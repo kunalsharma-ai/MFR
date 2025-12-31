@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///frfs/src/app/page.jsx"],"sourcesContent":["\"use client\"\r\nimport React from 'react'\r\nimport { useRouter } from 'next/navigation'\r\n\r\nfunction page() {\r\n  const router = useRouter();\r\n      React.useEffect(() => {\r\n      router.replace(\"/member/\");\r\n    }, []);\r\n  return (\r\n    <div>\r\n      \r\n    </div>\r\n  )\r\n}\r\n\r\nexport default page\r\n"],"names":[],"mappings":";;;;;AACA;AACA;AAFA;;;;AAIA,SAAS;IACP,MAAM,SAAS,IAAA,+IAAS;IACpB,gNAAK,CAAC,SAAS,CAAC;QAChB,OAAO,OAAO,CAAC;IACjB,GAAG,EAAE;IACP,qBACE,8OAAC;;;;;AAIL;uCAEe","debugId":null}}]
+}
