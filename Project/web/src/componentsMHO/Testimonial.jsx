@@ -1,145 +1,280 @@
 "use client";
-import { Grid, Typography, Paper, Box } from "@mui/material";
-import { motion } from "framer-motion";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Grid, Typography, Box, Container, IconButton } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const Testimonialsdata = [
   {
+    user: "Charoen",
+    country: "Thailand",
     content:
-      "I have participated in health survey, just having basic detail those I have observed after my fathers heart surgery and this is most important to have some extra in your pocket. Thanks you :)",
-    user: "Patricia Garci",
+      "Frankly say this is one of the best site who offer the real money otherwise I was fade up with fake advertisements. Good work support",
+  },
+  {
+    user: "Peter knot",
+    country: "UK",
+    content:
+      "I have participated in an in-house survey and completed the profiling to cover the threshold part to check the payment term. But Now, I am addicted and waiting for more survey and gain more points daily. Very Easy payment procedure and good for alternative income after covid. Thanks alot myfrequentrewards team. cheers:)",
+  },
+  {
+    user: "Maggie Bonnet",
     country: "USA",
-  },
-
-  {
     content:
-      "I am under-graduate Nurse and usually spare some extra time to check the survey daily and now, I am addicted which is good for my extra bills.Much Appreciate",
-    user: "Edeline",
-    country: "Germany",
+      "I easily make over $50 per month taking online surveys about houseware products or any electric gadgets. Also, I find these surveys very interesting and easy to earn.",
   },
   {
+    user: "Jasper",
+    country: "UK",
     content:
-      "I feel they offer great promotions and reward their users. Also have an amazing customer service with timely responses and great follow through. Thank you",
-    user: "James",
-    country: "USA",
+      "It’s very relaxing to take online surveys on my laptop or phone via mail notification and start proceeding for the surveys. I like knowing my opinion helps shape product development. And, getting rewarded for sharing my opinion is a huge plus!",
   },
   {
+    user: "Dmitri RozH",
+    country: "Russia",
     content:
-      "I’m a housewife with no-work. I have registered myself just few couple of months back and start participating in paid online surveys and earn a little extra money and help to pay for my household expenses and to treat my family special things. Thanks my health opinion",
-    user: "Wandy Doah",
-    country: "Germany",
+      "Great platform to earn more. Appreciate frequentrewards team and thanks",
   },
   {
-    content:
-      "I pariticipate in last month.Health opinion panel have good source of information covering most of the healthcare policies till now.",
-    user: "Dr Emma Noah",
-    country: "New York",
-  },
-  {
-    content:
-      "Great platform to earn extra, great support team to assist quickly and Glad to have more survey soon.",
-    user: "Danya Milch",
-    country: "Moscow",
-  },
-  {
-    content:
-      "Appriciable work by My Health Opinion Team. These type of Panels helps doctor to read the analysis more efficiently.",
-    user: "Anil Jain",
-    country: "India",
-  },
-  {
+    user: "Galina Ford",
+    country: "Russia",
     content:
       "Very quick response team to support, Quick reward redemption. Cheersssss",
-    user: "Charlie Charlotte",
-    country: "London",
   },
-
   {
+    user: "Shelly Makhija",
+    country: "India",
     content:
-      "Experience some downtime during surveys but it's great to have more survey done now. Health Opinion support team helps really quick. Much Appreciate health opinion site",
-    user: "Fengge",
+      "Who don't like some extra cash bills so thank you team for effort to support my opinion to improve the real world.",
+  },
+  {
+    user: "Absalom",
+    country: "Germany",
+    content:
+      "I feel they offer great promotions and reward their users. Also have an amazing customer service with timely responses and great follow through. Thank you",
+  },
+  {
+    user: "Chaoxiang Hugg",
     country: "China",
+    content:
+      "Great work team, it helped me a lot to earn some extra after covid pandamic. I really appreciate your work and offer us a survey to earn from any place.",
   },
   {
-    content:
-      "This is one of the best site who offer the real money otherwise I was fade up with fake advertisements. Threshold reward is realy quick to achive and redeem it thru PayPal. Thank a lot support.",
-    user: "Saada",
+    user: "Charoen",
     country: "Thailand",
+    content:
+      "Frankly say this is one of the best site who offer the real money otherwise I was fade up with fake advertisements. Good work support",
+  },
+  {
+    user: "Peter knot",
+    country: "UK",
+    content:
+      "I have participated in an in-house survey and completed the profiling to cover the threshold part to check the payment term. But Now, I am addicted and waiting for more survey and gain more points daily. Very Easy payment procedure and good for alternative income after covid. Thanks alot myfrequentrewards team. cheers:)",
   },
 ];
 
-const MotionPaper = motion.create(Paper);
+const slideVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? 200 : -200,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? -200 : 200,
+    opacity: 0,
+  }),
+};
 
 function Testimonial() {
+  const [[index, direction], setIndex] = useState([0, 0]);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const paginate = (newDirection) => {
+    setIndex([
+      (index + newDirection + Testimonialsdata.length) %
+        Testimonialsdata.length,
+      newDirection,
+    ]);
+  };
+
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      paginate(1);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [index, isPaused]);
+
   return (
     <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      direction="column"
-      py={7}
-      position="relative"
+      size={12}
+      sx={{
+        height: { xs: "100vh", lg: 680 },
+        py: 12,
+        position: "relative",
+        bgcolor: "secondary.main",
+        color: "white",
+        backgroundImage: "url(/imagesmfr/testi-bg.webp)",
+        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
     >
-      <Typography
-        sx={{ fontSize: "26px", fontWeight: "bold", px: { xs: 2, md: 0 } }}
-      >
-        See What Our Customers Are Saying
-      </Typography>
-      <Typography sx={{ fontSize: "16px", mb: 4, px: { xs: 2, md: 0 } }}>
-        Trusted by thousands of users worldwide, hear how MyHealthOpinions helps
-        them financially.
-      </Typography>
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "rgba(12, 91, 219, 0.4)",
+          zIndex: 1,
+        }}
+      />
 
       <Grid
-        size={10}
-        sx={{
-          columnCount: { xs: 1, sm: 2, md: 3 },
-          columnGap: 1,
-        }}
+        size={12}
+        container
+        justifyContent="center"
+        sx={{ zIndex: 2, position: "relative" }}
       >
-        {Testimonialsdata.map((item, index) => (
-          <MotionPaper
-            key={index}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.15 }}
-            viewport={{ once: true, amount: 0.2 }}
+        <Grid size={12} container justifyContent="center">
+          <Box
             sx={{
-              mb: 2,
-              p: 2,
-              borderRadius: 3,
-              boxShadow: 0,
-              bgcolor: "#f4f6fa",
-              border: `1px solid #a8fbd3`,
+              fontWeight: "bold",
+              fontSize: { xs: "16px", md: "28px" },
               display: "inline-block",
-              width: "100%",
+              color: "white",
             }}
           >
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {item.content}
-            </Typography>
-            <Typography variant="subtitle2" fontWeight="bold">
-              {item.user}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {item.country}
-            </Typography>
-          </MotionPaper>
-        ))}
-        <Box
+            TESTIMONIALS
+            <Box
+              sx={{
+                width: "80%",
+                mx: "auto",
+                mt: 1,
+                height: 5,
+                bgcolor: "#cfd8ff",
+                borderRadius: 5,
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  bgcolor: "primary.main",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  animation: "moveBall 3s ease-in-out infinite alternate",
+                  "@keyframes moveBall": {
+                    from: { left: 0 },
+                    to: { left: "calc(100% - 10px)" },
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+        <Container
+          maxWidth="lg"
           sx={{
-            display: { xs: "none", md: "block" },
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "45%",
-            background:
-              "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 60%, rgba(255,255,255,1) 100%)",
-            pointerEvents: "none",
-            backdropFilter: "blur(1px)",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            height: 500,
           }}
-        />
+        >
+          <IconButton
+            onClick={() => paginate(-1)}
+            aria-label="Back Button"
+            sx={{
+              position: "absolute",
+              left: 5,
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 2,
+              color: "primary.main",
+              border: "1px solid #fff",
+              bgcolor: "rgba(255, 255, 255, 0.5)",
+              "&:hover": { bgcolor: "primary.main", color: "#fff" },
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+
+          {/* Carousel */}
+          <Box
+            sx={{ overflow: "hidden", flex: 1, px: 6 }}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <AnimatePresence custom={direction} mode="wait">
+              <motion.div
+                key={index}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.4 }}
+                style={{ textAlign: "center", position: "relative" }}
+              >
+                <Box
+                  sx={{
+                    fontSize: { xs: 30, md: 50 },
+                    opacity: 0.5,
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                  }}
+                >
+                  <i className="fa-solid fa-quote-left" />
+                </Box>
+
+                <Typography
+                  fontSize={{ xs: 16, md: 20 }}
+                  pt={9}
+                  pb={{ xs: 4, md: 9 }}
+                >
+                  {Testimonialsdata[index].content}
+                </Typography>
+
+                <Typography fontWeight="bold" fontSize={{ xs: 16, md: 18 }}>
+                  - {Testimonialsdata[index].user}
+                </Typography>
+                <Typography fontSize={14}>
+                  {Testimonialsdata[index].country}
+                </Typography>
+              </motion.div>
+            </AnimatePresence>
+          </Box>
+
+          <IconButton
+            onClick={() => paginate(1)}
+            aria-label="Next button"
+            sx={{
+              position: "absolute",
+              right: 5,
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 2,
+              color: "primary.main",
+              border: "1px solid #fff",
+              bgcolor: "rgba(255, 255, 255, 0.5)",
+              "&:hover": { bgcolor: "primary.main", color: "#fff" },
+            }}
+          >
+            <ArrowForwardIcon />
+          </IconButton>
+        </Container>
       </Grid>
     </Grid>
   );

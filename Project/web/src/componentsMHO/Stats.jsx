@@ -1,68 +1,80 @@
 "use client";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Container } from "@mui/material";
 import Counter from "./Counter";
 
 const stats = [
-  { label: "Registered Panellist", value: 1233332 },
-  { label: "Incentives this Month", value: 3221333, prefix: "$" },
-  { label: "Monthly Surveys", value: 142233 },
-  { label: "Completed Surveys", value: 323212 },
+  { label: "REWARDS PAID", value: 1233332, prefix: "$", showPlus: true },
+  {
+    label: "TOTAL SURVEYS COMPLETED (THIS MONTH)",
+    value: 323,
+    showPlus: false,
+  },
+  { label: "MONTHLY AVAILABLE SURVEYS", value: 42, showPlus: true },
+  { label: "PANELISTS REGISTERED", value: 3212, showPlus: false },
 ];
 
 function Stats() {
   return (
     <Grid
       size={12}
-      container
-      justifyContent="center"
-      alignItems="center"
-      sx={{ borderTop: `1px solid #e0e0e0` }}
+      sx={{
+        bgcolor: "primary.main",
+        color: "white",
+        backgroundImage: "url(/imagesmfr/dot1-bg.png)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
     >
-      <Grid
-        size={10}
-        container
-        spacing={3}
-        px={2}
-        py={12}
-        justifyContent="center"
-      >
-        {stats.map((stat, index) => {
-          return (
-            <Grid
-              container
-              size={{ xs: 12, md: 6, lg: 3 }}
-              key={index}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              spacing={1}
-              sx={{
-                bgcolor: "#f1f4f9",
-                border: `1px solid #a8fbd3`,
-                borderRadius: 4,
-                py: 2,
-                minHeight: "190px",
-                textAlign: "center",
-              }}
-            >
-              <Typography
+      <Container maxWidth="lg">
+        <Grid
+          size={12}
+          container
+          spacing={3}
+          px={2}
+          pt={6}
+          pb={{ xs: 6, md: 0 }}
+          justifyContent="center"
+        >
+          {stats.map((stat, index) => {
+            return (
+              <Grid
+                container
+                size={{ xs: 12, md: 6, lg: 3 }}
+                key={index}
+                direction="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={1}
                 sx={{
-                  fontWeight: "bold",
-                  fontSize: "36px",
-                  wordBreak: "break-word",
-                  overflowWrap: "anywhere",
-                  whiteSpace: "normal",
+                  py: 2,
+                  minHeight: { xs: "140px", md: "190px" },
+                  textAlign: "center",
                 }}
               >
-                <Counter value={stat.value} prefix={stat?.prefix} />
-              </Typography>
-              <Typography sx={{ fontSize: { xs: "16px", xl: "18px" } }}>
-                {stat?.label}
-              </Typography>
-            </Grid>
-          );
-        })}
-      </Grid>{" "}
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "36px",
+                    wordBreak: "break-word",
+                    overflowWrap: "anywhere",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  <Counter
+                    value={stat.value}
+                    prefix={stat?.prefix}
+                    showPlus={stat?.showPlus}
+                  />
+                </Typography>
+                <Typography sx={{ fontSize: { xs: "16px", xl: "18px" } }}>
+                  {stat?.label}
+                </Typography>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Container>
     </Grid>
   );
 }

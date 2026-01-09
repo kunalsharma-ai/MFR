@@ -22,7 +22,8 @@ const theme = createTheme({
   typography: {
     color: "black",
     fontSize: 14,
-    fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "Fira Sans, sans-serif",
+    // fontFamily: "'Montserrat', sans-serif",
   },
   components: {
     MuiCssBaseline: {

@@ -189,7 +189,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 borderColor: "secondary.main",
               },
               "& .Mui-selected": {
-                backgroundColor: "#016550 !important",
+                backgroundColor: "#063686 !important",
                 color: "#fff !important",
                 "&:hover": {
                   backgroundColor: "primary.dark",
@@ -292,7 +292,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           sx={{
             borderRadius: "8px",
             padding: "9px",
-            backgroundColor: "#016550",
+            backgroundColor: "secondary.main",
 
             color: "white",
             boxShadow: "none",
@@ -427,7 +427,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
                   color: "white",
                   borderRadius: "8px",
                   padding: 1,
-                  backgroundColor: "#016550",
+                  backgroundColor: "secondary.main",
                   boxShadow: "none",
                   fontWeight: "bold",
                   transition: "box-shadow 0.3s ease",

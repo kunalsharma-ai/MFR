@@ -5,8 +5,6 @@ import Providers from "./providers";
 import { Toast } from "@/components";
 import "@/lib/enhancements.js";
 
-
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -14,50 +12,18 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/css/style.css" as="style" />
         <link rel="stylesheet" href="/css/style.css" />
 
-        <title>My Frequent Rewards</title>
-        {/* <meta
-          name="description"
-          content="Join My Health Opinions — a trusted platform where doctors and patients share insights and earn rewards for participating in surveys that shape better healthcare."
-        />
-        <meta
-          name="keywords"
-          content="health survey, doctors, patients, rewards, healthcare opinions, medical surveys, healthcare research"
-        />
-        <meta name="author" content="My Health Opinions" />
-
-        <meta
-          property="og:title"
-          content="My Health Opinions – Earn Rewards for Sharing Your Voice"
-        />
-        <meta
-          property="og:description"
-          content="Join doctors and patients in shaping healthcare by sharing your insights. Earn rewards for your valuable opinions."
-        />
-        <meta property="og:url" content="https://myhealthopinions.com/" />
-        <meta property="og:site_name" content="My Health Opinions" />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://myhealthopinions.com/images/logo/My-Health-Opinions.png"
-        />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="480" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="My Health Opinions – Earn Rewards for Sharing Your Voice"
-        />
-        <meta
-          name="twitter:description"
-          content="Doctors and patients share insights and earn rewards for surveys that improve healthcare outcomes."
-        />
-        <meta
-          name="twitter:image"
-          content="https://myhealthopinions.com/images/logo/My-Health-Opinions.png"
+        <title>My Frequent Rewards - Get Rewarded With Your Opinions</title>
+        {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+          rel="stylesheet"
         /> */}
 
-        {/* <link rel="canonical" href="https://myhealthopinions.com/" /> */}
+        <meta
+          name="description"
+          content="Join My Frequent Rewards — a trusted platform where people share insights and earn rewards for participating in surveys."
+        />
       </head>
       <body>
         <Providers>

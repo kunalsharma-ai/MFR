@@ -12,114 +12,110 @@
   font-style: normal;
 }
 
-/* Montserrat Font Family */
+/* FiraSans Font Family */
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Thin.ttf") format("truetype");
-  font-weight: 100;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-ThinItalic.ttf") format("truetype");
-  font-weight: 100;
-  font-style: italic;
-}
-@font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-ExtraLight.ttf") format("truetype");
-  font-weight: 200;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-ExtraLightItalic.ttf") format("truetype");
-  font-weight: 200;
-  font-style: italic;
-}
-@font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Light.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-LightItalic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-LightItalic.ttf") format("truetype");
   font-weight: 300;
   font-style: italic;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Regular.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Italic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Medium.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-MediumItalic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-MediumItalic.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-SemiBold.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-SemiBoldItalic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-SemiBoldItalic.ttf") format("truetype");
   font-weight: 600;
   font-style: italic;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Bold.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-BoldItalic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-BoldItalic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-ExtraBold.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-ExtraBoldItalic.ttf") format("truetype");
-  font-weight: 800;
-  font-style: italic;
-}
-@font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-Black.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-Black.ttf") format("truetype");
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
 }
+
 @font-face {
-  font-family: "Montserrat";
-  src: url("../fonts/Montserrat-BlackItalic.ttf") format("truetype");
+  font-family: "Fira Sans";
+  src: url("../fonts/FiraSans-BlackItalic.ttf") format("truetype");
   font-weight: 900;
   font-style: italic;
+  font-display: swap;
 }
 
 /*!
@@ -10811,6 +10807,8 @@
   font-weight: 900;
   font-display: block;
   src: url("../fonts/fa-solid-900.woff2");
+    font-display: swap;
+
 }
 .fas {
   --fa-family: var(--fa-family-classic);
@@ -11657,10 +11655,10 @@
 .button {
   cursor: pointer;
 }
-.width-full{
-  width:100%
+.width-full {
+  width: 100%;
 }
-.padding-h-30{
-  padding-left:30px;
-  padding-right:30px;
+.padding-h-30 {
+  padding-left: 30px;
+  padding-right: 30px;
 }

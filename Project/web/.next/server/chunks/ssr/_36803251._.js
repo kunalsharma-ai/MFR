@@ -396,23 +396,54 @@ function AdminHeader() {
                                 }, this),
                                 " ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$mui$2f$material$2f$esm$2f$Box$2f$Box$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Box$3e$__["Box"], {
-                                    component: "img",
-                                    src: "/images/logo/mfr-logo-white.png",
-                                    alt: "logo",
-                                    // height="90px"
-                                    width: "225px",
                                     sx: {
+                                        position: "relative",
                                         cursor: "pointer",
+                                        scale: 1.1,
                                         display: {
                                             xs: "none",
                                             sm: "block"
                                         },
-                                        scale: 1.1
+                                        marginRight: {
+                                            lg: "50px"
+                                        }
                                     },
                                     onClick: ()=>{
                                         router.push("/admin/dashboard");
-                                    }
-                                }, void 0, false, {
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$mui$2f$material$2f$esm$2f$Box$2f$Box$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Box$3e$__["Box"], {
+                                            component: "img",
+                                            src: "/images/logo/mfr-logo-white.png",
+                                            alt: "logo",
+                                            width: {
+                                                xs: "180px",
+                                                sm: "225px"
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
+                                            lineNumber: 84,
+                                            columnNumber: 27
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$mui$2f$material$2f$esm$2f$Box$2f$Box$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Box$3e$__["Box"], {
+                                            component: "img",
+                                            src: "/imagesmfr/dol-sign.gif",
+                                            alt: "logo",
+                                            width: {
+                                                xs: 15,
+                                                md: 20
+                                            },
+                                            sx: {
+                                                position: "absolute",
+                                                right: -6.5
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
+                                            lineNumber: 90,
+                                            columnNumber: 27
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
                                     lineNumber: 72,
                                     columnNumber: 13
@@ -434,7 +465,7 @@ function AdminHeader() {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$admin$2f$components$2f$AdminNotification$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                                    lineNumber: 95,
+                                    lineNumber: 105,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$mui$2f$material$2f$esm$2f$Button$2f$Button$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Button$3e$__["Button"], {
@@ -453,7 +484,7 @@ function AdminHeader() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                                            lineNumber: 102,
+                                            lineNumber: 112,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$mui$2f$material$2f$esm$2f$Typography$2f$Typography$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Typography$3e$__["Typography"], {
@@ -463,19 +494,19 @@ function AdminHeader() {
                                             children: me?.name?.first ?? "User"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                                            lineNumber: 107,
+                                            lineNumber: 117,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                                    lineNumber: 97,
+                                    lineNumber: 107,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                            lineNumber: 89,
+                            lineNumber: 99,
                             columnNumber: 11
                         }, this)
                     ]
@@ -524,19 +555,19 @@ function AdminHeader() {
                             className: "icon-power"
                         }, void 0, false, {
                             fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                            lineNumber: 152,
+                            lineNumber: 162,
                             columnNumber: 11
                         }, this),
                         "Logout"
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                    lineNumber: 143,
+                    lineNumber: 153,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/admin/components/AdminHeader.jsx",
-                lineNumber: 114,
+                lineNumber: 124,
                 columnNumber: 7
             }, this)
         ]

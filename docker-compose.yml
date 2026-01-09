@@ -3,7 +3,58 @@ networks:
     external: true
   mfr:
     external: false
+  db:
+    external: false
 services:
+  db:
+    image: mongo
+    container_name: ${PROJECT}-mongodb
+    restart: always
+    volumes:
+      - ./db/store:/data/db
+      - ./db/dump:/backup
+    networks:
+      - db
+  api:
+    image: optiwariindia/express:api-module-1.0.1
+    restart: unless-stopped
+    networks:
+      - db
+      - mfr
+    env_file:
+      - ./environment/${PROJECT}.env
+    container_name: ${PROJECT}-api
+    volumes:
+      - ./Project/api/app:/src/app
+      - ./Project/api/package.json:/src/package.json
+      - ./Project/utils:/src/utils
+      - ./defaultData:/data
+  email:
+    image: registry.sampledge.com/microservice/email:smtp-1.0.0
+    build:
+      context: services/email
+      target: development
+    container_name: ${PROJECT}-email
+    env_file:
+      - environment/${PROJECT}.env
+    volumes:
+      - ./Project/services/email/server.js:/app/server.js
+      - ./Project/services/email/utils:/app/utils
+      - ./Project/services/email/config:/app/config
+    networks:
+      - mfr
+    restart: always
+  storage:
+    image: registry.sampledge.com/microservice/storage:1.0.0
+    container_name: ${PROJECT}-service-storage
+    volumes:
+      - ./Project/services/storage/uploads:/data
+      - ./Project/services/storage/hosts:/app/hosts
+    environment:
+      - public=/data
+    networks:
+      - mfr
+    restart: unless-stopped
   web-prod:
     image: registry.sampledge.com/my-frequent-rewards/web:1.0.0
     build:

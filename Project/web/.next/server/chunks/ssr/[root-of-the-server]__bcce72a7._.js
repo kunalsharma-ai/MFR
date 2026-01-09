@@ -53,7 +53,7 @@ const theme = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2
     typography: {
         color: "black",
         fontSize: 14,
-        fontFamily: "'Montserrat', sans-serif"
+        fontFamily: "Fira Sans, sans-serif"
     },
     components: {
         MuiCssBaseline: {

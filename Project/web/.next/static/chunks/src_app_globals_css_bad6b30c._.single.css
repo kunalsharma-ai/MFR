@@ -16,7 +16,7 @@ body {
   background: var(--background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: Montserrat, sans-serif;
+  font-family: Fira Sans, sans-serif;
 }
 
 * {
@@ -50,7 +50,7 @@ a {
 
 .hover-line:after {
   content: "";
-  background: #06923e;
+  background: #0c5adb;
   width: 0;
   height: 2px;
   transition: width .4s, background-color .4s;

@@ -15,7 +15,7 @@ function MemberFooter() {
         zIndex: 999,
       }}
     >
-      Copyright 2025 ©{" "}
+      Copyright 2026 ©{" "}
       <Typography
         component="a"
         href="https://frequentresearch.com/"

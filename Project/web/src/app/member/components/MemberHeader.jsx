@@ -69,22 +69,31 @@ export default function MemberHeader() {
               }}
             />{" "}
             <Box
-              component="img"
-              
-              src="/images/logo/mfr-logo-white.png"
-              alt="logo"
-              // height="90px"
-              width="225px"
               sx={{
-                
+                position: "relative",
                 cursor: "pointer",
-                display: { xs: "none", sm: "block" },
                 scale: 1.1,
+                display: { xs: "none", sm: "block" },
+                marginRight: { lg: "50px" },
               }}
               onClick={() => {
                 router.push("/member/dashboard");
               }}
-            />
+            >
+              <Box
+                component="img"
+                src="/images/logo/mfr-logo-white.png"
+                alt="logo"
+                width={{ xs: "180px", sm: "225px" }}
+              />
+              <Box
+                component="img"
+                src="/imagesmfr/dol-sign.gif"
+                alt="logo"
+                width={{ xs: 15, md: 20 }}
+                sx={{ position: "absolute", right: -6.5 }}
+              />
+            </Box>
           </Box>
           <Box
             display={"flex"}

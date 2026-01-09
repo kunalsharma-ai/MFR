@@ -16,9 +16,13 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Grid,
+  Container,
 } from "@mui/material";
+import { motion } from "framer-motion";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import PersonIcon from "@mui/icons-material/Person";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { usePathname } from "next/navigation";
@@ -109,34 +113,26 @@ export default function Header({ sections = [], open, setOpen }) {
   };
 
   const getNavigationItems = () => {
-    if (pathname === "/") {
-      // Home page - use sections with scroll functionality
-      // Override "CONTACT" to navigate to /contact page
-      return sections.map((section) => ({
-        label: section.label, // Already uppercase
-        onClick: () => {
-          if (section.label === "CONTACT") {
-            handleNavigation("/contact");
-          } else {
-            handleScroll(section.ref);
-          }
-          handleDrawerClose();
-        },
-        isExternalPage: section.label === "CONTACT",
-        path: section.label === "CONTACT" ? "/contact" : "/",
-      }));
-    } else {
+    // if (pathname === "/") {
+    //   // Home page - use sections with scroll functionality
+    //   // Override "CONTACT" to navigate to /contact page
+    //   return sections.map((section) => ({
+    //     label: section.label, // Already uppercase
+    //     onClick: () => {
+    //       if (section.label === "CONTACT") {
+    //         handleNavigation("/contact");
+    //       } else {
+    //         handleScroll(section.ref);
+    //       }
+    //       handleDrawerClose();
+    //     },
+    //     isExternalPage: section.label === "COVERAGE",
+    //     path: section.label === "CONTACT" ? "//panels.frequentresearch.com/" : "/",
+    //   }));
+    // } else
+    {
       // Other pages - navigate to home sections or other pages, with uppercase labels
       return [
-        {
-          label: "HOME",
-          onClick: () => {
-            handleNavigation("/", "HOME");
-            handleDrawerClose();
-          },
-          path: "/",
-          sectionLabel: "HOME",
-        },
         {
           label: "ABOUT US",
           onClick: () => {
@@ -146,50 +142,47 @@ export default function Header({ sections = [], open, setOpen }) {
           path: "/",
           sectionLabel: "ABOUT US",
         },
+
         {
-          label: "OUR PROFESSIONALS",
+          label: "HOW IT WORKS",
           onClick: () => {
-            handleNavigation("/", "OUR PROFESSIONALS");
+            handleNavigation("/", "HOW IT WORKS");
             handleDrawerClose();
           },
           path: "/",
-          sectionLabel: "OUR PROFESSIONALS",
+          sectionLabel: "HOW IT WORKS",
         },
         {
-          label: "OUR SPECIALTIES",
+          label: "WHY US",
           onClick: () => {
-            handleNavigation("/", "OUR SPECIALTIES");
+            handleNavigation("/", "WHY US");
             handleDrawerClose();
           },
           path: "/",
-          sectionLabel: "OUR SPECIALTIES",
+          sectionLabel: "WHY US",
         },
         {
-          label: "SOLUTIONS",
+          label: "STEPS TO JOIN",
           onClick: () => {
-            handleNavigation("/", "SOLUTIONS");
+            handleNavigation("/", "STEPS TO JOIN");
             handleDrawerClose();
           },
           path: "/",
-          sectionLabel: "SOLUTIONS",
+          sectionLabel: "STEPS TO JOIN",
         },
         {
-          label: "TESTIMONIALS",
+          label: "COVERAGE",
           onClick: () => {
-            handleNavigation("/", "TESTIMONIALS");
-            handleDrawerClose();
+            window.open(
+              "//panels.frequentresearch.com/",
+              "_blank",
+              "noopener,noreferrer"
+            ),
+              //  router.push("//panels.frequentresearch.com/")
+              handleDrawerClose();
           },
-          path: "/",
-          sectionLabel: "TESTIMONIALS",
-        },
-        {
-          label: "CONTACT",
-          onClick: () => {
-            handleNavigation("/contact");
-            handleDrawerClose();
-          },
-          path: "/contact",
-          sectionLabel: null, // Not a home section
+          path: null,
+          sectionLabel: null,
         },
       ];
     }
@@ -201,10 +194,15 @@ export default function Header({ sections = [], open, setOpen }) {
       sx={{
         display: "flex",
         flexDirection: "column",
+
         width: "100vw",
         height: "100vh",
-        bgcolor: "#A8FBD3",
-        color: "black",
+        bgcolor: "primary.main",
+        color: "white",
+        backgroundImage: "url(/imagesmfr/facts-bg-last.png)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
         pt: 2,
         pb: 2,
         position: "relative",
@@ -222,25 +220,44 @@ export default function Header({ sections = [], open, setOpen }) {
           alignItems: "center",
         }}
       >
-        <img
-          src="/images/logo/My-Health-Opinions1500-500.png"
-          alt="logo"
-          height="60px"
-          width="180px"
-          style={{ cursor: "pointer" }}
+        <Box
+          sx={{
+            position: "relative",
+            cursor: "pointer",
+            scale: 1.1,
+            marginRight: { lg: "50px" },
+          }}
           onClick={() => {
             handleNavigation("/");
             handleDrawerClose();
           }}
-        />
+        >
+          <Box
+            component="img"
+            src="/images/logo/mfr-logo-white.png"
+            alt="logo"
+            width={220}
+          />
+          <Box
+            component="img"
+            src="/imagesmfr/dol-sign.gif"
+            alt="logo"
+            width={{ xs: 15, lg: 20 }}
+            sx={{ position: "absolute", right: -5, top: 4 }}
+          />
+        </Box>
+
         <IconButton
           aria-label="close drawer"
           onClick={handleDrawerClose}
           sx={{
-            color: "black",
-            "&:hover": {
-              bgcolor: "rgba(0, 0, 0, 0.04)",
-            },
+            p: 1,
+            bgcolor: "white",
+            ml: 4,
+            borderRadius: 20,
+            border: "1px solid white",
+            borderColor: "primary.main",
+            color: "primary.main",
           }}
         >
           <CloseIcon />
@@ -289,8 +306,8 @@ export default function Header({ sections = [], open, setOpen }) {
               <ListItemText
                 primary={item.label}
                 primaryTypographyProps={{
-                  fontWeight: "bold",
-                  fontSize: "16px",
+                  fontWeight: "400",
+                  fontSize: "22px",
                 }}
               />
             </ListItem>
@@ -416,155 +433,208 @@ export default function Header({ sections = [], open, setOpen }) {
       position="sticky"
       elevation={0}
       sx={{
-        bgcolor: "#A8FBD3",
+        width: "100%",
+        bgcolor: "white",
         color: "black",
         py: { xs: 0, lg: 0.5 },
         boxShadow: 3,
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      <Toolbar
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          height: "70px",
-        }}
-      >
-        <img
-          src="/images/logo/My-Health-Opinions.png"
-          alt="logo"
-          height="90px"
-          width="225px"
-          style={{
-            cursor: "pointer",
-            scale: 1.1,
-          }}
-          onClick={() => {
-            handleNavigation("/");
-          }}
-        />
-
-        <Box
-          sx={{ display: { xs: "none", lg: "flex" }, gap: { xs: 2, xl: 4 } }}
-        >
-          {navigationItems.map((item, index) => (
-            <Box
-              component="button"
-              tabIndex={0}
-              key={index}
-              className="hover-line"
-              onClick={item.onClick}
-              sx={{
-                fontFamily: "inherit",
-                bgcolor: "transparent",
-                border: "none",
-
-                "&:focus-visible": {
-                  outline: "2px solid",
-                  outlineColor: "primary.main",
-                  outlineOffset: "2px",
-                },
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: { xs: "12px", lg: "13px", xl: "14px" },
-                position: "relative",
-                "&:after": {
-                  content: '""',
-                  position: "absolute",
-                  width:
-                    mounted && pathname === item.path && !item.isExternalPage
-                      ? "100%"
-                      : 0,
-                  height: "2px",
-                  bottom: -4,
-                  left: 0,
-                  bgcolor: "primary.main",
-                  transition: "width 0.3s ease",
-                },
-                "&:hover": {
-                  color: "secondary.main",
-                  "&:after": {
-                    width: "100%",
-                  },
-                },
-              }}
-            >
-              {item.label}
-            </Box>
-          ))}
-        </Box>
-
-        <Box sx={{ display: { xs: "flex", lg: "none" }, alignItems: "center" }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerToggle}
-            sx={{ mx: 0.5 }}
-          >
-            <MenuIcon fontSize="large" />
-          </IconButton>
-        </Box>
-        <Box
+      <Container maxWidth="lg">
+        <Grid
+          size={12}
+          container
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={6}
           sx={{
-            display: { xs: "none", lg: "block" },
-            alignItems: "center",
-            mr: 7,
-            minWidth: "145px",
+            height: "70px",
           }}
         >
-          {showLogin &&
-            (user === null ? (
-              <Button
-                variant="outlined"
-                color="black"
-                onClick={() => {
-                  setOpen(!open);
-                }}
-                sx={{
-                  boxShadow: 2,
-                  fontSize: "16px",
-                  borderRadius: 1,
-                  fontWeight: "bold",
-                  height: "36px",
+          <Box
+            sx={{
+              position: "relative",
+              cursor: "pointer",
+              scale: 1.1,
+              marginRight: { lg: "50px" },
+            }}
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            <Box
+              component="img"
+              src="/images/logo/mfr-logo.png"
+              alt="logo"
+              width={{ xs: "180px", sm: "225px" }}
+              height={{xs:"38px", sm:"48px"}}
+            />
+            <Box
+              component="img"
+              src="/imagesmfr/dol-sign.gif"
+              alt="logo"
+              width={{ xs: 15, md: 20 }}
+              sx={{
+                position: "absolute",
+                right: { xs: -5, md: -6.5 },
+                top: { xs: 2, sm: 5, md: 0 },
+              }}
+            />
+          </Box>
 
+          <Box
+            sx={{ display: { xs: "none", lg: "flex" }, gap: { xs: 2, xl: 4 } }}
+          >
+            {navigationItems.map((item, index) => (
+              <Box
+                component="button"
+                tabIndex={0}
+                key={index}
+                className="hover-line"
+                onClick={item.onClick}
+                sx={{
+                  fontFamily: "Fira Sans, sans-serif",
+                  bgcolor: "transparent",
+                  border: "none",
+
+                  "&:focus-visible": {
+                    outline: "2px solid",
+                    outlineColor: "primary.main",
+                    outlineOffset: "2px",
+                  },
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  fontSize: { xs: "12px", lg: "13px", xl: "16px" },
+                  position: "relative",
+                  "&:after": {
+                    content: '""',
+                    position: "absolute",
+                    width:
+                      mounted && pathname === item.path && !item.isExternalPage
+                        ? "100%"
+                        : 0,
+                    height: "2px",
+                    bottom: -4,
+                    left: 0,
+                    bgcolor: "primary.main",
+                    transition: "width 0.3s ease",
+                  },
                   "&:hover": {
-                    boxShadow: 5,
+                    color: "secondary.main",
+                    "&:after": {
+                      width: "100%",
+                    },
                   },
                 }}
               >
-                Login
-              </Button>
-            ) : (
-              <Button
-                onClick={(event) => setProfileAnchorEl(event.currentTarget)}
-                color="inherit"
-                sx={{ textTransform: "none", px: 2 }}
-              >
-                <Avatar
-                  sx={{
-                    width: "40px",
-                    height: "40px",
-                    bgcolor: user?.profilePicture
-                      ? "transparent"
-                      : "primary.main",
+                {item.label}
+              </Box>
+            ))}
+          </Box>
+
+          <Box
+            sx={{ display: { xs: "flex", lg: "none" }, alignItems: "center" }}
+          >
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{ mx: 0.5, color: "secondary.main" }}
+            >
+              <MenuIcon fontSize="large" />
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "none", lg: "block" },
+              alignItems: "center",
+              // mr: 7,
+              // minWidth: "145px",
+            }}
+          >
+            {showLogin &&
+              (user === null ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setOpen(!open);
                   }}
-                  src={user?.profilePicture || ""}
-                  alt={"user photo"}
-                />
-                <Typography
                   sx={{
-                    display: { xs: "none", lg: "block" },
-                    ml: 1,
+                    position: "relative",
+                    overflow: "hidden",
                     fontSize: "16px",
-                    fontWeight: "bold",
+                    fontWeight: "500",
+                    height: "30px",
+                    borderRadius: 0,
+                    p: 2.5,
+                    px: 3,
+                    zIndex: 1,
+
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "0%",
+                      height: "100%",
+                      bgcolor: "secondary.main",
+                      transition: "width 0.35s ease",
+                      zIndex: -1,
+                    },
+
+                    "&:hover::before": {
+                      width: "100%",
+                    },
                   }}
                 >
-                  {user?.name?.first ?? "User"}
-                </Typography>
-              </Button>
-            ))}
-        </Box>
-      </Toolbar>
+                  <PersonIcon />{" "}
+                  <span
+                    style={{
+                      verticalAlign: "middle",
+                      marginTop: 2,
+                      marginLeft: 5,
+                    }}
+                  >
+                    Login
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={(event) => setProfileAnchorEl(event.currentTarget)}
+                  color="inherit"
+                  sx={{ textTransform: "none", px: 2 }}
+                >
+                  <Avatar
+                    sx={{
+                      width: "40px",
+                      height: "40px",
+                      bgcolor: user?.profilePicture
+                        ? "transparent"
+                        : "primary.main",
+                    }}
+                    src={user?.profilePicture || ""}
+                    alt={"user photo"}
+                  />
+                  <Typography
+                    sx={{
+                      display: { xs: "none", lg: "block" },
+                      ml: 1,
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {user?.name?.first ?? "User"}
+                  </Typography>
+                </Button>
+              ))}
+          </Box>
+        </Grid>
+      </Container>
+
       <Menu
         anchorEl={profileAnchorEl}
         open={Boolean(profileAnchorEl)}

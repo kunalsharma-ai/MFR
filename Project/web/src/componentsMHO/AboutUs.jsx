@@ -1,84 +1,115 @@
-import { Grid, Typography, Button, Box } from "@mui/material";
+import text from "@/util/page/text";
+import { Grid, Typography, Button, Box, Container } from "@mui/material";
 import React from "react";
 
 function AboutUs() {
   return (
-    <Grid
-      size={12}
-      container
-      spacing={6}
-      justifyContent="center"
-      alignItems="center"
-      sx={{ height: "550px", mt: { xs: 2, lg: 0 } }}
-    >
+    <Container maxWidth="lg">
       <Grid
+        size={12}
         container
-        size={{ xs: 12, lg: 5 }}
-        sx={{ alignItems: "center", justifyContent: "center" }}
+        spacing={6}
+        justifyContent="center"
+        alignItems="center"
+        sx={{
+          height: { xs: "auto", lg: "456px" },
+          pt: { xs: "50px", lg: "80px" },
+          pb:{xs:0,lg:"80px"}
+        }}
       >
-        <Box
-          sx={{
-            position: "relative",
-            height: { xs: "170px", lg: "350px" },
-            width: { xs: "255px", lg: "550px" },
-            overflow: "visible",
-          }}
+        <Grid
+          container
+          size={{ xs: 12, lg: 6 }}
+          sx={{ alignItems: "center", justifyContent: "center" }}
         >
-          <img
-            src="/images/home/banner/bg4.jpg"
-            alt="image"
-            height="100%"
-            style={{ borderRadius: 30, boxShadow: 4 }}
-          />
           <Box
             sx={{
-              bgcolor: "#A8FBD3",
-              position: "absolute",
-              bottom: { xs: -20, lg: -30 },
-              left: { xs: -20, lg: -30 },
-              borderRadius: 10,
-              height: { xs: "150px", lg: "300px" },
-              width: { xs: "250px", lg: "450px" },
-              zIndex: -1,
+              position: { xs: "static", lg: "relative" },
+              height: "auto",
+              width: { xs: "100vw", lg: "440px" },
+              overflow: "visible",
             }}
-          />
-        </Box>
-      </Grid>
-      <Grid
-        size={{ xs: 10, lg: 5 }}
-        container
-        justifyContent="center"
-        direction="column"
-      >
-        <Grid container direction="column" spacing={4}>
-          <Box>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: { xs: "16px", md: "20px" },
-                display: "inline",
-                fontWeight: "bold",
-                borderBottom: "3px solid #06923E",
-                pb: 0.5,
-              }}
-            >
-              About Us
-            </Typography>
-          </Box>
-          <Box>
-            <Typography sx={{ fontSize: "18px", mb: 2 }}>
-              Welcome to My Health Opinions
-            </Typography>
-            <Typography sx={{ fontSize: "16px" }}>
-              A healthcare community of Frequent Research which covers solely
-              healthcare audiences responses which is used by us for healthcare
-              sponsors and other pharmaceutical research purpose only including
-              Physicians, Healthcare Professionals and Consumer Ailments.
-            </Typography>
+          >
+            <img
+              src="/imagesmfr/slider/02.jpg"
+              alt="image"
+              height="100%"
+              width="100%"
+              style={{ borderRadius: 0, boxShadow: 4 }}
+            />
           </Box>
         </Grid>
-      </Grid>
-    </Grid>
+        <Grid
+          size={{ xs: 10, lg: 6 }}
+          container
+          justifyContent="center"
+          direction="column"
+        >
+          <Grid container direction="column" spacing={4}>
+            <Box>
+              <Box
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: { xs: "16px", md: "28px" },
+                  display: "inline-block",
+                  fontWeight: "bold",
+                }}
+              >
+                ABOUT US
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 5,
+                    bgcolor: "#cfd8ff",
+                    borderRadius: 5,
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 10,
+                      height: 10,
+                      bgcolor: "primary.main",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      animation: "moveBall 2s ease-in-out infinite alternate",
+                      "@keyframes moveBall": {
+                        from: {
+                          left: 0,
+                        },
+                        to: {
+                          left: "calc(100% - 10px)",
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Box>
+            <Box>
+              <Typography
+                sx={{ fontSize: "17px", mb: 1, textAlign: "justify" }}
+              >
+                MyFrequentRewards is a world wide Consumer and Business
+                Community of Frequent Research.
+              </Typography>
+              <Typography sx={{ fontSize: "16px", textAlign: "justify" }}>
+                MyFrequentRewards welcomes you as our new panel members to take
+                participate and share your opinion and perspective to
+                wide-ranging market research survey campaigns.It is a platform
+                which helps you to generate more and more revenues in high
+                incentive rewards. You get the studies that are best fit for
+                you. The more participation you do in the surveys, You will be
+                able to earn more and more money.
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>{" "}
+    </Container>
   );
 }
 

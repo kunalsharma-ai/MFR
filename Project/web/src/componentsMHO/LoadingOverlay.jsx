@@ -59,8 +59,8 @@ function LoadingOverlay({ zIndex = 9998 }) {
             alt="Rotating Logo"
             src="/images/logo/logo.png"
             sx={{
-              height: "160px",
-              width: "160px",
+              height: 207,
+              width: 207,
               animation: `${spin} 2s linear infinite`,
               transformOrigin: "center center",
             }}

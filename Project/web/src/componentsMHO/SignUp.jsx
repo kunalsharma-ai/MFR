@@ -29,14 +29,11 @@ import {
 } from "@mui/icons-material";
 
 import PopUp from "./PopUp";
-import DoctorSignUp from "./DoctorSignUp";
-import PatientSignUp from "./PatientSignUp";
 import { Form, RequiredLabel } from "@/components";
 import { api, Page } from "@/util";
 import user from "@/validators/user";
 import { useToast } from "@/hooks";
 import { useMember, useQuery, useTelemetry } from "@/Context";
-import MapComponent from "@/components/Map"; //Temporary Import
 function capitalizeName(str) {
   if (!str) return "";
 
@@ -54,27 +51,12 @@ function capitalizeName(str) {
 }
 const today = new Date();
 
-export default function SignUp({ open, onClose, userType, setUserType }) {
+export default function SignUp({ open, onClose, setOpenLogin }) {
   const [telemetry, router] = [useTelemetry(), useRouter()];
   const [status, setStatus] = React.useState("signup"); // signup, success, duplicate
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
-  const [categoryOptions, setCategoryOptions] = React.useState([]);
   const [query, member] = [useQuery(), useMember()];
-
-  React.useEffect(() => {
-    api.get(`/api/v1/category`).then((resp) => {
-      if (resp.status === "error") return useToast(resp);
-      setCategoryOptions(
-        resp.data.map((cat) => {
-          return {
-            label: capitalizeName(cat.name),
-            value: cat.name,
-          };
-        })
-      );
-    });
-  }, []);
 
   const form = useForm({
     defaultValues: {
@@ -117,9 +99,7 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
       }
     });
   }, [telemetry]);
-  React.useEffect(() => {
-    form.setValue("category", userType);
-  }, [userType]);
+
   let minDOB = new Date();
   minDOB.setFullYear(minDOB.getFullYear() - 120);
   let maxDOB = new Date();
@@ -147,15 +127,21 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
   return (
     <PopUp
       open={open}
-      onExited={() => {
-        setUserType(null);
-      }}
       onClose={() => {
         onClose();
       }}
       hideTitle={true}
       noBorder={true}
-      backgroundColor="rgba(168, 251, 211, 0.95)"
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        bgcolor: "primary.main",
+        color: "white",
+        backgroundImage: "url(/imagesmfr/facts-bg-last.png)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
       maxWidth={status !== "signup" ? "md" : "xl"}
       children={
         <>
@@ -170,11 +156,11 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                 borderColor: "#33aaca",
               }}
             >
-              <Grid size={{ xs: 0, md: 7.5 }} container>
+              <Grid size={{ xs: 0, lg: 7.5 }} container>
                 <img
                   width={"100%"}
-                  // src="images/Professional/personnel-department-specialist.jpg"
-                  src="images/home/signup-image5.jpg"
+                  src="imagesmfr/slider/02.jpg"
+                  // src="images/home/signup-image5.jpg"
                   loading="eager"
                   alt=""
                   style={{
@@ -185,7 +171,7 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                 />
               </Grid>
               <Grid
-                size={{ xs: 12, md: 4.5 }}
+                size={{ xs: 12, lg: 4.5 }}
                 container
                 sx={{
                   maxHeight: { xs: "90vh", lg: "75vh" },
@@ -207,17 +193,29 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                     px: 2,
                   }}
                 >
-                  <Page.Box
-                    sx={{
-                      height: { xs: "60px", lg: "100px" },
-                      width: { xs: "180px", lg: "300px" },
-                    }}
-                  >
-                    <img
-                      src="/images/logo/My-Health-Opinions1500-500.png"
+                  <Page.Box sx={{ position: "relative", pt: 3 }}>
+                    <Page.Box
+                      sx={{
+                        height: { xs: "60px", md: "80px" },
+                        width: { xs: "180px", md: "300px" },
+                      }}
+                    >
+                      <img
+                        src="/images/logo/mfr-logo.png"
+                        alt="logo"
+                        width="100%"
+                      />
+                    </Page.Box>{" "}
+                    <Page.Box
+                      component="img"
+                      src="/imagesmfr/dol-sign.gif"
                       alt="logo"
-                      height="100%"
-                      width="100%"
+                      width={{ xs: 15, md: 20 }}
+                      sx={{
+                        position: "absolute",
+                        right: -4.5,
+                        top: { xs: 24, md: 32 },
+                      }}
                     />
                   </Page.Box>
                   <IconButton
@@ -250,7 +248,7 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                       textAlign: "center",
                       fontSize: { xs: "18px", md: "26px" },
                       fontWeight: 600,
-                      color: "#016550",
+                      color: "secondary.main",
 
                       my: 2,
                     }}
@@ -258,23 +256,6 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                     Signup
                   </Page.Text>
                   <Grid size={12} container direction="column" spacing={1.2}>
-                    {!userType && (
-                      <Grid size={12}>
-                        <Page.Text
-                          sx={{ fontWeight: 500, color: "#555", mb: 0.5 }}
-                        >
-                          Please select your identity{" "}
-                          <span style={{ color: "red" }}>*</span>
-                        </Page.Text>
-                        <AccountTypeButtonGroup
-                          control={control}
-                          name="category"
-                          errors={errors?.category}
-                          validations={user.category}
-                          options={categoryOptions}
-                        />
-                      </Grid>
-                    )}
                     <Grid size={12}>
                       <Form.Select
                         {...register("name.salutation")}
@@ -367,8 +348,10 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                         {...register("agreedtoterms")}
                         control={control}
                       />
-                      <Typography sx={{ flex: 1, ml: -1.5 }}>
-                        I agree for My Health Opinions Panel to use my
+                      <Typography
+                        sx={{ flex: 1, ml: -1.5, textAlign: "justify" }}
+                      >
+                        I agree for My Frequent Rewards Panel to use my
                         information for the purposes of determining my
                         eligibility and for contacting me in relation to
                         participation in market research surveys. Also, I am
@@ -377,7 +360,10 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                           component={"a"}
                           href="/terms"
                           target="_blank"
-                          sx={{ textDecoration: "underline", color: "#016550" }}
+                          sx={{
+                            textDecoration: "underline",
+                            color: "secondary.main",
+                          }}
                         >
                           Terms & Conditions
                         </Typography>{" "}
@@ -386,7 +372,10 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                           component={"a"}
                           href="/privacy"
                           target="_blank"
-                          sx={{ textDecoration: "underline", color: "#016550" }}
+                          sx={{
+                            textDecoration: "underline",
+                            color: "secondary.main",
+                          }}
                         >
                           Privacy Policy.
                         </Typography>
@@ -400,7 +389,7 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                       loadingIndicator="Signing Up..."
                       disabled={!Boolean(form.watch("agreedtoterms"))}
                       sx={{
-                        bgcolor: "#016550",
+                        bgcolor: "secondary.main",
                         my: 2,
                         p: 1,
                         fontSize: 14,
@@ -411,6 +400,28 @@ export default function SignUp({ open, onClose, userType, setUserType }) {
                     >
                       Sign Up
                     </Page.MuiButton>
+                    <Grid
+                      size={12}
+                      container
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <Page.Text>Already have an account?</Page.Text>
+                      <Page.Text
+                        sx={{
+                          color: "secondary.main",
+                          cursor: "pointer",
+                          "&:hover": {
+                            textDecoration: "underline",
+                          },
+                        }}
+                        onClick={() => {
+                          onClose(), setOpenLogin(true);
+                        }}
+                      >
+                        Log in
+                      </Page.Text>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -610,7 +621,7 @@ function GenderRadioGroup({
         >
           <Grid size={12} container direction="column" spacing={0.5}>
             <Typography sx={{ fontWeight: 500, color: "#555" }}>
-              {validations?.required ? <RequiredLabel label={label} /> : label}:
+              {validations?.required ? <RequiredLabel label={label} /> : label}
             </Typography>
 
             <RadioGroup
@@ -631,9 +642,9 @@ function GenderRadioGroup({
                     border:
                       field.value === option.value
                         ? "none"
-                        : "2px solid #9fefc9",
+                        : "2px solid #0c5bdb50",
                     backgroundColor:
-                      field.value === option.value ? "#016550" : "transparent",
+                      field.value === option.value ? "#063686" : "transparent",
                     borderRadius: 1,
                     transition: "background-color 0.2s ease",
                     display: "flex",

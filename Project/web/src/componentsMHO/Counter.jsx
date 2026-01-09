@@ -3,7 +3,7 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useInView } from "./RevealOnScroll";
 
-function Counter({ value, prefix }) {
+function Counter({ value, prefix , showPlus=true}) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.floor(latest));
@@ -34,9 +34,9 @@ function Counter({ value, prefix }) {
   return (
     <motion.span ref={ref}>
       {/* SEO fallback */}
-      <noscript>{value.toLocaleString()}+</noscript>
+      <noscript>{value.toLocaleString()}{showPlus && "+"}</noscript>
       {prefix}
-      {displayValue.toLocaleString()}+
+      {displayValue.toLocaleString()}{showPlus && "+"}
     </motion.span>
   );
 }

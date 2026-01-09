@@ -15,7 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DownloadIcon from "@mui/icons-material/Download";
 import SectionTitle from "@/components/SectionTitle";
 
-export default function PopUp({ hideTitle = false, ...attr }) {
+export default function PopUp({ hideTitle = false,sx, ...attr }) {
   const [open, setOpen] = React.useState(attr.open ?? false);
   const { title, children, loading } = attr;
   React.useEffect(() => {
@@ -61,6 +61,7 @@ export default function PopUp({ hideTitle = false, ...attr }) {
             ? attr.backgroundColor
             : "rgba(0, 0, 0, 0.4)",
           backdropFilter: "blur(5px)",
+          ...sx
         },
       }}
       PaperProps={{
