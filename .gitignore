@@ -6,3 +6,6 @@ logs
 services/storage
 .next
 node_modules
+GEMINI.md
+.vscode
+.editorconfig
