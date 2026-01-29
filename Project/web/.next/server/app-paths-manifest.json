@@ -1,5 +1,0 @@
-{
-  "/(memberpages)/admin/(admin pages)/dashboard/page": "app/(memberpages)/admin/(admin pages)/dashboard/page.js",
-  "/icon.png/route": "app/icon.png/route.js",
-  "/page": "app/page.js"
-}

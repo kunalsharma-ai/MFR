@@ -1,1 +1,0 @@
-export default function mutate(data) { return JSON.parse(JSON.stringify(data)) }
