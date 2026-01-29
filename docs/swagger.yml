@@ -1,0 +1,968 @@
+openapi: 3.0.0
+info:
+  title: My Frequent Rewards API
+  version: 1.0.0
+  description: Backend Server for My Frequent Rewards
+servers:
+  - url: /api/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: authorization
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        respondentID:
+          type: string
+        qualityScore:
+          type: number
+        category:
+          type: string
+        name:
+          type: object
+          properties:
+            salutation:
+              type: string
+            first:
+              type: string
+            middle:
+              type: string
+            last:
+              type: string
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        dob:
+          type: string
+          format: date
+        mail:
+          type: string
+        phone:
+          type: string
+        timezone:
+          type: string
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        isVerified:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+            video:
+              type: string
+            inPersonVisit:
+              type: string
+        role:
+          type: string
+          enum: [respondent, administrator, root]
+    Address:
+      type: object
+      properties:
+        tag:
+          type: string
+        house:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        zipcode:
+          type: string
+        gps:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Point]
+            coordinates:
+              type: array
+              items:
+                type: number
+    Survey:
+      type: object
+      properties:
+        _id:
+          type: string
+        slug:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        source:
+          type: string
+        points:
+          type: number
+        loi:
+          type: number
+        status:
+          type: string
+    Question:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        label:
+          type: string
+        type:
+          type: string
+        category:
+          type: array
+          items:
+            type: string
+        isRequired:
+          type: boolean
+    Option:
+      type: object
+      properties:
+        _id:
+          type: string
+        question:
+          type: string
+        label:
+          type: string
+        value:
+          type: string
+        parentValue:
+          type: array
+          items:
+            type: string
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        termsMessage:
+          type: string
+        terms:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              body:
+                type: string
+              isRequired:
+                type: boolean
+    SupportTicket:
+      type: object
+      properties:
+        _id:
+          type: string
+        ticketNo:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        category:
+          type: string
+        department:
+          type: string
+        issueRaisedBy:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+    Batch:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        survey:
+          type: string
+        emails:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [pending, sent, failed]
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+paths:
+  /user:
+    get:
+      summary: List all users
+      tags: [User]
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+    post:
+      summary: List users matching filter
+      tags: [User]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: Filtered list of users
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+    put:
+      summary: Register new user
+      tags: [User]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /user/login:
+    post:
+      summary: Login user
+      tags: [User]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mail:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  token:
+                    type: string
+  /user/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get user by ID
+      tags: [User]
+      responses:
+        200:
+          description: User details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+    put:
+      summary: Update user by ID
+      tags: [User]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: User updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete user by ID
+      tags: [User]
+      responses:
+        200:
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /me:
+    get:
+      summary: Get current user profile
+      tags: [Me]
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+    put:
+      summary: Update current user profile
+      tags: [Me]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    patch:
+      summary: Change password
+      tags: [Me]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                cnfPassword:
+                  type: string
+      responses:
+        200:
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      summary: Logout
+      tags: [Me]
+      responses:
+        200:
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /me/points:
+    get:
+      summary: Get user points and rewards statistics
+      tags: [Me]
+      responses:
+        200:
+          description: Points statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /survey:
+    get:
+      summary: List all surveys
+      tags: [Survey]
+      responses:
+        200:
+          description: List of surveys
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Survey'
+    post:
+      summary: Filter surveys
+      tags: [Survey]
+      responses:
+        200:
+          description: Filtered surveys
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Survey'
+    put:
+      summary: Create survey
+      tags: [Survey]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Survey'
+      responses:
+        200:
+          description: Survey created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Survey'
+
+  /survey/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get survey details
+      tags: [Survey]
+      responses:
+        200:
+          description: Survey details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Survey'
+    put:
+      summary: Update survey
+      tags: [Survey]
+      responses:
+        200:
+          description: Survey updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Survey'
+    delete:
+      summary: Delete survey
+      tags: [Survey]
+      responses:
+        200:
+          description: Survey deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /question:
+    get:
+      summary: List all questions
+      tags: [Question]
+      responses:
+        200:
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Question'
+    post:
+      summary: Get questions for user category
+      tags: [Question]
+      responses:
+        200:
+          description: Questions for category
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Question'
+    put:
+      summary: Create question
+      tags: [Question]
+      responses:
+        200:
+          description: Question created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Question'
+
+  /option/{parent}:
+    parameters:
+      - name: parent
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: List options for a question
+      tags: [Option]
+      responses:
+        200:
+          description: List of options
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Option'
+    post:
+      summary: Filter options
+      tags: [Option]
+      responses:
+        200:
+          description: Filtered options
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Option'
+    put:
+      summary: Create option
+      tags: [Option]
+      responses:
+        200:
+          description: Option created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Option'
+
+  /category:
+    get:
+      summary: List categories
+      tags: [Category]
+      responses:
+        200:
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Category'
+    post:
+      summary: Filter categories
+      tags: [Category]
+      responses:
+        200:
+          description: Filtered categories
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Category'
+    put:
+      summary: Create category
+      tags: [Category]
+      responses:
+        200:
+          description: Category created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Category'
+
+  /forgot-password:
+    post:
+      summary: Request password reset link
+      tags: [Authentication]
+      security: []
+      responses:
+        200:
+          description: Link sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /change-email:
+    post:
+      summary: Request email change
+      tags: [Authentication]
+      responses:
+        200:
+          description: OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    patch:
+      summary: Verify and complete email change
+      tags: [Authentication]
+      responses:
+        200:
+          description: Email changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /support:
+    get:
+      summary: List support tickets
+      tags: [Support]
+      responses:
+        200:
+          description: List of tickets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SupportTicket'
+    post:
+      summary: Filter support tickets
+      tags: [Support]
+      responses:
+        200:
+          description: Filtered tickets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SupportTicket'
+    put:
+      summary: Create support ticket
+      tags: [Support]
+      responses:
+        200:
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SupportTicket'
+
+  /support/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get ticket details
+      tags: [Support]
+      responses:
+        200:
+          description: Ticket details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SupportTicket'
+    delete:
+      summary: Delete ticket
+      tags: [Support]
+      responses:
+        200:
+          description: Ticket deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /support/{id}/reply:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get conversation for ticket
+      tags: [Support]
+      responses:
+        200:
+          description: Conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    put:
+      summary: Reply to ticket
+      tags: [Support]
+      responses:
+        200:
+          description: Reply sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /batch:
+    get:
+      summary: List invite batches
+      tags: [Batch]
+      responses:
+        200:
+          description: List of batches
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Batch'
+    post:
+      summary: Filter batches
+      tags: [Batch]
+      responses:
+        200:
+          description: Filtered batches
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Batch'
+    put:
+      summary: Create/Schedule batch
+      tags: [Batch]
+      responses:
+        200:
+          description: Batch created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Batch'
+
+  /feasibility:
+    post:
+      summary: Check feasibility for given filters
+      tags: [Feasibility]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: Number of qualified respondents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /response:
+    get:
+      summary: List my responses
+      tags: [Response]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of responses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    post:
+      summary: Filter my responses
+      tags: [Response]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Filtered responses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /project:
+    get:
+      summary: List projects
+      tags: [Project]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    put:
+      summary: Create or Update project
+      tags: [Project]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Project created/updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
