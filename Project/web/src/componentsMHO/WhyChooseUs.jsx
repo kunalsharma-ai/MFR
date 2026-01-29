@@ -104,7 +104,7 @@ export default function WhyChooseUs() {
                 }}
               >
                 <video
-                  poster="/images/deskwork.jpg"
+                  poster="/imagesmfr/videos/deskwork.jpg"
                   preload="auto"
                   loop
                   autoPlay

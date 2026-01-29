@@ -8,29 +8,13 @@ function createEvent(name, detail) {
   document.dispatchEvent(new CustomEvent(name, { detail }));
 }
 const SSE = ({ onMessage, onError, onOpen }) => {
-  let [token, setToken] = React.useState();
-  let path = usePathname();
-  let searchParams = useSearchParams();
-  // return <></>;
   const [isConnected, setIsConnected] = React.useState(false);
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    let temp = localStorage.getItem("token");
-    setToken(temp);
-  }, []);
-  React.useEffect(() => {
-    if (!token) return;
-    const url = `/event/subscribe?token=${token}`;
+    const url = `/event/subscribe`;
     if (eventSource) {
       eventSource.close();
     }
-    eventSource = new EventSource(url, {
-      headers: {
-        Authorization: "none",
-        Cookie: "test cookie",
-        currentPage: `${path}?${searchParams.toString()}`,
-      },
-    });
+    eventSource = new EventSource(url);
     eventSource.onopen = (event) => {
       setIsConnected(true);
       let data = {};
@@ -64,7 +48,7 @@ const SSE = ({ onMessage, onError, onOpen }) => {
       createEvent("sse-disconnect", data);
       onError?.(event);
     };
-  }, [token]);
+  }, []);
   return <></>;
 };
 

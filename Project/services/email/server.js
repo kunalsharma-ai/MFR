@@ -17,18 +17,28 @@ function getOrigin(data) {
         .use([
             (req, res, next) => {
                 req.origin = getOrigin(req.headers.origin ?? req.headers.host);
+                if (!fs.existsSync(`config/${req.origin}.json`)) {
+                    return next();
+                }
+                req.creds = JSON.parse(
+                    fs.readFileSync(`config/${req.origin}.json`, "utf-8")
+                )
                 next();
             },
             express.static('public'),
             express.json(),
+            (r, s, n) => {
+                console.log("yahan tak theek hai")
+                n();
+            },
             express.urlencoded({
                 extended: true,
             }),
             fileUpload(),
         ])
-        .post("/mail/verify", async (r, s) => {
+        .post("/email/verify", async (r, s) => {
             try {
-                let data=r.body;
+                let data = r.body;
                 const mail = new Mail({
                     name: data.name,
                     host: data.host,
@@ -40,8 +50,8 @@ function getOrigin(data) {
                 });
                 await mail.verify();
                 return s.json({
-                    status:"success",
-                    message:"verified"
+                    status: "success",
+                    message: "verified"
                 });
             } catch (error) {
                 console.log(error)
@@ -51,8 +61,10 @@ function getOrigin(data) {
                 })
             }
         })
-        .use("/mail", async (r, s, n) => {
+        .use("/email", async (r, s, n) => {
             try {
+                console.log({ creds: r.creds })
+                if (r.creds) return n();
                 if (r?.headers?.creds) {
                     const creds = r.headers.creds.split(".");
                     const temp = decrypt({
@@ -88,10 +100,12 @@ function getOrigin(data) {
                 return s.json({ message: error.message })
             }
         })
-        .get("/mail", async (r, s) => {
+        .get("/email", async (r, s) => {
             try {
-                console.log(r.creds)
-                return;
+                // console.log(r.creds)
+                // return s.json({
+                //     ...r.creds
+                // })
                 const mail = new Mail(r.creds);
                 const status = await mail.send(
                     "Sampledge App <om.tiwari@frequentresearch.com",
@@ -118,12 +132,11 @@ function getOrigin(data) {
             }
 
         })
-        .post("/mail", async (r, s, n) => {
+        .post("/email", async (r, s, n) => {
             try {
                 console.log(`[${new Date()}] Sending Mail to ${r.body.to}`);
                 const mail = new Mail(r.creds);
                 const from = `${r.creds.name} <${r.creds.from}>`;
-                // const from = r.creds.from;
                 const to = r.body.to;
                 const subject = r.body.subject;
                 const message = r.body.message ?? { html: r.body.content };

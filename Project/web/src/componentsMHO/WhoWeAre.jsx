@@ -227,11 +227,12 @@ function WhoWeAre() {
                       Read More
                     </Button>
                   </Box>
-                  <Box
+                  <Grid
+                    size={12}
+                    container
+                    justifyContent="center"
+                    spacing={1}
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: 1,
                       position: "absolute",
                       bottom: 20,
                       justifySelf: "center",
@@ -254,7 +255,7 @@ function WhoWeAre() {
                         }}
                       />
                     ))}
-                  </Box>
+                  </Grid>
                 </Grid>
               ) : (
                 data.map((item, index) => (

@@ -48,7 +48,7 @@ export default function Upload({
   hideCaption = false,
   form,
   tooltipTitle = "Logo",
-  multiple = false, // <-- NEW PARAM
+  multiple = false, 
   ...attr
 }) {
   const inputRef = React.useRef(null);
@@ -75,7 +75,7 @@ export default function Upload({
 
     const urls = files.map((f) => URL.createObjectURL(f));
 
-    if (outputType === "image/webp") {
+    if (outputType === "image/webp" && !multiple) {
       // open crop for each file
       setSelectedFiles(files);
       setTempImgURLs(urls);

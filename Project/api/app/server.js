@@ -1,14 +1,11 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import fileUpload from "express-fileupload";
 import pureIP from "express-pureip";
 import mongoose from "mongoose";
-import Twig from "twig";
-
-// import {
-//     default as routes
-// } from "./routes/index.js";
-import { setOrigin, expressRoute, fsLogger } from "../utils/index.js";
+import appRoute from "./routes/index.js";
+import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
 
 (async () => {
     const env = {
@@ -19,7 +16,7 @@ import { setOrigin, expressRoute, fsLogger } from "../utils/index.js";
     const app = express();
     app
         .set("view-engine", "twig")
-        .set('views', "app/views")
+        .set('views', "views")
         .use([
             express.static("/src/public"),
             cors({
@@ -31,10 +28,12 @@ import { setOrigin, expressRoute, fsLogger } from "../utils/index.js";
             express.urlencoded({
                 extended: true
             }),
+            cookieParser(),
             pureIP,
             fileUpload(),
             setOrigin,
-            errorRoute
+            errorRoute,
+            appRoute
         ])
         .use(expressRoute(
             async (req) => {

@@ -1,5 +1,3 @@
-console.log("🔥 SharedWorker started!");
-
 let socket = null;
 let ports = [];
 let joinPayload = null;
@@ -24,6 +22,7 @@ onconnect = function (e) {
       socket = io(msg.serverURL, {
         path: msg.path + "/socket.io",   // <<< IMPORTANT FIX
         transports: ["websocket"],
+        withCredentials: true,
       });
 
       socket.on("connect", () => {

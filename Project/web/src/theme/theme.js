@@ -16,14 +16,14 @@ const theme = createTheme({
       main: "#ffffff",
     },
     cardbg:{
-      main: "#c6e3f4"
+      main:   "#c6e3f4"  //   "#8cb2f333",
     }
   },
   typography: {
     color: "black",
     fontSize: 14,
-    fontFamily: "Fira Sans, sans-serif",
-    // fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "'Fira Sans', ui-sans-serif, system-ui, sans-serif"
+    
   },
   components: {
     MuiCssBaseline: {

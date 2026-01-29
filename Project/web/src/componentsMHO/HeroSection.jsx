@@ -42,8 +42,19 @@ const HeroSection = ({
   const [currentSlide, setCurrentSlide] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [isVisible, setIsVisible] = useState(true);
+  const [isAutoPaused, setIsAutoPaused] = useState(false);
 
-  // Preload images
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   useEffect(() => {
     BannerData.forEach((banner) => {
       const img = new Image();
@@ -51,15 +62,14 @@ const HeroSection = ({
     });
   }, []);
 
-  // Auto-slide every 5 seconds
   useEffect(() => {
+    if (!isVisible || isAutoPaused) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % BannerData.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isVisible, isAutoPaused]);
 
-  // Handle manual dot click
   const goToSlide = (index) => {
     setCurrentSlide(index);
   };
@@ -68,7 +78,6 @@ const HeroSection = ({
     <Box
       sx={{
         bgcolor: "white",
-        // height: { xs: "calc(100vh - 70px)", lg: "calc(100vh - 78px)" },
         position: "relative",
       }}
     >
@@ -76,12 +85,10 @@ const HeroSection = ({
         sx={{
           position: "relative",
           height: { xs: "100vh", lg: "620px" },
-          // height: { xs: "calc(75vh - 70px)", lg: "calc(75vh - 78px)" },
           width: "100%",
           overflow: "hidden",
         }}
       >
-        {/* Slides */}
         <AnimatePresence initial={false}>
           <motion.div
             key={currentSlide}
@@ -102,7 +109,6 @@ const HeroSection = ({
               alignItems: "center",
             }}
           >
-            {/* Background Image */}
             <Box
               sx={{
                 position: "absolute",
@@ -115,7 +121,6 @@ const HeroSection = ({
               }}
             />
 
-            {/* Dark Overlay */}
             <Box
               sx={{
                 position: "absolute",
@@ -126,7 +131,6 @@ const HeroSection = ({
               }}
             />
 
-            {/* Text Content */}
             <Container maxWidth="lg">
               <Box
                 sx={{
@@ -142,7 +146,7 @@ const HeroSection = ({
                 }}
               >
                 <Typography
-                  variant="h4"
+                  variant="h1"
                   component={motion.h4}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -236,7 +240,6 @@ const HeroSection = ({
           </motion.div>
         </AnimatePresence>
 
-        {/* Slide Indicators (Dots) */}
         <Box
           sx={{
             position: "absolute",
@@ -252,6 +255,8 @@ const HeroSection = ({
             <Box
               key={index}
               onClick={() => goToSlide(index)}
+              onMouseEnter={() => setIsAutoPaused(true)}
+              onMouseLeave={() => setIsAutoPaused(false)}
               sx={{
                 width: currentSlide === index ? 56 : 20,
                 height: 10,

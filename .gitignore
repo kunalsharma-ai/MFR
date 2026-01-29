@@ -10,3 +10,14 @@ GEMINI.md
 .vscode
 .editorconfig
 tasks
+backend
+migrate
+buid-and-push.sh
+db
+defaultData
+docker-compose.yml
+environment
+GEMINI.md
+migrate
+mqtt
+

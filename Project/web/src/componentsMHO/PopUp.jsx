@@ -50,13 +50,10 @@ export default function PopUp({ hideTitle = false,sx, ...attr }) {
        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
               
         borderRadius: attr.noBorder ? 0 : 4,
+        ...attr?.DialogSx
       }}
       BackdropProps={{
         sx: {
-          // background: "url(images/login/popupbg.png)",
-          // backgroundRepeat: "no-repeat",
-          // backgroundPosition: "center",
-          // backgroundSize: "cover",
           backgroundColor: attr.backgroundColor
             ? attr.backgroundColor
             : "rgba(0, 0, 0, 0.4)",

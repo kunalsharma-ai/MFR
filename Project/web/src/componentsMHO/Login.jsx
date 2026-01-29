@@ -137,10 +137,6 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
         component="form"
         onSubmit={async (e) => {
           e.preventDefault();
-          // console.log(e);
-          // let resp = await submitWithAjax(e);
-          // console.log(resp);
-
           setLoading(true);
           try {
             const resp = await submitWithAjax(e);

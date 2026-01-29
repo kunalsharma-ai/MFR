@@ -18,7 +18,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const CookiePolicy = () => {
   return (
-    <Grid
+    <React.Suspense fallback={<></>}><Grid
       size={12}
       container
       justifyContent={"center"}
@@ -425,7 +425,7 @@ const CookiePolicy = () => {
           </Accordion>
         </Box>
       </Grid>
-    </Grid>
+    </Grid></React.Suspense>
   );
 };
 

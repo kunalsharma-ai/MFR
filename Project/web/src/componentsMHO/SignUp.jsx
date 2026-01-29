@@ -57,10 +57,9 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
   const [query, member] = [useQuery(), useMember()];
-
   const form = useForm({
     defaultValues: {
-      category: "",
+      category: "b2b",
       name: {
         salutation: "Mr.",
         first: "",
@@ -93,6 +92,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
       form.setValue("timezone", timezone);
     });
     telemetry.ip().then((resp) => {
+      console.log(resp);
       if (resp.country) {
         form.setValue("address.0.country", resp.country.toLowerCase());
         setCountry(resp.country.toLowerCase());
@@ -103,7 +103,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
   let minDOB = new Date();
   minDOB.setFullYear(minDOB.getFullYear() - 120);
   let maxDOB = new Date();
-  maxDOB.setFullYear(maxDOB.getFullYear() - 13);
+  maxDOB.setFullYear(maxDOB.getFullYear() - 14);
 
   const onSubmit = async (userData) => {
     setIsLoading(true);
@@ -141,6 +141,15 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
+      }}
+      DialogSx={{
+        "& .MuiDialog-paper": {
+          width: "100vw",
+          margin: {
+            xs: 1,
+            sm: "32px",
+          },
+        },
       }}
       maxWidth={status !== "signup" ? "md" : "xl"}
       children={
@@ -256,59 +265,49 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     Signup
                   </Page.Text>
                   <Grid size={12} container direction="column" spacing={1.2}>
-                    <Grid size={12}>
-                      <Form.Select
-                        {...register("name.salutation")}
-                        control={control}
-                        options={[
-                          { value: "Mr.", label: "Mr." },
-                          { value: "Ms.", label: "Ms." },
-                          { value: "Mrs.", label: "Mrs." },
-                          { value: "Dr.", label: "Dr." },
-                          { value: "Prof.", label: "Prof." },
-                          { value: "Mx. ", label: "Mx." },
-                        ]}
-                        labelText="Salutation"
-                      />
+                    <Grid
+                      size={12}
+                      container
+                      direction="row"
+                      style={{ alignItems: "flex-end" }}
+                    >
+                      <Grid size={{ xs: 12, md: 2 }}>
+                        <Form.Select
+                          {...register("name.salutation")}
+                          control={control}
+                          options={[
+                            { value: "Mr.", label: "Mr." },
+                            { value: "Ms.", label: "Ms." },
+                            { value: "Mrs.", label: "Mrs." },
+                            { value: "Dr.", label: "Dr." },
+                            { value: "Prof.", label: "Prof." },
+                            { value: "Mx. ", label: "Mx." },
+                          ]}
+                          labelText="Salutation"
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 5 }}>
+                        <Form.Input
+                          {...register("name.first")}
+                          control={control}
+                          labelText="First Name"
+                          required={true}
+                          errors={errors?.name?.first}
+                          validations={user.name.first}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 5 }}>
+                        <Form.Input
+                          {...register("name.last")}
+                          control={control}
+                          labelText="Last Name"
+                          required={true}
+                          errors={errors?.name?.last}
+                          validations={user.name.last}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid size={12}>
-                      <Form.Input
-                        {...register("name.first")}
-                        control={control}
-                        labelText="First Name"
-                        required={true}
-                        errors={errors?.name?.first}
-                        validations={user.name.first}
-                      />
-                    </Grid>
-                    <Grid size={12}>
-                      <Form.Input
-                        {...register("name.last")}
-                        control={control}
-                        labelText="Last Name"
-                        required={true}
-                        errors={errors?.name?.last}
-                        validations={user.name.last}
-                      />
-                    </Grid>
-                    <GenderRadioGroup
-                      name={"gender"}
-                      control={control}
-                      label="Gender"
-                      errors={errors?.gender}
-                      validations={user.gender}
-                    />
-                    <Grid size={12}>
-                      <Form.Date
-                        {...register("dob")}
-                        control={control}
-                        labelText="Date of Birth"
-                        required={true}
-                        dateRange={[minDOB, maxDOB]}
-                        errors={errors?.dob}
-                        validations={user.dob}
-                      />
-                    </Grid>
+
                     <Grid size={12}>
                       <Form.Input
                         {...register("mail")}
@@ -334,6 +333,29 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           console.log(form.getValues());
                         }}
                       />
+                    </Grid>
+
+                    <Grid size={12} container direction="row">
+                      <Grid size={6}>
+                        <Form.Date
+                          {...register("dob")}
+                          control={control}
+                          labelText="Date of Birth"
+                          required={true}
+                          dateRange={[minDOB, maxDOB]}
+                          errors={errors?.dob}
+                          validations={user.dob}
+                        />
+                      </Grid>{" "}
+                      <Grid size={6}>
+                        <GenderRadioGroup
+                          name={"gender"}
+                          control={control}
+                          label="Gender"
+                          errors={errors?.gender}
+                          validations={user.gender}
+                        />
+                      </Grid>
                     </Grid>
 
                     <Grid
@@ -463,7 +485,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       fontWeight: 600,
                     }}
                   >
-                    MyHealthOpinions
+                    My Frequent Rewards
                   </Page.Text>{" "}
                   - A Frequent Research Healthcare Panel Community.{" "}
                 </Page.Text>
@@ -473,7 +495,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     fontWeight: 500,
                     textAlign: "center",
                     borderRadius: 5,
-                    bgcolor: "rgba(163, 243, 206, 0.21)",
+                    bgcolor: "#8cb2f333",
                     border: "1px solid #f4f4f4",
                     p: 4,
                   }}
@@ -530,7 +552,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   sx={{
                     textAlign: "center",
                     borderRadius: 5,
-                    bgcolor: "rgba(163, 243, 206, 0.21)",
+                    bgcolor: "#8cb2f333",
                     border: "1px solid #f4f4f4",
                     p: 4,
                   }}
@@ -619,7 +641,7 @@ function GenderRadioGroup({
             display: "flex",
           }}
         >
-          <Grid size={12} container direction="column" spacing={0.5}>
+          <Grid size={12} container direction="column" spacing={0}>
             <Typography sx={{ fontWeight: 500, color: "#555" }}>
               {validations?.required ? <RequiredLabel label={label} /> : label}
             </Typography>

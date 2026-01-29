@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AppBar,
-  Toolbar,
   Button,
   Box,
   Typography,
@@ -19,16 +18,22 @@ import {
   Grid,
   Container,
 } from "@mui/material";
-import { motion } from "framer-motion";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import PersonIcon from "@mui/icons-material/Person";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Person as PersonIcon,
+  PowerSettingsNew as PowerSettingsNewIcon,
+  Dashboard as DashboardIcon,
+} from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import { useMember, useQuery } from "@/Context";
 
-export default function Header({ sections = [], open, setOpen }) {
+export default function Header({
+  sections = [],
+  open,
+  setOpen,
+  setOpenSignUp,
+}) {
   const [profileAnchorEl, setProfileAnchorEl] = React.useState(null);
   const [showLogin, setShowLogin] = React.useState(true);
   const user = useMember();
@@ -38,11 +43,16 @@ export default function Header({ sections = [], open, setOpen }) {
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     if (!query) return;
     if (![null, undefined].includes(query.login)) {
       setOpen(true);
+    }
+  }, [query]);
+  React.useEffect(() => {
+    if (!query) return;
+    if (![null, undefined].includes(query.signup)) {
+      setOpenSignUp(true);
     }
   }, [query]);
 
@@ -93,7 +103,7 @@ export default function Header({ sections = [], open, setOpen }) {
       const sectionLabel = searchParams.get("section");
       if (sectionLabel) {
         const section = sections.find(
-          (s) => s.label === decodeURIComponent(sectionLabel)
+          (s) => s.label === decodeURIComponent(sectionLabel),
         );
         if (section) {
           handleScroll(section.ref);
@@ -113,25 +123,7 @@ export default function Header({ sections = [], open, setOpen }) {
   };
 
   const getNavigationItems = () => {
-    // if (pathname === "/") {
-    //   // Home page - use sections with scroll functionality
-    //   // Override "CONTACT" to navigate to /contact page
-    //   return sections.map((section) => ({
-    //     label: section.label, // Already uppercase
-    //     onClick: () => {
-    //       if (section.label === "CONTACT") {
-    //         handleNavigation("/contact");
-    //       } else {
-    //         handleScroll(section.ref);
-    //       }
-    //       handleDrawerClose();
-    //     },
-    //     isExternalPage: section.label === "COVERAGE",
-    //     path: section.label === "CONTACT" ? "//panels.frequentresearch.com/" : "/",
-    //   }));
-    // } else
     {
-      // Other pages - navigate to home sections or other pages, with uppercase labels
       return [
         {
           label: "ABOUT US",
@@ -173,13 +165,13 @@ export default function Header({ sections = [], open, setOpen }) {
         {
           label: "COVERAGE",
           onClick: () => {
-            window.open(
+            (window.open(
               "//panels.frequentresearch.com/",
               "_blank",
-              "noopener,noreferrer"
+              "noopener,noreferrer",
             ),
               //  router.push("//panels.frequentresearch.com/")
-              handleDrawerClose();
+              handleDrawerClose());
           },
           path: null,
           sectionLabel: null,
@@ -194,7 +186,6 @@ export default function Header({ sections = [], open, setOpen }) {
       sx={{
         display: "flex",
         flexDirection: "column",
-
         width: "100vw",
         height: "100vh",
         bgcolor: "primary.main",
@@ -288,19 +279,6 @@ export default function Header({ sections = [], open, setOpen }) {
                   borderRadius: 1,
                 },
                 position: "relative",
-                // "&::after": {
-                //   content: '""',
-                //   position: "absolute",
-                //   width: 0,
-                //   height: "2px",
-                //   bottom: 0,
-                //   left: 24,
-                //   bgcolor: "primary.main",
-                //   transition: "width 0.3s ease",
-                // },
-                // "&:hover::after": {
-                //   width: "calc(100% - 48px)",
-                // },
               }}
             >
               <ListItemText
@@ -315,27 +293,6 @@ export default function Header({ sections = [], open, setOpen }) {
         </List>
 
         <Box sx={{ px: 3, mt: 3 }} position="absolute" bottom="20px">
-          {/* <Button
-          fullWidth
-          variant="outlined"
-          color="black"
-          onClick={() => {
-            setOpen(!open);
-
-            handleDrawerClose();
-          }}
-          sx={{
-            fontSize: "16px",
-            borderRadius: 1,
-            fontWeight: "bold",
-            height: "45px",
-            "&:hover": {
-              boxShadow: 12,
-            },
-          }}
-        >
-          Login
-        </Button> */}
           {user === null ? (
             <Button
               variant="outlined"
@@ -393,7 +350,7 @@ export default function Header({ sections = [], open, setOpen }) {
                   placement="top"
                 >
                   <IconButton
-                    sx={{ fontSize: "26px", color: "black" }}
+                    sx={{ fontSize: "26px", color: "white" }}
                     onClick={() => {
                       handleNavigation("/member/dashboard");
                       handleDrawerClose();
@@ -409,7 +366,7 @@ export default function Header({ sections = [], open, setOpen }) {
                   placement="top"
                 >
                   <IconButton
-                    sx={{ fontSize: "26px", color: "black" }}
+                    sx={{ fontSize: "26px", color: "white" }}
                     onClick={async () => {
                       localStorage.removeItem("token");
                       user.Reload();
@@ -469,7 +426,7 @@ export default function Header({ sections = [], open, setOpen }) {
               src="/images/logo/mfr-logo.png"
               alt="logo"
               width={{ xs: "180px", sm: "225px" }}
-              height={{xs:"38px", sm:"48px"}}
+              height={{ xs: "38px", sm: "48px" }}
             />
             <Box
               component="img"
@@ -511,10 +468,7 @@ export default function Header({ sections = [], open, setOpen }) {
                   "&:after": {
                     content: '""',
                     position: "absolute",
-                    width:
-                      mounted && pathname === item.path && !item.isExternalPage
-                        ? "100%"
-                        : 0,
+                    width: 0,
                     height: "2px",
                     bottom: -4,
                     left: 0,
@@ -565,6 +519,7 @@ export default function Header({ sections = [], open, setOpen }) {
                   }}
                   sx={{
                     position: "relative",
+                    width:"120px",
                     overflow: "hidden",
                     fontSize: "16px",
                     fontWeight: "500",
@@ -606,7 +561,7 @@ export default function Header({ sections = [], open, setOpen }) {
                 <Button
                   onClick={(event) => setProfileAnchorEl(event.currentTarget)}
                   color="inherit"
-                  sx={{ textTransform: "none", px: 2 }}
+                  sx={{ textTransform: "none", px: 2 ,width:"120px"}}
                 >
                   <Avatar
                     sx={{
@@ -663,21 +618,23 @@ export default function Header({ sections = [], open, setOpen }) {
           },
         }}
       >
-        <MenuItem
-          onClick={() => {
-            setProfileAnchorEl(null);
-            router.replace("/member/dashboard");
-          }}
-          sx={{ gap: 1, px: 3, py: 1, color: "black", fontWeight: 500 }}
-        >
-          <i className="icon-drawer" />
-          Dashboard
-        </MenuItem>
+        {user?.navbar?.map((link) => (
+          <MenuItem
+            key={link?.text}
+            onClick={() => {
+              setProfileAnchorEl(null);
+              router.replace(link?.link ?? "/");
+            }}
+            sx={{ gap: 1, px: 3, py: 1, color: "black", fontWeight: 500 }}
+          >
+            {link?.icon && <i className={link.icon} />}
+            {link?.text}
+          </MenuItem>
+        ))}
         <MenuItem
           onClick={async () => {
             setProfileAnchorEl(null);
-            localStorage.removeItem("token");
-            user.Reload();
+            user.Logout();
           }}
           sx={{
             gap: 1,

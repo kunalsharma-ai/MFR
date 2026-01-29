@@ -28,6 +28,8 @@ export default function Select({
   api,
   parent,
   label,
+  labelText,
+  required = false,
   watch,
   validations,
   multiple,
@@ -94,7 +96,7 @@ export default function Select({
       setOptionList(options);
     }
   }, [options]);
-  
+
   const formattedOptions = React.useMemo(() => {
     return (optionList || []).map((opt) => ({
       ...opt,
@@ -113,35 +115,44 @@ export default function Select({
           rules={validate}
           render={({ field }) => {
             return (
-              <Page.Box position="relative">
-                <Page.Box display="flex" justifyContent="flex-end">
-                  {isOpen &&
-                    formattedOptions.length > 1 &&
-                    multiple &&
-                    showSelectAllBtn && (
-                      <Page.MuiButton
-                        variant="contained"
-                        color="secondary"
-                        onMouseDown={(event) => {
-                          event.preventDefault();
-                          field.onChange(
-                            formattedOptions.map((val) => val.value)
-                          );
-                        }}
-                        sx={{
-                          position: "absolute",
-                          fontSize: "13px",
-                          px: 1,
-                          py: 0,
-                          top: "-27px",
-                          zIndex: 99999,
-                          textTransform: "none",
-                        }}
-                      >
-                        Select All
-                      </Page.MuiButton>
+              <>
+                {labelText && (
+                  <Page.Text sx={{ fontWeight: 500, color: "#555" }}>
+                    {labelText}{" "}
+                    {required && (
+                      <span style={{ color: "red", fontWeight: 600 }}>*</span>
                     )}
-                  {/* {isOpen && addOptions && (
+                  </Page.Text>
+                )}
+                <Page.Box position="relative">
+                  <Page.Box display="flex" justifyContent="flex-end">
+                    {isOpen &&
+                      formattedOptions.length > 1 &&
+                      multiple &&
+                      showSelectAllBtn && (
+                        <Page.MuiButton
+                          variant="contained"
+                          color="secondary"
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            field.onChange(
+                              formattedOptions.map((val) => val.value)
+                            );
+                          }}
+                          sx={{
+                            position: "absolute",
+                            fontSize: "13px",
+                            px: 1,
+                            py: 0,
+                            top: "-27px",
+                            zIndex: 99999,
+                            textTransform: "none",
+                          }}
+                        >
+                          Select All
+                        </Page.MuiButton>
+                      )}
+                    {/* {isOpen && addOptions && (
                     <IconButton
                       onMouseDown={(e) => {
                         e.preventDefault();
@@ -158,293 +169,302 @@ export default function Select({
                       <PlusIcon />
                     </IconButton>
                   )} */}
-                </Page.Box>
-                <Autocomplete
-                  fullWidth
-                  disabled={isDisabled}
-                  size="small"
-                  ref={autocompleteRef}
-                  slotProps={{
-                    popper: {
-                      modifiers: [
-                        {
-                          name: "zIndex",
-                          enabled: true,
-                          phase: "write",
-                          fn: ({ state }) => {
-                            state.styles.popper.zIndex = 15000;
+                  </Page.Box>
+                  <Autocomplete
+                    fullWidth
+                    disabled={isDisabled}
+                    size="small"
+                    ref={autocompleteRef}
+                    slotProps={{
+                      popper: {
+                        modifiers: [
+                          {
+                            name: "zIndex",
+                            enabled: true,
+                            phase: "write",
+                            fn: ({ state }) => {
+                              state.styles.popper.zIndex = 15000;
+                            },
                           },
-                        },
-                      ],
-                    },
-                    paper: {
-                      sx: {
-                        maxHeight: "unset",
-                        overflow: "unset",
-                        "& .MuiAutocomplete-listbox": {
-                          maxHeight: "300px",
-                          overflowY: "auto",
-                        },
-                        "& .MuiAutocomplete-option": {
-                          '&[aria-selected="true"]': {
-                            backgroundColor: "#c1e3ff !important",
+                        ],
+                      },
+                      paper: {
+                        sx: {
+                          maxHeight: "unset",
+                          overflow: "unset",
+                          "& .MuiAutocomplete-listbox": {
+                            maxHeight: "300px",
+                            overflowY: "auto",
+                          },
+                          "& .MuiAutocomplete-option": {
+                            '&[aria-selected="true"]': {
+                              backgroundColor: "#c1e3ff !important",
+                            },
                           },
                         },
                       },
-                    },
-                  }}
-                  multiple={
-                    !formattedOptions || formattedOptions.length === 0
-                      ? undefined
-                      : !!multiple
-                  }
-                  disableCloseOnSelect={!!multiple}
-                  disableClearable={!multiple || hasError}
-                  options={formattedOptions ?? []}
-                  open={showSelectAllBtn || addOptions ? isOpen : undefined}
-                  getOptionLabel={(option) => option.label || ""}
-                  value={
-                    multiple
-                      ? Array.isArray(field.value)
-                        ? field.value
-                            .map((val) =>
-                              formattedOptions.find((opt) => opt.value === val)
-                            )
-                            .filter(Boolean)
-                        : []
-                      : !Array.isArray(field.value)
-                      ? formattedOptions?.find(
-                          (opt) => opt.value === field.value
-                        ) || null
-                      : null
-                  }
-                  noOptionsText={!noOptions ? "Not Applicable" : noOptions}
-                  onChange={(event, newValue) => {
-                    if (onChange) {
-                      onChange(event, newValue);
+                    }}
+                    multiple={
+                      !formattedOptions || formattedOptions.length === 0
+                        ? undefined
+                        : !!multiple
                     }
-                    if (multiple) {
-                      field.onChange(newValue.map((val) => val.value));
-                      return;
+                    disableCloseOnSelect={!!multiple}
+                    disableClearable={!multiple || hasError}
+                    options={formattedOptions ?? []}
+                    open={showSelectAllBtn || addOptions ? isOpen : undefined}
+                    getOptionLabel={(option) => option.label || ""}
+                    value={
+                      multiple
+                        ? Array.isArray(field.value)
+                          ? field.value
+                              .map((val) =>
+                                formattedOptions.find(
+                                  (opt) => opt.value === val
+                                )
+                              )
+                              .filter(Boolean)
+                          : []
+                        : !Array.isArray(field.value)
+                        ? formattedOptions?.find(
+                            (opt) => opt.value === field.value
+                          ) || null
+                        : null
                     }
-                    field.onChange(newValue === null ? "" : newValue.value);
-                    setIsOpen(false);
-                  }}
-                  filterOptions={(options, { inputValue: searchTerm }) => {
-                    let val = options.find(
-                      (opt) =>
-                        opt.value.toLowerCase() === searchTerm.toLowerCase()
-                    );
-                    if (val) {
-                      return [val];
-                    }
-                    return options.filter((opt) =>
-                      opt.label.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
-                  }}
-                  onOpen={() => {
-                    setIsOpen(true);
-                  }}
-                  onClose={(e, reason) => {
-                    if (!["selectOption", "removeOption"].includes(reason)) {
+                    noOptionsText={!noOptions ? "Not Applicable" : noOptions}
+                    onChange={(event, newValue) => {
+                      if (onChange) {
+                        onChange(event, newValue);
+                      }
+                      if (multiple) {
+                        field.onChange(newValue.map((val) => val.value));
+                        return;
+                      }
+                      field.onChange(newValue === null ? "" : newValue.value);
                       setIsOpen(false);
-                    }
-                  }}
-                  renderTags={(selected, getTagProps) => {
-                    const threshold = 3;
-                    if (selected.length > threshold) {
-                      return [
-                        <Chip
-                          size="small"
-                          key="summary"
-                          label={`${selected.length} items selected`}
-                          sx={{ fontWeight: "bold" }}
-                        />,
-                      ];
-                    } else {
-                      return selected.map((option, index) => {
-                        const { key, ...tagProps } = getTagProps({ index });
-                        return (
+                    }}
+                    filterOptions={(options, { inputValue: searchTerm }) => {
+                      let val = options.find(
+                        (opt) =>
+                          opt.value.toLowerCase() === searchTerm.toLowerCase()
+                      );
+                      if (val) {
+                        return [val];
+                      }
+                      return options.filter((opt) =>
+                        opt.label
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      );
+                    }}
+                    onOpen={() => {
+                      setIsOpen(true);
+                    }}
+                    onClose={(e, reason) => {
+                      if (!["selectOption", "removeOption"].includes(reason)) {
+                        setIsOpen(false);
+                      }
+                    }}
+                    renderTags={(selected, getTagProps) => {
+                      const threshold = 3;
+                      if (selected.length > threshold) {
+                        return [
                           <Chip
-                            key={key}
                             size="small"
-                            avatar={
-                              option.img ? (
-                                <img
-                                  src={option.img}
-                                  alt={option.label}
-                                  style={{
-                                    width: 20,
-                                    height: 13,
-                                    objectFit: "contain",
-                                    filter:
-                                      "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
-                                  }}
-                                />
-                              ) : undefined
-                            }
-                            label={showLabel ? option.label : option.value}
-                            deleteIcon={
-                              <IconButton size="small">
-                                <CancelIcon
-                                  sx={{
-                                    fontSize: "18px",
-                                    "&:hover": { color: "#f24f4f !important" },
-                                  }}
-                                />
-                              </IconButton>
-                            }
-                            sx={{
-                              fontWeight: "bold",
-                              "& .MuiChip-deleteIcon": {
-                                marginRight: "5px",
-                                padding: 0,
-                              },
-                            }}
-                            {...tagProps}
-                          />
-                        );
-                      });
-                    }
-                  }}
-                  renderOption={(props, option) => (
-                    <li {...props} key={option.value}>
-                      {option.img ? (
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img
-                            src={option.img}
-                            alt={option.label}
-                            style={{
-                              width: 25,
-                              height: 18,
-                              marginRight: 10,
-                              filter:
-                                "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
-                            }}
-                          />
-                          <span>{option.label}</span>
-                        </div>
-                      ) : (
-                        option.label
-                      )}
-                    </li>
-                  )}
-                  renderInput={(params) => {
-                    return (
-                      <InputTextField
-                        {...params}
-                        label={
-                          isDisabled ? (
-                            label
-                          ) : validate?.required ? (
-                            <RequiredLabel label={label} />
-                          ) : (
-                            label
-                          )
-                        }
-                        fullWidth
-                        error={hasError}
-                        helperText={null}
-                        name={name}
-                        sx={sx}
-                        InputProps={{
-                          ...params.InputProps,
-                          sx: {
-                            pr: "32px !important",
-                            ...(params.InputProps?.sx || {}),
-                          },
-                          endAdornment: (
-                            <>
-                              {hasError && errorMessage ? (
-                                <Tooltip
-                                  title={errorMessage}
-                                  arrow
-                                  placement="top-end"
-                                  slots={{
-                                    transition: Zoom,
-                                  }}
-                                  slotProps={{
-                                    transition: { timeout: 200 },
-                                  }}
-                                  PopperProps={{
-                                    disablePortal: true,
-                                    sx: { zIndex: 7500 },
-                                  }}
-                                  componentsProps={{
-                                    tooltip: {
-                                      sx: {
-                                        zIndex: 7600,
-                                        bgcolor: "#fff8f8",
-                                        color: "#d32f2f",
-                                        border: "1.5px solid #d32f2f",
-                                        fontSize: "12px",
-                                        px: 1,
-                                        py: 0.75,
-                                        borderRadius: 1,
-                                        boxShadow: 2,
+                            key="summary"
+                            label={`${selected.length} items selected`}
+                            sx={{ fontWeight: "bold" }}
+                          />,
+                        ];
+                      } else {
+                        return selected.map((option, index) => {
+                          const { key, ...tagProps } = getTagProps({ index });
+                          return (
+                            <Chip
+                              key={key}
+                              size="small"
+                              avatar={
+                                option.img ? (
+                                  <img
+                                    src={option.img}
+                                    alt={option.label}
+                                    style={{
+                                      width: 20,
+                                      height: 13,
+                                      objectFit: "contain",
+                                      filter:
+                                        "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
+                                    }}
+                                  />
+                                ) : undefined
+                              }
+                              label={showLabel ? option.label : option.value}
+                              deleteIcon={
+                                <IconButton size="small">
+                                  <CancelIcon
+                                    sx={{
+                                      fontSize: "18px",
+                                      "&:hover": {
+                                        color: "#f24f4f !important",
                                       },
-                                    },
-                                    arrow: {
-                                      sx: {
-                                        color: "#fff8f8",
-                                        filter:
-                                          "drop-shadow(0 0 1.5px #d32f2f)",
+                                    }}
+                                  />
+                                </IconButton>
+                              }
+                              sx={{
+                                fontWeight: "bold",
+                                "& .MuiChip-deleteIcon": {
+                                  marginRight: "5px",
+                                  padding: 0,
+                                },
+                              }}
+                              {...tagProps}
+                            />
+                          );
+                        });
+                      }
+                    }}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.value}>
+                        {option.img ? (
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <img
+                              src={option.img}
+                              alt={option.label}
+                              style={{
+                                width: 25,
+                                height: 18,
+                                marginRight: 10,
+                                filter:
+                                  "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
+                              }}
+                            />
+                            <span>{option.label}</span>
+                          </div>
+                        ) : (
+                          option.label
+                        )}
+                      </li>
+                    )}
+                    renderInput={(params) => {
+                      return (
+                        <InputTextField
+                          {...params}
+                          label={
+                            isDisabled ? (
+                              label
+                            ) : validate?.required ? (
+                              <RequiredLabel label={label} />
+                            ) : (
+                              label
+                            )
+                          }
+                          fullWidth
+                          error={hasError}
+                          helperText={null}
+                          name={name}
+                          sx={sx}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: {
+                              pr: "32px !important",
+                              ...(params.InputProps?.sx || {}),
+                            },
+                            endAdornment: (
+                              <>
+                                {hasError && errorMessage ? (
+                                  <Tooltip
+                                    title={errorMessage}
+                                    arrow
+                                    placement="top-end"
+                                    slots={{
+                                      transition: Zoom,
+                                    }}
+                                    slotProps={{
+                                      transition: { timeout: 200 },
+                                    }}
+                                    PopperProps={{
+                                      disablePortal: true,
+                                      sx: { zIndex: 7500 },
+                                    }}
+                                    componentsProps={{
+                                      tooltip: {
+                                        sx: {
+                                          zIndex: 7600,
+                                          bgcolor: "#fff8f8",
+                                          color: "#d32f2f",
+                                          border: "1.5px solid #d32f2f",
+                                          fontSize: "12px",
+                                          px: 1,
+                                          py: 0.75,
+                                          borderRadius: 1,
+                                          boxShadow: 2,
+                                        },
                                       },
-                                    },
-                                  }}
-                                >
-                                  <IconButton
-                                    size="small"
-                                    aria-label="error info"
-                                    sx={{ p: 0 }}
+                                      arrow: {
+                                        sx: {
+                                          color: "#fff8f8",
+                                          filter:
+                                            "drop-shadow(0 0 1.5px #d32f2f)",
+                                        },
+                                      },
+                                    }}
                                   >
-                                    <InfoOutlinedIcon
-                                      color="error"
-                                      fontSize="inherit"
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                              ) : null}
-                              {isOpen &&
-                                addOptions &&
-                                (!parent || pValue !== "") && (
-                                  <Page.Box
-                                    mr={
-                                      isOpen &&
-                                      multiple &&
-                                      Array.isArray(field.value) &&
-                                      field.value.length > 0
-                                        ? 3
-                                        : 0
-                                    }
-                                  >
-                                    <Tooltip title="Add Option">
-                                      <IconButton
-                                        size="small"
-                                        onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          setIsPopperOpen(true);
-                                          setIsOpen(false);
-                                        }}
-                                        sx={{ p: 0.5 }}
-                                      >
-                                        <PlusIcon color="secondary" />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Page.Box>
-                                )}
+                                    <IconButton
+                                      size="small"
+                                      aria-label="error info"
+                                      sx={{ p: 0 }}
+                                    >
+                                      <InfoOutlinedIcon
+                                        color="error"
+                                        fontSize="inherit"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                ) : null}
+                                {isOpen &&
+                                  addOptions &&
+                                  (!parent || pValue !== "") && (
+                                    <Page.Box
+                                      mr={
+                                        isOpen &&
+                                        multiple &&
+                                        Array.isArray(field.value) &&
+                                        field.value.length > 0
+                                          ? 3
+                                          : 0
+                                      }
+                                    >
+                                      <Tooltip title="Add Option">
+                                        <IconButton
+                                          size="small"
+                                          onMouseDown={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsPopperOpen(true);
+                                            setIsOpen(false);
+                                          }}
+                                          sx={{ p: 0.5 }}
+                                        >
+                                          <PlusIcon color="secondary" />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </Page.Box>
+                                  )}
 
-                              {params.InputProps.endAdornment}
-                            </>
-                          ),
-                          onKeyUp,
-                        }}
-                      />
-                    );
-                  }}
-                />
-              </Page.Box>
+                                {params.InputProps.endAdornment}
+                              </>
+                            ),
+                            onKeyUp,
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                </Page.Box>
+              </>
             );
           }}
         />

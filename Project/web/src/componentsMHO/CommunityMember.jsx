@@ -23,7 +23,7 @@ export default function CommunityMember() {
     {
       img: "/imagesmfr/medal.png",
       title: "GET REWARDED",
-      description: "Acheive your threshold to claim the rewards via paypal",
+      description: "Acheive your threshold to claim the rewards via PayPal, UPI, Gift-Vouchers etc.",
     },
   ];
 

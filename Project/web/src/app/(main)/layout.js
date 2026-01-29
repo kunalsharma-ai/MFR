@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense } from "react";
-import { Fab, Zoom } from "@mui/material";
+import { Fab, Box,Zoom } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import Footer from "@/componentsMHO/Footer";
@@ -8,8 +8,7 @@ import Header from "@/componentsMHO/Header";
 import SignUp from "@/componentsMHO/SignUp";
 import Login from "@/componentsMHO/Login";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
-
-
+import { ContextProviders } from "@/Context";
 
 export default function MainLayout({ children }) {
   const [visible, setVisible] = React.useState(false);
@@ -39,49 +38,57 @@ export default function MainLayout({ children }) {
     }
   };
   return (
-    <Suspense fallback={<LoadingOverlay />}>
-      <div
-        id="scroll-container"
-        style={{
-          height: "100vh",
-          overflowY: "auto",
-        }}
-      >
-        {" "}
-        <Header open={openLogin} setOpen={setOpenLogin} />
-        <main>{children}</main>
+    <div
+      id="scroll-container"
+      style={ {
+        height: "100vh",
+        overflowY: "auto",
+      } }
+    >
+      { " " }
+      <ContextProviders>
+        <React.Suspense fallback={<Box sx={{width:"100%", height:{xs:"70px",lg:"78px"}}}/>}>
+        <Header open={ openLogin } setOpen={ setOpenLogin } />
+        </React.Suspense>
+      </ContextProviders>
+      <main>{ children }</main>
+      <React.Suspense fallback={ <></> }>
         <Footer />
+      </React.Suspense>
+      <ContextProviders>
         <SignUp
-          open={openSignUp}
-          onClose={() => {
+          open={ openSignUp }
+          onClose={ () => {
             setOpenSignUp(false);
-          }}
+          } }
+          setOpenLogin={ setOpenLogin }
         />
         <Login
-          open={openLogin}
-          setOpenSignUp={setOpenSignUp}
-          onClose={() => {
+          open={ openLogin }
+          setOpenSignUp={ setOpenSignUp }
+          onClose={ () => {
             setOpenLogin(false);
-          }}
+          } }
         />
-        <Zoom in={visible} unmountOnExit>
-          <Fab
-            size="medium"
-            color="primary"
-            onClick={scrollToTop}
-            sx={{
-              position: "fixed",
-              bottom: 35,
-              right: 35,
-              boxShadow: 4,
-              zIndex: 999,
-              color: "white",
-            }}
-          >
-            <KeyboardArrowUpIcon sx={{ fontSize: "30px" }} />
-          </Fab>
-        </Zoom>
-      </div>
-    </Suspense>
+      </ContextProviders>
+      <Zoom in={ visible } unmountOnExit>
+        <Fab
+          size="medium"
+          color="primary"
+          onClick={ scrollToTop }
+          sx={ {
+            position: "fixed",
+            bottom: 35,
+            left: 35,
+            boxShadow: 4,
+            zIndex: 999,
+            color: "white",
+          } }
+          aria-label="scroll to top button"
+        >
+          <KeyboardArrowUpIcon sx={ { fontSize: "30px" } } />
+        </Fab>
+      </Zoom>
+    </div>
   );
 }

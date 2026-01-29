@@ -66,7 +66,7 @@ function page() {
           <Grid size={12} container spacing={3} px={{xs:2,lg:0}}>
             {data.map((item, i) => {
               return (
-                <Grid size={12}>
+                <Grid size={12} key={i}>
                   <Box
                     className="icon-box"
                     sx={{

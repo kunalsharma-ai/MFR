@@ -107,6 +107,7 @@ export default function DateField({
                   },
                 },
                 textField: {
+                  readOnly:true,
                   placeholder: "date",
                   size: "small",
                   fullWidth: true,

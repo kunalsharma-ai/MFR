@@ -6,6 +6,25 @@ networks:
   db:
     external: false
 services:
+  mqtt:
+    image: nats
+    container_name: ${PROJECT}-service-mqtt
+    command: ['-js',"-m","8222"]
+    networks:
+      - mfr
+    volumes:
+      - ./mqtt:/data/jetstream
+    # ports:
+    #   - 8222:8222
+  api-email-template:
+    image: registry.sampledge.com/microservice/email-template
+    container_name: ${PROJECT}-api-email-template
+    restart: unless-stopped
+    volumes:
+      - ./Project/mailer:/app/mailer
+    networks:
+      - mfr
+
   db:
     image: mongo
     container_name: ${PROJECT}-mongodb
@@ -15,20 +34,39 @@ services:
       - ./db/dump:/backup
     networks:
       - db
-  api:
+  api-get-country:
+    image: registry.sampledge.com/microservice/get-country
+    container_name: ${PROJECT}-api-get-country
+    restart: unless-stopped
+    volumes:
+      - /etc/services:/etc/services :ro
+    networks:
+      - mfr
+  api-validator-email:
+    image: registry.sampledge.com/validator/email
+    container_name: ${PROJECT}-api-email-validator
+    restart: always
+    networks:
+      - mfr
+  backend:
     image: optiwariindia/express:api-module-1.0.1
     restart: unless-stopped
     networks:
-      - db
       - mfr
+      - db
     env_file:
-      - ./environment/${PROJECT}.env
-    container_name: ${PROJECT}-api
+      - ./environment/my-frequent-rewards.env
     volumes:
       - ./Project/api/app:/src/app
+      - ./Project/public:/src/public
       - ./Project/api/package.json:/src/package.json
-      - ./Project/utils:/src/utils
-      - ./defaultData:/data
+  
+  migrate-db:
+    image: optiwariindia/express:api-module-1.0.1
+    volumes:
+      - ./migrate:/src
+    networks:
+      - db
   email:
     image: registry.sampledge.com/microservice/email:smtp-1.0.0
     build:
@@ -56,7 +94,7 @@ services:
       - mfr
     restart: unless-stopped
   web-prod:
-    image: registry.sampledge.com/my-frequent-rewards/web:1.0.0
+    image: registry.sampledge.com/my-frequent-rewards/web:2.0.0
     build:
       context: Project/web
       target: production
