@@ -15,7 +15,7 @@ export default function SurveyPoints() {
     api
       .get(`/api/v1/me/points`)
       .then((resp) => {
-        console.log(resp)
+        // console.log(resp)
         if(resp.status==="error")
           router.replace("/survey?name=welcome");
         // if (!resp.data) return useToast(resp);

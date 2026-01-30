@@ -32,6 +32,9 @@ export default mongooseModel(
             ...string,
             required: true,
         }],
+        adminLabel:{
+            type:String,
+        },
         isRequired:{
             type:Boolean,
             default:true

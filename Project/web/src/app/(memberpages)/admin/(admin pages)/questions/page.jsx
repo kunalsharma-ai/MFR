@@ -43,6 +43,12 @@ export default function () {
       <Datatable
         columns={[
           {
+            id:"adminLabel",
+            data:"adminLabel",
+            label:"Admin Label",
+            feature:["filterable","sortable"]
+          },
+          {
             id: "category",
             label: "Category",
             width: "300px",

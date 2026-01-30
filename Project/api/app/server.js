@@ -5,6 +5,7 @@ import fileUpload from "express-fileupload";
 import pureIP from "express-pureip";
 import mongoose from "mongoose";
 import appRoute from "./routes/index.js";
+import compression from "compression";
 import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
 
 (async () => {
@@ -18,6 +19,7 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
         .set("view-engine", "twig")
         .set('views', "views")
         .use([
+            compression(),
             express.static("/src/public"),
             cors({
                 origin: function (origin, callback) {
@@ -51,14 +53,14 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
 })();
 
 async function errorRoute(error, req, res, next) {
-    let {status,message}=error;
-    if(isNaN(status))status=500;
+    let { status, message } = error;
+    if (isNaN(status)) status = 500;
     fsLogger.Log(`Error: ${error.message}`, {
         ...req.headers,
         origin: req.origin
     })
     return res.status(status).json({
-        status:"error",
+        status: "error",
         message
     })
 }

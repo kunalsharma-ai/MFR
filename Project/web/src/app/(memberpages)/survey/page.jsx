@@ -142,7 +142,7 @@ export default function page() {
         if ("data" in resp) setSurvey(resp.data);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         setSurveyTaken(true);
         setIsLoading(false);
       });
@@ -186,7 +186,7 @@ export default function page() {
     api
       .post(`/api/v1/question`, { name: { $in: survey.pages.flat() } })
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         if (
           !resp.data ||
           !(resp.data instanceof Array) ||
@@ -237,8 +237,8 @@ export default function page() {
         return [key.toLowerCase(), value];
       }),
     );
-    data.fn = user.name.first;
-    data.ln = user.name.last;
+    data.firstname = user.name.first;
+    data.lastname = user.name.last;
     form.reset(data);
   }, [user]);
   const onSubmit = async (data) => {
@@ -264,7 +264,7 @@ export default function page() {
       setValidationError("Please fill all required fields before proceeding.");
       return;
     }
-    console.log({ ...form.watch() });
+    // console.log({ ...form.watch() });
     if (currentGroup.includes("age")) {
       let age = form.watch("age");
       let dob = new Date(user.dob);
@@ -743,21 +743,26 @@ export const Question = ({
   const isQuestionDisabled = question.disabled || editMode;
 
   const parentValue = question.parent ? watch(question.parent) : null;
-
+  const fldValue = form.watch(question.name);
   React.useEffect(() => {
-    if (!Boolean(parentValue)) setOptions(question.options);
+    let tempFilteredOptions = question.options;
+    if(!question.parent || question.parent===""){
+      setOptions(question.options);
+    return;
+    }
+    
     else if (parentValue instanceof Array) {
-      setOptions(
-        question.options.filter((opt) => {
-          let temp = opt.parentValue.diff(parentValue);
-          if (temp?.old?.length > 0) return true;
-          return false;
-        }),
-      );
-    } else
-      setOptions(
-        question.options.filter((opt) => opt.parentValue.includes(parentValue)),
-      );
+      tempFilteredOptions = question.options.filter((opt) => {
+        let temp = opt.parentValue.diff(parentValue);
+        if (temp?.old?.length > 0) return true;
+        return false;
+      })
+    } else {
+      tempFilteredOptions = question.options.filter((opt) => opt.parentValue.includes(parentValue))
+    }
+    // console.log({[question.name]:tempFilteredOptions})
+    if (tempFilteredOptions.length>0 && !tempFilteredOptions.find(option => option.value === fldValue)) form.setValue(question.name, "")
+    setOptions(tempFilteredOptions);
   }, [parentValue, question.options]);
   const renderQuestion = () => {
     if (

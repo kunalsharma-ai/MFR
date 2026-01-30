@@ -60,7 +60,7 @@ export default function MemberNotification() {
     if(messages instanceof Array)
     setNotificationMessages(messages.filter(msg=>msg.type==="notification").map(msg=>msg.data));
   },[messages])
-  console.log(messages)
+  // console.log(messages)
   if (!user) return <></>;
   return (
     <>
