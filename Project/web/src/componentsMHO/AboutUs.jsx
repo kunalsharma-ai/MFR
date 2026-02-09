@@ -1,6 +1,5 @@
-import text from "@/util/page/text";
-import { Grid, Typography, Button, Box, Container } from "@mui/material";
 import React from "react";
+import { Grid, Typography, Button, Box, Container } from "@mui/material";
 
 function AboutUs() {
   return (
@@ -14,7 +13,7 @@ function AboutUs() {
         sx={{
           height: { xs: "auto", lg: "456px" },
           pt: { xs: "50px", lg: "80px" },
-          pb:{xs:0,lg:"80px"}
+          pb: { xs: 0, lg: "80px" },
         }}
       >
         <Grid
@@ -99,7 +98,7 @@ function AboutUs() {
               <Typography sx={{ fontSize: "16px", textAlign: "justify" }}>
                 MyFrequentRewards welcomes you as our new panel members to take
                 participate and share your opinion and perspective to
-                wide-ranging market research survey campaigns.It is a platform
+                wide-ranging market research survey campaigns. It is a platform
                 which helps you to generate more and more revenues in high
                 incentive rewards. You get the studies that are best fit for
                 you. The more participation you do in the surveys, You will be

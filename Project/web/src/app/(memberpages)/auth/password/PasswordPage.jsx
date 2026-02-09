@@ -16,7 +16,6 @@ function PasswordPage() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [status, setStatus] = React.useState("");
   const router = useRouter();
-console.log("Password page is loading")
   React.useEffect(() => {
     if (!query.user || !query.code) return;
     setIsLoading(true);
@@ -30,7 +29,7 @@ console.log("Password page is loading")
         }
       })
       .catch((err) => {
-        console.log("Kuch to gadbad hai");
+        console.log(err)
       })
       .finally(() => {
         setIsLoading(false);
@@ -52,7 +51,6 @@ console.log("Password page is loading")
   } = form;
 
   const onSubmit = async (data) => {
-    console.log(data);
     let resp = await api.patch(`/api/v1/user`, {
       ...data,
       action: "set-password",

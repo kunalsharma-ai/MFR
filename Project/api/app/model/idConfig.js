@@ -63,7 +63,6 @@ export async function generateID(module, origin, count) {
         isActive: true,
         isDeleted: false
     });
-
     if (!info) throw new Error("Misconfigured");
     if (info.limit <= count) throw new Error("No more support tickets allowed")
     const temp = `${info.prefix}${Number(info.sequence).toString().padStart(info.minLength, "0")}${info.suffix}`;

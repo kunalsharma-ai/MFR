@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link
+        {/* <link
           rel="preload"
           href="/fonts/FiraSans-Regular.ttf"
           as="font"
@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
           as="font"
           type="font/ttf"
           crossOrigin="anonymous"
-        />
+        /> */}
         <link rel="preload" href="/css/style.css" as="style" />
         <link rel="stylesheet" href="/css/style.css" />
         <title>My Frequent Rewards - Get Rewarded With Your Opinions</title>

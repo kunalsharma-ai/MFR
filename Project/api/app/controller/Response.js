@@ -107,7 +107,7 @@ class Response extends CrudController {
                 .find({
                     user: this.request.user._id,
                     ...this.commonFilters
-                }, { "slug": "$survey.slug", "status": "$survey.status" }))
+                }, { "slug": "$survey.slug", "status": 1 }))
             .reduce((a,c) => {
                 a[c.slug]=c.status;
                 return a;

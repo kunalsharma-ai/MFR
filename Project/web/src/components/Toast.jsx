@@ -21,6 +21,13 @@ export default function PositionedSnackbar() {
         ...prev,
         open: true,
       }));
+      setTimeout(()=>{
+        setState({
+          open:false,
+          vertical:"bottom",
+          horizontal:"right"
+        })
+      },30000)
     };
 
     document.addEventListener("toast", handleToast);

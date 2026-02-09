@@ -25,6 +25,7 @@ export default function DateField({
   validations,
   disabled,
   dateRange = [null, null],
+  onOutOfBound,
 }) {
   const [validate, setValidate] = React.useState(validations);
   const [minDate, setMinDate] = React.useState(new Date().toString());
@@ -68,13 +69,14 @@ export default function DateField({
               (!maxDate || !day.isAfter(dayjs(maxDate)))
             ) {
             } else {
+              if (onOutOfBound) onOutOfBound(event, field.value);
               field.onChange(null);
             }
           };
           return (
             <DatePicker
               {...field}
-              disabled={disabled}
+              // disabled={disabled}
               value={field.value ? dayjs(field.value) : null}
               label={
                 label && validate?.required ? (
@@ -92,6 +94,11 @@ export default function DateField({
                     zIndex: 9999,
                   },
                 },
+                dialog: {
+                  sx: {
+                    zIndex: 999999,
+                  },
+                },
                 day: {
                   sx: {
                     "&.Mui-selected": {
@@ -107,7 +114,7 @@ export default function DateField({
                   },
                 },
                 textField: {
-                  readOnly:true,
+                  // readOnly:true,
                   placeholder: "date",
                   size: "small",
                   fullWidth: true,

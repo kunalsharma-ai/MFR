@@ -45,7 +45,7 @@ const mockupNotifications = [
   {
     type: "Survey Closing Soon",
     title: "Last chance to participate",
-    message: "‘Healthcare Technology Trends 2025’ survey closes in 6 hours.",
+    message: "Technology Trends 2025’ survey closes in 6 hours.",
   },
 ];
 export default function AdminNotification() {

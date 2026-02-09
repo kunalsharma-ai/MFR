@@ -105,12 +105,13 @@ function WhoWeAre() {
           muted
           playsInline
           sx={{
+            scale: 1.1,
             width: {
               xs: "600px",
               sm: "100%",
             },
             height: {
-              xs: "800px",
+              xs: "calc(100vh - 70px)",
               lg: "1024px",
             },
             objectFit: "fill",
@@ -128,7 +129,7 @@ function WhoWeAre() {
             display: "flex",
             justifyContent: "center",
             color: "#fff",
-            pt: 10,
+            pt: { xs: 6, md: 10 },
             pb: { xs: 0, md: 10 },
           }}
         >

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { Grid, Typography } from "@mui/material";
 import { useMember, useQuery } from "@/Context";
 
-import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { api, Page } from "@/util";
 import { useToast } from "@/hooks";
 
@@ -39,28 +38,7 @@ function Panelists() {
       .finally(() => {});
   }, []);
 
-  const stats = React.useMemo(() => {
-    return [
-      {
-        label: "Total Panelist",
-        value: statistics?.total ?? 0,
-      },
-      {
-        label: "Healthcare Professionals",
-        value: statistics?.dsjkljfklds ?? 0,
-      },
-      {
-        label: "Patients",
-        value: statistics?.points ?? 0,
-      },
-
-      {
-        label: "Caregivers",
-        value: statistics?.disqualified ?? 0,
-      },
-    ];
-  }, [statistics]);
-
+  
   return (
     <Grid
       size={12}
@@ -76,7 +54,7 @@ function Panelists() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: "600",
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
             my: 2,
           }}
@@ -94,7 +72,7 @@ function Panelists() {
             justifyContent="space-between"
             spacing={1}
             sx={{
-              border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
               borderRadius: 4,
               px: { xs: 3, xl: 5 },
@@ -200,7 +178,7 @@ function Surveys() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: "600",
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
             my: 2,
           }}
@@ -218,7 +196,7 @@ function Surveys() {
             justifyContent="space-between"
             spacing={1}
             sx={{
-              border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
               borderRadius: 4,
               px: { xs: 3, xl: 5 },

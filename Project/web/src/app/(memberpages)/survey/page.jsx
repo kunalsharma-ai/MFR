@@ -43,8 +43,8 @@ function CustomStepIcon(props) {
 
   return (
     <div
-      className={ className }
-      style={ {
+      className={className}
+      style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -59,9 +59,9 @@ function CustomStepIcon(props) {
         color: "white",
         fontWeight: active ? "bold" : "normal",
         fontSize: "12px",
-      } }
+      }}
     >
-      { completed ? <CheckCircle sx={ { fontSize: 16 } } /> : stepNumber }
+      {completed ? <CheckCircle sx={{ fontSize: 16 }} /> : stepNumber}
     </div>
   );
 }
@@ -363,16 +363,16 @@ export default function page() {
       handleSubmit(onSubmit);
     }
   };
-  (async () => { })();
+  (async () => {})();
   const visibleSteps = steps.filter((step) => step !== "Welcome");
   const visibleStepIndex = visibleSteps.indexOf(steps[currentGroupIndex]);
 
   return (
-    <LocalizationProvider dateAdapter={ AdapterDateFns } adapterLocale={ enGB }>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
       <Grid
-        size={ 12 }
+        size={12}
         container
-        sx={ {
+        sx={{
           // bgcolor: "rgba(89, 172, 119, 0.4)",
           bgcolor: "primary.main",
           // color: "white",
@@ -382,17 +382,17 @@ export default function page() {
           backgroundPosition: "center",
           minHeight: "100vh",
           minWidth: "100vw",
-        } }
+        }}
         justifyContent="center"
         alignItems="center"
-        py={ 2 }
+        py={2}
       >
         <Grid
           container
           direction="column"
           alignItems="center"
-          spacing={ 0 }
-          sx={ {
+          spacing={0}
+          sx={{
             width: { xs: "90vw", lg: "80vw", xl: "70vw" },
             minHeight: "90vh",
             overflow: "hidden",
@@ -404,76 +404,76 @@ export default function page() {
             py: 3,
             px: { xs: 1, md: 4 },
             textAlign: "justify",
-          } }
+          }}
         >
-          { isLoading && <LoadingOverlay /> }
+          {isLoading && <LoadingOverlay />}
           <Grid
             container
-            size={ 12 }
+            size={12}
             alignItems="center"
-            justifyContent={ { xs: "center", md: "space-between" } }
-            mb={ 2 }
-            spacing={ { xs: 1, md: 2 } }
-            direction={ { xs: "column", md: "row" } }
-            sx={ { borderBottom: "1px solid #f4f4f4" } }
+            justifyContent={{ xs: "center", md: "space-between" }}
+            mb={2}
+            spacing={{ xs: 1, md: 2 }}
+            direction={{ xs: "column", md: "row" }}
+            sx={{ borderBottom: "1px solid #f4f4f4" }}
           >
-            <Page.Box sx={ { position: "relative" } }>
+            <Page.Box sx={{ position: "relative" }}>
               <Page.Box
-                sx={ {
+                sx={{
                   height: { xs: "60px", md: "80px" },
                   width: { xs: "180px", md: "300px" },
-                } }
+                }}
               >
                 <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
-              </Page.Box>{ " " }
+              </Page.Box>{" "}
               <Page.Box
                 component="img"
                 src="/imagesmfr/dol-sign.gif"
                 alt="logo"
-                width={ { xs: 15, md: 20 } }
-                sx={ {
+                width={{ xs: 15, md: 20 }}
+                sx={{
                   position: "absolute",
                   right: -4.5,
                   top: { xs: 0, md: 5 },
-                } }
+                }}
               />
             </Page.Box>
 
             <Page.Text
-              sx={ {
+              sx={{
                 flex: 1,
                 textAlign: "center",
                 ml: { xs: 0, md: "-320px" },
                 fontSize: { xs: "18px", lg: "24px" },
                 fontWeight: 600,
                 color: "secondary.main",
-              } }
+              }}
             >
-              { survey?.name }
+              {survey?.name}
             </Page.Text>
           </Grid>
-          { !surveyTaken ? (
+          {!surveyTaken ? (
             !surveyCompleted ? (
               <>
-                { steps[currentGroupIndex] !== "Welcome" && (
-                  <Grid size={ 12 }>
-                    { !isMobile ? (
+                {steps[currentGroupIndex] !== "Welcome" && (
+                  <Grid size={12}>
+                    {!isMobile ? (
                       <Stepper
-                        activeStep={ visibleStepIndex }
+                        activeStep={visibleStepIndex}
                         alternativeLabel
-                        connector={ <StepConnector /> }
-                        sx={ {
+                        connector={<StepConnector />}
+                        sx={{
                           my: 1,
                           width: "100%",
-                        } }
+                        }}
                       >
-                        { visibleSteps.map((label) => (
-                          <Step key={ label }>
+                        {visibleSteps.map((label) => (
+                          <Step key={label}>
                             <StepLabel
-                              StepIconComponent={ (props) => (
-                                <CustomStepIcon { ...props } />
-                              ) }
-                              sx={ {
+                              StepIconComponent={(props) => (
+                                <CustomStepIcon {...props} />
+                              )}
+                              sx={{
                                 "& .MuiStepLabel-label": {
                                   fontSize: "12px",
 
@@ -481,47 +481,47 @@ export default function page() {
                                     fontWeight: "bold",
                                   },
                                 },
-                              } }
+                              }}
                             >
-                              { label }
+                              {label}
                             </StepLabel>
                           </Step>
-                        )) }
+                        ))}
                       </Stepper>
                     ) : (
-                      <Grid size={ 12 } container justifyContent={ "center" }>
+                      <Grid size={12} container justifyContent={"center"}>
                         <MobileStepper
                           variant="dots"
-                          steps={ visibleSteps.length }
+                          steps={visibleSteps.length}
                           position="static"
-                          activeStep={ visibleStepIndex }
-                          sx={ { my: 1 } }
+                          activeStep={visibleStepIndex}
+                          sx={{ my: 1 }}
                         />
                       </Grid>
-                    ) }
+                    )}
                   </Grid>
-                ) }
+                )}
                 <Grid
                   component="form"
-                  onFocus={ () => {
+                  onFocus={() => {
                     setValidationError(null);
-                  } }
-                  onSubmit={ handleSubmit(onSubmit) }
-                  size={ 12 }
+                  }}
+                  onSubmit={handleSubmit(onSubmit)}
+                  size={12}
                   container
                   direction="column"
                   justifyContent="space-between"
-                  sx={ {
+                  sx={{
                     minHeight:
                       steps[currentGroupIndex] !== "Welcome"
                         ? "calc(90vh - 230px)"
                         : "calc(90vh - 145px)",
-                  } }
+                  }}
                 >
                   <Grid
-                    size={ 12 }
+                    size={12}
                     container
-                    sx={ {
+                    sx={{
                       maxHeight: {
                         md:
                           steps[currentGroupIndex] !== "Welcome"
@@ -539,65 +539,65 @@ export default function page() {
                       flex: 1,
                       flexDirection: "column",
                       justifyContent: "space-between",
-                    } }
+                    }}
                   >
                     <Page.Box>
-                      { validationError && (
-                        <Page.Box sx={ { px: 1 } }>
+                      {validationError && (
+                        <Page.Box sx={{ px: 1 }}>
                           <Alert
                             severity="error"
-                            sx={ {
+                            sx={{
                               borderRadius: 2,
                               fontWeight: "500",
                               py: 0,
                               display: "flex",
                               alignItems: "center",
                               backgroundColor: "rgba(255, 219, 219, 1)",
-                            } }
+                            }}
                           >
-                            { validationError }
+                            {validationError}
                           </Alert>
                         </Page.Box>
-                      ) }
+                      )}
                       <Page.Box
-                        sx={ {
+                        sx={{
                           display: "flex",
                           width: "100%",
                           flexWrap: "wrap",
-                        } }
+                        }}
                       >
-                        { currentGroup.map((que) => {
+                        {currentGroup.map((que) => {
                           const question = questionBank[que] ?? null;
                           if (!question)
                             return (
-                              <p key={ que } style={ { width: "50%" } }>
+                              <p key={que} style={{ width: "50%" }}>
                                 Abhi ye question nahi bna hai
                               </p>
                             );
                           return (
                             <Question
-                              form={ form }
-                              key={ question.name }
-                              question={ question }
-                              control={ control }
-                              errors={ errors }
-                              watch={ watch }
+                              form={form}
+                              key={question.name}
+                              question={question}
+                              control={control}
+                              errors={errors}
+                              watch={watch}
                             />
                           );
-                        }) }
+                        })}
                       </Page.Box>
                     </Page.Box>
                   </Grid>
                   <Grid
                     container
-                    size={ 12 }
-                    spacing={ 2 }
-                    sx={ {
+                    size={12}
+                    spacing={2}
+                    sx={{
                       justifyContent: "flex-end",
                       py: 2,
-                    } }
+                    }}
                   >
-                    { currentGroupIndex !== 0 && (
+                    {/* { currentGroupIndex !== 0 && (
                       <Page.MuiButton
                         variant="outlined"
                         color="secondary"
@@ -606,31 +606,31 @@ export default function page() {
                       >
                         Back
                       </Page.MuiButton>
-                    ) }
+                    ) } */}
                     <Page.MuiButton
                       variant="contained"
                       color="secondary"
                       // loading={true}
-                      sx={ {
+                      sx={{
                         fontWeight: 600,
-                      } }
-                      onClick={ isLast ? handleSubmit(onSubmit) : onNext }
+                      }}
+                      onClick={isLast ? handleSubmit(onSubmit) : onNext}
                     >
-                      { isLast ? "Submit" : "Next" }
+                      {isLast ? "Submit" : "Next"}
                     </Page.MuiButton>
                   </Grid>
                 </Grid>
               </>
             ) : (
               <Grid
-                size={ 12 }
+                size={12}
                 container
                 alignItems="space-between"
-                sx={ { minHeight: "calc(90vh - 125px)" } }
+                sx={{ minHeight: "calc(90vh - 125px)" }}
               >
                 <Page.Box
                   component="div"
-                  sx={ {
+                  sx={{
                     textAlign: "justify",
                     p: 3,
                     width: "100%",
@@ -638,20 +638,20 @@ export default function page() {
                     bgcolor: "#8cb2f333",
                     border: "1px solid #f4f4f4",
                     textShadow: "1px 1px 1px rgba(0, 0, 0, 0.1)",
-                  } }
-                  dangerouslySetInnerHTML={ { __html: survey.thankyou } }
+                  }}
+                  dangerouslySetInnerHTML={{ __html: survey.thankyou }}
                 />
-                <Grid size={ 12 } container justifyContent="center" mt={ 2 }>
+                <Grid size={12} container justifyContent="center" mt={2}>
                   <Page.MuiButton
                     variant="contained"
                     color="secondary"
-                    sx={ {
+                    sx={{
                       height: "36px",
                       fontWeight: 600,
-                    } }
-                    onClick={ () => {
+                    }}
+                    onClick={() => {
                       router.push("/member/dashboard");
-                    } }
+                    }}
                   >
                     Go to Dashboard
                   </Page.MuiButton>
@@ -659,24 +659,24 @@ export default function page() {
               </Grid>
             )
           ) : (
-            <Grid size={ 12 } container direction="column" spacing={ 3 }>
+            <Grid size={12} container direction="column" spacing={3}>
               <Grid
-                size={ 12 }
+                size={12}
                 container
-                spacing={ 2 }
+                spacing={2}
                 alignSelf="flex-start"
                 alignItems="center"
                 direction="column"
-                mt={ 6 }
+                mt={6}
               >
-                <ErrorIcon color="secondary" sx={ { fontSize: "80px" } } />
+                <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
                 <Page.Text
-                  sx={ { fontSize: "32px", textAlign: "center", my: 2 } }
+                  sx={{ fontSize: "32px", textAlign: "center", my: 2 }}
                 >
                   Survey Already Taken
                 </Page.Text>
                 <Page.Text
-                  sx={ {
+                  sx={{
                     fontSize: "16px",
                     width: { xs: "95%", lg: "75%" },
                     textAlign: "center",
@@ -685,7 +685,7 @@ export default function page() {
                     bgcolor: "#8cb2f333",
                     border: `1px solid rgba(51, 169, 202, 0.4)`,
                     borderRadius: 2,
-                  } }
+                  }}
                 >
                   You have already completed this survey. You can now go to your
                   dashboard to view your rewards and other available surveys.
@@ -693,22 +693,22 @@ export default function page() {
                 <Page.MuiButton
                   variant="contained"
                   color="secondary"
-                  sx={ { fontWeight: "bold", mt: 2 } }
-                  onClick={ () => {
+                  sx={{ fontWeight: "bold", mt: 2 }}
+                  onClick={() => {
                     router.push("/member/dashboard");
-                  } }
+                  }}
                 >
                   Go to Dashboard
                 </Page.MuiButton>
               </Grid>
             </Grid>
-          ) }
+          )}
         </Grid>
 
         <ErrorPopup
-          title={ errorPopup.title }
-          errorMessage={ errorPopup.message }
-          onOk={ errorPopup.onOk }
+          title={errorPopup.title}
+          errorMessage={errorPopup.message}
+          onOk={errorPopup.onOk}
           onCancel={
             errorPopup.onCancel
             // e => {
@@ -746,22 +746,26 @@ export const Question = ({
   const fldValue = form.watch(question.name);
   React.useEffect(() => {
     let tempFilteredOptions = question.options;
-    if(!question.parent || question.parent===""){
+    if (!question.parent || question.parent === "") {
       setOptions(question.options);
-    return;
-    }
-    
-    else if (parentValue instanceof Array) {
+      return;
+    } else if (parentValue instanceof Array) {
       tempFilteredOptions = question.options.filter((opt) => {
         let temp = opt.parentValue.diff(parentValue);
         if (temp?.old?.length > 0) return true;
         return false;
-      })
+      });
     } else {
-      tempFilteredOptions = question.options.filter((opt) => opt.parentValue.includes(parentValue))
+      tempFilteredOptions = question.options.filter((opt) =>
+        opt.parentValue.includes(parentValue),
+      );
     }
     // console.log({[question.name]:tempFilteredOptions})
-    if (tempFilteredOptions.length>0 && !tempFilteredOptions.find(option => option.value === fldValue)) form.setValue(question.name, "")
+    if (
+      tempFilteredOptions.length > 0 &&
+      !tempFilteredOptions.find((option) => option.value === fldValue)
+    )
+      form.setValue(question.name, "");
     setOptions(tempFilteredOptions);
   }, [parentValue, question.options]);
   const renderQuestion = () => {
@@ -795,21 +799,21 @@ export const Question = ({
     if (question.name === "zipcode") {
       return (
         <Grid
-          size={ { xs: 12, md: Number(question?.size) } }
+          size={{ xs: 12, md: Number(question?.size) }}
           alignSelf="flex-end"
-          sx={ { px: 2, py: 1 } }
+          sx={{ px: 2, py: 1 }}
         >
           <Form.Input
-            { ...form.register(`${question.name}`) }
-            control={ control }
-            watch={ watch }
+            {...form.register(`${question.name}`)}
+            control={control}
+            watch={watch}
             api="zipcode"
-            parent={ `${question.parent}` }
+            parent={`${question.parent}`}
             surveyLabel={
               <Page.Text
-                sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
               >
-                { question.label }{ " " }
+                {question.label}{" "}
                 {/* {question.required && (
                   <span style={{ color: "red", fontWeight: 600 }}>*</span>
                 )} */}
@@ -823,19 +827,19 @@ export const Question = ({
       case "note":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ { textAlign: "center", px: 2, py: 1 } }
+            sx={{ textAlign: "center", px: 2, py: 1 }}
           >
             <>
               <Page.Box
                 component="div"
-                sx={ {
+                sx={{
                   textAlign: "justify",
                   p: 3,
                   textShadow: "1px 1px 1px rgba(0, 0, 0, 0.1)",
-                } }
-                dangerouslySetInnerHTML={ { __html: question.label } }
+                }}
+                dangerouslySetInnerHTML={{ __html: question.label }}
               />
             </>
           </Grid>
@@ -844,44 +848,44 @@ export const Question = ({
       case "radio":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <FormControl
               component="fieldset"
-              required={ question.required }
+              required={question.required}
               fullWidth
-              sx={ {
+              sx={{
                 "& .MuiFormControlLabel-label": {
                   fontSize: 13,
                 },
-              } }
+              }}
             >
               <Page.Text
-                sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
               >
-                { question.label }{ " " }
-                { question.required && (
-                  <span style={ { color: "red", fontWeight: 600 } }>*</span>
-                ) }
+                {question.label}{" "}
+                {question.required && (
+                  <span style={{ color: "red", fontWeight: 600 }}>*</span>
+                )}
               </Page.Text>
               <Controller
-                name={ question.name }
-                control={ control }
-                rules={ {
+                name={question.name}
+                control={control}
+                rules={{
                   required: question.required
                     ? "This field is required"
                     : false,
-                } }
+                }}
                 defaultValue=""
-                render={ ({ field }) => (
+                render={({ field }) => (
                   <>
-                    <RadioGroup { ...field } aria-label={ question.label }>
-                      { options.map((option) => (
+                    <RadioGroup {...field} aria-label={question.label}>
+                      {options.map((option) => (
                         <FormControlLabel
                           key={
                             typeof option === "string" ? option : option.label
@@ -891,31 +895,31 @@ export const Question = ({
                           }
                           control={
                             <Radio
-                              disabled={ isQuestionDisabled }
-                              sx={ {
+                              disabled={isQuestionDisabled}
+                              sx={{
                                 "& .MuiSvgIcon-root": {
                                   color: "secondary.main",
                                 },
-                              } }
+                              }}
                             />
                           }
                           label={
                             typeof option === "string" ? option : option.label
                           }
                         />
-                      )) }
+                      ))}
                     </RadioGroup>
-                    { errors[question.name] && (
+                    {errors[question.name] && (
                       <Page.Text
                         color="error"
                         variant="caption"
-                        sx={ { fontWeight: "bold" } }
+                        sx={{ fontWeight: "bold" }}
                       >
-                        { errors[question.name].message }
+                        {errors[question.name].message}
                       </Page.Text>
-                    ) }
+                    )}
                   </>
-                ) }
+                )}
               />
             </FormControl>
           </Grid>
@@ -924,42 +928,42 @@ export const Question = ({
       case "checkbox":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <FormControl
               component="fieldset"
-              required={ question.required }
+              required={question.required}
               fullWidth
-              sx={ {
+              sx={{
                 "& .MuiFormControlLabel-label": {
                   fontSize: 13,
                 },
-              } }
+              }}
             >
               <Page.Text
-                sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
               >
-                { question.label }{ " " }
-                { question.required && (
-                  <span style={ { color: "red", fontWeight: 600 } }>*</span>
-                ) }
+                {question.label}{" "}
+                {question.required && (
+                  <span style={{ color: "red", fontWeight: 600 }}>*</span>
+                )}
               </Page.Text>
 
               <Controller
-                name={ question.name }
-                control={ control }
-                rules={ {
+                name={question.name}
+                control={control}
+                rules={{
                   required: question.required
                     ? "This field is required"
                     : false,
-                } }
-                defaultValue={ [] }
-                render={ ({ field }) => {
+                }}
+                defaultValue={[]}
+                render={({ field }) => {
                   const handleChange = (optionValue) => {
                     const currentValue = field.value || [];
 
@@ -978,44 +982,44 @@ export const Question = ({
                   return (
                     <>
                       <FormGroup>
-                        { options.map((option) => {
+                        {options.map((option) => {
                           const label =
                             typeof option === "string" ? option : option.label;
                           const value =
                             typeof option === "string" ? option : option.value;
                           return (
                             <FormControlLabel
-                              key={ label }
+                              key={label}
                               control={
                                 <Checkbox
-                                  disabled={ isQuestionDisabled }
-                                  checked={ field.value?.includes(value) }
-                                  onChange={ () => handleChange(value) }
-                                  sx={ {
+                                  disabled={isQuestionDisabled}
+                                  checked={field.value?.includes(value)}
+                                  onChange={() => handleChange(value)}
+                                  sx={{
                                     "& .MuiSvgIcon-root": {
                                       color: "secondary.main",
                                     },
-                                  } }
+                                  }}
                                 />
                               }
-                              label={ label }
+                              label={label}
                             />
                           );
-                        }) }
+                        })}
                       </FormGroup>
 
-                      { errors[question.name] && (
+                      {errors[question.name] && (
                         <Page.Text
                           color="error"
                           variant="caption"
-                          sx={ { fontWeight: "500" } }
+                          sx={{ fontWeight: "500" }}
                         >
-                          { errors[question.name].message }
+                          {errors[question.name].message}
                         </Page.Text>
-                      ) }
+                      )}
                     </>
                   );
-                } }
+                }}
               />
             </FormControl>
           </Grid>
@@ -1024,34 +1028,34 @@ export const Question = ({
       case "date":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
-            <FormControl fullWidth required={ question.required }>
+            <FormControl fullWidth required={question.required}>
               <Page.Text
-                sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
               >
-                { question.label }{ " " }
-                { question.required && (
-                  <span style={ { color: "red", fontWeight: 600 } }>*</span>
-                ) }
+                {question.label}{" "}
+                {question.required && (
+                  <span style={{ color: "red", fontWeight: 600 }}>*</span>
+                )}
               </Page.Text>
-              <Grid size={ 12 }>
+              <Grid size={12}>
                 <Form.Date
-                  { ...form.register(question.name) }
-                  control={ form.control }
-                  disabled={ isQuestionDisabled }
-                  validations={ {
+                  {...form.register(question.name)}
+                  control={form.control}
+                  disabled={isQuestionDisabled}
+                  validations={{
                     required: question.required
                       ? "This field is required"
                       : false,
-                  } }
-                  dateRange={ question.dateRange }
-                  errors={ errors?.[question.name] }
+                  }}
+                  dateRange={question.dateRange}
+                  errors={errors?.[question.name]}
                 />
               </Grid>
             </FormControl>
@@ -1061,27 +1065,27 @@ export const Question = ({
       case "multiselect":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
             <Form.Select
-              { ...form.register(question.name) }
-              control={ control }
-              watch={ watch }
-              multiple={ true }
-              isDisabled={ isQuestionDisabled }
+              {...form.register(question.name)}
+              control={control}
+              watch={watch}
+              multiple={true}
+              isDisabled={isQuestionDisabled}
               options={
                 question?.options &&
                 options instanceof Array &&
@@ -1094,17 +1098,17 @@ export const Question = ({
                   return opt;
                 })
               }
-              parent={ question.parent }
-              validations={ {
+              parent={question.parent}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
-              sx={ {
+              }}
+              errors={errors?.[question.name]}
+              sx={{
                 "& .MuiOutlinedInput-notchedOutline legend": {
                   width: 0,
                   visibilty: "hidden",
                 },
-              } }
+              }}
             />
           </Grid>
         );
@@ -1136,39 +1140,39 @@ export const Question = ({
         }));
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
             <Form.Select
-              { ...form.register(question.name) }
-              control={ control }
-              watch={ watch }
-              isDisabled={ isQuestionDisabled }
-              options={ optionList }
+              {...form.register(question.name)}
+              control={control}
+              watch={watch}
+              isDisabled={isQuestionDisabled}
+              options={optionList}
               // api={question.api}
-              parent={ question.parent }
-              validations={ {
+              parent={question.parent}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
-              sx={ {
+              }}
+              errors={errors?.[question.name]}
+              sx={{
                 "& .MuiOutlinedInput-notchedOutline legend": {
                   width: 0,
                   visibilty: "hidden",
                 },
-              } }
+              }}
             />
           </Grid>
         );
@@ -1176,32 +1180,32 @@ export const Question = ({
       case "text":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
             <Form.Input
-              { ...form.register(question.name) }
-              control={ control }
-              watch={ watch }
-              disabled={ isQuestionDisabled }
-              parent={ question.parent }
-              validations={ {
+              {...form.register(question.name)}
+              control={control}
+              watch={watch}
+              disabled={isQuestionDisabled}
+              // parent={question.parent}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
-              sx={ {
+              }}
+              errors={errors?.[question.name]}
+              sx={{
                 "& label.MuiInputLabel-shrink": {
                   fontSize: "16px !important",
                   backgroundColor: "white",
@@ -1209,7 +1213,7 @@ export const Question = ({
                   px: 2,
                   ml: -1.5,
                 },
-              } }
+              }}
             />
           </Grid>
         );
@@ -1217,34 +1221,34 @@ export const Question = ({
       case "textarea":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
             <Form.Input
-              { ...form.register(question.name) }
-              control={ control }
-              watch={ watch }
-              parent={ question.parent }
-              disabled={ isQuestionDisabled }
-              validations={ {
+              {...form.register(question.name)}
+              control={control}
+              watch={watch}
+              parent={question.parent}
+              disabled={isQuestionDisabled}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
+              }}
+              errors={errors?.[question.name]}
               multiline
-              rows={ 4 }
-              sx={ {
+              rows={4}
+              sx={{
                 "& label.MuiInputLabel-shrink": {
                   fontSize: "16px !important",
                   backgroundColor: "white",
@@ -1252,7 +1256,7 @@ export const Question = ({
                   px: 2,
                   ml: -1.5,
                 },
-              } }
+              }}
             />
           </Grid>
         );
@@ -1260,30 +1264,30 @@ export const Question = ({
       case "editor":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
             <Form.TextEditor
-              { ...form.register(question.name) }
-              control={ control }
-              watch={ watch }
-              disabled={ isQuestionDisabled }
-              validations={ {
+              {...form.register(question.name)}
+              control={control}
+              watch={watch}
+              disabled={isQuestionDisabled}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
+              }}
+              errors={errors?.[question.name]}
             />
           </Grid>
         );
@@ -1291,32 +1295,32 @@ export const Question = ({
       case "document":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
-            <FormControl fullWidth required={ question.required }>
+            <FormControl fullWidth required={question.required}>
               <Page.Text
-                sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
               >
-                { question.label }{ " " }
-                { question.required && (
-                  <span style={ { color: "red", fontWeight: 600 } }>*</span>
-                ) }
+                {question.label}{" "}
+                {question.required && (
+                  <span style={{ color: "red", fontWeight: 600 }}>*</span>
+                )}
               </Page.Text>
               <Form.Upload
                 endpoint="/api/v1/upload/pdf"
-                name={ question.name }
-                control={ control }
-                form={ form }
-                rules={ {
+                name={question.name}
+                control={control}
+                form={form}
+                rules={{
                   required: question.required
                     ? "This field is required"
                     : false,
-                } }
+                }}
                 accept="application/pdf"
               />
             </FormControl>
@@ -1328,54 +1332,54 @@ export const Question = ({
           form.setValue(`${question.name}.coordinates`, coordinates);
         }
         return (
-          <Grid size={ 12 } container p={ 2 }>
+          <Grid size={12} container p={2}>
             <Page.Text
-              sx={ {
+              sx={{
                 fontWeight: 600,
                 mb: 0.5,
                 color: "secondary.main",
                 width: "100%",
-              } }
+              }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
 
             <Grid
-              size={ {
+              size={{
                 xs: 12,
                 md: watch(`${question.name}.consent`) === "Yes" ? 6 : 12,
-              } }
+              }}
               container
               direction="column"
               justifySelf="flex-start"
-              spacing={ 1.5 }
-              mt={ 1 }
+              spacing={1.5}
+              mt={1}
             >
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              <Grid size={12} container direction="column" spacing={0}>
                 <Page.Text
-                  sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+                  sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
                 >
                   Are you comfortable sharing your location on map?
                 </Page.Text>
                 <Controller
-                  name={ `${question.name}.consent` }
-                  control={ control }
-                  rules={ "This field is required" }
+                  name={`${question.name}.consent`}
+                  control={control}
+                  rules={"This field is required"}
                   defaultValue=""
-                  render={ ({ field }) => (
+                  render={({ field }) => (
                     <>
                       <RadioGroup
-                        { ...field }
-                        aria-label={ question.label }
-                        onChange={ (e) => {
+                        {...field}
+                        aria-label={question.label}
+                        onChange={(e) => {
                           if (e.target.value === "Yes") setIsMapVisible(true);
                           field.onChange(e);
-                        } }
+                        }}
                       >
-                        { [
+                        {[
                           {
                             label: "Yes",
                             value: "Yes",
@@ -1391,143 +1395,165 @@ export const Question = ({
                             }
                             control={
                               <Radio
-                                sx={ {
+                                sx={{
                                   "& .MuiSvgIcon-root": {
                                     color: "secondary.main",
                                   },
-                                } }
+                                }}
                               />
                             }
                             label={
                               typeof option === "string" ? option : option.label
                             }
                           />
-                        )) }
+                        ))}
                       </RadioGroup>
-                      { errors[question.name] && (
+                      {errors[question.name] && (
                         <Page.Text
                           color="error"
                           variant="caption"
-                          sx={ { fontWeight: "500" } }
+                          sx={{ fontWeight: "500" }}
                         >
-                          { errors[question.name].message }
+                          {errors[question.name].message}
                         </Page.Text>
-                      ) }
+                      )}
                     </>
-                  ) }
+                  )}
                 />
-              </Grid>{ " " }
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              </Grid>{" "}
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Input
-                  { ...form.register(`${question.name}.line1`) }
-                  control={ control }
-                  watch={ watch }
-                  labelText={ "Address Line 1" }
+                  {...form.register(`${question.name}.line1`)}
+                  control={control}
+                  watch={watch}
+                  labelText={"Address Line 1"}
                 />
               </Grid>
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Input
-                  { ...form.register(`${question.name}.line2`) }
-                  control={ control }
-                  watch={ watch }
-                  labelText={ "Address Line 2" }
+                  {...form.register(`${question.name}.line2`)}
+                  control={control}
+                  watch={watch}
+                  labelText={"Address Line 2"}
                 />
-              </Grid>{ " " }
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              </Grid>{" "}
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Select
-                  { ...form.register(`${question.name}.country`) }
-                  control={ control }
-                  watch={ watch }
-                  option={ [] }
+                  {...form.register(`${question.name}.country`)}
+                  control={control}
+                  watch={watch}
+                  option={[]}
                   api="country"
-                  labelText={ "Country" }
+                  labelText={"Country"}
                 />
               </Grid>
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Select
-                  { ...form.register(`${question.name}.state`) }
-                  control={ control }
-                  watch={ watch }
-                  option={ [] }
-                  parent={ `${question.name}.country` }
+                  {...form.register(`${question.name}.state`)}
+                  control={control}
+                  watch={watch}
+                  option={[]}
+                  parent={`${question.name}.country`}
                   api="state"
-                  labelText={ "State" }
+                  labelText={"State"}
                 />
               </Grid>
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Select
-                  { ...form.register(`${question.name}.city`) }
-                  control={ control }
-                  watch={ watch }
-                  option={ [] }
-                  parent={ [
+                  {...form.register(`${question.name}.city`)}
+                  control={control}
+                  watch={watch}
+                  option={[]}
+                  parent={[
                     `${question.name}.country`,
                     `${question.name}.state`,
-                  ] }
+                  ]}
                   api="city"
-                  labelText={ "City" }
+                  labelText={"City"}
                 />
               </Grid>
-              <Grid size={ 12 } container direction="column" spacing={ 0 }>
+              <Grid size={12} container direction="column" spacing={0}>
                 <Form.Input
-                  { ...form.register(`${question.name}.zipcode`) }
-                  control={ control }
-                  watch={ watch }
+                  {...form.register(`${question.name}.zipcode`)}
+                  control={control}
+                  watch={watch}
                   api="zipcode"
-                  parent={ `${question.name}.country` }
-                  labelText={ "Zipcode" }
+                  parent={`${question.name}.country`}
+                  labelText={"Zipcode"}
                 />
-              </Grid>{ " " }
+              </Grid>{" "}
             </Grid>
 
-            { isMapVisible && (
+            {isMapVisible && (
               <Grid
-                size={ { xs: 12, md: 6 } }
+                size={{ xs: 12, md: 6 }}
                 direction="column"
                 container
-                p={ 2 }
+                p={2}
                 display={
                   watch(`${question.name}.consent`) === "Yes" ? "flex" : "none"
                 }
               >
-                <Map setCoordinates={ setCoordinates } />
-                <Page.Text fontStyle="italic" mt={ 1 }>
+                <Map setCoordinates={setCoordinates} />
+                <Page.Text fontStyle="italic" mt={1}>
                   click on your location to place location marker
                 </Page.Text>
               </Grid>
-            ) }
+            )}
           </Grid>
         );
 
       case "phone":
         return (
           <Grid
-            size={ { xs: 12, md: Number(question?.size) } }
+            size={{ xs: 12, md: Number(question?.size) }}
             alignSelf="flex-end"
-            sx={ {
+            sx={{
               px: 2,
               py: 1,
-            } }
+            }}
           >
             <Page.Text
-              sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+              sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
             >
-              { question.label }{ " " }
-              { question.required && (
-                <span style={ { color: "red", fontWeight: 600 } }>*</span>
-              ) }
+              {question.label}{" "}
+              {question.required && (
+                <span style={{ color: "red", fontWeight: 600 }}>*</span>
+              )}
             </Page.Text>
 
             <Form.Phone
-              name={ question.name }
-              control={ control }
-              onlyCountries={ undefined }
-              disabled={ isQuestionDisabled }
-              validations={ {
+              name={question.name}
+              control={control}
+              onlyCountries={undefined}
+              disabled={isQuestionDisabled}
+              validations={{
                 required: question.required ? "This field is required" : false,
-              } }
-              errors={ errors?.[question.name] }
+              }}
+              errors={errors?.[question.name]}
             />
+            {/* <Controller
+              name={`${question.name}_whatsapp`}
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <FormControlLabel
+                  sx={{ mt: 1 }}
+                  control={
+                    <Checkbox
+                      {...field}
+                      checked={Boolean(field.value)}
+                      sx={{
+                        "& .MuiSvgIcon-root": {
+                          color: "secondary.main",
+                        },
+                      }}
+                    />
+                  }
+                  label="Is this number also on WhatsApp?"
+                />
+              )}
+            /> */}
           </Grid>
         );
 
@@ -1536,33 +1562,33 @@ export const Question = ({
     }
   };
 
-  return <>{ renderQuestion() }</>;
+  return <>{renderQuestion()}</>;
 };
 
 function ErrorPopup({ title, errorMessage, onOk, onCancel, btns }) {
   return (
     <PopUp
-      open={ Boolean(errorMessage) }
-      onClose={ onCancel }
+      open={Boolean(errorMessage)}
+      onClose={onCancel}
       maxWidth="xs"
-      title={ title }
+      title={title}
     >
       <Grid
-        size={ 12 }
+        size={12}
         direction="column"
         container
         justifyContent="center"
         alignItems="center"
-        sx={ { minHeight: "150px", p: 2 } }
+        sx={{ minHeight: "150px", p: 2 }}
       >
         <Page.Text
           component="div"
-          sx={ { px: 2, mb: 2, fontWeight: 500, textAlign: "justify" } }
+          sx={{ px: 2, mb: 2, fontWeight: 500, textAlign: "justify" }}
         >
-          { errorMessage }
-          {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam hic iusto odit tempora unde. Veritatis dolor ducimus asperiores natus dignissimos. */ }
+          {errorMessage}
+          {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam hic iusto odit tempora unde. Veritatis dolor ducimus asperiores natus dignissimos. */}
         </Page.Text>
-        <Grid size={ 12 } spacing={ 2 } container justifyContent="flex-end">
+        <Grid size={12} spacing={2} container justifyContent="flex-end">
           {/* {btns?.cancel && (
             <Page.MuiButton
               variant="contained"
@@ -1572,15 +1598,15 @@ function ErrorPopup({ title, errorMessage, onOk, onCancel, btns }) {
               {btns?.cancel ?? "Cancel"}
             </Page.MuiButton>
           )} */}
-          { btns?.ok && (
+          {btns?.ok && (
             <Page.MuiButton
               variant="contained"
               color="secondary"
-              onClick={ onOk }
+              onClick={onOk}
             >
-              { btns?.ok ?? "Ok" }
+              {btns?.ok ?? "Ok"}
             </Page.MuiButton>
-          ) }
+          )}
         </Grid>
       </Grid>
     </PopUp>

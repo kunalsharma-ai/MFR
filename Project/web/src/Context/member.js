@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { api } from "@/util";
+import { useToast } from "@/hooks";
 const MemberContext = createContext();
 function notLoggedIn(pathname, router) {
   if (typeof pathname !== "string") return;
@@ -59,6 +60,7 @@ export function MemberProvider({ children }) {
         setMe(null);
       });
   }, [reload, pathname]);
+  
   return <MemberContext.Provider value={ me }>{ children }</MemberContext.Provider>;
 }
 

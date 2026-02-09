@@ -18,6 +18,7 @@ import {
   Collapse,
   Rating,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import PersonIcon from "@mui/icons-material/Person";
@@ -74,8 +75,6 @@ const getGenderIcon = (gender) => {
 
 export default function page() {
   const user = useMember();
-
-  
 
   return (
     <Grid container size={12}>
@@ -183,8 +182,8 @@ function Stats({ user }) {
               justifyContent="space-between"
               spacing={1}
               sx={{
-               border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+                border: (theme) => `1px solid ${theme.palette.primary.main}`,
+                bgcolor: (theme) => theme.palette.cardbg.main,
                 borderRadius: 4,
                 px: { xs: 3, md: 1, xl: 3 },
                 py: 3,
@@ -260,8 +259,8 @@ function UserInfo({ user }) {
       alignSelf={{ md: "flex-start", xl: "stretch" }}
       justifyContent={"space-between"}
       sx={{
-        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+        border: (theme) => `1px solid ${theme.palette.primary.main}`,
+        bgcolor: (theme) => theme.palette.cardbg.main,
         borderRadius: 4,
       }}
     >
@@ -371,14 +370,14 @@ function UserInfo({ user }) {
 
 function Payment() {
   const [openPayment, setOpenPayment] = React.useState(false);
-  const [selectedMethod, setSelectedMethod] = React.useState("Wire Transfer");
+  const [selectedMethod, setSelectedMethod] = React.useState(null);
 
   const [payment, setPayment] = React.useState({
-    method: "Wire Transfer",
+    method: null,
     value: {
-      bank: "qwertyuiop",
-      ifsc: "QWERTY",
-      accountNumber: "123456789097656434",
+      bank: "",
+      ifsc: "",
+      accountNumber: "",
     },
   });
 
@@ -415,7 +414,7 @@ function Payment() {
           sx={{
             fontSize: "16px",
             fontWeight: 600,
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
@@ -438,8 +437,8 @@ function Payment() {
         px={2}
         py={2}
         sx={{
-          border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
           borderRadius: 2,
         }}
       >
@@ -518,7 +517,18 @@ function Payment() {
             )}
           </Grid>
         ) : (
-          <Typography>No Payment method selected yet</Typography>
+          <Typography>
+            No Payment method selected yet.{" "}
+            <Typography
+              color="secondary"
+              component={"span"}
+              fontWeight={600}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenPayment(true)}
+            >
+              Click to add
+            </Typography>
+          </Typography>
         )}
       </Grid>
 
@@ -568,11 +578,11 @@ function Payment() {
                         p: 1,
                         borderRadius: 2,
                         cursor: "pointer",
-                        border:theme=>
+                        border: (theme) =>
                           selectedMethod === method.name
                             ? `2px solid ${theme.palette.primary.main}`
                             : "2px solid transparent",
-                        boxShadow:theme=>
+                        boxShadow: (theme) =>
                           selectedMethod === method.name
                             ? `0 0 8px ${theme.palette.secondary.main}`
                             : "none",
@@ -803,7 +813,7 @@ function SocialAccounts({ user }) {
       user.socials.reduce((a, c) => {
         a[c.channel] = c.account;
         return a;
-      }, {})
+      }, {}),
     );
   }, [user]);
   const handleChange = (key) => (e) => {
@@ -874,7 +884,7 @@ function SocialAccounts({ user }) {
           sx={{
             fontSize: "16px",
             fontWeight: 600,
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
@@ -896,8 +906,8 @@ function SocialAccounts({ user }) {
         px={2}
         py={2}
         sx={{
-          border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
           borderRadius: 2,
         }}
       >
@@ -933,8 +943,17 @@ function SocialAccounts({ user }) {
               </Grid>
             ))
         ) : (
-          <Typography onClick={() => setOpenContact(true)}>
-            No social contact method added. Click to add.
+          <Typography>
+            No social contact method added.{" "}
+            <Typography
+              color="secondary"
+              component={"span"}
+              fontWeight={600}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenContact(true)}
+            >
+              Click to add
+            </Typography>
           </Typography>
         )}
       </Grid>
@@ -1018,21 +1037,38 @@ function TabPanel({ children, value, index }) {
 }
 
 function Summary() {
+  const router = useRouter();
+  const [points, setPoints] = React.useState(0); //todo: set from api call
+  const [conversionRate, setConversionRate] = React.useState(1); //todo: set conversion rate from api call
+  const [threshold, setThreshold] = React.useState(1500); //todo: set from server config
+  React.useEffect(() => {
+    api
+      .get(`/api/v1/me/points`)
+      .then((resp) => {
+        if (resp.status === "error") router.replace("/survey?name=welcome");
+        // if (!resp.data) return useToast(resp);
+        let data = resp.data;
+        setPoints(data.totalPoints);
+        setThreshold(data.threshold);
+        setConversionRate(data.conversionRate);
+      })
+      .catch((err) => {})
+      .finally(() => {});
+  }, []);
   const rewardSummary = [
     {
       label: "Current Rewards",
-      value: "430pts",
+      value: `${points}pts`,
     },
     {
       label: "Conversion",
-      value: "$4.30",
+      value: `$${(Number(points) * Number(conversionRate)).toFixed(2)}`,
     },
     {
       label: "Needed reward points for payout",
-      value: "1070pts",
+      value: `${threshold - points}pts`,
     },
   ];
-
   const [activeTab, setActiveTab] = React.useState(0);
   const tabs = [
     {
@@ -1046,7 +1082,7 @@ function Summary() {
     {
       label: "Rewards Processed Summary",
       render: (
-       <Grid size={12} container justifyContent="center" py={7}>
+        <Grid size={12} container justifyContent="center" py={7}>
           No Reward Processed yet.
         </Grid>
       ),

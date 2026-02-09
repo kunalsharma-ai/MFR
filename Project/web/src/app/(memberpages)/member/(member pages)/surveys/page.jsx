@@ -104,7 +104,7 @@ function MySurveys({ user, query }) {
               my: 1,
             }}
           >
-            My Survey
+            My Surveys
           </Typography>
         }
         columns={columns}
@@ -190,7 +190,7 @@ function AvailableSurvey({ user, query }) {
               fontSize: "16px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom: "2px solid #59AC77",
+              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}

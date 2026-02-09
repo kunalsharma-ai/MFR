@@ -193,45 +193,6 @@ export default function MemberHeader() {
           <i className="icon-power" />
           Logout
         </MenuItem>
-        {/* <MenuItem
-          onClick={() => {
-            setProfileAnchorEl(null);
-            router.replace("/member/myaccount");
-          }}
-          sx={{ gap: 1, color: "black", fontWeight: 500 }}
-        >
-          <i className="icon-user" /> Profile
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setProfileAnchorEl(null);
-            router.replace("/member/settings");
-          }}
-          sx={{
-            gap: 1,
-            color: "black",
-            fontWeight: 500,
-            borderTop: "1px solid whitesmoke",
-          }}
-        >
-          <i className="icon-settings" /> Settings
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            setProfileAnchorEl(null);
-            localStorage.removeItem("token");
-            user.Reload();
-          }}
-          sx={{
-            gap: 1,
-            borderTop: "1px solid whitesmoke",
-            color: "black",
-            fontWeight: 500,
-          }}
-        >
-          <i className="icon-power" />
-          Logout
-        </MenuItem> */}
       </Menu>
     </div>
   );
