@@ -32,27 +32,31 @@ export default mongooseModel(
             ...string,
             required: true,
         }],
-        adminLabel:{
-            type:String,
+        adminLabel: {
+            type: String,
         },
-        isRequired:{
-            type:Boolean,
-            default:true
+        isMoney: {
+            type: Boolean,
+            default: false,
         },
-        isEditable:{
-            type:Boolean,
-            default:true
+        isRequired: {
+            type: Boolean,
+            default: true
         },
-        size:{
-            type:String,
-            default:"6"
+        isEditable: {
+            type: Boolean,
+            default: true
+        },
+        size: {
+            type: String,
+            default: "6"
         }
     },
     [
         [
             {
                 name: 1,
-                category:1,
+                category: 1,
                 origin: 1
             },
             {

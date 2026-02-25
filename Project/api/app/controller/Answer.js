@@ -6,7 +6,7 @@ import {
 
 class Answer extends CrudController {
     async save(data) {
-        console.log(data)
+        // console.log(data)
         const origin = this.request.origin;
         const user = this.request.user._id;
         let temp = data.map(info => {
@@ -27,7 +27,7 @@ class Answer extends CrudController {
                 }
             }
         })
-
+console.log(temp)
         return await answerModel.bulkWrite(temp)
         // await answerModel.update
         throw new Error("Unable to save data")

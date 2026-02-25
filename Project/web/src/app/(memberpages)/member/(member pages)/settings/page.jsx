@@ -30,9 +30,6 @@ export default function page() {
     >
       <ChangePassword />
       <SurveyNotification />
-      <Grid size={12}>
-        <ChangeEmail />
-      </Grid>
       <TermsAndConditions />
     </Grid>
   );
@@ -132,7 +129,7 @@ function ChangePassword() {
         variant="contained"
         color="secondary"
         disabled={
-          inputs.cnfPassword !== inputs.newPassword || inputs.newPassword === ""
+          inputs.cnfPassword !== inputs.newPassword || inputs.newPassword === "" || inputs.oldPassword === ""
         }
         sx={{
           ml: 1,
@@ -149,6 +146,7 @@ function ChangePassword() {
 
 function SurveyNotification() {
   const [selected, setSelected] = React.useState([]);
+  const [initialSelected, setInitialSelected] = React.useState([]);
   const [user] = [useMember()];
   React.useEffect(() => {
     if (!user) return;
@@ -156,6 +154,7 @@ function SurveyNotification() {
       .post(`/api/v1/me`, { questions: ["communication-methods"] })
       .then((resp) => {
         setSelected(resp.data["communication-methods"] ?? []);
+        setInitialSelected(resp.data["communication-methods"] ?? []);
       });
   }, [user]);
 
@@ -166,6 +165,11 @@ function SurveyNotification() {
     { label: "By Dashboard Notifications", value: "dashboard" },
     { label: "By Whatsapp", value: "whatsapp" },
   ];
+
+   const isUnchanged = React.useMemo(() => {
+    const sort = (arr) => [...arr].sort();
+    return JSON.stringify(sort(selected)) === JSON.stringify(sort(initialSelected));
+  }, [selected, initialSelected]);
 
   return (
     <Grid size={{ xs: 12, md: 6 }} container spacing={2}>
@@ -236,6 +240,7 @@ function SurveyNotification() {
           useToast(resp);
           console.log(resp);
         }}
+        disabled={isUnchanged}
         variant="contained"
         color="secondary"
         sx={{
@@ -251,135 +256,6 @@ function SurveyNotification() {
   );
 }
 
-function ChangeEmail() {
-  const [email, setEmail] = React.useState("");
-  const [isValid, setIsValid] = React.useState(false);
-  const [isUnused, setIsUnused] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const user = useMember();
-  useDebounce(
-    () => {
-      if (
-        !Boolean(
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(
-            email
-          )
-        )
-      )
-        return setIsValid(false);
-      api
-        .post(`/api/v1/user`, {
-          mail: email.trim().toLowerCase(),
-        })
-        .then((resp) => {
-          if (resp.data.length === 0) setIsUnused(true);
-        });
-    },
-    1000,
-    [email]
-  );
-  useDebounce(
-    () => {
-      if (
-        !Boolean(
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(
-            email
-          )
-        )
-      )
-        return setIsValid(false);
-      api
-        .post(`/api/v1/validator/email`, {
-          email: email.trim().toLowerCase(),
-        })
-        .then((resp) => {
-          setIsValid(resp.valid);
-        });
-    },
-    1000,
-    [email]
-  );
-
-  return (
-    <Grid
-      size={{ xs: 12, md: 6 }}
-      container
-      spacing={2}
-      justifySelf="flex-start"
-      component="form"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        let resp = await api.patch(`/api/v1/me/change-email`, { email });
-        // useToast(resp);
-        setMessage(resp.message);
-        if (resp.status === "success" && "Reload" in user) user.Reload();
-        setIsValid(false);
-      }}
-    >
-      <Box
-        width="100%"
-        display={"flex"}
-        alignItems="center"
-        justifyContent={"space-between"}
-        px={1}
-        pt={1}
-      >
-        <Typography
-          sx={{
-            fontSize: "16px",
-            display: "inline-block",
-            fontWeight: 600,
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
-            pb: 0.5,
-          }}
-        >
-          Change Email
-        </Typography>
-      </Box>
-
-      <Grid
-        container
-        size={12}
-        direction="column"
-        spacing={2}
-        px={2}
-        py={2}
-        sx={{
-          border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
-          borderRadius: 2,
-        }}
-      >
-        <Page.Input
-          label="New Email"
-          onChange={(e) => {
-            setEmail(e?.target?.value ?? "");
-          }}
-          sx={{ bgcolor: "white" }}
-        />
-      </Grid>
-
-      <Typography width="100%" ml={1} color="secondary" fontWeight={500}>
-        {message}
-      </Typography>
-
-      <Button
-        type="submit"
-        variant="contained"
-        color="secondary"
-        disabled={!isValid || !isUnused}
-        sx={{
-          ml: 1,
-          px: 2,
-          color: "white",
-          fontWeight: 600,
-        }}
-      >
-        Change Email
-      </Button>
-    </Grid>
-  );
-}
 
 function TermsAndConditions() {
   return (

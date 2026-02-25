@@ -97,6 +97,7 @@ export default function ({
             sx={{
               fontSize: "12px",
               mt: 0.5,
+              
               display: "flex",
               justifyContent: "space-between",
             }}
@@ -120,6 +121,7 @@ export default function ({
             variant="determinate"
             value={passwordStrength.score * 20}
             color={passwordStrength.color}
+            sx={{mb:0.5}}
           />
         </>
       ) : (

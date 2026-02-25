@@ -177,7 +177,7 @@ export default function Input({
   }
 
   props["InputProps"] = { ...temp };
-  if (hide) return <></>;
+  // if (hide) return <></>;
   /* <Grid
           size={ { xs: 12, md: Number(question?.size) } }
           alignSelf="flex-end"
@@ -193,6 +193,7 @@ export default function Input({
         name={name}
         control={control}
         rules={validate}
+        disabled={hide}
         render={({ field }) => {
           const hasError = !!errors;
           const errorMessage = errors?.message;

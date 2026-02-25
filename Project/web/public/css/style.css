@@ -11662,3 +11662,7 @@
   padding-left: 30px;
   padding-right: 30px;
 }
+
+input:disabled{
+  background-color: #eee;
+}

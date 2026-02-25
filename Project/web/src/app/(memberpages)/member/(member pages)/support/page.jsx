@@ -165,6 +165,14 @@ function FAQ() {
                     borderRadius: 2,
                     textAlign: "justify",
                     fontSize: 15,
+                    "& ul, & ol": {
+                      paddingLeft: "24px",
+                      marginTop: 1,
+                      marginBottom: 1,
+                    },
+                    "& li": {
+                      marginBottom: "6px",
+                    },
                   }}
                 >
                   <div dangerouslySetInnerHTML={{ __html: faq.ans }} />
@@ -278,6 +286,7 @@ function TicketList({ setCreateTicket, reload, setActiveTicket }) {
         const resp = await api.post(`/api/v1/support`, {
           "issueRaisedBy.email": user.mail,
         });
+        console.log(resp.data);
         if (Array.isArray(resp?.data)) {
           setData(resp.data);
         }
@@ -306,7 +315,7 @@ function TicketList({ setCreateTicket, reload, setActiveTicket }) {
     {
       id: "ticketNo",
       label: "Ticket Number",
-      render: (info) => info._id,
+      render: (info) => info.ticketNo ?? info._id,
       feature: ["sortable", "lockable"],
     },
     {
@@ -462,7 +471,12 @@ function TicketList({ setCreateTicket, reload, setActiveTicket }) {
 
 function CreateTicket({ reloadData, setCreateTicket, setActiveTicket }) {
   const form = useForm({
-    defaultValues: {},
+    defaultValues: {
+      subject: "",
+      description: "",
+      attachments: [],
+    },
+    mode: "onChange",
   });
 
   const {
@@ -472,6 +486,13 @@ function CreateTicket({ reloadData, setCreateTicket, setActiveTicket }) {
     setValue,
     formState: { errors },
   } = form;
+
+  const subject = watch("subject");
+  const description = watch("description");
+
+  const isDisabled =
+    !subject?.trim() || !description?.replace(/<[^>]*>/g, "").trim();
+
   return (
     <Grid
       component="form"
@@ -504,12 +525,20 @@ function CreateTicket({ reloadData, setCreateTicket, setActiveTicket }) {
         <Form.Input
           control={control}
           {...form.register("subject")}
-          label="Subject"
+          label={
+            <>
+              Subject <span style={{ color: "red" }}>*</span>
+            </>
+          }
         />
         <Form.TextEditor
           control={control}
           name="description"
-          label="Description"
+          label={
+            <>
+              Description <span style={{ color: "red" }}>*</span>
+            </>
+          }
         />
         <Form.Upload
           endpoint="/api/v1/upload/image"
@@ -545,6 +574,7 @@ function CreateTicket({ reloadData, setCreateTicket, setActiveTicket }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
+          disabled={isDisabled}
           color="secondary"
           sx={{
             fontWeight: "bold",

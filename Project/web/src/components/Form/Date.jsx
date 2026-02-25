@@ -76,7 +76,7 @@ export default function DateField({
           return (
             <DatePicker
               {...field}
-              // disabled={disabled}
+              disabled={disabled}
               value={field.value ? dayjs(field.value) : null}
               label={
                 label && validate?.required ? (

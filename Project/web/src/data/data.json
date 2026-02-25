@@ -5,67 +5,83 @@
   "faqs": [
     {
       "que": "How do I become a member?",
-      "ans": "<p>To register on My Frequent Rewards, you will be asked to provide some basic questions while creating your account, as well as the option to provide some more in-depth information about yourself in order to participate in our surveys. After completing the signup form, My Frequent Rewards panel will sent a confirmation email into your registered email ID in order to confirm the profile validity and finalize your registration process. Alternatively, You may click the link in your email to confirm your registration over panel and to receive the survey access.</p>"
+      "ans": "<p>Becoming a member is simple and free.</p><p>To register with <strong>My Frequent Rewards</strong>, you will need to complete a short sign-up form providing basic information. You may also choose to provide additional profile details to help us match you with relevant surveys.</p><p>After submitting your registration:</p><ul><li>A confirmation email will be sent to your registered email address.</li><li>Click the verification link in the email to confirm your profile.</li><li>Once verified, you can log in and start participating in surveys.</li></ul><p>Please ensure your email address is valid to complete the registration process.</p>"
     },
     {
-      "que": "Any hidden charges while registration?",
-      "ans": "<p>Registration to My Frequent Rewards is completely free - you will not be asked for any payment. On the contrary, it is you who earns points that can be exchanged for PayPal, gift vouchers etc., by taking participation in our sponsored surveys.</p>"
+      "que": "Are there any hidden charges for registration?",
+      "ans": "<p>No. Registration is completely free.</p><p>You will never be asked to pay any fees to join or participate in surveys. Instead, you earn reward points for completing surveys, which can be redeemed for:</p><ul><li>PayPal payments</li><li>Amazon Gift vouchers</li><li>Bank transfers</li><li>UPI (where applicable)</li></ul>"
     },
     {
       "que": "Why should I become a member of My Frequent Rewards?",
-      "ans": "<p>Becoming a member, let you take part in surveys on different topics. You can then start to accumulate the rewards after achieving the minimum threshold points. You can redeem for an incentive of your choice from “Redeem Now” button from Dashboard.</p>"
+      "ans": "<p>As a member, you can:</p><ul><li>Participate in surveys on various topics</li><li>Share your opinions with leading brands and research organizations</li><li>Earn reward points for successful survey participation</li><li>Redeem rewards once you reach the minimum threshold</li></ul><p>You can redeem your points anytime from the <strong>“Redeem Now”</strong> section in your Dashboard.</p>"
     },
     {
-      "que": "How do I change my email address and password?",
-      "ans": "<p>Due to security, My Frequent Rewards don’t allow to update the email ID for the profile. You may contact support team at <a href='mailto:support@myfrewardsrewards.com'>support@myfrewardsrewards.com</a> for any type of email update request.</p><p>You can change your password after login to the My frequent Rewards Dashboard, Go to “Change Password” section after selecting Settings option in Sidebar.</p>"
+      "que": "How do I change my email address or password?",
+      "ans": "<p><strong>Email Address:</strong><br/>For security reasons, email addresses cannot be changed directly from the dashboard. If you need to update your email, please contact us at:</p><em><a href='mailto:support@myfrequentrewards.com'>support@myfrequentrewards.com</a></em><p><br/><strong>Password:</strong></p><ul><li>Log into your dashboard</li><li>Go to <b>Settings</b></li><li>Select <b>Change Password -> New Password -> Confirm New Password</b></li></ul>"
     },
     {
       "que": "How can I edit my personal information?",
-      "ans": "<p>My Frequent Rewards Panel allow all user to change personal information with limited access only. Some of the basic personal information could not updated such as Gender, Age or Date of birth.</p><p>You can update any information from left section profile categories. Update the information and save.</p>"
+      "ans": "<p>You may update most of your profile information by logging into your account and navigating to your profile settings.</p><p>Please note:</p><ul><li>Some core details such as Date of Birth, Age, and Gender may not be editable for data integrity and compliance purposes.</li><li>Keeping your profile updated increases your chances of qualifying for more surveys.</li></ul>"
     },
     {
-      "que": "How can I cancel my account?",
-      "ans": "<p>My Frequent Rewards respect all user data privacy so user can request for Account Deletion.</p><p>For Cancel/Delete your account, User need to login and go to top right my profile section then choose Delete Account.</p><p>After request for deletion, My Frequent Rewards will require a user confirmation through registered email ID. User can restore the account within 30 days otherwise all account data will be removed from the My Frequent Rewards Database and user need to create a new account for account activation.</p>"
+      "que": "How can I cancel or delete my account?",
+      "ans": "<p>You may raise a request for account deletion at any time by sending an email to:</p><b><a href='mailto:support@myfrequentrewards.com'>support@myfrequentrewards.com</a></b><br/><br/><p>After submitting the request:</p><ul><li>You will receive a confirmation email within 24–48 hours.</li><li>You must confirm the deletion request.</li><li>You may restore your account within 30 days.</li><li>After 30 days, all data will be permanently deleted.</li></ul>"
     },
     {
-      "que": "How do I participate in Surveys?",
-      "ans": "<p>My Frequent Rewards always share the survey according to the user preference and input provided by the user. User will get the notification for new surveys by email, dashboard popup information and alert for new surveys.</p><p>All surveys will appear at the dashboard with basic information and proceed by click the “Start Now” button on respective surveys.</p>"
+      "que": "How do I participate in surveys?",
+      "ans": "<p>Surveys are matched based on your profile information.</p><p>You will be notified via:</p><ul><li>Email invitations</li><li>Dashboard notifications</li><li>Survey alerts</li></ul><p>To participate:</p><ul><li>Log in to your dashboard</li><li>Check the Available Surveys box</li><li>Click the <b>“Take Survey”</b> button on available surveys</li></ul>"
     },
     {
-      "que": "How many points will I earn for my participation?",
-      "ans": "<p>All reward points depends upon the survey information and these details will always appears to My Frequent Rewards dashboard. User can check some basic survey information along with reward point and proceed for the surveys.</p>"
+      "que": "How many points will I earn per survey?",
+      "ans": "<p>Points vary depending on:</p><ul><li>Survey length</li><li>Complexity</li><li>Sponsor requirements</li></ul><p>The reward amount is clearly displayed before you begin each survey.</p>"
     },
     {
-      "que": "How many surveys will I be invited to?",
-      "ans": "<p>My Frequent Rewards always share the survey according to the user preference and input provided by the user. User will get the notification for new surveys by email, dashboard popup information and alert for new surveys. You can login to your account and you will get the available survey information at the dashboard under “External Survey”.</p><p>My Frequent Rewards always encourage you to keep your profile up to date and increase the chance of getting more surveys.</p><p>The number of surveys you receive will vary depending on what personal settings you have and how many surveys are currently available. You can login to your account and under 'Profile' tab, you can select 'Ideal survey frequency' as per your choice. We encourage you to keep your profile up to date and increase the chance of getting more surveys.</p>"
+      "que": "How many surveys will I receive?",
+      "ans": "<p>The number of invitations depends on:</p><ul><li>Your demographic profile</li><li>Survey availability</li><li>Your survey frequency preferences</li><li>Your qualification rate</li></ul><p>You can update your survey frequency preference under the <b>Profile</b> section. Keeping your profile complete and updated increases your chances of receiving more invitations.</p>"
     },
     {
-      "que": "Technical difficulties with a survey, and why does this happen?",
-      "ans": "<p>One of the major reason behind technical issues is that survey respondents are using a variety of operating systems, browsers, Internet connection types, and hardware, and not all are necessarily compatible with the technology of all surveys that may be available.</p><p>If you encounter a technical difficulty during any survey. Usually, if you wait for a while, and try again later, the problem will be resolved and the survey resumed where the user left otherwise If you are still seeing an error after waiting a while, please report it to support team at <a href='mailto:support@myfrequentrewards.com'>support@myfrequentrewards.com</a> along with error information screenshot, if possible. We apologize for any inconvenience caused by technical errors. We will do our best to get them resolved.</p>"
+      "que": "Why am I facing technical difficulties during a survey?",
+      "ans": "<p>Technical issues may occur due to:</p><ul><li>Browser compatibility</li><li>Internet connection interruptions</li><li>Device limitations</li><li>Survey provider technical errors</li></ul><p>If you experience issues:</p><ul><li>Wait a few minutes and try again.</li><li>Clear your browser cache.</li><li>Try using a different browser or device.</li></ul><p>If the issue persists, email us at <b><a href='mailto:support@myfrequentrewards.com'>support@myfrequentrewards.com</a></b> </p><p>(please include a screenshot of the error if possible).</p>"
     },
     {
-      "que": "Why does My Frequent Rewards ask the same questions in almost every survey?",
-      "ans": "<p>My Frequent Rewards profiling process is continuous. The objective is to have broad and current attributes on each panel member. Our clients makes decisions based on responses from our user in their surveys. Implementing strict quality controls helps us make sure you are part of the target the client is looking for. The questions at the beginning of each survey may seem repetitive but are necessary to ensure the integrity of panellists.</p>"
+      "que": "Why do surveys sometimes close after I click the link?",
+      "ans": "<p>Surveys are sent to a large group of members and close once the required number of participants is reached.</p><p>If you see “Survey Closed,” it means:</p><ul><li>The quota has already been filled.</li><li>The survey reached its target participants.</li></ul><p>We recommend checking your dashboard regularly for new opportunities.</p>"
     },
     {
-      "que": "When I click on the survey link, it says 'Survey is closed'. What does that mean?",
-      "ans": "<p>From usual experience, My Frequent Rewards understand that not everyone has time or opportunity to participate in all the surveys we send out. For one of the instance, user might be on vacation and cannot participate in a specific survey on time.</p><p>My Frequent Rewards launch survey to large number of people and it gets closed when desired number of participants have been reached. Thereafter, no more user can participate in the survey. If you get this message, it means My Frequent Rewards already have number of participants the survey is looking for.</p><p>User need to keep update and login usually to check the survey offers.</p>"
+      "que": "Why are some questions repeated in multiple surveys?",
+      "ans": "<p>Some questions (like age, location, household details) are asked repeatedly to:</p><ul><li>Verify data accuracy</li><li>Ensure eligibility</li><li>Maintain quality control</li><li>Meet client targeting requirements</li></ul><p>This helps maintain the integrity and reliability of survey data.</p>"
     },
     {
       "que": "How will I receive my rewards?",
-      "ans": "<p>Once the user achieve the minimum threshold and can able to request to redeem earn points.</p><p>The rewards could be in any form i.e. PayPal, Gift Vouchers, Bank Transfer etc., All payment form could be different as per the country law.</p><p>User ensure all of your information is correct to avoid any delays.</p>"
+      "ans": "<p>Once you reach the minimum redemption threshold, you can request a payout.</p><p>Available reward options may include:</p><ul><li>PayPal</li><li>Gift Cards</li><li>Bank Transfer</li><li>UPI (subject to country regulations)</li></ul><p>Please ensure your payment details are accurate to avoid delays.</p>"
     },
     {
-      "que": "How long will it take to receive my reward once redeemed?",
-      "ans": "<p>Once the user request for point redemption, My Frequent Rewards Support team check the validity of the profile and survey completion then proceed to share the information to accounts department for credit procedure.</p><p>All payment procedure could take up to 2-3 weeks before the transfer is actually executed. This could be due to several other transfers being queued for execution.</p><p>User ensure all of your information is correct to avoid any delays.</p>"
+      "que": "How long does reward processing take?",
+      "ans": "<p>After you request redemption:</p><ul><li>Our team verifies your account and survey participation.</li><li>The request is processed by our accounts department.</li></ul><p>Processing time may take <b>2–3 weeks</b>, depending on queue volume and verification requirements.</p>"
     },
     {
-      "que": "What is done with the information I filled out when signing up?",
-      "ans": "<p>My Frequent Rewards respect the user data privacy policy. Your profile data is stored on our secured server that allows us to call upon those members who match specific criteria to participate in the surveys. This process is completely automated and members are contacted by My Frequent Rewards via email to participate in our surveys. All responses are held in aggregate, which means that individual responses are not linked to personally identifiable information. The information you provide will never be sold or used to advertise. You are not responsible for buying any product or service at any time, nor will any company solicit you as a result of joining My Frequent Rewards panel.</p>"
+      "que": "What happens to the information I provide during registration?",
+      "ans": "<p>Your privacy is important to us.</p><ul><li>Your data is stored securely.</li><li>Personal information is not sold to third parties.</li><li>Survey responses are aggregated and anonymized.</li><li>Your data is used only for research matching purposes.</li></ul><p>You will never be required to purchase products or services as a result of joining. For more information, please visit our <a href='//www.myfrequentrewards.com/privacy' target='_blank'>Privacy Policy</a> and <a href='//www.myfrequentrewards.com/gdpr' target='_blank'>GDPR</a> pages.</p>"
     },
     {
-      "que": "Why do you ask questions about age, income and other personal information?",
-      "ans": "<p>This information is used to match members with specific survey requirements. In some cases, our clients require feedback from people in a certain income bracket or those who have children.</p><p>Please be assured that this information is securely kept and strictly confidential. The more information you provide, the greater are your chances of receiving invitations to surveys you may qualify for, and the more opportunities you may receive to earn rewards. Go through our privacy policy for more details.</p>"
+      "que": "Why do you ask about age, income, and personal details?",
+      "ans": "<p>Some surveys require participants from specific demographic groups.</p><p>Providing accurate information helps:</p><ul><li>Match you with relevant surveys</li><li>Increase your qualification rate</li><li>Improve your earning opportunities</li></ul><p>All personal data is handled securely and confidentially.</p>"
+    },
+    {
+      "que": "Is My Frequent Rewards available worldwide?",
+      "ans": "<p>Membership availability may vary by country. Survey availability depends on market demand and client requirements in your region.</p>"
+    },
+    {
+      "que": "What happens if I provide inconsistent survey answers?",
+      "ans": "<p>Providing inconsistent or false responses may result in:</p><ul><li>Survey disqualification</li><li>Account review</li><li>Suspension or termination</li></ul><p>We encourage honest and thoughtful participation.</p>"
+    },
+    {
+      "que": "What is the minimum age to join?",
+      "ans": "<p>Members must be at least 18 years old (or the legal age in their country).</p><p>If under 18, parental consent may be required before activation.</p>"
+    },
+    {
+      "que": "How do I contact customer support?",
+      "ans": "<p>You can reach us at:</p><b><a href='mailto:support@myfrequentrewards.com'>support@myfrequentrewards.com</a></b><p>Please allow 24–72 business hours for response.</p>"
     }
   ]
 }

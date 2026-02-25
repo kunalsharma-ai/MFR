@@ -8,10 +8,13 @@ import { DateRangeSelector } from "@/components/Form";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { api, Page } from "@/util";
 import { useToast } from "@/hooks";
-import { SurveyPoints, CurrentUser } from "@/app/(memberpages)/member/components";
+import {
+  SurveyPoints,
+  CurrentUser,
+} from "@/app/(memberpages)/member/components";
 
 export default function page() {
-  const [user,router] = [useMember(),useRouter()];
+  const [user, router] = [useMember(), useRouter()];
   React.useEffect(() => {
     if (!user) return;
     if (
@@ -126,7 +129,7 @@ function Stats() {
             justifyContent="space-between"
             spacing={1}
             sx={{
-              border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
               borderRadius: 4,
               px: { xs: 3, xl: 5 },
@@ -221,7 +224,7 @@ function Surveys() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: "600",
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
             my: 2,
           }}
@@ -241,7 +244,7 @@ function Surveys() {
             spacing={1}
             py={3}
             sx={{
-           border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
               borderRadius: 4,
               overflow: "hidden",
@@ -259,26 +262,40 @@ function Surveys() {
             <Typography sx={{ fontSize: "16px" }}>
               {survey?.description}
             </Typography>
-            <Page.Link
-              tabIndex={-1}
-              href={!survey.isAvailable ? "#" : survey.link}
-              sx={{ cursor: !survey.isAvailable ? "not-allowed" : "pointer" }}
-            >
-              <Button
-                disabled={!survey.isAvailable}
-                variant="contained"
-                color="secondary"
-                sx={{
-                  my: 1,
-                  px: 2,
-                  fontWeight: "600",
-                  color: "white",
-                  borderRadius: 2,
-                }}
-              >
-                TAKE SURVEY
-              </Button>
-            </Page.Link>
+            {survey.isAvailable ? (
+              <Page.Link href={survey.link}>
+                <Page.MuiButton
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    my: 1,
+                    px: 2,
+                    fontWeight: "600",
+                    color: "white",
+                    borderRadius: 2,
+                  }}
+                >
+                  TAKE SURVEY
+                </Page.MuiButton>
+              </Page.Link>
+            ) : (
+              <Page.Box>
+                <Page.MuiButton
+                  disabled
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    my: 1,
+                    px: 2,
+                    fontWeight: "600",
+                    color: "white",
+                    borderRadius: 2,
+                  }}
+                >
+                  TAKE SURVEY
+                </Page.MuiButton>
+              </Page.Box>
+            )}
           </Grid>
         );
       })}
@@ -373,7 +390,9 @@ function SurveyHistory() {
             <DateRangeSelector
               onUpdate={(e) => {
                 setDateRange(
-                  e.map((d) => new Date(d.toDate()).toISOString().split("T")[0])
+                  e.map(
+                    (d) => new Date(d.toDate()).toISOString().split("T")[0],
+                  ),
                 );
               }}
             />
@@ -385,7 +404,8 @@ function SurveyHistory() {
               fontSize: "16px",
               display: "inline-block",
               fontWeight: "600",
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) =>
+                `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}

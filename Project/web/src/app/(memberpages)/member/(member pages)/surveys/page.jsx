@@ -8,7 +8,7 @@ import { useMember, useQuery } from "@/Context";
 import { api, Page } from "@/util";
 export default function () {
   const [user, query] = [useMember(), useQuery()];
-  
+
   return (
     <>
       <AvailableSurvey user={user} query={query} />
@@ -41,11 +41,11 @@ function MySurveys({ user, query }) {
       id: "source",
       label: "Survey Type",
       render: (info) =>
-        ({
-          internal: "Your Survey",
-          external: "External Survey",
-          sampledge: "Daily Survey",
-        }[info.source]),
+      ({
+        internal: "Your Survey",
+        external: "External Survey",
+        sampledge: "Daily Survey",
+      }[info.source]),
     },
     {
       id: "createdAt",
@@ -99,7 +99,7 @@ function MySurveys({ user, query }) {
               fontSize: "16px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}
@@ -137,11 +137,11 @@ function AvailableSurvey({ user, query }) {
       id: "source",
       label: "Survey Type",
       render: (info) =>
-        ({
-          internal: "Your Survey",
-          external: "External Survey",
-          sampledge: "Daily Survey",
-        }[info.source]),
+      ({
+        internal: "Your Survey",
+        external: "External Survey",
+        sampledge: "Daily Survey",
+      }[info.source]),
     },
     {
       id: "createdAt",
@@ -160,9 +160,9 @@ function AvailableSurvey({ user, query }) {
       label: "",
       render: (info) =>
         info.status === "active" &&
-        (info.participationStatus === "" ||
-          (info.source === "internal" &&
-            ["", "dropout"].includes(info.participationStatus))) ? (
+          (info.participationStatus === "" ||
+            (info.source === "internal" &&
+              ["", "dropout"].includes(info.participationStatus))) ? (
           <Page.Link
             sx={{ color: "secondary.main", fontWeight: 600 }}
             href={`/survey?name=${info.slug}`}
@@ -190,7 +190,7 @@ function AvailableSurvey({ user, query }) {
               fontSize: "16px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}

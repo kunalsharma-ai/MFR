@@ -110,6 +110,7 @@ function WhoWeAre() {
               xs: "600px",
               sm: "100%",
             },
+            minHeight: 700,
             height: {
               xs: "calc(100vh - 70px)",
               lg: "1024px",

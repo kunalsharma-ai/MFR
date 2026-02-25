@@ -5,6 +5,14 @@ async function sendMail(headers, to, subject, content, cc = null, bcc = null, at
         baseURL: `http://email:3000`,
         headers
     })
+    console.log({
+        to,
+        subject,
+        content,
+        cc,
+        bcc,
+        attachments
+    })
     return await emailAPI.post(`/email`, {
         to,
         subject,

@@ -391,12 +391,13 @@ export default function Header({
       elevation={0}
       sx={{
         width: "100%",
-        bgcolor: "white",
+        bgcolor: "rgba(255, 255, 255, 0.9)",
         color: "black",
         py: { xs: 0, lg: 0.5 },
         boxShadow: 3,
         display: "flex",
         justifyContent: "center",
+        minHeight: { xs: 70, lg: 78 },
       }}
     >
       <Container maxWidth="lg">
@@ -519,7 +520,7 @@ export default function Header({
                   }}
                   sx={{
                     position: "relative",
-                    width:"120px",
+                    width: "120px",
                     overflow: "hidden",
                     fontSize: "16px",
                     fontWeight: "500",
@@ -561,7 +562,7 @@ export default function Header({
                 <Button
                   onClick={(event) => setProfileAnchorEl(event.currentTarget)}
                   color="inherit"
-                  sx={{ textTransform: "none", px: 2 ,width:"120px"}}
+                  sx={{ textTransform: "none", px: 2, width: "120px" }}
                 >
                   <Avatar
                     sx={{

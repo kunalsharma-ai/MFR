@@ -69,6 +69,8 @@ router
                 }) : null)
                 .filter(link => Boolean(link));
             data = { ...Mutate(data), ...req.user, navbar }
+            data.firstname = data.name.first;
+            data.lastname = data.name.last;
             return { message, data };
         },
         userController
@@ -81,6 +83,8 @@ router
             let data = Mutate(await userController.read(req.user._id))
             data.whatsapp = data.phone;
             let temp = Mutate(await answerController.getAnswers({ user: req.user._id, question: { $in: [...req.body.questions] } }))
+            temp.firstname = data.name.first;
+            temp.lastname = data.name.last;
             return { message, data: { ...data, ...temp } };
         },
         userController
@@ -103,9 +107,9 @@ router
         },
         userController
     ))
-    .delete(async (req,res)=>{
-        res.cookie("authorization",null,{
-            maxAge:-1
+    .delete(async (req, res) => {
+        res.cookie("authorization", null, {
+            maxAge: -1
         })
         return res.json({})
     })
@@ -283,16 +287,20 @@ router
     .patch(expressRoute(
         async req => {
             const user = req.user;
-            const { questions, answers } = req.body;
+            // const { questions, answers } = req.body;
+            const questions=Object.keys(req.body);
+            const answers=req.body;
+            console.log(req.body)
             if (!user || !questions || !(questions instanceof Array) || questions.length < 1) throw new Error("Invalid request");
             const updatedAnswers = questions.map(fld => {
-                if (!(fld in answers)) return false;
+                if (!(fld in answers || answers[fld]===null)) return false;
                 return {
                     user: user._id,
                     question: fld,
                     answer: answers[fld]
                 }
             }).filter(q => Boolean(q))
+            // console.log(updatedAnswers)
             await answerController.save(updatedAnswers)
             return { message: "Profile updated successfully", data: [] }
         },
@@ -405,7 +413,7 @@ router
                 fld => {
                     let temp = fld.split("-")
                     const ans = req.body[fld];
-                    let gps = ans.consent === "Yes" ? {
+                    let gps = ans?.consent === "Yes" ? {
                         type: "Point",
                         coordinates: [ans.coordinates.lat, ans.coordinates.lng]
                     } : null;

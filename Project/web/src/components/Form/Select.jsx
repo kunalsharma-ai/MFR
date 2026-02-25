@@ -57,7 +57,7 @@ export default function Select({
   const errorMessage = errors?.message;
   const autocompleteRef = React.useRef(null);
   let pValue = parentDefault ?? "";
-
+  
   if (api) {
     if (parent instanceof Array) {
       let parentVal = [];
@@ -100,46 +100,48 @@ export default function Select({
   const formattedOptions = React.useMemo(() => {
     return (optionList || []).map((opt) => ({
       ...opt,
-      label: opt.label?.replace(/(^\p{L}|\s\p{L})/gu, (char) =>
-        char.toLocaleUpperCase("en")
-      ),
+      // label: opt.label?.replace(/(^\p{L}|\s\p{L})/gu, (char) =>
+      //   char.toLocaleUpperCase("en")
+      // ),
     }));
   }, [optionList]);
+  
   if (hide && !showSelect) return <></>;
   return (
     <>
-      {formattedOptions && (
+      { (formattedOptions && formattedOptions instanceof Array && formattedOptions.length > 0) && ( 
         <Controller
-          name={name}
-          control={control}
-          rules={validate}
-          render={({ field }) => {
+          name={ name }
+          control={ control }
+          rules={ validate }
+          
+          render={ ({ field }) => {
             return (
               <>
-                {labelText && (
-                  <Page.Text sx={{ fontWeight: 500, color: "#555" }}>
-                    {labelText}{" "}
-                    {required && (
-                      <span style={{ color: "red", fontWeight: 600 }}>*</span>
-                    )}
+                { labelText && (
+                  <Page.Text sx={ { fontWeight: 500, color: "#555" } }>
+                    { labelText }{ " " }
+                    { required && (
+                      <span style={ { color: "red", fontWeight: 600 } }>*</span>
+                    ) }
                   </Page.Text>
-                )}
+                ) }
                 <Page.Box position="relative">
                   <Page.Box display="flex" justifyContent="flex-end">
-                    {isOpen &&
+                    { isOpen &&
                       formattedOptions.length > 1 &&
                       multiple &&
                       showSelectAllBtn && (
                         <Page.MuiButton
                           variant="contained"
                           color="secondary"
-                          onMouseDown={(event) => {
+                          onMouseDown={ (event) => {
                             event.preventDefault();
                             field.onChange(
                               formattedOptions.map((val) => val.value)
                             );
-                          }}
-                          sx={{
+                          } }
+                          sx={ {
                             position: "absolute",
                             fontSize: "13px",
                             px: 1,
@@ -147,11 +149,11 @@ export default function Select({
                             top: "-27px",
                             zIndex: 99999,
                             textTransform: "none",
-                          }}
+                          } }
                         >
                           Select All
                         </Page.MuiButton>
-                      )}
+                      ) }
                     {/* {isOpen && addOptions && (
                     <IconButton
                       onMouseDown={(e) => {
@@ -172,10 +174,10 @@ export default function Select({
                   </Page.Box>
                   <Autocomplete
                     fullWidth
-                    disabled={isDisabled}
+                    disabled={ isDisabled || hide }
                     size="small"
-                    ref={autocompleteRef}
-                    slotProps={{
+                    ref={ autocompleteRef }
+                    slotProps={ {
                       popper: {
                         modifiers: [
                           {
@@ -203,36 +205,36 @@ export default function Select({
                           },
                         },
                       },
-                    }}
+                    } }
                     multiple={
                       !formattedOptions || formattedOptions.length === 0
                         ? undefined
                         : !!multiple
                     }
-                    disableCloseOnSelect={!!multiple}
-                    disableClearable={!multiple || hasError}
-                    options={formattedOptions ?? []}
-                    open={showSelectAllBtn || addOptions ? isOpen : undefined}
-                    getOptionLabel={(option) => option.label || ""}
+                    disableCloseOnSelect={ !!multiple }
+                    disableClearable={ !multiple || hasError }
+                    options={ formattedOptions ?? [] }
+                    open={ showSelectAllBtn || addOptions ? isOpen : undefined }
+                    getOptionLabel={ (option) => option.label || "" }
                     value={
                       multiple
                         ? Array.isArray(field.value)
                           ? field.value
-                              .map((val) =>
-                                formattedOptions.find(
-                                  (opt) => opt.value === val
-                                )
+                            .map((val) =>
+                              formattedOptions.find(
+                                (opt) => opt.value === val
                               )
-                              .filter(Boolean)
+                            )
+                            .filter(Boolean)
                           : []
                         : !Array.isArray(field.value)
-                        ? formattedOptions?.find(
+                          ? formattedOptions?.find(
                             (opt) => opt.value === field.value
                           ) || null
-                        : null
+                          : null
                     }
-                    noOptionsText={!noOptions ? "Not Applicable" : noOptions}
-                    onChange={(event, newValue) => {
+                    noOptionsText={ !noOptions ? "Not Applicable" : noOptions }
+                    onChange={ (event, newValue) => {
                       if (onChange) {
                         onChange(event, newValue);
                       }
@@ -242,8 +244,8 @@ export default function Select({
                       }
                       field.onChange(newValue === null ? "" : newValue.value);
                       setIsOpen(false);
-                    }}
-                    filterOptions={(options, { inputValue: searchTerm }) => {
+                    } }
+                    filterOptions={ (options, { inputValue: searchTerm }) => {
                       let val = options.find(
                         (opt) =>
                           opt.value.toLowerCase() === searchTerm.toLowerCase()
@@ -256,24 +258,24 @@ export default function Select({
                           .toLowerCase()
                           .includes(searchTerm.toLowerCase())
                       );
-                    }}
-                    onOpen={() => {
+                    } }
+                    onOpen={ () => {
                       setIsOpen(true);
-                    }}
-                    onClose={(e, reason) => {
+                    } }
+                    onClose={ (e, reason) => {
                       if (!["selectOption", "removeOption"].includes(reason)) {
                         setIsOpen(false);
                       }
-                    }}
-                    renderTags={(selected, getTagProps) => {
+                    } }
+                    renderTags={ (selected, getTagProps) => {
                       const threshold = 3;
                       if (selected.length > threshold) {
                         return [
                           <Chip
                             size="small"
                             key="summary"
-                            label={`${selected.length} items selected`}
-                            sx={{ fontWeight: "bold" }}
+                            label={ `${selected.length} items selected` }
+                            sx={ { fontWeight: "bold" } }
                           />,
                         ];
                       } else {
@@ -281,92 +283,92 @@ export default function Select({
                           const { key, ...tagProps } = getTagProps({ index });
                           return (
                             <Chip
-                              key={key}
+                              key={ key }
                               size="small"
                               avatar={
                                 option.img ? (
                                   <img
-                                    src={option.img}
-                                    alt={option.label}
-                                    style={{
+                                    src={ option.img }
+                                    alt={ option.label }
+                                    style={ {
                                       width: 20,
                                       height: 13,
                                       objectFit: "contain",
                                       filter:
                                         "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
-                                    }}
+                                    } }
                                   />
                                 ) : undefined
                               }
-                              label={showLabel ? option.label : option.value}
+                              label={ showLabel ? option.label : option.value }
                               deleteIcon={
                                 <IconButton size="small">
                                   <CancelIcon
-                                    sx={{
+                                    sx={ {
                                       fontSize: "18px",
                                       "&:hover": {
                                         color: "#f24f4f !important",
                                       },
-                                    }}
+                                    } }
                                   />
                                 </IconButton>
                               }
-                              sx={{
+                              sx={ {
                                 fontWeight: "bold",
                                 "& .MuiChip-deleteIcon": {
                                   marginRight: "5px",
                                   padding: 0,
                                 },
-                              }}
-                              {...tagProps}
+                              } }
+                              { ...tagProps }
                             />
                           );
                         });
                       }
-                    }}
-                    renderOption={(props, option) => (
-                      <li {...props} key={option.value}>
-                        {option.img ? (
+                    } }
+                    renderOption={ (props, option) => (
+                      <li { ...props } key={ option.value }>
+                        { option.img ? (
                           <div
-                            style={{ display: "flex", alignItems: "center" }}
+                            style={ { display: "flex", alignItems: "center" } }
                           >
                             <img
-                              src={option.img}
-                              alt={option.label}
-                              style={{
+                              src={ option.img }
+                              alt={ option.label }
+                              style={ {
                                 width: 25,
                                 height: 18,
                                 marginRight: 10,
                                 filter:
                                   "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))",
-                              }}
+                              } }
                             />
-                            <span>{option.label}</span>
+                            <span>{ option.label }</span>
                           </div>
                         ) : (
                           option.label
-                        )}
+                        ) }
                       </li>
-                    )}
-                    renderInput={(params) => {
+                    ) }
+                    renderInput={ (params) => {
                       return (
                         <InputTextField
-                          {...params}
+                          { ...params }
                           label={
                             isDisabled ? (
                               label
                             ) : validate?.required ? (
-                              <RequiredLabel label={label} />
+                              <RequiredLabel label={ label } />
                             ) : (
                               label
                             )
                           }
                           fullWidth
-                          error={hasError}
-                          helperText={null}
-                          name={name}
-                          sx={sx}
-                          InputProps={{
+                          error={ hasError }
+                          helperText={ null }
+                          name={ name }
+                          sx={ sx }
+                          InputProps={ {
                             ...params.InputProps,
                             sx: {
                               pr: "32px !important",
@@ -374,22 +376,22 @@ export default function Select({
                             },
                             endAdornment: (
                               <>
-                                {hasError && errorMessage ? (
+                                { hasError && errorMessage ? (
                                   <Tooltip
-                                    title={errorMessage}
+                                    title={ errorMessage }
                                     arrow
                                     placement="top-end"
-                                    slots={{
+                                    slots={ {
                                       transition: Zoom,
-                                    }}
-                                    slotProps={{
+                                    } }
+                                    slotProps={ {
                                       transition: { timeout: 200 },
-                                    }}
-                                    PopperProps={{
+                                    } }
+                                    PopperProps={ {
                                       disablePortal: true,
                                       sx: { zIndex: 7500 },
-                                    }}
-                                    componentsProps={{
+                                    } }
+                                    componentsProps={ {
                                       tooltip: {
                                         sx: {
                                           zIndex: 7600,
@@ -410,12 +412,12 @@ export default function Select({
                                             "drop-shadow(0 0 1.5px #d32f2f)",
                                         },
                                       },
-                                    }}
+                                    } }
                                   >
                                     <IconButton
                                       size="small"
                                       aria-label="error info"
-                                      sx={{ p: 0 }}
+                                      sx={ { p: 0 } }
                                     >
                                       <InfoOutlinedIcon
                                         color="error"
@@ -423,16 +425,16 @@ export default function Select({
                                       />
                                     </IconButton>
                                   </Tooltip>
-                                ) : null}
-                                {isOpen &&
+                                ) : null }
+                                { isOpen &&
                                   addOptions &&
                                   (!parent || pValue !== "") && (
                                     <Page.Box
                                       mr={
                                         isOpen &&
-                                        multiple &&
-                                        Array.isArray(field.value) &&
-                                        field.value.length > 0
+                                          multiple &&
+                                          Array.isArray(field.value) &&
+                                          field.value.length > 0
                                           ? 3
                                           : 0
                                       }
@@ -440,38 +442,38 @@ export default function Select({
                                       <Tooltip title="Add Option">
                                         <IconButton
                                           size="small"
-                                          onMouseDown={(e) => {
+                                          onMouseDown={ (e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             setIsPopperOpen(true);
                                             setIsOpen(false);
-                                          }}
-                                          sx={{ p: 0.5 }}
+                                          } }
+                                          sx={ { p: 0.5 } }
                                         >
                                           <PlusIcon color="secondary" />
                                         </IconButton>
                                       </Tooltip>
                                     </Page.Box>
-                                  )}
+                                  ) }
 
-                                {params.InputProps.endAdornment}
+                                { params.InputProps.endAdornment }
                               </>
                             ),
                             onKeyUp,
-                          }}
+                          } }
                         />
                       );
-                    }}
+                    } }
                   />
                 </Page.Box>
               </>
             );
-          }}
+          } }
         />
-      )}
-      {isPopperOpen && (
+      ) } 
+      { isPopperOpen && (
         <Page.Box
-          sx={{
+          sx={ {
             position: "fixed",
             top: 0,
             left: 0,
@@ -481,19 +483,19 @@ export default function Select({
             backdropFilter: "blur(1px)",
             WebkitBackdropFilter: "blur(1px)",
             zIndex: 1400,
-          }}
-          onMouseDown={() => setIsPopperOpen(false)}
+          } }
+          onMouseDown={ () => setIsPopperOpen(false) }
         />
-      )}
+      ) }
 
       <Popper
-        open={isPopperOpen}
-        anchorEl={autocompleteRef.current}
-        style={{ zIndex: 9999 }}
+        open={ isPopperOpen }
+        anchorEl={ autocompleteRef.current }
+        style={ { zIndex: 9999 } }
         placement="bottom"
       >
         <Paper
-          sx={{
+          sx={ {
             p: 2,
             minWidth: 280,
             borderRadius: 2,
@@ -501,41 +503,41 @@ export default function Select({
             bgcolor: "#ffffff90",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
-          }}
-          onMouseDown={(e) => {
+          } }
+          onMouseDown={ (e) => {
             e.stopPropagation();
-          }}
+          } }
         >
-          <Page.Text sx={{ fontWeight: "bold" }}>Add {label}</Page.Text>
-          <Page.Divider sx={{ my: 1 }} />
+          <Page.Text sx={ { fontWeight: "bold" } }>Add { label }</Page.Text>
+          <Page.Divider sx={ { my: 1 } } />
 
           <Page.InputTextField
-            onChange={(e) => {
+            onChange={ (e) => {
               setNewOption(e.target.value);
-            }}
+            } }
             label="option"
-            sx={{ width: "100%", my: 3 }}
+            sx={ { width: "100%", my: 3 } }
           />
           <Page.Box
-            sx={{
+            sx={ {
               display: "flex",
               justifyContent: "flex-end",
               gap: 1,
-            }}
+            } }
           >
             <Page.MuiButton
               variant="contained"
-              sx={{
+              sx={ {
                 borderRadius: 2,
                 height: "30px",
                 background: "linear-gradient(to top right, #ff512f, #dd2476)",
-              }}
-              onClick={() => setIsPopperOpen(false)}
+              } }
+              onClick={ () => setIsPopperOpen(false) }
             >
               Cancel
             </Page.MuiButton>
             <Page.MuiButton
-              sx={{
+              sx={ {
                 borderRadius: 2,
                 height: "30px",
                 background:
@@ -544,15 +546,15 @@ export default function Select({
                   background: "linear-gradient(to left,#b0d4f0,#d3e9f9)",
                   color: "whitesmoke",
                 },
-              }}
-              onClick={async (e) => {
+              } }
+              onClick={ async (e) => {
                 await addOptions(newOption);
                 if (parent && pValue)
                   setOptionList(await getOptions(api, pValue, populate));
                 else setOptionList(await getOptions(api, "", populate));
                 setIsPopperOpen(false);
                 setIsOpen(true);
-              }}
+              } }
               variant="contained"
             >
               Add

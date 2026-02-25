@@ -100,6 +100,14 @@ function page() {
                   borderRadius: 2,
                   textAlign: "justify",
                   fontSize: 15,
+                  "& ul, & ol": {
+                    paddingLeft: "24px",
+                    marginTop: 1,
+                    marginBottom: 1,
+                  },
+                  "& li": {
+                    marginBottom: "6px",
+                  },
                 }}
               >
                 <div dangerouslySetInnerHTML={{ __html: faq.ans }} />

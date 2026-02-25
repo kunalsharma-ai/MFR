@@ -14,11 +14,11 @@ export default mongooseModel(
         respondentID: {
             type: String
         },
-        qualityScore:{
-            type:Number,
-            default:100,
-            min:[0, "Minimum score should not go below zero"],
-            max:[200,"Quality score cannot exceed 200"]
+        qualityScore: {
+            type: Number,
+            default: 100,
+            min: [0, "Minimum score should not go below zero"],
+            max: [200, "Quality score cannot exceed 200"]
         },
         category: {
             type: String,
@@ -196,11 +196,11 @@ export default mongooseModel(
                 }
             }
         ],
-        referredBy:{
-            type:String,
-            required:false,
-            default:null,
-            select:false
+        referredBy: {
+            type: String,
+            required: false,
+            default: null,
+            select: false
         },
         consent: {
             canShareVideo: { type: Boolean, default: false },
@@ -212,27 +212,81 @@ export default mongooseModel(
             type: String,
             required: true,
         },
-        terms:[{type:String}],
-        socials:[
+        terms: [{ type: String }],
+        socials: [
             {
-                channel:{type:String,required:true},
-                account:{type:String}
+                channel: { type: String, required: true },
+                account: { type: String }
             }
         ],
-        role:{
-            type:String,
-            default:"respondent",
-            lowercase:true,
-            trim:true,
-            enum:["respondent","administrator","root"],
-            select:false
+        role: {
+            type: String,
+            default: "respondent",
+            lowercase: true,
+            trim: true,
+            enum: ["respondent", "administrator", "root"],
+            select: false
         },
-        paymentMethod:{
-            method:{
-                type:String,
-                default:""
+        paymentMethod: {
+            method: {
+                type: String,
+                default: ""
             },
-            details:{}
+            details: {}
+        },
+        parent: {
+            email: {
+                type: String,
+                lowercase: true,
+                trim: true,
+                match: [
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    "Please enter a valid email address",
+                ],
+                validate: {
+                    validator: async function (email) {
+                        // Extract domain
+                        const domain = email.split("@")[1];
+                        if (!domain) return false;
+                        try {
+                            const records = await resolveMx(domain);
+                            return records && records.length > 0; // has MX record
+                        } catch (err) {
+                            return false; // domain has no MX record or not resolvable
+                        }
+                    },
+                    message: "Please type correct email address.",
+                },
+            },
+            name: {
+                salutation: {
+                    type: String,
+                    trim: true,
+                    enum: ["Mr.", "Ms.", "Mrs.", "Dr.", "Prof.", "Mx."]
+                },
+                first: {
+                    type: String,
+                    trim: true
+                },
+                middle: {
+                    type: String,
+                    trim: true
+                },
+                last: {
+                    type: String,
+                    trim: true
+                }
+            },
+            relation: {
+                type: String,
+                trim: true,
+                lowercase: true,
+                enum: ["father", "mother"]
+            },
+            consent: {
+                type: Boolean,
+                default: null
+            }
         }
     },
     [
@@ -265,6 +319,13 @@ export default mongooseModel(
                 if (temp.day < 0) { temp.month = temp.month - 1; temp.day += 30; }
                 if (temp.month < 0) { temp.years = temp.years - 1; temp.month += 12; }
                 return temp;
+            },
+            isMinor: function () {
+                if (!this.dob) return null;
+                const today = new Date();
+                const dob = new Date(this.dob);
+                if (today.getFullYear() - dob.getFullYear() <= 18) return true;
+                return false;
             }
         },
         method: {
@@ -294,8 +355,8 @@ export default mongooseModel(
                 await this.save();
                 return this;
             },
-            changeRole:async function(newRole="respondent"){
-                this.role=newRole;
+            changeRole: async function (newRole = "respondent") {
+                this.role = newRole;
                 await this.save();
                 return this;
             }

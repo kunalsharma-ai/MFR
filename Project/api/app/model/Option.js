@@ -23,7 +23,7 @@ export default mongooseModel(
                 question: 1,
                 value: 1,
                 origin: 1,
-                label:1
+                label: 1
             },
             {
                 unique: 1

@@ -30,6 +30,7 @@ export default function page() {
     if (!query || !("ticket" in query)) return;
     api.get(`/api/v1/support/${query.ticket}`).then((resp) => {
       if ("data" in resp) setTicket(resp.data);
+      console.log(resp)
     });
   }, [query, reload]);
 
@@ -118,8 +119,7 @@ function TicketBody({ ticket }) {
     <Grid
       size={ 12 }
       sx={ {
-        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              
+        border: (theme) => `1px solid ${theme.palette.primary.main}`,
         borderRadius: 2,
         mb: 2,
         p: 2,
@@ -131,7 +131,7 @@ function TicketBody({ ticket }) {
           sx={ {
             display: "inline-block",
             fontWeight: "600",
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           } }
         >
@@ -149,6 +149,62 @@ function TicketBody({ ticket }) {
       </Grid>
       <div className="body">
         <div dangerouslySetInnerHTML={ { __html: ticket?.description } } />
+        { ticket?.attachments.length !== 0 && (
+          <>
+            <Page.Divider sx={ { my: 1, mx: -1 } } />
+            <Page.Text sx={ { fontWeight: "bold" } }>Attachments</Page.Text>
+            <Grid container size={ 12 } spacing={ 1 } mt={ 1 }>
+              { ticket.attachments?.map((file, i) => (
+                <Grid
+                  container
+                  key={ i }
+                  size={ { xs: 12, sm: 6, md: 4 } }
+                  sx={ {
+                    p: 1,
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: 1,
+                    bgcolor: "#fafafa",
+                  } }
+                >
+                  <Page.Text
+                    sx={ {
+                      fontSize: "14px",
+                      wordBreak: "break-all",
+                      fontWeight: 500,
+                    } }
+                  >
+                    { file.split("/").pop() }
+                  </Page.Text>
+                  <Grid container spacing={ 1 } alignItems="flex-end">
+                    <Page.MuiButton
+                      size="small"
+                      variant="outlined"
+                      onClick={ () => window.open(file, "_blank") }
+                    >
+                      View
+                    </Page.MuiButton>
+
+                    <Page.MuiButton
+                      size="small"
+                      variant="contained"
+                      color="secondary"
+                      component="a"
+                      href={ file }
+                      download
+                    >
+                      Download
+                    </Page.MuiButton>
+                  </Grid>
+                </Grid>
+              )) }
+            </Grid>
+          </>
+        ) }
+        {/* {ticket?.attachments.map(attachment=><img key={attachment} src={attachment} alt="attachment" />)} */ }
         {/* {ticket.issueRaisedBy.name} */ }
         {/* {ticket.issueRaisedBy.email} */ }
       </div>
@@ -172,8 +228,7 @@ function TicketHistory({ ticket }) {
       p={ 2 }
       mt={ 2 }
       sx={ {
-        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              
+        border: (theme) => `1px solid ${theme.palette.primary.main}`,
         borderRadius: 2,
         bgcolor: "white",
       } }
@@ -181,7 +236,7 @@ function TicketHistory({ ticket }) {
       <Page.Text
         sx={ {
           fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+          borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
           pb: 0.5,
           mb: 1,
         } }
@@ -205,10 +260,8 @@ function TicketHistory({ ticket }) {
               borderBottomLeftRadius: 8,
               borderBottomRightRadius: 8,
             },
-            
-              bgcolor: (theme) => theme.palette.cardbg.main,
-            border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              
+             border: (theme) => `1px solid ${theme.palette.primary.main}`,
+        bgcolor: (theme) => theme.palette.cardbg.main,
             minHeight: "50px",
           } }
         >
@@ -232,8 +285,8 @@ function TicketHistory({ ticket }) {
                   alignItems: "center",
                 } }
               >
-                <Page.Text sx={ { fontSize: "13px" } }>
-                  { data?.repliedBy?.name }
+                <Page.Text sx={ { fontSize: "13px", fontWeight: 600 } }>
+                  { data?.created?.By?.fullName }
                 </Page.Text>
                 <Page.Text sx={ { fontSize: "13px", pl: 2 } }>
                   { new Date(data?.createdAt).relativeTime() }
@@ -317,7 +370,19 @@ function TicketHistory({ ticket }) {
 
 function TicketReply({ ticket, reloadData }) {
   const [reload, setReload] = React.useState(1);
-
+  let ticketStatusOptions = ticket.status === "Closed" ? [
+    "Re Open"
+  ] : [
+    "In Progress",
+    "Close",
+    // "New",
+    // "Open",
+    // "Resolved",
+    // "Re Opened",
+    // "Pending",
+    // "Awaited",
+    // "Cancelled",
+  ]
   const form = useForm({
     defaultValues: {},
   });
@@ -333,7 +398,6 @@ function TicketReply({ ticket, reloadData }) {
     <Grid
       component="form"
       onSubmit={ handleSubmit(async (data) => {
-        console.log(data);
         let resp = await api.put(`/api/v1/support/${ticket._id}/reply`, data);
         useToast(resp);
         reloadData();
@@ -346,42 +410,40 @@ function TicketReply({ ticket, reloadData }) {
       py={ 2 }
       sx={ {
         bgcolor: "white",
-        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              
+        border: (theme) => `1px solid ${theme.palette.primary.main}`,
         borderRadius: 2,
       } }
     >
       <Page.Text
         sx={ {
           fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+          borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
           pb: 0.5,
           mb: 1,
         } }
       >
         Reply
       </Page.Text>
-      <Form.TextEditor control={ control } name="message" label="Message" />
+      <Form.TextEditor control={ control } name="message"  label={<>Message <span style={{ color: "red" }}>*</span></>} />
 
       <Grid size={ 12 } mb={ 1 }>
         <Form.Select
           control={ control }
           { ...form.register("status") }
           label="Ticket Status"
-          options={ [
-            "New",
-            "Open",
-            "In Progress",
-            "Resolved",
-            "Closed",
-            "Re Opened",
-            "Pending",
-            "Awaited",
-            "Cancelled",
-          ].map((option) => ({
+          options={ ticketStatusOptions.map((option) => ({
             label: option,
             value: option.sluggify(),
           })) }
+          errors={ form?.formState?.errors?.status }
+          validations={
+            {
+              validate: async val => {
+                if (ticketStatusOptions.map(v=>v.sluggify()).indexOf(val) > -1) return;
+                return "Please select ticket status"
+              }
+            }
+          }
         />
       </Grid>
       <Form.Upload
@@ -393,9 +455,10 @@ function TicketReply({ ticket, reloadData }) {
         multiple
         hideCaption
       />
-      <Grid size={ 12 } container justifyContent="flex-end" my={ 2 }>
+       <Grid size={ 12 } container justifyContent="flex-end" my={ 2 }>
         <Page.MuiButton
           type="submit"
+          disabled={form.watch("message")===""}
           variant="contained"
           color="secondary"
           sx={ { fontWeight: 600 } }

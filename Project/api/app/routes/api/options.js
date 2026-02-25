@@ -3,22 +3,38 @@ import { User as userController } from "../../controller/index.js";
 import { expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
 import fs from "fs";
 const router = express.Router();
-
-/*
 const world = JSON.parse(
     fs.readFileSync("/src/app/dataBank/theworld.json", "utf-8")
 )
 function getCN(country) {
     let cn
     if (country.length === 2)
-        cn = world[req.body.country];
+        cn = world[country];
     else {
         cn = Object.values(world).find(c => c.name === country);
     }
     return cn;
 }
-
 router
+    .post(
+        "/zipcode",
+        expressRoute(
+            async req => {
+                let country = req.body.country;
+                let cn = getCN(country);
+                return {
+                    message: "",
+                    data: [{
+                        pattern: (Buffer.from(cn.zipFormat, "utf-8")).toString("base64")
+                    }]
+                }
+            },
+            userController
+        )
+    )
+
+/*
+
     .get(
         "/country",
         expressRoute(
@@ -53,22 +69,7 @@ router
             userController
         )
     )
-    .post(
-        "/zipcode",
-        expressRoute(
-            async req => {
-                let country = req.body.country;
-                let cn = getCN(country);
-                return {
-                    message: "",
-                    data: [{
-                        pattern: (Buffer.from(cn.zipFormat, "utf-8")).toString("base64")
-                    }]
-                }
-            },
-            userController
-        )
-    )
+ 
     .post(
         "/city",
         expressRoute(

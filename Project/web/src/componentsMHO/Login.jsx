@@ -442,8 +442,8 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
             <Page.Box
               sx={{
                 textAlign: "center",
-                borderRadius: 5,
-                bgcolor: "rgba(163, 243, 206, 0.21)",
+                borderRadius: 3,
+                bgcolor: "#8cb2f333",
                 border: "1px solid #f4f4f4",
                 p: 4,
               }}

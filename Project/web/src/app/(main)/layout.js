@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense } from "react";
-import { Fab, Box,Zoom } from "@mui/material";
+import { Fab, Box, Zoom } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import Footer from "@/componentsMHO/Footer";
@@ -40,53 +40,55 @@ export default function MainLayout({ children }) {
   return (
     <div
       id="scroll-container"
-      style={ {
+      style={{
         height: "100vh",
         overflowY: "auto",
-      } }
+      }}
     >
-      { " " }
+      {" "}
       <ContextProviders>
-        <React.Suspense fallback={<Box sx={{width:"100%", height:{xs:"70px",lg:"78px"}}}/>}>
-        <Header open={ openLogin } setOpen={ setOpenLogin } />
-        </React.Suspense>
+        <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" } }}>
+          <React.Suspense fallback={null}>
+            <Header open={openLogin} setOpen={setOpenLogin} />
+          </React.Suspense>
+        </Box>
       </ContextProviders>
-      <main>{ children }</main>
-      <React.Suspense fallback={ <></> }>
+      <main>{children}</main>
+      <React.Suspense fallback={<></>}>
         <Footer />
       </React.Suspense>
       <ContextProviders>
         <SignUp
-          open={ openSignUp }
-          onClose={ () => {
+          open={openSignUp}
+          onClose={() => {
             setOpenSignUp(false);
-          } }
-          setOpenLogin={ setOpenLogin }
+          }}
+          setOpenLogin={setOpenLogin}
         />
         <Login
-          open={ openLogin }
-          setOpenSignUp={ setOpenSignUp }
-          onClose={ () => {
+          open={openLogin}
+          setOpenSignUp={setOpenSignUp}
+          onClose={() => {
             setOpenLogin(false);
-          } }
+          }}
         />
       </ContextProviders>
-      <Zoom in={ visible } unmountOnExit>
+      <Zoom in={visible} unmountOnExit>
         <Fab
           size="medium"
           color="primary"
-          onClick={ scrollToTop }
-          sx={ {
+          onClick={scrollToTop}
+          sx={{
             position: "fixed",
             bottom: 35,
             left: 35,
             boxShadow: 4,
             zIndex: 999,
             color: "white",
-          } }
+          }}
           aria-label="scroll to top button"
         >
-          <KeyboardArrowUpIcon sx={ { fontSize: "30px" } } />
+          <KeyboardArrowUpIcon sx={{ fontSize: "30px" }} />
         </Fab>
       </Zoom>
     </div>

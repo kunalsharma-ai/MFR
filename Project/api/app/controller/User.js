@@ -1,5 +1,5 @@
 import { CrudController, Mutate } from "../utils/index.js";
-import { User as userModel, Invites as invitesModel } from "../model/index.js";
+import { User as userModel, Invites as invitesModel, Answers, Survey, Response as responseModel } from "../model/index.js";
 import fs from "fs"
 class User extends CrudController {
     fixUserIssue() {
@@ -14,8 +14,8 @@ class User extends CrudController {
         let user
         if (!phone)
             user = await super.list({ mail });
-        if (!mail) user = await super.list({ phone });
-        
+        if (!mail) user = await super.list({ phone: phone.replace(/\D/g, "") });
+
         if (user.length !== 1) throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
         let temp = await userModel.findById(user[0]._id).select("+role");
 
@@ -23,6 +23,7 @@ class User extends CrudController {
         if (response) {
             return temp;
         }
+        console.log(temp)
         throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
     }
     async list(query = {}, populateFields = null, sort = {}, project = null) {
@@ -128,7 +129,17 @@ class User extends CrudController {
         return await super.update(this.request.user._id, { paymentMethod });
     }
     async refreshUser(data) {
-        console.log(data)
+        await Answers.deleteMany({
+            user: data.user
+        })
+        let user = await userModel.findById(data.user);
+        await responseModel.deleteMany({
+            "survey.slug": "welcome",
+            user: user._id
+        })
+        user.terms = [];
+        await user.save();
+        return true;
     }
 }
 
