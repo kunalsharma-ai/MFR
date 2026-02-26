@@ -387,7 +387,7 @@ export default function Header({
 
   return (
     <AppBar
-      position="sticky"
+      position="fixed"
       elevation={0}
       sx={{
         width: "100%",

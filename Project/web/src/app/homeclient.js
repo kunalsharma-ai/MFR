@@ -74,10 +74,12 @@ export default function Home() {
         overflowY: "auto",
       }}
     >
+       <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" }, position:"fixed" }} />
+       {/* <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" }, }} /> */}
       <ContextProviders>
         <React.Suspense
           fallback={
-            <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" } }} />
+           <></>
           }
         >
           <Header
@@ -88,6 +90,7 @@ export default function Home() {
           />
         </React.Suspense>
       </ContextProviders>
+
       <main>
         <div ref={homeRef} className="scroll-target">
           <HeroSection
