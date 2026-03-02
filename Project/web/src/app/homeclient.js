@@ -74,8 +74,7 @@ export default function Home() {
         overflowY: "auto",
       }}
     >
-       <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" }, position:"fixed" }} />
-       {/* <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" }, }} /> */}
+      <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" } }} />
       <ContextProviders>
         <React.Suspense
           fallback={

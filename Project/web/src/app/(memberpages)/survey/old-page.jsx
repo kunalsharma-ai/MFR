@@ -438,8 +438,7 @@ export default function page() {
                       maxWidth: "100%",
                       overflowY: "auto",
                       borderRadius: 2,
-                      bgcolor: "#8cb2f333",
-
+                      bgcolor: (theme) => theme.palette.cardbg.main,
                       border: "1px solid #f4f4f4",
                       py: 2,
                       px: { xs: 0, md: 2 },

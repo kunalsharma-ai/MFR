@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Controller } from "react-hook-form";
-import { InputTextField, RequiredLabel } from "../forms";
+import { InputTextField, RequiredLabel } from "@/components/forms";
 import {
   Box,
   IconButton,
@@ -44,6 +44,9 @@ export default function Select({
   showLabel = true,
   showSelectAllBtn = true,
   addOptions,
+  hasOthers = false,
+  hasSkip = false,
+  hasNone = false,
   ...attr
 }) {
   const [newOption, setNewOption] = React.useState("");
@@ -57,6 +60,24 @@ export default function Select({
   const errorMessage = errors?.message;
   const autocompleteRef = React.useRef(null);
   let pValue = parentDefault ?? "";
+  const isOthersOption = React.useCallback((option) => {
+    if (!option) return false;
+    const value = String(option.value ?? "").trim().toLowerCase();
+    const label = String(option.label ?? "").trim().toLowerCase();
+    return value === "others" || label === "others";
+  }, []);
+  const isSkipOption = React.useCallback((option) => {
+    if (!option) return false;
+    const value = String(option.value ?? "").trim().toLowerCase();
+    const label = String(option.label ?? "").trim().toLowerCase();
+    return value === "prefer_not_to_say" || label === "prefer not to say";
+  }, []);
+  const isNoneOption = React.useCallback((option) => {
+    if (!option) return false;
+    const value = String(option.value ?? "").trim().toLowerCase();
+    const label = String(option.label ?? "").trim().toLowerCase();
+    return value === "none_of_the_above" || label === "none of the above";
+  }, []);
   
   if (api) {
     if (parent instanceof Array) {
@@ -98,13 +119,20 @@ export default function Select({
   }, [options]);
 
   const formattedOptions = React.useMemo(() => {
-    return (optionList || []).map((opt) => ({
+    const list = (optionList || []).map((opt) => ({
       ...opt,
-      // label: opt.label?.replace(/(^\p{L}|\s\p{L})/gu, (char) =>
-      //   char.toLocaleUpperCase("en")
-      // ),
     }));
-  }, [optionList]);
+    if (hasOthers && !list.some((opt) => isOthersOption(opt))) {
+      list.push({ value: "others", label: "Others" });
+    }
+    if (hasSkip && !list.some((opt) => isSkipOption(opt))) {
+      list.push({ value: "prefer_not_to_say", label: "Prefer not to say" });
+    }
+    if (hasNone && !list.some((opt) => isNoneOption(opt))) {
+      list.push({ value: "none_of_the_above", label: "None of the above" });
+    }
+    return list;
+  }, [optionList, hasOthers, hasSkip, hasNone, isOthersOption, isSkipOption, isNoneOption]);
   
   if (hide && !showSelect) return <></>;
   return (
@@ -116,6 +144,27 @@ export default function Select({
           rules={ validate }
           
           render={ ({ field }) => {
+            const othersSelected =
+              multiple &&
+              hasOthers &&
+              Array.isArray(field.value) &&
+              field.value.some((val) =>
+                isOthersOption({ value: val, label: val })
+              );
+            const skipSelected =
+              multiple &&
+              hasSkip &&
+              Array.isArray(field.value) &&
+              field.value.some((val) =>
+                isSkipOption({ value: val, label: val })
+              );
+            const noneSelected =
+              multiple &&
+              hasNone &&
+              Array.isArray(field.value) &&
+              field.value.some((val) =>
+                isNoneOption({ value: val, label: val })
+              );
             return (
               <>
                 { labelText && (
@@ -138,7 +187,14 @@ export default function Select({
                           onMouseDown={ (event) => {
                             event.preventDefault();
                             field.onChange(
-                              formattedOptions.map((val) => val.value)
+                              formattedOptions
+                                .filter(
+                                  (val) =>
+                                    !isOthersOption(val) &&
+                                    !isSkipOption(val) &&
+                                    !isNoneOption(val)
+                                )
+                                .map((val) => val.value)
                             );
                           } }
                           sx={ {
@@ -154,7 +210,7 @@ export default function Select({
                           Select All
                         </Page.MuiButton>
                       ) }
-                    {/* {isOpen && addOptions && (
+                    {isOpen && addOptions && (
                     <IconButton
                       onMouseDown={(e) => {
                         e.preventDefault();
@@ -170,7 +226,7 @@ export default function Select({
                     >
                       <PlusIcon />
                     </IconButton>
-                  )} */}
+                  )}
                   </Page.Box>
                   <Autocomplete
                     fullWidth
@@ -214,6 +270,22 @@ export default function Select({
                     disableCloseOnSelect={ !!multiple }
                     disableClearable={ !multiple || hasError }
                     options={ formattedOptions ?? [] }
+                    getOptionDisabled={ (option) =>
+                      !!(
+                        (multiple &&
+                          hasOthers &&
+                          othersSelected &&
+                          !isOthersOption(option)) ||
+                        (multiple &&
+                          hasSkip &&
+                          skipSelected &&
+                          !isSkipOption(option)) ||
+                        (multiple &&
+                          hasNone &&
+                          noneSelected &&
+                          !isNoneOption(option))
+                      )
+                    }
                     open={ showSelectAllBtn || addOptions ? isOpen : undefined }
                     getOptionLabel={ (option) => option.label || "" }
                     value={
@@ -239,6 +311,37 @@ export default function Select({
                         onChange(event, newValue);
                       }
                       if (multiple) {
+                        if (hasNone && newValue.some((val) => isNoneOption(val))) {
+                          const noneOption = formattedOptions.find((opt) =>
+                            isNoneOption(opt)
+                          );
+                          field.onChange(
+                            noneOption
+                              ? [noneOption.value]
+                              : ["none_of_the_above"]
+                          );
+                          return;
+                        }
+                        if (hasSkip && newValue.some((val) => isSkipOption(val))) {
+                          const skipOption = formattedOptions.find((opt) =>
+                            isSkipOption(opt)
+                          );
+                          field.onChange(
+                            skipOption
+                              ? [skipOption.value]
+                              : ["prefer_not_to_say"]
+                          );
+                          return;
+                        }
+                        if (hasOthers && newValue.some((val) => isOthersOption(val))) {
+                          const othersOption = formattedOptions.find((opt) =>
+                            isOthersOption(opt)
+                          );
+                          field.onChange(
+                            othersOption ? [othersOption.value] : ["others"]
+                          );
+                          return;
+                        }
                         field.onChange(newValue.map((val) => val.value));
                         return;
                       }

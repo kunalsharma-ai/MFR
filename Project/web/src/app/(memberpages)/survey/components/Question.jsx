@@ -31,12 +31,13 @@ export default function Question({
     },
     enabled: Boolean(que)
   })
+  
   return (question.isLoading
     ? <></>
     : question.isError
       ? <></>
       : Boolean(question.data)
-        ? <Que question={ question.data } form={ form } disabled={ disabled } />
+        ? <><Que question={ question.data } form={ form } disabled={ disabled } /></>
         : <></>
   )
 }

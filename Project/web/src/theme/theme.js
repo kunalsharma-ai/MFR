@@ -16,7 +16,7 @@ const theme = createTheme({
       main: "#ffffff",
     },
     cardbg:{
-      main:   "#c6e3f4"  //   "#8cb2f333",
+      main: "#e8f0fd"// "#c6e3f4"  //   "#8cb2f333",
     }
   },
   typography: {

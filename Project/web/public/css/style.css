@@ -11666,3 +11666,10 @@
 input:disabled{
   background-color: #eee;
 }
+.page-content{
+  min-height:calc(100vh - 260px)
+}
+
+.padding-20{
+  padding:20px
+}

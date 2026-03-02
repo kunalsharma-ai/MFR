@@ -47,6 +47,18 @@ export default mongooseModel(
             type: Boolean,
             default: true
         },
+        hasOthers: {
+            type: Boolean,
+            default: false
+        },
+        hasNone: {
+            type: Boolean,
+            default: false
+        },
+        hasSkip: {
+            type: Boolean,
+            default: false
+        },
         size: {
             type: String,
             default: "6"

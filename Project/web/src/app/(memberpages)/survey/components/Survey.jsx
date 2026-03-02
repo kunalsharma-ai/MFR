@@ -38,7 +38,6 @@ export default function Survey({
     // defaultValues: {...user,age:""}
   })
   let questions = pages[currentPage]
-  // if (!questions || !(questions instanceof Array)) return;
   if (questions?.includes("phone")) questions.push("phone-whatsapp")
   if (questions?.includes("alternate-phone")) questions.push("alternate-phone-whatsapp")
   questions = questions?.unique();
@@ -54,10 +53,6 @@ export default function Survey({
         Object.entries(resp.data)
           .filter(ans => questions.includes(ans[0]))
           .map(([key, value]) => {
-            console.log({
-              key,
-              value
-            })
             form.setValue(key, value)
             if (key === "age") {
               form.setValue(key, "")
@@ -124,6 +119,7 @@ export default function Survey({
     console.log("sab theek hai, Next page load kar lete hain")
     setCurrentPage(currentPage + 1)
   }
+  
   return <>
     {
       (hideSteps || [undefined, null].includes(currentPage))
@@ -159,8 +155,7 @@ export default function Survey({
           maxWidth: "100%",
           overflowY: "auto",
           borderRadius: 2,
-          bgcolor: "#8cb2f333",
-
+          bgcolor: (theme) => theme.palette.cardbg.main,
           border: "1px solid #f4f4f4",
           py: 2,
           px: { xs: 0, md: 2 },
