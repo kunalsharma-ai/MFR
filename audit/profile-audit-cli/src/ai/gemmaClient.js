@@ -1,10 +1,11 @@
-const fetch = require("node-fetch");
-const { ollamaUrl, model } = require("../config");
+import fetch from "node-fetch";
+import { ollamaUrl, model } from "../config.js";
 
-async function analyzeWithGemma(payload) {
+export async function analyzeWithGemma(payload) {
+  console.log(payload)
   const prompt = `
 You are a survey architect.
-Group similar meaning questions.
+find typoes and return corrections as well.
 Return JSON only.
 
 ${JSON.stringify(payload)}
@@ -23,5 +24,3 @@ ${JSON.stringify(payload)}
   const data = await res.json();
   return data.response;
 }
-
-module.exports = { analyzeWithGemma };

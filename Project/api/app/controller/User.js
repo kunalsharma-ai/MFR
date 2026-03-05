@@ -27,7 +27,7 @@ class User extends CrudController {
         throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
     }
     async list(query = {}, populateFields = null, sort = {}, project = null) {
-        console.log(query)
+        console.log({query,project})
         return await super.list(query, populateFields, sort, project)
     }
     async create(data) {

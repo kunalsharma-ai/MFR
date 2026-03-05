@@ -2,7 +2,7 @@ function normalize(text = "") {
   return text.toLowerCase().replace(/[^\w\s]/g, "").trim();
 }
 
-function validateQuestions(questions) {
+export function validateQuestions(questions) {
   const seen = new Map();
   const issues = [];
 
@@ -28,5 +28,3 @@ function validateQuestions(questions) {
 
   return issues;
 }
-
-module.exports = { validateQuestions };

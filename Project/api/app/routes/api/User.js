@@ -25,7 +25,7 @@ router
         async req => {
             // Read all entries matching filter
             let message = "";
-            let data = await userController.list(req.body)
+            let data = await userController.list(req.body,null,{},"+role")
             return { message, data };
         },
         userController

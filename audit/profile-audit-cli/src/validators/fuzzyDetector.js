@@ -1,11 +1,11 @@
-const levenshtein = require("fast-levenshtein");
+import levenshtein from "fast-levenshtein";
 
 function similarity(a, b) {
   const distance = levenshtein.get(a, b);
   return 1 - distance / Math.max(a.length, b.length);
 }
 
-function detectNearDuplicates(questions) {
+export function detectNearDuplicates(questions) {
   const issues = [];
 
   for (let i = 0; i < questions.length; i++) {
@@ -27,5 +27,3 @@ function detectNearDuplicates(questions) {
 
   return issues;
 }
-
-module.exports = { detectNearDuplicates };

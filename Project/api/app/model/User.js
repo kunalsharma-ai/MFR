@@ -224,7 +224,7 @@ export default mongooseModel(
             default: "respondent",
             lowercase: true,
             trim: true,
-            enum: ["respondent", "administrator", "root"],
+            // enum: ["respondent", "administrator", "root"],
             select: false
         },
         paymentMethod: {

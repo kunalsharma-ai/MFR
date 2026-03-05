@@ -48,7 +48,11 @@ export default function () {
   }, [messages]);
   React.useEffect(() => {
     setIsLoading(true);
-    api.get(`/api/v1/user`).then((resp) => {
+    api.post(`/api/v1/user`,{
+      isActive:{
+        $in:[true,false]
+      }
+    }).then((resp) => {
       setUsers(resp.data);
       setIsLoading(false);
     });
@@ -98,6 +102,11 @@ export default function () {
       ),
     },
     {
+      id:"role",
+      label:"Role",
+      render:info=>info.role
+    },
+    {
       id: "name",
       label: "User",
       render: (info) => (
@@ -145,56 +154,7 @@ export default function () {
       render: (info) => `+${info.phone}`,
       feature: ["searchable"],
       width: 150,
-    },
-    // {
-    //   id: "status",
-    //   label: "Status",
-    //   render: (info) => (
-    //     <div className="flex-apart">
-    //       {info?.isVerified?.email === "verified" ? "✓" : "❌"}
-    //       <a
-    //         className="button"
-    //         onClick={async (e) => {
-    //           let resp = await api.delete(`/api/v1/user/terms`, {
-    //             _id: info._id,
-    //           });
-    //           useToast(resp);
-    //           setReload(!reload);
-    //         }}
-    //       >
-    //         {info?.terms?.length}
-    //       </a>
-
-    //       <a href={`/admin/panelists/open?user=${info._id}`}>Open</a>
-    //       <a
-    //         className="button"
-    //         onClick={async (e) => {
-    //           let resp = await api.post(`/api/v1/user/autologin`, {
-    //             _id: info._id,
-    //           });
-    //           if (!resp.token) return useToast(resp);
-    //           setReload(!reload);
-    //           localStorage.setItem("token", resp.token);
-    //         }}
-    //       >
-    //         Login
-    //       </a>
-    //       <a
-    //         className="button"
-    //         onClick={async (e) => {
-    //           let resp = await api.post(`/api/v1/user/refresh`, {
-    //             _id: info._id,
-    //           });
-    //           if (!resp.token) return useToast(resp);
-    //           setReload(!reload);
-    //           localStorage.setItem("token", resp.token);
-    //         }}
-    //       >
-    //         Clear History
-    //       </a>
-    //     </div>
-    //   ),
-    // },
+    }
   ];
 
   return (

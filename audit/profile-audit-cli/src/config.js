@@ -1,5 +1,3 @@
-module.exports = {
-  mongoUri: "mongodb://localhost:27017/your-db",
-  ollamaUrl: "http://localhost:11434/api/generate",
-  model: "gemma3"
-};
+export const mongoUri = "mongodb://db:27017/mfr";
+export const ollamaUrl = "http://ollama:11434/api/generate";
+export const model = "gemma3";

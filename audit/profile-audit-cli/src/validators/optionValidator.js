@@ -2,7 +2,7 @@ function normalize(text = "") {
   return text.toLowerCase().replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
 }
 
-async function validateOptions(Question, Option) {
+export async function validateOptions(Question, Option) {
   const issues = [];
 
   const questions = await Question.find().lean();
@@ -37,5 +37,3 @@ async function validateOptions(Question, Option) {
 
   return issues;
 }
-
-module.exports = { validateOptions };

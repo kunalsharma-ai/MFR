@@ -1,10 +1,13 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const OptionSchema = new mongoose.Schema({
-  question: String,
-  label: String,
-  value: String,
-  parentValue: [String]
-});
+const dynamicSchema = new mongoose.Schema(
+  {},
+  {
+    strict: false,        // allow any fields
+    collection: "Option" // exact collection name
+  }
+);
 
-module.exports = mongoose.model("Option", OptionSchema);
+const Option = mongoose.model("Option", dynamicSchema);
+
+export default Option;

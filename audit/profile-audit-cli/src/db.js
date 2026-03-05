@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
-const { mongoUri } = require("./config");
+import mongoose from "mongoose";
+import { mongoUri } from "./config.js";
 
-async function connectDB() {
+export async function connectDB() {
+  console.log("Connecting DB "+mongoUri)
   await mongoose.connect(mongoUri);
   console.log("Mongo connected");
 }
-
-module.exports = { connectDB };
