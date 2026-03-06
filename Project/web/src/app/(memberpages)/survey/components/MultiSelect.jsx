@@ -63,8 +63,8 @@ export default function MultiSelectElement({ question, form, options, disabled }
         },
       } }
       onChange={ onChange }
-      hasNone={ question.hasNone }
       hasOthers={ question.hasOthers }
+      hasNone={ question.hasNone }
       hasSkip={ question.hasSkip }
     />
   </Grid>

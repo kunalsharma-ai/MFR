@@ -347,7 +347,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
             { ...form.register("isEditable") }
             label="Editable"
           />
-          { form.watch("type") === "multiselect" ? <>
+          { ["multiselect","select"].includes(form.watch("type")) ? <>
             <Form.Checkbox
               control={ control }
               { ...form.register("hasOthers") }

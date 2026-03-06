@@ -1,7 +1,12 @@
 "use client";
 import React from "react";
 
-import { Datatable, Icon, SectionTitle } from "@/components";
+import {
+  Datatable,
+  FlagAndCountryCode,
+  Icon,
+  SectionTitle,
+} from "@/components";
 
 import { api, Page } from "@/util";
 import { useMember, useQuery } from "@/Context";
@@ -11,6 +16,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import {
   Grid,
   Chip,
+  Box,
   IconButton,
   Avatar,
   Collapse,
@@ -23,6 +29,31 @@ import { SideDrawer } from "@/components/Popup";
 import DataList from "@/componentsMHO/DataList";
 import { useToast } from "@/hooks";
 import useSharedSocket from "@/hooks/useSharedSocket";
+
+function getAge(dob) {
+  if (!dob) return "";
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  if (today.getDate() < birth.getDate()) {
+    months--;
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+  }
+
+  return `${years}y ${months}m`;
+}
 
 export default function () {
   const me = useMember();
@@ -48,14 +79,16 @@ export default function () {
   }, [messages]);
   React.useEffect(() => {
     setIsLoading(true);
-    api.post(`/api/v1/user`, {
-      isActive: {
-        $in: [true, false]
-      }
-    }).then((resp) => {
-      setUsers(resp.data);
-      setIsLoading(false);
-    });
+    api
+      .post(`/api/v1/user`, {
+        isActive: {
+          $in: [true, false],
+        },
+      })
+      .then((resp) => {
+        setUsers(resp.data);
+        setIsLoading(false);
+      });
   }, [reload]);
 
   const columns = [
@@ -68,79 +101,79 @@ export default function () {
         <Page.Box
           display="flex"
           alignItems="center"
-          gap={ 2 }
-          mx={ 1 }
+          gap={2}
+          mx={1}
           justifyContent="center"
         >
           <Icon
             iconClass="fa fa-user"
-            onClick={ () => {
+            onClick={() => {
               setOpen({ open: true, id: info._id });
-            } }
-            style={ { color: "#035f87", fontSize: 16 } }
-            sx={ { m: 0 } }
+            }}
+            style={{ color: "#035f87", fontSize: 16 }}
+            sx={{ m: 0 }}
             label="User Details"
           />
-          { info.isActive ? (
+          {info.isActive ? (
             <Icon
               iconClass="fa fa-ban"
-              onClick={ () => { } }
+              onClick={() => {}}
               label="Disable User"
-              style={ { color: "rgba(237, 89, 89, 1)", fontSize: 16 } }
-              sx={ { m: 0 } }
+              style={{ color: "rgba(237, 89, 89, 1)", fontSize: 16 }}
+              sx={{ m: 0 }}
             />
           ) : (
             <Icon
               iconClass="fa fa-circle-check"
-              onClick={ () => { } }
+              onClick={() => {}}
               label="Enable User"
-              style={ { color: "#59AC77", fontSize: 16 } }
-              sx={ { m: 0 } }
+              style={{ color: "#59AC77", fontSize: 16 }}
+              sx={{ m: 0 }}
             />
-          ) }
+          )}
         </Page.Box>
       ),
     },
     {
       id: "role",
       label: "Role",
-      render: info => info.role
+      render: (info) => info.role.Capitalize(),
     },
     {
       id: "name",
       label: "User",
       render: (info) => (
-        <Page.Box display="flex" alignItems="center" gap={ 1 }>
+        <Page.Box display="flex" alignItems="center" gap={1}>
           <Avatar
-            sx={ { height: 25, width: 25 } }
-            src={ info.profilePicture }
+            sx={{ height: 25, width: 25 }}
+            src={info.profilePicture}
             alt="user photo"
-          />{ " " }
+          />{" "}
           <Page.Text
-            sx={ {
+            sx={{
               fontSize: 13,
               fontWeight: 500,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
-            } }
+            }}
           >
-            { info.fullName }
+            {info.fullName}
           </Page.Text>
-          { activeUsers.includes(info.mail) ? (
-            <CircleIcon sx={ { fontSize: 10, color: "#4dbf0b" } } />
+          {activeUsers.includes(info.mail) ? (
+            <CircleIcon sx={{ fontSize: 10, color: "#4dbf0b" }} />
           ) : (
-            <CircleIcon sx={ { fontSize: 10, color: "red" } } />
-          ) }
+            <CircleIcon sx={{ fontSize: 10, color: "red" }} />
+          )}
         </Page.Box>
       ),
     },
-    {
-      id: "category",
-      label: "Category",
-      data: "category",
-      feature: ["filterable"],
-    },
+    // {
+    //   id: "category",
+    //   label: "Category",
+    //   data: "category",
+    //   feature: ["filterable"],
+    // },
     {
       id: "email",
       label: "Email",
@@ -154,28 +187,28 @@ export default function () {
       render: (info) => `+${info.phone}`,
       feature: ["searchable"],
       width: 150,
-    }
+    },
   ];
 
   return (
     <Page.Box
-      sx={ {
+      sx={{
         bgcolor: (theme) => theme.palette.page.main,
         p: { xs: 2, md: 3 },
-      } }
+      }}
     >
       <Datatable
-        columns={ columns }
-        data={ users }
-        isLoading={ isLoading }
-        pagination={ [10, 20, 50, 100] }
-        pageSize={ 20 }
+        columns={columns}
+        data={users}
+        isLoading={isLoading}
+        pagination={[10, 20, 50, 100]}
+        pageSize={20}
         hideColumnSelector
         hideDownload
         noDataMsg="No Record Found."
         title={
           <Page.Text
-            sx={ {
+            sx={{
               fontSize: "18px",
               display: "inline-block",
               fontWeight: "600",
@@ -183,28 +216,29 @@ export default function () {
                 `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
-            } }
+            }}
           >
             Users List
           </Page.Text>
         }
       />
       <SideDrawer
-        open={ open.open }
-        hideTitleBar={ true }
+        open={open.open}
+        width={"100vw"}
+        hideTitleBar={true}
         anchor="right"
-        onClose={ () => setOpen({ open: false, id: null }) }
+        onClose={() => setOpen({ open: false, id: null })}
       >
         <UserData
-          userId={ open.id }
-          onClose={ () => setOpen({ open: false, id: null }) }
+          userId={open.id}
+          onClose={() => setOpen({ open: false, id: null })}
         />
       </SideDrawer>
     </Page.Box>
   );
 }
 function useCustomState(defaultValue) {
-  const [state, setState] = React.useState(defaultValue)
+  const [state, setState] = React.useState(defaultValue);
   // const update = (val) => {
   //   setState({ ...defaultValue, ...val, update })
   // }
@@ -214,24 +248,22 @@ function useCustomState(defaultValue) {
   //     update
   //   })
   // }, [defaultValue])
-  return { ...state, update:(newData)=>{
-    setState({...state,...newData})
-  } 
- };
+  return {
+    ...state,
+    update: (newData) => {
+      setState({ ...state, ...newData });
+    },
+  };
 }
 function UserData({ userId, onClose }) {
   // const [user, setUser] = React.useState({});
-  const user = useCustomState({})
+  const user = useCustomState({});
   const [showProfiles, setShowProfiles] = React.useState(false);
   const [reload, setReload] = React.useState(false);
   const me = useMember();
   React.useEffect(() => {
     if (!userId) return;
-    console.log({userId})
-    api
-      .get(`/api/v1/user/${userId}`)
-      .then((resp) => user.update(resp.data));
-
+    api.get(`/api/v1/user/${userId}`).then((resp) => user.update(resp.data));
   }, [userId]);
 
   const userData = [
@@ -247,27 +279,27 @@ function UserData({ userId, onClose }) {
     {
       label: "Verification",
       value: (
-        <Page.Box component="span" display="flex" alignItems="center" gap={ 1 }>
+        <Page.Box component="span" display="flex" alignItems="center" gap={1}>
           <Chip
             size="small"
             label="Email"
-            color={ user?.isVerified?.email === "verified" ? "success" : "error" }
+            color={user?.isVerified?.email === "verified" ? "success" : "error"}
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
           <Chip
             label="Phone"
             size="small"
-            color={ user?.isVerified?.phone === "verified" ? "success" : "error" }
+            color={user?.isVerified?.phone === "verified" ? "success" : "error"}
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
           <Chip
             label="Video"
             size="small"
-            color={ user?.isVerified?.video === "verified" ? "success" : "error" }
+            color={user?.isVerified?.video === "verified" ? "success" : "error"}
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
           <Chip
             label="In-Person"
@@ -278,7 +310,7 @@ function UserData({ userId, onClose }) {
                 : "error"
             }
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
         </Page.Box>
       ),
@@ -288,20 +320,20 @@ function UserData({ userId, onClose }) {
     {
       label: "Consent",
       value: (
-        <Page.Box component="span" display="flex" alignItems="center" gap={ 1 }>
+        <Page.Box component="span" display="flex" alignItems="center" gap={1}>
           <Chip
             size="small"
             label="Video"
-            color={ user?.consent?.canShareVideo ? "success" : "error" }
+            color={user?.consent?.canShareVideo ? "success" : "error"}
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
           <Chip
             label="GPS"
             size="small"
-            color={ user?.consent?.canShareGPS ? "success" : "error" }
+            color={user?.consent?.canShareGPS ? "success" : "error"}
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
           <Chip
             label="Notification"
@@ -310,7 +342,7 @@ function UserData({ userId, onClose }) {
               user?.consent?.canAcceptPushNotification ? "success" : "error"
             }
             variant="contained"
-            sx={ { fontWeight: 600 } }
+            sx={{ fontWeight: 600 }}
           />
         </Page.Box>
       ),
@@ -322,44 +354,44 @@ function UserData({ userId, onClose }) {
   const socialIcons = {
     facebook: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-square-facebook"
-        style={ { color: "#3b5998", fontSize: 16 } }
+        style={{ color: "#3b5998", fontSize: 16 }}
       />
     ),
     whatsapp: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-whatsapp"
-        style={ { color: "#25D366", fontSize: 16 } }
+        style={{ color: "#25D366", fontSize: 16 }}
       />
     ),
     linkedin: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-square-linkedin"
-        style={ { color: "#0e76a8", fontSize: 16 } }
+        style={{ color: "#0e76a8", fontSize: 16 }}
       />
     ),
     instagram: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-instagram"
-        style={ { color: "#C13584", fontSize: 16 } }
+        style={{ color: "#C13584", fontSize: 16 }}
       />
     ),
     twitter: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-square-x-twitter"
-        style={ { color: "black", fontSize: 16 } }
+        style={{ color: "black", fontSize: 16 }}
       />
     ),
     youtube: (
       <Icon
-        disabled={ true }
+        disabled={true}
         iconClass="fa-brands fa-youtube"
-        style={ { color: "#FF0000", fontSize: 16 } }
+        style={{ color: "#FF0000", fontSize: 16 }}
       />
     ),
   };
@@ -367,44 +399,65 @@ function UserData({ userId, onClose }) {
   return (
     <Grid
       container
-      spacing={ 2 }
-      size={ 12 }
-      sx={ {
+      spacing={2}
+      size={12}
+      sx={{
         bgcolor: "white",
         overflow: "hidden",
         borderRadius: "10px",
         boxShadow: 1,
         pb: 2,
         alignSelf: "flex-start",
-      } }
+      }}
     >
       <SectionTitle
-        title={ user?.fullName }
-        sx={ { justifyContent: "space-between" } }
+        title={
+          <div className="profile-details">
+            <span style={{ color: "#063686", marginRight: "5px" }}>
+              {user?.fullName}{" "}
+            </span>
+            {showProfiles && (
+              <>
+                {`- ${[user?.gender, getAge(user?.dob)].filter(Boolean).join(" - ")}`}
+                {user?.country && (
+                  <>
+                    {" - "}
+                    <FlagAndCountryCode
+                      cn={user?.country}
+                      showLabel={false}
+                      title={user?.country}
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        }
+        sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={ onClose } color="secondary">
+        <IconButton onClick={onClose} color="secondary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
 
-      <Grid container size={ 12 } spacing={ 0 }>
-        <Grid size={ 12 } container justifyContent="flex-end" spacing={ 2 } mr={ 3 }>
+      <Grid container size={12} spacing={0}>
+        <Grid size={12} container justifyContent="flex-end" spacing={2} mr={3}>
           <Page.MuiButton
             variant="contained"
-            onClick={ () => {
+            onClick={() => {
               setShowProfiles(!showProfiles);
-            } }
+            }}
             color="secondary"
-            sx={ { fontWeight: 600, color: "white" } }
+            sx={{ fontWeight: 600, color: "white" }}
             startIcon={
-              <i className="fa-solid fa-users" style={ { fontSize: "14px" } } />
+              <i className="fa-solid fa-users" style={{ fontSize: "14px" }} />
             }
           >
-            { showProfiles ? "Hide Profiles" : "Profiles" }
+            {showProfiles ? "Hide Profiles" : "Profiles"}
           </Page.MuiButton>
           <Page.MuiButton
             variant="contained"
-            onClick={ async (e) => {
+            onClick={async (e) => {
               let resp = await api.post(`/api/v1/user/autologin`, {
                 _id: userId,
               });
@@ -412,11 +465,11 @@ function UserData({ userId, onClose }) {
               useToast(resp);
               me.Reload();
               onClose();
-            } }
+            }}
             color="info"
-            sx={ { fontWeight: 600, color: "white" } }
+            sx={{ fontWeight: 600, color: "white" }}
             startIcon={
-              <i className="fa-solid fa-user" style={ { fontSize: "14px" } } />
+              <i className="fa-solid fa-user" style={{ fontSize: "14px" }} />
             }
           >
             Login As User
@@ -424,18 +477,18 @@ function UserData({ userId, onClose }) {
           <Page.MuiButton
             variant="contained"
             color="error"
-            sx={ { fontWeight: 600 } }
-            onClick={ async (e) => {
+            sx={{ fontWeight: 600 }}
+            onClick={async (e) => {
               let resp = await api.delete(`/api/v1/user/terms`, {
                 _id: user._id,
               });
               useToast(resp);
               setReload(!reload);
-            } }
+            }}
             startIcon={
               <i
                 className="fa-solid fa-trash-can"
-                style={ { fontSize: "14px" } }
+                style={{ fontSize: "14px" }}
               />
             }
           >
@@ -444,18 +497,18 @@ function UserData({ userId, onClose }) {
           <Page.MuiButton
             variant="contained"
             color="error"
-            sx={ { fontWeight: 600 } }
-            onClick={ async (e) => {
+            sx={{ fontWeight: 600 }}
+            onClick={async (e) => {
               let resp = await api.post(`/api/v1/user/refresh`, {
                 user: user._id,
               });
               useToast(resp);
               setReload(!reload);
-            } }
+            }}
             startIcon={
               <i
                 className="fa-solid fa-trash-can"
-                style={ { fontSize: "14px" } }
+                style={{ fontSize: "14px" }}
               />
             }
           >
@@ -463,64 +516,73 @@ function UserData({ userId, onClose }) {
           </Page.MuiButton>
           <Page.MuiButton
             variant="outlined"
-            color={ user?.isActive ? "error" : "success" }
-            sx={ { borderWidth: 2, fontWeight: 600 } }
-            onClick={ async (e) => {
+            color={user?.isActive ? "error" : "success"}
+            sx={{ borderWidth: 2, fontWeight: 600 }}
+            onClick={async (e) => {
               let resp = await api.put(`/api/v1/user/${user._id}`, {
-                isActive: !Boolean(user?.isActive)
+                isActive: !Boolean(user?.isActive),
               });
               useToast(resp);
               setReload(!reload);
-            } }
+            }}
             startIcon={
               user?.isActive ? (
-                <i className="fa-solid fa-ban" style={ { fontSize: "14px" } } />
+                <i className="fa-solid fa-ban" style={{ fontSize: "14px" }} />
               ) : (
                 <i
                   className="fa-solid fa-circle-check"
-                  style={ { fontSize: "14px" } }
+                  style={{ fontSize: "14px" }}
                 />
               )
             }
           >
-            { user?.isActive ? "Disable" : "Enable" }
+            {user?.isActive ? "Disable" : "Enable"}
           </Page.MuiButton>
           <Page.MuiButton
             variant="outlined"
-            color={ ["admin", "superadmin", "root"].includes(user?.role) ? "error" : "success" }
-            sx={ { borderWidth: 2, fontWeight: 600 } }
-            onClick={ async (e) => {
+            title="Change Role Type"
+            color={
+              ["admin", "superadmin", "root"].includes(user?.role)
+                ? "error"
+                : "success"
+            }
+            sx={{ borderWidth: 2, fontWeight: 600 }}
+            onClick={async (e) => {
               let resp = await api.put(`/api/v1/user/${user._id}`, {
-                role: ["admin", "superadmin", "root"].includes(user?.role) ? "respondent" : "admin"
+                role: ["admin", "superadmin", "root"].includes(user?.role)
+                  ? "respondent"
+                  : "admin",
               });
               useToast(resp);
               setReload(!reload);
-            } }
+            }}
           >
-            { ["admin", "superadmin", "root"].includes(user?.role) ? "Admin" : "Respondent" }
+            {["admin", "superadmin", "root"].includes(user?.role)
+              ? "Admin"
+              : "Respondent"}
           </Page.MuiButton>
         </Grid>
         <Collapse
-          in={ showProfiles }
+          in={showProfiles}
           timeout="auto"
           unmountOnExit
-          sx={ { width: "100%" } }
+          sx={{ width: "100%" }}
         >
-          <ProfilesData user={ user } />
+          <ProfilesData user={user} />
         </Collapse>
 
         <Collapse
-          in={ !showProfiles }
+          in={!showProfiles}
           unmountOnExit
           timeout="auto"
-          sx={ { width: "100%" } }
+          sx={{ width: "100%" }}
         >
-          <Grid size={ 12 }>
-            <DataList dataList={ userData } />
+          <Grid size={12}>
+            <DataList dataList={userData} />
           </Grid>
-          <Grid size={ 12 } px={ 2 } ml={ 3 }>
+          <Grid size={12} px={2} ml={3}>
             <Page.Text
-              sx={ {
+              sx={{
                 display: "inline-block",
                 fontWeight: "600",
                 borderBottom: (theme) =>
@@ -528,31 +590,31 @@ function UserData({ userId, onClose }) {
 
                 pb: 0.5,
                 my: 1,
-              } }
+              }}
             >
               Accepted Terms
             </Page.Text>
-            <Grid size={ 12 } container>
-              { (!Array.isArray(user?.terms) || user?.terms.length === 0) && (
-                <Page.Text fontSize={ 13 }>No Terms Accepted</Page.Text>
-              ) }
-              { user?.terms?.map((term, index) => {
+            <Grid size={12} container>
+              {(!Array.isArray(user?.terms) || user?.terms.length === 0) && (
+                <Page.Text fontSize={13}>No Terms Accepted</Page.Text>
+              )}
+              {user?.terms?.map((term, index) => {
                 return (
-                  <Page.Box width="50%" key={ index } my={ 0.5 } fontWeight={ 500 }>
+                  <Page.Box width="50%" key={index} my={0.5} fontWeight={500}>
                     <Icon
-                      disabled={ true }
+                      disabled={true}
                       iconClass="fa-regular fa-check-circle"
-                      style={ { color: "#124d86", fontSize: 16 } }
-                    />{ " " }
-                    { term }
+                      style={{ color: "#124d86", fontSize: 16 }}
+                    />{" "}
+                    {term}
                   </Page.Box>
                 );
-              }) }
+              })}
             </Grid>
           </Grid>
-          <Grid size={ 12 } px={ 2 } ml={ 3 } mt={ 2 }>
+          <Grid size={12} px={2} ml={3} mt={2}>
             <Page.Text
-              sx={ {
+              sx={{
                 display: "inline-block",
                 fontWeight: "600",
                 borderBottom: (theme) =>
@@ -560,25 +622,25 @@ function UserData({ userId, onClose }) {
 
                 pb: 0.5,
                 my: 1,
-              } }
+              }}
             >
               Contacts
             </Page.Text>
-            <Grid size={ 12 } container>
-              { (!Array.isArray(user?.socials) ||
+            <Grid size={12} container>
+              {(!Array.isArray(user?.socials) ||
                 user?.socials.length === 0) && (
-                  <Page.Text fontSize={ 13 }>No Socials Added</Page.Text>
-                ) }
-              { user?.socials?.map((social, index) => {
+                <Page.Text fontSize={13}>No Socials Added</Page.Text>
+              )}
+              {user?.socials?.map((social, index) => {
                 return (
                   social?.account && (
-                    <Page.Box width="50%" key={ index } my={ 0.5 } fontWeight={ 500 }>
-                      { socialIcons[social?.channel] }
-                      { social?.account }
+                    <Page.Box width="50%" key={index} my={0.5} fontWeight={500}>
+                      {socialIcons[social?.channel]}
+                      {social?.account}
                     </Page.Box>
                   )
                 );
-              }) }
+              })}
             </Grid>
           </Grid>
         </Collapse>
@@ -593,8 +655,6 @@ function ProfilesData({ user }) {
   const [questionBank, setQuestionBank] = React.useState();
   const [dataList, setDataList] = React.useState([]);
   const [openData, setOpenData] = React.useState(true);
-
-  console.log(user);
 
   React.useEffect(() => {
     if (!user) return;
@@ -649,11 +709,13 @@ function ProfilesData({ user }) {
 
       setQuestionBank(profileQuestions);
     });
-    console.log({user})
-    api.post(`/api/v1/user/${user.id}/profile-data`, { questions: questions }).then((resp) => {
-      if ("update" in user) user.update(resp.data);
-      else console.log("unable to update user");
-    });
+
+    api
+      .post(`/api/v1/user/${user.id}/profile-data`, { questions: questions })
+      .then((resp) => {
+        if ("update" in user) user.update(resp.data);
+        else console.log("unable to update user");
+      });
   }, [selectedProfile]);
 
   const tabs = React.useMemo(() => {
@@ -684,24 +746,36 @@ function ProfilesData({ user }) {
   }, [profiles]);
 
   if (!tabs) return;
+
+  const values = Object.values(dataList || []);
+
+  const noAnswers = values.every(
+    (d) =>
+      !d?.answer ||
+      (Array.isArray(d.answer) && d.answer.length === 0) ||
+      d.answer === "",
+  );
   return (
-    <Grid size={ 12 } px={ 2 } mt={ 3 }>
-      <Grid size={ 12 } sx={ { border: "1px solid #cecece", overflowX: "auto" } }>
-        <Grid size={ 12 } sx={ { overflowX: "auto" } }>
+    <Grid size={12} px={2} mt={3}>
+      <Grid
+        size={12}
+        container
+        sx={{ border: "1px solid #cecece", overflowX: "auto" }}
+      >
+        <Box sx={{ overflowX: "auto", width: { xs: "100%", md: 280 } }}>
           <ToggleButtonGroup
             variant="contained"
-            value={ selectedProfile?.slug || "" }
+            value={selectedProfile?.slug || ""}
             exclusive
             color="secondary"
             fullWidth
-            onChange={ (e, value) => {
+            onChange={(e, value) => {
               if (!value) return;
               setSelectedProfile(profiles.find((p) => p.slug === value));
-            } }
-            sx={ {
+            }}
+            sx={{
               display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              // flexWrap: "nowrap",
+              flexDirection: "column",
 
               "& .MuiToggleButton-root": {
                 textTransform: "capitalize",
@@ -709,6 +783,7 @@ function ProfilesData({ user }) {
                 fontSize: 13,
                 px: 2,
                 py: 0.5,
+                borderRadius: 0,
                 color: "secondary.main",
                 borderColor: "secondary.main",
               },
@@ -720,46 +795,65 @@ function ProfilesData({ user }) {
                   backgroundColor: "primary.dark",
                 },
               },
-            } }
+            }}
           >
-            { tabs.map((tab, i) => (
+            {tabs.map((tab, i) => (
               <ToggleButton
                 variant="contained"
-                key={ tab.link }
-                value={ tab.link }
+                key={tab.link}
+                value={tab.link}
                 size="small"
                 color="secondary"
               >
-                { tab.label }
+                {tab.label}
               </ToggleButton>
-            )) }
+            ))}
           </ToggleButtonGroup>
-        </Grid>
+        </Box>
         <Collapse
-          in={ openData }
+          in={openData}
           timeout="auto"
-          sx={ { width: "100%", p: 3 } }
+          sx={{ flex: 1, p: 3 }}
           unmountOnExit
         >
-          { Object.values(dataList).map((d, i) => {
-            if (Array.isArray(d.answer) && d.answer.length === 0) return null;
-
-            return (
+          <Grid size={12} container spacing={1}>
+            {noAnswers ? (
               <Grid
-                key={ i }
-                size={ 12 }
+                size={12}
                 container
-                direction="column"
-                spacing={ 0 }
-                mb={ 1.5 }
+                justifyContent="center"
+                alignItems="center"
+                height={400}
               >
-                <Page.Text fontWeight={ 600 } fontSize={ 16 }>
-                  { d.label }
-                </Page.Text>
-                <Page.Text>{ d.answer }</Page.Text>
+                No Profile Data
               </Grid>
-            );
-          }) }
+            ) : (
+              values.map((d, i) => (
+                <Grid
+                  key={i}
+                  size={{ xs: 12, md: 6 }}
+                  container
+                  direction="column"
+                  spacing={0}
+                  mb={1}
+                  sx={{
+                    borderBottom: "1px solid #D9D9D9",
+                  }}
+                >
+                  <Page.Text
+                    fontWeight={600}
+                    fontSize={16}
+                    color="secondary.main"
+                  >
+                    {d.label}
+                  </Page.Text>
+                  <Page.Text>
+                    {Array.isArray(d.answer) ? d.answer.join(", ") : d.answer}
+                  </Page.Text>
+                </Grid>
+              ))
+            )}
+          </Grid>
         </Collapse>
       </Grid>
     </Grid>

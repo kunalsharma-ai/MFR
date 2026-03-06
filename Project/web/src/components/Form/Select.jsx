@@ -145,7 +145,7 @@ export default function Select({
           
           render={ ({ field }) => {
             const othersSelected =
-              multiple &&
+              // multiple &&
               hasOthers &&
               Array.isArray(field.value) &&
               field.value.some((val) =>

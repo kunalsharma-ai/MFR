@@ -11673,3 +11673,12 @@ input:disabled{
 .padding-20{
   padding:20px
 }
+.profile-details{
+  display: flex;
+  align-items: center;
+}
+
+.profile-details .flagged-code{
+  margin-left:7px;
+  display: flex;
+}
