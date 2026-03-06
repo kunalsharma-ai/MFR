@@ -6,8 +6,12 @@ Date.prototype.isMinor = function (cn = "IN") {
 }
 
 import express from "express";
-import { User as userController, OTP as otpController } from "../../controller/index.js";
-import { expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
+import {
+    User as userController,
+    OTP as otpController,
+    Answer as answerController,
+} from "../../controller/index.js";
+import { Mutate,expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
 
 const router = express.Router();
 router
@@ -25,7 +29,7 @@ router
         async req => {
             // Read all entries matching filter
             let message = "";
-            let data = await userController.list(req.body,null,{},"+role")
+            let data = await userController.list(req.body, null, {}, "+role")
             return { message, data };
         },
         userController
@@ -53,22 +57,22 @@ router
                     7 * 24 * 60 * 60 * 1000
                 )
                 let mailer = await getMailer(
-                "register",
-                "parent-consent",
-                {
-                    user: data,
-                    otp
-                }
-            )
-            console.log({
-                emailStatus: await sendMail(
-                    { origin: req.origin, "content-type": "application/json" },
-                    data.mail,
-                    `My Frequent Rewards: Registration Consent for ${data.name.first}`,
-                    mailer.data
+                    "register",
+                    "parent-consent",
+                    {
+                        user: data,
+                        otp
+                    }
                 )
-            })
-            return { message:"Please ask your parent to check their inbox and share consent for you to join this panel.", data:null };    
+                console.log({
+                    emailStatus: await sendMail(
+                        { origin: req.origin, "content-type": "application/json" },
+                        data.mail,
+                        `My Frequent Rewards: Registration Consent for ${data.name.first}`,
+                        mailer.data
+                    )
+                })
+                return { message: "Please ask your parent to check their inbox and share consent for you to join this panel.", data: null };
             }
             let otp = await otpController.generate(
                 data._id,
@@ -211,12 +215,21 @@ router
         },
         userController
     ))
-
+    .post(`/:user/profile-data`, expressRoute(
+        async req => {
+            let data = await userController.read(req.params.user)
+            answerController.request = req;
+            let temp = Mutate(await answerController.getAnswers({ user: req.params.user, question: { $in: [...req.body.questions] } }))
+            return {
+                message: "under development", data:temp
+            }
+        },
+        userController
+    ))
 router
     .route('/:id')
     .get(expressRoute(
         async req => {
-            // read single entry
             let message = "";
             let data = await userController.read(req.params.id);
             return { message, data };

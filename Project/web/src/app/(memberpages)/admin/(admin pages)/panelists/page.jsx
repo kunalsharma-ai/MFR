@@ -48,9 +48,9 @@ export default function () {
   }, [messages]);
   React.useEffect(() => {
     setIsLoading(true);
-    api.post(`/api/v1/user`,{
-      isActive:{
-        $in:[true,false]
+    api.post(`/api/v1/user`, {
+      isActive: {
+        $in: [true, false]
       }
     }).then((resp) => {
       setUsers(resp.data);
@@ -102,9 +102,9 @@ export default function () {
       ),
     },
     {
-      id:"role",
-      label:"Role",
-      render:info=>info.role
+      id: "role",
+      label: "Role",
+      render: info => info.role
     },
     {
       id: "name",
@@ -203,15 +203,35 @@ export default function () {
     </Page.Box>
   );
 }
-
+function useCustomState(defaultValue) {
+  const [state, setState] = React.useState(defaultValue)
+  // const update = (val) => {
+  //   setState({ ...defaultValue, ...val, update })
+  // }
+  // React.useEffect(() => {
+  //   setState({
+  //     ...defaultValue,
+  //     update
+  //   })
+  // }, [defaultValue])
+  return { ...state, update:(newData)=>{
+    setState({...state,...newData})
+  } 
+ };
+}
 function UserData({ userId, onClose }) {
-  const [user, setUser] = React.useState({});
+  // const [user, setUser] = React.useState({});
+  const user = useCustomState({})
   const [showProfiles, setShowProfiles] = React.useState(false);
-  const [reload,setReload]=React.useState(false);
+  const [reload, setReload] = React.useState(false);
   const me = useMember();
   React.useEffect(() => {
     if (!userId) return;
-    api.get(`/api/v1/user/${userId}`).then((resp) => setUser(resp.data));
+    console.log({userId})
+    api
+      .get(`/api/v1/user/${userId}`)
+      .then((resp) => user.update(resp.data));
+
   }, [userId]);
 
   const userData = [
@@ -477,7 +497,7 @@ function UserData({ userId, onClose }) {
               setReload(!reload);
             } }
           >
-            {["admin", "superadmin", "root"].includes(user?.role) ? "Admin" : "Respondent"}
+            { ["admin", "superadmin", "root"].includes(user?.role) ? "Admin" : "Respondent" }
           </Page.MuiButton>
         </Grid>
         <Collapse
@@ -629,7 +649,8 @@ function ProfilesData({ user }) {
 
       setQuestionBank(profileQuestions);
     });
-    api.post("/api/v1/me", { questions: questions }).then((resp) => {
+    console.log({user})
+    api.post(`/api/v1/user/${user.id}/profile-data`, { questions: questions }).then((resp) => {
       if ("update" in user) user.update(resp.data);
       else console.log("unable to update user");
     });
