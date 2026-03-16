@@ -347,7 +347,7 @@ function UserInfo({ user }) {
                   { u.value }
                 </Typography>
                 { }
-                { u.label === "Mobile" && !!u.value && (
+                {/* { u.label === "Mobile" && !!u.value && (
                   <Grid
                     size={ 12 }
                     container
@@ -377,7 +377,7 @@ function UserInfo({ user }) {
                       } }
                     />
                   </Grid>
-                ) }
+                ) } */}
               </Grid>
             );
           }) }

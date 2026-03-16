@@ -84,6 +84,13 @@ class Question extends CrudController {
         this.fixUserIssue();
         return await super.update(id, data);
     }
+    async deleteParent(id){
+        return await this.model.findByIdAndUpdate(id,{
+            $unset:{
+                parent:null
+            }
+        })
+    }
     async read(id) {
         return await super.read(id)
     }

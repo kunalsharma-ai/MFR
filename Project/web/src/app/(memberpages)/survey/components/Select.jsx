@@ -9,11 +9,14 @@ import {
 } from "@mui/material";
 
 export default function SelectElement({ question, form, options, disabled }) {
-  const [showSpecify,setShowSpecify]=React.useState(false)
+  const [showSpecify, setShowSpecify] = React.useState(false)
   const isQuestionDisabled = disabled || !(question.isEditable ?? true);
   const errors = form?.formState?.errors
-  function onChange(e,v) {
-    setShowSpecify(v?.value==="others")
+  function onChange(e, v) {
+    console.log(v)
+    // let value=options.find(opt=>v.include)
+    // console.log(v);
+    setShowSpecify(v?.value === "others")
     question?.children.map(child => {
       form.setValue(child, null)
     })
@@ -55,7 +58,10 @@ export default function SelectElement({ question, form, options, disabled }) {
           };
         return {
           label: opt.label,
-          value: opt.value
+          value: opt.value,
+          isExclusive: opt.isExclusive,
+          requiredDescribe: opt.describeLabel !== "",
+          describeLabel: opt.describeLabel,
         };
       }) }
       // api={question.api}
@@ -74,12 +80,12 @@ export default function SelectElement({ question, form, options, disabled }) {
       hasOthers={ question.hasOthers }
     />
   </Grid>
-  {showSpecify && <TextElement  form={ form } question={ {
-    label:`Please Specify`,
-    name:`${question.name}_specify`,
-    type:"text",
-    isEditable:true,
-    size:question.size
-  } } />}
+    { showSpecify && <TextElement form={ form } question={ {
+      label: `Please Specify`,
+      name: `${question.name}_specify`,
+      type: "text",
+      isEditable: true,
+      size: question.size
+    } } /> }
   </>
 }

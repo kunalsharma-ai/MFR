@@ -1,3 +1,4 @@
+import React from "react";
 import { Page } from "@/util";
 import { Form } from "@/components"
 import { Controller } from "react-hook-form";
@@ -23,6 +24,7 @@ import {
 } from "@mui/material";
 
 export default function TextElement({ question, form, disabled }) {
+  const [hide, setHide] = React.useState(false)
   const isQuestionDisabled = disabled || !(question.isEditable ?? true);
   const errors = form?.formState?.errors
 
@@ -32,6 +34,8 @@ export default function TextElement({ question, form, disabled }) {
     sx={ {
       px: 2,
       py: 1,
+      // backgroundColor:hide?"red":"green"
+      display: hide ? "none" : "grid"
     } }
   >
     <Page.Text
@@ -51,6 +55,9 @@ export default function TextElement({ question, form, disabled }) {
       api={ question.name }
       validations={ {
         required: question.required ? "This field is required" : false,
+      } }
+      onHide={ e => {
+        setHide(e)
       } }
       errors={ errors?.[question.name] }
       sx={ {

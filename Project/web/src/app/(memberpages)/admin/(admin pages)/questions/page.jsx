@@ -1,15 +1,9 @@
-// todo: Add questions from seeder
-// todo: Display questions added from seeder
-// todo: Edit questions added from seeder
-// todo: Add question from this page
-// todo: Display count of options avaliable
-
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
-import { Page, api } from "@/util";
+import { Page, api, useCustomState } from "@/util";
 
 import { Grid, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,14 +15,15 @@ import { DateRangeSelector } from "@/components/Form";
 const endpoint = `/api/v1/question`;
 export default function () {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [questions, setQuestions] = React.useState([]);
+  // const [questions, setQuestions] = React.useState([]);
+  const questions = useCustomState([]);
   const [open, setOpen] = React.useState({ open: false, id: null });
   const router = useRouter();
 
   React.useEffect(() => {
     setIsLoading(true);
     api.get(endpoint).then((resp) => {
-      setQuestions(resp.data);
+      questions.update(resp.data);
       setIsLoading(false);
     });
   }, [open]);
@@ -46,12 +41,12 @@ export default function () {
             id: "adminLabel",
             data: "adminLabel",
             label: "Admin Label",
-            feature: ["filterable", "sortable"]
+            feature: ["filterable", "sortable"],
           },
           {
             id: "category",
             label: "Category",
-            width: "300px",
+            width: "160px",
             render: (info) => {
               if (info.category instanceof Array) {
                 const formatter = new Intl.ListFormat("en-IN", {
@@ -67,11 +62,11 @@ export default function () {
             label: "Question",
             data: "label",
             width: "300px",
-            feature: ["searchable"],
+            feature: ["searchable","lockable"],
           },
           {
             id: "name",
-            label: "qname",
+            label: "Variable",
             data: "name",
             width: "300px",
             feature: ["searchable", "sortable"],
@@ -79,7 +74,39 @@ export default function () {
           {
             id: "parent",
             label: "Parent Question",
-            render: (info) => info.parent ?? "-",
+            render: (info) => (
+              <>
+                { info.parent ? (
+                  <>
+                    { info.parent }
+                    <IconButton sx={ { p: 0, ml: 1 } } onClick={ async () => {
+                      setIsLoading(true)
+                      try {
+                        let resp = await api.patch(`/api/v1/question/${info._id}`, {
+                          parent: ""
+                        })
+                        let temp = await api.get(endpoint);
+                        if ("data" in temp)
+                          questions.update(temp.data)
+
+                      } catch (error) {
+                        console.log(error)
+                      }
+                      finally {
+                        setIsLoading(false)
+                      }
+                    } }>
+                      <DeleteIcon
+                        fontSize="small"
+                        sx={ { "&:hover": { color: "red" } } }
+                      />
+                    </IconButton>
+                  </>
+                ) : (
+                  "-"
+                ) }
+              </>
+            ),
             width: "300px",
             feature: ["searchable", "sortable"],
           },
@@ -111,16 +138,16 @@ export default function () {
             width: "150px",
             render: (info) =>
               ["radio", "checkbox", "select", "multiselect"].includes(
-                info?.type
+                info?.type,
               ) && (
-                <Page.MuiButton
+                <Page.Text
+                  component="a" 
+                  href={`/admin/options?id=${info._id}`}
+                  target="_blank"
                   sx={ { color: "secondary.main", fontWeight: 500, p: 0 } }
-                  onClick={ () => {
-                    router.push(`/admin/options?id=${info._id}`);
-                  } }
                 >
                   View Options
-                </Page.MuiButton>
+                </Page.Text>
               ),
           },
           {
@@ -134,12 +161,12 @@ export default function () {
                   setOpen({ open: true, id: info._id });
                 } }
               >
-                <EditIcon fontSize="small" />
+                <EditIcon fontSize="small" color="secondary" />
               </IconButton>
             ),
           },
         ] }
-        data={ questions }
+        data={ questions.value }
         isLoading={ isLoading }
         pagination={ [10, 20, 50, 100] }
         pageSize={ 50 }
@@ -155,7 +182,8 @@ export default function () {
               fontSize: "18px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) =>
+                `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             } }
@@ -347,23 +375,27 @@ function CreateOrEditQuestion({ questionID = null, close }) {
             { ...form.register("isEditable") }
             label="Editable"
           />
-          { ["multiselect","select"].includes(form.watch("type")) ? <>
-            <Form.Checkbox
-              control={ control }
-              { ...form.register("hasOthers") }
-              label="Has Others"
-            />
-            <Form.Checkbox
-              control={ control }
-              { ...form.register("hasNone") }
-              label="Has None"
-            />
-            <Form.Checkbox
-              control={ control }
-              { ...form.register("hasSkip") }
-              label="Has Prefer not to say"
-            />
-          </> : <></> }
+          { ["multiselect", "select"].includes(form.watch("type")) ? (
+            <>
+              <Form.Checkbox
+                control={ control }
+                { ...form.register("hasOthers") }
+                label="Has Others"
+              />
+              <Form.Checkbox
+                control={ control }
+                { ...form.register("hasNone") }
+                label="Has None"
+              />
+              <Form.Checkbox
+                control={ control }
+                { ...form.register("hasSkip") }
+                label="Has Prefer not to say"
+              />
+            </>
+          ) : (
+            <></>
+          ) }
         </Grid>
       </Grid>
       <Grid

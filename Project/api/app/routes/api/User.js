@@ -67,7 +67,7 @@ router
                 console.log({
                     emailStatus: await sendMail(
                         { origin: req.origin, "content-type": "application/json" },
-                        data.mail,
+                        data?.parent?.email,
                         `My Frequent Rewards: Registration Consent for ${data.name.first}`,
                         mailer.data
                     )

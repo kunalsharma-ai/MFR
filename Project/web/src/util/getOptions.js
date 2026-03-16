@@ -1,4 +1,4 @@
-import {api} from "./api";
+import { api } from "./api";
 
 const endpoints = {
     "country": "/api/v1/options/country",
@@ -16,10 +16,13 @@ const endpoints = {
     "tax": "/api/v1/options/tax",
     "client": "/api/v1/company",
     "vendor": "/api/v1/company",
-    "user":"/api/v1/user",
-    "roles":"/api/v1/role",
-    "category":"/api/v1/category",
-    "question":"/api/v1/question"
+    "user": "/api/v1/user",
+    "roles": "/api/v1/role",
+    "category": "/api/v1/category",
+    "question": "/api/v1/question",
+    "orglocation": "/api/v1/options/orglocation",
+    "orglinkedin": "/api/v1/options/orglinkedin",
+    "orgwebsite": "/api/v1/options/orgwebsite"
 }
 const parameters = {
     country: "",
@@ -37,19 +40,24 @@ const parameters = {
     client: "category.isClient",
     vendor: "category.isVendor",
     tax: "parent",
-    user:"",
-    roles:"",
-    category:"",
-    question:""
+    user: "",
+    roles: "",
+    category: "",
+    question: "",
+    orglocation: "empstat",
+    orglinkedin: "empstat",
+    orgwebsite: "empstat",
 }
 const populate = {
-    category: val=>({label:val.name,value:val.name}),
+    category: val => ({ label: val.name, value: val.name }),
     default: val => ({ value: val.name, label: val.label }),
-    country: val => ({ value: val.name, label: val.label,img:`/images/flags/${val.name.toLowerCase()}.svg` }),
-    roles: val=>({value:val.name,label:val.name})
+    country: val => ({ value: val.name, label: val.label, img: `/images/flags/${val.name.toLowerCase()}.svg` }),
+    roles: val => ({ value: val.name, label: val.name })
 }
 export default async function getOptions(field, parameter = null, populateFn = null) {
-    if (!field || !(field in endpoints)) return null;
+    if (!field || !(field in endpoints)) return console.log({
+        field
+    });
     if (parameters[field] !== "" && (parameter === null || parameter === "")) return null;
     const cacheKey = btoa(`${field}_${parameter ?? ""}`);
     let temp = window.localStorage.getItem(cacheKey);

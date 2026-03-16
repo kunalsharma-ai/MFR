@@ -83,7 +83,7 @@ export default function () {
     useRouter(),
   ];
   const { data: profiles = [], isLoading: profilesLoading } = useQuery({
-    queryKey: ["profiles", user?.category,editMode?"true":"false"],
+    queryKey: ["profiles", user?.category, editMode ? "true" : "false"],
     queryFn: () =>
       api
         .post("/api/v1/profile", { category: user.category })
@@ -91,7 +91,8 @@ export default function () {
     enabled: !!user?.category || !editMode,
   });
   if (profilesLoading || profiles.length === 0) return <></>
-  const activeTab = 1 + profiles.map(profile => profile.slug).indexOf(query.profile);
+
+  const activeTab = (!query.profile) ? 1 : 1 + profiles.map(profile => profile.slug).indexOf(query.profile);
   const selectedProfile = (activeTab) ? profiles.at(activeTab - 1) : profiles[0];
   return <Grid container size={ 12 } px={ 1 } mt={ 2 } justifyContent="center">
     <ProfileTabs
@@ -182,14 +183,17 @@ function ProfileTabs({
   }, [profiles]);
 
   const activeTab = React.useMemo(() => {
-    
+
     if (
       !profiles ||
-      !query?.profile ||
       !(profiles instanceof Array) ||
       profiles.length === 0
     )
       return;
+    if (!query.profile) {
+      onChange(tabs[0].link);
+      return;
+    }
     return profiles.map((p) => p.slug).indexOf(query.profile);
   }, [profiles, query]);
   return <Tabs

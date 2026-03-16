@@ -23,7 +23,6 @@ class User extends CrudController {
         if (response) {
             return temp;
         }
-        console.log(temp)
         throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
     }
     async list(query = {}, populateFields = null, sort = {}, project = null) {

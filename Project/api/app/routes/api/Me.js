@@ -287,10 +287,8 @@ router
     .patch(expressRoute(
         async req => {
             const user = req.user;
-            // const { questions, answers } = req.body;
             const questions=Object.keys(req.body);
             const answers=req.body;
-            console.log(req.body)
             if (!user || !questions || !(questions instanceof Array) || questions.length < 1) throw new Error("Invalid request");
             const updatedAnswers = questions.map(fld => {
                 if (!(fld in answers || answers[fld]===null)) return false;
@@ -300,7 +298,6 @@ router
                     answer: answers[fld]
                 }
             }).filter(q => Boolean(q))
-            // console.log(updatedAnswers)
             await answerController.save(updatedAnswers)
             return { message: "Profile updated successfully", data: [] }
         },
