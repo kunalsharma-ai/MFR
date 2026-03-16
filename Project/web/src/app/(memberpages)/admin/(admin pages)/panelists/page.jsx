@@ -54,7 +54,6 @@ function getAge(dob) {
 
   return `${years}y ${months}m`;
 }
-
 export default function () {
   const me = useMember();
   const [activeUsers, setActiveUsers] = React.useState([]);
@@ -62,7 +61,15 @@ export default function () {
   const [users, setUsers] = React.useState([]);
   const [open, setOpen] = React.useState({ open: false, id: null });
   const [reload, setReload] = React.useState(0);
-  const { messages, emit } = useSharedSocket(me);
+  const { messages, emit, isLoaded } = useSharedSocket(me);
+
+  React.useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    emit("who", {});
+  }, [isLoaded]);
 
   React.useEffect(() => {
     switch (messages.type) {
@@ -256,7 +263,6 @@ function useCustomState(defaultValue) {
   };
 }
 function UserData({ userId, onClose }) {
-  // const [user, setUser] = React.useState({});
   const user = useCustomState({});
   const [showProfiles, setShowProfiles] = React.useState(false);
   const [reload, setReload] = React.useState(false);

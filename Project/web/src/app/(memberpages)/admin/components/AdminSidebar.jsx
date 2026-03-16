@@ -1,13 +1,6 @@
 "use client";
 import React from "react";
-import {
-  Grid,
-  Box,
-  Typography,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Grid, Box, Typography, Tooltip } from "@mui/material";
 
 import { useRouter, usePathname } from "next/navigation";
 
@@ -42,12 +35,12 @@ const sidebarItems = [
     label: "Support",
     link: "/admin/support",
   },
-// todo:   
-//  {
-//     icon: "icon-speech",
-//     label: "Chat",
-//     link: "/admin/chat",
-//   }, 
+  // todo:
+  //  {
+  //     icon: "icon-speech",
+  //     label: "Chat",
+  //     link: "/admin/chat",
+  //   },
   {
     icon: "icon-settings",
     label: "Panel Config",
@@ -57,8 +50,6 @@ const sidebarItems = [
 export default function AdminSidebar({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
   return (
     <Box display="flex">
@@ -99,16 +90,14 @@ export default function AdminSidebar({ children }) {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "1px solid #e0e0e0",
-
                 color: isActive ? "secondary.main" : "inherit",
-
-bgcolor: isActive ? "#eaf7ffff" : "transparent",
+                bgcolor: isActive ? "#eaf7ffff" : "transparent",
                 gap: 0.5,
                 "&:hover": {
                   cursor: "pointer",
                   color: "secondary.main",
                   bgcolor: "#d6e8f3ff",
-                                },
+                },
               }}
             >
               <i className={item.icon} style={{ fontSize: "26px" }} />
@@ -127,9 +116,7 @@ bgcolor: isActive ? "#eaf7ffff" : "transparent",
             </Box>
           );
 
-          return isLgUp ? (
-            <React.Fragment key={index}>{content}</React.Fragment>
-          ) : (
+          return (
             <Tooltip
               key={index}
               title={item.label}
