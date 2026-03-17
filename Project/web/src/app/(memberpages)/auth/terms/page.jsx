@@ -8,60 +8,61 @@ import {
   List,
   ListItem,
 } from "@mui/material";
-
+import { useForm } from "react-hook-form";
 import { useMember } from "@/Context";
 import { api, Page } from "@/util";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
+import ParentDetailsForm from "../password/ParentDetailsForm";
 
 export default function page() {
   return (
     <Grid
-      size={ 12 }
+      size={12}
       container
-      sx={ {
+      sx={{
         bgcolor: "#8cb2f333",
         minHeight: "100vh",
         minWidth: "100vw",
-      } }
+      }}
       justifyContent="center"
       alignItems="center"
-      py={ 2 }
+      py={2}
     >
       <Grid
         container
         direction="column"
         alignItems="center"
-        spacing={ 0 }
-        sx={ {
+        spacing={0}
+        sx={{
           bgcolor: "white",
           borderRadius: 4,
           boxShadow: 24,
           py: 3,
           px: { xs: 1, md: 4 },
           textAlign: "justify",
-        } }
+        }}
       >
-        { " " }
-        <Page.Box sx={ { position: "relative", pt: 3 } }>
+        {" "}
+        <Page.Box sx={{ position: "relative", pt: 3 }}>
           <Page.Box
-            sx={ {
+            sx={{
               height: { xs: "60px", md: "80px" },
               width: { xs: "180px", md: "300px" },
-            } }
+            }}
           >
             <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
-          </Page.Box>{ " " }
+          </Page.Box>{" "}
           <Page.Box
             component="img"
             src="/imagesmfr/dol-sign.gif"
             alt="logo"
-            width={ { xs: 15, md: 20 } }
-            sx={ {
+            width={{ xs: 15, md: 20 }}
+            sx={{
               position: "absolute",
               right: -4.5,
               top: { xs: 24, md: 32 },
-            } }
+            }}
           />
         </Page.Box>
         <Terms />
@@ -79,6 +80,7 @@ export function Terms({
   const [termOptions, setTermsOptions] = React.useState([
     { label: "I Accept all", value: "accept_all", required: false },
   ]);
+  const form = useForm();
 
   const [acceptedTerms, setAcceptedTerms] = React.useState([]);
   const [initialTerms, setInitialTerms] = React.useState([]);
@@ -89,7 +91,7 @@ export function Terms({
       termOptions[0],
       ...category.terms.map((term) => {
         return {
-          label: <div dangerouslySetInnerHTML={ { __html: term.body } } />,
+          label: <div dangerouslySetInnerHTML={{ __html: term.body }} />,
           value: term.name,
           required: term.isRequired ?? false,
         };
@@ -99,7 +101,8 @@ export function Terms({
   React.useEffect(() => {
     if (!user) return;
     setIsLoading(true);
-    if (pathName === "/auth/terms" && user?.terms?.length > 0) router.push("/survey?name=welcome");
+    if (pathName === "/auth/terms" && user?.terms?.length > 0)
+      router.push("/survey?name=welcome");
     setAcceptedTerms(user.terms);
     setInitialTerms(user.terms || []);
     api
@@ -166,6 +169,18 @@ export function Terms({
   if (isLoading && !hideLoading) {
     return <LoadingOverlay />;
   }
+  if(user.isMinor && [null,undefined,""].includes(user?.parent?.email)){
+    return <form 
+      onSubmit={
+        form.handleSubmit(async data=>{
+          let resp=await api.patch(`/api/v1/me/parent-details`,data)
+          user.update(resp.data)
+        })
+      }
+      >
+      <ParentDetailsForm form={form} submitLabel={"Submit"}/>
+    </form>
+  }
   return (
     <>
       {/* <Page.Text
@@ -176,20 +191,21 @@ export function Terms({
           my: { xs: 1, md: 2 },
         }}
       ></Page.Text> */}
+
       <Grid
-        sx={ {
+        sx={{
           borderRadius: 2,
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           bgcolor: "#8cb2f333",
           py: 2,
           px: 2,
           width: width,
-        } }
+        }}
       >
         <Page.Box
-          fontSize={ 15 }
-          py={ 2 }
-          sx={ {
+          fontSize={15}
+          py={2}
+          sx={{
             textAlign: "justify",
             "& p": {
               fontSize: 14,
@@ -213,57 +229,35 @@ export function Terms({
               color: "#063686",
               textDecoration: "none",
             },
-          } }
+          }}
         >
           <div
-            dangerouslySetInnerHTML={ {
+            dangerouslySetInnerHTML={{
               __html: category?.termsMessage ?? "",
-            } }
+            }}
           />
-          {/* todo: deleted once flow is finalized
-          
-           By applying to join,{" "}
-            <Page.Text component="span" color="secondary" fontWeight={600}>
-              MyHealthOpinions
-            </Page.Text>
-            , you agree to these Terms and Conditions and Privacy Notice, which
-            govern your participation as a <b>Caregiver</b> in healthcare market
-            research activities conducted by Frequent Research and its trusted
-            partners. */}
         </Page.Box>
-        {/* todo: deleted once flow is finalized
-          
-          <Page.Text fontSize={15} pb={2}>
-            Your participation helps share real-life caregiving experiences that
-            support improvements in healthcare services, patient support, and
-            product design.
-          </Page.Text> */}
-        {/* todo: deleted once flow is finalized
-          
-           <Page.Text fontSize={15} fontWeight={600}>
-            Eligibility and Identity Verification
-          </Page.Text> */}
 
         <Grid
-          size={ 12 }
+          size={12}
           container
-          direction={ "column" }
-          mt={ 2 }
-          gap={ 0 }
-          sx={ {
+          direction={"column"}
+          mt={2}
+          gap={0}
+          sx={{
             "& ul": {
               pl: 3,
               my: 1,
             },
-          } }
+          }}
         >
-          { termOptions.map((option, index) => (
+          {termOptions.map((option, index) => (
             <Page.Box
-              key={ index }
-              className={ option.required ? "required" : "not-required" }
-              sx={ {
+              key={index}
+              className={option.required ? "required" : "not-required"}
+              sx={{
                 borderBottom: "2px solid #fcfcfc",
-              } }
+              }}
             >
               <FormControlLabel
                 control={
@@ -275,25 +269,25 @@ export function Terms({
                         ? isAllChecked
                         : acceptedTerms.includes(option.value)
                     }
-                    onChange={ () =>
+                    onChange={() =>
                       option.value === "accept_all"
                         ? handleAcceptAll()
                         : handleCheckboxChange(option.value)
                     }
                   />
                 }
-                label={ option.label }
-                sx={ {
+                label={option.label}
+                sx={{
                   alignItems: "flex-start",
                   "& .MuiFormControlLabel-label": {
                     my: "6px",
                   },
-                } }
+                }}
               />
             </Page.Box>
-          )) }
+          ))}
 
-          <Page.Text pt={ 3 }>
+          <Page.Text pt={3}>
             <em>
               Your data will be stored securely and used solely for market
               research and opinion analysis purposes in compliance with
@@ -301,15 +295,15 @@ export function Terms({
               regulations)
             </em>
           </Page.Text>
-          <Page.Text mt={ 1 }>
+          <Page.Text mt={1}>
             <em>
-              { " " }
+              {" "}
               You may withdraw your consent or deactivate your account at any
-              time by contacting{ " " }
+              time by contacting{" "}
               <Page.Text
                 component="a"
                 href="mailto:support@myfrequentrewards.com"
-                sx={ { color: "secondary.main", fontWeight: 600 } }
+                sx={{ color: "secondary.main", fontWeight: 600 }}
               >
                 support@myfrequentrewards.com
               </Page.Text>
@@ -318,18 +312,18 @@ export function Terms({
             </em>
           </Page.Text>
 
-          <Grid size={ 12 } container justifyContent={ "flex-end" } my={ 2 }>
+          <Grid size={12} container justifyContent={"flex-end"} my={2}>
             <Page.MuiButton
-              onClick={ handleSubmit }
-              disabled={ !allRequiredSelected || !isTermsChanged }
+              onClick={handleSubmit}
+              disabled={!allRequiredSelected || !isTermsChanged}
               variant="contained"
               color="secondary"
-              sx={ {
+              sx={{
                 ml: 1,
                 fontWeight: 600,
                 color: "white",
                 px: 2,
-              } }
+              }}
             >
               Accept
             </Page.MuiButton>

@@ -45,7 +45,7 @@ export default function () {
             id: "name",
             label: "Category",
             data: "name",
-            feature: ["searchable"],
+            feature: ["filterable","sortable"],
           },
           {
             id: "action",
@@ -65,7 +65,7 @@ export default function () {
         data={categories}
         isLoading={isLoading}
         pagination={[10, 20, 50, 100]}
-        pageSize={10}
+        pageSize={50}
         hideColumnSelector
         hideDownload
         noDataMsg="No Record Found."

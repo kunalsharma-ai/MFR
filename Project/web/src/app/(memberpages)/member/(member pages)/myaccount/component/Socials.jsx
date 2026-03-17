@@ -115,6 +115,8 @@ export default function Socials() {
     },
   ];
 
+  const hasContacts = Object.values(contact).some(v => v?.trim());
+
   return (
     <Grid
       size={{ xs: 12, lg: 6 }}
@@ -129,6 +131,7 @@ export default function Socials() {
         justifyContent="space-between"
         px={1}
         pt={1}
+        minHeight={"46px"}
       >
         <Typography
           sx={{
@@ -141,12 +144,12 @@ export default function Socials() {
         >
           Social Contacts
         </Typography>
-        <IconButton
+        {hasContacts && <IconButton
           onClick={() => setOpenContact(true)}
           sx={{ color: "secondary.main" }}
         >
           <EditIcon sx={{ fontSize: 22 }} />
-        </IconButton>
+        </IconButton>}
       </Box>
 
       <Grid
@@ -194,7 +197,7 @@ export default function Socials() {
               </Grid>
             ))
         ) : (
-          <Typography>
+          <Typography py={1}>
             No social contact method added.{" "}
             <Typography
               color="secondary"

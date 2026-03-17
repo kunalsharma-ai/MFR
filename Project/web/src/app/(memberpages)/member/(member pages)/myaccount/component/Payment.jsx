@@ -81,6 +81,7 @@ export default function Payment() {
         justifyContent="space-between"
         px={ 1 }
         pt={ 1 }
+        minHeight={"46px"}
       >
         <Typography
           sx={ {
@@ -93,12 +94,12 @@ export default function Payment() {
         >
           Payment Method
         </Typography>
-        <IconButton
+        {payment?.method && <IconButton
           onClick={ () => setOpenPayment(true) }
           sx={ { color: "secondary.main" } }
         >
           <EditIcon sx={ { fontSize: 22 } } />
-        </IconButton>
+        </IconButton>}
       </Box>
 
       {/* Payment display */ }
@@ -190,7 +191,7 @@ export default function Payment() {
             ) }
           </Grid>
         ) : (
-          <Typography>
+          <Typography py={1}>
             No Payment method selected yet.{ " " }
             <Typography
               color="secondary"

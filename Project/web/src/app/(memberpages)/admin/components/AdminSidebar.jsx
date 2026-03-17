@@ -51,6 +51,18 @@ export default function AdminSidebar({ children }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const [isLgUp, setIsLgUp] = React.useState(false);
+
+  React.useEffect(() => {
+    const media = window.matchMedia("(min-width:1200px)");
+    const listener = () => setIsLgUp(media.matches);
+
+    listener();
+    media.addEventListener("change", listener);
+
+    return () => media.removeEventListener("change", listener);
+  }, []);
+
   return (
     <Box display="flex">
       <Grid
@@ -121,8 +133,9 @@ export default function AdminSidebar({ children }) {
               key={index}
               title={item.label}
               placement="right"
-              enterTouchDelay={0}
-              leaveTouchDelay={1000}
+              disableHoverListener={isLgUp}
+              disableFocusListener={isLgUp}
+              disableTouchListener={isLgUp}
             >
               {content}
             </Tooltip>

@@ -191,6 +191,35 @@ router
         },
         userController
     ))
+    .patch("/parent-details",
+        expressRoute(
+            async req => {
+                await userController.update(req.user._id, {...req.body,category:"b2b-minor"});
+                let user = Mutate(await userController.read(req.user._id))
+
+                let mailer = await getMailer(
+                    "register",
+                    "minor",
+                    {
+                        user
+                    }
+                )
+                const emailStatus = await sendMail(
+                    { origin: req.origin, "content-type": "application/json" },
+                    user?.parent?.email,
+                    "My Frequent Rewards: Child Registration",
+                    mailer.data
+                )
+                console.log(emailStatus)
+                return {
+                    status:"success",
+                    message:"",
+                    data:user
+                }
+            },
+            userController
+        )
+    )
 router
     .route("/change-email")
     .patch(expressRoute(
@@ -287,11 +316,11 @@ router
     .patch(expressRoute(
         async req => {
             const user = req.user;
-            const questions=Object.keys(req.body);
-            const answers=req.body;
+            const questions = Object.keys(req.body);
+            const answers = req.body;
             if (!user || !questions || !(questions instanceof Array) || questions.length < 1) throw new Error("Invalid request");
             const updatedAnswers = questions.map(fld => {
-                if (!(fld in answers || answers[fld]===null)) return false;
+                if (!(fld in answers || answers[fld] === null)) return false;
                 return {
                     user: user._id,
                     question: fld,

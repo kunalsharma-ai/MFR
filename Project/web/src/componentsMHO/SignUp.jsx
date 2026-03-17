@@ -14,9 +14,7 @@ import {
   Radio,
   RadioGroup,
   FormHelperText,
-  Tooltip,
-  ToggleButtonGroup,
-  ToggleButton,
+  Tooltip
 } from "@mui/material";
 
 import {
@@ -392,7 +390,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         />
                       </Grid>
                     </Grid>
-                    {isMinor ? (
+                    {/* {isMinor ? (
                       <>
                         <Page.Divider sx={{ width: "100%", opacity: "0.5" }} />
                         <Grid size={12}>
@@ -479,53 +477,53 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           />
                         </Grid>
                       </>
-                    ) : (
-                      <Grid
-                        size={12}
-                        container
-                        spacing={0}
-                        alignItems="flex-start"
-                        mt={3}
+                    ) : ( */}
+                    <Grid
+                      size={12}
+                      container
+                      spacing={0}
+                      alignItems="flex-start"
+                      mt={3}
+                    >
+                      <Form.Checkbox
+                        size="medium"
+                        {...register("agreedtoterms")}
+                        control={control}
+                      />
+                      <Typography
+                        sx={{ flex: 1, ml: -1.5, textAlign: "justify" }}
                       >
-                        <Form.Checkbox
-                          size="medium"
-                          {...register("agreedtoterms")}
-                          control={control}
-                        />
+                        I agree for My Frequent Rewards Panel to use my
+                        information for the purposes of determining my
+                        eligibility and for contacting me in relation to
+                        participation in market research surveys. Also, I am
+                        agreeing to{" "}
                         <Typography
-                          sx={{ flex: 1, ml: -1.5, textAlign: "justify" }}
+                          component={"a"}
+                          href="/terms"
+                          target="_blank"
+                          sx={{
+                            textDecoration: "underline",
+                            color: "secondary.main",
+                          }}
                         >
-                          I agree for My Frequent Rewards Panel to use my
-                          information for the purposes of determining my
-                          eligibility and for contacting me in relation to
-                          participation in market research surveys. Also, I am
-                          agreeing to{" "}
-                          <Typography
-                            component={"a"}
-                            href="/terms"
-                            target="_blank"
-                            sx={{
-                              textDecoration: "underline",
-                              color: "secondary.main",
-                            }}
-                          >
-                            Terms & Conditions
-                          </Typography>{" "}
-                          and{" "}
-                          <Typography
-                            component={"a"}
-                            href="/privacy"
-                            target="_blank"
-                            sx={{
-                              textDecoration: "underline",
-                              color: "secondary.main",
-                            }}
-                          >
-                            Privacy Policy.
-                          </Typography>
+                          Terms & Conditions
+                        </Typography>{" "}
+                        and{" "}
+                        <Typography
+                          component={"a"}
+                          href="/privacy"
+                          target="_blank"
+                          sx={{
+                            textDecoration: "underline",
+                            color: "secondary.main",
+                          }}
+                        >
+                          Privacy Policy.
                         </Typography>
-                      </Grid>
-                    )}
+                      </Typography>
+                    </Grid>
+                    {/* )} */}
                     <Page.MuiButton
                       type="submit"
                       variant="contained"
@@ -878,92 +876,6 @@ function GenderRadioGroup({
             <FormHelperText sx={{ fontSize: "12px", mx: 0 }}>
               {errorMessage}
             </FormHelperText>
-          )}
-        </FormControl>
-      )}
-    />
-  );
-}
-
-function AccountTypeButtonGroup({
-  name = "category",
-  control,
-  validations,
-  errors,
-  isDisabled = false,
-  options,
-}) {
-  const hasError = !!errors;
-  const errorMessage = errors?.message;
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={validations}
-      render={({ field }) => (
-        <FormControl fullWidth error={hasError} disabled={isDisabled}>
-          <ToggleButtonGroup
-            value={field.value || ""}
-            size="small"
-            exclusive
-            onChange={(_, value) => {
-              if (value !== null) field.onChange(value);
-            }}
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              flexWrap: "nowrap",
-              "& .MuiToggleButton-root": {
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: 13,
-                px: 2,
-                py: 0.5,
-                color: errorMessage ? "red" : "secondary.main",
-                borderColor: errorMessage ? "red" : "secondary.main",
-              },
-              "& .Mui-selected": {
-                backgroundColor: "#016550 !important",
-                color: "#fff !important",
-                "&:hover": {
-                  backgroundColor: "primary.dark",
-                },
-              },
-
-              // xs only rounded corners
-              "@media (max-width: 600px)": {
-                "& .MuiToggleButton-root": {
-                  borderRadius: 0,
-                  flex: 1,
-                  width: "100%",
-                  justifyContent: "center",
-                },
-                "& .MuiToggleButton-root:first-of-type": {
-                  borderTopLeftRadius: 4,
-                  borderTopRightRadius: 4,
-                },
-                "& .MuiToggleButton-root:last-of-type": {
-                  borderBottomLeftRadius: 4,
-                  borderBottomRightRadius: 4,
-                },
-                "& .MuiToggleButton-root:not(:first-of-type)": {
-                  borderTop: "none",
-                },
-              },
-            }}
-          >
-            {options.map((option) => (
-              <ToggleButton key={option.value} value={option.value}>
-                {option.label}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-
-          {errorMessage && (
-            <Page.Text sx={{ color: "red", fontSize: "11px" }}>
-              {errorMessage}
-            </Page.Text>
           )}
         </FormControl>
       )}
