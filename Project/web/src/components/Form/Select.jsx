@@ -270,7 +270,7 @@ export default function Select({
                         : !!multiple
                     }
                     disableCloseOnSelect={ !!multiple }
-                    disableClearable={ !multiple || hasError }
+                    // disableClearable={ !multiple || hasError }
                     options={ formattedOptions ?? [] }
                     getOptionDisabled={ (option) => {
                       let exclusiveOption=formattedOptions.filter(option=>{

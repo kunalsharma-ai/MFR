@@ -5,7 +5,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
 import { Page, api, useCustomState } from "@/util";
 
-import { Grid, IconButton } from "@mui/material";
+import { Grid, IconButton,Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
@@ -47,14 +47,17 @@ export default function () {
             id: "category",
             label: "Category",
             width: "160px",
-            render: (info) => {
-              if (info.category instanceof Array) {
-                const formatter = new Intl.ListFormat("en-IN", {
-                  type: "conjunction",
-                });
-                return formatter.format(info.category);
-              }
-              return info.category;
+           render: (info) => {
+              return info?.category?.map((cat, i) => (
+                <Chip
+                  key={i}
+                  size="small"
+                  label={cat}
+                  variant="contained"
+                  color={cat == "b2b" ? "secondary" : "primary"}
+                  sx={{ mr: 0.5, color: "white",textTransform:"uppercase" }}
+                />
+              ));
             },
           },
           {

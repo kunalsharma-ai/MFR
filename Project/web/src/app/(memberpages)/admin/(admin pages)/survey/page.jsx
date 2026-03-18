@@ -119,7 +119,7 @@ export default function () {
               my: 1,
             }}
           >
-            Surveys List
+            Internal Surveys List
           </Page.Text>
         }
       />

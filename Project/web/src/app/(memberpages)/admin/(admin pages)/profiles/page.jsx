@@ -5,10 +5,11 @@
 
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
 import { Page, api } from "@/util";
-import { Grid, IconButton } from "@mui/material";
+import { Grid, IconButton, Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,6 +19,7 @@ import { useToast } from "@/hooks";
 import { SideDrawer } from "@/components/Popup";
 const endpoint = `/api/v1/profile`;
 export default function () {
+  const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(true);
   const [profiles, setProfiles] = React.useState([]);
   const [open, setOpen] = React.useState({ open: false, id: null });
@@ -44,18 +46,27 @@ export default function () {
 
   return (
     <Page.Box
-      sx={ {
+      sx={{
         bgcolor: (theme) => theme.palette.page.main,
         p: { xs: 2, md: 3 },
-      } }
+      }}
     >
       <Datatable
-        columns={ [
+        columns={[
           {
             id: "category",
             label: "Category",
-            data: "category",
-            feature: ["filterable", "sortable"]
+            width:160,
+            feature: ["filterable", "sortable"],
+            render: (info, i) => {
+              return<Chip
+                size="small"
+                label={info?.category}
+                variant="contained"
+                color={info?.category == "b2b" ? "secondary" : "primary"}
+                sx={{ mr: 0.5, color: "white", textTransform: "uppercase" }}
+              />;
+            },
           },
           {
             id: "name",
@@ -68,10 +79,10 @@ export default function () {
             label: "Questions List",
             render: (info) => (
               <Page.MuiButton
-                sx={ { color: "secondary.main", fontWeight: 500, p: 0 } }
-                onClick={ () => {
+                sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+                onClick={() => {
                   setOpenQuestions({ open: true, id: info._id });
-                } }
+                }}
               >
                 View Questions
               </Page.MuiButton>
@@ -82,64 +93,81 @@ export default function () {
             label: "Action",
             render: (info) => (
               <IconButton
-                sx={ { p: 0 } }
-                onClick={ () => {
+                sx={{ p: 0 }}
+                onClick={() => {
                   setOpen({ open: true, id: info._id });
-                } }
+                }}
               >
                 <EditIcon fontSize="small" color="secondary" />
               </IconButton>
             ),
           },
-        ] }
-        data={ profiles }
-        isLoading={ isLoading }
-        pagination={ [10, 20, 50, 100] }
-        pageSize={ 50 }
+        ]}
+        data={profiles}
+        isLoading={isLoading}
+        pagination={[10, 20, 50, 100]}
+        pageSize={50}
         hideColumnSelector
         hideDownload
         noDataMsg="No Record Found."
-        add={ () => {
+        add={() => {
           setOpen({ open: true, id: null });
-        } }
+        }}
+        extra={
+          <Page.MuiButton
+            onClick={() => {
+              router.push("/admin/questions");
+            }}
+            variant="contained"
+            color="secondary"
+            size="small"
+            sx={{
+              fontWeight: "bold",
+              mr: 2,
+            }}
+          >
+            Show All Questions List
+          </Page.MuiButton>
+        }
         title={
           <Page.Text
-            sx={ {
+            sx={{
               fontSize: "18px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) =>
+                `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
-            } }
+            }}
           >
             Profiles
           </Page.Text>
         }
       />
       <SideDrawer
-        open={ open.open }
-        hideTitleBar={ true }
-        onClose={ () => setOpen({ open: false, id: null }) }
+        open={open.open}
+        hideTitleBar={true}
+        onClose={() => setOpen({ open: false, id: null })}
       >
         <CreateOrEditProfile
-          profileID={ open.id }
-          close={ () => {
+          profileID={open.id}
+          close={() => {
             setOpen({ open: false, id: null });
-          } }
+          }}
         />
       </SideDrawer>
       <SideDrawer
-        open={ openQuestons.open }
-        hideTitleBar={ true }
-        onClose={ () => setOpenQuestions({ open: false, id: null }) }
+        open={openQuestons.open}
+        hideTitleBar={true}
+        onClose={() => setOpenQuestions({ open: false, id: null })}
         anchor="right"
       >
         <ProfileQuestions
-          profileID={ openQuestons.id }
-          close={ () => {
+          profileID={openQuestons.id}
+          close={() => {
             setOpenQuestions({ open: false, id: null });
-          } }
+          }}
         />
       </SideDrawer>
     </Page.Box>
@@ -197,68 +225,68 @@ function CreateOrEditProfile({ profileID = null, close }) {
   return (
     <Grid
       component="form"
-      onSubmit={ handleSubmit(onSubmit) }
+      onSubmit={handleSubmit(onSubmit)}
       container
-      spacing={ 2 }
-      size={ 12 }
-      sx={ {
+      spacing={2}
+      size={12}
+      sx={{
         bgcolor: "white",
         overflow: "hidden",
         borderRadius: "10px",
         boxShadow: 1,
         pb: 2,
         alignSelf: "flex-start",
-      } }
+      }}
     >
       <SectionTitle
-        title={ profileID ? "Edit Profile" : "Create Profile" }
-        sx={ { justifyContent: "space-between" } }
+        title={profileID ? "Edit Profile" : "Create Profile"}
+        sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={ close } color="secondary">
+        <IconButton onClick={close} color="secondary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
-      <Grid container size={ 12 } spacing={ 1.4 } sx={ { px: 2 } }>
+      <Grid container size={12} spacing={1.4} sx={{ px: 2 }}>
         <Form.Input
-          control={ control }
-          { ...form.register("slug") }
+          control={control}
+          {...form.register("slug")}
           label="Profile URL"
         />
         <Form.Input
-          control={ control }
-          { ...form.register("name") }
+          control={control}
+          {...form.register("name")}
           label="Profile Name"
         />
         <Form.Input
-          control={ control }
-          { ...form.register("icon") }
+          control={control}
+          {...form.register("icon")}
           label="Profile Icon"
         />
-        <Grid size={ 12 }>
+        <Grid size={12}>
           <Form.Select
-            control={ control }
-            { ...form.register("category") }
+            control={control}
+            {...form.register("category")}
             label="Category"
-            options={ [] }
+            options={[]}
             api="category"
           />
         </Grid>
       </Grid>
       <Grid
         container
-        size={ 12 }
-        sx={ {
+        size={12}
+        sx={{
           justifyContent: "flex-end",
           mr: 2,
-        } }
+        }}
       >
         <Page.MuiButton
           type="submit"
           variant="contained"
           color="secondary"
-          sx={ {
+          sx={{
             fontWeight: "bold",
-          } }
+          }}
         >
           Submit
         </Page.MuiButton>
@@ -311,105 +339,105 @@ function ProfileQuestions({ profileID = null, close }) {
   return (
     <Grid
       component="form"
-      onSubmit={ handleSubmit(onSubmit) }
+      onSubmit={handleSubmit(onSubmit)}
       container
-      spacing={ 2 }
-      size={ 12 }
-      sx={ {
+      spacing={2}
+      size={12}
+      sx={{
         bgcolor: "white",
         overflow: "hidden",
         borderRadius: "10px",
         boxShadow: 1,
         pb: 2,
         alignSelf: "flex-start",
-      } }
+      }}
     >
       <SectionTitle
-        title={ "Create/Edit Questions" }
-        sx={ { justifyContent: "space-between" } }
+        title={"Create/Edit Questions"}
+        sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={ close } color="secondary">
+        <IconButton onClick={close} color="secondary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
-      <Grid container size={ 12 } spacing={ 2 } sx={ { px: 2 } }>
-        { pageFields.map((pageField, pageIndex) => (
+      <Grid container size={12} spacing={2} sx={{ px: 2 }}>
+        {pageFields.map((pageField, pageIndex) => (
           <Grid
-            size={ 12 }
-            key={ pageField.id }
+            size={12}
+            key={pageField.id}
             container
             direction="column"
-            spacing={ 1 }
-            sx={ {
+            spacing={1}
+            sx={{
               p: 2,
               borderRadius: 2,
               border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
-            } }
+            }}
           >
             <Grid container alignItems="center" justifyContent="space-between">
               <Grid>
                 <Page.Text
-                  sx={ {
+                  sx={{
                     fontWeight: 600,
                     color: "secondary.main",
                     fontSize: 16,
-                  } }
+                  }}
                 >
-                  PAGE { pageIndex + 1 }{ " " }
+                  PAGE {pageIndex + 1}{" "}
                 </Page.Text>
                 <Form.Input
-                  { ...form.register(`pages.${pageIndex}.0`) }
-                  control={ form.control }
+                  {...form.register(`pages.${pageIndex}.0`)}
+                  control={form.control}
                 />
               </Grid>
-              <Grid container spacing={ 0.5 }>
-                { pageIndex > 0 && (
+              <Grid container spacing={0.5}>
+                {pageIndex > 0 && (
                   <IconButton
                     size="small"
-                    onClick={ () => movePage(pageIndex, pageIndex - 1) }
+                    onClick={() => movePage(pageIndex, pageIndex - 1)}
                   >
                     <KeyboardArrowUpIcon />
                   </IconButton>
-                ) }
-                { pageIndex < pageFields.length - 1 && (
+                )}
+                {pageIndex < pageFields.length - 1 && (
                   <IconButton
                     size="small"
-                    onClick={ () => movePage(pageIndex, pageIndex + 1) }
+                    onClick={() => movePage(pageIndex, pageIndex + 1)}
                   >
                     <KeyboardArrowDownIcon />
                   </IconButton>
-                ) }
-                { pageFields.length > 1 && (
+                )}
+                {pageFields.length > 1 && (
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={ () => removePage(pageIndex) }
+                    onClick={() => removePage(pageIndex)}
                   >
                     <DeleteIcon />
                   </IconButton>
-                ) }
+                )}
               </Grid>
             </Grid>
 
             <QuestionsEditor
-              pageIndex={ pageIndex }
-              control={ control }
-              register={ register }
-              watch={ watch }
+              pageIndex={pageIndex}
+              control={control}
+              register={register}
+              watch={watch}
             />
           </Grid>
-        )) }
-        <Grid size={ 12 }>
+        ))}
+        <Grid size={12}>
           <Page.MuiButton
             variant="outlined"
             size="small"
             color="secondary"
-            sx={ {
+            sx={{
               borderWidth: 2,
               fontWeight: 600,
-            } }
-            onClick={ () => appendPage([""]) }
+            }}
+            onClick={() => appendPage([""])}
           >
             Add Page
           </Page.MuiButton>
@@ -417,20 +445,20 @@ function ProfileQuestions({ profileID = null, close }) {
       </Grid>
       <Grid
         container
-        size={ 12 }
-        sx={ {
+        size={12}
+        sx={{
           justifyContent: "flex-end",
           mr: 2,
           mt: 2,
-        } }
+        }}
       >
         <Page.MuiButton
           type="submit"
           variant="contained"
           color="secondary"
-          sx={ {
+          sx={{
             fontWeight: "bold",
-          } }
+          }}
         >
           Save Questions
         </Page.MuiButton>
@@ -447,67 +475,67 @@ function QuestionsEditor({ pageIndex, control, register, watch }) {
 
   return (
     <>
-      <Grid container spacing={ 1 } sx={ { mt: 1 } }>
-        { fields.map((field, index) => {
+      <Grid container spacing={1} sx={{ mt: 1 }}>
+        {fields.map((field, index) => {
           if (index === 0) return;
           return (
             <Grid
               container
-              key={ field.id }
+              key={field.id}
               alignItems="center"
-              spacing={ 1 }
-              size={ 12 }
+              spacing={1}
+              size={12}
             >
-              <Grid size={ 9 }>
+              <Grid size={9}>
                 <Form.Select
-                  control={ control }
-                  { ...register(`pages.${pageIndex}.${index}`) }
-                  label={ `Question ${index + 1} [${watch(
-                    `pages.${pageIndex}.${index}`
-                  )}]` }
+                  control={control}
+                  {...register(`pages.${pageIndex}.${index}`)}
+                  label={`Question ${index + 1} [${watch(
+                    `pages.${pageIndex}.${index}`,
+                  )}]`}
                   // label={`Question ${index + 1}`}
                   api="question"
                 />
               </Grid>
-              <Grid container size={ 3 } spacing={ 0.5 } alignItems="center">
-                { index > 0 && (
+              <Grid container size={3} spacing={0.5} alignItems="center">
+                {index > 0 && (
                   <IconButton
                     size="small"
-                    onClick={ () => move(index, index - 1) }
+                    onClick={() => move(index, index - 1)}
                   >
                     <KeyboardArrowUpIcon fontSize="small" />
                   </IconButton>
-                ) }
-                { index < fields.length - 1 && (
+                )}
+                {index < fields.length - 1 && (
                   <IconButton
                     size="small"
-                    onClick={ () => move(index, index + 1) }
+                    onClick={() => move(index, index + 1)}
                   >
                     <KeyboardArrowDownIcon fontSize="small" />
                   </IconButton>
-                ) }
+                )}
                 <IconButton
                   size="small"
                   color="error"
-                  onClick={ () => remove(index) }
+                  onClick={() => remove(index)}
                 >
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Grid>
             </Grid>
           );
-        }) }
+        })}
       </Grid>
 
-      <Grid size={ 12 }>
+      <Grid size={12}>
         <Page.MuiButton
           variant="outlined"
           size="small"
-          sx={ {
+          sx={{
             borderWidth: 2,
             fontWeight: 600,
-          } }
-          onClick={ () => append("") }
+          }}
+          onClick={() => append("")}
         >
           Add Question
         </Page.MuiButton>

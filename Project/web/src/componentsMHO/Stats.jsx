@@ -3,14 +3,14 @@ import { Grid, Typography, Container } from "@mui/material";
 import Counter from "./Counter";
 
 const stats = [
-  { label: "REWARDS PAID", value: 1233332, prefix: "$", showPlus: true },
+  { label: "REWARDS PAID", value: 11840, prefix: "$", showPlus: true },
   {
     label: "TOTAL SURVEYS COMPLETED (THIS MONTH)",
-    value: 323,
+    value: 1325,
     showPlus: false,
   },
-  { label: "MONTHLY AVAILABLE SURVEYS", value: 42, showPlus: true },
-  { label: "PANELISTS REGISTERED", value: 3212, showPlus: false },
+  { label: "MONTHLY AVAILABLE SURVEYS", value: 37, showPlus: true },
+  { label: "PANELISTS REGISTERED", value: 26780, showPlus: false },
 ];
 
 function Stats() {

@@ -89,7 +89,7 @@ export default function page() {
         size={12}
         container
         spacing={2}
-        py={1}
+        py={2}
         px={{ xs: 2, md: 3 }}
         justifyContent="center"
         alignItems={"flex-start"}
@@ -284,8 +284,8 @@ function UserInfo({ user }) {
         })}
         justifyContent={{ xs: "center", md: "space-between" }}
         alignItems={"center"}
-        pb={2}
-        mb={2}
+        pb={1.5}
+        mb={1.5}
         borderBottom={{ md: `1px solid #e0e0e0`, xs: "none" }}
         spacing={2}
       >
@@ -424,7 +424,7 @@ function UserInfo({ user }) {
           readOnly
           size="large"
           emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-          sx={{ py: 1, mt: 3 }}
+          sx={{ py: 1, mt: 1 }}
         />
       </Grid>
 

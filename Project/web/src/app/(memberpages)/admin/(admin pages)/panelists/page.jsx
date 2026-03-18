@@ -144,13 +144,42 @@ export default function () {
     {
       id: "role",
       label: "Role",
-      render: (info) => info.role.Capitalize(),
+      render: (info, i) => {
+        return (
+          <Chip
+            size="small"
+            label={info?.role}
+            variant="contained"
+            color={info?.role == "admin" ? "secondary" : "primary"}
+            sx={{ mr: 0.5, color: "white", textTransform: "capitalize" }}
+          />
+        );
+      },
+      width: 150,
+      feature: ["filterable", "sortable"],
+    },
+    {
+      id: "category",
+      label: "Category",
+       render: (info, i) => {
+        return (
+          <Chip
+            size="small"
+            label={info?.category}
+            variant="contained"
+            color={info?.category == "b2b" ? "success" : "error"}
+            sx={{ mr: 0.5, color: "white", textTransform: "uppercase" }}
+          />
+        );
+      },
+      width: 150,
+      feature: ["filterable", "sortable"],
     },
     {
       id: "name",
       label: "User",
       render: (info) => (
-        <Page.Box display="flex" alignItems="center" gap={1}>
+        <Page.Box display="flex" alignItems="center" gap={1} title={info.dob}>
           <Avatar
             sx={{ height: 25, width: 25 }}
             src={info.profilePicture}
@@ -175,12 +204,7 @@ export default function () {
         </Page.Box>
       ),
     },
-    // {
-    //   id: "category",
-    //   label: "Category",
-    //   data: "category",
-    //   feature: ["filterable"],
-    // },
+
     {
       id: "email",
       label: "Email",

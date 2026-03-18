@@ -5,6 +5,7 @@
 
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
 import { Page, api } from "@/util";
@@ -18,6 +19,7 @@ import { useToast } from "@/hooks";
 import { SideDrawer } from "@/components/Popup";
 const endpoint = `/api/v1/project`;
 export default function () {
+  const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(true);
   const [surveys, setSurveys] = React.useState([]);
   const [open, setOpen] = React.useState({ open: false, id: null });
@@ -29,7 +31,6 @@ export default function () {
   React.useEffect(() => {
     setIsLoading(true);
     api.get(endpoint).then((resp) => {
-      
       setSurveys(resp.data);
       setIsLoading(false);
     });
@@ -156,13 +157,30 @@ export default function () {
         add={() => {
           setOpen({ open: true, id: null });
         }}
+        extra={
+          <Page.MuiButton
+            onClick={() => {
+              router.push("/admin/survey");
+            }}
+            variant="contained"
+            color="secondary"
+            size="small"
+            sx={{
+              fontWeight: "bold",
+              mr: 2,
+            }}
+          >
+            Show Internal Surveys
+          </Page.MuiButton>
+        }
         title={
           <Page.Text
             sx={{
               fontSize: "18px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) =>
+                `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}
@@ -456,7 +474,7 @@ function SurveyQuestions({ surveyID = null, close }) {
             sx={{
               p: 2,
               borderRadius: 2,
-              border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
               bgcolor: (theme) => theme.palette.cardbg.main,
             }}
           >
@@ -576,7 +594,7 @@ function QuestionsEditor({ pageIndex, control, register, watch }) {
                   control={control}
                   {...register(`pages.${pageIndex}.${index}`)}
                   label={`Question ${index + 1} [${watch(
-                    `pages.${pageIndex}.${index}`
+                    `pages.${pageIndex}.${index}`,
                   )}]`}
                   // label={`Question ${index + 1}`}
                   api="question"

@@ -169,7 +169,7 @@ export function Terms({
   if (isLoading && !hideLoading) {
     return <LoadingOverlay />;
   }
-  if(user.isMinor && [null,undefined,""].includes(user?.parent?.email)){
+  if(user?.isMinor && [null,undefined,""].includes(user?.parent?.email)){
     return <form 
       onSubmit={
         form.handleSubmit(async data=>{
