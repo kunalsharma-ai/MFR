@@ -91,6 +91,7 @@ export default function Input({
   match,
   onStrengthChanged,
   onHide,
+  disabled,
   ...props
 }) {
   const [hide, setHide] = React.useState(false);
@@ -198,7 +199,7 @@ export default function Input({
         name={ name }
         control={ control }
         rules={ validate }
-        disabled={ hide }
+        disabled={ disabled}
         render={ ({ field }) => {
           const hasError = !!errors;
           const errorMessage = errors?.message;

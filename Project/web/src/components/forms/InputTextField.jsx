@@ -30,9 +30,8 @@ const FormTextField = React.forwardRef((props, ref) => {
     disabled,
     ...rest
   } = props;
-
   return (
-    <TextField
+    <><TextField
       inputRef={ref} // Forward the ref to the input element
       InputProps={{
         ...InputProps,
@@ -70,6 +69,7 @@ const FormTextField = React.forwardRef((props, ref) => {
     >
       {children}
     </TextField>
+      </>
   );
 });
 

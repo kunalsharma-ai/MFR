@@ -94,6 +94,9 @@ export default function () {
 
   const activeTab = (!query.profile) ? 1 : 1 + profiles.map(profile => profile.slug).indexOf(query.profile);
   const selectedProfile = (activeTab) ? profiles.at(activeTab - 1) : profiles[0];
+  // React.useEffect(()=>{
+  //   setEditMode(false);
+  // },[activeTab])
   return <Grid container size={ 12 } px={ 1 } mt={ 2 } justifyContent="center">
     <ProfileTabs
       profiles={ profiles }

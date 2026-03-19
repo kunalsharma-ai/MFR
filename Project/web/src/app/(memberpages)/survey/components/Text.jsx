@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { Page } from "@/util";
 import { Form } from "@/components"
@@ -25,7 +26,10 @@ import {
 
 export default function TextElement({ question, form, disabled }) {
   const [hide, setHide] = React.useState(false)
-  const isQuestionDisabled = disabled || !(question.isEditable ?? true);
+  let isQuestionDisabled = disabled;
+  let value = (!question) ? null : !("name" in question) ? null : form.getValues(question?.name);
+
+  if (!isQuestionDisabled) isQuestionDisabled = ([null, undefined, "", []].includes(value)) ? false : !(("isEditable" in question) ? question.isEditable : false)
   const errors = form?.formState?.errors
 
   return <Grid
