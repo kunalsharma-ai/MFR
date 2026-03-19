@@ -34,14 +34,12 @@ router
             // Read all entries
             let message = "";
             let data = await optionController.list({ question: req.params.parent })
-            console.log(data)
             return { message, data };
         },
         optionController
     ))
     .post(expressRoute(
         async req => {
-            // Read all entries matching filter
             let message = "";
             let data = await optionController.list({ question: req.params.parent, ...req.body })
             return { message, data };

@@ -44,13 +44,20 @@ function page() {
             textAlign: "justify",
             "& p": {
               fontSize: 16,
-              mb: 2,
+              mb: 1.5,
               lineHeight: 1.7,
             },
             "& h5": {
-              fontSize: 20,
+              fontSize: 22,
               mt: 4,
               mb: 2,
+              fontWeight: 600,
+              color: "#063686",
+            },
+            "& h6": {
+              fontSize: 18,
+              mt: 4,
+              mb: 1,
               fontWeight: 600,
             },
             "& ul": {

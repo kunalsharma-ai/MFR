@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import { useRouter } from "next/navigation";
 import {
   Datatable,
   FlagAndCountryCode,
@@ -161,7 +161,7 @@ export default function () {
     {
       id: "category",
       label: "Category",
-       render: (info, i) => {
+      render: (info, i) => {
         return (
           <Chip
             size="small"
@@ -288,6 +288,7 @@ function useCustomState(defaultValue) {
 }
 function UserData({ userId, onClose }) {
   const user = useCustomState({});
+  const router = useRouter();
   const [showProfiles, setShowProfiles] = React.useState(false);
   const [reload, setReload] = React.useState(false);
   const me = useMember();
@@ -495,6 +496,7 @@ function UserData({ userId, onClose }) {
               useToast(resp);
               me.Reload();
               onClose();
+              router.refresh();
             }}
             color="info"
             sx={{ fontWeight: 600, color: "white" }}
@@ -853,7 +855,7 @@ function ProfilesData({ user }) {
                 container
                 justifyContent="center"
                 alignItems="center"
-                height={400}
+                height={350}
               >
                 No Profile Data
               </Grid>

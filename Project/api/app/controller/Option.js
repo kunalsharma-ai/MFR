@@ -45,7 +45,9 @@ class Option extends CrudController {
         return;
 
     }
-    async list(q = {}, populateFields = null, sort = {}, project = null) {
+    async list(q = {}, populateFields = null, sort = {
+        value:1
+    }, project = "+sortOrder") {
         let query = Object.fromEntries(Object.entries(q).map(fltr => {
             if (fltr[1] instanceof Array) {
                 return [
@@ -55,11 +57,7 @@ class Option extends CrudController {
             }
             return fltr;
         }))
-
-        // console.log({query})
-        return Mutate(await super.list(query, populateFields, sort, project)).sort((a, b) =>
-            a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
-        )
+        return Mutate(await super.list(query, populateFields, sort, project))
     }
     async create(data) {
         let item = await super.list(data);

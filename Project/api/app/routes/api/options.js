@@ -15,7 +15,7 @@ const patterns = {
         ]
         return temp.includes(parent)?{
             status:"success",
-            data:[{pattern:"XlxXKyQ="}]
+            data:[{pattern:"XltcIC16XSsk"}] 
         }:{
             status:"success",
             data:[{pattern:""}]
