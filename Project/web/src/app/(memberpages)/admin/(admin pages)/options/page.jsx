@@ -26,10 +26,11 @@ export default function () {
   const router = useRouter();
 
   React.useEffect(() => {
+    if (!query?.id) return;
     api
       .get(`/api/v1/question/${query.id}`)
       .then((resp) => setQuestion(resp.data));
-  }, []);
+  }, [query]);
 
   React.useEffect(() => {
     if (!question || !question.name) return;

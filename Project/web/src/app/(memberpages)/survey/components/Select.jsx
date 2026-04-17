@@ -10,13 +10,16 @@ import {
 
 export default function SelectElement({ question, form, options, disabled }) {
   const [showSpecify, setShowSpecify] = React.useState(false)
+  const [describe, setDescribe] = React.useState("")
   const isQuestionDisabled = disabled || !(question.isEditable ?? true);
   const errors = form?.formState?.errors
+  console.log({ [question.name]: options, showSpecify })
+
   function onChange(e, v) {
-    console.log(v)
-    // let value=options.find(opt=>v.include)
-    // console.log(v);
+    
     setShowSpecify(v?.value === "others")
+    let tempDescribe = [v].find(opt => opt?.describeLabel !== "")
+    if (tempDescribe) setDescribe(tempDescribe.describeLabel); else setDescribe("")
     question?.children.map(child => {
       form.setValue(child, null)
     })
@@ -28,29 +31,28 @@ export default function SelectElement({ question, form, options, disabled }) {
     if (!country) return null;
     formattedOptions = options.sortRange("asc").map(range => ({ ...range, label: range.label.toMoneyRange(getCurrency(country), "en-IN") }))
   }
-
   return <><Grid
-    size={ { xs: 12, md: Number(question?.size) } }
+    size={{ xs: 12, md: Number(question?.size) }}
     alignSelf="flex-end"
-    sx={ {
+    sx={{
       px: 2,
       py: 1,
-    } }
+    }}
   >
     <Page.Text
-      sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+      sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
     >
-      { question.label }{ " " }
-      { question.required && (
-        <span style={ { color: "red", fontWeight: 600 } }>*</span>
-      ) }
+      {question.label}{" "}
+      {question.required && (
+        <span style={{ color: "red", fontWeight: 600 }}>*</span>
+      )}
     </Page.Text>
     <Form.Select
-      { ...form.register(question.name) }
-      control={ form.control }
-      watch={ form.watch }
-      isDisabled={ isQuestionDisabled }
-      options={ formattedOptions.map((opt) => {
+      {...form.register(question.name)}
+      control={form.control}
+      watch={form.watch}
+      isDisabled={isQuestionDisabled}
+      options={formattedOptions.map((opt) => {
         if (typeof opt === "string")
           return {
             label: opt,
@@ -63,29 +65,29 @@ export default function SelectElement({ question, form, options, disabled }) {
           requiredDescribe: opt.describeLabel !== "",
           describeLabel: opt.describeLabel,
         };
-      }) }
+      })}
       // api={question.api}
-      parent={ question.parent }
-      validations={ {
+      parent={question.parent}
+      validations={{
         required: question.required ? "This field is required" : false,
-      } }
-      errors={ errors?.[question.name] }
-      sx={ {
+      }}
+      errors={errors?.[question.name]}
+      sx={{
         "& .MuiOutlinedInput-notchedOutline legend": {
           width: 0,
           visibilty: "hidden",
         },
-      } }
-      onChange={ onChange }
-      hasOthers={ question.hasOthers }
+      }}
+      onChange={onChange}
+      hasOthers={question.hasOthers}
     />
   </Grid>
-    { showSpecify && <TextElement form={ form } question={ {
-      label: `Please Specify`,
+    {(showSpecify || (!["", null, undefined].includes(describe))) && <TextElement form={form} question={{
+      label: ([null, undefined, ""].includes(describe)) ? "Please Specify" : describe,
       name: `${question.name}_specify`,
       type: "text",
       isEditable: true,
       size: question.size
-    } } /> }
+    }} />}
   </>
 }

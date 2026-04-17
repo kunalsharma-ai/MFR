@@ -146,6 +146,29 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
+                onClick={() => router.push("/profiling")}
+                onKeyDown={(e) =>
+                  handleKeyDown(e, () => router.push("/profiling"))
+                }
+                sx={{
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: "primary.main",
+                    transform: "translateX(5px)",
+                  },
+                  "&:focus-visible": {
+                    outline: "2px solid",
+                    outlineColor: "primary.main",
+                    outlineOffset: "2px",
+                  },
+                }}
+              >
+                Profiling and Quality Score
+              </Typography>
+              <Typography
+                role="button"
+                tabIndex={0}
                 onClick={() =>
                   window.open(
                     "https://panels.frequentresearch.com/",

@@ -205,7 +205,9 @@ export default function page() {
             <DateRangeSelector
               onUpdate={(e) => {
                 setDateRange(
-                  e.map((d) => new Date(d.toDate()).toISOString().split("T")[0])
+                  e.map(
+                    (d) => new Date(d.toDate()).toISOString().split("T")[0],
+                  ),
                 );
               }}
             />
@@ -217,7 +219,8 @@ export default function page() {
               fontSize: "16px",
               display: "inline-block",
               fontWeight: "600",
-              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+              borderBottom: (theme) =>
+                `2px solid ${theme.palette.primary.main}`,
               pb: 0.5,
               my: 1,
             }}
@@ -246,6 +249,8 @@ export default function page() {
 
 function CreateTicket({ reloadData, close }) {
   const id = React.useId();
+
+  const [isLoading, setIsLoading] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   React.useEffect(() => {
     api.get(`/api/v1/user`).then((resp) => {
@@ -254,7 +259,7 @@ function CreateTicket({ reloadData, close }) {
           resp.data.map((u) => ({
             label: `${u.fullName} (${u.mail}) [${u.category}]`,
             value: u.mail,
-          }))
+          })),
         );
     });
   }, []);
@@ -269,17 +274,33 @@ function CreateTicket({ reloadData, close }) {
     setValue,
     formState: { errors },
   } = form;
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const resp = await api.put(`/api/v1/support`, data);
+      useToast(resp);
+
+      if (resp.status === "success") {
+        reloadData();
+        close();
+      }
+    } catch (err) {
+      useToast({ status: "error", message: "Something went wrong" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const user = watch("user");
+  const subject = watch("subject");
+
+  const isDisabled = !user || !subject;
+
   return (
     <Grid
       component="form"
-      onSubmit={handleSubmit(async (data) => {
-        let resp = await api.put(`/api/v1/support`, data);
-        useToast(resp);
-        if (resp.status === "success") {
-          reloadData();
-          close();
-        }
-      })}
+      onSubmit={handleSubmit(onSubmit)}
       container
       spacing={2}
       size={12}
@@ -343,8 +364,12 @@ function CreateTicket({ reloadData, close }) {
           type="submit"
           variant="contained"
           color="secondary"
+          disabled={isDisabled || isLoading}
+          loading={isLoading}
+          loadingIndicator="Creating..."
           sx={{
             fontWeight: "bold",
+            minWidth: "110px",
           }}
         >
           Create

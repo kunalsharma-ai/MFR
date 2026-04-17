@@ -27,7 +27,7 @@ class Answer extends CrudController {
                 }
             }
         })
-console.log(temp)
+        console.log(temp)
         return await answerModel.bulkWrite(temp)
         // await answerModel.update
         throw new Error("Unable to save data")
@@ -62,8 +62,8 @@ console.log(temp)
                     return a;
                 }
                 a[c] = {
-                    $in: filters[c].map(fltr=>{
-                        let temp=fltr.split(" | ")
+                    $in: filters[c].map(fltr => {
+                        let temp = fltr.split(" | ")
                         return temp[0]
                     })
                 }
@@ -159,9 +159,9 @@ console.log(temp)
                 gender: "$userInfo.gender",
                 timezone: "$userInfo.timezone",
                 category: "$userInfo.category",
-                name:"$userInfo.name",
-                mail:"$userInfo.mail",
-                qualityScore:"$userInfo.qualityScore",
+                name: "$userInfo.name",
+                mail: "$userInfo.mail",
+                qualityScore: "$userInfo.qualityScore",
                 data: 1
             }
         })
@@ -175,9 +175,9 @@ console.log(temp)
                             gender: "$gender",
                             timezone: "$timezone",
                             category: "$category",
-                            name:"$name",
-                            mail:"$mail",
-                            qualityScore:"$qualityScore"
+                            name: "$name",
+                            mail: "$mail",
+                            qualityScore: "$qualityScore"
                         },
                         "$data"
                     ]

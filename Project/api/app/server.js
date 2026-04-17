@@ -22,9 +22,10 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
             compression(),
             express.static("/src/public"),
             cors({
-                origin: function (origin, callback) {
-                    return callback(null, origin)
-                }
+                origin: ["https://mfr.sampledge.duckdns.org", "https://admin.sampledge.duckdns.org"],
+                credentials: true,
+                allowedHeaders: ["Content-Type", "Authorization", "test"],
+                methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
             }),
             express.json(),
             express.urlencoded({

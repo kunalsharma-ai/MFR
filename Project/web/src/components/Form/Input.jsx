@@ -179,8 +179,11 @@ export default function Input({
   }
 
   props["InputProps"] = { ...temp };
+
+  React.useEffect(() => {
   if (Boolean(onHide))
     onHide(hide)
+}, [hide, onHide]);
   if (hide) {
     return <></>;
   }
