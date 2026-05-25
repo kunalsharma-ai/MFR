@@ -1,4 +1,4 @@
-import React, { startTransition } from "react";
+import React, { startTransition, useEffect } from "react";
 import PopUp from "./PopUp";
 import {
   Typography,
@@ -16,22 +16,44 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import {
+  Facebook,
+  GitHub,
+  Google,
+  LinkedIn,
+  X,
+  Apple,
+  Microsoft,
+  Login as LoginIcon,
+} from "@mui/icons-material";
 import { api, Page, submitWithAjax } from "@/util";
 import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
-import { useRouter } from "next/navigation";
+
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTelemetry } from "@/Context";
 import { useToast } from "@/hooks";
 
 function Login({ open, onClose, setOpenSignUp }) {
   const [cardType, setCardType] = React.useState("login");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   return (
     <Dialog
-      open={ open }
-      onClose={ onClose }
-      sx={ {
+      open={open}
+      onClose={() => {
+        onClose();
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("login");
+        router.replace(`${pathname}?${params.toString()}`, {
+          scroll: false,
+        });
+      }}
+      sx={{
         zIndex: 3300,
         boxShadow: 24,
         overflowY: "auto",
@@ -39,38 +61,52 @@ function Login({ open, onClose, setOpenSignUp }) {
           margin: 1,
           maxWidth: "unset",
         },
-      } }
-      slots={ { transition: Fade } }
-      slotProps={ {
+      }}
+      slots={{ transition: Fade }}
+      slotProps={{
         transition: {
           onExited: () => setCardType("login"),
         },
-      } }
-      BackdropProps={ {
+      }}
+      BackdropProps={{
         sx: {
           backgroundColor: "rgba(0, 0, 0, 0.1)",
           backdropFilter: "blur(5px)",
         },
-      } }
-      PaperProps={ {
+      }}
+      PaperProps={{
         sx: {
           borderRadius: 2,
         },
-      } }
+      }}
     >
-      { cardType === "login" ? (
+      {cardType === "login" ? (
         <LoginCard
-          onClose={ onClose }
-          setCardType={ setCardType }
-          setOpenSignUp={ setOpenSignUp }
+          onClose={() => {
+            onClose();
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("login");
+            router.replace(`${pathname}?${params.toString()}`, {
+              scroll: false,
+            });
+          }}
+          setCardType={setCardType}
+          setOpenSignUp={setOpenSignUp}
         />
       ) : (
         <ForgotCard
-          onClose={ onClose }
-          setCardType={ setCardType }
-          setOpenSignUp={ setOpenSignUp }
+          onClose={() => {
+            onClose();
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("login");
+            router.replace(`${pathname}?${params.toString()}`, {
+              scroll: false,
+            });
+          }}
+          setCardType={setCardType}
+          setOpenSignUp={setOpenSignUp}
         />
-      ) }
+      )}
     </Dialog>
   );
 }
@@ -85,6 +121,15 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   const [loginType, setLoginType] = React.useState("mail");
   const [phone, setPhone] = React.useState("");
 
+  const [providers, setProviders] = React.useState([]);
+  useEffect(() => {
+    api.post("/api/v1/auth/socials", {}).then((resp) => {
+      setProviders(resp?.data ?? []);
+    });
+  }, []);
+
+  console.log(providers);
+
   React.useEffect(() => {
     if (!telemetry) return;
     telemetry.ip().then((resp) => {
@@ -98,80 +143,107 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
     { label: "Email", value: "mail" },
     { label: "Phone", value: "phone" },
   ];
+
+  const providerIcons = {
+    google: <Google />,
+    github: <GitHub />,
+    facebook: <Facebook />,
+    linkedin: <LinkedIn />,
+    twitter: <X />,
+    x: <X />,
+    apple: <Apple />,
+    microsoft: <Microsoft />,
+  };
+
+  const authProviders = providers.map((provider) => ({
+    label: `Continue with ${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
+      }`,
+    icon: providerIcons[provider.name?.toLowerCase()] || <LoginIcon />,
+    href: provider.authUrl,
+  }));
+
   return (
     <Card
-      sx={ {
+      sx={{
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
-        minHeight: "520px",
-        width: { xs: "95vw", sm: "430px" },
-        px: { xs: 1, md: 3 },
+        minHeight: authProviders.length > 0 ? "620px" : "520px",
+        width: { xs: "95vw", sm: "440px" },
+        px: { xs: 1.5, sm: 3 },
         position: "relative",
-      } }
+      }}
     >
       <IconButton
-        sx={ {
+        sx={{
           position: "absolute",
           right: 25,
           top: 20,
           "&:hover": { color: "red" },
-        } }
-        onClick={ onClose }
+        }}
+        onClick={onClose}
       >
         <CloseIcon />
       </IconButton>
       <Typography
-        sx={ {
+        sx={{
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
-          pt: 9,
+          pt: 6,
           pb: 3,
           fontWeight: 500,
-        } }
+        }}
       >
         Log in
       </Typography>
       <Box
         component="form"
-        onSubmit={ async (e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
+          // console.log(e);
+          // let resp = await submitWithAjax(e);
+          // console.log(resp);
+
           setLoading(true);
           try {
             const resp = await submitWithAjax(e);
-            if (resp?.status === "success")
-              router.replace("/member/dashboard");
-            if (resp?.status === "error")
-              setErrorMessage(resp?.message ?? "Invalid credentials")
-            setLoading(false)
+            switch (resp.status) {
+              case "success":
+                router.replace("/member/dashboard");
+                break;
+
+              default:
+                setErrorMessage(resp.message);
+                setLoading(false);
+                break;
+            }
           } catch (error) {
             console.log({ error });
             setErrorMessage("Something went wrong.");
             setLoading(false);
           }
-        } }
+        }}
         method="post"
         action="/api/v1/user/login"
-        sx={ {
+        sx={{
           display: "flex",
           flexDirection: "column",
           width: "100%",
           gap: 1.8,
-        } }
+        }}
       >
-        <Grid direction="column" container size={ 12 } gap={ 2.5 }>
+        <Grid direction="column" container size={12} gap={2.5}>
           <ToggleButtonGroup
-            value={ loginType || "" }
+            value={loginType || ""}
             size="small"
             exclusive
             fullWidth
-            onChange={ (_, value) => {
+            onChange={(_, value) => {
               if (value !== null) setLoginType(value);
-            } }
-            sx={ {
+            }}
+            sx={{
               display: "flex",
-              // flexDirection: { xs: "column", sm: "row" },
               flexWrap: "nowrap",
               "& .MuiToggleButton-root": {
                 textTransform: "none",
@@ -180,25 +252,31 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 px: 2,
                 py: 0.5,
                 color: "secondary.main",
-                borderColor: "secondary.main",
+                borderColor: "primary.main",
+                bgcolor: "white",
               },
-              "& .Mui-selected": {
-                backgroundColor: "#063686 !important",
-                color: "#fff !important",
+              "& .MuiToggleButton-root.Mui-selected": {
+                bgcolor: "primary.main",
+
                 "&:hover": {
                   backgroundColor: "primary.dark",
                 },
               },
-            } }
+            }}
           >
-            { options.map((option) => (
-              <ToggleButton key={ option.value } value={ option.value }>
-                { option.label }
+            {options.map((option) => (
+              <ToggleButton key={option.value} value={option.value}>
+                <Typography
+                  fontWeight={500}
+                  color={loginType === option.value ? "#fff" : "secondary.main"}
+                >
+                  {option.label}
+                </Typography>
               </ToggleButton>
-            )) }
+            ))}
           </ToggleButtonGroup>
 
-          { loginType === "mail" ? (
+          {loginType === "mail" ? (
             <Page.Input
               label="E-Mail Address"
               type="email"
@@ -206,36 +284,36 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
               variant="outlined"
               required
               autoFocus
-              onFocus={ (e) => {
+              onFocus={(e) => {
                 setErrorMessage(null);
-              } }
+              }}
             />
           ) : (
             <PhoneInput
-              country={ country }
+              country={country}
               // onlyCountries={onlyCountries}
               // disableDropdown={true}
               name="phone"
               // value={phone}
               // onChange={(value) => setPhone(value)}
-              inputProps={ {
+              inputProps={{
                 name: "phone",
-              } }
-              inputStyle={ {
+              }}
+              inputStyle={{
                 width: "100%",
                 height: "34px",
                 color: "grey",
                 fontSize: "14px",
                 borderColor: " #0000003b",
-              } }
+              }}
               inputClass="custom-phone-font"
-              specialLabel={ "" }
+              specialLabel={""}
             />
-          ) }
+          )}
           <Page.Input
-            onFocus={ (e) => {
+            onFocus={(e) => {
               setErrorMessage(null);
-            } }
+            }}
             label="Password"
             type="password"
             name="password"
@@ -243,23 +321,23 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
         </Grid>
         <Grid
           container
-          sx={ {
+          sx={{
             justifyContent: "space-between",
             alignItems: "center",
             px: 0.5,
             mt: -1,
-          } }
+          }}
         >
           <Page.Input label="Remember me" type="checkbox" name="remember" />
           <Box
-            sx={ { width: "100%" } }
+            sx={{ width: "100%" }}
             display="flex"
-            justifyContent={ { xs: "center", md: "flex-end" } }
-            mt={ { xs: 1, md: -1 } }
+            justifyContent={{ xs: "center", md: "flex-end" }}
+            mt={{ xs: 1, md: -1 }}
           >
             <Page.MuiButton
               color="secondary"
-              sx={ {
+              sx={{
                 fontWeight: 500,
                 textTransform: "none",
                 fontSize: 13,
@@ -267,26 +345,27 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                   cursor: "pointer",
                   textDecoration: "underline",
                 },
-              } }
-              onClick={ () => {
+              }}
+              onClick={() => {
                 setCardType("forgot");
-              } }
+              }}
             >
               Forgot your password?
             </Page.MuiButton>
           </Box>
         </Grid>
-        { errorMessage && <Page.Error message={ errorMessage } /> }
+        {errorMessage && <Page.Error message={errorMessage} />}
+
         <Page.MuiButton
           type="submit"
           fullWidth
           variant="contained"
-          loading={ loading }
+          loading={loading}
+          color="secondary"
           loadingIndicator="Signing in..."
-          sx={ {
+          sx={{
             borderRadius: "8px",
             padding: "9px",
-            backgroundColor: "secondary.main",
 
             color: "white",
             boxShadow: "none",
@@ -295,29 +374,129 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
             "&:hover": {
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.25)",
             },
-          } }
+          }}
         >
           Log in
         </Page.MuiButton>
+        {authProviders.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              my: 0.5,
+            }}
+          >
+            <Box
+              sx={{
+                flex: 1,
+                height: "1px",
+                bgcolor: "divider",
+              }}
+            />
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                fontSize: 13,
+                whiteSpace: "nowrap",
+              }}
+            >
+              or continue with
+            </Typography>
+
+            <Box
+              sx={{
+                flex: 1,
+                height: "1px",
+                bgcolor: "divider",
+              }}
+            />
+          </Box>
+        )}
+        {authProviders.length <= 2 ? (
+          <Box display="flex" flexDirection="column" gap={1}>
+            {authProviders.map((provider, i) => (
+              <Page.MuiButton
+                component={"a"}
+                href={provider.href}
+                key={i}
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                startIcon={provider.icon}
+                sx={{
+                  borderRadius: "8px",
+                  padding: "9px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  borderWidth: "1px",
+                  "&:hover": {
+                    borderWidth: "1px",
+                    backgroundColor: "transparent",
+                  },
+                }}
+              >
+                {provider.label}
+              </Page.MuiButton>
+            ))}
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            gap={{ xs: 0.8, sm: 1.5 }}
+            flexWrap="wrap"
+            mb={0.5}
+          >
+            {authProviders.map((provider, i) => (
+              <IconButton
+                component={"a"}
+                href={provider.href}
+                onClick={provider.onClick}
+                key={i}
+                title={provider?.label}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "secondary.main",
+                  color: "secondary.main",
+                  width: 42,
+                  height: 42,
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    backgroundColor: "action.hover",
+                    transform: "translateY(-1px)",
+                  },
+                }}
+              >
+                {provider.icon}
+              </IconButton>
+            ))}
+          </Box>
+        )}
         <Box display="flex" alignItems="center" justifyContent="center">
           <Typography>Don&apos;t have an account?&nbsp;</Typography>
           <Page.MuiButton
-            component={ "span" }
+            component={"span"}
             color="secondary"
-            sx={ {
-              px: 0,
+            sx={{
+              p: 0,
               fontWeight: 500,
               fontSize: 13,
+
+              ml: -0.5,
               textTransform: "none",
               "&:hover": {
                 cursor: "pointer",
                 textDecoration: "underline",
               },
-            } }
-            onClick={ () => {
+            }}
+            onClick={() => {
               onClose();
               setOpenSignUp(true);
-            } }
+            }}
           >
             Sign up
           </Page.MuiButton>
@@ -331,7 +510,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
   const [stage, setStage] = React.useState("user"); //user,otp,password
   const [user, setUser] = React.useState("");
   const [timeout, updateTimeout] = React.useState(30);
-  // const router = useRouter();
+
   React.useEffect(() => {
     setTimeout(() => {
       if (timeout <= 0) return;
@@ -350,7 +529,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
 
   return (
     <Page.Card
-      sx={ {
+      sx={{
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -360,28 +539,28 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
         px: 3,
 
         position: "relative",
-      } }
+      }}
     >
       <IconButton
-        sx={ {
+        sx={{
           position: "absolute",
           right: 25,
           top: 20,
           "&:hover": { color: "red" },
-        } }
-        onClick={ onClose }
+        }}
+        onClick={onClose}
       >
         <CloseIcon />
       </IconButton>
 
       <Page.Text
-        sx={ {
+        sx={{
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
           mt: 9,
           fontWeight: 500,
-        } }
+        }}
       >
         Reset Password
       </Page.Text>
@@ -389,11 +568,11 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
         component="form"
         action="/api/v1/forgot-password"
         method="put"
-        onSubmit={ (e) => {
+        onSubmit={(e) => {
           e.preventDefault();
           //   submitWithAjax(e);
-        } }
-        sx={ {
+        }}
+        sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -401,101 +580,101 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
           height: "100%",
           gap: 2,
           py: 6,
-        } }
+        }}
       >
-        <Grid container flexDirection="column" gap={ 2 } size={ 12 }>
-          { stage === "user" && (
+        <Grid container flexDirection="column" gap={2} size={12}>
+          {stage === "user" && (
             <>
               <Page.Input
                 name="user"
                 label="Registered E-mail"
-                onChange={ (e) => setUser(e.target.value) }
-                control={ form.control }
+                onChange={(e) => setUser(e.target.value)}
+                control={form.control}
               />
 
               <Page.MuiButton
                 variant="contained"
-                disabled={ !user }
-                onClick={ sendOTP }
-                sx={ {
+                disabled={!user}
+                color="secondary"
+                onClick={sendOTP}
+                sx={{
                   color: "white",
                   borderRadius: "8px",
                   padding: 1,
-                  backgroundColor: "secondary.main",
                   boxShadow: "none",
                   fontWeight: "bold",
                   transition: "box-shadow 0.3s ease",
                   "&:hover": {
                     boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.25)",
                   },
-                } }
-                endIcon={ <SendIcon /> }
+                }}
+                endIcon={<SendIcon />}
               >
                 Send OTP
               </Page.MuiButton>
             </>
-          ) }
+          )}
 
-          { stage === "otp" && (
+          {stage === "otp" && (
             <Page.Box
-              sx={ {
+              sx={{
                 textAlign: "center",
                 borderRadius: 3,
-                bgcolor: "#8cb2f333",
+                bgcolor: (theme) => theme.palette.cardbg.main,
                 border: "1px solid #f4f4f4",
                 p: 4,
-              } }
+              }}
             >
-              <Page.Text sx={ { fontWeight: 500, color: "secondary.main" } }>
+              <Page.Text sx={{ fontWeight: 600 }}>
                 A link has been sent to you on your email. Please check your
                 inbox and spam folders, find the link and reset your password.
               </Page.Text>
             </Page.Box>
-          ) }
+          )}
         </Grid>
         <Grid>
-          <Page.Text sx={ { textAlign: "center", color: "grey.700" } }>
+          <Page.Text sx={{ textAlign: "center", color: "grey.700" }}>
             Try to remember your password?&nbsp;
             <Typography
-              component={ "span" }
+              component={"span"}
               color="secondary"
-              sx={ {
+              sx={{
                 fontWeight: 500,
                 "&:hover": {
                   cursor: "pointer",
                   textDecoration: "underline",
                 },
-              } }
-              onClick={ () => {
+              }}
+              onClick={() => {
                 setCardType("login");
-              } }
+              }}
             >
               Login
             </Typography>
           </Page.Text>
-          { stage !== "otp" && (
-            <Page.Text sx={ { mt: 1, textAlign: "center", color: "grey.700" } }>
+          {stage !== "otp" && (
+            <Page.Text sx={{ mt: 1, textAlign: "center", color: "grey.700" }}>
               Not a Member?&nbsp;
               <Typography
-                component={ "span" }
+                component={"span"}
                 color="secondary"
-                sx={ {
+                sx={{
                   fontWeight: 500,
                   "&:hover": {
                     cursor: "pointer",
                     textDecoration: "underline",
                   },
-                } }
-                onClick={ () => {
+                }}
+                onClick={() => {
                   onClose();
                   setCardType("login");
                   setOpenSignUp(true);
-                } }
+                }}
               >
                 Sign up
               </Typography>
             </Page.Text>
-          ) }
+          )}
         </Grid>
       </Page.Box>
     </Page.Card>

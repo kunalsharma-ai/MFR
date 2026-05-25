@@ -14,7 +14,9 @@ import {
   Radio,
   RadioGroup,
   FormHelperText,
-  Tooltip
+  Tooltip,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 
 import {
@@ -106,17 +108,13 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
   minDOB.setFullYear(minDOB.getFullYear() - 120);
   let maxDOB = new Date();
   maxDOB.setFullYear(maxDOB.getFullYear() - 14);
-  const isMinor = new Date(form.watch("dob")).isMinor();
+  // const isMinor = new Date(form.watch("dob")).isMinor();
 
   const onSubmit = async (userData) => {
     setIsLoading(true);
     try {
       let { agreedtoterms, ...data } = userData;
       if (Boolean(query?.ref) && query.ref !== "") data.referredBy = query.ref;
-      // if(isMinor){
-      //   console.log(data)
-      //   return;
-      // }
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
 
@@ -148,7 +146,33 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
+  React.useEffect(() => {
+    let userInfo = form.getValues();
+    if (("name" in query)) {
+      let name = query?.name.split(" ");
+      switch (name.length) {
+        case 1:
+          userInfo.name.first = name[0];
+          break;
+        case 2:
+          userInfo.name.first = name[0];
+          userInfo.name.last = name[1];
+          break;
+        case 3:
+          userInfo.name.first = name[0];
+          userInfo.name.middle = name[1];
+          userInfo.name.last = name[2];
+          break;
+        default:
+          userInfo.name.first = name[0] ?? "";
+          userInfo.name.last = name.at(-1) ?? "";
 
+      }
+    }
+    if ("email" in query)
+      userInfo.mail = query?.email;
+    form.reset(userInfo)
+  }, [query])
   const category = form.watch("category");
   return (
     <PopUp
@@ -228,7 +252,11 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     px: 2,
                   }}
                 >
-                  <Page.Box sx={{ position: "relative", pt: 3 }}>
+                  <Page.Box sx={{
+                    position: "relative",
+                    pt: 2
+                    // pt: 3
+                  }}>
                     <Page.Box
                       sx={{
                         height: { xs: "60px", md: "80px" },
@@ -238,7 +266,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       <img
                         src="/images/logo/mfr-logo.png"
                         alt="logo"
-                        width="100%"
+                        width={"100%"}
                       />
                     </Page.Box>{" "}
                     <Page.Box
@@ -275,17 +303,18 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   sx={{
                     px: { xs: 2, md: 4 },
                     pb: 4,
+
                   }}
                 >
                   <Page.Text
                     sx={{
                       alignSelf: "flex-start",
                       textAlign: "center",
-                      fontSize: { xs: "18px", md: "26px" },
+                      fontSize: { xs: "18px", md: "24px" },
                       fontWeight: 600,
                       color: "secondary.main",
 
-                      my: 2,
+                      my: 1,
                     }}
                   >
                     Signup
@@ -297,7 +326,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       direction="row"
                       style={{ alignItems: "flex-end" }}
                     >
-                      <Grid size={{ xs: 12, md: 2 }}>
+                      <Grid size={{ xs: 12, md: 2.2, }}>
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
@@ -312,7 +341,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           labelText="Salutation"
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, md: 5 }}>
+                      <Grid size={{ xs: 12, md: 4.9 }}>
                         <Form.Input
                           {...register("name.first")}
                           control={control}
@@ -322,7 +351,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           validations={user.name.first}
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, md: 5 }}>
+                      <Grid size={{ xs: 12, md: 4.9 }}>
                         <Form.Input
                           {...register("name.last")}
                           control={control}
@@ -390,94 +419,6 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         />
                       </Grid>
                     </Grid>
-                    {/* {isMinor ? (
-                      <>
-                        <Page.Divider sx={{ width: "100%", opacity: "0.5" }} />
-                        <Grid size={12}>
-                          <Page.Text
-                            sx={{
-                              fontSize: 16,
-                              fontWeight: 600,
-                              color: "secondary.main",
-                            }}
-                          >
-                            Parent / Legal Guardian
-                          </Page.Text>
-                          <Page.Text sx={{ textAlign: "justify" }}>
-                            Since you are under 18 years of age, we are required
-                            to obtain consent from your parent or legal guardian
-                            before proceeding. You are kindly requested to share
-                            the details below.
-                          </Page.Text>
-                        </Grid>
-                        <Grid size={12}>
-                          <Form.Select
-                            {...register("parent.relation")}
-                            control={control}
-                            options={[
-                              { label: "Father", value: "father" },
-                              { label: "Mother", value: "mother" },
-                              { label: "Legal Guardian", value: "guardian" },
-                            ]}
-                            labelText="Relation"
-                          />
-                        </Grid>
-                        <Grid
-                          size={12}
-                          container
-                          spacing={1.2}
-                          direction="row"
-                          style={{ alignItems: "flex-end" }}
-                        >
-                          <Grid size={{ xs: 12, md: 2 }}>
-                            <Form.Select
-                              {...register("parent.name.salutation")}
-                              control={control}
-                              options={[
-                                { value: "Mr.", label: "Mr." },
-                                { value: "Ms.", label: "Ms." },
-                                { value: "Mrs.", label: "Mrs." },
-                                { value: "Dr.", label: "Dr." },
-                                { value: "Prof.", label: "Prof." },
-                                { value: "Mx. ", label: "Mx." },
-                              ]}
-                              labelText="Sal."
-                            />
-                          </Grid>
-                          <Grid size={{ xs: 12, md: 5 }}>
-                            <Form.Input
-                              {...register("parent.name.first")}
-                              control={control}
-                              labelText="First Name"
-                              required={true}
-                              errors={errors?.parent?.name?.first}
-                              validations={user.name.first}
-                            />
-                          </Grid>
-                          <Grid size={{ xs: 12, md: 5 }}>
-                            <Form.Input
-                              {...register("parent.name.last")}
-                              control={control}
-                              labelText="Last Name"
-                              required={true}
-                              errors={errors?.parent?.name?.last}
-                              validations={user.name.last}
-                            />
-                          </Grid>
-                        </Grid>
-
-                        <Grid size={12}>
-                          <Form.Input
-                            {...register("parent.email")}
-                            control={control}
-                            labelText="Email"
-                            required={true}
-                            errors={errors?.parent?.email}
-                            validations={user.parent.email}
-                          />
-                        </Grid>
-                      </>
-                    ) : ( */}
                     <Grid
                       size={12}
                       container
@@ -523,7 +464,6 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         </Typography>
                       </Typography>
                     </Grid>
-                    {/* )} */}
                     <Page.MuiButton
                       type="submit"
                       variant="contained"
@@ -876,6 +816,92 @@ function GenderRadioGroup({
             <FormHelperText sx={{ fontSize: "12px", mx: 0 }}>
               {errorMessage}
             </FormHelperText>
+          )}
+        </FormControl>
+      )}
+    />
+  );
+}
+
+function AccountTypeButtonGroup({
+  name = "category",
+  control,
+  validations,
+  errors,
+  isDisabled = false,
+  options,
+}) {
+  const hasError = !!errors;
+  const errorMessage = errors?.message;
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={validations}
+      render={({ field }) => (
+        <FormControl fullWidth error={hasError} disabled={isDisabled}>
+          <ToggleButtonGroup
+            value={field.value || ""}
+            size="small"
+            exclusive
+            onChange={(_, value) => {
+              if (value !== null) field.onChange(value);
+            }}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              flexWrap: "nowrap",
+              "& .MuiToggleButton-root": {
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: 13,
+                px: 2,
+                py: 0.5,
+                color: errorMessage ? "red" : "secondary.main",
+                borderColor: errorMessage ? "red" : "secondary.main",
+              },
+              "& .Mui-selected": {
+                backgroundColor: "#016550 !important",
+                color: "#fff !important",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              },
+
+              // xs only rounded corners
+              "@media (max-width: 600px)": {
+                "& .MuiToggleButton-root": {
+                  borderRadius: 0,
+                  flex: 1,
+                  width: "100%",
+                  justifyContent: "center",
+                },
+                "& .MuiToggleButton-root:first-of-type": {
+                  borderTopLeftRadius: 4,
+                  borderTopRightRadius: 4,
+                },
+                "& .MuiToggleButton-root:last-of-type": {
+                  borderBottomLeftRadius: 4,
+                  borderBottomRightRadius: 4,
+                },
+                "& .MuiToggleButton-root:not(:first-of-type)": {
+                  borderTop: "none",
+                },
+              },
+            }}
+          >
+            {options.map((option) => (
+              <ToggleButton key={option.value} value={option.value}>
+                {option.label}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+
+          {errorMessage && (
+            <Page.Text sx={{ color: "red", fontSize: "11px" }}>
+              {errorMessage}
+            </Page.Text>
           )}
         </FormControl>
       )}
