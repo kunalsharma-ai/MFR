@@ -1,6 +1,6 @@
 import express from "express";
 import { Profile as profileController } from "../../controller/index.js";
-import { expressRoute, Mutate, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
+import { Mutate, expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
 
 const router = express.Router();
 router
@@ -14,12 +14,13 @@ router
         },
         profileController
     ))
+    
     .post(isAuthenticated, expressRoute(
         async req => {
             // Read all entries matching filter
             let message = "";
             let status = await profileController.status();
-            let data = Mutate(await profileController.list(req.body))
+            let data = Mutate(await profileController.list(req.body,null,{sortOrder:1},"+sortOrder"))
             for (let index = 0; index < data.length; index++) {
                 let profile = data[index];
                 profile["status"] = status[profile.slug] ?? -1;

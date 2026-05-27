@@ -10,33 +10,26 @@ export default mongooseModel(
             trim: true,
             lowercase: true
         },
-        termsMessage: {
-            type: String
+        termsMessage:{
+            type:String
         },
-        termsMessageChildren: {
-            type: String
-        },
-        terms: [
+        terms:[
             {
-                name: {
-                    type: String,
-                    required: true,
-                    lowercase: true,
-                    trim: true
+                name:{
+                    type:String,
+                    required:true,
+                    lowercase:true,
+                    trim:true
                 },
-                body: {
-                    type: String,
-                    required: true
+                body:{
+                    type:String,
+                    required:true
                 },
-                isRequired: {
-                    type: Boolean,
-                    required: true,
-                    default: false
-                },
-                forMinor: {
-                    type: Boolean,
-                    default: false
-                }
+                isRequired:{
+                    type:Boolean,
+                    required:true,
+                    default:false
+                }         
             }
         ]
     },

@@ -6,20 +6,23 @@ import {
 
 class Answer extends CrudController {
     async save(data) {
-        // console.log(data)
         const origin = this.request.origin;
         const user = this.request.user._id;
-        let temp = data.map(info => {
-            console.log(info);
+        let temp = data.map(({ question, answer }) => {
             return {
                 updateOne: {
                     filter: {
-                        question: info.question,
+                        question,
                         user,
                         origin
                     },
                     update: {
-                        ...info,
+                        question,
+                        answer: Array.isArray(answer)
+                            ? answer
+                            : answer === null
+                                ? []
+                                : [answer],
                         user,
                         origin
                     },
@@ -27,8 +30,8 @@ class Answer extends CrudController {
                 }
             }
         })
-        console.log(temp)
-        return await answerModel.bulkWrite(temp)
+        console.log({ temp })
+        return await answerModel.bulkWrite(temp, { ordered: true });
         // await answerModel.update
         throw new Error("Unable to save data")
         return true;

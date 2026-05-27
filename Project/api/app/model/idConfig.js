@@ -57,12 +57,18 @@ const idConfig= mongooseModel(
 )
 
 export async function generateID(module, origin, count) {
+    console.log("Looking for ")
+    console.log({module,
+        origin,
+        isActive: true,
+        isDeleted: false})
     let info = await idConfig.findOne({
         module,
         origin,
         isActive: true,
         isDeleted: false
     });
+
     if (!info) throw new Error("Misconfigured");
     if (info.limit <= count) throw new Error("No more support tickets allowed")
     const temp = `${info.prefix}${Number(info.sequence).toString().padStart(info.minLength, "0")}${info.suffix}`;

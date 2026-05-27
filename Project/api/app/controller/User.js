@@ -6,7 +6,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 }
 
 import { CrudController, Mutate } from "../utils/index.js";
-import { User as userModel, Invites as invitesModel, Answers, Survey, Response as responseModel } from "../model/index.js";
+import { User as userModel, Invites as invitesModel, Answers, Survey,Response as responseModel } from "../model/index.js";
 import fs from "fs"
 class User extends CrudController {
     fixUserIssue() {
@@ -21,7 +21,7 @@ class User extends CrudController {
         let user
         if (!phone)
             user = await super.list({ mail });
-        if (!mail) user = await super.list({ phone: phone.replace(/\D/g, "") });
+        if (!mail) user = await super.list({ phone:phone.replace(/\D/g,"") });
 
         if (user.length !== 1) throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
         let temp = await userModel.findById(user[0]._id).select("+role");
@@ -33,7 +33,7 @@ class User extends CrudController {
         throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
     }
     async list(query = {}, populateFields = null, sort = {}, project = null) {
-        console.log({query,project})
+        console.log(query)
         return await super.list(query, populateFields, sort, project)
     }
     async create(data) {
@@ -43,7 +43,36 @@ class User extends CrudController {
         }, {
             isActive: false
         })
-        return await super.create(data)
+        const user = await super.create(data);
+        
+        // Auto-invite to active surveys with autoInvite enabled
+        try {
+            const surveys = await modelSurvey.find({
+                category: user.category,
+                autoInvite: true,
+                status: "active",
+                ...this.commonFilters
+            });
+            
+            if (surveys.length > 0) {
+                const autoInvites = surveys.map(s => ({
+                    user: user._id,
+                    survey: {
+                        name: s.name,
+                        slug: s.slug
+                    },
+                    status: "invited",
+                    source: s.source,
+                    points: s.points,
+                    ...this.commonFilters
+                }));
+                await responseModel.insertMany(autoInvites, { ordered: false });
+            }
+        } catch (e) {
+            console.Log("Auto-invite failed for new user", e.message);
+        }
+
+        return user;
     }
     async update(id, data) {
         this.fixUserIssue();

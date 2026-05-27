@@ -70,7 +70,7 @@ class Question extends CrudController {
         for (let index = 0; index < data.length; index++) {
             const que = data[index];
             que["children"] = children[que.name];
-            que["required"]=que.isRequired;            
+            que["required"] = que.isRequired;
         }
         return data;
     }

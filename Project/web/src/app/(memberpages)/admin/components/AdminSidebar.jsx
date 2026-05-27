@@ -105,6 +105,7 @@ export default function AdminSidebar({ children }) {
                 color: isActive ? "secondary.main" : "inherit",
                 bgcolor: isActive ? "#eaf7ffff" : "transparent",
                 gap: 0.5,
+                minHeight: 75,
                 "&:hover": {
                   cursor: "pointer",
                   color: "secondary.main",

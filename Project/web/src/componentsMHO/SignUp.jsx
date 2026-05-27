@@ -28,6 +28,17 @@ import {
   Error as ErrorIcon,
 } from "@mui/icons-material";
 
+import {
+  Facebook,
+  GitHub,
+  Google,
+  LinkedIn,
+  X,
+  Apple,
+  Microsoft,
+  Login as LoginIcon,
+} from "@mui/icons-material";
+
 import PopUp from "./PopUp";
 import { Form, RequiredLabel } from "@/components";
 import { api, Page } from "@/util";
@@ -90,6 +101,33 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
     reset,
     formState: { errors, isDirty },
   } = form;
+
+  const [providers, setProviders] = React.useState([]);
+  React.useEffect(() => {
+    api.post("/api/v1/auth/socials", {}).then((resp) => {
+      setProviders(resp?.data ?? []);
+    });
+  }, []);
+
+  const providerIcons = {
+    google: <Google />,
+    github: <GitHub />,
+    facebook: <Facebook />,
+    linkedin: <LinkedIn />,
+    twitter: <X />,
+    x: <X />,
+    apple: <Apple />,
+    microsoft: <Microsoft />,
+  };
+
+  const authProviders = providers.map((provider) => ({
+    label: `Continue with ${
+      provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
+    }`,
+    icon: providerIcons[provider.name?.toLowerCase()] || <LoginIcon />,
+    href: provider.authUrl,
+  }));
+
   React.useEffect(() => {
     if (!telemetry) return;
     telemetry.timezone().then((timezone) => {
@@ -148,7 +186,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
   React.useEffect(() => {
     let userInfo = form.getValues();
-    if (("name" in query)) {
+    if ("name" in query) {
       let name = query?.name.split(" ");
       switch (name.length) {
         case 1:
@@ -166,13 +204,11 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
         default:
           userInfo.name.first = name[0] ?? "";
           userInfo.name.last = name.at(-1) ?? "";
-
       }
     }
-    if ("email" in query)
-      userInfo.mail = query?.email;
-    form.reset(userInfo)
-  }, [query])
+    if ("email" in query) userInfo.mail = query?.email;
+    form.reset(userInfo);
+  }, [query]);
   const category = form.watch("category");
   return (
     <PopUp
@@ -252,11 +288,13 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     px: 2,
                   }}
                 >
-                  <Page.Box sx={{
-                    position: "relative",
-                    pt: 2
-                    // pt: 3
-                  }}>
+                  <Page.Box
+                    sx={{
+                      position: "relative",
+                      pt: 2,
+                      // pt: 3
+                    }}
+                  >
                     <Page.Box
                       sx={{
                         height: { xs: "60px", md: "80px" },
@@ -303,7 +341,6 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   sx={{
                     px: { xs: 2, md: 4 },
                     pb: 4,
-
                   }}
                 >
                   <Page.Text
@@ -319,6 +356,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   >
                     Signup
                   </Page.Text>
+
                   <Grid size={12} container direction="column" spacing={1.2}>
                     <Grid
                       size={12}
@@ -326,7 +364,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       direction="row"
                       style={{ alignItems: "flex-end" }}
                     >
-                      <Grid size={{ xs: 12, md: 2.2, }}>
+                      <Grid size={{ xs: 12, md: 2.2 }}>
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
@@ -476,7 +514,8 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       }
                       sx={{
                         bgcolor: "secondary.main",
-                        my: 2,
+                        mt: 2,
+                        mb: 1,
                         p: 1,
                         fontSize: 14,
                         fontWeight: 600,
@@ -486,11 +525,114 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     >
                       Sign Up
                     </Page.MuiButton>
+                    {!query?.email && (
+                      <>
+                        {authProviders.length > 0 && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                              my: 0.5,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                flex: 1,
+                                height: "1px",
+                                bgcolor: "divider",
+                              }}
+                            />
+
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: "text.secondary",
+                                fontSize: 13,
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              or continue with
+                            </Typography>
+
+                            <Box
+                              sx={{
+                                flex: 1,
+                                height: "1px",
+                                bgcolor: "divider",
+                              }}
+                            />
+                          </Box>
+                        )}
+                        {authProviders.length <= 2 ? (
+                          <Box display="flex" flexDirection="column" gap={1}>
+                            {authProviders.map((provider, i) => (
+                              <Page.MuiButton
+                                component={"a"}
+                                href={provider.href}
+                                key={i}
+                                fullWidth
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={provider.icon}
+                                sx={{
+                                  borderRadius: "8px",
+                                  padding: "9px",
+                                  fontWeight: 600,
+                                  textTransform: "none",
+                                  borderWidth: "1px",
+                                  "&:hover": {
+                                    borderWidth: "1px",
+                                    backgroundColor: "transparent",
+                                  },
+                                }}
+                              >
+                                {provider.label}
+                              </Page.MuiButton>
+                            ))}
+                          </Box>
+                        ) : (
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            gap={{ xs: 0.8, sm: 1.5 }}
+                            flexWrap="wrap"
+                            mb={0.5}
+                          >
+                            {authProviders.map((provider, i) => (
+                              <IconButton
+                                component={"a"}
+                                href={provider.href}
+                                onClick={provider.onClick}
+                                key={i}
+                                title={provider?.label}
+                                sx={{
+                                  border: "1px solid",
+                                  borderColor: "secondary.main",
+                                  color: "secondary.main",
+                                  width: 42,
+                                  height: 42,
+                                  transition: "all 0.2s ease",
+                                  "&:hover": {
+                                    backgroundColor: "action.hover",
+                                    transform: "translateY(-1px)",
+                                  },
+                                }}
+                              >
+                                {provider.icon}
+                              </IconButton>
+                            ))}
+                          </Box>
+                        )}
+                      </>
+                    )}
                     <Grid
                       size={12}
                       container
                       justifyContent="center"
                       alignItems="center"
+                      mt={1}
                     >
                       <Page.Text>Already have an account?</Page.Text>
                       <Page.Text

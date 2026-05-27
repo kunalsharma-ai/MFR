@@ -1,7 +1,8 @@
-import { CrudController,Mutate } from "../utils/index.js";
+import { CrudController } from "../utils/index.js";
 import { Profile as profileModel } from "../model/index.js";
 
 class ProfileController extends CrudController {
+  
   async status() {
     const userID = this?.request?.user?._id?.toString();
     let temp = await profileModel.aggregate([
@@ -173,7 +174,9 @@ class ProfileController extends CrudController {
       }
     ])
     // console.log({temp,user:this.request.user});
-    if(temp instanceof Array && temp.length ===1)return temp[0];
+    // console.log(temp)
+    // throw new Error("under development")
+    if (temp instanceof Array && temp.length === 1) return temp[0];
     return temp;
   }
 }

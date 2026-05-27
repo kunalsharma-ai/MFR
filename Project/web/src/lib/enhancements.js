@@ -54,7 +54,12 @@ Array.prototype.sortRange = function (direction = "asc") {
   const extractLow = (val) => {
     let str = val;
     if (typeof str !== "string")
-      str = ("label" in val) ? str.label : ("value" in val) ? str.value : JSON.stringify(str);
+      str =
+        "label" in val
+          ? str.label
+          : "value" in val
+            ? str.value
+            : JSON.stringify(str);
     str = str.toLowerCase();
 
     // Up to ₹ 2,000 → treat as 0
@@ -73,9 +78,7 @@ Array.prototype.sortRange = function (direction = "asc") {
     return 0;
   };
 
-  return this.sort((a, b) =>
-    (extractLow(a) - extractLow(b)) * factor
-  );
+  return this.sort((a, b) => (extractLow(a) - extractLow(b)) * factor);
 };
 Date.prototype.timestamp = function () {
   return Math.floor(this.getTime() / 1000);
@@ -84,7 +87,7 @@ Date.prototype.next = function (offsetStr = "0d") {
   const match = offsetStr.match(/^(\d+)([dwmy])$/i);
   if (!match) {
     throw new Error(
-      "Invalid format. Use format like '5d', '2w', '3m', or '1y'."
+      "Invalid format. Use format like '5d', '2w', '3m', or '1y'.",
     );
   }
 
@@ -114,7 +117,7 @@ Date.prototype.next = function (offsetStr = "0d") {
 };
 Date.prototype.showDate = function (
   format = "dd-mmm-yyyy",
-  locale = "default"
+  locale = "default",
 ) {
   const options = {
     day: "2-digit",
@@ -145,7 +148,7 @@ Date.prototype.showDate = function (
         /mm/,
         this.getMonth() + 1 < 10
           ? "0" + (this.getMonth() + 1)
-          : this.getMonth() + 1
+          : this.getMonth() + 1,
       )
       .replace(/yyyy/, year)
       .replace(/yy/, year.slice(-2));
@@ -156,11 +159,11 @@ Date.prototype.showDate = function (
 Date.prototype.toDate = function () {
   return this;
 };
-Date.prototype.isMinor=function(cn="IN"){
-  let today=new Date();
-  let age=(today - this) / (365.25 * 24 * 3600 * 1000);
-  return age < 18
-}
+Date.prototype.isMinor = function (cn = "IN") {
+  let today = new Date();
+  let age = (today - this) / (365.25 * 24 * 3600 * 1000);
+  return age < 18;
+};
 Date.prototype.relativeTime = function () {
   const slabs = [0, 60, 3600, 86400, 604800, 2592000, 31536000];
   const slabNames = [
@@ -186,7 +189,7 @@ Date.prototype.relativeTime = function () {
 };
 Date.prototype.toFormat = function (
   format = "dd-mm-yyyy - hh:mm:ss",
-  locale = "en-IN"
+  locale = "en-IN",
 ) {
   const fmt = format.toLowerCase();
   const options = {
@@ -225,7 +228,7 @@ String.prototype.sluggify = function () {
 String.prototype.toMoneyRange = function (currency = "INR", locale = "en-IN") {
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
-    currency
+    currency,
   });
 
   const str = this.toLowerCase();
@@ -244,8 +247,8 @@ String.prototype.toMoneyRange = function (currency = "INR", locale = "en-IN") {
 
   // 3️⃣ Normal range case
   if (str.includes("-")) {
-    const [min, max] = this.split("-").map(v =>
-      Number(v.replace(/[^\d]/g, ""))
+    const [min, max] = this.split("-").map((v) =>
+      Number(v.replace(/[^\d]/g, "")),
     );
 
     return `${formatter.format(min)} - ${formatter.format(max)}`;
@@ -260,6 +263,26 @@ Number.prototype.toMoney = function (currency = "INR", locale = "en-IN") {
   }).format;
   return format(this);
 };
+
+Number.prototype.toLocalCurrency = function (
+  currency = "INR",
+  locale = "en-IN",
+) {
+  if (typeof localStorage === "undefined") return "";
+  const format = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+  }).format;
+  let localCurrency = localStorage?.getItem("local-currency");
+  if (!localCurrency) return ``;
+  let currencyConversion = localStorage?.getItem("currency-conversion");
+  if (!currencyConversion) currencyConversion = 1;
+  const localFormat = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: localCurrency,
+  }).format;
+  return ` ~ ${localFormat(this * currencyConversion)} ${localCurrency} `;
+};
 Number.prototype.toPercent = function (locale = "en-IN") {
   const { format } = new Intl.NumberFormat(locale, {
     style: "percent",
@@ -269,21 +292,25 @@ Number.prototype.toPercent = function (locale = "en-IN") {
   });
   return format(this / 100);
 };
-Number.prototype.toTime = Number.prototype.toTimeElapsed = function (showMs=false) {
+Number.prototype.toTime = Number.prototype.toTimeElapsed = function (
+  showMs = false,
+) {
   let temp = this;
-  let ms = temp % 1000; temp = (temp - ms) / 1000;
-  let sec = temp % 60; temp = (temp - sec) / 60;
-  let min = temp % 60; temp = (temp - min) / 60;
+  let ms = temp % 1000;
+  temp = (temp - ms) / 1000;
+  let sec = temp % 60;
+  temp = (temp - sec) / 60;
+  let min = temp % 60;
+  temp = (temp - min) / 60;
   let hr = temp;
-  if(showMs)
-  return `${hr}:${(min < 10) ? `0${min}` : min}:${(sec < 10) ? `0${sec}` : sec}.${ms}`
-  return `${hr}:${(min < 10) ? `0${min}` : min}:${(sec < 10) ? `0${sec}` : sec}`
-   
-}
+  if (showMs)
+    return `${hr}:${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}.${ms}`;
+  return `${hr}:${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`;
+};
 Array.prototype.avg = function () {
   let sum = 0;
   for (let i = 0; i < this.length; i++) {
     sum += Number(this[i]);
   }
-  return (sum / this.length)
-}
+  return sum / this.length;
+};

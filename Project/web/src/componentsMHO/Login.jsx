@@ -128,8 +128,6 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
     });
   }, []);
 
-  console.log(providers);
-
   React.useEffect(() => {
     if (!telemetry) return;
     telemetry.ip().then((resp) => {
@@ -156,8 +154,9 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   };
 
   const authProviders = providers.map((provider) => ({
-    label: `Continue with ${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
-      }`,
+    label: `Continue with ${
+      provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
+    }`,
     icon: providerIcons[provider.name?.toLowerCase()] || <LoginIcon />,
     href: provider.authUrl,
   }));

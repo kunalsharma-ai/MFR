@@ -10,6 +10,7 @@ export { default as telemetry } from "./getSecurityInfo";
 export { default as getCurrency } from "./getCurrency";
 export { default as getOptions } from "./getOptions";
 export {default as useCustomState} from "./useCustomState";
+export {loadData} from "./loadData";
 
 export function mutate(data) {
   return JSON.parse(JSON.stringify(data));

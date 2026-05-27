@@ -23,7 +23,7 @@ router
         },
         categoryController
     ))
-    .put(isAuthenticated,expressRoute(
+    .put(expressRoute(
         async req => {
             // Create new entry
             let message = "";
@@ -43,7 +43,7 @@ router
         },
         categoryController
     ))
-    .put(isAuthenticated,expressRoute(
+    .put(expressRoute(
         async req => {
             // update single entry
             let message = "";
@@ -52,7 +52,7 @@ router
         },
         categoryController
     ))
-    .delete(isAuthenticated,expressRoute(
+    .delete(expressRoute(
         async req => {
             // delete single entry
             let message = "";

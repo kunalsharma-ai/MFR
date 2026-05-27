@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import {exec} from "child_process";
 import fs from "fs";
 
 function seconds(n) {
@@ -46,7 +46,7 @@ class fsLogger {
         fs.appendFileSync(this.#path, message, "utf-8");
     }
 
-    constructor(path, { locale = "en-US", timezone = "UTC" }) {
+    constructor(path, {locale = "en-US", timezone = "UTC"}) {
         this.#path = path;
         this.#locale = locale;
         this.#timezone = timezone;

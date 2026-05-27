@@ -17,23 +17,26 @@ import {
   Fade,
   Collapse,
   Rating,
-  Chip,
+  Stack,
+  Card,
+  CardContent,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import {
-  Male as MaleIcon,
-  Female as FemaleIcon,
-  Person as PersonIcon,
-  Edit as EditIcon,
-  WhatsApp as WhatsAppIcon,
-  X as XIcon,
-  Instagram as InstagramIcon,
-  Facebook as FacebookIcon,
-  LinkedIn as LinkedInIcon,
-  YouTube as YouTubeIcon,
-  Star as StarIcon,
-} from "@mui/icons-material";
-
+import MaleIcon from "@mui/icons-material/Male";
+import FemaleIcon from "@mui/icons-material/Female";
+import PersonIcon from "@mui/icons-material/Person";
+import EditIcon from "@mui/icons-material/Edit";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import XIcon from "@mui/icons-material/X";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import StarIcon from "@mui/icons-material/Star";
+import CakeIcon from "@mui/icons-material/Cake";
+import EventNoteIcon from "@mui/icons-material/EventNote";
+import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
 import { useForm } from "react-hook-form";
 
 import { Form } from "@/components";
@@ -43,11 +46,10 @@ import DataList from "@/componentsMHO/DataList";
 import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
+import MyAccountPoints from "../../components/MyAccountPoints";
 
-import Payment from "./component/Payment";
-import Socials from "./component/Socials";
 const iconStyle = {
-  color: "secondary.main",
+  color: "#fff",
   verticalAlign: "middle",
   ml: 1,
   mb: 0.5,
@@ -83,159 +85,193 @@ export default function page() {
   const user = useMember();
 
   return (
-    <Grid container size={12}>
-      <Stats user={user} />
-      <Grid
-        size={12}
-        container
-        spacing={2}
-        py={2}
-        px={{ xs: 2, md: 3 }}
-        justifyContent="center"
-        alignItems={"flex-start"}
-      >
-        <Payment />
-        {/* <SocialAccounts user={ user } /> */}
-        <Socials />
+    <Grid
+      container
+      size={12}
+      py={2}
+      px={{ xs: 2, md: 3 }}
+      sx={{ border: `1px solid #e0e0e0` }}
+      spacing={2}
+    >
+      <Grid container size={{ xs: 12, md: 4, lg: 3 }} alignSelf={"flex-start"}>
+        <UserInfo user={user} />
       </Grid>
-      <Summary />
+
+      <Grid container size={{ xs: 12, md: 8, lg: 9 }} alignContent="flex-start">
+        <MyAccountPoints />
+        <Stats user={user} />
+        <Summary />
+      </Grid>
     </Grid>
   );
 }
 
-function Stats({ user }) {
+function Stats() {
   const [statistics, setStatistics] = React.useState({});
+
   React.useEffect(() => {
     api
       .get(`/api/v1/me/statistics`)
       .then((resp) => {
         if (!resp.data) return useToast(resp);
-        let data = resp.data;
-        setStatistics(data);
+
+        setStatistics(resp.data);
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {});
+      });
   }, []);
 
   const stats = [
+    // {
+    //   title: "Current Rewards",
+    //   value: `${statistics?.totalRewards ?? 0} pts`,
+    //   subtitle: "Available reward balance",
+    //   icon: "/images/myaccount/currentreward.png",
+    //   bg: "rgba(255, 152, 0, 0.12)",
+    // },
     {
-      label: "Current Rewards",
-      value: statistics?.totalRewards ?? 0,
-      icon: "/images/myaccount/currentreward.png",
-    },
-    {
-      label: "Claimed Rewards",
-      value: 0,
+      title: "Claimed Rewards",
+      value: `0 pts`,
+      subtitle: "Rewards already redeemed",
       icon: "/images/myaccount/claimedreward.png",
+      bg: "rgba(76, 175, 80, 0.12)",
     },
     {
-      label: "Total Rewards Earned",
-      value: statistics?.totalRewards ?? 0,
+      title: "Total Rewards Earned",
+      value: `${statistics?.totalRewards ?? 0} pts`,
+      subtitle: "Lifetime reward earnings",
       icon: "/images/myaccount/totalreward.png",
+      bg: "rgba(255, 193, 7, 0.12)",
     },
     {
-      label: "Profile Status",
-      value: "42%",
-      icon: "/images/myaccount/profilestatus.png",
-    },
-    {
-      label: "Profile Completion",
-      value: "8/19",
-      icon: "/images/myaccount/totalprofilecompletion.png",
-    },
-    {
-      label: "Total Surveys Taken",
+      title: "Total Surveys Taken",
       value: (statistics?.total ?? 0).toLocaleString("en-US"),
+      subtitle: "All survey attempts",
       icon: "/images/myaccount/totalsurveytaken.png",
+      bg: "rgba(33, 150, 243, 0.12)",
     },
     {
-      label: "Completed Suveys",
+      title: "Completed Surveys",
       value: (statistics?.complete ?? 0).toLocaleString("en-US"),
+      subtitle: "Successfully completed",
       icon: "/images/myaccount/completedsurvey.png",
+      bg: "rgba(76, 175, 80, 0.12)",
     },
     {
-      label: "Disqualified Surveys",
+      title: "Disqualified Surveys",
       value: (statistics?.disqualified ?? 0).toLocaleString("en-US"),
+      subtitle: "Screened out surveys",
       icon: "/images/myaccount/disqualifiedsurvey.png",
+      bg: "rgba(244, 67, 54, 0.12)",
     },
     {
-      label: "Abandoned Surveys",
+      title: "Abandoned Surveys",
       value: (statistics?.abdoned ?? 0).toLocaleString("en-US"),
+      subtitle: "Surveys not completed",
       icon: "/images/myaccount/abandonedsurvey.png",
+      bg: "rgba(158, 158, 158, 0.12)",
+    },
+    {
+      title: "Approved Surveys",
+      value: (statistics?.approved ?? 0).toLocaleString("en-US"),
+      subtitle: "Approved responses",
+      icon: "/images/myaccount/disqualifiedsurvey.png",
+      bg: "rgba(0, 150, 136, 0.12)",
+    },
+    {
+      title: "Rejected Surveys",
+      value: (statistics?.rejected ?? 0).toLocaleString("en-US"),
+      subtitle: "Rejected responses",
+      icon: "/images/myaccount/abandonedsurvey.png",
+      bg: "rgba(233, 30, 99, 0.12)",
     },
   ];
 
   return (
-    <Grid
-      size={12}
-      container
-      spacing={3}
-      py={2}
-      px={{ xs: 2, md: 3 }}
-      sx={{ border: `1px solid #e0e0e0` }}
-    >
-      <UserInfo user={user} />
-      <Grid size={{ xs: 12, lg: 8 }} container spacing={2}>
-        {stats.map((stat, index) => {
-          return (
-            <Grid
-              container
-              size={{ xs: 12, md: 6, lg: 4 }}
-              key={index}
-              // direction={{ xs: "row", md: "column", lg: "row" }}
-              alignItems="center"
-              justifyContent="space-between"
-              spacing={1}
-              sx={{
-                border: (theme) => `1px solid ${theme.palette.primary.main}`,
-                bgcolor: (theme) => theme.palette.cardbg.main,
-                borderRadius: 4,
-                px: { xs: 3, md: 1, xl: 3 },
-                py: 3,
-                minHeight: "120px",
-              }}
-            >
-              <Grid
-                // size={6}
-                direction="column"
-                alignItems="flex-start"
-                justifyContent="center"
-              >
-                <Typography fontSize={{ xs: 14, md: 13, xl: 14 }}>
-                  {stat?.label}
-                </Typography>
-                <Typography
+    <Grid container spacing={2}>
+      {stats.map((item, index) => (
+        <Grid
+          key={index}
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4,
+            xl: 3,
+          }}
+        >
+          <Card
+            elevation={0}
+            sx={{
+              height: "100%",
+              borderRadius: 4,
+              border: "1px solid",
+              borderColor: "divider",
+              transition: "0.2s ease",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: 2,
+              },
+            }}
+          >
+            <CardContent sx={{ p: 2.5 }}>
+              <Stack direction="row" spacing={2} alignItems="flex-start">
+                <Avatar
+                  variant="rounded"
                   sx={{
-                    fontWeight: "600",
-                    fontSize: { xs: "22px", xl: "26px" },
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                    whiteSpace: "normal",
+                    width: 70,
+                    height: 70,
+                    borderRadius: "50%",
+                    bgcolor: item.bg,
                   }}
                 >
-                  {stat.value.toLocaleString("en-US")}
-                </Typography>
-              </Grid>
+                  <Box
+                    component="img"
+                    src={item.icon}
+                    alt={item.title}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      objectFit: "contain",
+                    }}
+                  />
+                </Avatar>
 
-              <Page.Box
-                component="img"
-                src={stat.icon}
-                height={60}
-                alt="stats logo"
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
+                <Box flex={1} minWidth={0}>
+                  <Typography
+                    variant="body1"
+                    color="secondary.main"
+                    fontWeight={600}
+                    mb={1}
+                  >
+                    {item.title}
+                  </Typography>
+
+                  <Typography
+                    variant="h5"
+                    fontWeight={700}
+                    sx={{
+                      wordBreak: "break-word",
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {item.value}
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary" mt={0.5}>
+                    {item.subtitle}
+                  </Typography>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
     </Grid>
   );
 }
 
 function UserInfo({ user }) {
-  const [openVerificationDialog, setOpenVerificationDialog] =
-    React.useState(false);
   const form = useForm();
   React.useEffect(() => {
     if (!user) return;
@@ -245,33 +281,46 @@ function UserInfo({ user }) {
   }, [user]);
   const userData = [
     {
+      icon: <CakeIcon sx={{ fontSize: 18 }} />,
       label: "Birth Date",
       value: new Date(user?.dob).showDate(),
     },
     {
+      icon: <EventNoteIcon sx={{ fontSize: 18 }} />,
       label: "Joined on",
       value: new Date(user?.createdAt).showDate(),
     },
     {
+      icon: <EmailIcon sx={{ fontSize: 18 }} />,
+      label: "Email",
+      value: user?.mail,
+    },
+    {
+      icon: <PhoneIcon sx={{ fontSize: 18 }} />,
       label: "Mobile",
       value: `+${user?.phone}`,
     },
   ];
-
   return (
     <Grid
-      size={{ xs: 12, lg: 4 }}
+      size={12}
       container
-      px={{ xs: 2, xl: 4 }}
-      py={2}
-      spacing={0}
+      p={{ xs: 2, xl: 4 }}
+      spacing={1}
       alignItems={"center"}
+      alignContent={"flex-start"}
       alignSelf={{ md: "flex-start", xl: "stretch" }}
       justifyContent={"space-between"}
       sx={{
         border: (theme) => `1px solid ${theme.palette.primary.main}`,
-        bgcolor: (theme) => theme.palette.cardbg.main,
+        // bgcolor: (theme) => theme.palette.cardbg.main,
+        // background: "linear-gradient(180deg,#3B1F1A 0%,#6B341F 50%,#B45309 100%)",
+        // background: "linear-gradient(180deg,#2A1810 0%,#4A2C1D 45%,#8B4513 100%)",
+        // background: "linear-gradient(180deg,#24140D 0%,#4B2E24 50%,#9A5B2A 100%)",
+
+        background: "linear-gradient(#04142f, #0c5adb)",
         borderRadius: 4,
+        color: "white",
       }}
     >
       <Grid
@@ -286,11 +335,11 @@ function UserInfo({ user }) {
         alignItems={"center"}
         pb={1.5}
         mb={1.5}
-        borderBottom={{ md: `1px solid #e0e0e0`, xs: "none" }}
-        spacing={2}
+        borderBottom={{ md: `1px solid rgba(255, 255, 255, 0.3)`, xs: "none" }}
+        spacing={0}
       >
         <Grid
-          size={{ xs: 12, md: 6 }}
+          size={12}
           position={"relative"}
           container
           justifyContent="center"
@@ -303,9 +352,15 @@ function UserInfo({ user }) {
             tooltipTitle={"Profile Picture"}
             endpoint="/api/v1/upload/image"
             accept={"image/*"}
+            hideCaption={true}
             sx={{
               height: "140px",
               width: "140px",
+              borderRadius: "50%",
+              border: `2px solid #fff`,
+            }}
+            containerSx={{
+              alignItems: "center",
             }}
             onUpload={async (e) => {
               const updatedValue = form.watch();
@@ -316,145 +371,533 @@ function UserInfo({ user }) {
           />
         </Grid>
         <Grid
-          size={{ xs: 12, md: 6 }}
+          size={12}
+          container
+          direction="column"
+          alignItems={"center"}
+          spacing={0}
+        >
+          <Box display={"flex"} alignItems="center">
+            <Typography fontSize={"18px"} color="#ffe" fontWeight={"600"}>
+              {user?.fullName}
+            </Typography>
+            {getGenderIcon(user?.gender)}
+          </Box>
+
+          {/* <Typography fontWeight={600} fontSize={{ xs: 12, md: 14 }}>
+            {user?.mail}
+          </Typography> */}
+          {user?.isMinor && (
+            <>
+              <Box display={"flex"} alignItems="center" mt={1}>
+                <Typography color="secondary" fontWeight={"600"}>
+                  {user?.parent?.name?.first}
+                  {user?.parent?.relation && <span
+                    style={{
+                      paddingLeft: "0.5rem",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    [{user?.parent?.relation}]
+                  </span>}
+                </Typography>
+              </Box>
+
+              <Typography fontWeight={600} fontSize={12}>
+                {user?.parent?.email}
+              </Typography>
+            </>
+          )}
+          <Rating
+            name="account-rating"
+            value={4}
+            // precision={0.5}
+            readOnly
+            size="large"
+            emptyIcon={
+              <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+            }
+            sx={{ pb: 2 }}
+          />
+        </Grid>
+        <Grid
+          size={12}
           container
           spacing={2}
           justifyContent="flex-start"
           direction={"column"}
-          alignItems={{ xs: "center", md: "flex-end" }}
-          borderTop={{ xs: `1px solid #e0e0e0`, md: "none" }}
-          borderBottom={{ xs: `1px solid #e0e0e0`, md: "none" }}
+          alignItems="center"
+          borderTop={{ xs: `1px solid rgba(255, 255, 255, 0.3)`, md: "none" }}
+          borderBottom={{
+            xs: `1px solid rgba(255, 255, 255, 0.3)`,
+            md: "none",
+          }}
           py={{ xs: 1, md: 0 }}
         >
-          {userData.map((u, index) => {
+          {userData.map((user, index) => {
             return (
               <Grid
                 key={index}
                 size={12}
                 container
-                textAlign={{ xs: "center", md: "right" }}
+                alignItems="center"
                 spacing={0}
-                direction="column"
               >
-                <Typography>{u.label}</Typography>
-                <Typography
-                  component="span"
-                  fontSize={{ xs: "16px", md: "18px" }}
-                  color="secondary"
-                  fontWeight={"500"}
-                  pb={1}
-                >
-                  {u.value}
+                <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
+                  {user.icon}
+                </Box>
+                <Typography sx={{ color: "#eee", pr: 0.5 }}>
+                  {user.label}:
                 </Typography>
-                {}
-                {/* { u.label === "Mobile" && !!u.value && (
-                  <Grid
-                    size={ 12 }
-                    container
-                    justifyContent={ { xs: "center", md: "flex-end" } }
-                  >
-                    <Chip
-                      onClick={
-                        user?.isVerified?.phone === "unverified"
-                          ? () => setOpenVerificationDialog(true)
-                          : undefined
-                      }
-                      icon={ <WhatsAppIcon /> }
-                      label={ user?.isVerified?.phone }
-                      color={
-                        user?.isVerified?.phone === "unverified"
-                          ? "error"
-                          : "success"
-                      }
-                      size="small"
-                      sx={ {
-                        width: 100,
-                        textTransform: "capitalize",
-                        cursor:
-                          user?.isVerified?.phone === "unverified"
-                            ? "pointer"
-                            : "default",
-                      } }
-                    />
-                  </Grid>
-                ) } */}
+                <Typography component="span" color="#fff">
+                  {user.value}
+                </Typography>
               </Grid>
             );
           })}
         </Grid>
       </Grid>
 
-      <Grid size={12} container direction="column">
-        <Box display={"flex"} alignItems="center">
-          <Typography fontSize={"16px"} color="secondary" fontWeight={"600"}>
-            {user?.fullName}
-          </Typography>
-          {getGenderIcon(user?.gender)}
-        </Box>
+      <Payment />
+      <SocialAccounts user={user} />
+      {/* </Grid> */}
+    </Grid>
+  );
+}
 
-        <Typography fontWeight={600} fontSize={{ xs: 12, md: 14 }}>
-          {user?.mail}
+function Payment() {
+  const [openPayment, setOpenPayment] = React.useState(false);
+  const [selectedMethod, setSelectedMethod] = React.useState("Wire Transfer");
+  const [payment, setPayment] = React.useState({});
+  const member = useMember();
+  React.useEffect(() => {
+    if (!member) return;
+    setPayment({
+      ...member.paymentMethod,
+      value: member?.paymentMethod?.details,
+    });
+  }, [member]);
+
+  const paymentMethods = [
+    { name: "PayPal", icon: "/images/payment/paypal.png" },
+    { name: "Wire Transfer", icon: "/images/payment/wire-transfer.png" },
+    { name: "Amazon", icon: "/images/payment/amazone.png" },
+    { name: "UPI", icon: "/images/payment/upi.png" },
+  ];
+
+  const handleSave = async (method, value) => {
+    let resp = await api.patch("/api/v1/me/payment-method", {
+      method,
+      details: {
+        ...value,
+      },
+    });
+    console.log(resp);
+    // console.log({value})
+    setPayment({ method, value });
+    setOpenPayment(false);
+    // setPayment({ method, value });
+    // setOpenPayment(false);
+    // console.log({ method, value });
+  };
+
+  return (
+    <Grid size={12} container spacing={2} justifyContent="center">
+      {/* Header */}
+      <Box
+        width="100%"
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        px={1}
+        pt={1}
+        minHeight={46}
+      >
+        <Typography
+          sx={{
+            fontSize: "15px",
+            fontWeight: 600,
+            borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+            // borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
+            pb: 0.5,
+          }}
+        >
+          Payment Method
         </Typography>
-        {user?.isMinor && (
-          <>
-            <Box display={"flex"} alignItems="center" mt={1}>
-              <Typography color="secondary" fontWeight={"600"}>
-                {user?.parent?.name?.first}
-                <span
-                  style={{
-                    paddingLeft: "0.5rem",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  [{user?.parent?.relation}]
-                </span>
-              </Typography>
-            </Box>
-
-            <Typography fontWeight={600} fontSize={12}>
-              {user?.parent?.email}
-            </Typography>
-          </>
+        {payment?.method && (
+          <IconButton
+            onClick={() => setOpenPayment(true)}
+            sx={{ color: "#fff" }}
+          >
+            <EditIcon sx={{ fontSize: 22 }} />
+          </IconButton>
         )}
+      </Box>
 
-        <Rating
-          name="account-rating"
-          value={4}
-          // precision={0.5}
-          readOnly
-          size="large"
-          emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-          sx={{ py: 1, mt: 1 }}
-        />
+      {/* Payment display */}
+      <Grid
+        container
+        size={12}
+        direction="column"
+        spacing={0}
+        px={2}
+        py={2}
+        sx={{
+          // border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          // bgcolor: (theme) => theme.palette.cardbg.main,
+          background: "rgba(255, 255, 255, 0.1)",
+          borderRadius: 2,
+        }}
+      >
+        {payment?.method ? (
+          <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
+            <Typography
+              width={{ xs: "100%", lg: "40%" }}
+              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
+            >
+              {payment.method}:
+            </Typography>
+            {["PayPal", "UPI", "Amazon"].includes(payment?.method) ? (
+              <Typography fontWeight={500}>
+                {payment?.value?.account}
+              </Typography>
+            ) : (
+              <Grid size={12} mt={1.5}>
+                <Grid
+                  size={12}
+                  container
+                  alignItems="center"
+                  borderBottom={"1px solid #fff"}
+                  py={1}
+                >
+                  <Typography
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
+                  >
+                    Bank:
+                  </Typography>
+                  <Typography component="span" fontWeight={500}>
+                    {payment?.value?.bank}
+                  </Typography>{" "}
+                </Grid>
+                <Grid
+                  size={12}
+                  container
+                  alignItems="center"
+                  borderBottom={"1px solid #fff"}
+                  py={1}
+                >
+                  <Typography
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
+                  >
+                    IFSC/IBAN/SWIFT Code:
+                  </Typography>
+                  <Typography component="span" fontWeight={500}>
+                    {payment?.value?.ifsc}
+                  </Typography>{" "}
+                </Grid>
+                <Grid size={12} container alignItems="center" py={1}>
+                  <Typography
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
+                  >
+                    Account Number:
+                  </Typography>
+                  <Typography component="span" fontWeight={500}>
+                    {payment?.value?.account}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
+          </Grid>
+        ) : (
+          <Typography py={1}>
+            No Payment method selected yet.{" "}
+            <Typography
+              component={"span"}
+              fontWeight={700}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenPayment(true)}
+            >
+              Click to add
+            </Typography>
+          </Typography>
+        )}
       </Grid>
 
+      {/* Payment Popup */}
       <PopUp
-        open={openVerificationDialog}
-        onClose={() => {
-          setOpenVerificationDialog(false);
-        }}
-        hideTitle={true}
-        maxWidth={"xs"}
+        title="Select Payment Method"
+        maxWidth="md"
+        open={openPayment}
+        onClose={() => setOpenPayment(false)}
       >
-        <Grid size={12} container direction="column" alignItems="center" py={1}>
-          <Typography color="secondary" variant="h6" p={2}>
-            Verify WhatsApp Number
-          </Typography>
-          <Typography textAlign="center">
-            To verify your phone number, <br />
-            Please Message <b>CODE</b> on WhatsApp to <b>987654321</b>
-          </Typography>
-
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setOpenVerificationDialog(false);
-            }}
-            size="medium"
-            sx={{ my: 3, borderWidth: 2, fontWeight: 600 }}
+        <Grid
+          size={12}
+          container
+          alignItems="center"
+          sx={{ bgcolor: (theme) => theme.palette.cardbg.main }}
+        >
+          {/* Payment options */}
+          <Grid
+            container
+            size={12}
+            alignItems="center"
+            spacing={3}
+            justifyContent="space-evenly"
+            pt={5}
+            pb={3}
           >
-            OK
-          </Button>
+            <RadioGroup
+              row
+              value={selectedMethod}
+              onChange={(event) => setSelectedMethod(event.target.value)}
+              style={{ justifyContent: "space-evenly", width: "100%" }}
+            >
+              {paymentMethods.map((method, index) => (
+                <FormControlLabel
+                  key={index}
+                  value={method.name}
+                  control={<Radio />}
+                  label={
+                    <Box
+                      component="img"
+                      src={method.icon}
+                      alt={method.name}
+                      sx={{
+                        height: 63,
+                        width: 100,
+                        mr: 2,
+                        p: 1,
+                        borderRadius: 2,
+                        cursor: "pointer",
+                        border: (theme) =>
+                          selectedMethod === method.name
+                            ? `2px solid ${theme.palette.primary.main}`
+                            : "2px solid transparent",
+                        boxShadow: (theme) =>
+                          selectedMethod === method.name
+                            ? `0 0 8px ${theme.palette.secondary.main}`
+                            : "none",
+                        transition: "0.2s",
+                      }}
+                    />
+                  }
+                />
+              ))}
+            </RadioGroup>
+          </Grid>
+
+          {/* Dynamic input form */}
+          <Grid size={12} container py={2}>
+            {/* PayPal */}
+            <Collapse
+              in={selectedMethod === "PayPal"}
+              unmountOnExit
+              sx={{ width: "100%" }}
+            >
+              <Grid
+                container
+                size={12}
+                px={2}
+                justifyContent="center"
+                spacing={0}
+              >
+                <Typography
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
+                  color="secondary"
+                >
+                  Enter your PayPal Email
+                </Typography>
+                <Page.Input
+                  value={
+                    payment.method === "PayPal" ? payment?.value?.account : ""
+                  }
+                  onChange={(e) =>
+                    setPayment({
+                      method: "PayPal",
+                      value: { account: e.target.value },
+                    })
+                  }
+                />
+                <Button
+                  onClick={() => handleSave("PayPal", payment.value)}
+                  variant="contained"
+                  color="secondary"
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Collapse>
+
+            {/* Wire Transfer */}
+            <Collapse
+              in={selectedMethod === "Wire Transfer"}
+              unmountOnExit
+              sx={{ width: "100%" }}
+            >
+              <Grid
+                container
+                size={12}
+                px={2}
+                justifyContent="center"
+                spacing={2}
+              >
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                    Bank
+                  </Typography>
+                  <Page.Input
+                    value={
+                      payment.method === "Wire Transfer"
+                        ? payment.value.bank || ""
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setPayment((prev) => ({
+                        method: "Wire Transfer",
+                        value: { ...prev.value, bank: e.target.value },
+                      }))
+                    }
+                  />
+                </Grid>
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                    IFSC/IBAN/SWIFT Code
+                  </Typography>
+                  <Page.Input
+                    value={
+                      payment.method === "Wire Transfer"
+                        ? payment.value.ifsc || ""
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setPayment((prev) => ({
+                        method: "Wire Transfer",
+                        value: { ...prev.value, ifsc: e.target.value },
+                      }))
+                    }
+                  />
+                </Grid>
+                <Grid size={12} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                    Enter your Account Number
+                  </Typography>
+                  <Page.Input
+                    value={
+                      payment.method === "Wire Transfer"
+                        ? payment.value.account || ""
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setPayment((prev) => ({
+                        method: "Wire Transfer",
+                        value: { ...prev.value, account: e.target.value },
+                      }))
+                    }
+                  />
+                </Grid>
+                <Button
+                  onClick={() => handleSave("Wire Transfer", payment.value)}
+                  variant="contained"
+                  color="secondary"
+                  sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Collapse>
+
+            {/* Amazon */}
+            <Collapse
+              in={selectedMethod === "Amazon"}
+              unmountOnExit
+              sx={{ width: "100%" }}
+            >
+              <Grid
+                container
+                size={12}
+                px={2}
+                justifyContent="center"
+                spacing={0}
+              >
+                <Typography
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
+                  color="secondary"
+                >
+                  Enter your Amazon Email
+                </Typography>
+                <Page.Input
+                  value={
+                    payment.method === "Amazon" ? payment?.value?.account : ""
+                  }
+                  onChange={(e) =>
+                    setPayment({
+                      method: "Amazon",
+                      value: { account: e.target.value },
+                    })
+                  }
+                />
+                <Button
+                  onClick={() => handleSave("Amazon", payment.value)}
+                  variant="contained"
+                  color="secondary"
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Collapse>
+
+            {/* UPI */}
+            <Collapse
+              in={selectedMethod === "UPI"}
+              unmountOnExit
+              sx={{ width: "100%" }}
+            >
+              <Grid
+                container
+                size={12}
+                px={2}
+                justifyContent="center"
+                spacing={0}
+              >
+                <Typography
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
+                  color="secondary"
+                >
+                  Enter your UPI ID
+                </Typography>
+                <Page.Input
+                  value={
+                    payment.method === "UPI" ? payment?.value?.account : ""
+                  }
+                  onChange={(e) =>
+                    setPayment({
+                      method: "UPI",
+                      value: { account: e.target.value },
+                    })
+                  }
+                />
+                <Button
+                  onClick={() => handleSave("UPI", payment.value)}
+                  variant="contained"
+                  color="secondary"
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Collapse>
+          </Grid>
         </Grid>
       </PopUp>
     </Grid>
@@ -472,7 +915,6 @@ function SocialAccounts({ user }) {
     youtube: "",
     twitter: "",
   });
-
   React.useEffect(() => {
     if (!user) return;
     // console.log(user.socials);
@@ -533,12 +975,7 @@ function SocialAccounts({ user }) {
   ];
 
   return (
-    <Grid
-      size={{ xs: 12, lg: 6 }}
-      container
-      spacing={2}
-      justifyContent="center"
-    >
+    <Grid size={12} container spacing={2} justifyContent="center">
       <Box
         width="100%"
         display="flex"
@@ -550,9 +987,9 @@ function SocialAccounts({ user }) {
       >
         <Typography
           sx={{
-            fontSize: "16px",
+            fontSize: "15px",
             fontWeight: 600,
-            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
+            borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
             pb: 0.5,
           }}
         >
@@ -561,7 +998,7 @@ function SocialAccounts({ user }) {
         {Object.values(contact).some((value) => value?.trim()) && (
           <IconButton
             onClick={() => setOpenContact(true)}
-            sx={{ color: "secondary.main" }}
+            sx={{ color: "#fff" }}
           >
             <EditIcon sx={{ fontSize: 22 }} />
           </IconButton>
@@ -573,11 +1010,12 @@ function SocialAccounts({ user }) {
         size={12}
         direction="column"
         spacing={0}
-        px={2}
-        py={2}
+        px={1}
+        py={1}
         sx={{
-          border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          bgcolor: (theme) => theme.palette.cardbg.main,
+          // border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          // bgcolor: (theme) => theme.palette.cardbg.main,
+          background: "rgba(255, 255, 255, 0.1)",
           borderRadius: 2,
         }}
       >
@@ -607,18 +1045,15 @@ function SocialAccounts({ user }) {
                   <Typography fontWeight={500}>{key}</Typography>
                 </Grid>
 
-                <Typography color="secondary" fontWeight={600}>
-                  {value}
-                </Typography>
+                <Typography fontWeight={600}>{value}</Typography>
               </Grid>
             ))
         ) : (
-          <Typography>
+          <Typography py={1}>
             No social contact method added.{" "}
             <Typography
-              color="secondary"
               component={"span"}
-              fontWeight={600}
+              fontWeight={700}
               sx={{ cursor: "pointer" }}
               onClick={() => setOpenContact(true)}
             >
@@ -741,14 +1176,14 @@ function Summary() {
   ];
   const [activeTab, setActiveTab] = React.useState(0);
   const tabs = [
-    {
-      label: "Rewards Summary",
-      render: (
-        <Grid size={12}>
-          <DataList dataList={rewardSummary} />
-        </Grid>
-      ),
-    },
+    // {
+    //   label: "Rewards Summary",
+    //   render: (
+    //     <Grid size={12}>
+    //       <DataList dataList={rewardSummary} />
+    //     </Grid>
+    //   ),
+    // },
     {
       label: "Rewards Processed Summary",
       render: (
@@ -768,13 +1203,7 @@ function Summary() {
   ];
 
   return (
-    <Grid
-      size={12}
-      container
-      px={{ xs: 2, md: 3 }}
-      mt={1}
-      justifyContent="center"
-    >
+    <Grid size={12} container px={1} mt={2} justifyContent="center">
       <Tabs
         value={activeTab}
         onChange={(e, v) => {

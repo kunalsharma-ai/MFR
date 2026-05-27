@@ -23,7 +23,7 @@ import changeEmail from "./api/changeEmail.js"
 const router = express.Router();
 router
     .use("/api/v1/llm", llmRouter)
-    .use("/api/v1/auth", authRouter)
+    .use("/api/v1/auth",authRouter)
     .use("/api/v1/answers", ansRouter)
     .use("/api/v1/category", categoryRouter)
     .use("/api/v1/survey", surveyRouter)

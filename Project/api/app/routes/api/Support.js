@@ -73,8 +73,6 @@ router
                 }
             })
             const message = "Your request is accepted by the system, One of our correspondent will reach you soon. Keep checking your inbox/spam folders of email or this section of dashboard for status."
-            if(!subject || subject.length==="")throw new Error("Subject is required");
-            if(!description || description.length==="")throw new Error("Please describe the issue");            
             const data = await supportController.create({
                 subject,
                 issueRaisedBy,

@@ -21,6 +21,7 @@ import {
     sendMail,
     Token
 } from "../../utils/index.js"
+import responseController from "../../controller/Response.js";
 
 const router = express.Router();
 router
@@ -38,7 +39,25 @@ router
         async req => {
             // Read all entries matching filter
             let message = "";
-            let data = await userController.list(req.body, null, {}, "+role")
+            responseController.request = req;
+            let status = Mutate(await responseController.surveySummaryByUsers())
+            let data = Mutate(await userController.list(req.body, null, {}, "+role")).map(
+                user => {
+                    const stat = status.find(st => st._id === user._id);
+                    user.status = {
+                        "total": 0,
+                        "complete": 0,
+                        "disqualified": 0,
+                        "abdoned": 0,
+                        "internal": 0,
+                        "external": 0,
+                        "points": 0,
+                        "totalRewards": 0,
+                        ...stat
+                    }
+                    return user;
+                }
+            )
             return { message, data };
         },
         userController
@@ -72,7 +91,7 @@ router
             const emailStatus = await sendMail(
                 { origin: req.origin, "content-type": "application/json" },
                 data.mail,
-                "My Frequent Rewards: Registration",
+                "Turn 2 Opinion: Registration",
                 mailer.data
             )
             return { message, data: otp };
@@ -194,7 +213,7 @@ router
     ))
     .post(`/:user/profile-data`, expressRoute(
         async req => {
-            let data = await userController.read(req.params.user)
+            // let data = await userController.read(req.params.user)
             answerController.request = req;
             let temp = Mutate(await answerController.getAnswers({ user: req.params.user, question: { $in: [...req.body.questions] } }))
             return {
@@ -217,12 +236,9 @@ router
         async req => {
             // read single entry
             let message = ""
-            let data = await userController.read(req.params.id);
-            if (!data) throw new Error("Invalid request");
             let otp = await otpController.verify(req.params.id, "email", req.origin, req.body.code)
             if (!otp) throw new Error("Link Expired")
-            
-            return { message, data: { ...data } };
+            return { message, data: {} };
         },
         userController
     ))

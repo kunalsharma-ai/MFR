@@ -22,7 +22,8 @@ export default mongooseModel(
         },
         category: {
             type: String,
-            required: [true, "Please select if you are medical professional, caregiver or a patient."],
+            required: [true, "Please select your category"],
+            default: "b2c"
         },
         name: {
             salutation: {
@@ -224,7 +225,7 @@ export default mongooseModel(
             default: "respondent",
             lowercase: true,
             trim: true,
-            // enum: ["respondent", "administrator", "root"],
+            enum: ["respondent", "administrator", "root"],
             select: false
         },
         paymentMethod: {
@@ -288,6 +289,7 @@ export default mongooseModel(
                 default: null
             }
         }
+
     },
     [
         [
@@ -319,13 +321,6 @@ export default mongooseModel(
                 if (temp.day < 0) { temp.month = temp.month - 1; temp.day += 30; }
                 if (temp.month < 0) { temp.years = temp.years - 1; temp.month += 12; }
                 return temp;
-            },
-            isMinor: function () {
-                if (!this.dob) return null;
-                const today = new Date();
-                const dob = new Date(this.dob);
-                if (today.getFullYear() - dob.getFullYear() <= 18) return true;
-                return false;
             }
         },
         method: {
