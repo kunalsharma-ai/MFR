@@ -270,13 +270,14 @@ function SetPasswordForm({ form }) {
       <Page.Box sx={{ position: "relative", pt: 3 }}>
         <Page.Box
           sx={{
-            height: { xs: "60px", md: "80px" },
-            width: { xs: "180px", md: "300px" },
+            width:220,
+            // height: { xs: "60px", md: "80px" },
+            // width: { xs: "180px", md: "300px" },
           }}
         >
           <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
         </Page.Box>{" "}
-        <Page.Box
+        {/* <Page.Box
           component="img"
           src="/imagesmfr/dol-sign.gif"
           alt="logo"
@@ -286,7 +287,7 @@ function SetPasswordForm({ form }) {
             right: -4.5,
             top: { xs: 24, md: 32 },
           }}
-        />
+        /> */}
       </Page.Box>
       <Page.Text
         sx={{

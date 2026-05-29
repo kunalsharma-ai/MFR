@@ -61,6 +61,7 @@ export default function AdminHeader() {
               sx={{
                 ml: 2,
                 mb: 1,
+                filter: "brightness(0) saturate(100%) invert(100%)",
                 cursor: "pointer",
                 display: { xs: "block", sm: "none" },
               }}
@@ -82,17 +83,19 @@ export default function AdminHeader() {
             >
               <Box
                 component="img"
-                src="/images/logo/mfr-logo-white.png"
+                src="/images/logo/mfr-logo.png"
                 alt="logo"
-                width={{ xs: "180px", sm: "225px" }}
+                 width={245}
+                  style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                // width={{ xs: "180px", sm: "225px" }}
               />
-              <Box
+              {/* <Box
                 component="img"
                 src="/imagesmfr/dol-sign.gif"
                 alt="logo"
                 width={{ xs: 15, md: 20 }}
                 sx={{ position: "absolute", right: -6.5 }}
-              />
+              /> */}
             </Box>
           </Box>
           <Box

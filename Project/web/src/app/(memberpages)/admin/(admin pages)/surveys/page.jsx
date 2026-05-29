@@ -90,7 +90,7 @@ export default function () {
               <Page.Link
                 href={`/admin/surveys/open?id=${info._id}`}
                 target="_blank"
-                sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+                sx={{ color: "primary.main", fontWeight: 500, p: 0 }}
               >
                 Open Survey
               </Page.Link>
@@ -105,7 +105,7 @@ export default function () {
           //     <Page.Link
           //       href={`/admin/responses?survey=${info.slug}`}
           //       target="_blank"
-          //       sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+          //       sx={{ color: "primary.main", fontWeight: 500, p: 0 }}
           //     >
           //       View Responses
           //     </Page.Link>
@@ -118,7 +118,7 @@ export default function () {
           //   render: (info) => (
           //     <Page.MuiButton
           //       sx={{
-          //         color: "secondary.main",
+          //         color: "primary.main",
           //         fontWeight: 500,
           //         p: 0,
           //         textTransform: "none",
@@ -163,7 +163,7 @@ export default function () {
               router.push("/admin/survey");
             }}
             variant="contained"
-            color="secondary"
+            color="primary"
             size="small"
             sx={{
               fontWeight: "bold",
@@ -286,7 +286,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
         title={surveyID ? "Edit Survey" : "Create Survey"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -386,7 +386,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: "bold",
           }}
@@ -459,7 +459,7 @@ function SurveyQuestions({ surveyID = null, close }) {
         title={"Create/Edit Questions"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -483,7 +483,7 @@ function SurveyQuestions({ surveyID = null, close }) {
                 <Page.Text
                   sx={{
                     fontWeight: 600,
-                    color: "secondary.main",
+                    color: "primary.main",
                     fontSize: 16,
                   }}
                 >
@@ -535,7 +535,7 @@ function SurveyQuestions({ surveyID = null, close }) {
           <Page.MuiButton
             variant="outlined"
             size="small"
-            color="secondary"
+            color="primary"
             sx={{
               borderWidth: 2,
               fontWeight: 600,
@@ -558,7 +558,7 @@ function SurveyQuestions({ surveyID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: "bold",
           }}
@@ -634,7 +634,7 @@ function QuestionsEditor({ pageIndex, control, register, watch }) {
         <Page.MuiButton
           variant="outlined"
           size="small"
-          color="secondary"
+          color="primary"
           sx={{
             borderWidth: 2,
             fontWeight: 600,

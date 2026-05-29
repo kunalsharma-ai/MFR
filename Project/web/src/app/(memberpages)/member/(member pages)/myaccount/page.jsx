@@ -240,7 +240,7 @@ function Stats() {
                 <Box flex={1} minWidth={0}>
                   <Typography
                     variant="body1"
-                    color="secondary.main"
+                    color="primary.main"
                     fontWeight={600}
                     mb={1}
                   >
@@ -273,12 +273,15 @@ function Stats() {
 
 function UserInfo({ user }) {
   const form = useForm();
+
   React.useEffect(() => {
     if (!user) return;
+
     form.reset({
       profilePicture: user.profilePicture ?? "/images/logo/user.png",
     });
   }, [user]);
+
   const userData = [
     {
       icon: <CakeIcon sx={{ fontSize: 18 }} />,
@@ -301,28 +304,58 @@ function UserInfo({ user }) {
       value: `+${user?.phone}`,
     },
   ];
+
   return (
     <Grid
       size={12}
       container
-      p={{ xs: 2, xl: 4 }}
+      p={2.5}
       spacing={1}
       alignItems={"center"}
       alignContent={"flex-start"}
       alignSelf={{ md: "flex-start", xl: "stretch" }}
       justifyContent={"space-between"}
       sx={{
-        border: (theme) => `1px solid ${theme.palette.primary.main}`,
-        // bgcolor: (theme) => theme.palette.cardbg.main,
-        // background: "linear-gradient(180deg,#3B1F1A 0%,#6B341F 50%,#B45309 100%)",
-        // background: "linear-gradient(180deg,#2A1810 0%,#4A2C1D 45%,#8B4513 100%)",
-        // background: "linear-gradient(180deg,#24140D 0%,#4B2E24 50%,#9A5B2A 100%)",
-
-        background: "linear-gradient(#04142f, #0c5adb)",
-        borderRadius: 4,
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 5,
         color: "white",
+        border: "1px solid rgba(245, 160, 0, 0.18)",
+        background:
+          "linear-gradient(180deg, #001B66 0%, #002B8F 55%, #0A47C9 100%)",
+        boxShadow: "0 18px 50px rgba(0, 27, 102, 0.35)",
       }}
     >
+      {/* Decorative Pattern */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          opacity: 0.06,
+          backgroundImage: `
+            linear-gradient(120deg, transparent 0%, transparent 48%, #FFD166 49%, transparent 50%),
+            linear-gradient(60deg, transparent 0%, transparent 48%, #FFD166 49%, transparent 50%)
+          `,
+          backgroundSize: "220px 220px",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Top Glow */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: -100,
+          right: -80,
+          width: 220,
+          height: 220,
+          borderRadius: "50%",
+          background: "rgba(245,160,0,0.18)",
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
+
       <Grid
         size={12}
         container
@@ -334,10 +367,14 @@ function UserInfo({ user }) {
         justifyContent={{ xs: "center", md: "space-between" }}
         alignItems={"center"}
         pb={1.5}
-        mb={1.5}
-        borderBottom={{ md: `1px solid rgba(255, 255, 255, 0.3)`, xs: "none" }}
+        
         spacing={0}
+        sx={{
+          position: "relative",
+          zIndex: 2,
+        }}
       >
+        {/* Profile Image */}
         <Grid
           size={12}
           position={"relative"}
@@ -346,30 +383,46 @@ function UserInfo({ user }) {
           alignItems="center"
           p={1}
         >
-          <Form.Upload
-            form={form}
-            name="profilePicture"
-            tooltipTitle={"Profile Picture"}
-            endpoint="/api/v1/upload/image"
-            accept={"image/*"}
-            hideCaption={true}
+          <Box
             sx={{
-              height: "140px",
-              width: "140px",
+              position: "relative",
               borderRadius: "50%",
-              border: `2px solid #fff`,
+              p: "4px",
+              background: "linear-gradient(135deg, #FFD166 0%, #F5A000 100%)",
+              boxShadow: "0 10px 35px rgba(245,160,0,0.35)",
             }}
-            containerSx={{
-              alignItems: "center",
-            }}
-            onUpload={async (e) => {
-              const updatedValue = form.watch();
-              let temp = await api.put(`/api/v1/me`, updatedValue);
-              useToast(temp);
-              user.Reload();
-            }}
-          />
+          >
+            <Form.Upload
+              form={form}
+              name="profilePicture"
+              tooltipTitle={"Profile Picture"}
+              endpoint="/api/v1/upload/image"
+              accept={"image/*"}
+              hideCaption={true}
+              sx={{
+                height: "140px",
+                width: "140px",
+                borderRadius: "50%",
+                border: `3px solid rgba(255,255,255,0.9)`,
+                background: "#fff",
+              }}
+              containerSx={{
+                alignItems: "center",
+              }}
+              onUpload={async () => {
+                const updatedValue = form.watch();
+
+                let temp = await api.put("/api/v1/me", updatedValue);
+
+                useToast(temp);
+
+                user.Reload();
+              }}
+            />
+          </Box>
         </Grid>
+
+        {/* User Info */}
         <Grid
           size={12}
           container
@@ -377,64 +430,89 @@ function UserInfo({ user }) {
           alignItems={"center"}
           spacing={0}
         >
-          <Box display={"flex"} alignItems="center">
-            <Typography fontSize={"18px"} color="#ffe" fontWeight={"600"}>
+          <Box display={"flex"} alignItems="center" gap={0.5}>
+            <Typography
+              fontSize={"22px"}
+              fontWeight={700}
+              sx={{
+                color: "#fff",
+                textAlign: "center",
+              }}
+            >
               {user?.fullName}
             </Typography>
+
             {getGenderIcon(user?.gender)}
           </Box>
 
-          {/* <Typography fontWeight={600} fontSize={{ xs: 12, md: 14 }}>
-            {user?.mail}
-          </Typography> */}
           {user?.isMinor && (
             <>
               <Box display={"flex"} alignItems="center" mt={1}>
-                <Typography color="secondary" fontWeight={"600"}>
+                <Typography
+                  sx={{
+                    color: "#FFE29A",
+                    fontWeight: 700,
+                  }}
+                >
                   {user?.parent?.name?.first}
-                  {user?.parent?.relation && <span
-                    style={{
-                      paddingLeft: "0.5rem",
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    [{user?.parent?.relation}]
-                  </span>}
+
+                  {user?.parent?.relation && (
+                    <span
+                      style={{
+                        paddingLeft: "0.5rem",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      [{user?.parent?.relation}]
+                    </span>
+                  )}
                 </Typography>
               </Box>
 
-              <Typography fontWeight={600} fontSize={12}>
+              <Typography
+                fontWeight={600}
+                fontSize={12}
+                sx={{
+                  color: "rgba(255,255,255,0.8)",
+                }}
+              >
                 {user?.parent?.email}
               </Typography>
             </>
           )}
+
           <Rating
             name="account-rating"
             value={4}
-            // precision={0.5}
             readOnly
             size="large"
             emptyIcon={
-              <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+              <StarIcon
+                style={{ opacity: 0.28, color: "#FFD166" }}
+                fontSize="inherit"
+              />
             }
-            sx={{ pb: 2 }}
+            sx={{
+              pt: 0.5,
+              pb: 2,
+              "& .MuiRating-iconFilled": {
+                color: "#F5A000",
+              },
+            }}
           />
         </Grid>
+
+        {/* User Data */}
         <Grid
           size={12}
           container
-          spacing={2}
+          spacing={1.6}
           justifyContent="flex-start"
           direction={"column"}
           alignItems="center"
-          borderTop={{ xs: `1px solid rgba(255, 255, 255, 0.3)`, md: "none" }}
-          borderBottom={{
-            xs: `1px solid rgba(255, 255, 255, 0.3)`,
-            md: "none",
-          }}
-          py={{ xs: 1, md: 0 }}
+          // py={{ xs: 1, md: 0 }}
         >
-          {userData.map((user, index) => {
+          {userData.map((item, index) => {
             return (
               <Grid
                 key={index}
@@ -442,15 +520,45 @@ function UserInfo({ user }) {
                 container
                 alignItems="center"
                 spacing={0}
+                sx={{
+                  background: "rgba(255,255,255,0.08)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "14px",
+                  px: 1.5,
+                  py: 1.2,
+                }}
               >
-                <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
-                  {user.icon}
+                <Box
+                  sx={{
+                    mr: 1.2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: "#FFD166",
+                  }}
+                >
+                  {item.icon}
                 </Box>
-                <Typography sx={{ color: "#eee", pr: 0.5 }}>
-                  {user.label}:
+
+                <Typography
+                  sx={{
+                    color: "rgba(255,255,255,0.72)",
+                    pr: 0.5,
+                    fontWeight: 500,
+                  }}
+                >
+                  {item.label}:
                 </Typography>
-                <Typography component="span" color="#fff">
-                  {user.value}
+
+                <Typography
+                  component="span"
+                  sx={{
+                    color: "#fff",
+                    fontWeight: 600,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {item.value}
                 </Typography>
               </Grid>
             );
@@ -458,9 +566,39 @@ function UserInfo({ user }) {
         </Grid>
       </Grid>
 
-      <Payment />
-      <SocialAccounts user={user} />
-      {/* </Grid> */}
+      {/* Payment Section */}
+      <Box
+        sx={{
+          width: "100%",
+
+          p: 2,
+          borderRadius: "18px",
+          background: "rgba(255,255,255,0.08)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <Payment />
+      </Box>
+
+      {/* Social Section */}
+      <Box
+        sx={{
+          width: "100%",
+
+          p: 2,
+          borderRadius: "18px",
+          background: "rgba(255,255,255,0.08)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <SocialAccounts user={user} />
+      </Box>
     </Grid>
   );
 }
@@ -708,7 +846,7 @@ function Payment() {
                   mb={1}
                   fontSize={16}
                   fontWeight={600}
-                  color="secondary"
+                  color="primary"
                 >
                   Enter your PayPal Email
                 </Typography>
@@ -726,7 +864,7 @@ function Payment() {
                 <Button
                   onClick={() => handleSave("PayPal", payment.value)}
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
@@ -748,7 +886,7 @@ function Payment() {
                 spacing={2}
               >
                 <Grid size={6} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                  <Typography fontSize={16} fontWeight={600} color="primary">
                     Bank
                   </Typography>
                   <Page.Input
@@ -766,7 +904,7 @@ function Payment() {
                   />
                 </Grid>
                 <Grid size={6} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                  <Typography fontSize={16} fontWeight={600} color="primary">
                     IFSC/IBAN/SWIFT Code
                   </Typography>
                   <Page.Input
@@ -784,7 +922,7 @@ function Payment() {
                   />
                 </Grid>
                 <Grid size={12} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600} color="secondary">
+                  <Typography fontSize={16} fontWeight={600} color="primary">
                     Enter your Account Number
                   </Typography>
                   <Page.Input
@@ -804,7 +942,7 @@ function Payment() {
                 <Button
                   onClick={() => handleSave("Wire Transfer", payment.value)}
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
                 >
                   Save
@@ -829,7 +967,7 @@ function Payment() {
                   mb={1}
                   fontSize={16}
                   fontWeight={600}
-                  color="secondary"
+                  color="primary"
                 >
                   Enter your Amazon Email
                 </Typography>
@@ -847,7 +985,7 @@ function Payment() {
                 <Button
                   onClick={() => handleSave("Amazon", payment.value)}
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
@@ -872,7 +1010,7 @@ function Payment() {
                   mb={1}
                   fontSize={16}
                   fontWeight={600}
-                  color="secondary"
+                  color="primary"
                 >
                   Enter your UPI ID
                 </Typography>
@@ -890,7 +1028,7 @@ function Payment() {
                 <Button
                   onClick={() => handleSave("UPI", payment.value)}
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
@@ -1081,7 +1219,7 @@ function SocialAccounts({ user }) {
           <Grid size={12} container spacing={2} justifyContent="center" p={2}>
             {socialChannels.map(({ name, key, icon }, index) => (
               <Grid key={index} container size={6} spacing={0}>
-                <Typography fontSize={16} fontWeight={600} color="secondary">
+                <Typography fontSize={16} fontWeight={600} color="primary">
                   {name}
                 </Typography>
                 <Page.Input
@@ -1113,7 +1251,7 @@ function SocialAccounts({ user }) {
               user.Reload();
             }}
             variant="contained"
-            color="secondary"
+            color="primary"
             sx={{
               my: 3,
               fontWeight: 600,
@@ -1216,7 +1354,7 @@ function Summary() {
           width: "100%",
           borderBottom: "3px solid whitesmoke",
           "& .MuiTabs-indicator": {
-            backgroundColor: "secondary.main",
+            backgroundColor: "primary.main",
             height: "3px",
           },
           "& .MuiTab-root": {
@@ -1225,7 +1363,7 @@ function Summary() {
             fontWeight: 500,
           },
           "& .Mui-selected": {
-            color: "secondary.main !important",
+            color: "primary.main !important",
 
             fontWeight: 600,
           },

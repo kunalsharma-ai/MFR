@@ -40,7 +40,7 @@ export default function SelectElement({ question, form, options, disabled }) {
     }}
   >
     <Page.Text
-      sx={{ fontWeight: 600, mb: 0.5, color: "secondary.main" }}
+      sx={{ fontWeight: 600, mb: 0.5, color: "primary.main" }}
     >
       {question.label}{" "}
       {question.required && (

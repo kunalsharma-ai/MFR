@@ -53,28 +53,43 @@ export default function MyAccountPoints() {
     <Box
       sx={{
         width: "100%",
-        borderRadius: "18px",
+        borderRadius: "22px",
         overflow: "hidden",
         position: "relative",
         px: { xs: 2, md: 4 },
         py: { xs: 2.5, md: 3 },
         background:
-          "linear-gradient(135deg, #081a3d 0%, #0c5adb 45%, #063686 100%)",
-        border: "1px solid rgba(255,255,255,0.12)",
-        boxShadow: "0 10px 40px rgba(6, 54, 134, 0.3)",
+          "linear-gradient(135deg, #001B66 0%, #0037A6 55%, #0A47C9 100%)",
+        border: "1px solid rgba(245, 160, 0, 0.18)",
+        boxShadow: "0 12px 40px rgba(0, 27, 102, 0.35)",
       }}
     >
-      {/* Decorative lines */}
+      {/* Decorative Pattern */}
       <Box
         sx={{
           position: "absolute",
           inset: 0,
-          opacity: 0.08,
+          opacity: 0.07,
           backgroundImage: `
-            linear-gradient(120deg, transparent 0%, transparent 48%, #60a5fa 49%, transparent 50%),
-            linear-gradient(60deg, transparent 0%, transparent 48%, #60a5fa 49%, transparent 50%)
+            linear-gradient(120deg, transparent 0%, transparent 48%, #FFD166 49%, transparent 50%),
+            linear-gradient(60deg, transparent 0%, transparent 48%, #FFD166 49%, transparent 50%)
           `,
           backgroundSize: "220px 220px",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Glow Effects */}
+      <Box
+        sx={{
+          position: "absolute",
+          width: 300,
+          height: 300,
+          borderRadius: "50%",
+          background: "rgba(245, 160, 0, 0.15)",
+          filter: "blur(80px)",
+          top: -120,
+          right: -80,
           pointerEvents: "none",
         }}
       />
@@ -86,7 +101,7 @@ export default function MyAccountPoints() {
         position="relative"
         zIndex={2}
       >
-        {/* Left - Current Rewards */}
+        {/* Left Section */}
         <Grid size={{ xs: 12, md: 5 }}>
           <Typography
             sx={{
@@ -102,12 +117,14 @@ export default function MyAccountPoints() {
           <Typography
             sx={{
               mt: 1,
-              fontSize: { xs: "34px", md: "52px" },
+              fontSize: { xs: "36px", md: "58px" },
               lineHeight: 1,
               fontWeight: 800,
-              background: "linear-gradient(180deg, #a5d6ff 0%, #60a5fa 100%)",
+              background:
+                "linear-gradient(180deg, #FFE29A 0%, #F5A000 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              letterSpacing: "-1px",
             }}
           >
             {points.toLocaleString()} pts
@@ -115,8 +132,8 @@ export default function MyAccountPoints() {
 
           <Typography
             sx={{
-              mt: 0.5,
-              color: "#93c5fd",
+              mt: 0.75,
+              color: "#FFE29A",
               fontSize: { xs: "15px", md: "18px" },
               fontWeight: 600,
             }}
@@ -125,7 +142,7 @@ export default function MyAccountPoints() {
           </Typography>
         </Grid>
 
-        {/* Center Icon */}
+        {/* Center Trophy */}
         <Grid
           size={{ xs: 12, md: 2 }}
           sx={{
@@ -138,14 +155,19 @@ export default function MyAccountPoints() {
             spacing={1}
             alignItems="center"
             sx={{
-              color: "#93c5fd",
+              color: "#FFD166",
             }}
           >
-            <EmojiEventsRoundedIcon sx={{ fontSize: 72 }} />
+            <EmojiEventsRoundedIcon
+              sx={{
+                fontSize: 74,
+                filter: "drop-shadow(0 0 18px rgba(245,160,0,0.35))",
+              }}
+            />
           </Stack>
         </Grid>
 
-        {/* Right - Payout Milestone */}
+        {/* Right Section */}
         <Grid size={{ xs: 12, md: 5 }}>
           <Stack
             direction="row"
@@ -155,9 +177,10 @@ export default function MyAccountPoints() {
           >
             <Typography
               sx={{
-                color: "#bfdbfe",
+                color: "#FFE29A",
                 fontWeight: 700,
                 fontSize: { xs: "14px", md: "16px" },
+                letterSpacing: 0.2,
               }}
             >
               Payout Milestone
@@ -165,7 +188,7 @@ export default function MyAccountPoints() {
 
             <FlagRoundedIcon
               sx={{
-                color: "#60a5fa",
+                color: "#F5A000",
                 fontSize: 28,
               }}
             />
@@ -176,12 +199,15 @@ export default function MyAccountPoints() {
               variant="determinate"
               value={percentage}
               sx={{
-                height: 20,
+                height: 18,
                 borderRadius: "999px",
-                backgroundColor: "rgba(255,255,255,0.15)",
+                backgroundColor: "rgba(255,255,255,0.14)",
+                overflow: "hidden",
+
                 "& .MuiLinearProgress-bar": {
                   borderRadius: "999px",
-                  background: "#fff",
+                  background:
+                    "linear-gradient(90deg, #F5A000 0%, #FFD166 100%)",
                 },
               }}
             />
@@ -189,21 +215,21 @@ export default function MyAccountPoints() {
             <Typography
               sx={{
                 mt: 1,
-                color: "rgba(255,255,255,0.75)",
+                color: "rgba(255,255,255,0.8)",
                 fontSize: "13px",
                 fontWeight: 500,
               }}
             >
-              [{points.toLocaleString()} / {threshold.toLocaleString()} pts to
-              Payout]
+              [{points.toLocaleString()} /{" "}
+              {threshold.toLocaleString()} pts to Payout]
             </Typography>
 
             <Typography
               sx={{
                 position: "absolute",
                 right: 0,
-                top: 34,
-                color: "#93c5fd",
+                top: 32,
+                color: "#FFE29A",
                 fontSize: "14px",
                 fontWeight: 700,
                 display: { xs: "block", md: "none", xl: "block" },
@@ -217,14 +243,20 @@ export default function MyAccountPoints() {
             <Button
               variant="contained"
               sx={{
-                mt: 2,
+                mt: 2.5,
                 borderRadius: 999,
                 px: 3,
-                fontWeight: 700,
-                background: "linear-gradient(90deg, #60a5fa 0%, #2563eb 100%)",
-                color: "#0a1f3d",
+                py: 1,
+                fontWeight: 800,
+                textTransform: "none",
+                background:
+                  "linear-gradient(90deg, #F5A000 0%, #FFB938 100%)",
+                color: "#001B66",
+                boxShadow: "0 8px 24px rgba(245,160,0,0.35)",
+
                 "&:hover": {
-                  opacity: 0.95,
+                  background:
+                    "linear-gradient(90deg, #E59400 0%, #F5A000 100%)",
                 },
               }}
             >

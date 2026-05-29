@@ -145,7 +145,7 @@ export default function page() {
               label: "Filters",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setOpenFilters({ open: true, filters: info?.filters });
@@ -163,7 +163,7 @@ export default function page() {
               label: "Qualified",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -182,7 +182,7 @@ export default function page() {
               label: "Invited",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -211,7 +211,7 @@ export default function page() {
               label: "Pending",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -230,7 +230,7 @@ export default function page() {
               label: "Clicks",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -258,7 +258,7 @@ export default function page() {
               label: "Disqualified",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -281,7 +281,7 @@ export default function page() {
               label: "Overquota",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -304,7 +304,7 @@ export default function page() {
               label: "dropouts",
               render: (info) => (
                 <Page.MuiButton
-                  color="secondary"
+                  color="primary"
                   sx={{ textTransform: "none", fontWeight: 600, p: 0 }}
                   onClick={() => {
                     setShowFilteredUsers({
@@ -424,7 +424,7 @@ function BatchesHistory({ setShowFilteredUsers }) {
                   <Page.Text
                     fontWeight={600}
                     fontSize={16}
-                    sx={{ color: "secondary.main" }}
+                    sx={{ color: "primary.main" }}
                   >
                     {batch.name}
                   </Page.Text>
@@ -447,7 +447,7 @@ function BatchesHistory({ setShowFilteredUsers }) {
                       setShowFilteredUsers({ open: true, data: null })
                     }
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     sx={{ fontWeight: 600, width: 100 }}
                   >
                     Edit
@@ -455,7 +455,7 @@ function BatchesHistory({ setShowFilteredUsers }) {
                   <Page.MuiButton
                     onClick={() => {}}
                     variant="outlined"
-                    color="secondary"
+                    color="primary"
                     sx={{ fontWeight: 600, borderWidth: 2, width: 100 }}
                   >
                     Cancel
@@ -494,7 +494,7 @@ function FiltersList({ filters }) {
             <Page.Text
               fontWeight={600}
               fontSize={16}
-              sx={{ color: "secondary.main" }}
+              sx={{ color: "primary.main" }}
             >
               {filter?.type}
             </Page.Text>
@@ -596,7 +596,7 @@ function SendInvites({ users, survey, market, onClose }) {
                 }
               : onClose
           }
-          sx={{ color: "secondary.main" }}
+          sx={{ color: "primary.main" }}
         >
           <CloseIcon />
         </IconButton>
@@ -803,7 +803,7 @@ function SendInvites({ users, survey, market, onClose }) {
                 setSendMail(true);
               }}
               variant="contained"
-              color="secondary"
+              color="primary"
               sx={{ fontWeight: 600 }}
             >
               Send Invite
@@ -866,7 +866,7 @@ function SendInvites({ users, survey, market, onClose }) {
 //                 }
 //               : onClose
 //           }
-//           sx={{ color: "secondary.main" }}
+//           sx={{ color: "primary.main" }}
 //         >
 //           <CloseIcon />
 //         </IconButton>
@@ -983,7 +983,7 @@ function SendInvites({ users, survey, market, onClose }) {
 //                 setSendMail(true);
 //               }}
 //               variant="contained"
-//               color="secondary"
+//               color="primary"
 //               sx={{ fontWeight: 600 }}
 //             >
 //               Send Invite

@@ -466,7 +466,7 @@ function UserData({ userId, onClose }) {
         }
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={onClose} color="secondary">
+        <IconButton onClick={onClose} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -478,7 +478,7 @@ function UserData({ userId, onClose }) {
             onClick={() => {
               setShowProfiles(!showProfiles);
             }}
-            color="secondary"
+            color="primary"
             sx={{ fontWeight: 600, color: "white" }}
             startIcon={
               <i className="fa-solid fa-users" style={{ fontSize: "14px" }} />
@@ -799,7 +799,7 @@ function ProfilesData({ user }) {
             variant="contained"
             value={selectedProfile?.slug || ""}
             exclusive
-            color="secondary"
+            color="primary"
             fullWidth
             onChange={(e, value) => {
               if (!value) return;
@@ -816,8 +816,8 @@ function ProfilesData({ user }) {
                 px: 2,
                 py: 0.5,
                 borderRadius: 0,
-                color: "secondary.main",
-                borderColor: "secondary.main",
+                color: "primary.main",
+                borderColor: "primary.main",
               },
               "& .Mui-selected": {
                 backgroundColor: (theme) =>
@@ -835,7 +835,7 @@ function ProfilesData({ user }) {
                 key={tab.link}
                 value={tab.link}
                 size="small"
-                color="secondary"
+                color="primary"
               >
                 {tab.label}
               </ToggleButton>
@@ -875,7 +875,7 @@ function ProfilesData({ user }) {
                   <Page.Text
                     fontWeight={600}
                     fontSize={16}
-                    color="secondary.main"
+                    color="primary.main"
                   >
                     {d.label}
                   </Page.Text>

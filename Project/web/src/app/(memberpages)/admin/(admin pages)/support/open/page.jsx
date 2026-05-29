@@ -88,7 +88,7 @@ export default function page() {
           Ticket Number :{ " " }
           <Page.Text
             component="span"
-            sx={ { fontWeight: 600, fontSize: "20px", color: "secondary.main" } }
+            sx={ { fontWeight: 600, fontSize: "20px", color: "primary.main" } }
           >
             { ticket?.ticketNo }
           </Page.Text>
@@ -100,7 +100,7 @@ export default function page() {
             sx={ {
               fontWeight: 600,
               fontSize: "16px",
-              color: "secondary.main",
+              color: "primary.main",
               textTransform: "capitalize",
             } }
           >
@@ -191,7 +191,7 @@ function TicketBody({ ticket }) {
                     <Page.MuiButton
                       size="small"
                       variant="contained"
-                      color="secondary"
+                      color="primary"
                       component="a"
                       href={ file }
                       download
@@ -348,7 +348,7 @@ function TicketHistory({ ticket }) {
                         <Page.MuiButton
                           size="small"
                           variant="contained"
-                          color="secondary"
+                          color="primary"
                           component="a"
                           href={ file }
                           download
@@ -460,7 +460,7 @@ function TicketReply({ ticket, reloadData }) {
           type="submit"
           disabled={form.watch("message")===""}
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={ { fontWeight: 600 } }
         >
           Reply

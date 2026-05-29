@@ -141,7 +141,7 @@ export default function () {
                     setOpen({ open: true, id: info._id });
                   }}
                 >
-                  <EditIcon fontSize="small" color="secondary" />
+                  <EditIcon fontSize="small" color="primary" />
                 </IconButton>
 
                 <IconButton
@@ -343,7 +343,7 @@ function CreateOrEditOption({
         title={optionID ? "Edit Option" : "Add Option"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={onClose} sx={{ color: "secondary.main" }}>
+        <IconButton onClick={onClose} sx={{ color: "primary.main" }}>
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -408,7 +408,7 @@ function CreateOrEditOption({
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             color: "white",
             fontWeight: "bold",
@@ -428,7 +428,7 @@ const UploadOptions = () => {
       size="small"
       label="Upload Options"
       component="label"
-      color="secondary"
+      color="primary"
       sx={{
         px: 1,
         py: 0.5,

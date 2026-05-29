@@ -107,7 +107,7 @@ export default function page() {
         >
           <Page.MuiButton
             variant="contained"
-            color="secondary"
+            color="primary"
             size="small"
             sx={{ height: 22, textTransform: "none" }}
             onClick={() => {
@@ -163,7 +163,7 @@ export default function page() {
           >
             <Page.MuiButton
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={() => {
                 setOpen(true);
               }}
@@ -317,7 +317,7 @@ function CreateTicket({ reloadData, close }) {
         title="Create Ticket"
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -363,7 +363,7 @@ function CreateTicket({ reloadData, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           disabled={isDisabled || isLoading}
           loading={isLoading}
           loadingIndicator="Creating..."

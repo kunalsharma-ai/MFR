@@ -37,7 +37,7 @@ export default function ({
                 value={opt.value}
                 control={
                   <Radio
-                    color="secondary"
+                    color="primary"
                     sx={{
                       filter: "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3))",
                     }}

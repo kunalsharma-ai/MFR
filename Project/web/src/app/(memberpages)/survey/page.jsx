@@ -130,7 +130,7 @@ export default function page() {
                 <Grid size={ 12 } container justifyContent="center" mt={ 2 }>
                   <Page.MuiButton
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     sx={ {
                       height: "36px",
                       fontWeight: 600,
@@ -157,13 +157,14 @@ export default function page() {
                   <Page.Box sx={ { position: "relative" } }>
                     <Page.Box
                       sx={ {
-                        height: { xs: "60px", md: "80px" },
-                        width: { xs: "180px", md: "300px" },
+                        width:220,
+                        // height: { xs: "60px", md: "80px" },
+                        // width: { xs: "180px", md: "300px" },
                       } }
                     >
                       <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
                     </Page.Box>{ " " }
-                    <Page.Box
+                    {/* <Page.Box
                       component="img"
                       src="/imagesmfr/dol-sign.gif"
                       alt="logo"
@@ -173,7 +174,7 @@ export default function page() {
                         right: -4.5,
                         top: { xs: 0, md: 5 },
                       } }
-                    />
+                    /> */}
                   </Page.Box>
 
                   <Page.Text
@@ -183,7 +184,7 @@ export default function page() {
                       ml: { xs: 0, md: "-320px" },
                       fontSize: { xs: "18px", lg: "24px" },
                       fontWeight: 600,
-                      color: "secondary.main",
+                      color: "primary.main",
                     } }
                   >
                     { survey?.name }

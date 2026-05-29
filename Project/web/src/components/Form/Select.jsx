@@ -206,7 +206,7 @@ export default function Select({
                         showSelectAllBtn && (
                           <Page.MuiButton
                             variant="contained"
-                            color="secondary"
+                            color="primary"
                             onMouseDown={(event) => {
                               event.preventDefault();
                               field.onChange(
@@ -604,7 +604,7 @@ export default function Select({
                                             }}
                                             sx={{ p: 0.5 }}
                                           >
-                                            <PlusIcon color="secondary" />
+                                            <PlusIcon color="primary" />
                                           </IconButton>
                                         </Tooltip>
                                       </Page.Box>

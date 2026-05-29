@@ -3,7 +3,7 @@ import NextLink from "next/link";
 function Links(attr) {
   return (
     <Link
-      color="secondary"
+      color="primary"
       href={attr.href}
       component={NextLink}
       type={attr.type}

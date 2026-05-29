@@ -297,8 +297,9 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   >
                     <Page.Box
                       sx={{
-                        height: { xs: "60px", md: "80px" },
-                        width: { xs: "180px", md: "300px" },
+                        width:220
+                        // height: { xs: "60px", md: "80px" },
+                        // width: { xs: "180px", md: "300px" },
                       }}
                     >
                       <img
@@ -307,7 +308,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         width={"100%"}
                       />
                     </Page.Box>{" "}
-                    <Page.Box
+                    {/* <Page.Box
                       component="img"
                       src="/imagesmfr/dol-sign.gif"
                       alt="logo"
@@ -317,7 +318,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         right: -4.5,
                         top: { xs: 24, md: 32 },
                       }}
-                    />
+                    /> */}
                   </Page.Box>
                   <IconButton
                     sx={{
@@ -349,7 +350,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       textAlign: "center",
                       fontSize: { xs: "18px", md: "24px" },
                       fontWeight: 600,
-                      color: "secondary.main",
+                      color: "primary.main",
 
                       my: 1,
                     }}
@@ -483,7 +484,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           target="_blank"
                           sx={{
                             textDecoration: "underline",
-                            color: "secondary.main",
+                            color: "primary.main",
                           }}
                         >
                           Terms & Conditions
@@ -495,7 +496,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                           target="_blank"
                           sx={{
                             textDecoration: "underline",
-                            color: "secondary.main",
+                            color: "primary.main",
                           }}
                         >
                           Privacy Policy.
@@ -505,7 +506,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     <Page.MuiButton
                       type="submit"
                       variant="contained"
-                      color="secondary"
+                      color="primary"
                       loading={isLoading}
                       loadingIndicator="Signing Up..."
                       disabled={
@@ -513,7 +514,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         !Boolean(form.watch("parent.email"))
                       }
                       sx={{
-                        bgcolor: "secondary.main",
+                        bgcolor: "primary.main",
                         mt: 2,
                         mb: 1,
                         p: 1,
@@ -573,7 +574,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                                 key={i}
                                 fullWidth
                                 variant="outlined"
-                                color="secondary"
+                                color="primary"
                                 startIcon={provider.icon}
                                 sx={{
                                   borderRadius: "8px",
@@ -609,8 +610,8 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                                 title={provider?.label}
                                 sx={{
                                   border: "1px solid",
-                                  borderColor: "secondary.main",
-                                  color: "secondary.main",
+                                  borderColor: "primary.main",
+                                  color: "primary.main",
                                   width: 42,
                                   height: 42,
                                   transition: "all 0.2s ease",
@@ -637,7 +638,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       <Page.Text>Already have an account?</Page.Text>
                       <Page.Text
                         sx={{
-                          color: "secondary.main",
+                          color: "primary.main",
                           cursor: "pointer",
                           "&:hover": {
                             textDecoration: "underline",
@@ -686,7 +687,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   <Page.Text
                     component="span"
                     sx={{
-                      color: "secondary.main",
+                      color: "primary.main",
                       fontSize: { xs: "18px", md: "26px" },
                       fontWeight: 600,
                     }}
@@ -715,7 +716,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                 </Page.Text>
                 <Page.MuiButton
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{ fontWeight: "bold", mt: 2, color: "white" }}
                   onClick={onClose}
                 >
@@ -747,7 +748,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                 <Page.Text
                   component="span"
                   sx={{
-                    color: "secondary.main",
+                    color: "primary.main",
                     fontSize: { xs: "18px", md: "26px" },
                     fontWeight: 600,
                   }}
@@ -791,7 +792,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                 <Page.Box sx={{ display: "flex", gap: 2 }}>
                   <Page.MuiButton
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     disabled={cooldown > 0}
                     sx={{
                       position: "relative",
@@ -835,7 +836,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
 
                   <Page.MuiButton
                     variant="outlined"
-                    color="secondary"
+                    color="primary"
                     sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
                     onClick={onClose}
                   >
@@ -940,7 +941,7 @@ function GenderRadioGroup({
                                 ? "error.main"
                                 : field.value === option.value
                                   ? "white"
-                                  : "secondary.main",
+                                  : "primary.main",
                             },
                           }}
                         />
@@ -1000,8 +1001,8 @@ function AccountTypeButtonGroup({
                 fontSize: 13,
                 px: 2,
                 py: 0.5,
-                color: errorMessage ? "red" : "secondary.main",
-                borderColor: errorMessage ? "red" : "secondary.main",
+                color: errorMessage ? "red" : "primary.main",
+                borderColor: errorMessage ? "red" : "primary.main",
               },
               "& .Mui-selected": {
                 backgroundColor: "#016550 !important",

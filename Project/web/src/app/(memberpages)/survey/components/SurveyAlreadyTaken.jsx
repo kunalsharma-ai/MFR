@@ -24,7 +24,7 @@ export default function SurveyAlreadyTaken({ onExit, timeout }) {
       direction="column"
       mt={ 6 }
     >
-      <ErrorIcon color="secondary" sx={ { fontSize: "80px" } } />
+      <ErrorIcon color="primary" sx={ { fontSize: "80px" } } />
       <Page.Text
         sx={ { fontSize: "32px", textAlign: "center", my: 2 } }
       >
@@ -47,7 +47,7 @@ export default function SurveyAlreadyTaken({ onExit, timeout }) {
       </Page.Text>
       <Page.MuiButton
         variant="contained"
-        color="secondary"
+        color="primary"
         sx={ { fontWeight: "bold", mt: 2 } }
         onClick={ (e) => {
           if (onExit) onExit(e)

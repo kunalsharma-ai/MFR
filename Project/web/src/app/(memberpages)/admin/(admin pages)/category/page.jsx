@@ -57,7 +57,7 @@ export default function () {
                   setOpen({ open: true, id: info._id });
                 }}
               >
-                <EditIcon fontSize="small" color="secondary"/>
+                <EditIcon fontSize="small" color="primary"/>
               </IconButton>
             ),
           },
@@ -161,7 +161,7 @@ function CreateOrEditCategory({ categoryID = null, close }) {
         title={categoryID ? "Edit Category" : "Create Category"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} sx={{ color: "secondary.main" }}>
+        <IconButton onClick={close} sx={{ color: "primary.main" }}>
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -202,7 +202,7 @@ function CreateOrEditCategory({ categoryID = null, close }) {
                 width="100%"
                 alignItems="center"
               >
-                <Page.Text sx={{ fontWeight: 600, color: "secondary.main" }}>
+                <Page.Text sx={{ fontWeight: 600, color: "primary.main" }}>
                   Terms {index + 1} Details
                 </Page.Text>
 
@@ -240,7 +240,7 @@ function CreateOrEditCategory({ categoryID = null, close }) {
         <Page.MuiButton
           variant="outlined"
           size="small"
-          color="secondary"
+          color="primary"
           sx={{
             borderWidth: 2,
             fontWeight: 600,
@@ -262,7 +262,7 @@ function CreateOrEditCategory({ categoryID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             color: "white",
             fontWeight: "bold",

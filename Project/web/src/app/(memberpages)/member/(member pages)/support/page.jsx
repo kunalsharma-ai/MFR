@@ -72,7 +72,7 @@ export default function () {
           bgcolor: "white",
           borderBottom: "3px solid whitesmoke",
           "& .MuiTabs-indicator": {
-            backgroundColor: "secondary.main",
+            backgroundColor: "primary.main",
             height: "3px",
           },
           "& .MuiTab-root": {
@@ -81,7 +81,7 @@ export default function () {
             fontWeight: 500,
           },
           "& .Mui-selected": {
-            color: "secondary.main",
+            color: "primary.main",
 
             fontWeight: 600,
           },
@@ -135,6 +135,7 @@ function FAQ() {
                 key={index}
                 disableGutters
                 sx={{
+                  width: "100%",
                   boxShadow: 0,
                   bgcolor: "#385e9e",
                   border: `1px solid #e0e0e0`,
@@ -166,7 +167,7 @@ function FAQ() {
                     textAlign: "justify",
                     fontSize: 15,
                     "& ul, & ol": {
-                      paddingLeft: "24px",
+                      paddingLeft: {xs:"8px",md:"24px"},
                       marginTop: 1,
                       marginBottom: 1,
                     },
@@ -237,7 +238,7 @@ function ContactSupport() {
             </Page.Text>
             <Page.MuiButton
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={() => {
                 setCreateTicket(true);
               }}
@@ -357,7 +358,7 @@ function TicketList({ setCreateTicket, reload, setActiveTicket }) {
         >
           <Page.MuiButton
             variant="contained"
-            color="secondary"
+            color="primary"
             size="small"
             sx={{ height: 22, textTransform: "none" }}
             onClick={() => {
@@ -398,7 +399,7 @@ function TicketList({ setCreateTicket, reload, setActiveTicket }) {
           >
             <Page.MuiButton
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={() => {
                 setCreateTicket(true);
               }}

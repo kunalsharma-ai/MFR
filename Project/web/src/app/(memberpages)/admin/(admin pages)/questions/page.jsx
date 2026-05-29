@@ -150,7 +150,7 @@ export default function () {
                   component="a"
                   href={`/admin/options?id=${info._id}`}
                   target="_blank"
-                  sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+                  sx={{ color: "primary.main", fontWeight: 500, p: 0 }}
                 >
                   View Options
                 </Page.Text>
@@ -167,7 +167,7 @@ export default function () {
                   setOpen({ open: true, id: info._id });
                 }}
               >
-                <EditIcon fontSize="small" color="secondary" />
+                <EditIcon fontSize="small" color="primary" />
               </IconButton>
             ),
           },
@@ -188,7 +188,7 @@ export default function () {
               router.push("/admin/profiles");
             }}
             variant="contained"
-            color="secondary"
+            color="primary"
             size="small"
             sx={{
               fontWeight: "bold",
@@ -291,7 +291,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
         title={questionID ? "Edit Question" : "Add Question"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -431,7 +431,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: "bold",
           }}

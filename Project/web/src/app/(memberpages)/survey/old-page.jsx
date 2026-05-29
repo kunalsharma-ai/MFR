@@ -327,13 +327,14 @@ export default function page() {
             <Page.Box sx={ { position: "relative" } }>
               <Page.Box
                 sx={ {
-                  height: { xs: "60px", md: "80px" },
-                  width: { xs: "180px", md: "300px" },
+                  width: 220,
+                  // height: { xs: "60px", md: "80px" },
+                  // width: { xs: "180px", md: "300px" },
                 } }
               >
                 <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
               </Page.Box>{ " " }
-              <Page.Box
+              {/* <Page.Box
                 component="img"
                 src="/imagesmfr/dol-sign.gif"
                 alt="logo"
@@ -343,7 +344,7 @@ export default function page() {
                   right: -4.5,
                   top: { xs: 0, md: 5 },
                 } }
-              />
+              /> */}
             </Page.Box>
 
             <Page.Text

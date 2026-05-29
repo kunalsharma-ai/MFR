@@ -128,7 +128,7 @@ export default function page() {
       <Grid size={12} container spacing={2} mt={1}>
         <Box width={"100%"}>
           <Typography
-            color="secondary"
+            color="primary"
             sx={{
               fontSize: "16px",
               fontWeight: "700",
@@ -156,7 +156,7 @@ export default function page() {
         <Grid size={{ xs: 12, lg: 6 }} container spacing={2} mt={2}>
           <Box width={"100%"}>
             <Typography
-              color="secondary"
+              color="primary"
               sx={{
                 fontSize: "16px",
                 fontWeight: "700",
@@ -249,7 +249,7 @@ export default function page() {
                 }
               }}
               variant="contained"
-              color="secondary"
+              color="primary"
               disabled={
                 emails.filter((email) => {
                   return Boolean(

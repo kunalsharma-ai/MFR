@@ -47,7 +47,7 @@ export default function () {
             size="small"
             label={info?.category}
             variant="contained"
-            color={info?.category == "b2c" ? "secondary" : "primary"}
+            color={info?.category == "b2b" ? "secondary" : "primary"}
             sx={{ mr: 0.5, color: "white", textTransform: "uppercase" }}
           />
         );
@@ -64,7 +64,7 @@ export default function () {
     {
       id: "points",
       label: "Survey Points",
-      render: info => `${info.points} pts`,
+      render: (info) => `${info.points} pts`,
       width: 140,
       feature: ["sortable"],
     },
@@ -76,7 +76,7 @@ export default function () {
         <Page.Link
           href={`/admin/responses?survey=${info.slug}`}
           target="_blank"
-          sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+          sx={{ color: "primary.main", fontWeight: 500, p: 0 }}
         >
           View Responses
         </Page.Link>
@@ -89,7 +89,7 @@ export default function () {
       render: (info) => (
         <Page.MuiButton
           sx={{
-            color: "secondary.main",
+            color: "primary.main",
             fontWeight: 500,
             p: 0,
             textTransform: "none",
@@ -114,7 +114,7 @@ export default function () {
               setOpenInvite({ open: true, id: info._id });
             }}
           >
-            <PeopleIcon fontSize="small" color="secondary" />
+            <PeopleIcon fontSize="small" color="primary" />
           </IconButton>
         </Tooltip>
       ),
@@ -130,11 +130,11 @@ export default function () {
             setOpen({ open: true, id: info._id });
           }}
         >
-          <EditIcon fontSize="small" color="secondary" />
+          <EditIcon fontSize="small" color="primary" />
         </IconButton>
       ),
     },
-  ]
+  ];
 
   return (
     <Page.Box
@@ -251,8 +251,13 @@ function SurveyInvite({ surveyID = null, close }) {
     close();
   };
 
-  const totalRespondents = Array.isArray(summary) ? (summary.find((s) => s.label === "Total Panelists")?.value || 0) : 0;
-  const categoryCount = (surveyData && Array.isArray(summary)) ? (summary.find((s) => s.label === surveyData.category)?.value || 0) : 0;
+  const totalRespondents = Array.isArray(summary)
+    ? summary.find((s) => s.label === "Total Panelists")?.value || 0
+    : 0;
+  const categoryCount =
+    surveyData && Array.isArray(summary)
+      ? summary.find((s) => s.label === surveyData.category)?.value || 0
+      : 0;
 
   return (
     <Grid
@@ -274,7 +279,7 @@ function SurveyInvite({ surveyID = null, close }) {
         title={"Invite Panelists"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -293,11 +298,11 @@ function SurveyInvite({ surveyID = null, close }) {
                 options={[
                   {
                     label: `Match Category Only (${surveyData?.category?.toUpperCase()}: ${categoryCount} users)`,
-                    value: "category"
+                    value: "category",
                   },
                   {
                     label: `All Respondents (${totalRespondents} users)`,
-                    value: "all"
+                    value: "all",
                   },
                 ]}
               />
@@ -310,8 +315,12 @@ function SurveyInvite({ surveyID = null, close }) {
               />
             </Grid>
             <Grid size={12} sx={{ mt: 1 }}>
-              <Page.Text fontSize={13} sx={{ color: "text.secondary", fontStyle: "italic" }}>
-                Note: Clicking "Send Invitations" will immediately create invitations for existing users based on the selected scope.
+              <Page.Text
+                fontSize={13}
+                sx={{ color: "text.primary", fontStyle: "italic" }}
+              >
+                Note: Clicking "Send Invitations" will immediately create
+                invitations for existing users based on the selected scope.
               </Page.Text>
             </Grid>
           </>
@@ -329,7 +338,7 @@ function SurveyInvite({ surveyID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           disabled={isLoading}
           sx={{
             fontWeight: "bold",
@@ -360,6 +369,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
       description: "",
       link: "",
       pages: [],
+      type: "basic"
     },
   });
 
@@ -410,7 +420,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
         title={surveyID ? "Edit Survey" : "Create Survey"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -487,6 +497,51 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
           dialogScoped
         />
         <Form.Input control={control} {...form.register("link")} label="Link" />
+        <Grid size={12}>
+          <Form.Select
+            control={control}
+            {...form.register("type")}
+            label="Type"
+            options={[
+              { label: "Basic", value: "basic" },
+              { label: "Professional", value: "professional" },
+              { label: "Educational", value: "educational" },
+              { label: "Survey and Rewards", value: "survey_and_rewards" },
+              { label: "Financial", value: "financial" },
+              { label: "Parenting", value: "parenting" },
+              {
+                label: "Home and Pet Ownership",
+                value: "home_and_pet_ownership",
+              },
+              { label: "Shopping", value: "shopping" },
+              { label: "Lifestyle and Food", value: "lifestyle_and_food" },
+              { label: "Travel", value: "travel" },
+              { label: "Automobile", value: "automobile" },
+              { label: "Health", value: "health" },
+              { label: "Beauty & Fashion", value: "beauty_fashion" },
+              {
+                label: "Media, Electronics, Mobile & Technology",
+                value: "media_electronics_mobile_technology",
+              },
+              { label: "Sports", value: "sports" },
+              { label: "Gaming", value: "gaming" },
+              { label: "Entertainment", value: "entertainment" },
+              { label: "Social Media", value: "social_media" },
+              { label: "Music", value: "music" },
+              { label: "Environment", value: "environment" },
+              { label: "Real Estate", value: "real_estate" },
+              { label: "Telecom", value: "telecom" },
+              { label: "Insurance", value: "insurance" },
+              { label: "Employment", value: "employment" },
+              { label: "Dating", value: "dating" },
+              { label: "Fitness", value: "fitness" },
+              { label: "Crypto", value: "crypto" },
+              { label: "News", value: "news" },
+              { label: "Movies", value: "movies" },
+              { label: "Kids", value: "kids" },
+            ]}
+          />
+        </Grid>
         {/* todo:confirmation from management about icon upload
         <Grid container direction="column" sx={{ px: 1, py: 1 }}>
           <Page.Text sx={{ color: "grey" }}>Survey Welcome Icon</Page.Text>
@@ -510,7 +565,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: "bold",
           }}
@@ -583,7 +638,7 @@ function SurveyQuestions({ surveyID = null, close }) {
         title={"Create/Edit Questions"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="secondary">
+        <IconButton onClick={close} color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -607,7 +662,7 @@ function SurveyQuestions({ surveyID = null, close }) {
                 <Page.Text
                   sx={{
                     fontWeight: 600,
-                    color: "secondary.main",
+                    color: "primary.main",
                     fontSize: 16,
                   }}
                 >
@@ -659,7 +714,7 @@ function SurveyQuestions({ surveyID = null, close }) {
           <Page.MuiButton
             variant="outlined"
             size="small"
-            color="secondary"
+            color="primary"
             sx={{
               borderWidth: 2,
               fontWeight: 600,
@@ -682,7 +737,7 @@ function SurveyQuestions({ surveyID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: "bold",
           }}
@@ -758,7 +813,7 @@ function QuestionsEditor({ pageIndex, control, register, watch }) {
         <Page.MuiButton
           variant="outlined"
           size="small"
-          color="secondary"
+          color="primary"
           sx={{
             borderWidth: 2,
             fontWeight: 600,

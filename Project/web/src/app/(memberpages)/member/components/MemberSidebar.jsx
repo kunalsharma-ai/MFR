@@ -1,16 +1,18 @@
 "use client";
+
 import React from "react";
 import {
-  Grid,
   Box,
   Typography,
   Tooltip,
   useMediaQuery,
   useTheme,
-  Popper,
-  Grow,
 } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
+
+import SurveyPointsSidebar from "./SurveyPointsSidebar";
+import CurrentUser from "./CurrentUser";
+import { Page } from "@/util";
 
 const sidebarItems = [
   { icon: "icon-drawer", label: "Dashboard", link: "/member/dashboard" },
@@ -20,104 +22,202 @@ const sidebarItems = [
   { icon: "icon-wallet", label: "Rewards", link: "/member/rewards" },
   { icon: "icon-share-alt", label: "Referrals", link: "/member/referrals" },
   { icon: "icon-settings", label: "Settings", link: "/member/settings" },
-  { icon: "icon-support", label: "Help", link: "/member/support" },
+  { icon: "icon-support", label: "Help & Support", link: "/member/support" },
 ];
 
 export default function MemberSidebar({ children }) {
   const router = useRouter();
   const pathname = usePathname();
+
   const theme = useTheme();
   const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
   return (
     <Box display="flex">
-      <Grid
-        container
+      {/* Sidebar */}
+      <Box
         sx={{
-          width: { xs: "50px", lg: "110px" },
-          flexDirection: "column",
-          height: { xs: "calc(100vh - 122px)", sm: "calc(100vh - 104px)" },
+          width: { xs: 72, lg: 290 },
+          height: {
+            xs: "calc(100vh - 122px)",
+            sm: "calc(100vh - 104px)",
+          },
           mt: "78px",
+          bgcolor: "#ffffff",
+          borderRight: "1px solid #eef2f7",
+          px: { xs: 1, lg: 2 },
+          py: 2,
+          overflowY: "auto",
+          flexShrink: 0,
+
           display: "flex",
+          flexDirection: "column",
           justifyContent: "space-between",
-          overflow: "auto",
-          flexWrap: "nowrap",
-          borderRadius: "0 0.75rem 0.75rem 0",
-          borderLeft: "1px solid #f3f3f3",
-          boxShadow: "0 3px 30px rgba(0,0,0,0.1), 0 3px 20px rgba(0,0,0,0.1)",
         }}
       >
-        {sidebarItems.map((item, index) => {
-          const isActive = pathname === item.link;
+        {/* Menu */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 0.5,
+          }}
+        >
+          {sidebarItems.map((item, index) => {
+            const isActive = pathname === item.link;
 
-          const content = (
-            <Box
-              role="button"
-              tabIndex={0}
-              onClick={(e) => router.push(item.link)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  router.push(item.link);
-                }
-              }}
-              sx={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid #e0e0e0",
-                color: isActive ? "secondary.main" : "inherit",
-                bgcolor: isActive ? "#eaf7ffff" : "transparent",
-                gap: 0.5,
-                minHeight: 75,
-                "&:hover": {
-                  cursor: "pointer",
-                  color: "secondary.main",
-                  bgcolor: "#d6e8f3ff",
-                },
-              }}
-            >
-              <i className={item.icon} style={{ fontSize: "26px" }} />
-              <Typography
+            const content = (
+              <Box
+                key={index}
+                role="button"
+                tabIndex={0}
+                onClick={() => router.push(item.link)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push(item.link);
+                  }
+                }}
                 sx={{
-                  display: { xs: "none", lg: "inline" },
-                  fontWeight: 500,
-                  fontSize: { xs: 12, xl: 14 },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: { xs: "center", lg: "flex-start" },
+                  gap: 2,
+                  px: { xs: 0, lg: 2.2 },
+                  height: 54,
+                  borderRadius: "16px",
+                  transition: "all 0.2s ease",
+                  cursor: "pointer",
+
+                  bgcolor: isActive ? "primary.main" : "transparent",
+
+                  color: isActive ? "#ffffff" : "#667085",
+
+                  "&:hover": {
+                    bgcolor: isActive ? "secondary.main" : "#f5f3ff",
+                    color: isActive ? "#ffffff" : "secondary.main",
+                  },
                 }}
               >
-                {item.label}
-              </Typography>
-            </Box>
-          );
+                <i
+                  className={item.icon}
+                  style={{
+                    fontSize: "20px",
+                  }}
+                />
 
-          return isLgUp ? (
-            <React.Fragment key={index}>{content}</React.Fragment>
-          ) : (
-            <Tooltip
-              key={index}
-              title={item.label}
-              placement="right"
-              enterTouchDelay={0}
-              leaveTouchDelay={1000}
+                <Typography
+                  sx={{
+                    display: { xs: "none", lg: "block" },
+                    fontSize: 15,
+                    fontWeight: isActive ? 700 : 600,
+                    letterSpacing: "-0.1px",
+                  }}
+                >
+                  {item.label}
+                </Typography>
+              </Box>
+            );
+
+            return isLgUp ? (
+              content
+            ) : (
+              <Tooltip key={index} title={item.label} placement="right">
+                {content}
+              </Tooltip>
+            );
+          })}
+        </Box>
+
+        {/* Bottom Section */}
+        <Box
+          sx={{
+            mt: 3,
+            display: { xs: "none", lg: "block" },
+          }}
+        >
+          <Box
+            sx={{
+              borderRadius: "24px",
+              background: "linear-gradient(180deg, #faf7ff 0%, #f4efff 100%)",
+              border: "1px solid #ede9fe",
+              p: 2.2,
+              overflow: "hidden",
+              position: "relative",
+
+              "& .MuiGrid-root": {
+                width: "100%",
+              },
+
+              "& .MuiBox-root": {
+                minWidth: "100% !important",
+                background: "transparent !important",
+                border: "none !important",
+                boxShadow: "none !important",
+                backdropFilter: "none !important",
+                WebkitBackdropFilter: "none !important",
+                padding: "0px !important",
+                textAlign: "left !important",
+              },
+
+              "& .MuiTypography-root": {
+                textAlign: "left !important",
+              },
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 700,
+                color: "primary.main",
+                mb: 1,
+                textTransform: "uppercase",
+                letterSpacing: "0.6px",
+              }}
             >
-              {content}
-            </Tooltip>
-          );
-        })}
-      </Grid>
+              Reward Balance
+            </Typography>
 
-      <Grid
+            <SurveyPointsSidebar onUpdate={() => {}} />
+          </Box>
+          <Box
+            sx={{
+              borderRadius: "24px",
+              background: "linear-gradient(180deg, #faf7ff 0%, #f4efff 100%)",
+              border: "1px solid #ede9fe",
+              p: 2.2,
+              mt:2,
+              overflow: "hidden",
+              position: "relative",
+
+              "& .MuiGrid-root": {
+                width: "100%",
+              },
+            }}
+          >
+            <CurrentUser />
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Main Content */}
+      <Box
         sx={{
-          width: { xs: "calc(100vw - 50px)", lg: "calc(100vw - 110px)" },
-          height: { xs: "calc(100vh - 122px)", sm: "calc(100vh - 104px)" },
+          width: {
+            xs: "calc(100vw - 72px)",
+            lg: "calc(100vw - 290px)",
+          },
+          height: {
+            xs: "calc(100vh - 122px)",
+            sm: "calc(100vh - 104px)",
+          },
           mt: "78px",
           overflow: "auto",
+          bgcolor: "#f8fafc",
         }}
       >
         {children}
-      </Grid>
+      </Box>
     </Box>
   );
 }

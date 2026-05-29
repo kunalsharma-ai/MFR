@@ -21,7 +21,7 @@ function MemberFooter() {
         href="https://frequentresearch.com/"
         target="_blank"
         rel="noopener noreferrer"
-        color="primary.main"
+        color="secondary.main"
         fontWeight={500}
         fontSize={12}
         sx={{

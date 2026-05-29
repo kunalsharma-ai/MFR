@@ -31,7 +31,7 @@ export default function SecurityCheck({ title, errorMessage, onOk, onCancel, btn
           { btns?.ok && (
             <Page.MuiButton
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={ onOk }
             >
               { btns?.ok ?? "Ok" }

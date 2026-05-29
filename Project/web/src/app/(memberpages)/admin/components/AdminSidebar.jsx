@@ -102,7 +102,7 @@ export default function AdminSidebar({ children }) {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "1px solid #e0e0e0",
-                color: isActive ? "secondary.main" : "inherit",
+                color: isActive ? "primary.main" : "inherit",
                 bgcolor: isActive ? "#eaf7ffff" : "transparent",
                 gap: 0.5,
                 minHeight: 75,

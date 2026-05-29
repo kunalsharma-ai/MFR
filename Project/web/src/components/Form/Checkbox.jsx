@@ -45,7 +45,7 @@ export default function ({
                   {...field}
                   checked={!!field.value}
                   size={size}
-                  color="secondary"
+                  color="primary"
                 />
               }
             />

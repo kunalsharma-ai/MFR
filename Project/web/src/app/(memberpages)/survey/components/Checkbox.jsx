@@ -44,7 +44,7 @@ export default function CheckboxElement({ question, form, options,disabled }) {
       } }
     >
       <Page.Text
-        sx={ { fontWeight: 600, mb: 0.5, color: "secondary.main" } }
+        sx={ { fontWeight: 600, mb: 0.5, color: "primary.main" } }
       >
         { question.label }{ " " }
         { question.required && (
@@ -94,7 +94,7 @@ export default function CheckboxElement({ question, form, options,disabled }) {
                           } }
                           sx={ {
                             "& .MuiSvgIcon-root": {
-                              color: "secondary.main",
+                              color: "primary.main",
                             },
                           } }
                         />

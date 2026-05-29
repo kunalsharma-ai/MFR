@@ -80,7 +80,7 @@ export default function () {
             label: "Questions List",
             render: (info) => (
               <Page.MuiButton
-                sx={ { color: "secondary.main", fontWeight: 500, p: 0 } }
+                sx={ { color: "primary.main", fontWeight: 500, p: 0 } }
                 onClick={ () => {
                   setOpenQuestions({ open: true, id: info._id });
                 } }
@@ -100,7 +100,7 @@ export default function () {
                     setOpen({ open: true, id: info._id });
                   } }
                 >
-                  <EditIcon fontSize="small" color="secondary" />
+                  <EditIcon fontSize="small" color="primary" />
                 </IconButton>
                 {/* <IconButton
                   sx={ { p: 0 } }
@@ -151,7 +151,7 @@ export default function () {
               router.push("/admin/questions");
             } }
             variant="contained"
-            color="secondary"
+            color="primary"
             size="small"
             sx={ {
               fontWeight: "bold",
@@ -274,7 +274,7 @@ function CreateOrEditProfile({ profileID = null, close }) {
         title={ profileID ? "Edit Profile" : "Create Profile" }
         sx={ { justifyContent: "space-between" } }
       >
-        <IconButton onClick={ close } color="secondary">
+        <IconButton onClick={ close } color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -315,7 +315,7 @@ function CreateOrEditProfile({ profileID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={ {
             fontWeight: "bold",
           } }
@@ -388,7 +388,7 @@ function ProfileQuestions({ profileID = null, close }) {
         title={ "Create/Edit Questions" }
         sx={ { justifyContent: "space-between" } }
       >
-        <IconButton onClick={ close } color="secondary">
+        <IconButton onClick={ close } color="primary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -412,7 +412,7 @@ function ProfileQuestions({ profileID = null, close }) {
                 <Page.Text
                   sx={ {
                     fontWeight: 600,
-                    color: "secondary.main",
+                    color: "primary.main",
                     fontSize: 16,
                   } }
                 >
@@ -464,7 +464,7 @@ function ProfileQuestions({ profileID = null, close }) {
           <Page.MuiButton
             variant="outlined"
             size="small"
-            color="secondary"
+            color="primary"
             sx={ {
               borderWidth: 2,
               fontWeight: 600,
@@ -487,7 +487,7 @@ function ProfileQuestions({ profileID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={ {
             fontWeight: "bold",
           } }

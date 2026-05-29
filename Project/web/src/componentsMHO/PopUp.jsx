@@ -96,7 +96,7 @@ export default function PopUp({ hideTitle = false,sx, ...attr }) {
             title={attr?.title}
             sx={{
               justifyContent: "space-between",
-              background: (theme) => theme.palette.secondary.main,
+              background: (theme) => theme.palette.primary.main,
               color: "white",
             }}
           >

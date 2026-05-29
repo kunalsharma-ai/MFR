@@ -118,7 +118,7 @@ function Testimonial() {
         height: { xs: "100vh", lg: 680 },
         py: 12,
         position: "relative",
-        bgcolor: "secondary.main",
+        bgcolor: "primary.main",
         color: "white",
         backgroundImage: "url(/imagesmfr/testi-bg.webp)",
         backgroundAttachment: "fixed",

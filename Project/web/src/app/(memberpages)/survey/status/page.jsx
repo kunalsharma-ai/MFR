@@ -9,11 +9,28 @@ import {
   Mood as MoodIcon,
 } from "@mui/icons-material";
 
-import { Page } from "@/util";
+import { api, loadData, Page } from "@/util";
+import { useQuery } from "@/Context";
 
 function page() {
-  const [status, setStatus] = React.useState({ type: "complete" });
-  const background = "/images/logo/groupofpeople.jpg";
+  const [status, setStatus] = React.useState({ type: "terminate", points: 0 });
+  const background = "/images/logo/groupofpeople2.jpg";
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [query] = [useQuery()];
+  React.useEffect(() => {
+    setIsLoading(true);
+    loadData(
+      api.patch(`/api/v1/survey/response`, query),
+      (resp) => {
+        let { data } = resp;
+        if (!data) return;
+        setStatus({ type: data.status, points: data.points });
+      },
+      () => {
+        setIsLoading(false);
+      },
+    );
+  }, [query]);
 
   return (
     <Page.Box
@@ -53,8 +70,18 @@ function page() {
           borderRadius: 4,
         }}
       >
-        {!status.type ? (
-          <CircularProgress />
+        {isLoading ? (
+          <Page.Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: 300,
+              width: { xs: 300, md: 400 },
+            }}
+          >
+            <CircularProgress />
+          </Page.Box>
         ) : (
           <Page.Box>
             <Page.Box
@@ -66,13 +93,15 @@ function page() {
             >
               <Page.Box
                 sx={{
-                  height: { xs: "60px", md: "80px" },
-                  width: { xs: "180px", md: "300px" },
+                  width: 220,
+                  // height: { xs: "60px", md: "80px" },
+                  // width: { xs: "180px", md: "300px" },
                   position: "relative",
+                  mb: 2,
                 }}
               >
                 <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
-                <Page.Box
+                {/* <Page.Box
                   component="img"
                   src="/imagesmfr/dol-sign.gif"
                   alt="logo"
@@ -82,7 +111,7 @@ function page() {
                     right: -4.5,
                     top: { xs: 0, md: 5 },
                   }}
-                />
+                /> */}
               </Page.Box>{" "}
             </Page.Box>
             <Page.Divider sx={{ mb: 2, width: "90%", mx: "auto" }} />
@@ -97,7 +126,26 @@ function page() {
     </Page.Box>
   );
 }
+
 function StatusMessage({ type, points, link }) {
+  const [availableSurveys, setAvailableSurveys] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [query, setQuery] = [useQuery()];
+  React.useEffect(() => {
+    setIsLoading(true);
+    loadData(
+      api.post("/api/v1/me/survey", {
+        status: "new",
+      }),
+      (resp) => {
+        setAvailableSurveys(resp.data);
+      },
+      () => {
+        setIsLoading(false);
+      },
+    );
+  }, []);
+
   let avatarIcon = <HighlightOffIcon />;
   let statusColor = "#f44336";
   let surveyStatus = "";
@@ -150,7 +198,10 @@ function StatusMessage({ type, points, link }) {
             points.
           </div>
         ),
-        info: `Dear user, You have successfully completed this survey. We will reach you for more opportunities soon.`,
+        info:
+          availableSurveys.length !== 0
+            ? ""
+            : `Dear user, You have successfully completed this survey. We will reach you for more opportunities soon.`,
       };
       break;
   }
@@ -197,7 +248,7 @@ function StatusMessage({ type, points, link }) {
             maxWidth: { xs: "320px", md: "500px" },
             textAlign: "center",
             fontWeight: 500,
-            mb: 4,
+            mb: availableSurveys.length !== 0 ? 0 : 4,
           }}
         >
           {statusMessage.info}
@@ -207,15 +258,186 @@ function StatusMessage({ type, points, link }) {
       {link && (
         <Page.MuiButton
           variant="contained"
-          color="secondary"
+          color="primary"
           sx={{
             fontWeight: 600,
             mb: 2,
           }}
           onClick={() => redirect(link)}
         >
-          Continue
+          Go to Dashboard
         </Page.MuiButton>
+      )}
+
+      {availableSurveys.length !== 0 && (
+        <>
+          <Page.Divider sx={{ mb: 2, width: "90%", mx: "auto" }} />
+          <Page.Text
+            color="text.secondary"
+            mt={1}
+            sx={{
+              maxWidth: { xs: "320px", md: "640px" },
+
+              fontWeight: 500,
+            }}
+          >
+            More earning opportunities are waiting for you. Please check out the
+            available surveys below and earn more points by sharing your
+            valuable opinions.
+          </Page.Text>
+
+          <Page.Box
+            sx={{
+              mt: 2,
+              border: "1px solid rgba(0,0,0,0.12)",
+              borderRadius: 2,
+              overflow: "hidden",
+              maxWidth: { xs: "320px", md: "640px" },
+              background: "#fff",
+            }}
+          >
+            <table
+              width="100%"
+              cellPadding="0"
+              cellSpacing="0"
+              style={{
+                fontSize: 14,
+                color: "#2a3940",
+                tableLayout: "fixed",
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    background: "#f8fafc",
+                  }}
+                >
+                  <td
+                    style={{
+                      width: "35%",
+                      padding: "4px 8px",
+                      fontWeight: 700,
+                      borderBottom: "1px solid rgba(0,0,0,0.12)",
+                      borderRight: "1px solid rgba(0,0,0,0.08)",
+                    }}
+                  >
+                    Survey Name
+                  </td>
+                  <td
+                    style={{
+                      width: "25%",
+                      padding: "4px 8px",
+                      fontWeight: 700,
+                      borderBottom: "1px solid rgba(0,0,0,0.12)",
+                      borderRight: "1px solid rgba(0,0,0,0.08)",
+                    }}
+                  >
+                    Time Required
+                  </td>{" "}
+                  <td
+                    style={{
+                      width: "15%",
+                      padding: "4px 8px",
+                      fontWeight: 700,
+                      borderBottom: "1px solid rgba(0,0,0,0.12)",
+                      borderRight: "1px solid rgba(0,0,0,0.08)",
+                    }}
+                  >
+                    Points
+                  </td>
+                  <td
+                    style={{
+                      width: "25%",
+                      padding: "4px 8px",
+                      borderBottom: "1px solid rgba(0,0,0,0.12)",
+                    }}
+                  />
+                </tr>
+              </thead>
+
+              <tbody>
+                {availableSurveys.map((survey, index, arr) => (
+                  <tr
+                    key={survey.id}
+                    style={{
+                      borderBottom:
+                        index !== arr.length - 1
+                          ? "1px solid rgba(0,0,0,0.08)"
+                          : "none",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#f8fafc";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#ffffff";
+                    }}
+                  >
+                    <td
+                      style={{
+                        padding: "4px 8px",
+                        fontSize: 13,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        verticalAlign: "middle",
+                        borderRight: "1px solid rgba(0,0,0,0.08)",
+                      }}
+                    >
+                      {survey.name}
+                    </td>
+                    <td
+                      style={{
+                        padding: "4px 8px",
+                        fontSize: 13,
+                        whiteSpace: "nowrap",
+                        verticalAlign: "middle",
+                        borderRight: "1px solid rgba(0,0,0,0.08)",
+                      }}
+                    >
+                      {survey.loi} minutes (approx)
+                    </td>{" "}
+                    <td
+                      style={{
+                        padding: "4px 8px",
+                        fontSize: 13,
+                        whiteSpace: "nowrap",
+                        verticalAlign: "middle",
+                        borderRight: "1px solid rgba(0,0,0,0.08)",
+                      }}
+                    >
+                      {survey.points || 50} pts
+                    </td>
+                    <td
+                      style={{
+                        padding: "4px 8px",
+                        textAlign: "right",
+                        verticalAlign: "middle",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Page.MuiButton
+                        component="a"
+                        href={`/survey?name=${survey.slug}`}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        sx={{
+                          height: { md: 24 },
+                          minWidth: { xs: 50, md: 100 },
+                          textAlign: "center",
+                        }}
+                      >
+                        Take Survey
+                      </Page.MuiButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Page.Box>
+        </>
       )}
     </>
   );

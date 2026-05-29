@@ -250,7 +250,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 fontSize: 13,
                 px: 2,
                 py: 0.5,
-                color: "secondary.main",
+                color: "primary.main",
                 borderColor: "primary.main",
                 bgcolor: "white",
               },
@@ -267,7 +267,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
               <ToggleButton key={option.value} value={option.value}>
                 <Typography
                   fontWeight={500}
-                  color={loginType === option.value ? "#fff" : "secondary.main"}
+                  color={loginType === option.value ? "#fff" : "primary.main"}
                 >
                   {option.label}
                 </Typography>
@@ -335,7 +335,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
             mt={{ xs: 1, md: -1 }}
           >
             <Page.MuiButton
-              color="secondary"
+              color="primary"
               sx={{
                 fontWeight: 500,
                 textTransform: "none",
@@ -360,7 +360,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           fullWidth
           variant="contained"
           loading={loading}
-          color="secondary"
+          color="primary"
           loadingIndicator="Signing in..."
           sx={{
             borderRadius: "8px",
@@ -423,7 +423,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 key={i}
                 fullWidth
                 variant="outlined"
-                color="secondary"
+                color="primary"
                 startIcon={provider.icon}
                 sx={{
                   borderRadius: "8px",
@@ -459,8 +459,8 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 title={provider?.label}
                 sx={{
                   border: "1px solid",
-                  borderColor: "secondary.main",
-                  color: "secondary.main",
+                  borderColor: "primary.main",
+                  color: "primary.main",
                   width: 42,
                   height: 42,
                   transition: "all 0.2s ease",
@@ -479,7 +479,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           <Typography>Don&apos;t have an account?&nbsp;</Typography>
           <Page.MuiButton
             component={"span"}
-            color="secondary"
+            color="primary"
             sx={{
               p: 0,
               fontWeight: 500,
@@ -594,7 +594,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
               <Page.MuiButton
                 variant="contained"
                 disabled={!user}
-                color="secondary"
+                color="primary"
                 onClick={sendOTP}
                 sx={{
                   color: "white",
@@ -636,7 +636,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
             Try to remember your password?&nbsp;
             <Typography
               component={"span"}
-              color="secondary"
+              color="primary"
               sx={{
                 fontWeight: 500,
                 "&:hover": {
@@ -656,7 +656,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
               Not a Member?&nbsp;
               <Typography
                 component={"span"}
-                color="secondary"
+                color="primary"
                 sx={{
                   fontWeight: 500,
                   "&:hover": {

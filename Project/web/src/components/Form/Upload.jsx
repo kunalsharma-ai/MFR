@@ -197,7 +197,7 @@ export default function Upload({
 
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             fullWidth
             sx={{ color: "white", fontWeight: 600, mt: 1 }}
             onClick={handleCropSave}
@@ -218,7 +218,7 @@ export default function Upload({
             <Page.MuiButton
               component="label"
               variant="outlined"
-              color="secondary"
+              color="primary"
               sx={{
                 width: "120px",
                 borderWidth: 2,
@@ -366,7 +366,7 @@ export default function Upload({
           <Page.MuiButton
             variant="contained"
             component="label"
-            color="secondary"
+            color="primary"
             htmlFor="file-upload"
           >
             Upload File

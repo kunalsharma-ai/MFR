@@ -253,7 +253,7 @@ const DateRangeSelector = ({ onUpdate, defaultValue, ...attr }) => {
                 >
                   <Button
                     variant="outlined"
-                    color="secondary"
+                    color="primary"
                     onClick={handleClose}
                     sx={{
                       mr: 1,
@@ -264,7 +264,7 @@ const DateRangeSelector = ({ onUpdate, defaultValue, ...attr }) => {
                   </Button>
                   <Button
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     sx={{
                       fontWeight: "bold",
                       color: "#fff",

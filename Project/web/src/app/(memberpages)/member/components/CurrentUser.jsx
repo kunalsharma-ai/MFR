@@ -22,9 +22,9 @@ export default function CurrentUser() {
         src={user?.profilePicture || ""}
         alt={user?.name?.first ?? "U"}
         sx={{
-          height: "70px",
-          width: "70px",
-          fontSize: "36px",
+          height: { xs: "50px", lg: "30px" },
+          width: { xs: "50px", lg: "30px" },
+          fontSize: "22px",
           bgcolor: user?.profilePicture ? "transparent" : "primary.main",
         }}
       />
@@ -35,10 +35,14 @@ export default function CurrentUser() {
           alignItems: { xs: "center", sm: "flex-start" },
         }}
       >
-        <Typography  fontSize={{ xs: "16px", md: "20px" }} fontWeight={600} color="secondary.main">
+        <Typography
+          fontSize={{ xs: "16px", md: "14px" }}
+          fontWeight={600}
+          color="primary.main"
+        >
           {user?.fullName}
         </Typography>
-        <Typography fontSize={{ xs: "14px", md: "18px" }} fontWeight={500}>
+        <Typography fontSize={{ xs: "14px", lg: "11px" }} fontWeight={500} sx={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: { xs: "270px", lg: "170px" }}}>
           {user?.mail}
         </Typography>
         {/* <Typography

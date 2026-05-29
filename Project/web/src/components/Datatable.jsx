@@ -788,7 +788,7 @@ export default function Datatable({
                   <Page.Text
                     sx={{
                       fontSize: "10px",
-                      color: "secondary.main",
+                      color: "primary.main",
                       fontWeight: "bold",
                     }}
                   >

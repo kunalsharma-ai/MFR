@@ -1,23 +1,42 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
-  palette: {
+  // palette: {
 
+  //   primary: {
+  //     main: "#0c5adb",
+  //   },
+  //   secondary: {
+  //     main: "#063686",
+  //   },
+  //   page: {
+  //     main: "#f4f4f4",
+  //   },
+  //   card: {
+  //     main: "#ffffff",
+  //   },
+  //   cardbg:{
+  //     main: "#e8f0fd"// "#c6e3f4"  //   "#8cb2f333",
+  //   }
+  // },
+    palette: {
     primary: {
-      main: "#0c5adb",
+      main: "#001B66",
     },
     secondary: {
-      main: "#063686",
+      main: "#F5A000",
     },
+
     page: {
       main: "#f4f4f4",
     },
     card: {
       main: "#ffffff",
     },
-    cardbg:{
-      main: "#e8f0fd"// "#c6e3f4"  //   "#8cb2f333",
-    }
+    cardbg: {
+      // main: "#c6e3f4",
+      main: "#fff1d9",
+    },
   },
   typography: {
     color: "black",

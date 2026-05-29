@@ -61,7 +61,7 @@ function TabLabel({ label, progress = 0, icon, selected }) {
           sx={ {
             ".MuiLinearProgress-bar": {
               bgcolor: (theme) =>
-                selected ? "white" : theme.palette.secondary.main,
+                selected ? "white" : theme.palette.primary.main,
             },
             width: "100%",
             height: 3,
@@ -126,7 +126,7 @@ export default function () {
             py: 1.5,
             px: 2,
             color: "white",
-            bgcolor: (theme) => theme.palette.secondary.main,
+            bgcolor: (theme) => theme.palette.primary.main,
             fontWeight: 600,
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
@@ -213,7 +213,7 @@ function ProfileTabs({
       borderBottom: "3px solid whitesmoke",
       "& .MuiTabs-scrollButtons .MuiSvgIcon-root": { fontSize: 30 },
       "& .MuiTabs-indicator": {
-        bgcolor: (theme) => theme.palette.secondary.main,
+        bgcolor: (theme) => theme.palette.primary.main,
 
         height: 3,
         display: "none",
@@ -224,7 +224,7 @@ function ProfileTabs({
         fontWeight: 600,
       },
       "& .Mui-selected": {
-        bgcolor: (theme) => theme.palette.secondary.main,
+        bgcolor: (theme) => theme.palette.primary.main,
         color: "white !important",
       },
     } }
@@ -367,7 +367,7 @@ function profilePages() {
             borderBottom: "3px solid whitesmoke",
             "& .MuiTabs-scrollButtons .MuiSvgIcon-root": { fontSize: 30 },
             "& .MuiTabs-indicator": {
-              bgcolor: (theme) => theme.palette.secondary.main,
+              bgcolor: (theme) => theme.palette.primary.main,
 
               height: 3,
               display: "none",
@@ -378,7 +378,7 @@ function profilePages() {
               fontWeight: 600,
             },
             "& .Mui-selected": {
-              bgcolor: (theme) => theme.palette.secondary.main,
+              bgcolor: (theme) => theme.palette.primary.main,
               color: "white !important",
             },
           } }
@@ -418,7 +418,7 @@ function profilePages() {
                 py: 1.5,
                 px: 2,
                 color: "white",
-                bgcolor: (theme) => theme.palette.secondary.main,
+                bgcolor: (theme) => theme.palette.primary.main,
                 fontWeight: 600,
                 borderTopLeftRadius: "10px",
                 borderTopRightRadius: "10px",
@@ -537,7 +537,7 @@ function profilePages() {
                     </Page.MuiButton>
                     <Page.MuiButton
                       variant="contained"
-                      color="secondary"
+                      color="primary"
                       type="submit"
                       sx={ {
                         textTransform: "none",

@@ -76,7 +76,7 @@ export default function RequestQuote({ open, onClose }) {
             border: "1px solid #007acc",
             "&:hover": {
               color: "white",
-              bgcolor: "secondary.main",
+              bgcolor: "primary.main",
               borderColor: "white",
             },
           }}
@@ -303,7 +303,7 @@ export default function RequestQuote({ open, onClose }) {
                       height: 55,
                       fontWeight: 600,
                       fontSize: 16,
-                      color: "secondary.main",
+                      color: "primary.main",
                       borderRadius: 2,
                       "&:hover": {
                         bgcolor: "secondary.main",

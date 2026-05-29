@@ -261,13 +261,13 @@ export default function Upload({
         <Page.Box mt={1}>
           <Page.MuiButton
             variant="contained"
-            color="secondary"
+            color="primary"
             component="label"
             htmlFor="file-upload"
           >
             Upload File
           </Page.MuiButton>
-          <Page.Text mt={1} color="secondary" fontSize={13}>
+          <Page.Text mt={1} color="primary" fontSize={13}>
             {preview}
           </Page.Text>
           <input

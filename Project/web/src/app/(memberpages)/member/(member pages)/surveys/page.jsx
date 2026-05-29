@@ -13,6 +13,8 @@ import {
   Button,
   Chip,
   Divider,
+  CircularProgress,
+  Collapse,
 } from "@mui/material";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -22,20 +24,29 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
-
 import DataCards from "@/components/DataCards";
+
 import { loadData, api } from "@/util";
 import { SurveyPoints } from "../../components";
+import { SurveyHistory } from "../dashboard/page";
 import { useQuery } from "@/Context";
 
 const permittedStatus = ["invited", "dropout"];
 export default function SurveyDashboard() {
   const [query] = [useQuery()];
   const [surveys, setSurveys] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   React.useEffect(() => {
-    loadData(api.post(`/api/v1/me/survey`, { source: query.source }), (resp) => {
-      setSurveys(resp.data);
-    });
+    setIsLoading(true);
+    loadData(
+      api.post(`/api/v1/me/survey`, { source: query.source }),
+      (resp) => {
+        setSurveys(resp.data);
+      },
+      () => {
+        setIsLoading(false);
+      },
+    );
   }, [query]);
   const availableSurveys = surveys?.filter((s) =>
     permittedStatus.includes(s.participationStatus),
@@ -51,7 +62,10 @@ export default function SurveyDashboard() {
     },
     {
       title: "Total Earning Opportunity",
-      value: `${availableSurveys?.reduce((sum, survey) => sum + survey.points, 0)} pts`,
+      value:
+        availableSurveys.length === 0
+          ? `-`
+          : `${availableSurveys?.reduce((sum, survey) => sum + survey.points, 0)} pts`,
       subtitle: "Across all surveys",
       icon: <AccountBalanceWalletOutlinedIcon />,
       color: "#16A34A",
@@ -59,7 +73,10 @@ export default function SurveyDashboard() {
     },
     {
       title: "Estimated Time",
-      value: `${Math.round(availableSurveys?.reduce((sum, survey) => sum + survey.loi, 0) / availableSurveys?.length)} min`,
+      value:
+        availableSurveys.length === 0
+          ? `-`
+          : `${Math.round(availableSurveys?.reduce((sum, survey) => sum + survey.loi, 0) / availableSurveys?.length)} min`,
       subtitle: "On average",
       icon: <AccessTimeOutlinedIcon />,
       color: "#7C3AED",
@@ -67,7 +84,10 @@ export default function SurveyDashboard() {
     },
     {
       title: "Average Reward",
-      value: `${availableSurveys?.reduce((sum, survey) => sum + survey.points, 0) / availableSurveys?.length} pts`,
+      value:
+        availableSurveys.length === 0
+          ? `-`
+          : `${Math.round(availableSurveys?.reduce((sum, survey) => sum + survey.points, 0) / availableSurveys?.length)} pts`,
       subtitle: "Per survey",
       icon: <CardGiftcardOutlinedIcon />,
       color: "#F59E0B",
@@ -77,123 +97,127 @@ export default function SurveyDashboard() {
 
   return (
     <Box sx={{ p: { xs: 1, md: 2.5 }, bgcolor: "#eff3f5" }}>
-      <SurveyStat stats={stats} />
-      <Divider sx={{ my: 3, bgcolor: "#ffe" }} />
-      <SurveyList surveys={surveys} query={query} />
+      <Collapse
+        in={availableSurveys.length !== 0 && !isLoading}
+        timeout="auto"
+        unmountOnExit
+      >
+        <SurveyStat stats={stats} isLoading={isLoading} />
+        <Divider sx={{ mt: 2, mb: 1, bgcolor: "#ffe" }} />
+      </Collapse>
+      <SurveyList surveys={surveys} query={query} isLoading={isLoading} />
+      <Divider sx={{ my: 2, bgcolor: "#ffe" }} />
+      <SurveyHistory />
     </Box>
   );
 }
 
-function SurveyStat({ stats }) {
+function SurveyStat({ stats, isLoading }) {
   return (
     <>
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="flex-start"
-        mb={4}
+        mb={2}
       >
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Typography
-            fontSize={{ xs: 20, md: 26 }}
-            fontWeight={700}
-            color="text.primary"
-          >
-            Available Surveys
-          </Typography>
+        <Grid sx={{ flex: 1 }}>
+          <Grid container spacing={3}>
+            {stats.map((item, index) => (
+              <Grid
+                key={index}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                }}
+              >
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    borderRadius: 4,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    position: "relative",
+                    minHeight: 120,
+                  }}
+                >
+                  <CardContent sx={{ p: 2.5 }}>
+                    {isLoading ? (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          display: "inline-flex",
+                          zIndex: 10,
+                        }}
+                      >
+                        <CircularProgress
+                          sx={{ color: "primary.main" }}
+                          thickness={2}
+                        />
+                      </Box>
+                    ) : (
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="flex-start"
+                      >
+                        <Avatar
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            bgcolor: item.bg,
+                            color: item.color,
+                          }}
+                        >
+                          {item.icon}
+                        </Avatar>
 
-          <Typography variant="body1" color="text.secondary">
-            Complete surveys, share your opinion and earn rewards.
-          </Typography>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SurveyPoints onUpdate={() => { }} />
-        </Grid>
+                        <Box>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            fontWeight={600}
+                            mb={1}
+                          >
+                            {item.title}
+                          </Typography>
 
-        {/* <IconButton
-          onClick={() => {}}
-          sx={{
-            border: "1px solid",
-            borderColor: "divider",
-            borderRadius: 3,
-            bgcolor: "#fff",
-            px: 2,
-            py: 1,
-            gap: 1,
-            color: "primary.main",
-          }}
-        >
-          <RefreshIcon fontSize="small" />
+                          <Typography variant="h5" fontWeight={700}>
+                            {item.value}
+                          </Typography>
 
-          <Typography variant="button" fontWeight={600}>
-            Refresh
-          </Typography>
-        </IconButton> */}
-      </Stack>
-      <Grid container spacing={3}>
-        {stats.map((item, index) => (
-          <Grid
-            key={index}
-            size={{
-              xs: 12,
-              sm: 6,
-              md: 4,
-              lg: 3,
-            }}
-          >
-            <Card
-              elevation={0}
-              sx={{
-                height: "100%",
-                borderRadius: 4,
-                border: "1px solid",
-                borderColor: "divider",
-              }}
-            >
-              <CardContent sx={{ p: 2.5 }}>
-                <Stack direction="row" spacing={2} alignItems="flex-start">
-                  <Avatar
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      bgcolor: item.bg,
-                      color: item.color,
-                    }}
-                  >
-                    {item.icon}
-                  </Avatar>
-
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight={600}
-                      mb={1}
-                    >
-                      {item.title}
-                    </Typography>
-
-                    <Typography variant="h5" fontWeight={700}>
-                      {item.value}
-                    </Typography>
-
-                    <Typography variant="body2" color="text.secondary" mt={0.5}>
-                      {item.subtitle}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            mt={0.5}
+                          >
+                            {item.subtitle}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        </Grid>
+      </Stack>
     </>
   );
 }
 
-function SurveyList({ surveys, query }) {
-  const [activeFilter, setActiveFilter] = React.useState(query.filter ?? "All Surveys");
-  console.log(activeFilter)
+function SurveyList({ surveys, query, isLoading }) {
+  const [activeFilter, setActiveFilter] = React.useState(
+    query.filter ?? "All Surveys",
+  );
+  console.log(activeFilter);
   const filters = [
     {
       label: "All Surveys",
@@ -214,12 +238,12 @@ function SurveyList({ surveys, query }) {
   ];
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box>
       <DataCards
         data={surveys}
-        isLoading={false}
+        isLoading={isLoading}
         filter={filters.find((filter) => filter.label === activeFilter)}
-        pageSize={5}
+        pageSize={4}
         getSearchText={(row) => row.name}
         renderToolbar={() => (
           <Box
@@ -247,7 +271,7 @@ function SurveyList({ surveys, query }) {
                     textTransform: "none",
                     fontWeight: 700,
                     borderColor: "divider",
-                    bgcolor: active ? "secondary.main" : "#fff",
+                    bgcolor: active ? "primary.main" : "#fff",
                     color: active ? "#fff" : "text.primary",
                     boxShadow: "none",
                     "&:hover": {
@@ -286,9 +310,7 @@ function SurveyList({ surveys, query }) {
           elevation: 0,
           sx: {
             mt: 1,
-            borderRadius: 4,
-            border: "1px solid",
-            borderColor: "divider",
+            borderRadius: "24px",
           },
         }}
       />
@@ -296,205 +318,609 @@ function SurveyList({ surveys, query }) {
   );
 }
 
+// function SurveyCard({ survey }) {
+//   const getCategoryData = (survey) => {
+//     const categories = [
+//       { name: "basic", icon: "fa-id-card-clip", color: "#1E40AF" },
+//       { name: "professional", icon: "fa-user-tie", color: "#1F2937" },
+//       { name: "educational", icon: "fa-graduation-cap", color: "#7C3AED" },
+//       {
+//         name: "Survey and Rewards",
+//         icon: "fa-clipboard-list",
+//         color: "#16A34A",
+//       },
+//       { name: "financial", icon: "fa-circle-dollar-to-slot", color: "#CA8A04" },
+//       { name: "parenting", icon: "fa-people-roof", color: "#DB2777" },
+//       {
+//         name: "Home and Pet Ownership",
+//         icon: "fa-house-chimney",
+//         color: "#EA580C",
+//       },
+//       { name: "shopping", icon: "fa-cart-shopping", color: "#E11D48" },
+//       { name: "Lifestyle and food", icon: "fa-utensils", color: "#B45309" },
+//       { name: "travel", icon: "fa-plane-departure", color: "#0E7490" },
+//       { name: "automobile", icon: "fa-car-side", color: "#334155" },
+//       { name: "health", icon: "fa-heart-pulse", color: "#DC2626" },
+//       { name: "beauty & fashion", icon: "fa-hand-dots", color: "#C026D3" },
+//       {
+//         name: "media, electronics, mobile & technology",
+//         icon: "fa-microchip",
+//         color: "#4338CA",
+//       },
+//       { name: "sports", icon: "fa-basketball", color: "#F59E0B" },
+//       { name: "gaming", icon: "fa-gamepad", color: "#7C3AED" },
+//     ];
+
+//     const surveyCategory = survey.category || survey.slug || survey.name || survey.type || "";
+
+//     return (
+//       categories.find(
+//         (cat) =>
+//           surveyCategory.toLowerCase().includes(cat.name.toLowerCase()) ||
+//           cat.name.toLowerCase().includes(surveyCategory.toLowerCase()),
+//       ) || { icon: "fa-clipboard-list", color: "#64748B" }
+//     );
+//   };
+
+//   const category = getCategoryData(survey);
+//   const darkColor = category.color;
+//   const lightBg = darkColor + "20";
+
+//   return (
+//     <Box
+//       sx={{
+//         p: 2,
+//         display: "flex",
+//         flexDirection: "column",
+//         gap: 2,
+//         minHeight: 220,
+//         position: "relative",
+//       }}
+//     >
+//       <Box
+//         sx={{
+//           position: "relative",
+//           height: 60,
+//           display: "flex",
+//           alignItems: "center",
+//         }}
+//       >
+//         <Box
+//           sx={{
+//             position: "absolute",
+//             left: "50%",
+//             transform: "translateX(-50%)",
+//           }}
+//         >
+//           <Avatar
+//             sx={{
+//               width: 56,
+//               height: 56,
+//               bgcolor: lightBg,
+//               color: darkColor,
+//               border: "1px solid",
+//               borderColor: `${darkColor}40`,
+//               boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+//               display: "flex",
+//               alignItems: "center",
+//               justifyContent: "center",
+//             }}
+//           >
+//             <i
+//               className={`fa-solid ${category.icon}`}
+//               style={{ fontSize: 22 }}
+//             ></i>
+//           </Avatar>
+//         </Box>
+
+//         <Box sx={{ position: "absolute", right: 0, top: 0 }}>
+//           {survey.participationStatus === "invited" ? (
+//             <Chip
+//               size="small"
+//               color="secondary"
+//               label="New"
+//               sx={{
+//                 color: "white",
+//                 fontWeight: 600,
+//                 background: "linear-gradient(45deg, #00c853, #64dd17)",
+//               }}
+//             />
+//           ) : (
+//             <Chip
+//               label={survey.participationStatus}
+//               size="small"
+//               color={
+//                 survey.participationStatus === "complete"
+//                   ? "success"
+//                   : survey.participationStatus === "dropout"
+//                     ? "error"
+//                     : "primary"
+//               }
+//               sx={{
+//                 textTransform: "capitalize",
+//                 fontWeight: 600,
+//                 color: "#fff",
+//               }}
+//             />
+//           )}
+//         </Box>
+//       </Box>
+
+//       <Box>
+//         <Typography
+//           title={survey.name}
+//           variant="h6"
+//           fontWeight={700}
+//           sx={{
+//             mb: 1,
+//             lineHeight: 1.4,
+//             overflow: "hidden",
+//             whiteSpace: "nowrap",
+//             textOverflow: "ellipsis",
+//             textAlign: "center",
+//           }}
+//         >
+//           {survey.name}
+//         </Typography>
+//       </Box>
+
+//       <Divider />
+
+//       <Stack
+//         direction="row"
+//         alignItems="center"
+//         justifyContent="space-between"
+//         px={3}
+//       >
+//         <Stack direction="row" spacing={1} alignItems="center">
+//           <AccountBalanceWalletOutlinedIcon
+//             sx={{ fontSize: 24, color: "success.main" }}
+//           />
+//           <Box>
+//             <Typography fontSize={26} fontWeight={700} color="success.main">
+//               {survey.points} pts
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               Reward
+//             </Typography>
+//           </Box>
+//         </Stack>
+
+//         <Stack direction="row" spacing={1} alignItems="center">
+//           <AccessTimeRoundedIcon
+//             sx={{ fontSize: 24, color: "secondary.main" }}
+//           />
+//           <Box>
+//             <Typography variant="body1" fontWeight={700}>
+//               {survey.loi} min
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               Time
+//             </Typography>
+//           </Box>
+//         </Stack>
+//       </Stack>
+
+//       <Box sx={{ mt: "auto" }}>
+//         {permittedStatus.includes(survey?.participationStatus) && (
+//           <Button
+//             fullWidth
+//             variant="contained"
+//             href={`/survey?name=${survey.slug}`}
+//             color="secondary"
+//             sx={{
+//               borderRadius: 2,
+//               textTransform: "none",
+//               fontWeight: 700,
+//             }}
+//           >
+//             Start Survey
+//           </Button>
+//         )}
+//       </Box>
+//     </Box>
+//   );
+// }
+
 function SurveyCard({ survey }) {
   const getCategoryData = (survey) => {
     const categories = [
-      { name: "basic", icon: "fa-id-card-clip", color: "#1E40AF" },
-      { name: "professional", icon: "fa-user-tie", color: "#1F2937" },
-      { name: "educational", icon: "fa-graduation-cap", color: "#7C3AED" },
+      {
+        name: "basic",
+        icon: "fa-id-card-clip",
+        gradient: "linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%)",
+      },
+
+      {
+        name: "professional",
+        icon: "fa-user-tie",
+        gradient: "linear-gradient(180deg, #475569 0%, #0f172a 100%)",
+      },
+
+      {
+        name: "educational",
+        icon: "fa-graduation-cap",
+        gradient: "linear-gradient(180deg, #8b5cf6 0%, #4c1d95 100%)",
+      },
+
       {
         name: "Survey and Rewards",
         icon: "fa-clipboard-list",
-        color: "#16A34A",
+        gradient: "linear-gradient(180deg, #22c55e 0%, #166534 100%)",
       },
-      { name: "financial", icon: "fa-circle-dollar-to-slot", color: "#CA8A04" },
-      { name: "parenting", icon: "fa-people-roof", color: "#DB2777" },
+
+      {
+        name: "financial",
+        icon: "fa-circle-dollar-to-slot",
+        gradient: "linear-gradient(180deg, #f59e0b 0%, #b45309 100%)",
+      },
+
+      {
+        name: "parenting",
+        icon: "fa-people-roof",
+        gradient: "linear-gradient(180deg, #ec4899 0%, #9d174d 100%)",
+      },
+
       {
         name: "Home and Pet Ownership",
         icon: "fa-house-chimney",
-        color: "#EA580C",
+        gradient: "linear-gradient(180deg, #f97316 0%, #9a3412 100%)",
       },
-      { name: "shopping", icon: "fa-cart-shopping", color: "#E11D48" },
-      { name: "Lifestyle and food", icon: "fa-utensils", color: "#B45309" },
-      { name: "travel", icon: "fa-plane-departure", color: "#0E7490" },
-      { name: "automobile", icon: "fa-car-side", color: "#334155" },
-      { name: "health", icon: "fa-heart-pulse", color: "#DC2626" },
-      { name: "beauty & fashion", icon: "fa-hand-dots", color: "#C026D3" },
+
+      {
+        name: "shopping",
+        icon: "fa-cart-shopping",
+        gradient: "linear-gradient(180deg, #ff2d55 0%, #be185d 100%)",
+      },
+
+      {
+        name: "Lifestyle and food",
+        icon: "fa-utensils",
+        gradient: "linear-gradient(180deg, #fb923c 0%, #9a3412 100%)",
+      },
+
+      {
+        name: "travel",
+        icon: "fa-plane-departure",
+        gradient: "linear-gradient(180deg, #ff9800 0%, #ea580c 100%)",
+      },
+
+      {
+        name: "automobile",
+        icon: "fa-car-side",
+        gradient: "linear-gradient(180deg, #64748b 0%, #1e293b 100%)",
+      },
+
+      {
+        name: "health",
+        icon: "fa-heart-pulse",
+        gradient: "linear-gradient(180deg, #10b981 0%, #065f46 100%)",
+      },
+
+      {
+        name: "beauty & fashion",
+        icon: "fa-hand-dots",
+        gradient: "linear-gradient(180deg, #d946ef 0%, #86198f 100%)",
+      },
+
       {
         name: "media, electronics, mobile & technology",
         icon: "fa-microchip",
-        color: "#4338CA",
+        gradient: "linear-gradient(180deg, #2563eb 0%, #312e81 100%)",
       },
-      { name: "sports", icon: "fa-basketball", color: "#F59E0B" },
-      { name: "gaming", icon: "fa-gamepad", color: "#7C3AED" },
-    ];
 
-    const surveyCategory = survey.category || survey.slug || survey.name || survey.type || "";
+      {
+        name: "sports",
+        icon: "fa-basketball",
+        gradient: "linear-gradient(180deg, #f59e0b 0%, #b45309 100%)",
+      },
+
+      {
+        name: "gaming",
+        icon: "fa-gamepad",
+        gradient: "linear-gradient(180deg, #8b5cf6 0%, #4c1d95 100%)",
+      },
+
+      {
+        name: "entertainment",
+        icon: "fa-film",
+        gradient: "linear-gradient(180deg, #ef4444 0%, #7f1d1d 100%)",
+      },
+
+      {
+        name: "social media",
+        icon: "fa-hashtag",
+        gradient: "linear-gradient(180deg, #06b6d4 0%, #164e63 100%)",
+      },
+
+      {
+        name: "music",
+        icon: "fa-music",
+        gradient: "linear-gradient(180deg, #6366f1 0%, #312e81 100%)",
+      },
+
+      {
+        name: "environment",
+        icon: "fa-leaf",
+        gradient: "linear-gradient(180deg, #22c55e 0%, #14532d 100%)",
+      },
+
+      {
+        name: "real estate",
+        icon: "fa-building",
+        gradient: "linear-gradient(180deg, #0ea5e9 0%, #0c4a6e 100%)",
+      },
+
+      {
+        name: "telecom",
+        icon: "fa-signal",
+        gradient: "linear-gradient(180deg, #14b8a6 0%, #134e4a 100%)",
+      },
+
+      {
+        name: "insurance",
+        icon: "fa-shield-halved",
+        gradient: "linear-gradient(180deg, #0284c7 0%, #082f49 100%)",
+      },
+
+      {
+        name: "employment",
+        icon: "fa-briefcase",
+        gradient: "linear-gradient(180deg, #6366f1 0%, #3730a3 100%)",
+      },
+
+      {
+        name: "dating",
+        icon: "fa-heart",
+        gradient: "linear-gradient(180deg, #fb7185 0%, #9f1239 100%)",
+      },
+
+      {
+        name: "fitness",
+        icon: "fa-dumbbell",
+        gradient: "linear-gradient(180deg, #f97316 0%, #7c2d12 100%)",
+      },
+
+      {
+        name: "crypto",
+        icon: "fa-bitcoin-sign",
+        gradient: "linear-gradient(180deg, #f59e0b 0%, #78350f 100%)",
+      },
+
+      {
+        name: "news",
+        icon: "fa-newspaper",
+        gradient: "linear-gradient(180deg, #38bdf8 0%, #075985 100%)",
+      },
+
+      {
+        name: "movies",
+        icon: "fa-clapperboard",
+        gradient: "linear-gradient(180deg, #a855f7 0%, #581c87 100%)",
+      },
+
+      {
+        name: "kids",
+        icon: "fa-baby",
+        gradient: "linear-gradient(180deg, #f472b6 0%, #831843 100%)",
+      },
+    ];
+    const surveyCategory = survey.surveyCategory || "";
+
+    return categories[Math.floor(Math.random() * 20)];
 
     return (
       categories.find(
         (cat) =>
           surveyCategory.toLowerCase().includes(cat.name.toLowerCase()) ||
           cat.name.toLowerCase().includes(surveyCategory.toLowerCase()),
-      ) || { icon: "fa-clipboard-list", color: "#64748B" }
+      ) || {
+        icon: "fa-clipboard-list",
+        gradient: "linear-gradient(180deg, #7c3aed 0%, #4338ca 100%)",
+      }
     );
   };
 
   const category = getCategoryData(survey);
-  const darkColor = category.color;
-  const lightBg = darkColor + "20";
 
   return (
     <Box
       sx={{
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        minHeight: 220,
+        height: "100%",
+        borderRadius: "24px",
+        overflow: "hidden",
+        background: category.gradient,
+        color: "#fff",
         position: "relative",
+        minHeight: 430,
+
+        transform: "translateZ(0)",
+
+        boxShadow: "0 12px 35px rgba(0,0,0,0.18)",
+        transition: "transform 0.25s ease, box-shadow 0.25s ease",
+
+        "&:hover": {
+          transform: "translate3d(0,-4px,0)",
+          boxShadow: "0 20px 45px rgba(0,0,0,0.24)",
+        },
       }}
     >
       <Box
         sx={{
-          position: "relative",
-          height: 60,
+          position: "absolute",
+          inset: 0,
+          borderRadius: "inherit",
+          background:
+            "radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 35%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <Box
+        sx={{
+          p: 2,
           display: "flex",
-          alignItems: "center",
+          flexDirection: "column",
+          height: "100%",
+          position: "relative",
+          zIndex: 2,
         }}
       >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Chip
+            label={
+              survey.participationStatus === "invited"
+                ? "NEW"
+                : survey.participationStatus
+            }
+            size="small"
+            sx={{
+              bgcolor:
+                survey.participationStatus === "complete"
+                  ? "success.main"
+                  : survey.participationStatus === "dropout"
+                    ? "error.main"
+                    : "rgba(255,255,255,0.2)",
+              color: "#fff",
+              fontWeight: 700,
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              textTransform: "uppercase",
+            }}
+          />
+        </Stack>
+
         <Box
           sx={{
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+            mb: 3,
           }}
         >
           <Avatar
             sx={{
-              width: 56,
-              height: 56,
-              bgcolor: lightBg,
-              color: darkColor,
-              border: "1px solid",
-              borderColor: `${darkColor}40`,
-              boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              width: 82,
+              height: 82,
+              bgcolor: "rgba(255,255,255,0.16)",
+              color: "#fff",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.12)",
             }}
           >
             <i
               className={`fa-solid ${category.icon}`}
-              style={{ fontSize: 22 }}
-            ></i>
+              style={{ fontSize: 32 }}
+            />
           </Avatar>
         </Box>
 
-        <Box sx={{ position: "absolute", right: 0, top: 0 }}>
-          {survey.participationStatus === "invited" ? (
-            <Chip
-              size="small"
-              color="secondary"
-              label="New"
-              sx={{
-                color: "white",
-                fontWeight: 600,
-                background: "linear-gradient(45deg, #00c853, #64dd17)",
-              }}
-            />
-          ) : (
-            <Chip
-              label={survey.participationStatus}
-              size="small"
-              color={
-                survey.participationStatus === "complete"
-                  ? "success"
-                  : survey.participationStatus === "dropout"
-                    ? "error"
-                    : "primary"
-              }
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: 600,
-                color: "#fff",
-              }}
-            />
-          )}
-        </Box>
-      </Box>
+        <Box sx={{ textAlign: "center" }}>
+          <Typography
+            fontWeight={800}
+            fontSize={24}
+            lineHeight={1.25}
+            sx={{
+              minHeight: 64,
+            }}
+          >
+            {survey.name}
+          </Typography>
 
-      <Box>
-        <Typography
-          title={survey.name}
-          variant="h6"
-          fontWeight={700}
+          <Typography
+            sx={{
+              opacity: 0.8,
+              mt: 1,
+              fontSize: 14,
+            }}
+          >
+            Complete the survey and earn rewards instantly
+          </Typography>
+        </Box>
+
+        <Box
           sx={{
-            mb: 1,
-            lineHeight: 1.4,
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
+            mt: 4,
             textAlign: "center",
           }}
         >
-          {survey.name}
-        </Typography>
-      </Box>
-
-      <Divider />
-
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        px={3}
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
-          <AccountBalanceWalletOutlinedIcon
-            sx={{ fontSize: 24, color: "success.main" }}
-          />
-          <Box>
-            <Typography fontSize={26} fontWeight={700} color="success.main">
-              {survey.points} pts
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reward
-            </Typography>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={1} alignItems="center">
-          <AccessTimeRoundedIcon
-            sx={{ fontSize: 24, color: "secondary.main" }}
-          />
-          <Box>
-            <Typography variant="body1" fontWeight={700}>
-              {survey.loi} min
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Time
-            </Typography>
-          </Box>
-        </Stack>
-      </Stack>
-
-      <Box sx={{ mt: "auto" }}>
-        {permittedStatus.includes(survey?.participationStatus) && (
-          <Button
-            fullWidth
-            variant="contained"
-            href={`/survey?name=${survey.slug}`}
-            color="secondary"
+          <Typography
             sx={{
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: 700,
+              fontSize: 42,
+              fontWeight: 900,
+              lineHeight: 1,
             }}
           >
-            Start Survey
-          </Button>
-        )}
+            {survey.points}
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 1,
+              fontSize: 15,
+              fontWeight: 700,
+              opacity: 0.85,
+            }}
+          >
+            Reward Points
+          </Typography>
+        </Box>
+
+        <Stack
+          direction="row"
+          justifyContent="center"
+          spacing={3}
+          sx={{
+            mt: 4,
+            opacity: 0.92,
+          }}
+        >
+          <Stack direction="row" spacing={1} alignItems="center">
+            <AccessTimeRoundedIcon sx={{ fontSize: 18 }} />
+
+            <Typography fontWeight={700} fontSize={14}>
+              {survey.loi} min
+            </Typography>
+          </Stack>
+
+          <Stack direction="row" spacing={1} alignItems="center">
+            <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 18 }} />
+
+            <Typography fontWeight={700} fontSize={14}>
+              Fast Reward
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <Box sx={{ mt: "auto", pt: 4 }}>
+          {permittedStatus.includes(survey?.participationStatus) && (
+            <Button
+              fullWidth
+              variant="contained"
+              href={`/survey?name=${survey.slug}`}
+              sx={{
+                height: 52,
+                borderRadius: 3,
+                bgcolor: "#fff",
+                color: "#4c1d95",
+                fontWeight: 800,
+                textTransform: "none",
+                fontSize: 16,
+                boxShadow: "none",
+                "&:hover": {
+                  bgcolor: "#f8fafc",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Start Survey →
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

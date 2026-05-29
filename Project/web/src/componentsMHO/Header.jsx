@@ -225,17 +225,18 @@ export default function Header({
         >
           <Box
             component="img"
-            src="/images/logo/mfr-logo-white.png"
+            src="/images/logo/mfr-logo.png"
             alt="logo"
-            width={220}
+            width={270}
+            style={{ filter: "brightness(0) saturate(100%) invert(100%)" }}
           />
-          <Box
+          {/* <Box
             component="img"
             src="/imagesmfr/dol-sign.gif"
             alt="logo"
             width={{ xs: 15, lg: 20 }}
             sx={{ position: "absolute", right: -5, top: 4 }}
-          />
+          /> */}
         </Box>
 
         <IconButton
@@ -426,10 +427,11 @@ export default function Header({
               component="img"
               src="/images/logo/mfr-logo.png"
               alt="logo"
-              width={{ xs: "180px", sm: "225px" }}
-              height={{ xs: "38px", sm: "48px" }}
+              width={220}
+              // width={{ xs: "180px", sm: "225px" }}
+              // height={{ xs: "38px", sm: "48px" }}
             />
-            <Box
+            {/* <Box
               component="img"
               src="/imagesmfr/dol-sign.gif"
               alt="logo"
@@ -439,7 +441,7 @@ export default function Header({
                 right: { xs: -5, md: -6.5 },
                 top: { xs: 2, sm: 5, md: 0 },
               }}
-            />
+            /> */}
           </Box>
 
           <Box
@@ -497,7 +499,7 @@ export default function Header({
               aria-label="open drawer"
               edge="end"
               onClick={handleDrawerToggle}
-              sx={{ mx: 0.5, color: "secondary.main" }}
+              sx={{ mx: 0.5, color: "primary.main" }}
             >
               <MenuIcon fontSize="large" />
             </IconButton>

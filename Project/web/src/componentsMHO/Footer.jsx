@@ -25,7 +25,7 @@ function Footer() {
       <Grid
         size={12}
         sx={{
-          bgcolor: "secondary.main",
+          bgcolor: "primary.main",
           color: "white",
           backgroundImage: "url(/imagesmfr/call-bg.png)",
           backgroundSize: "cover",
@@ -66,12 +66,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -87,12 +87,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -110,12 +110,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -131,12 +131,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -154,12 +154,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -189,12 +189,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -210,12 +210,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -235,12 +235,14 @@ function Footer() {
             >
               <Box sx={{ position: "relative" }}>
                 <img
-                  src="/images/logo/mfr-logo-white.png"
+                  src="/images/logo/mfr-logo.png"
                   alt="logo"
-                  width="250px"
-                  height="52.77px"
+                  width={270}
+                  style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                  // width="250px"
+                  // height="52.77px"
                 />
-                <Box
+                {/* <Box
                   component="img"
                   src="/imagesmfr/dol-sign.gif"
                   alt="logo"
@@ -250,7 +252,7 @@ function Footer() {
                     left: 238,
                     top: { xs: 4, md: 0 },
                   }}
-                />
+                /> */}
               </Box>
               <Box display="flex" alignItems="center" gap={2} mt={1} pl={1}>
                 <IconButton
@@ -264,12 +266,12 @@ function Footer() {
                     transition: "all 0.3s ease",
                     "&:hover": {
                       cursor: "pointer",
-                      color: "primary.main",
+                      color: "secondary.main",
                       transform: "translateX(5px)",
                     },
                     "&:focus-visible": {
                       outline: "2px solid",
-                      outlineColor: "primary.main",
+                      outlineColor: "secondary.main",
                       outlineOffset: "2px",
                     },
                   }}
@@ -287,12 +289,12 @@ function Footer() {
                     transition: "all 0.3s ease",
                     "&:hover": {
                       cursor: "pointer",
-                      color: "primary.main",
+                      color: "secondary.main",
                       transform: "translateX(5px)",
                     },
                     "&:focus-visible": {
                       outline: "2px solid",
-                      outlineColor: "primary.main",
+                      outlineColor: "secondary.main",
                       outlineOffset: "2px",
                     },
                   }}
@@ -314,12 +316,12 @@ function Footer() {
                     transition: "all 0.3s ease",
                     "&:hover": {
                       cursor: "pointer",
-                      color: "primary.main",
+                      color: "secondary.main",
                       transform: "translateX(5px)",
                     },
                     "&:focus-visible": {
                       outline: "2px solid",
-                      outlineColor: "primary.main",
+                      outlineColor: "secondary.main",
                       outlineOffset: "2px",
                     },
                   }}
@@ -342,12 +344,12 @@ function Footer() {
                     transition: "all 0.3s ease",
                     "&:hover": {
                       cursor: "pointer",
-                      color: "primary.main",
+                      color: "secondary.main",
                       transform: "translateX(5px)",
                     },
                     "&:focus-visible": {
                       outline: "2px solid",
-                      outlineColor: "primary.main",
+                      outlineColor: "secondary.main",
                       outlineOffset: "2px",
                     },
                   }}
@@ -384,13 +386,13 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
 
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -421,12 +423,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -451,12 +453,12 @@ function Footer() {
                   transition: "all 0.3s ease",
                   "&:hover": {
                     cursor: "pointer",
-                    color: "primary.main",
+                    color: "secondary.main",
                     transform: "translateX(5px)",
                   },
                   "&:focus-visible": {
                     outline: "2px solid",
-                    outlineColor: "primary.main",
+                    outlineColor: "secondary.main",
                     outlineOffset: "2px",
                   },
                 }}
@@ -500,7 +502,7 @@ function Footer() {
               "&:hover": { textDecoration: "underline" },
               "&:focus-visible": {
                 outline: "2px solid",
-                outlineColor: "primary.main",
+                outlineColor: "secondary.main",
                 outlineOffset: "2px",
               },
             }}
