@@ -44,10 +44,11 @@ export default function page() {
         }}
       >
         {" "}
-        <Page.Box sx={{ position: "relative", pt: 3 }}>
+        <Page.Box sx={{ position: "relative", pt: 2 }}>
           <Page.Box
             sx={{
-              width:220,
+              pb: 2,
+              width: 220,
               // height: { xs: "60px", md: "80px" },
               // width: { xs: "180px", md: "300px" },
             }}
@@ -170,17 +171,17 @@ export function Terms({
   if (isLoading && !hideLoading) {
     return <LoadingOverlay />;
   }
-  if(user?.isMinor && [null,undefined,""].includes(user?.parent?.email)){
-    return <form 
-      onSubmit={
-        form.handleSubmit(async data=>{
-          let resp=await api.patch(`/api/v1/me/parent-details`,data)
-          user.update(resp.data)
-        })
-      }
+  if (user?.isMinor && [null, undefined, ""].includes(user?.parent?.email)) {
+    return (
+      <form
+        onSubmit={form.handleSubmit(async (data) => {
+          let resp = await api.patch(`/api/v1/me/parent-details`, data);
+          user.update(resp.data);
+        })}
       >
-      <ParentDetailsForm form={form} submitLabel={"Submit"}/>
-    </form>
+        <ParentDetailsForm form={form} submitLabel={"Submit"} />
+      </form>
+    );
   }
   return (
     <>
@@ -196,7 +197,7 @@ export function Terms({
       <Grid
         sx={{
           borderRadius: 2,
-          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          border: (theme) => `1px solid ${theme.palette.secondary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
           py: 2,
           px: 2,
@@ -255,9 +256,8 @@ export function Terms({
           {termOptions.map((option, index) => (
             <Page.Box
               key={index}
-              className={option.required ? "required" : "not-required"}
               sx={{
-                borderBottom: "2px solid #fcfcfc",
+                borderBottom: "1px solid #fcfcfc",
               }}
             >
               <FormControlLabel
@@ -277,7 +277,23 @@ export function Terms({
                     }
                   />
                 }
-                label={option.label}
+                label={
+                  <Page.Box display="flex" alignItems="flex-start" gap={0.5}>
+                    <Page.Box>{option.label}</Page.Box>
+                    {option.required && (
+                      <Page.Text
+                        component="span"
+                        sx={{
+                          color: "error.main",
+                          fontWeight: 700,
+                          lineHeight: 1,
+                        }}
+                      >
+                        *
+                      </Page.Text>
+                    )}
+                  </Page.Box>
+                }
                 sx={{
                   alignItems: "flex-start",
                   "& .MuiFormControlLabel-label": {

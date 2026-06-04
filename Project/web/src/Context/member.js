@@ -34,17 +34,14 @@ class ValidUser {
   }
   async hasCompletedWelcomeSurvey() {
     try {
-      let temp = await api.post(`/api/v1/me/survey`, {
-        slug: "welcome"
+      let temp = await api.post(`/api/v1/response`, {
+        ["survey.slug"]: "welcome",
+        "status": "complete"
       });
       if (temp.status === "error") {
-        console.error(temp.message);
         return false;
       }
-      if ("data" in temp && Array.isArray(temp.data) && temp.data.length === 1) {
-        return temp.data[0].participationStatus === "complete"
-      }
-      return false;
+      return ("data" in temp && Array.isArray(temp.data) && temp.data.length === 1)
     } catch (error) {
       console.error(error);
       return false;
@@ -61,7 +58,9 @@ class ValidUser {
       if (!this.emailVerified()) return this.router.replace(`/?verifyemail=${this.userinfo.mail}`)
     }
     if (!this.termsAccepted()) return this.router.replace("/auth/terms")
-    if (!(await this.hasCompletedWelcomeSurvey())) return this.router.replace("/survey?name=welcome")
+    if (!(await this.hasCompletedWelcomeSurvey())) {
+      return this.router.replace("/survey?name=welcome")
+    }
   }
 }
 export function MemberProvider({ children }) {

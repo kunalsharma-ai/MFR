@@ -238,7 +238,9 @@ function Footer() {
                   src="/images/logo/mfr-logo.png"
                   alt="logo"
                   width={270}
-                  style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                  style={{
+                    filter: "brightness(0) saturate(100%) invert(100%)",
+                  }}
                   // width="250px"
                   // height="52.77px"
                 />
@@ -257,7 +259,7 @@ function Footer() {
               <Box display="flex" alignItems="center" gap={2} mt={1} pl={1}>
                 <IconButton
                   component="a"
-                  href="https://in.linkedin.com/company/frequentresearch"
+                  href="https://www.linkedin.com/company/my-frequent-rewards"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="linkedin"
@@ -495,10 +497,10 @@ function Footer() {
             href="https://frequentresearch.com/"
             target="_blank"
             rel="noopener noreferrer"
-            color="primary.main"
             fontSize={13}
             sx={{
-              color: "white",
+              fontWeight: "bold",
+              color: "secondary.main",
               "&:hover": { textDecoration: "underline" },
               "&:focus-visible": {
                 outline: "2px solid",

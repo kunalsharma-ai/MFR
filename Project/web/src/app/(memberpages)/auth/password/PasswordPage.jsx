@@ -31,7 +31,7 @@ function PasswordPage() {
         }
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -65,75 +65,75 @@ function PasswordPage() {
     return (
       <>
         <Grid
-          size={ 12 }
+          size={12}
           container
-          spacing={ 4 }
+          spacing={4}
           alignItems="center"
           direction="column"
-          p={ { xs: 1, md: 6 } }
+          p={{ xs: 1, md: 6 }}
         >
           <Page.Box
             display="flex"
             flexDirection="column"
             alignItems="center"
-            gap={ 1.5 }
+            gap={1.5}
           >
-            <ErrorIcon color="primary" sx={ { fontSize: "80px" } } />
+            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
             <Page.Text
               component="span"
-              sx={ {
+              sx={{
                 color: "secondary.main",
                 fontSize: { xs: "18px", md: "26px" },
                 fontWeight: 600,
-              } }
+              }}
             >
               Link Expired!
-            </Page.Text>{ " " }
+            </Page.Text>{" "}
           </Page.Box>
           <Page.Box
-            sx={ {
+            sx={{
               textAlign: "center",
               borderRadius: 5,
               bgcolor: "#8cb2f333",
               border: "1px solid #f4f4f4",
               p: 4,
-            } }
+            }}
           >
             <Page.Text
-              sx={ {
+              sx={{
                 mt: 2,
                 fontSize: "16px",
                 fontWeight: 500,
                 maxWidth: "600px",
-              } }
+              }}
             >
               Verification link you used has expired , please request a new one
               by clicking on <strong>Resend Verification Email</strong> button
               below.
             </Page.Text>
           </Page.Box>
-          <Page.Box sx={ { display: "flex", gap: 2 } }>
+          <Page.Box sx={{ display: "flex", gap: 2 }}>
             <Page.MuiButton
               variant="contained"
               color="secondary"
-              sx={ { fontWeight: "bold", mt: 2, color: "white" } }
-              onClick={ async () => {
+              sx={{ fontWeight: "bold", mt: 2, color: "white" }}
+              onClick={async () => {
                 let temp = await api.patch(`/api/v1/user/${query.user}`, {
                   action: "resend-otp",
                 });
                 console.log(temp);
                 if (temp.status === "success") setStatus("resent");
-              } }
+              }}
             >
               Resend Verification Email
-            </Page.MuiButton>{ " " }
+            </Page.MuiButton>{" "}
             <Page.MuiButton
               variant="outlined"
               color="secondary"
-              sx={ { fontWeight: "bold", mt: 2, borderWidth: 3 } }
-              onClick={ () => {
+              sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
+              onClick={() => {
                 router.push("/");
-              } }
+              }}
             >
               Go To Home
             </Page.MuiButton>
@@ -146,63 +146,63 @@ function PasswordPage() {
     return (
       <>
         <Grid
-          size={ 12 }
+          size={12}
           container
-          spacing={ 4 }
+          spacing={4}
           alignItems="center"
           direction="column"
-          p={ { xs: 1, md: 6 } }
+          p={{ xs: 1, md: 6 }}
         >
           <Page.Box
             display="flex"
             flexDirection="column"
             alignItems="center"
-            gap={ 1.5 }
+            gap={1.5}
           >
-            <ErrorIcon color="primary" sx={ { fontSize: "80px" } } />
+            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
             <Page.Text
               component="span"
-              sx={ {
+              sx={{
                 color: "secondary.main",
                 fontSize: { xs: "18px", md: "26px" },
                 fontWeight: 600,
-              } }
+              }}
             >
               Link Resent!
-            </Page.Text>{ " " }
+            </Page.Text>{" "}
           </Page.Box>
           <Page.Box
-            sx={ {
+            sx={{
               textAlign: "center",
               borderRadius: 5,
               bgcolor: "rgba(163, 243, 206, 0.21)",
               border: "1px solid #f4f4f4",
               p: 4,
-            } }
+            }}
           >
             <Page.Text
-              sx={ {
+              sx={{
                 mt: 2,
                 fontSize: "16px",
                 fontWeight: 500,
                 maxWidth: "600px",
-              } }
+              }}
             >
-              Please check your inbox/Spam and{ " " }
+              Please check your inbox/Spam and{" "}
               <strong>click the verification link</strong> to confirm your email
               and <strong>activate your account.</strong> Once verified, you
               will be able to create your password and access available surveys
               and research opportunities surveys made just for you!
             </Page.Text>
           </Page.Box>
-          <Page.Box sx={ { display: "flex", gap: 2 } }>
+          <Page.Box sx={{ display: "flex", gap: 2 }}>
             <Page.MuiButton
               variant="outlined"
               color="secondary"
-              sx={ { fontWeight: "bold", mt: 2, borderWidth: 3 } }
-              onClick={ () => {
+              sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
+              onClick={() => {
                 router.push("/");
-              } }
+              }}
             >
               Go To Home
             </Page.MuiButton>
@@ -214,46 +214,46 @@ function PasswordPage() {
   return (
     <Grid
       component="form"
-      onSubmit={ handleSubmit(onSubmit) }
-      size={ 12 }
+      onSubmit={handleSubmit(onSubmit)}
+      size={12}
       container
-      sx={ {
+      sx={{
         bgcolor: "#8cb2f333",
         minHeight: "100vh",
         width: "100vw",
-      } }
+      }}
       justifyContent="center"
       alignItems="center"
-      p={ { xs: 1, md: 2 } }
+      p={{ xs: 1, md: 2 }}
     >
       <Grid
         container
         direction="column"
         alignItems="center"
-        spacing={ 2 }
-        sx={ {
+        spacing={2}
+        sx={{
           bgcolor: "white",
           borderRadius: 4,
           boxShadow: 24,
           py: 3,
           px: { xs: 2, md: 4 },
-        } }
+        }}
       >
-        { isLoading ? (
+        {isLoading ? (
           <LoadingOverlay />
         ) : (
           <>
-            { status === "success" ? (
-              <SetPasswordForm form={ form } isMinor={ isMinor } />
+            {status === "success" ? (
+              <SetPasswordForm form={form} isMinor={isMinor} />
             ) : status === "error" ? (
               <LinkExpiredMessage />
             ) : status === "resent" ? (
               <LinkResentSuccessfully />
             ) : (
               <LoadingOverlay />
-            ) }
+            )}
           </>
-        ) }
+        )}
       </Grid>
     </Grid>
   );
@@ -268,16 +268,16 @@ function SetPasswordForm({ form, isMinor }) {
   } = form;
   return (
     <>
-      <Page.Box sx={ { position: "relative", pt: 3 } }>
+      <Page.Box sx={{ position: "relative", pt: 3 }}>
         <Page.Box
-          sx={ {
-            width:220,
+          sx={{
+            width: 220,
             // height: { xs: "60px", md: "80px" },
             // width: { xs: "180px", md: "300px" },
-          } }
+          }}
         >
           <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
-        </Page.Box>{ " " }
+        </Page.Box>{" "}
         {/* <Page.Box
           component="img"
           src="/imagesmfr/dol-sign.gif"
@@ -291,25 +291,25 @@ function SetPasswordForm({ form, isMinor }) {
         /> */}
       </Page.Box>
       <Page.Text
-        sx={ {
+        sx={{
           fontSize: { xs: "24px", md: "32px" },
           fontWeight: 600,
           color: "secondary.main",
           my: { xs: 1, md: 2 },
-        } }
+        }}
       >
         Create Password
       </Page.Text>
 
-      <Grid size={ 12 }>
+      <Grid size={12}>
         <Page.Text>Enter your Password</Page.Text>
         <Form.Input
-          { ...register("password") }
-          control={ control }
+          {...register("password")}
+          control={control}
           type="password"
-          strengthMeter={ true }
-          errors={ errors?.password }
-          validations={ {
+          strengthMeter={true}
+          errors={errors?.password}
+          validations={{
             required: {
               value: true,
               message: "Password is required",
@@ -319,18 +319,18 @@ function SetPasswordForm({ form, isMinor }) {
                 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~])(?!.*\s).{8,}$/,
               message: "Password is insecure, try more complex password",
             },
-          } }
+          }}
         />
       </Grid>
 
-      <Grid size={ 12 }>
+      <Grid size={12}>
         <Page.Text>Confirm Password</Page.Text>
         <Form.Input
-          { ...register("confirmPassword") }
-          control={ control }
+          {...register("confirmPassword")}
+          control={control}
           type="password"
-          errors={ errors?.confirmPassword }
-        // validations={}
+          errors={errors?.confirmPassword}
+          // validations={}
         />
       </Grid>
       {/* { isMinor && <>
@@ -345,23 +345,23 @@ function SetPasswordForm({ form, isMinor }) {
         }
         variant="contained"
         color="secondary"
-        sx={ { my: 2, fontWeight: 600, width: "100%", p: 1 } }
+        sx={{ my: 2, fontWeight: 600, width: "100%", p: 1 }}
       >
         Create Password
       </Page.MuiButton>
       <Grid
-        sx={ {
+        sx={{
           borderRadius: 2,
           bgcolor: "#8cb2f333",
           border: "1px solid #f4f4f4",
           py: 2,
           pl: 2,
           pr: { xs: 2, md: 8 },
-        } }
+        }}
       >
-        <Page.Text fontSize={ 13 }>Password should have:</Page.Text>
+        <Page.Text fontSize={13}>Password should have:</Page.Text>
         <List
-          sx={ {
+          sx={{
             listStyleType: "disc",
             pl: 3,
             "& .MuiListItem-root": {
@@ -369,7 +369,7 @@ function SetPasswordForm({ form, isMinor }) {
               p: 0.2,
               fontSize: "12px",
             },
-          } }
+          }}
         >
           <ListItem>
             Minimum <b>8 Characters</b>

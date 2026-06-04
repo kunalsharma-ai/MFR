@@ -77,7 +77,7 @@ function PasswordPage() {
             alignItems="center"
             gap={1.5}
           >
-            <ErrorIcon color="primary" sx={{ fontSize: "80px" }} />
+            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
             <Page.Text
               component="span"
               sx={{
@@ -158,7 +158,7 @@ function PasswordPage() {
             alignItems="center"
             gap={1.5}
           >
-            <ErrorIcon color="primary" sx={{ fontSize: "80px" }} />
+            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
             <Page.Text
               component="span"
               sx={{

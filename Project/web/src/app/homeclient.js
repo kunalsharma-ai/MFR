@@ -126,7 +126,7 @@ export default function Home() {
       <Zoom in={visible} unmountOnExit>
         <Fab
           size="medium"
-          color="primary"
+          color="secondary"
           onClick={scrollToTop}
           aria-label="scroll to top button"
           sx={{

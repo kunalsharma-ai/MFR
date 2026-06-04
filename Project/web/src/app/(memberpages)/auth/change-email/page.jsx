@@ -108,7 +108,7 @@ function LinkExpiredMessage() {
           alignItems="center"
           gap={1.5}
         >
-          <ErrorIcon color="primary" sx={{ fontSize: "80px" }} />
+          <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
           <Page.Text
             component="span"
             sx={{
@@ -164,7 +164,7 @@ function EmailChangedSuccess({ message }) {
           alignItems="center"
           gap={1.5}
         >
-          <CheckCircleIcon color="primary" sx={{ fontSize: "80px" }} />
+          <CheckCircleIcon color="secondary" sx={{ fontSize: "80px" }} />
           <Page.Text
             component="span"
             sx={{

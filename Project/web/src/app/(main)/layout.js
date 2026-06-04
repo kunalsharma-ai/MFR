@@ -76,12 +76,12 @@ export default function MainLayout({ children }) {
       <Zoom in={visible} unmountOnExit>
         <Fab
           size="medium"
-          color="primary"
+          color="secondary"
           onClick={scrollToTop}
           sx={{
             position: "fixed",
             bottom: 35,
-            left: 35,
+            right: 35,
             boxShadow: 4,
             zIndex: 999,
             color: "white",

@@ -1,10 +1,10 @@
 {
-  "from":"support@frequentresearch.com",
-  "name":"My Frequent Rewards",
-  "replyTo":"support@frequentresearch.com",
-  "host": "192.168.0.145",
-  "port": 25,
-  "secure": false,
+  "from": "support@frequentresearch.com",
+  "name": "My Frequent Rewards",
+  "replyTo": "support@frequentresearch.com",
+  "host": "smtppro.zoho.in",
+  "port": 465,
+  "secure": true,
   "auth": {
     "user": "support@frequentresearch.com",
     "pass": "b7xETR0KME2B"

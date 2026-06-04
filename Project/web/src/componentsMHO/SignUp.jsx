@@ -33,6 +33,7 @@ import {
   GitHub,
   Google,
   LinkedIn,
+  YouTube,
   X,
   Apple,
   Microsoft,
@@ -61,6 +62,29 @@ function capitalizeName(str) {
     .join("");
 }
 const today = new Date();
+
+const socials = [
+  {
+    name: "linkedin",
+    link: "https://www.linkedin.com/company/my-frequent-rewards",
+    icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+  },
+  {
+    name: "facebook",
+    link: "https://www.facebook.com/frequentrfs/",
+    icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+  },
+  {
+    name: "youtube",
+    link: "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+    icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+  },
+  {
+    name: "twitter",
+    link: "https://twitter.com/frequentrfs",
+    icon: <X sx={{ color: "black", fontSize: "22px" }} />,
+  },
+];
 
 export default function SignUp({ open, onClose, setOpenLogin }) {
   const [query, member, telemetry, router] = [
@@ -297,7 +321,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   >
                     <Page.Box
                       sx={{
-                        width:220
+                        width: 220,
                         // height: { xs: "60px", md: "80px" },
                         // width: { xs: "180px", md: "300px" },
                       }}
@@ -341,7 +365,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                   spacing={0}
                   sx={{
                     px: { xs: 2, md: 4 },
-                    pb: 4,
+                    pb: 2,
                   }}
                 >
                   <Page.Text
@@ -418,6 +442,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         {...register("phone")}
                         control={control}
                         labelText="Phone"
+                        required={true}
                         // onlyCountries={ [country] }
                         selectedCountry={country}
                         disableDropdown={Boolean(country)}
@@ -473,7 +498,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       <Typography
                         sx={{ flex: 1, ml: -1.5, textAlign: "justify" }}
                       >
-                        I agree for My Frequent Rewards Panel to use my
+                        I agree for MyFrequentRewards Panel to use my
                         information for the purposes of determining my
                         eligibility and for contacting me in relation to
                         participation in market research surveys. Also, I am
@@ -514,7 +539,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         !Boolean(form.watch("parent.email"))
                       }
                       sx={{
-                        bgcolor: "primary.main",
+                        bgcolor: "secondary.main",
                         mt: 2,
                         mb: 1,
                         p: 1,
@@ -650,6 +675,47 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       >
                         Log in
                       </Page.Text>
+                    </Grid>
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="center"
+                      spacing={4}
+                      sx={{
+                        borderTop: "1px solid",
+                        borderColor: "divider",
+                        pt: 2,
+                        mt: 1,
+                      }}
+                    >
+                      <Page.Text
+                        sx={{ fontSize: "13px", color: "text.secondary" }}
+                      >
+                        Follow us on
+                      </Page.Text>
+                      <Page.Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "20px",
+
+                          justifyContent: "center",
+                          alignItems: "center",
+                          listStyle: "none",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {socials.map((social) => (
+                          <Page.Link
+                            key={social.name}
+                            href={social.link}
+                            underline="none"
+                            target="_blank"
+                          >
+                            {social.icon}
+                          </Page.Link>
+                        ))}
+                      </Page.Box>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -920,7 +986,7 @@ function GenderRadioGroup({
                     "&:hover": {
                       backgroundColor:
                         field.value === option.value
-                          ? "primary.main"
+                          ? "secondary.main"
                           : "action.hover",
                     },
                   }}

@@ -72,7 +72,7 @@ function ChangePassword() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: 600,
-            borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
@@ -88,8 +88,8 @@ function ChangePassword() {
         px={2}
         py={2}
         sx={{
-        border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+          border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
           borderRadius: 2,
         }}
       >
@@ -129,7 +129,9 @@ function ChangePassword() {
         variant="contained"
         color="secondary"
         disabled={
-          inputs.cnfPassword !== inputs.newPassword || inputs.newPassword === "" || inputs.oldPassword === ""
+          inputs.cnfPassword !== inputs.newPassword ||
+          inputs.newPassword === "" ||
+          inputs.oldPassword === ""
         }
         sx={{
           ml: 1,
@@ -166,9 +168,11 @@ function SurveyNotification() {
     { label: "By Whatsapp", value: "whatsapp" },
   ];
 
-   const isUnchanged = React.useMemo(() => {
+  const isUnchanged = React.useMemo(() => {
     const sort = (arr) => [...arr].sort();
-    return JSON.stringify(sort(selected)) === JSON.stringify(sort(initialSelected));
+    return (
+      JSON.stringify(sort(selected)) === JSON.stringify(sort(initialSelected))
+    );
   }, [selected, initialSelected]);
 
   return (
@@ -186,7 +190,7 @@ function SurveyNotification() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
@@ -202,8 +206,8 @@ function SurveyNotification() {
         px={2}
         py={2}
         sx={{
-          border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+          border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
           borderRadius: 2,
         }}
       >
@@ -220,7 +224,7 @@ function SurveyNotification() {
                 onChange={(e) => {
                   selected.includes(option.value)
                     ? setSelected(
-                        selected.filter((opt) => opt !== option.value)
+                        selected.filter((opt) => opt !== option.value),
                       )
                     : setSelected([...selected, option.value]);
                 }}
@@ -256,7 +260,6 @@ function SurveyNotification() {
   );
 }
 
-
 function TermsAndConditions() {
   return (
     <Grid size={12} container spacing={2} my={2}>
@@ -273,7 +276,7 @@ function TermsAndConditions() {
             fontSize: "16px",
             display: "inline-block",
             fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
@@ -283,7 +286,6 @@ function TermsAndConditions() {
       <Grid
         size={12}
         sx={{
-          border: `1px solid rgba(51, 169, 202, 0.4)`,
           borderRadius: 2,
         }}
       >

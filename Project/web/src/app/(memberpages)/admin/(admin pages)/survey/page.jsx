@@ -28,6 +28,19 @@ export default function () {
     id: null,
   });
 
+  function badgeColor(status) {
+    switch (status) {
+      case "active":
+        return "success";
+      case "closed":
+        return "error";
+      case "draft":
+        return "warning";
+      default:
+        return "secondary";
+    }
+  }
+
   React.useEffect(() => {
     setIsLoading(true);
     api.get(endpoint).then((resp) => {
@@ -54,6 +67,23 @@ export default function () {
       },
     },
     {
+      id: "status",
+      label: "Status",
+      width: 160,
+      feature: ["filterable", "sortable"],
+      render: (info, i) => {
+        return (
+          <Chip
+            size="small"
+            label={info?.status}
+            variant="contained"
+            color={badgeColor(info?.status)}
+            sx={{ mr: 0.5, color: "white", textTransform: "uppercase" }}
+          />
+        );
+      },
+    },
+    {
       id: "name",
       label: "Survey",
       data: "name",
@@ -64,7 +94,8 @@ export default function () {
     {
       id: "points",
       label: "Survey Points",
-      render: (info) => `${info.points} pts`,
+      render: (info) =>
+        info.points === 0 ? "Edit survey before launch" : `${info.points} pts`,
       width: 140,
       feature: ["sortable"],
     },
@@ -72,52 +103,55 @@ export default function () {
       id: "responses",
       label: "Responses",
       width: 150,
-      render: (info) => (
-        <Page.Link
-          href={`/admin/responses?survey=${info.slug}`}
-          target="_blank"
-          sx={{ color: "primary.main", fontWeight: 500, p: 0 }}
-        >
-          View Responses
-        </Page.Link>
-      ),
+      render: (info) =>
+        ["active", "closed", "hold"].includes(info.status) ? (
+          <Page.Link
+            href={`/admin/responses?survey=${info.slug}`}
+            target="_blank"
+            sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+          >
+            View Responses
+          </Page.Link>
+        ) : null,
     },
     {
       id: "questionsList",
       label: "Questions List",
       width: 150,
-      render: (info) => (
-        <Page.MuiButton
-          sx={{
-            color: "primary.main",
-            fontWeight: 500,
-            p: 0,
-            textTransform: "none",
-          }}
-          onClick={() => {
-            setOpenQuestions({ open: true, id: info._id });
-          }}
-        >
-          View Questions
-        </Page.MuiButton>
-      ),
+      render: (info) =>
+        info.status !== "active" ? null : (
+          <Page.MuiButton
+            sx={{
+              color: "secondary.main",
+              fontWeight: 500,
+              p: 0,
+              textTransform: "none",
+            }}
+            onClick={() => {
+              setOpenQuestions({ open: true, id: info._id });
+            }}
+          >
+            View Questions
+          </Page.MuiButton>
+        ),
     },
     {
       id: "invite",
       label: "Invite",
       width: 80,
-      render: (info) => (
-        <Tooltip title="Invite Panelists">
-          <IconButton
-            sx={{ p: 0 }}
-            onClick={() => {
-              setOpenInvite({ open: true, id: info._id });
-            }}
-          >
-            <PeopleIcon fontSize="small" color="primary" />
-          </IconButton>
-        </Tooltip>
-      ),
+      render: (info) =>
+        info.status !== "active" ? null : (
+          <Tooltip title="Invite Panelists">
+            <IconButton
+              sx={{ p: 0 }}
+              onClick={() => {
+                setOpenInvite({ open: true, id: info._id });
+              }}
+            >
+              <PeopleIcon fontSize="small" color="secondary" />
+            </IconButton>
+          </Tooltip>
+        ),
     },
     {
       id: "action",
@@ -369,7 +403,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
       description: "",
       link: "",
       pages: [],
-      type: "basic"
+      type: "basic",
     },
   });
 

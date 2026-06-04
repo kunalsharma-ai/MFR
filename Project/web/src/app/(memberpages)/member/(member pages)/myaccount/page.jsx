@@ -37,6 +37,8 @@ import CakeIcon from "@mui/icons-material/Cake";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useForm } from "react-hook-form";
 
 import { Form } from "@/components";
@@ -93,11 +95,11 @@ export default function page() {
       sx={{ border: `1px solid #e0e0e0` }}
       spacing={2}
     >
-      <Grid container size={{ xs: 12, md: 4, lg: 3 }} alignSelf={"flex-start"}>
+      <Grid container size={{ xs: 12, md: 6, xl: 3 }} alignSelf={"flex-start"}>
         <UserInfo user={user} />
       </Grid>
 
-      <Grid container size={{ xs: 12, md: 8, lg: 9 }} alignContent="flex-start">
+      <Grid container size={{ xs: 12, md: 6, xl: 9 }} alignContent="flex-start">
         <MyAccountPoints />
         <Stats user={user} />
         <Summary />
@@ -196,7 +198,6 @@ function Stats() {
           size={{
             xs: 12,
             sm: 6,
-            md: 4,
             xl: 3,
           }}
         >
@@ -273,6 +274,19 @@ function Stats() {
 
 function UserInfo({ user }) {
   const form = useForm();
+
+  const [visibleFields, setVisibleFields] = React.useState({});
+
+  const toggleField = (index) => {
+    setVisibleFields((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const maskValue = (value) => {
+    return value ? "xxxxxx" : "";
+  };
 
   React.useEffect(() => {
     if (!user) return;
@@ -367,7 +381,6 @@ function UserInfo({ user }) {
         justifyContent={{ xs: "center", md: "space-between" }}
         alignItems={"center"}
         pb={1.5}
-        
         spacing={0}
         sx={{
           position: "relative",
@@ -388,7 +401,7 @@ function UserInfo({ user }) {
               position: "relative",
               borderRadius: "50%",
               p: "4px",
-              background: "linear-gradient(135deg, #FFD166 0%, #F5A000 100%)",
+              bgcolor: "secondary.main",
               boxShadow: "0 10px 35px rgba(245,160,0,0.35)",
             }}
           >
@@ -450,7 +463,7 @@ function UserInfo({ user }) {
               <Box display={"flex"} alignItems="center" mt={1}>
                 <Typography
                   sx={{
-                    color: "#FFE29A",
+                    color: "secondary.main",
                     fontWeight: 700,
                   }}
                 >
@@ -488,7 +501,7 @@ function UserInfo({ user }) {
             size="large"
             emptyIcon={
               <StarIcon
-                style={{ opacity: 0.28, color: "#FFD166" }}
+                style={{ opacity: 0.28, color: "secondary.main" }}
                 fontSize="inherit"
               />
             }
@@ -496,7 +509,7 @@ function UserInfo({ user }) {
               pt: 0.5,
               pb: 2,
               "& .MuiRating-iconFilled": {
-                color: "#F5A000",
+                color: "secondary.main",
               },
             }}
           />
@@ -534,7 +547,7 @@ function UserInfo({ user }) {
                     mr: 1.2,
                     display: "flex",
                     alignItems: "center",
-                    color: "#FFD166",
+                    color: "secondary.main",
                   }}
                 >
                   {item.icon}
@@ -550,16 +563,37 @@ function UserInfo({ user }) {
                   {item.label}:
                 </Typography>
 
-                <Typography
-                  component="span"
+                <Box
                   sx={{
-                    color: "#fff",
-                    fontWeight: 600,
-                    wordBreak: "break-word",
+                    display: "flex",
+                    alignItems: "center",
+                    flex: 1,
                   }}
                 >
-                  {item.value}
-                </Typography>
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 600,
+                      wordBreak: "break-word",
+                      flex: 1,
+                    }}
+                  >
+                    {visibleFields[index] ? item.value : maskValue(item.value)}
+                  </Typography>
+
+                  <IconButton
+                    size="small"
+                    onClick={() => toggleField(index)}
+                    sx={{ color: "#fff", ml: 1 }}
+                  >
+                    {visibleFields[index] ? (
+                      <VisibilityOffIcon fontSize="small" />
+                    ) : (
+                      <VisibilityIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </Box>
               </Grid>
             );
           })}
@@ -571,7 +605,8 @@ function UserInfo({ user }) {
         sx={{
           width: "100%",
 
-          p: 2,
+          px: 2,
+          pb: 1,
           borderRadius: "18px",
           background: "rgba(255,255,255,0.08)",
           backdropFilter: "blur(10px)",
@@ -588,7 +623,8 @@ function UserInfo({ user }) {
         sx={{
           width: "100%",
 
-          p: 2,
+          px: 2,
+          pb: 1,
           borderRadius: "18px",
           background: "rgba(255,255,255,0.08)",
           backdropFilter: "blur(10px)",
@@ -673,20 +709,7 @@ function Payment() {
       </Box>
 
       {/* Payment display */}
-      <Grid
-        container
-        size={12}
-        direction="column"
-        spacing={0}
-        px={2}
-        py={2}
-        sx={{
-          // border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          // bgcolor: (theme) => theme.palette.cardbg.main,
-          background: "rgba(255, 255, 255, 0.1)",
-          borderRadius: 2,
-        }}
-      >
+      <Grid container size={12} direction="column" spacing={0} px={2}>
         {payment?.method ? (
           <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
             <Typography
@@ -705,11 +728,11 @@ function Payment() {
                   size={12}
                   container
                   alignItems="center"
-                  borderBottom={"1px solid #fff"}
+                  borderBottom={"1px solid rgba(255, 255, 255, 0.3)"}
                   py={1}
                 >
                   <Typography
-                    width={{ xs: "100%", lg: "40%" }}
+                    width={{ xs: "100%", xl: "40%" }}
                     fontWeight={500}
                   >
                     Bank:
@@ -722,11 +745,11 @@ function Payment() {
                   size={12}
                   container
                   alignItems="center"
-                  borderBottom={"1px solid #fff"}
+                  borderBottom={"1px solid rgba(255, 255, 255, 0.3)"}
                   py={1}
                 >
                   <Typography
-                    width={{ xs: "100%", lg: "40%" }}
+                    width={{ xs: "100%", xl: "40%" }}
                     fontWeight={500}
                   >
                     IFSC/IBAN/SWIFT Code:
@@ -737,7 +760,7 @@ function Payment() {
                 </Grid>
                 <Grid size={12} container alignItems="center" py={1}>
                   <Typography
-                    width={{ xs: "100%", lg: "40%" }}
+                    width={{ xs: "100%", xl: "40%" }}
                     fontWeight={500}
                   >
                     Account Number:
@@ -750,11 +773,12 @@ function Payment() {
             )}
           </Grid>
         ) : (
-          <Typography py={1}>
+          <Typography py={1} fontSize={12}>
             No Payment method selected yet.{" "}
             <Typography
               component={"span"}
               fontWeight={700}
+              fontSize={12}
               sx={{ cursor: "pointer" }}
               onClick={() => setOpenPayment(true)}
             >
@@ -1071,12 +1095,12 @@ function SocialAccounts({ user }) {
   };
 
   const contactIcons = {
-    WhatsApp: <WhatsAppIcon sx={{ color: "#25D366" }} />,
-    Instagram: <InstagramIcon sx={{ color: "#C13584" }} />,
-    Facebook: <FacebookIcon sx={{ color: "#3b5998" }} />,
-    Linkedin: <LinkedInIcon sx={{ color: "#0e76a8" }} />,
-    YouTube: <YouTubeIcon sx={{ color: "#FF0000" }} />,
-    Twitter: <XIcon sx={{ color: "black" }} />,
+    whatsapp: <WhatsAppIcon sx={{ color: "#fff" }} />,
+    instagram: <InstagramIcon sx={{ color: "#fff" }} />,
+    facebook: <FacebookIcon sx={{ color: "#fff" }} />,
+    linkedin: <LinkedInIcon sx={{ color: "#fff" }} />,
+    youtube: <YouTubeIcon sx={{ color: "#fff" }} />,
+    twitter: <XIcon sx={{ color: "#fff" }} />,
   };
 
   const socialChannels = [
@@ -1143,61 +1167,31 @@ function SocialAccounts({ user }) {
         )}
       </Box>
 
-      <Grid
-        container
-        size={12}
-        direction="column"
-        spacing={0}
-        px={1}
-        py={1}
-        sx={{
-          // border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          // bgcolor: (theme) => theme.palette.cardbg.main,
-          background: "rgba(255, 255, 255, 0.1)",
-          borderRadius: 2,
-        }}
-      >
+      <Grid container size={12} spacing={2}>
         {Object.entries(contact).filter(([_, value]) => value?.trim())
           .length ? (
           Object.entries(contact)
             .filter(([_, value]) => value?.trim())
             .map(([key, value], index, arr) => (
-              <Grid
-                key={index}
-                container
-                size={12}
-                alignItems="center"
-                borderBottom={
-                  index !== arr.length - 1 ? "1px solid #fff" : "none"
-                }
-                py={1}
-                px={2}
-              >
-                <Grid
-                  size={{ xs: 12, lg: 4 }}
-                  alignItems="center"
-                  container
-                  gap={1}
-                >
-                  {contactIcons[key]}
-                  <Typography fontWeight={500}>{key}</Typography>
-                </Grid>
-
-                <Typography fontWeight={600}>{value}</Typography>
-              </Grid>
+              <Tooltip title={`${key?.Capitalize()} :  ${value}`} key={index} placement="top">
+                <Page.Box px={0.75}>{contactIcons[key]}</Page.Box>
+              </Tooltip>
             ))
         ) : (
-          <Typography py={1}>
-            No social contact method added.{" "}
-            <Typography
-              component={"span"}
-              fontWeight={700}
-              sx={{ cursor: "pointer" }}
-              onClick={() => setOpenContact(true)}
-            >
-              Click to add
+          <Page.Box px={1} py={1}>
+            <Typography py={1} fontSize={12}>
+              No social contact method added.{" "}
+              <Typography
+                component={"span"}
+                fontWeight={700}
+                fontSize={12}
+                sx={{ cursor: "pointer" }}
+                onClick={() => setOpenContact(true)}
+              >
+                Click to add
+              </Typography>
             </Typography>
-          </Typography>
+          </Page.Box>
         )}
       </Grid>
 

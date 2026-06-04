@@ -22,6 +22,7 @@ import {
   GitHub,
   Google,
   LinkedIn,
+  YouTube,
   X,
   Apple,
   Microsoft,
@@ -113,6 +114,30 @@ function Login({ open, onClose, setOpenSignUp }) {
 
 export default Login;
 
+
+const socials = [
+  {
+    name: "linkedin",
+    link: "https://www.linkedin.com/company/my-frequent-rewards",
+    icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+  },
+  {
+    name: "facebook",
+    link: "https://www.facebook.com/frequentrfs/",
+    icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+  },
+  {
+    name: "youtube",
+    link: "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+    icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+  },
+  {
+    name: "twitter",
+    link: "https://twitter.com/frequentrfs",
+    icon: <X sx={{ color: "black", fontSize: "22px" }} />,
+  },
+];
+
 function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   const [telemetry, router] = [useTelemetry(), useRouter()];
   const [country, setCountry] = React.useState("in");
@@ -154,9 +179,8 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   };
 
   const authProviders = providers.map((provider) => ({
-    label: `Continue with ${
-      provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
-    }`,
+    label: `Continue with ${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
+      }`,
     icon: providerIcons[provider.name?.toLowerCase()] || <LoginIcon />,
     href: provider.authUrl,
   }));
@@ -167,8 +191,8 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
-        minHeight: authProviders.length > 0 ? "620px" : "520px",
-        width: { xs: "95vw", sm: "440px" },
+        minHeight: authProviders.length > 0 ? "720px" : "600px",
+        width: { xs: "95vw", sm: "480px" },
         px: { xs: 1.5, sm: 3 },
         position: "relative",
       }}
@@ -178,6 +202,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           position: "absolute",
           right: 25,
           top: 20,
+          color:"primary.main",
           "&:hover": { color: "red" },
         }}
         onClick={onClose}
@@ -186,6 +211,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
       </IconButton>
       <Typography
         sx={{
+          color:"primary.main",
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
@@ -250,15 +276,15 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
                 fontSize: 13,
                 px: 2,
                 py: 0.5,
-                color: "primary.main",
-                borderColor: "primary.main",
+                color: "secondary.main",
+                borderColor: "secondary.main",
                 bgcolor: "white",
               },
               "& .MuiToggleButton-root.Mui-selected": {
-                bgcolor: "primary.main",
+                bgcolor: "secondary.main",
 
                 "&:hover": {
-                  backgroundColor: "primary.dark",
+                  backgroundColor: "secondary.dark",
                 },
               },
             }}
@@ -267,7 +293,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
               <ToggleButton key={option.value} value={option.value}>
                 <Typography
                   fontWeight={500}
-                  color={loginType === option.value ? "#fff" : "primary.main"}
+                  color={loginType === option.value ? "#fff" : "secondary.main"}
                 >
                   {option.label}
                 </Typography>
@@ -360,7 +386,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           fullWidth
           variant="contained"
           loading={loading}
-          color="primary"
+          color="secondary"
           loadingIndicator="Signing in..."
           sx={{
             borderRadius: "8px",
@@ -500,6 +526,49 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
             Sign up
           </Page.MuiButton>
         </Box>
+         <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="center"
+                  spacing={4}
+                  sx={{
+                    position: "absolute",
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    zIndex: 2,
+                    borderTop: "1px solid",
+                    borderColor: "divider",
+                    pt: 2,
+                  }}
+                >
+                  <Page.Text sx={{ fontSize: "13px", color: "text.secondary" }}>
+                    Follow us on
+                  </Page.Text>
+                  <Page.Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "20px",
+        
+                      justifyContent: "center",
+                      alignItems: "center",
+                      listStyle: "none",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {socials.map((social) => (
+                      <Page.Link
+                        key={social.name}
+                        href={social.link}
+                        underline="none"
+                        target="_blank"
+                      >
+                        {social.icon}
+                      </Page.Link>
+                    ))}
+                  </Page.Box>
+                </Grid>
       </Box>
     </Card>
   );
@@ -520,7 +589,9 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
   const form = useForm({});
 
   async function sendOTP(e) {
+    console.log("sending otp")
     const resp = await api.post(`/api/v1/forgot-password`, { user });
+    console.log(resp);
     useToast(resp);
     if (resp.status === "error") return;
     setStage("otp");
@@ -554,6 +625,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
 
       <Page.Text
         sx={{
+          color:"primary.main",
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
@@ -594,7 +666,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
               <Page.MuiButton
                 variant="contained"
                 disabled={!user}
-                color="primary"
+                color="secondary"
                 onClick={sendOTP}
                 sx={{
                   color: "white",
@@ -620,7 +692,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
                 textAlign: "center",
                 borderRadius: 3,
                 bgcolor: (theme) => theme.palette.cardbg.main,
-                border: "1px solid #f4f4f4",
+                border:theme => `1px solid ${theme.palette.secondary.main}`,
                 p: 4,
               }}
             >

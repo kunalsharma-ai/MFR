@@ -27,13 +27,13 @@ export default function MemberHeader() {
         sx={{
           boxShadow: 3,
           pt: 1,
-          color: "black",
+          // color: "black",
           width: "100vw",
           zIndex: 1201,
           minHeight: "70px",
           bgcolor: "white",
           // bgcolor: "#044236",
-          bgcolor: "#24292e",
+          // bgcolor: "#24292e",
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -62,7 +62,7 @@ export default function MemberHeader() {
               sx={{
                 ml: 2,
                 mb: 1,
-                filter: "brightness(0) saturate(100%) invert(100%)",
+                // filter: "brightness(0) saturate(100%) invert(100%)",
                 cursor: "pointer",
                 display: { xs: "block", sm: "none" },
               }}
@@ -86,8 +86,8 @@ export default function MemberHeader() {
                 component="img"
                 src="/images/logo/mfr-logo.png"
                 alt="logo"
-                 width={245}
-                  style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                 width={240}
+                  // style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
                 // width={{ xs: "180px", sm: "225px" }}
               />
               {/* <Box
@@ -130,7 +130,7 @@ export default function MemberHeader() {
                   ml: 1,
                   display: { xs: "none", lg: "block" },
                   fontSize: "16px",
-                  color: "white",
+                  color: "text.primary",
                   fontWeight: 500,
                 }}
               >
@@ -212,7 +212,7 @@ const QualityScore = ({ value, total }) => {
       gap={0}
     >
       <Box>
-        <Typography sx={{ color: "white", fontSize: "18px" }}>
+        <Typography sx={{ color: "text.secondary", fontSize: "18px" }}>
           Quality Score -{" "}
           <Typography
             component={"span"}
@@ -231,7 +231,7 @@ const QualityScore = ({ value, total }) => {
           width: "100%",
           height: 6,
           borderRadius: 4,
-          backgroundColor: "rgba(255,255,255,0.15)",
+          backgroundColor: "whitesmoke",
           mt: 0.5,
           "& .MuiLinearProgress-bar": {
             background: progressColor,

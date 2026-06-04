@@ -223,7 +223,7 @@ function SurveyList({ surveys, query, isLoading }) {
       label: "All Surveys",
     },
     {
-      label: "High Reward",
+      label: "High Reward Surveys",
       filter: (survey) => survey.points > 1500,
     },
     {

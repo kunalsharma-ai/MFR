@@ -349,7 +349,7 @@ function HeroCards({ setOpenQuote, setOpenLogin, setOpenSignUp }) {
               color: "black",
               transition: "all 0.3s ease",
               "&:hover": {
-                bgcolor: "primary.main",
+                bgcolor: "secondary.main",
                 transform: "translateX(8px)",
 
                 "& .card-title": {
@@ -358,12 +358,12 @@ function HeroCards({ setOpenQuote, setOpenLogin, setOpenSignUp }) {
 
                 "& .icon-box": {
                   bgcolor: "white",
-                  color: "primary.main",
+                  color: "secondary.main",
                 },
 
                 "& .card-btn": {
                   backgroundColor: "white",
-                  color: "primary.main",
+                  color: "secondary.main",
 
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.15)",

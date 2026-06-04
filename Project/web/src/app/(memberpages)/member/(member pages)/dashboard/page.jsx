@@ -163,25 +163,25 @@ function Surveys() {
       isAvailable: Boolean(availableSurveys?.internal),
       stat: [
         {
-          title: "All",
+          title: "All Surveys",
           filter: null,
           count: availableSurveys?.internal?.all ?? 0,
           bg: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
         },
         {
-          title: "High Reward",
-          filter: "High Reward",
+          title: "High Reward Surveys",
+          filter: "High Reward Surveys",
           count: availableSurveys?.internal?.highRewards ?? 0,
           bg: "linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)",
         },
         {
           filter: "Short Surveys",
-          title: "Short",
+          title: "Short Surveys",
           count: availableSurveys?.internal?.short ?? 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
         {
-          title: "New",
+          title: "New Surveys",
           filter: "New Surveys",
           count: availableSurveys?.internal?.newSurveys ?? 0,
           bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
@@ -196,25 +196,25 @@ function Surveys() {
       isAvailable: Boolean(availableSurveys?.external),
       stat: [
         {
-          title: "All",
+          title: "All Surveys",
           filter: null,
           count: 0,
           bg: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
         },
         {
-          title: "High Reward",
-          filter: "High Reward",
+          title: "High Reward Surveys",
+          filter: "High Reward Surveys",
           count: 0,
           bg: "linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)",
         },
         {
           filter: "Short Surveys",
-          title: "Short",
+          title: "Short Surveys",
           count: 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
         {
-          title: "New",
+          title: "New Surveys",
           filter: "New Surveys",
           count: 0,
           bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
@@ -283,7 +283,7 @@ function Surveys() {
             alignItems="center"
             justifyContent="center"
             spacing={2}
-            p={{ xs: 3, md: 4 }}
+            p={{ xs: 1, md: 3 }}
             sx={{
               boxShadow: `0 8px 30px ${cardGlow}`,
               background: cardBg,
@@ -347,7 +347,8 @@ function Surveys() {
                   spacing={2}
                   justifyContent="center"
                   width="100%"
-                  mt={1}
+                  my={1}
+                  px={2}
                 >
                   {survey.stat.map((item, statIndex) => (
                     <Grid key={statIndex} size={{ xs: 6, sm: 3 }}>
@@ -619,9 +620,18 @@ export function SurveyHistory() {
     {
       id: "surveyname",
       label: "Survey Name",
+      width: 300,
       render: (info) => (
         <Typography
-          sx={{ fontWeight: "600", color: "primary.main", fontSize: "14px" }}
+          sx={{
+            fontWeight: "600",
+            color: "primary.main",
+            fontSize: "14px",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            maxWidth: 280,
+          }}
         >
           {info?.survey?.name}
         </Typography>

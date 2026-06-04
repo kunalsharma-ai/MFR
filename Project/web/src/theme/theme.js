@@ -24,7 +24,7 @@ const theme = createTheme({
       main: "#001B66",
     },
     secondary: {
-      main: "#F5A000",
+      main: "#fe7e00",
     },
 
     page: {
@@ -34,8 +34,7 @@ const theme = createTheme({
       main: "#ffffff",
     },
     cardbg: {
-      // main: "#c6e3f4",
-      main: "#fff1d9",
+      main: "#FFD4AD",  // #FFE4CC
     },
   },
   typography: {
@@ -61,7 +60,7 @@ const theme = createTheme({
         },
         "*": {
           scrollbarWidth: "thin",
-          scrollbarColor: "#063686 transparent",
+          scrollbarColor: "#fe7e00 transparent",
         },
         "*::-webkit-scrollbar": {
           width: "8px",
@@ -71,13 +70,13 @@ const theme = createTheme({
           background: "transparent",
         },
         "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "#063686",
+          backgroundColor: "#fe7e00",
           borderRadius: "8px",
           border: "2px solid transparent",
           backgroundClip: "content-box",
         },
         "*::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#063686",
+          backgroundColor: "#fe7e00",
         },
       },
     },

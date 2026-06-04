@@ -9,6 +9,8 @@ import {
   MobileStepper,
   useMediaQuery,
   useTheme,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -100,7 +102,7 @@ export default function Survey({
       let dob = new Date(user.dob);
       if (new Date().getFullYear() !== dob.getFullYear() + Number(age)) {
         onError({
-          title: "Security Check",
+          title: "Invalid Age",
           btns: {
             ok: "Try Again",
             cancel: "Go Back",
@@ -114,11 +116,11 @@ export default function Survey({
           message: (
             <>
               <p>
-                For security reasons, the age entered must match your registered
-                information.
+                The age you entered doesn't match the information on your
+                profile.
               </p>
+              <p>Please check and correct your age and try again.</p>
               <p>&nbsp;</p>
-              <p>Please check and re-enter the correct age.</p>
             </>
           ),
         });
@@ -168,7 +170,7 @@ export default function Survey({
             overflowY: "auto",
             borderRadius: 2,
             bgcolor: (theme) => theme.palette.cardbg.main,
-            border: "1px solid #f4f4f4",
+            border: theme => `1px solid ${theme.palette.divider}`,
             py: 2,
             px: { xs: 0, md: 2 },
             flex: 1,
@@ -252,46 +254,37 @@ function SurveySteps({ currentPage, steps }) {
 
   return (
     <Grid size={12}>
-      {!isMobile ? (
-        <Stepper
-          activeStep={currentPage}
-          alternativeLabel
-          connector={<StepConnector />}
+  
+        <Tabs
+          value={currentPage}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
           sx={{
-            my: 1,
-            width: "100%",
+            mb: 2,
+            borderBottom: 1,
+            borderColor: "divider",
+            "& .MuiTab-root": {
+              textTransform: "none",
+              minHeight: 48,
+              fontSize: 13,
+              fontWeight: 500,
+            },
+            "& .Mui-selected": {
+              fontWeight: 700,
+            },
           }}
         >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel
-                StepIconComponent={(props) => <CustomStepIcon {...props} />}
-                sx={{
-                  "& .MuiStepLabel-label": {
-                    fontSize: "12px",
-
-                    "& .Mui-active": {
-                      fontWeight: "bold",
-                    },
-                  },
-                }}
-              >
-                {label}
-              </StepLabel>
-            </Step>
+          {steps.map((label, index) => (
+            <Tab
+              key={label}
+              value={index}
+              label={index < currentPage ? `✓ ${label}` : label}
+              disabled
+            />
           ))}
-        </Stepper>
-      ) : (
-        <Grid size={12} container justifyContent={"center"}>
-          <MobileStepper
-            variant="dots"
-            steps={steps.length}
-            position="static"
-            activeStep={currentPage}
-            sx={{ my: 1 }}
-          />
-        </Grid>
-      )}
+        </Tabs>
+  
     </Grid>
   );
 }

@@ -3,7 +3,6 @@ import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function HowItWorks() {
-
   return (
     <Box>
       <Grid
@@ -70,7 +69,7 @@ export default function HowItWorks() {
 }
 
 function HowItWorksCards() {
-    const router = useRouter()
+  const router = useRouter();
   const cardData = [
     {
       icon: "imagesmfr/verify.png",
@@ -110,7 +109,7 @@ function HowItWorksCards() {
       {cardData.map((card, index) => (
         <Grid
           key={index}
-          size={{xs:12,md:6,lg:3}}
+          size={{ xs: 12, md: 6, lg: 3 }}
           container
           spacing={0}
           sx={{
@@ -124,7 +123,7 @@ function HowItWorksCards() {
             borderRadius: 2,
             border: "1px solid #0c5adb",
             color: "black",
-            transition: "color 0.3s ease",
+            transition: "all 0.3s ease",
 
             "&::before": {
               content: '""',
@@ -133,7 +132,7 @@ function HowItWorksCards() {
               bottom: 0,
               width: "100%",
               height: "100%",
-              bgcolor: "primary.main",
+              bgcolor: "secondary.main",
               transform: "scaleY(0)",
               transformOrigin: "bottom",
               transition: "transform 0.45s ease",
@@ -150,13 +149,15 @@ function HowItWorksCards() {
             },
 
             "&:hover": {
+              borderColor: "transparent",
+
               "& .card-title, & .card-description": {
                 color: "white",
               },
 
               "& .card-btn": {
                 backgroundColor: "white",
-                color: "primary.main",
+                color: "secondary.main",
 
                 "&:hover": {
                   backgroundColor: "rgba(255,255,255,0.15)",

@@ -122,7 +122,7 @@ export default function page() {
                     width: "100%",
                     minHeight: "calc(90vh - 215px)",
                     bgcolor: (theme) => theme.palette.cardbg.main,
-                    border: "1px solid #f4f4f4",
+                    border: theme => `1px solid ${theme.palette.divider}`,
                     textShadow: "1px 1px 1px rgba(0, 0, 0, 0.1)",
                   } }
                   dangerouslySetInnerHTML={ { __html: survey.thankyou } }
@@ -149,7 +149,8 @@ export default function page() {
                   size={ 12 }
                   alignItems="center"
                   justifyContent={ { xs: "center", md: "space-between" } }
-                  mb={ 2 }
+                  pb={ 2 }
+                  mb={1}
                   spacing={ { xs: 1, md: 2 } }
                   direction={ { xs: "column", md: "row" } }
                   sx={ { borderBottom: "1px solid #f4f4f4" } }
@@ -181,7 +182,7 @@ export default function page() {
                     sx={ {
                       flex: 1,
                       textAlign: "center",
-                      ml: { xs: 0, md: "-320px" },
+                      ml: { xs: 0, md: "-220px" },
                       fontSize: { xs: "18px", lg: "24px" },
                       fontWeight: 600,
                       color: "primary.main",

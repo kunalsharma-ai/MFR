@@ -27,10 +27,10 @@ export default function AdminHeader() {
       <AppBar
         position="fixed"
         sx={{
-          bgcolor: "#24292e",
+          bgcolor: "#fff",
           boxShadow: 3,
           pt: 1,
-          color: "white",
+          // color: "white",
           width: "100vw",
           zIndex: 1201,
           minHeight: "70px",
@@ -61,7 +61,7 @@ export default function AdminHeader() {
               sx={{
                 ml: 2,
                 mb: 1,
-                filter: "brightness(0) saturate(100%) invert(100%)",
+                // filter: "brightness(0) saturate(100%) invert(100%)",
                 cursor: "pointer",
                 display: { xs: "block", sm: "none" },
               }}
@@ -85,8 +85,8 @@ export default function AdminHeader() {
                 component="img"
                 src="/images/logo/mfr-logo.png"
                 alt="logo"
-                 width={245}
-                  style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                 width={240}
+                  // style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
                 // width={{ xs: "180px", sm: "225px" }}
               />
               {/* <Box
@@ -120,7 +120,7 @@ export default function AdminHeader() {
                   width: "45px",
                 }}
               />
-              <Typography fontSize={"16px"} fontWeight={500} ml={1}>
+              <Typography fontSize={"16px"} fontWeight={500} ml={1} color={"text.primary"} display={{ xs: "none", lg: "block" }}>
                 {me?.name?.first ?? "User"}
               </Typography>
             </Button>
