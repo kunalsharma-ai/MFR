@@ -95,7 +95,7 @@ function AboutUs() {
                 MyFrequentRewards is a world wide Consumer and Business
                 Community of Frequent Research.
               </Typography>
-              <Typography sx={{ fontSize: "16px", textAlign: "justify" }}>
+              <Typography sx={{ fontSize: "16px", textAlign: "justify", color: "text.secondary" }}>
                 MyFrequentRewards welcomes you as our new panel members to take
                 participate and share your opinion and perspective to
                 wide-ranging market research survey campaigns. It is a platform

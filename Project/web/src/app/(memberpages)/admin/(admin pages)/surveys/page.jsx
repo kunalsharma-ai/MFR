@@ -236,6 +236,7 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
       description: "",
       link: "",
       pages: [],
+      surveyCategory: "",
     },
   });
 
@@ -291,11 +292,44 @@ function CreateOrEditSurvey({ surveyID = null, close }) {
         </IconButton>
       </SectionTitle>
       <Grid container size={12} spacing={1.4} sx={{ px: 2 }}>
-        <Form.Input
-          control={control}
-          {...form.register("slug")}
-          label="Survey URL"
-        />
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Input
+            control={control}
+            {...form.register("slug")}
+            label="Survey URL"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Select
+            control={control}
+            {...form.register("surveyCategory")}
+            label="Survey Category"
+            options={[
+              { label: "Basic", value: "basic" },
+              { label: "Professional", value: "professional" },
+              { label: "Educational", value: "educational" },
+              { label: "Survey and Rewards", value: "Survey and Rewards" },
+              { label: "Financial", value: "financial" },
+              { label: "Parenting", value: "parenting" },
+              {
+                label: "Home and Pet Ownership",
+                value: "Home and Pet Ownership",
+              },
+              { label: "Shopping", value: "shopping" },
+              { label: "Lifestyle and food", value: "Lifestyle and food" },
+              { label: "travel", value: "travel" },
+              { label: "Automobile", value: "automobile" },
+              { label: "Health", value: "health" },
+              { label: "Beauty & Fashion", value: "beauty & fashion" },
+              {
+                label: "Media, Electronics, Mobile & Technology",
+                value: "media, electronics, mobile & technology",
+              },
+              { label: "Sports", value: "sports" },
+              { label: "Gaming", value: "gaming" },
+            ]}
+          />
+        </Grid>
         <Form.Input
           control={control}
           {...form.register("name")}

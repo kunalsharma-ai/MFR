@@ -225,9 +225,9 @@ export default function Header({
         >
           <Box
             component="img"
-            src="/images/logo/mfr-logo.png"
+            src="/images/logo/mfr/200w.webp"
             alt="logo"
-            width={270}
+            // width={220}
             style={{ filter: "brightness(0) saturate(100%) invert(100%)" }}
           />
           {/* <Box
@@ -250,6 +250,11 @@ export default function Header({
             border: "1px solid white",
             borderColor: "primary.main",
             color: "primary.main",
+            "&:hover": {
+              bgcolor: "white",
+              borderColor: "secondary.main",
+              color: "secondary.main",
+            },
           }}
         >
           <CloseIcon />
@@ -425,23 +430,10 @@ export default function Header({
           >
             <Box
               component="img"
-              src="/images/logo/mfr-logo.png"
+              src="images/logo/mfr/200w.webp"
               alt="logo"
-              width={220}
-              // width={{ xs: "180px", sm: "225px" }}
-              // height={{ xs: "38px", sm: "48px" }}
+              // width={220}
             />
-            {/* <Box
-              component="img"
-              src="/imagesmfr/dol-sign.gif"
-              alt="logo"
-              width={{ xs: 15, md: 20 }}
-              sx={{
-                position: "absolute",
-                right: { xs: -5, md: -6.5 },
-                top: { xs: 2, sm: 5, md: 0 },
-              }}
-            /> */}
           </Box>
 
           <Box

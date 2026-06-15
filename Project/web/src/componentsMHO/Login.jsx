@@ -12,6 +12,7 @@ import {
   Fade,
   ToggleButton,
   ToggleButtonGroup,
+  Collapse,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
@@ -36,6 +37,7 @@ import "react-phone-input-2/lib/material.css";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTelemetry } from "@/Context";
 import { useToast } from "@/hooks";
+import Captcha from "./Captcha";
 
 function Login({ open, onClose, setOpenSignUp }) {
   const [cardType, setCardType] = React.useState("login");
@@ -114,7 +116,6 @@ function Login({ open, onClose, setOpenSignUp }) {
 
 export default Login;
 
-
 const socials = [
   {
     name: "linkedin",
@@ -145,6 +146,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   const [loading, setLoading] = React.useState(false);
   const [loginType, setLoginType] = React.useState("mail");
   const [phone, setPhone] = React.useState("");
+  const [btnDisabled, setBtnDisabled] = React.useState(true);
 
   const [providers, setProviders] = React.useState([]);
   useEffect(() => {
@@ -179,8 +181,9 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
   };
 
   const authProviders = providers.map((provider) => ({
-    label: `Continue with ${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
-      }`,
+    label: `Continue with ${
+      provider.name.charAt(0).toUpperCase() + provider.name.slice(1)
+    }`,
     icon: providerIcons[provider.name?.toLowerCase()] || <LoginIcon />,
     href: provider.authUrl,
   }));
@@ -191,7 +194,15 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
-        minHeight: authProviders.length > 0 ? "720px" : "600px",
+        minHeight:
+          authProviders.length > 0
+            ? btnDisabled
+              ? "838px" // providers exist + button disabled
+              : "780px" // providers exist + button enabled
+            : btnDisabled
+              ? "720px" // no providers + button disabled
+              : "600px", // no providers + button enabled
+        transition: "min-height 300ms ease-in-out",
         width: { xs: "95vw", sm: "480px" },
         px: { xs: 1.5, sm: 3 },
         position: "relative",
@@ -202,7 +213,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
           position: "absolute",
           right: 25,
           top: 20,
-          color:"primary.main",
+          color: "primary.main",
           "&:hover": { color: "red" },
         }}
         onClick={onClose}
@@ -211,7 +222,7 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
       </IconButton>
       <Typography
         sx={{
-          color:"primary.main",
+          color: "primary.main",
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
@@ -379,9 +390,17 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
             </Page.MuiButton>
           </Box>
         </Grid>
+        <Collapse in={!!btnDisabled} sx={{ width: "100%" }}>
+          <Captcha
+            onVerified={() => {
+              setBtnDisabled(false);
+            }}
+          />
+        </Collapse>
         {errorMessage && <Page.Error message={errorMessage} />}
 
         <Page.MuiButton
+          disabled={btnDisabled}
           type="submit"
           fullWidth
           variant="contained"
@@ -526,49 +545,49 @@ function LoginCard({ onClose, setCardType, setOpenSignUp }) {
             Sign up
           </Page.MuiButton>
         </Box>
-         <Grid
-                  container
-                  alignItems="center"
-                  justifyContent="center"
-                  spacing={4}
-                  sx={{
-                    position: "absolute",
-                    bottom: 10,
-                    left: 0,
-                    right: 0,
-                    zIndex: 2,
-                    borderTop: "1px solid",
-                    borderColor: "divider",
-                    pt: 2,
-                  }}
-                >
-                  <Page.Text sx={{ fontSize: "13px", color: "text.secondary" }}>
-                    Follow us on
-                  </Page.Text>
-                  <Page.Box
-                    sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "20px",
-        
-                      justifyContent: "center",
-                      alignItems: "center",
-                      listStyle: "none",
-                      textDecoration: "none",
-                    }}
-                  >
-                    {socials.map((social) => (
-                      <Page.Link
-                        key={social.name}
-                        href={social.link}
-                        underline="none"
-                        target="_blank"
-                      >
-                        {social.icon}
-                      </Page.Link>
-                    ))}
-                  </Page.Box>
-                </Grid>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="center"
+          spacing={4}
+          sx={{
+            position: "absolute",
+            bottom: 10,
+            left: 0,
+            right: 0,
+            zIndex: 2,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            pt: 2,
+          }}
+        >
+          <Page.Text sx={{ fontSize: "13px", color: "text.secondary" }}>
+            Follow us on
+          </Page.Text>
+          <Page.Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px",
+
+              justifyContent: "center",
+              alignItems: "center",
+              listStyle: "none",
+              textDecoration: "none",
+            }}
+          >
+            {socials.map((social) => (
+              <Page.Link
+                key={social.name}
+                href={social.link}
+                underline="none"
+                target="_blank"
+              >
+                {social.icon}
+              </Page.Link>
+            ))}
+          </Page.Box>
+        </Grid>
       </Box>
     </Card>
   );
@@ -589,7 +608,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
   const form = useForm({});
 
   async function sendOTP(e) {
-    console.log("sending otp")
+    console.log("sending otp");
     const resp = await api.post(`/api/v1/forgot-password`, { user });
     console.log(resp);
     useToast(resp);
@@ -625,7 +644,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
 
       <Page.Text
         sx={{
-          color:"primary.main",
+          color: "primary.main",
           width: "100%",
           fontSize: "30px",
           textAlign: "center",
@@ -692,7 +711,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
                 textAlign: "center",
                 borderRadius: 3,
                 bgcolor: (theme) => theme.palette.cardbg.main,
-                border:theme => `1px solid ${theme.palette.secondary.main}`,
+                border: (theme) => `1px solid ${theme.palette.secondary.main}`,
                 p: 4,
               }}
             >

@@ -327,12 +327,12 @@ export default function page() {
             <Page.Box sx={ { position: "relative" } }>
               <Page.Box
                 sx={ {
-                  width: 220,
+                  // width: 220,
                   // height: { xs: "60px", md: "80px" },
                   // width: { xs: "180px", md: "300px" },
                 } }
               >
-                <img src="/images/logo/mfr-logo.png" alt="logo" width="100%" />
+                <img src="/images/logo/mfr/200w.webp" alt="logo" />
               </Page.Box>{ " " }
               {/* <Page.Box
                 component="img"

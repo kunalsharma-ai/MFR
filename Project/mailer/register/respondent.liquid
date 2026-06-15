@@ -1,81 +1,449 @@
-<table width="100%" cellpadding="0" cellspacing="0">
+<table
+  width="100%"
+  border="0"
+  cellspacing="0"
+  cellpadding="0"
+  bgcolor="#f4f4f4"
+  style="
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    font-family: Arial, Helvetica, sans-serif;
+  "
+>
   <tr>
     <td align="center">
-       <img
-        src="https://www.myfrequentrewards.com/images/logo/mfr-logo.png"
-        alt="My Frequent Rewards"
-        style="width: 320px; height: auto; margin: 20px 0; padding: 0"
-      />
+      <table
+        width="920"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+        bgcolor="#ffffff"
+        style="max-width: 920px"
+      >
+        <!-- TOP BORDER -->
+        <tr>
+          <td height="12" bgcolor="#002b8f"></td>
+        </tr>
+
+        <!-- LOGO SECTION -->
+        <tr>
+          <td align="center" style="padding: 30px 20px; background: #ffffff">
+            <img
+              src="https://myfrequentrewards.com/images/logo/mfr-logo.png"
+              alt="MyFrequentRewards"
+              width="520"
+              style="display: block; max-width: 100%"
+            />
+          </td>
+        </tr>
+
+        <!-- HERO BANNER -->
+        <tr>
+          <td>
+            <img
+              src="https://frequentresearch.com/mailer/mail-icons/mfr/header.png"
+              alt="Welcome to MyFrequentRewards"
+              width="920"
+              style="display: block; width: 100%; height: auto"
+            />
+          </td>
+        </tr>
+
+        <!-- INTRO -->
+        <tr>
+          <td style="padding: 35px 60px 15px">
+            <p
+              style="
+                margin: 0 0 25px;
+                font-size: 28px;
+                color: #0d2372;
+                font-weight: bold;
+              "
+            >
+              Hi {{user.name.first}},
+            </p>
+
+            <p
+              style="
+                margin: 0;
+                font-size: 22px;
+                line-height: 38px;
+                color: #14245d;
+              "
+            >
+              You're just one step away from joining our community and earning
+              rewards for sharing your valuable opinions.
+            </p>
+          </td>
+        </tr>
+
+        <!-- VERIFY CARD -->
+        <tr>
+          <td style="padding: 30px 55px">
+            <table
+              width="100%"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              style="
+                border: 1px solid #f0d7b4;
+                border-radius: 12px;
+                background: #fef8f2;
+              "
+            >
+              <tr>
+                <td width="220" align="center">
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/mail.png" width="180" alt="Verify" />
+                </td>
+
+                <td style="padding: 35px 35px 35px 0">
+                  <h2 style="margin: 0 0 15px; color: #0d2372; font-size: 30px">
+                    Verify Your Email Address
+                  </h2>
+
+                  <p
+                    style="
+                      margin: 0 0 30px;
+                      color: #17285f;
+                      font-size: 20px;
+                      line-height: 34px;
+                    "
+                  >
+                    To complete your registration and activate your account,
+                    please verify your email address by clicking the link below:
+                  </p>
+
+                  <a
+                   href="http://{{user.origin}}/auth/password?user={{user._id}}&code={{otp.code}}"
+                    style="
+                      display: inline-block;
+                      background: #fe7e00;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 18px 40px;
+                      border-radius: 12px;
+                      font-size: 18px;
+                      font-weight: bold;
+                    "
+                  >
+                    VERIFY EMAIL ADDRESS
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- BENEFITS TITLE -->
+        <tr>
+          <td align="center" style="padding: 10px 40px 20px">
+            <table width="100%">
+              <tr>
+                <td width="28%">
+                  <hr style="border: none; border-top: 1px solid #d4d4d4" />
+                </td>
+
+                <td
+                  width="44%"
+                  align="center"
+                  style="color: #0d2372; font-size: 22px; font-weight: bold"
+                >
+                  Once verified, you'll be able to:
+                </td>
+
+                <td width="28%">
+                  <hr style="border: none; border-top: 1px solid #d4d4d4" />
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- BENEFITS -->
+        <tr>
+          <td style="padding: 15px 30px 45px">
+            <table width="100%">
+              <tr>
+                <td width="20%" align="center">
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/email.png" width="80" />
+                  <p style="font-size: 16px; line-height: 26px; color: #222">
+                    Verify your<br />email address
+                  </p>
+                </td>
+
+                <td
+                  width="20%"
+                  align="center"
+                  style="border-left: 1px solid #ddd"
+                >
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/lock.png" width="80" />
+                  <p style="font-size: 16px; line-height: 26px; color: #222">
+                    Create your<br />password
+                  </p>
+                </td>
+
+                <td
+                  width="20%"
+                  align="center"
+                  style="border-left: 1px solid #ddd"
+                >
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/person.png" width="80" />
+                  <p style="font-size: 16px; line-height: 26px; color: #222">
+                    Complete<br />your profile
+                  </p>
+                </td>
+
+                <td
+                  width="20%"
+                  align="center"
+                  style="border-left: 1px solid #ddd"
+                >
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/clipboard.png" width="80" />
+                  <p style="font-size: 16px; line-height: 26px; color: #222">
+                    Participate in<br />research surveys
+                  </p>
+                </td>
+
+                <td
+                  width="20%"
+                  align="center"
+                  style="border-left: 1px solid #ddd"
+                >
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/gift.png" width="80" />
+                  <p style="font-size: 16px; line-height: 26px; color: #222">
+                    Earn rewards<br />for every survey
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- SECURITY NOTICE -->
+        <tr>
+          <td style="padding: 0 55px 35px">
+            <table
+              width="100%"
+              style="
+                background: #f8fbff;
+                border: 1px solid #d7e4ff;
+                border-radius: 10px;
+              "
+            >
+              <tr>
+                <td width="120" align="center" style="padding: 25px">
+                  <img src="https://frequentresearch.com/mailer/mail-icons/mfr/shield.png" width="85" />
+                </td>
+
+                <td style="padding: 25px 25px 25px 0">
+                  <h3 style="margin: 0 0 10px; color: #0d2372; font-size: 22px">
+                    Didn't Register?
+                  </h3>
+
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 18px;
+                      line-height: 30px;
+                      color: #22305f;
+                    "
+                  >
+                    If you did not register for the MyFrequent<span
+                      style="color: #fe7e00"
+                      >Rewards</span
+                    >
+                    Panel,<br />
+                    please ignore this message. No further action is required.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td
+            style="
+              padding: 15px 55px;
+              border-top: 1px solid #ddd;
+              border-bottom: 1px solid #ddd;
+            "
+          >
+            <table width="100%">
+              <tr>
+                <td align="center" style="padding: 8px">
+                  <img
+                    src="https://frequentresearch.com/mailer/icons/phone.png"
+                    alt="Phone"
+                    width="30"
+                    height="30"
+                    style="border: 0; display: block; margin-bottom: 8px"
+                  />
+                  <a
+                    href="tel:+919810459700"
+                    style="color: #000; text-decoration: none"
+                    >+91 98104 59700</a
+                  >
+                </td>
+
+                <td
+                  align="center"
+                  style="padding: 8px; border-left: 2px solid #ddd"
+                >
+                  <img
+                    src="https://frequentresearch.com/mailer/icons/email.png"
+                    alt="Email"
+                    width="30"
+                    height="30"
+                    style="border: 0; display: block; margin-bottom: 8px"
+                  />
+                  <a
+                    href="mailto:support@myfrequentrewards.com"
+                    style="color: #000; text-decoration: none"
+                    >support@myfrequentrewards.com</a
+                  >
+                </td>
+
+                <td
+                  align="center"
+                  style="padding: 8px; border-left: 2px solid #ddd"
+                >
+                  <img
+                    src="https://frequentresearch.com/mailer/icons/internet.png"
+                    alt="Website"
+                    width="30"
+                    height="30"
+                    style="border: 0; display: block; margin-bottom: 8px"
+                  />
+                  <a
+                    href="https://www.myfrequentrewards.com"
+                    style="color: #000; text-decoration: none"
+                    >www.myfrequentrewards.com</a
+                  >
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- TEAM -->
+        <tr>
+          <td align="center" style="padding: 35px 20px 20px">
+            <p style="margin: 0; color: #333; font-size: 18px">With Regards,</p>
+
+            <p
+              style="
+                margin: 10px 0;
+                color: #0d2372;
+                font-size: 34px;
+                font-weight: bold;
+              "
+            >
+              My Frequent Rewards Team
+            </p>
+
+            <p style="margin: 0; color: #666; font-size: 22px">
+              A Frequent Research Survey Panel
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+            >
+              <tr>
+                <td width="60" height="2" bgcolor="#fe7e00"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- SOCIAL -->
+        <tr>
+          <td align="center" style="padding: 30px 20px 50px">
+            <a
+              href="https://www.linkedin.com/company/my-frequent-rewards"
+              style="
+                text-decoration: none;
+                display: inline-block;
+                color: #ffffff;
+                vertical-align: middle;
+                margin-left: 10px;
+              "
+            >
+              <img
+                src="https://frequentresearch.com/mailer/icons/linkedin.png"
+                alt="Linkedin"
+                width="30"
+                height="30"
+                style="
+                  border: 0;
+                  display: inline-block;
+                  vertical-align: middle;
+                  margin-right: 8px;
+                "
+              />
+            </a>
+
+            <a
+              href="https://www.facebook.com/frequentrfs/"
+              style="
+                text-decoration: none;
+                display: inline-block;
+                color: #ffffff;
+                vertical-align: middle;
+                margin-left: 10px;
+              "
+            >
+              <img
+                src="https://frequentresearch.com/mailer/icons/facebook.png"
+                alt="Facebook"
+                width="30"
+                height="30"
+                style="
+                  border: 0;
+                  display: inline-block;
+                  vertical-align: middle;
+                  margin-right: 8px;
+                "
+              />
+            </a>
+
+            <a
+              href="https://twitter.com/frequentrfs/"
+              style="
+                text-decoration: none;
+                display: inline-block;
+                color: #ffffff;
+                vertical-align: middle;
+                margin-left: 10px;
+              "
+            >
+              <img
+                src="https://frequentresearch.com/mailer/icons/twitter.png"
+                alt="Twitter/X"
+                width="30"
+                height="30"
+                style="
+                  border: 0;
+                  display: inline-block;
+                  vertical-align: middle;
+                  margin-right: 8px;
+                "
+              />
+            </a>
+          </td>
+        </tr>
+
+        <!-- BOTTOM BAR -->
+        <tr>
+          <td height="10" bgcolor="#fe7e00"></td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>
-
-<div
-  style="
-    max-width: 600px;
-    margin: auto;
-     background: #fff1d9;
-    border: 1px solid #F5A000;
-    border-radius: 6px;
-  "
->
-  <div style="padding: 30px 20px; font-family: Roboto, sans-serif">
-    <h2 style="color: #2a3940; font-weight: 400; margin: 0">
-      Hey {{user.name.first}},
-    </h2>
-
-    <p
-      style="
-        font-size: 17px;
-        color: #2a3940;
-        
-        margin: 20px 0;
-      "
-    >
-        Thank you for registering with the MyFrequentRewards - A Frequent Research Survey Panel.
-    </p>
-
-    <p
-      style="
-        font-size: 17px;
-        color: #2a3940;
-        
-        margin: 20px 0;
-      "
-    >
-      To complete your registration and activate your account, please verify your email address by clicking the link below:
-    </p>
-
-    <div style="text-align: center; margin: 55px 0">
-      <a
-       href="http://{{user.origin}}/auth/password?user={{user._id}}&code={{otp.code}}"
-        target="_blank"
-        style="
-          display: inline-block;
-          background: #001B66;
-          color: #fff;
-          padding: 12px 40px;
-          text-decoration: none;
-          font-size: 18px;
-          border-radius: 2px;
-        "
-      >
-        Verify
-      </a>
-    </div>
-
-      <p
-      style="
-        font-size: 15px;
-        color: #2a3940;
-        
-        margin: 20px 0;
-      "
-    >
-     Once your email is verified, you’ll be able to set your password and access available market research opportunities.
-    If you did not register for the MyFrequentRewards Panel, please ignore this message.
-    </p>
-    <hr style="border: 0; border-top: 2px solid #e8e8e8; margin: 30px 0" />
- {% include  "mailer/footer.liquid" %}
-  </div>
-</div>

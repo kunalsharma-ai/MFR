@@ -83,9 +83,9 @@ export default function AdminHeader() {
             >
               <Box
                 component="img"
-                src="/images/logo/mfr-logo.png"
+                src="/images/logo/mfr/200w.webp"
                 alt="logo"
-                 width={240}
+                 
                   // style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
                 // width={{ xs: "180px", sm: "225px" }}
               />

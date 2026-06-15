@@ -39,7 +39,7 @@ export default function SurveyDashboard() {
   React.useEffect(() => {
     setIsLoading(true);
     loadData(
-      api.post(`/api/v1/me/survey`, { source: query.source }),
+      api.post(`/api/v1/me/survey`, { source: query.source, status: "active" }),
       (resp) => {
         setSurveys(resp.data);
       },
@@ -215,12 +215,15 @@ function SurveyStat({ stats, isLoading }) {
 
 function SurveyList({ surveys, query, isLoading }) {
   const [activeFilter, setActiveFilter] = React.useState(
-    query.filter ?? "All Surveys",
+    !query.filter || query.filter === "null" || query.filter === "undefined"
+      ? "All New Surveys"
+      : query.filter,
   );
   console.log(activeFilter);
   const filters = [
     {
-      label: "All Surveys",
+      label: "All New Surveys",
+      badge: "New",
     },
     {
       label: "High Reward Surveys",
@@ -230,11 +233,11 @@ function SurveyList({ surveys, query, isLoading }) {
       label: "Short Surveys",
       filter: (survey) => survey.loi < 15,
     },
-    {
-      label: "New Surveys",
-      badge: "New",
-      filter: (survey) => survey.participationStatus === "invited",
-    },
+    // {
+    //   label: "New Surveys",
+    //   badge: "New",
+    //   filter: (survey) => survey.participationStatus === "invited",
+    // },
   ];
 
   return (
@@ -707,8 +710,6 @@ function SurveyCard({ survey }) {
     ];
     const surveyCategory = survey.surveyCategory || "";
 
-    return categories[Math.floor(Math.random() * 20)];
-
     return (
       categories.find(
         (cat) =>
@@ -720,6 +721,8 @@ function SurveyCard({ survey }) {
       }
     );
   };
+
+  // return categories[Math.floor(Math.random() * 20)];
 
   const category = getCategoryData(survey);
 

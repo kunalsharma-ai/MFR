@@ -128,7 +128,7 @@ export default function MyAccountPoints() {
                 // background: "linear-gradient(180deg, #FFE29A 0%, #F5A000 100%)",
                 // WebkitBackgroundClip: "text",
                 // WebkitTextFillColor: "transparent",
-                color:"secondary.main",
+                color: "secondary.main",
                 letterSpacing: "-1px",
               }}
             >
@@ -211,8 +211,7 @@ export default function MyAccountPoints() {
 
                   "& .MuiLinearProgress-bar": {
                     borderRadius: "999px",
-                    background:
-                      "linear-gradient(90deg, #F5A000 0%, #FFD166 100%)",
+                    backgroundColor: "secondary.main",
                   },
                 }}
               />

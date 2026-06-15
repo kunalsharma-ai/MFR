@@ -163,7 +163,7 @@ function Surveys() {
       isAvailable: Boolean(availableSurveys?.internal),
       stat: [
         {
-          title: "All Surveys",
+          title: "All New Surveys",
           filter: null,
           count: availableSurveys?.internal?.all ?? 0,
           bg: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
@@ -180,12 +180,12 @@ function Surveys() {
           count: availableSurveys?.internal?.short ?? 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
-        {
-          title: "New Surveys",
-          filter: "New Surveys",
-          count: availableSurveys?.internal?.newSurveys ?? 0,
-          bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
-        },
+        // {
+        //   title: "New Surveys",
+        //   filter: "New Surveys",
+        //   count: availableSurveys?.internal?.newSurveys ?? 0,
+        //   bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
+        // },
       ],
     },
     {
@@ -196,7 +196,7 @@ function Surveys() {
       isAvailable: Boolean(availableSurveys?.external),
       stat: [
         {
-          title: "All Surveys",
+          title: "All New Surveys",
           filter: null,
           count: 0,
           bg: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
@@ -213,12 +213,12 @@ function Surveys() {
           count: 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
-        {
-          title: "New Surveys",
-          filter: "New Surveys",
-          count: 0,
-          bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
-        },
+        // {
+        //   title: "New Surveys",
+        //   filter: "New Surveys",
+        //   count: 0,
+        //   bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
+        // },
       ],
     },
   ];
@@ -351,7 +351,7 @@ function Surveys() {
                   px={2}
                 >
                   {survey.stat.map((item, statIndex) => (
-                    <Grid key={statIndex} size={{ xs: 6, sm: 3 }}>
+                    <Grid key={statIndex} size={{ xs: 6, sm: 4 }}>
                       <Page.Link
                         href={`${survey.link}&filter=${item.filter}`}
                         sx={{

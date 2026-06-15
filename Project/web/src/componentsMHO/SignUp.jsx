@@ -17,6 +17,7 @@ import {
   Tooltip,
   ToggleButtonGroup,
   ToggleButton,
+  Collapse,
 } from "@mui/material";
 
 import {
@@ -46,6 +47,7 @@ import { api, Page } from "@/util";
 import user from "@/validators/user";
 import { useToast } from "@/hooks";
 import { useMember, useQuery, useTelemetry } from "@/Context";
+import Captcha from "./Captcha";
 function capitalizeName(str) {
   if (!str) return "";
 
@@ -96,6 +98,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
   const [status, setStatus] = React.useState("signup"); // signup, success, duplicate
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
+  const [btnDisabled, setBtnDisabled] = React.useState(true);
   const form = useForm({
     defaultValues: {
       category: "b2b",
@@ -320,16 +323,18 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     }}
                   >
                     <Page.Box
-                      sx={{
-                        width: 220,
-                        // height: { xs: "60px", md: "80px" },
-                        // width: { xs: "180px", md: "300px" },
-                      }}
+                      sx={
+                        {
+                          // width: 220,
+                          // height: { xs: "60px", md: "80px" },
+                          // width: { xs: "180px", md: "300px" },
+                        }
+                      }
                     >
                       <img
-                        src="/images/logo/mfr-logo.png"
+                        src="/images/logo/mfr/200w.webp"
                         alt="logo"
-                        width={"100%"}
+                        // width={"100%"}
                       />
                     </Page.Box>{" "}
                     {/* <Page.Box
@@ -401,7 +406,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                             { value: "Prof.", label: "Prof." },
                             { value: "Mx. ", label: "Mx." },
                           ]}
-                          labelText="Salutation"
+                          labelText="Sal."
                         />
                       </Grid>
                       <Grid size={{ xs: 12, md: 4.9 }}>
@@ -483,12 +488,34 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         />
                       </Grid>
                     </Grid>
+                    <Collapse in={!!btnDisabled} sx={{ width: "100%" }}>
+                      <Grid
+                        sx={{
+                          py: 1,
+                          my: 1,
+                          px: 2,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          bgcolor: "#fff",
+                          borderRadius: 2,
+                        }}
+                        size={12}
+                        container
+                        direction="row"
+                        alignItems="center"
+                      >
+                        <Captcha
+                          onVerified={() => {
+                            setBtnDisabled(false);
+                          }}
+                        />
+                      </Grid>
+                    </Collapse>
                     <Grid
                       size={12}
                       container
                       spacing={0}
                       alignItems="flex-start"
-                      mt={3}
                     >
                       <Form.Checkbox
                         size="medium"
@@ -528,6 +555,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                         </Typography>
                       </Typography>
                     </Grid>
+
                     <Page.MuiButton
                       type="submit"
                       variant="contained"
@@ -535,8 +563,9 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                       loading={isLoading}
                       loadingIndicator="Signing Up..."
                       disabled={
-                        !Boolean(form.watch("agreedtoterms")) &&
-                        !Boolean(form.watch("parent.email"))
+                        // !Boolean(form.watch("agreedtoterms")) &&
+                        // !Boolean(form.watch("parent.email")) &&
+                        !!btnDisabled
                       }
                       sx={{
                         bgcolor: "secondary.main",
@@ -727,24 +756,35 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
               size={12}
               container
               alignItems="center"
+              spacing={1}
               sx={{
-                minHeight: { xs: "90vh", lg: "80vh" },
+                minHeight: { xs: "80vh", sm: "70vh" },
                 p: { xs: 1, md: 6 },
                 border: 1.5,
                 borderColor: "#33aaca",
               }}
             >
+              <Grid size={12} container justifyContent="center" mb={1.5}>
+                <img src="/images/logo/mfr/300w.webp" alt="logo" />
+              </Grid>
               <Grid
                 size={12}
                 container
-                spacing={4}
+                spacing={{ xs: 1, sm: 3 }}
                 alignItems="center"
                 direction="column"
+                sx={{
+                  border: "1px solid #ddd",
+                  borderRadius: 3,
+                  p: { xs: 3, sm: 6 },
+                  bgcolor: "#8cb2f333",
+                  flex: 1,
+                }}
               >
-                <CheckCircleIcon color="primary" sx={{ fontSize: "80px" }} />
+                <CheckCircleIcon color="primary" sx={{ fontSize: "60px" }} />
                 <Page.Text
                   sx={{
-                    fontSize: { xs: "18px", md: "26px" },
+                    fontSize: { xs: "18px", md: "22px" },
                     fontWeight: 600,
                     textAlign: "center",
                   }}
@@ -754,23 +794,33 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                     component="span"
                     sx={{
                       color: "primary.main",
-                      fontSize: { xs: "18px", md: "26px" },
+                      fontSize: { xs: "18px", md: "22px" },
                       fontWeight: 600,
                     }}
                   >
-                    My Frequent Rewards
+                    MyFrequent
+                    <Page.Text
+                      component="span"
+                      sx={{
+                        color: "secondary.main",
+                        fontSize: { xs: "18px", md: "22px" },
+                        fontWeight: 600,
+                      }}
+                    >
+                      Rewards
+                    </Page.Text>
                   </Page.Text>{" "}
                   - A Frequent Research Panel Community.{" "}
                 </Page.Text>
                 <Page.Text
                   sx={{
-                    fontSize: "16px",
+                    fontSize: "15px",
                     fontWeight: 500,
                     textAlign: "center",
                     borderRadius: 5,
-                    bgcolor: "#8cb2f333",
+                    bgcolor: "white",
                     border: "1px solid #f4f4f4",
-                    p: 4,
+                    p: { xs: 2, sm: 4 },
                   }}
                 >
                   Please check your inbox/Spam and{" "}
@@ -782,7 +832,7 @@ export default function SignUp({ open, onClose, setOpenLogin }) {
                 </Page.Text>
                 <Page.MuiButton
                   variant="contained"
-                  color="primary"
+                  color="secondary"
                   sx={{ fontWeight: "bold", mt: 2, color: "white" }}
                   onClick={onClose}
                 >
