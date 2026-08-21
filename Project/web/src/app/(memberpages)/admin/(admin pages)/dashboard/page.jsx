@@ -18,10 +18,6 @@ import {
 import { api, Page } from "@/util";
 import { useToast } from "@/hooks";
 
-// Motion wrapper for Grid components
-const MotionGrid = motion(Grid);
-
-// Animation variants for statistical cards
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: (index) => ({
@@ -35,7 +31,6 @@ const cardVariants = {
   }),
 };
 
-// Helper function to return beautiful, tailored category icon, color palettes, and glow effects
 const getCategoryDetails = (label = "") => {
   const normalized = label.toLowerCase();
 

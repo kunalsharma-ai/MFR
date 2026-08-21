@@ -62,9 +62,9 @@ export default function page() {
     {
       id: "user",
       label: "User",
-      render: (info) => (
-        <Page.Link href={`/api/v1/user/${info.user}`}>{info.user}</Page.Link>
-      ),
+      render: (info) => {
+        return <Page.Link href={ `/api/v1/user/${info?.user?._id}` }>{ info?.user?.fullName }</Page.Link>
+      },
     },
     {
       id: "actions",

@@ -36,6 +36,9 @@ const theme = createTheme({
     cardbg: {
       main: "#FFD4AD",  // #FFE4CC
     },
+     cardtext: {
+      main: "#001B66", 
+    },
   },
   typography: {
     color: "black",

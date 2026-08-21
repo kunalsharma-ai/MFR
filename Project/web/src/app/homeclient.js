@@ -17,6 +17,8 @@ import HowItWorks from "@/componentsMHO/HowItWorks";
 import WhyChooseUs from "@/componentsMHO/WhyChooseUs";
 import CommunityMember from "@/componentsMHO/CommunityMember";
 import { ContextProviders } from "@/Context";
+import FeedbackForm from "@/componentsMHO/FeedbackForm";
+import { Popup } from "@/components/Popup";
 
 export default function Home() {
   const howitworksRef = React.useRef(null);
@@ -30,6 +32,7 @@ export default function Home() {
   const [visible, setVisible] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openSignUp, setOpenSignUp] = React.useState(false);
+  const [emailUnverified, setEmailUnverified] = React.useState(null);
 
   React.useEffect(() => {
     const scrollContainer = document.getElementById("scroll-container");
@@ -76,16 +79,13 @@ export default function Home() {
     >
       <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" } }} />
       <ContextProviders>
-        <React.Suspense
-          fallback={
-           <></>
-          }
-        >
+        <React.Suspense fallback={<></>}>
           <Header
             sections={sections}
             open={openLogin}
             setOpen={setOpenLogin}
             setOpenSignUp={setOpenSignUp}
+            setEmailUnverified={setEmailUnverified}
           />
         </React.Suspense>
       </ContextProviders>
@@ -131,8 +131,8 @@ export default function Home() {
           aria-label="scroll to top button"
           sx={{
             position: "fixed",
-            bottom: 35,
-            right: 35,
+            bottom: 15,
+            left: 15,
             boxShadow: 4,
             zIndex: 999,
             color: "white",
@@ -148,6 +148,7 @@ export default function Home() {
           onClose={() => {
             setOpenSignUp(false);
           }}
+          emailUnverified={emailUnverified}
         />
         <Login
           open={openLogin}
@@ -156,6 +157,9 @@ export default function Home() {
             setOpenLogin(false);
           }}
         />
+        {/* <Popup open={true} onClose={() => {}} hideTitle maxWidth="sm">
+          <FeedbackForm />
+        </Popup> */}
       </ContextProviders>
     </div>
   );

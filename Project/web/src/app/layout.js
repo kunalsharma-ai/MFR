@@ -4,6 +4,7 @@ import Providers from "./providers";
 import { Toast } from "@/components";
 import "@/lib/enhancements.js";
 import { GoogleTagManager } from "@next/third-parties/google";
+import ChatWidget from "@/componentsMHO/ChatWidget";
 
 export default function RootLayout({ children }) {
   return (
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <CssBaseline />
           {children}
+          <ChatWidget />
           <Toast />
         </Providers>
         <GoogleTagManager gtmId="GTM-WG9FZ9LK" />

@@ -11,7 +11,7 @@ function AboutUs() {
         justifyContent="center"
         alignItems="center"
         sx={{
-          height: { xs: "auto", lg: "456px" },
+          // height: { xs: "auto", lg: "456px" },
           pt: { xs: "50px", lg: "80px" },
           pb: { xs: 0, lg: "80px" },
         }}
@@ -25,12 +25,13 @@ function AboutUs() {
             sx={{
               position: { xs: "static", lg: "relative" },
               height: "auto",
-              width: { xs: "100vw", lg: "440px" },
+              width: { xs: "100vw", lg: "580px" },
               overflow: "visible",
             }}
           >
             <img
-              src="/imagesmfr/slider/02.jpg"
+              // src="/imagesmfr/slider/02.jpg"
+              src="/imagesmfr/aboutus.jpg"
               alt="image"
               height="100%"
               width="100%"

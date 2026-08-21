@@ -34,9 +34,9 @@ export default function MemberSidebar({ children }) {
 
   return (
     <Box display="flex">
-      {/* Sidebar */}
+      {/* Sidebar */ }
       <Box
-        sx={{
+        sx={ {
           width: { xs: 72, lg: 290 },
           height: {
             xs: "calc(100vh - 122px)",
@@ -53,32 +53,36 @@ export default function MemberSidebar({ children }) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-        }}
+        } }
       >
-        {/* Menu */}
+        {/* Menu */ }
         <Box
-          sx={{
+          sx={ {
             display: "flex",
             flexDirection: "column",
             gap: 0.5,
-          }}
+          } }
         >
-          {sidebarItems.map((item, index) => {
+          { sidebarItems.map((item, index) => {
             const isActive = pathname === item.link;
 
             const content = (
               <Box
-                key={index}
+                key={ index }
                 role="button"
-                tabIndex={0}
-                onClick={() => router.push(item.link)}
-                onKeyDown={(e) => {
+                tabIndex={ 0 }
+                onClick={ () => {
+                  console.log(router);
+                  router.replace(item.link)
+                } }
+                onKeyDown={ (e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    router.push(item.link);
+                    
+                    router.replace(item.link);
                   }
-                }}
-                sx={{
+                } }
+                sx={ {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: { xs: "center", lg: "flex-start" },
@@ -97,24 +101,24 @@ export default function MemberSidebar({ children }) {
                     bgcolor: isActive ? "secondary.main" : "#f5f3ff",
                     color: isActive ? "#ffffff" : "secondary.main",
                   },
-                }}
+                } }
               >
                 <i
-                  className={item.icon}
-                  style={{
+                  className={ item.icon }
+                  style={ {
                     fontSize: "20px",
-                  }}
+                  } }
                 />
 
                 <Typography
-                  sx={{
+                  sx={ {
                     display: { xs: "none", lg: "block" },
                     fontSize: 15,
                     fontWeight: isActive ? 700 : 600,
                     letterSpacing: "-0.1px",
-                  }}
+                  } }
                 >
-                  {item.label}
+                  { item.label }
                 </Typography>
               </Box>
             );
@@ -122,22 +126,22 @@ export default function MemberSidebar({ children }) {
             return isLgUp ? (
               content
             ) : (
-              <Tooltip key={index} title={item.label} placement="right">
-                {content}
+              <Tooltip key={ index } title={ item.label } placement="right">
+                { content }
               </Tooltip>
             );
-          })}
+          }) }
         </Box>
 
-        {/* Bottom Section */}
+        {/* Bottom Section */ }
         <Box
-          sx={{
+          sx={ {
             mt: 3,
             display: { xs: "none", lg: "block" },
-          }}
+          } }
         >
           <Box
-            sx={{
+            sx={ {
               borderRadius: "24px",
               background: "linear-gradient(180deg, #faf7ff 0%, #f4efff 100%)",
               border: "1px solid #ede9fe",
@@ -163,46 +167,46 @@ export default function MemberSidebar({ children }) {
               "& .MuiTypography-root": {
                 textAlign: "left !important",
               },
-            }}
+            } }
           >
             <Typography
-              sx={{
+              sx={ {
                 fontSize: 13,
                 fontWeight: 700,
                 color: "primary.main",
                 mb: 1,
                 textTransform: "uppercase",
                 letterSpacing: "0.6px",
-              }}
+              } }
             >
               Reward Balance
             </Typography>
 
-            <SurveyPointsSidebar onUpdate={() => {}} />
+            <SurveyPointsSidebar onUpdate={ () => { } } />
           </Box>
           <Box
-            sx={{
+            sx={ {
               borderRadius: "24px",
               background: "linear-gradient(180deg, #faf7ff 0%, #f4efff 100%)",
               border: "1px solid #ede9fe",
               p: 2.2,
-              mt:2,
+              mt: 2,
               overflow: "hidden",
               position: "relative",
 
               "& .MuiGrid-root": {
                 width: "100%",
               },
-            }}
+            } }
           >
             <CurrentUser />
           </Box>
         </Box>
       </Box>
 
-      {/* Main Content */}
+      {/* Main Content */ }
       <Box
-        sx={{
+        sx={ {
           width: {
             xs: "calc(100vw - 72px)",
             lg: "calc(100vw - 290px)",
@@ -214,9 +218,9 @@ export default function MemberSidebar({ children }) {
           mt: "78px",
           overflow: "auto",
           bgcolor: "#f8fafc",
-        }}
+        } }
       >
-        {children}
+        { children }
       </Box>
     </Box>
   );

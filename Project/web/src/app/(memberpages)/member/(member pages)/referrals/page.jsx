@@ -24,7 +24,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import RemoveIcon from "@mui/icons-material/Remove";
 
-import { api, Page } from "@/util";
+import { api, Page, loadData } from "@/util";
 import { Datatable } from "@/components";
 import { useMember } from "@/Context";
 import { useToast } from "@/hooks";
@@ -117,7 +117,7 @@ export default function page() {
             fontSize: "18px",
             display: "inline-block",
             fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
             my: 2,
           }}
@@ -143,7 +143,7 @@ export default function page() {
           Share the below link with your colleagues and let them enjoy the
           benefits of being a My Frequent Rewards - In Community member.
         </Typography>
-        <Grid container size={12} alignItems="center" spacing={1} >
+        <Grid container size={12} alignItems="center" spacing={1}>
           <Typography fontSize={15} fontWeight={600}>
             {referralLink}
           </Typography>
@@ -197,10 +197,10 @@ export default function page() {
                       <>
                         {sentInvites?.invited.includes(email) && (
                           <Box display="flex" alignItems="center" gap="1">
-                            <CheckIcon color="secondary" />
+                            <CheckIcon color="primary" />
                             <Typography
                               fontSize={13}
-                              color="secondary"
+                              color="primary"
                               fontWeight={600}
                             >
                               invited
@@ -224,7 +224,7 @@ export default function page() {
                     ),
                   }}
                 />
-                <IconButton color="secondary" onClick={() => handleAddEmail()}>
+                <IconButton color="primary" onClick={() => handleAddEmail()}>
                   <AddIcon />
                 </IconButton>
                 {emails.length !== 1 && (
@@ -254,8 +254,8 @@ export default function page() {
                 emails.filter((email) => {
                   return Boolean(
                     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(
-                      email
-                    )
+                      email,
+                    ),
                   );
                 }).length === 0
               }
@@ -273,37 +273,41 @@ export default function page() {
 
         <InvitedEmails sentInvites={sentInvites} />
       </Grid>
-      <Grid size={12}>
-        <Datatable
-          isLoading={false}
-          pagination={[10, 20, 50, 100]}
-          pageSize={20}
-          hideColumnSelector
-          hideDownload
-          noDataMsg="No Record Found."
-          // extra={
-          //   <Box px={2}>
-          //     <DateRangeSelector onUpdate={() => {}} />
-          //   </Box>
-          // }
-          title={
-            <Typography
-              sx={{
-                fontSize: "18px",
-                display: "inline-block",
-                fontWeight: "600",
-              borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
-                pb: 0.5,
-                my: 1,
-              }}
-            >
-              Referral History
-            </Typography>
-          }
-          columns={columns}
-          data={referrals}
-        />
-      </Grid>
+      {referrals?.length > 0 && (
+        <Grid size={12}>
+          <Datatable
+            isLoading={false}
+            pagination={[10, 20, 50, 100]}
+            pageSize={20}
+            hideColumnSelector
+            hideDownload
+            noDataMsg="No Record Found."
+            // extra={
+            //   <Box px={2}>
+            //     <DateRangeSelector onUpdate={() => {}} />
+            //   </Box>
+            // }
+            title={
+              <Typography
+                sx={{
+                  fontSize: "18px",
+                  display: "inline-block",
+                  fontWeight: "600",
+                  borderBottom: (theme) =>
+                    `2px solid ${theme.palette.primary.main}`,
+                  pb: 0.5,
+                  my: 1,
+                }}
+              >
+                Referral History
+              </Typography>
+            }
+            columns={columns}
+            data={referrals}
+          />
+        </Grid>
+      )}
+      <FollowUs />
       <Snackbar
         open={toastOpen}
         autoHideDuration={3000}
@@ -351,18 +355,18 @@ function InvitedEmails({ sentInvites }) {
 
       <TableContainer
         sx={{
-border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
           borderRadius: 2,
           maxHeight: { xs: "400px", lg: "132px" },
-          minWidth: "500px",
+          maxWidth: "100%",
           overflow: "auto",
         }}
       >
         <Table
           size="small"
           sx={{
-            overflow: "scroll",
+            // overflow: "scroll",
             tableLayout: "fixed",
             "& tbody td": {
               height: "32px",
@@ -395,11 +399,11 @@ border:(theme) =>`1px solid ${theme.palette.primary.main}`,
             {users.map((user) => (
               <TableRow
                 key={user.id}
-                sx={{
-                  "&:hover": {
-                    bgcolor: "#bad6e7",
-                  },
-                }}
+                // sx={{
+                //   "&:hover": {
+                //     bgcolor: "#bad6e7",
+                //   },
+                // }}
               >
                 <TableCell align="center">
                   <Tooltip title={user.email} placement="left">
@@ -420,5 +424,280 @@ border:(theme) =>`1px solid ${theme.palette.primary.main}`,
         </Table>
       </TableContainer>
     </Grid>
+  );
+}
+
+function FollowUs() {
+  const [verifyOpen, setVerifyOpen] = React.useState(false);
+  const [selectedSocial, setSelectedSocial] = React.useState(null);
+  const [screenshot, setScreenshot] = React.useState(null);
+  const [socialId, setSocialId] = React.useState("");
+
+  const [socials, setSocials] = React.useState([]);
+  React.useEffect(() => {
+    loadData(
+      api.get(`/api/v1/socials`),
+      (resp) => {
+        setSocials(resp.data);
+      },
+      () => {
+        // isLoading =  false
+      },
+    );
+  }, []);
+  const handleSubmitVerification = async () => {
+    if (!selectedSocial || !screenshot || !socialId.trim()) return;
+
+    const formData = new FormData();
+    formData.append("platform", selectedSocial.platform);
+    formData.append("socialId", socialId);
+    formData.append("screenshot", screenshot);
+
+    const resp = await api.post("/api/v1/follow-social/verify", formData);
+    useToast(resp);
+    setSocials((prev) =>
+      prev.map((item) =>
+        item.platform === selectedSocial.platform
+          ? { ...item, status: "pending" }
+          : item,
+      ),
+    );
+
+    setVerifyOpen(false);
+    setSelectedSocial(null);
+    setScreenshot(null);
+    setSocialId("");
+  };
+
+  const closeVerifyPopup = () => {
+    setVerifyOpen(false);
+    setSelectedSocial(null);
+    setScreenshot(null);
+    setSocialId("");
+  };
+
+  if (!socials?.length) {
+    return null;
+  }
+
+  return (
+    <>
+      <Grid
+        size={12}
+        sx={{
+          mt: 2,
+          borderBottom: `1px solid #e0e0e0`,
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: "18px",
+            display: "inline-block",
+            fontWeight: "600",
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
+            pb: 0.5,
+            my: 2,
+          }}
+        >
+          Get Rewarded for Staying Connected
+        </Typography>
+      </Grid>
+
+      <Grid size={12}>
+        <Typography fontSize={15} mb={3}>
+          Follow us on social media to earn bonus reward points and stay updated
+          with the latest opportunities, surveys, and community updates.
+        </Typography>
+
+        <Grid container spacing={2}>
+          {socials.map((social, i) => (
+            <Grid key={i}>
+              <Box
+                sx={{
+                  width: 220,
+                  p: 2,
+                  border: "1px solid",
+                  borderColor:
+                    social.status === "rewarded"
+                      ? "success.main"
+                      : social.status === "pending"
+                        ? "warning.main"
+                        : "divider",
+                  borderRadius: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1.5,
+                }}
+              >
+                <i
+                  className={`fa-brands ${social.icon}`}
+                  style={{ color: "blue", fontSize: 40, ...social.iconspecs }}
+                />
+
+                <Typography fontWeight={600}>{social.platform}</Typography>
+
+                <Typography
+                  fontSize={16}
+                  fontWeight={600}
+                  color={
+                    social.status === "rewarded"
+                      ? "success.main"
+                      : social.status === "pending"
+                        ? "warning.main"
+                        : "secondary"
+                  }
+                >
+                  {social.status === "rewarded"
+                    ? `${social.points} Points Awarded`
+                    : social.status === "pending"
+                      ? "Verification Pending"
+                      : `+${social.points} Points`}
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    component="a"
+                    href={social.url}
+                    target="_blank"
+                    variant="outlined"
+                    size="small"
+                    onClick={() => {
+                      if (social.status === "not_started") {
+                        setSocials((prev) =>
+                          prev.map((item) =>
+                            item.platform === social.platform
+                              ? { ...item, status: "followed" }
+                              : item,
+                          ),
+                        );
+                      }
+                    }}
+                  >
+                    {social.actionLabel ?? "Like"}
+                  </Button>
+
+                  {social.status === "rewarded" ? (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      size="small"
+                      startIcon={<CheckIcon />}
+                      disabled
+                    >
+                      Reward Claimed
+                    </Button>
+                  ) : social.status === "pending" ? (
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      size="small"
+                      disabled
+                    >
+                      Pending Review
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      disabled={social.status === "not_started"}
+                      onClick={() => {
+                        setSelectedSocial(social);
+                        setVerifyOpen(true);
+                      }}
+                    >
+                      Verify Follow
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+
+      <PopUp
+        open={verifyOpen}
+        onClose={closeVerifyPopup}
+        title={`Verify ${selectedSocial?.platform || ""} Follow`}
+        maxWidth="sm"
+      >
+        <Box p={3}>
+          <Typography mb={2}>
+            Follow our <strong>{selectedSocial?.platform}</strong> page and
+            submit your profile information for verification.
+          </Typography>
+
+          <Page.Input
+            fullWidth
+            label={selectedSocial?.verificationLabel}
+            placeholder={selectedSocial?.verificationLabel}
+            value={socialId}
+            onChange={(e) => setSocialId(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <Button
+            component="label"
+            variant="outlined"
+            fullWidth
+            sx={{ height: 48, fontWeight: 700, fontSize: 16 }}
+          >
+            {screenshot ? "Change Screenshot" : "Upload Screenshot"}
+
+            <input
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  setScreenshot(e.target.files[0]);
+                }
+              }}
+            />
+          </Button>
+
+          {true && (
+            <Typography mt={2} fontSize={14} color="error.main">
+              Maximum 2MB file size allowed
+            </Typography>
+          )}
+
+          <Typography mt={1} fontSize={12} color="text.secondary">
+            Upload a screenshot showing that you have followed, subscribed, or
+            connected with our page.
+          </Typography>
+
+          {screenshot && (
+            <Typography mt={2} fontSize={14} color="success.main">
+              Selected: {screenshot.name}
+            </Typography>
+          )}
+
+          <Box mt={3} display="flex" justifyContent="flex-end" gap={1}>
+            <Button variant="outlined" onClick={closeVerifyPopup}>
+              Cancel
+            </Button>
+
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={!socialId.trim() || !screenshot}
+              onClick={handleSubmitVerification}
+            >
+              Submit Verification
+            </Button>
+          </Box>
+        </Box>
+      </PopUp>
+    </>
   );
 }

@@ -69,7 +69,7 @@ export default function PhoneElement({ question, form, disabled }) {
       errors={ errors?.[question.name] }
     />
     {
-      Boolean(value) &&
+      Boolean(value) && false &&
       !Boolean(errors[question.name]) &&
       <Controller
         name={ `${question.name}-whatsapp` }

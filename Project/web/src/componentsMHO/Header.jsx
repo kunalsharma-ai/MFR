@@ -33,6 +33,7 @@ export default function Header({
   open,
   setOpen,
   setOpenSignUp,
+  setEmailUnverified,
 }) {
   const [profileAnchorEl, setProfileAnchorEl] = React.useState(null);
   const [showLogin, setShowLogin] = React.useState(true);
@@ -43,6 +44,15 @@ export default function Header({
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    if (!query) return;
+    if (![null, undefined].includes(query.verifyemail)) {
+      setOpenSignUp(true);
+      setEmailUnverified(query.verifyemail);
+    }
+  }, [query]);
+
   useEffect(() => {
     if (!query) return;
     if (![null, undefined].includes(query.login)) {
@@ -299,7 +309,7 @@ export default function Header({
         </List>
 
         <Box sx={{ px: 3, mt: 3 }} position="absolute" bottom="20px">
-          {user === null ? (
+          {user?._id === undefined ? (
             <Button
               variant="outlined"
               color="black"
@@ -505,7 +515,7 @@ export default function Header({
             }}
           >
             {showLogin &&
-              (user === null ? (
+              (user?._id === undefined ? (
                 <Button
                   variant="contained"
                   color="primary"

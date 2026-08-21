@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { api } from "@/util";
 const MemberContext = createContext();
@@ -56,14 +56,13 @@ class ValidUser {
     }
     if (pathname.startsWith("/member")) {
       if (!this.emailVerified()) return this.router.replace(`/?verifyemail=${this.userinfo.mail}`)
-    }
-    if (!this.termsAccepted()) return this.router.replace("/auth/terms")
-    if (!(await this.hasCompletedWelcomeSurvey())) {
-      return this.router.replace("/survey?name=welcome")
+      if (!this.termsAccepted()) return this.router.replace("/auth/terms")
+      if (!(await this.hasCompletedWelcomeSurvey())) return this.router.replace("/survey?name=welcome")
     }
   }
 }
 export function MemberProvider({ children }) {
+  const [isLoading, setIsLoading] = React.useState(true)
   const [reload, setReload] = useState(1);
   const [me, setMe] = useState(null);
   const [router, pathname] = [useRouter(), usePathname()];
@@ -83,16 +82,18 @@ export function MemberProvider({ children }) {
     Reload();
     router.replace("/")
   }
+
   function updateMe(data) {
     setMe({
       ...data,
       Reload,
       Logout,
-      update
+      update,
     })
   }
 
   useEffect(() => {
+    setIsLoading(true);
     loadUserInfo()
       .then((resp) => {
         let user = new ValidUser(resp, router)
@@ -100,12 +101,22 @@ export function MemberProvider({ children }) {
         updateMe(resp)
       })
       .catch((err) => {
-        // notLoggedIn(pathname, router);
         setMe(null);
-      });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
   }, [reload, pathname]);
+  useEffect(() => {
+    if (isLoading) return () => { };
+    api
+      .get(`/api/v1/me/profile`)
+      .then(resp => {
 
-  return <MemberContext.Provider value={me}>{children}</MemberContext.Provider>;
+        update({ ...me, ...resp.data })
+      })
+  }, [isLoading])
+  return <MemberContext.Provider value={ me }>{ children }</MemberContext.Provider>;
 }
 
 export function useMember() {
