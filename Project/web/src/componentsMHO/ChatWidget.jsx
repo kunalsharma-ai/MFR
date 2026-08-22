@@ -29,40 +29,8 @@ const formatTime = (date) =>
   });
 
 const dummyMessages = [
-  {
-    id: 1,
-    text: "Hello! How can I help you?",
-    sender: "bot",
-    name: "Support",
-    timestamp: Date.now() - 60000,
-  },
-  {
-    id: 2,
-    text: "I need some info about your services.",
-    sender: "me",
-    name: "You",
-    timestamp: Date.now() - 30000,
-  },
-  {
-    id: 3,
-    text: "Sure, what would you like to know?",
-    sender: "bot",
-    name: "Support",
-    timestamp: Date.now(),
-    status: "unseen"
-  },
+  
 ];
-for (let index = 0; index < 20; index++) {
-  dummyMessages.push({
-    id: 3 + index,
-    text: "Sure, what would you like to know?",
-    sender: index & 1 ? "bot" : "me",
-    name: "Support Team",
-    timestamp: Date.now(),
-    status: index & 1 ? "unseen":"sent"
-  })
-
-}
 
 const chatVariants = {
   hidden: {
