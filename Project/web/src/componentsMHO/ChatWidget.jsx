@@ -16,6 +16,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMember } from "@/Context";
 
 const MotionPaper = motion.create(Paper);
 const MotionBox = motion.create(Box);
@@ -48,8 +49,20 @@ const dummyMessages = [
     sender: "bot",
     name: "Support",
     timestamp: Date.now(),
+    status: "unseen"
   },
 ];
+for (let index = 0; index < 20; index++) {
+  dummyMessages.push({
+    id: 3 + index,
+    text: "Sure, what would you like to know?",
+    sender: index & 1 ? "bot" : "me",
+    name: "Support Team",
+    timestamp: Date.now(),
+    status: index & 1 ? "unseen":"sent"
+  })
+
+}
 
 const chatVariants = {
   hidden: {
@@ -115,6 +128,7 @@ const messageVariants = {
 const MAX_ANIMATED_MESSAGES = 10;
 
 export default function ChatWidget() {
+  const [user] = [useMember()];
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState(dummyMessages);
   const [input, setInput] = React.useState("");
@@ -173,79 +187,27 @@ export default function ChatWidget() {
       ]);
     }, 800);
   };
-
   if (isSurveyPage) return null;
-
   return (
     <>
-      <MotionFab
-        color="primary"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{
-          duration: 0.45,
-          ease: [0.34, 1.56, 0.64, 1],
-        }}
-        onClick={() => setOpen((prev) => !prev)}
-        sx={{
-          height: 48,
-          width: 48,
-          position: "fixed",
-          bottom: 15,
-          right: 15,
-          zIndex: 1300,
-          color: "white",
-          fontSize: 30,
-        }}
-      >
-        <AnimatePresence mode="wait">
-          {open ? (
-            <motion.div
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CloseIcon />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="support"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Badge badgeContent={1} color="error">
-                <SupportAgentIcon sx={{ fontSize: 30 }} />
-              </Badge>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </MotionFab>
+      <ChatButton
+        { ...{
+          messages,
+          open,
+          onOpen: () => setOpen(true),
+          onClose: () => setOpen(false)
+        } }
+      />
 
       <AnimatePresence>
-        {open && (
+        { open && (
           <MotionPaper
-            variants={chatVariants}
+            variants={ chatVariants }
             initial="hidden"
             animate="visible"
             exit="exit"
-            elevation={10}
-            sx={{
+            elevation={ 10 }
+            sx={ {
               position: "fixed",
               bottom: 90,
               right: 20,
@@ -256,10 +218,10 @@ export default function ChatWidget() {
               borderRadius: 4,
               overflow: "hidden",
               zIndex: 1300,
-            }}
+            } }
           >
             <Box
-              sx={{
+              sx={ {
                 px: 2,
                 py: 1,
                 bgcolor: "secondary.dark",
@@ -267,54 +229,54 @@ export default function ChatWidget() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-              }}
+              } }
             >
-              <Typography fontWeight={700}>Support Chat</Typography>
-              <IconButton onClick={() => setOpen(false)}>
-                <CloseIcon sx={{ color: "white" }} />
+              <Typography fontWeight={ 700 }>Support Chat</Typography>
+              <IconButton onClick={ () => setOpen(false) }>
+                <CloseIcon sx={ { color: "white" } } />
               </IconButton>
             </Box>
 
             <MotionBox
-              variants={itemVariants}
+              variants={ itemVariants }
               initial="hidden"
               animate="visible"
-              sx={{
+              sx={ {
                 flex: 1,
                 p: 2,
                 overflowY: "auto",
                 bgcolor: "#f5f5f5",
-              }}
+              } }
             >
               <Box>
-                {messages.map((msg, index) => {
+                { messages.map((msg, index) => {
                   const isMe = msg.sender === "me";
                   const isRecent =
                     index >= messages.length - MAX_ANIMATED_MESSAGES;
 
                   return (
                     <MotionBox
-                      key={msg.id}
-                      custom={isMe}
-                      variants={isRecent ? messageVariants : undefined}
-                      initial={isRecent ? "hidden" : false}
-                      animate={isRecent ? "visible" : false}
-                      exit={{
+                      key={ msg.id }
+                      custom={ isMe }
+                      variants={ isRecent ? messageVariants : undefined }
+                      initial={ isRecent ? "hidden" : false }
+                      animate={ isRecent ? "visible" : false }
+                      exit={ {
                         opacity: 0,
                         scale: 0.8,
                         transition: { duration: 0.15 },
-                      }}
-                      sx={{
+                      } }
+                      sx={ {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: isMe ? "flex-end" : "flex-start",
                         mb: 2,
-                      }}
+                      } }
                     >
                       <MotionBox
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.15 }}
-                        sx={{
+                        whileHover={ { scale: 1.02 } }
+                        transition={ { duration: 0.15 } }
+                        sx={ {
                           px: 2,
                           py: 1.2,
                           maxWidth: "75%",
@@ -322,82 +284,86 @@ export default function ChatWidget() {
                           bgcolor: isMe ? "primary.main" : "grey.300",
                           color: isMe ? "white" : "black",
                           boxShadow: 2,
-                        }}
+                        } }
                       >
-                        {!isMe && (
+                        { !isMe && (
                           <Typography
                             variant="caption"
-                            sx={{
+                            sx={ {
                               display: "block",
                               fontWeight: 700,
                               mb: 0.5,
-                            }}
+                            } }
                           >
-                            {msg.name}
+                            { msg.name }
                           </Typography>
-                        )}
-                        <Typography variant="body2">{msg.text}</Typography>
+                        ) }
+                        <Typography variant="body2">{ msg.text }</Typography>
                         <Box
-                          sx={{
+                          sx={ {
                             display: "flex",
                             justifyContent: "flex-end",
                             alignItems: "center",
                             gap: 0.5,
                             mt: 0.8,
-                          }}
+                          } }
                         >
                           <Typography
                             variant="caption"
-                            sx={{
+                            sx={ {
                               fontSize: 10,
                               fontWeight: 600,
                               lineHeight: 1,
-                            }}
+                            } }
                           >
-                            {formatTime(msg.timestamp)}
+                            { formatTime(msg.timestamp) }
                           </Typography>
-                          {isMe && (
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
-                              <CheckIcon sx={{ fontSize: 14 }} />
-                              <DoneAllIcon sx={{ fontSize: 14 }} />
-                              <DoneAllIcon
-                                sx={{
-                                  fontSize: 15,
-                                  color: "#4FC3F7",
-                                  filter:
-                                    "drop-shadow(0 0 1px rgba(0,0,0,.35))",
-                                }}
-                              />
+                          { isMe && (
+                            <Box sx={ { display: "flex", alignItems: "center" } }>
+                              {
+                                msg.status === "unsent"
+                                  ? <CheckIcon sx={ { fontSize: 14 } } />
+                                  : (msg.status === "sent")
+                                    ? <DoneAllIcon sx={ { fontSize: 14 } } />
+                                    : <DoneAllIcon
+                                      sx={ {
+                                        fontSize: 15,
+                                        color: "#4FC3F7",
+                                        filter:
+                                          "drop-shadow(0 0 1px rgba(0,0,0,.35))",
+                                      } }
+                                    />
+                              }
                             </Box>
-                          )}
+                          ) }
                         </Box>
                       </MotionBox>
                     </MotionBox>
                   );
-                })}
+                }) }
               </Box>
-              <div ref={messagesEndRef} />
+              <div ref={ messagesEndRef } />
             </MotionBox>
 
             <MotionBox
-              variants={itemVariants}
-              sx={{
+              variants={ itemVariants }
+              sx={ {
                 p: 1,
                 display: "flex",
                 gap: 1,
                 borderTop: "1px solid",
                 borderColor: "divider",
                 bgcolor: "background.paper",
-              }}
+              } }
             >
               <TextField
                 fullWidth
                 size="small"
                 placeholder="Type a message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                sx={{
+                value={ input }
+                onChange={ (e) => setInput(e.target.value) }
+                onKeyDown={ (e) => e.key === "Enter" && handleSend() }
+                sx={ {
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 4,
                     bgcolor: "background.paper",
@@ -412,15 +378,75 @@ export default function ChatWidget() {
                       borderWidth: 2,
                     },
                   },
-                }}
+                } }
               />
-              <IconButton color="primary" onClick={handleSend}>
+              <IconButton color="primary" onClick={ handleSend }>
                 <SendIcon />
               </IconButton>
             </MotionBox>
           </MotionPaper>
-        )}
+        ) }
       </AnimatePresence>
     </>
   );
+}
+function ChatButton({ messages, open, onOpen, onClose }) {
+  return <MotionFab
+    color="primary"
+    initial={ { scale: 0, opacity: 0 } }
+    animate={ { scale: 1, opacity: 1 } }
+    whileHover={ { scale: 1.08 } }
+    whileTap={ { scale: 0.9 } }
+    transition={ {
+      duration: 0.45,
+      ease: [0.34, 1.56, 0.64, 1],
+    } }
+    onClick={ open ? onClose : onOpen }
+    sx={ {
+      height: 48,
+      width: 48,
+      position: "fixed",
+      bottom: 15,
+      right: 15,
+      zIndex: 1300,
+      color: "white",
+      fontSize: 30,
+    } }
+  >
+    <AnimatePresence mode="wait">
+      { open ? (
+        <motion.div
+          key="close"
+          initial={ { rotate: -90, opacity: 0 } }
+          animate={ { rotate: 0, opacity: 1 } }
+          exit={ { rotate: 90, opacity: 0 } }
+          transition={ { duration: 0.2 } }
+          style={ {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          } }
+        >
+          <CloseIcon />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="support"
+          initial={ { rotate: 90, opacity: 0 } }
+          animate={ { rotate: 0, opacity: 1 } }
+          exit={ { rotate: -90, opacity: 0 } }
+          transition={ { duration: 0.2 } }
+          style={ {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          } }
+        >
+          <Badge badgeContent={ messages?.filter(m => m?.status === "unseen")?.length } color="error">
+            <SupportAgentIcon sx={ { fontSize: 30 } } />
+          </Badge>
+        </motion.div>
+      ) }
+    </AnimatePresence>
+  </MotionFab>
 }
