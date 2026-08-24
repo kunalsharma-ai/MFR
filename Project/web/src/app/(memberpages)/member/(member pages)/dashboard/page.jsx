@@ -20,6 +20,7 @@ import {
   SurveyPoints,
   CurrentUser,
 } from "@/app/(memberpages)/member/components";
+import OnboardingTour from "../../components/OnboardingTour";
 
 import {
   Poll as PollIcon,
@@ -35,6 +36,7 @@ const formatNumber = (value) =>
 
 export default function page() {
   const user = [];
+  const member = useMember();
   const router = useRouter();
   const [[threshold, setThreshold], [conversionRate, setConversionRate]] = [
     React.useState(15000),
@@ -44,7 +46,12 @@ export default function page() {
     setThreshold(data.threshold);
     setConversionRate(data.conversionRate);
   }
-  if (!user) return <LoadingOverlay />;
+
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+
+  if (!member) return <LoadingOverlay />;
   return (
     <Grid
       container
@@ -58,6 +65,8 @@ export default function page() {
         gap: { xs: 3, md: 4 },
       }}
     >
+      <OnboardingTour greeting={greeting} userName={member?.name?.first} />
+
       <Grid
         size={12}
         container
@@ -86,18 +95,27 @@ export default function page() {
             background: "linear-gradient(180deg, #0c5adb 0%, #063686 100%)",
           },
         }}
+        data-tour="greeting"
       >
         <CurrentUser />
         <SurveyPoints onUpdate={onPointsUpdate} />
       </Grid>
-      <Stats threshold={threshold} conversionRate={conversionRate} />
-      <Surveys />
+
+      <Grid size={12} data-tour="stats">
+        <Stats threshold={threshold} conversionRate={conversionRate} />
+      </Grid>
+
+      <Grid size={12} data-tour="surveys">
+        <Surveys />
+      </Grid>
+
       <Grid
         size={12}
         px={{ xs: 2, md: 3 }}
         py={2}
         justifyContent="center"
         sx={{ border: `1px solid #e0e0e0` }}
+        data-tour="survey-history"
       >
         <SurveyHistory />
       </Grid>
@@ -180,12 +198,6 @@ function Surveys() {
           count: availableSurveys?.internal?.short ?? 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
-        // {
-        //   title: "New Surveys",
-        //   filter: "New Surveys",
-        //   count: availableSurveys?.internal?.newSurveys ?? 0,
-        //   bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
-        // },
       ],
     },
     {
@@ -213,12 +225,6 @@ function Surveys() {
           count: 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
-        // {
-        //   title: "New Surveys",
-        //   filter: "New Surveys",
-        //   count: 0,
-        //   bg: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
-        // },
       ],
     },
   ];
@@ -762,14 +768,6 @@ const StatCards = ({ statistics, isLoading, conversionRate }) => {
     },
   };
 
-  // const hoverShadowMap = [
-  //   "0 20px 35px rgba(79, 70, 229, 0.35)",
-  //   "0 20px 35px rgba(5, 150, 105, 0.35)",
-  //   "0 20px 35px rgba(220, 38, 38, 0.35)",
-  //   "0 20px 35px rgba(217, 119, 6, 0.35)",
-  //   "0 20px 35px rgba(2, 132, 199, 0.35)",
-  //   "0 20px 35px rgba(219, 39, 119, 0.35)",
-  // ];
   const hoverShadowMap = [
     "0 20px 35px rgba(6, 95, 70, 0.45)",
     "0 20px 35px rgba(67, 56, 202, 0.40)",
@@ -778,59 +776,6 @@ const StatCards = ({ statistics, isLoading, conversionRate }) => {
     "0 20px 35px rgba(21, 128, 61, 0.40)",
     "0 20px 35px rgba(180, 83, 9, 0.40)",
   ];
-
-  // const stats = React.useMemo(() => {
-  //   return [
-  //     {
-  //       title: "Survey Participated",
-  //       value: formatNumber(statistics?.total ?? 0),
-  //       icon: <PollIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-  //       hideOnLargeScreen: false,
-  //     },
-  //     {
-  //       title: "Survey Completed",
-  //       value: formatNumber(statistics?.complete ?? 0),
-  //       icon: <CheckCircleIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
-  //       hideOnLargeScreen: false,
-  //     },
-  //     {
-  //       title: "Survey Disqualified",
-  //       value: formatNumber(statistics?.disqualified ?? 0),
-  //       icon: <CancelIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
-  //       hideOnLargeScreen: false,
-  //     },
-  //     {
-  //       title: "Rewards Earned (Points)",
-  //       value: `${formatNumber(statistics?.points ?? 0)} Points`,
-  //       icon: <StarsIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
-  //       hideOnLargeScreen: true,
-  //     },
-  //     {
-  //       title: "Rewards Earned",
-  //       value: {
-  //         usd: `${(Number(statistics?.points ?? 0) * Number(conversionRate)).toMoney("USD")}`,
-  //         local: `${(Number(statistics?.points ?? 0) * Number(conversionRate)).toLocalCurrency("USD")}`,
-  //       },
-  //       icon: <AttachMoneyIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #0891b2 0%, #3b82f6 100%)",
-  //       hideOnLargeScreen: false,
-  //     },
-  //     {
-  //       title: "Rewards Claimed",
-  //       value: {
-  //         usd: `${((statistics?.claimed ?? 0) / 100).toMoney("USD")}`,
-  //         local: `${((statistics?.claimed ?? 0) / 100).toLocalCurrency("USD")}`,
-  //       },
-  //       icon: <PaymentsIcon {...iconStyle} />,
-  //       background: "linear-gradient(135deg, #be185d 0%, #ec4899 100%)",
-  //       hideOnLargeScreen: false,
-  //     },
-  //   ];
-  // }, [statistics, conversionRate]);
 
   const stats = React.useMemo(() => {
     return [
