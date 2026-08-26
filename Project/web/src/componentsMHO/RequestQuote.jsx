@@ -1,5 +1,9 @@
 "use client";
 import React from "react";
+import { useForm } from "react-hook-form";
+import "react-phone-input-2/lib/material.css";
+import { api } from "@/util";
+
 import {
   Drawer,
   IconButton,
@@ -11,32 +15,63 @@ import {
   Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { Form } from "@/components";
+
+import contact from "../validators/contact";
+import { useToast } from "@/hooks";
+
+
+const inputSx = {
+  height: 56,
+  borderRadius: "8px",
+  color: "#151515",
+  paddingX: 1,
+  "& input::placeholder": {
+    color: "#b0b4bc",
+    opacity: 1,
+    fontWeight: 500,
+  },
+  "& fieldset": {
+    border: "none",
+  },
+};
 
 export default function RequestQuote({ open, onClose }) {
-  const [data, setData] = React.useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: {errors, isSubmitting },
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      message: "",
+    },
   });
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+ 
+  const onSubmit = async (data) => {
+    const resp=await api.put("/api/v1/quote",data);
+    useToast(resp);
+    onClose();
+    reset();
+  }
+
+  const handleClose = () => {
+    if(document.activeElement instanceof HTMLElement){
+      document.activeElement.blur();
+    }
+    onClose();
+  }
+
   return (
     <Drawer
       anchor={"top"}
       open={open}
-      onClose={() => {
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        onClose();
-      }}
+      onClose={handleClose}
       sx={{ zIndex: 7000 }}
       ModalProps={{
         BackdropProps: {
@@ -50,6 +85,8 @@ export default function RequestQuote({ open, onClose }) {
     >
       <Box
         id="drawer-container"
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
           width: "100vw",
           height: "100vh",
@@ -65,7 +102,7 @@ export default function RequestQuote({ open, onClose }) {
         }}
       >
         <IconButton
-          onClick={onClose}
+          onClick={handleClose}
           sx={{
             color: "#007acc",
             p: {xs:1,md:2},
@@ -147,156 +184,68 @@ export default function RequestQuote({ open, onClose }) {
 
               <Grid size={12} container spacing={4} mt={6}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    name="name"
-                    value={data.name}
-                    onChange={handleChange}
-                    fullWidth
-                    placeholder="Name"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        height: 56,
-                        borderRadius: "8px",
-                        backgroundColor: "#5B8FE8",
-                        color: "#fff",
-                        paddingX: 1,
-                        "& input::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      },
-                    }}
+                  <Form.Input
+                    name="firstname"
+                    control={control}
+                    validations={contact.firstname}
+                    errors={errors.firstname}
+                    inputSX={inputSx}
+                    placeholder="First Name"  
                   />
                 </Grid>{" "}
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <Form.Input
+                    name="lastname"
+                    control={control}
+                    validations={contact.lastname}
+                    errors={errors.lastname}
+                    inputSX={inputSx}
+                    placeholder="Last Name"
+                  />
+                </Grid>{" "}
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Form.Input
                     name="email"
-                    value={data.email}
-                    onChange={handleChange}
-                    fullWidth
+                    control={control}
+                    validations={contact.email}
+                    errors={errors.email}
+                    inputSX={inputSx}
                     placeholder="Email"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        height: 56,
-                        borderRadius: "8px",
-                        backgroundColor: "#5B8FE8",
-                        color: "#fff",
-                        paddingX: 1,
-                        "& input::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      },
-                    }}
                   />
                 </Grid>{" "}
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
+                  <Form.Phone
                     name="phone"
-                    value={data.phone}
-                    onChange={handleChange}
-                    fullWidth
-                    placeholder="Phone"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        height: 56,
-                        borderRadius: "8px",
-                        backgroundColor: "#5B8FE8",
-                        color: "#fff",
-                        paddingX: 1,
-                        "& input::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      },
+                    control={control}
+                    validations={contact.phone}
+                    errors={errors.phone}
+                    inputSX={{
+                      height: 56,
+                      borderRadius: "8px",
+                      // backgroundColor: "#5B8FE8",
+                      color: "#151515",
+                      border: errors.phone
+                        ? "1px solid #FFD9D9"
+                        : "none",
                     }}
                   />
                 </Grid>{" "}
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    name="subject"
-                    value={data.subject}
-                    onChange={handleChange}
-                    fullWidth
-                    placeholder="Subject"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        height: 56,
-                        borderRadius: "8px",
-                        backgroundColor: "#5B8FE8",
-                        color: "#fff",
-                        paddingX: 1,
-                        "& input::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      },
-                    }}
-                  />
-                </Grid>{" "}
-                <Grid size={12}>
-                  <TextField
+                 <Grid size={12}>
+                  <Form.TextEditor
                     name="message"
-                    value={data.message}
-                    onChange={handleChange}
-                    fullWidth
+                    control={control}
+                    inputSX={inputSx}
                     placeholder="Message"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    InputProps={{
-                      sx: {
-                        borderRadius: "8px",
-                        backgroundColor: "#5B8FE8",
-                        color: "#fff",
-                        paddingX: 1,
-                        "& .MuiInputBase-input": {
-                          padding: "14px",
-                        },
-
-                        "& textarea": {
-                          padding: "14px",
-                        },
-                        "& input::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& textarea::placeholder": {
-                          color: "#EAF1FF",
-                          opacity: 1,
-                          fontWeight: 500,
-                        },
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      },
-                    }}
+                    height={300}
+                    validations={contact.message}
+                    errors={errors.message}
                   />
-                </Grid>
+                </Grid>{" "}
+               
                 <Grid size={12} justifyContent="center" container>
                   <Button
-                    onClick={() => console.log(data)}
+                    type="submit"
+                    disabled={isSubmitting}
                     sx={{
                       bgcolor: "white",
                       width: { xs: "100%", md: "230px" },
@@ -311,7 +260,7 @@ export default function RequestQuote({ open, onClose }) {
                       },
                     }}
                   >
-                    GET QUOTE
+                    {isSubmitting ? "SENDING..." : "GET QUOTE"}
                   </Button>
                 </Grid>
               </Grid>

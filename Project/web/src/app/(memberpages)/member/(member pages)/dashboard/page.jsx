@@ -720,7 +720,7 @@ export function SurveyHistory() {
       pagination={[10, 20, 50, 100]}
       pageSize={20}
       noDataMsg="No Record Found."
-      data={data.filter((info) => info.status !== "invited")}
+      data={data?.filter((info) => info.status !== "invited")}
       hideDownload={true}
       hideColumnSelector
       extra={

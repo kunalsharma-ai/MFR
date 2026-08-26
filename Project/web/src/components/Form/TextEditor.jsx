@@ -27,6 +27,8 @@ const TextEditor = ({
   toolbar,
   editorId,
   dialogScoped,
+  validations,
+  errors
 }) => {
   return (
     <div style={{ marginBottom: "1rem", width: "100%", position: "relative" }}>
@@ -46,8 +48,11 @@ const TextEditor = ({
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <Editor
+         rules={ validations }
+        render={({ field }) => {
+         const hasError = !!errors;
+          const errorMessage = errors?.message;
+          return <><Editor
             id={editorId}
             value={field.value}
             onEditorChange={field.onChange}
@@ -142,7 +147,9 @@ const TextEditor = ({
               },
             }}
           />
-        )}
+          <small style={{color:"red"}}>{errorMessage}</small>
+          </>
+        }}
       />
       {dialogScoped && (
         <style jsx global>{`

@@ -37,6 +37,7 @@ const FormTextField = React.forwardRef((props, ref) => {
         ...InputProps,
         sx: {
           backgroundColor: "white",
+           ...inputSX,
           ...InputProps?.sx,
         },
       }}
@@ -58,7 +59,7 @@ const FormTextField = React.forwardRef((props, ref) => {
       select={multiline ? false : select}
       variant={variant}
       color={color}
-      sx={sx ?? inputSX}
+      sx={sx}
       defaultValue={defaultValue}
       onChange={onChange}
       maxRows={maxRows}
