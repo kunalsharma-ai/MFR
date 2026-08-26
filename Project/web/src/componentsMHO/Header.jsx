@@ -186,6 +186,12 @@ export default function Header({
           path: null,
           sectionLabel: null,
         },
+        {
+          label: "CONTACT US",
+           onClick: () => {
+              document.dispatchEvent(new Event("contactus"));
+          },
+        },
       ];
     }
   };
@@ -489,6 +495,7 @@ export default function Header({
                 }}
               >
                 {item.label}
+{/* Helloooooo */}
               </Box>
             ))}
           </Box>
