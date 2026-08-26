@@ -13,6 +13,8 @@ import { useRouter, usePathname } from "next/navigation";
 import SurveyPointsSidebar from "./SurveyPointsSidebar";
 import CurrentUser from "./CurrentUser";
 import { Page } from "@/util";
+import OnboardingTour from "./OnboardingTour";
+import { useMember } from "@/Context";
 
 const sidebarItems = [
   { icon: "icon-drawer", label: "Dashboard", link: "/member/dashboard", tourId: "nav-dashboard" },
@@ -28,12 +30,17 @@ const sidebarItems = [
 export default function MemberSidebar({ children }) {
   const router = useRouter();
   const pathname = usePathname();
+  const member = useMember();
 
   const theme = useTheme();
   const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
   return (
     <Box display="flex">
+       <OnboardingTour member ={member} greeting={greeting} userName={member?.name?.first} />
       {/* Sidebar */ }
       <Box
         sx={ {

@@ -8,6 +8,7 @@ import {
   Grid,
   Typography,
   CircularProgress,
+  Rating,
 } from "@mui/material";
 
 import { useMember, useQuery } from "@/Context";
@@ -20,13 +21,14 @@ import {
   SurveyPoints,
   CurrentUser,
 } from "@/app/(memberpages)/member/components";
-import OnboardingTour from "../../components/OnboardingTour";
+//import OnboardingTour from "../../components/OnboardingTour";
 
 import {
   Poll as PollIcon,
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
   Stars as StarsIcon,
+  Star as StarIcon,
   AttachMoney as AttachMoneyIcon,
   Payments as PaymentsIcon,
 } from "@mui/icons-material";
@@ -65,7 +67,7 @@ export default function page() {
         gap: { xs: 3, md: 4 },
       }}
     >
-      <OnboardingTour greeting={greeting} userName={member?.name?.first} />
+     
 
       <Grid
         size={12}
@@ -711,6 +713,26 @@ export function SurveyHistory() {
           </Box>
         );
       },
+    },
+    {
+      id: "surveyFeedback",
+      label: "Survey Feedback",
+      render: (info) => (
+        <Page.Box
+          title={`${info.rating} Stars`}
+          sx={{ width: 200, display: "flex", alignItems: "center" }}
+        >
+          <Rating
+            name="survey-feedback"
+            value={info.rating}
+            precision={0.5}
+            readOnly
+            emptyIcon={
+              <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+            }
+          />
+        </Page.Box>
+      ),
     },
   ];
 

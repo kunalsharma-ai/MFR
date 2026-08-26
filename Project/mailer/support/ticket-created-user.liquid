@@ -1,71 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Support Ticket Created</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            background-color: #ffffff;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 32px 24px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        .header {
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-        }
-        .ticket-id {
-            background: #e3f2fd;
-            color: #1565c0;
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin: 12px 0;
-            font-size: 1.1em;
-            letter-spacing: 1px;
-        }
-        .footer {
-            margin-top: 32px;
-            color: #888;
-            font-size: 0.95em;
-            border-top: 1px solid #e0e0e0;
-            padding-top: 16px;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Ticket Confirmation</title>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h2>Support Ticket Confirmation</h2>
-        </div>
-        <p>Dear {{user.name}},</p>
-        <p>
-            Thank you for reaching out to us.<br>
-            This is to confirm that we have received your support request and a ticket has been successfully created. Our support team is currently reviewing the issue and will get back to you in 24 to 48 hours with an update.
-        </p>
-        <div>
-            <span class="ticket-id">Ticket ID: {{data.ticketNo}}</span>
-        </div>
-        <p>
-            In case you have any additional details to share, <strong>please do not reply to this email</strong>. To add more information or respond, please use the Support Ticket system only.
-        </p>
-        <p>
-            Thank you for your patience and cooperation.
-        </p>
-        <div class="footer">
-            Best regards,<br>
-            Support Team
-        </div>
-    </div>
+<body style="margin:0;padding:0;background:#f4f4f4;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f4f4f4" style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<tr><td align="center">
+<table width="920" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="max-width:920px;">
+
+<tr><td height="12" bgcolor="#002b8f"></td></tr>
+
+<tr><td align="center" style="padding:30px 20px;background:#ffffff;">
+<img src="https://myfrequentrewards.com/images/logo/mfr-logo.png" alt="MyFrequentRewards" width="520" style="display:block;max-width:100%;" />
+</td></tr>
+
+<tr><td height="1" bgcolor="#fe7e00"></td></tr>
+
+<tr><td style="padding:35px 60px 15px;">
+<p style="margin:0 0 25px;font-size:28px;color:#0d2372;font-weight:bold;">Hi {{user.name}},</p>
+<p style="margin:0;font-size:22px;line-height:38px;color:#14245d;">Thank you for reaching out to MyFrequent<span style="color:#fe7e00;">Rewards</span>. We have received your support request and your ticket has been successfully created.</p>
+</td></tr>
+
+<tr><td style="padding:30px 55px;">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #d7e4ff;border-radius:12px;background:#f8fbff;">
+
+<tr><td align="center" width="220" style="padding:30px;">
+<img src="https://frequentresearch.com/mailer/mail-icons/mfr/mail.png" width="150" alt="Support Ticket" style="display:block;" />
+</td>
+
+<td style="padding:35px 35px 35px 0;">
+<h2 style="margin:0 0 15px;color:#0d2372;font-size:30px;">Support Ticket Created</h2>
+<p style="margin:0 0 25px;color:#17285f;font-size:20px;line-height:34px;">Our support team is currently reviewing your request and will get back to you within 24 to 48 hours with an update.</p>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td style="background:#fe7e00;color:#ffffff;padding:12px 22px;border-radius:8px;font-size:18px;font-weight:bold;">Ticket ID: {{data.ticketNo}}</td>
+</tr>
+</table>
+
+</td></tr>
+</table>
+
+</td></tr>
+
+<tr><td style="padding:0 55px 35px;">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#fef8f2;border:1px solid #f0d7b4;border-radius:10px;">
+<tr>
+
+<td width="120" align="center" style="padding:25px;">
+<img src="https://frequentresearch.com/mailer/mail-icons/mfr/shield.png" width="85" alt="Information" style="display:block;" />
+</td>
+
+<td style="padding:25px 25px 25px 0;">
+<h3 style="margin:0 0 10px;color:#0d2372;font-size:22px;">Need to Add More Information?</h3>
+<p style="margin:0;font-size:18px;line-height:30px;color:#22305f;">Please do not reply to this email. To add more details or respond to your support request, please use the Support Ticket system.</p>
+</td>
+
+</tr>
+</table>
+
+</td></tr>
+
+<tr><td style="padding:0 55px 35px;">
+<p style="margin:0;font-size:20px;line-height:34px;color:#14245d;">Thank you for your patience and cooperation. We appreciate you reaching out to us and will work to resolve your request as soon as possible.</p>
+</td></tr>
+
+<tr><td style="padding:15px 55px;border-top:1px solid #ddd;border-bottom:1px solid #ddd;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+
+<td align="center" style="padding:8px;">
+<img src="https://frequentresearch.com/mailer/icons/phone.png" alt="Phone" width="30" height="30" style="border:0;display:block;margin-bottom:8px;" />
+<a href="tel:+919810459700" style="color:#000;text-decoration:none;">+91 98104 59700</a>
+</td>
+
+<td align="center" style="padding:8px;border-left:2px solid #ddd;">
+<img src="https://frequentresearch.com/mailer/icons/email.png" alt="Email" width="30" height="30" style="border:0;display:block;margin-bottom:8px;" />
+<a href="mailto:support@myfrequentrewards.com" style="color:#000;text-decoration:none;">support@myfrequentrewards.com</a>
+</td>
+
+<td align="center" style="padding:8px;border-left:2px solid #ddd;">
+<img src="https://frequentresearch.com/mailer/icons/internet.png" alt="Website" width="30" height="30" style="border:0;display:block;margin-bottom:8px;" />
+<a href="https://www.myfrequentrewards.com" style="color:#000;text-decoration:none;">www.myfrequentrewards.com</a>
+</td>
+
+</tr>
+</table>
+</td></tr>
+
+<tr><td align="center" style="padding:35px 20px 20px;">
+<p style="margin:0;color:#333;font-size:18px;">With Regards,</p>
+<p style="margin:10px 0;color:#0d2372;font-size:34px;font-weight:bold;">My Frequent Rewards Team</p>
+<p style="margin:0;color:#666;font-size:22px;">A Frequent Research Survey Panel</p>
+</td></tr>
+
+<tr><td align="center">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0">
+<tr><td width="60" height="2" bgcolor="#fe7e00"></td></tr>
+</table>
+</td></tr>
+
+<tr><td align="center" style="padding:30px 20px 50px;">
+
+<a href="https://www.linkedin.com/company/my-frequent-rewards" style="text-decoration:none;display:inline-block;vertical-align:middle;margin-left:10px;">
+<img src="https://frequentresearch.com/mailer/icons/linkedin.png" alt="LinkedIn" width="30" height="30" style="border:0;display:inline-block;vertical-align:middle;" />
+</a>
+
+<a href="https://www.facebook.com/FrequentResearchFieldwork/" style="text-decoration:none;display:inline-block;vertical-align:middle;margin-left:10px;">
+<img src="https://frequentresearch.com/mailer/icons/facebook.png" alt="Facebook" width="30" height="30" style="border:0;display:inline-block;vertical-align:middle;" />
+</a>
+
+<a href="https://twitter.com/frequentrfs/" style="text-decoration:none;display:inline-block;vertical-align:middle;margin-left:10px;">
+<img src="https://frequentresearch.com/mailer/icons/twitter.png" alt="Twitter/X" width="30" height="30" style="border:0;display:inline-block;vertical-align:middle;" />
+</a>
+
+</td></tr>
+
+<tr><td height="10" bgcolor="#fe7e00"></td></tr>
+
+</table>
+</td></tr>
+</table>
 </body>
 </html>

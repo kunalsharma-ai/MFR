@@ -9,8 +9,10 @@ import XIcon from "@mui/icons-material/X";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
+import { api, loadData } from "@/util";
 
 function Footer() {
+  const [socials, setSocials] = React.useState([]);
   const router = useRouter();
 
   const handleKeyDown = (e, handler) => {
@@ -20,6 +22,17 @@ function Footer() {
     }
   };
 
+  React.useEffect(() => {
+    loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
+  }, []);
+
+  const getSocialUrl = (platform, fallback = "#") => {
+    return (
+      socials.find(
+        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
+      )?.url || fallback
+    );
+  };
   return (
     <React.Suspense fallback={<></>}>
       <Grid
@@ -259,7 +272,10 @@ function Footer() {
               <Box display="flex" alignItems="center" gap={2} mt={1} pl={1}>
                 <IconButton
                   component="a"
-                  href="https://www.linkedin.com/company/my-frequent-rewards"
+                  href={getSocialUrl(
+                    "Linkedin",
+                    "https://www.linkedin.com/company/my-frequent-rewards",
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="linkedin"
@@ -283,7 +299,10 @@ function Footer() {
                 <IconButton
                   component="a"
                   target="_blank"
-                  href="https://www.facebook.com/frequentrfs/"
+                  href={getSocialUrl(
+                    "Facebook",
+                    "https://www.facebook.com/FrequentResearchFieldwork/",
+                  )}
                   rel="noopener noreferrer"
                   aria-label="facebook"
                   sx={{
@@ -310,7 +329,10 @@ function Footer() {
                 <IconButton
                   component="a"
                   target="_blank"
-                  href="https://twitter.com/frequentrfs"
+                  href={getSocialUrl(
+                    "Twitter",
+                    "https://twitter.com/frequentrfs",
+                  )}
                   rel="noopener noreferrer"
                   aria-label="twitter"
                   sx={{
@@ -338,7 +360,10 @@ function Footer() {
                 <IconButton
                   component="a"
                   target="_blank"
-                  href="https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ"
+                  href={getSocialUrl(
+                    "Youtube",
+                    "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+                  )}
                   rel="noopener noreferrer"
                   aria-label="youtube"
                   sx={{
