@@ -92,6 +92,7 @@ export default function Input({
   onStrengthChanged,
   onHide,
   disabled,
+  inputSX,
   ...props
 }) {
   const [hide, setHide] = React.useState(false);
@@ -330,6 +331,7 @@ export default function Input({
                 { ...props }
                 { ...field }
                 value={ field.value ?? "" }
+                inputSX={inputSX}
                 type={
                   type === "password" ? (masked ? "password" : "text") : type
                 }

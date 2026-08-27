@@ -898,6 +898,17 @@ function HeroCards({ setOpenQuote, setOpenLogin, setOpenSignUp }) {
     },
   ];
 
+// This handles the click event for "CONTACT US" in the header
+React.useEffect(()=>{
+  function handleContactUs(){
+    setOpenQuote(true);
+  }
+  document.addEventListener("contactus", handleContactUs);
+    return () => {
+      document.removeEventListener("contactus", handleContactUs);
+    };
+},[]);
+
   return (
     <Container
       maxWidth="lg"
