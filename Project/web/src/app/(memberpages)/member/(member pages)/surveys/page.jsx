@@ -30,6 +30,8 @@ import { loadData, api } from "@/util";
 import { SurveyPoints } from "../../components";
 import { SurveyHistory } from "../dashboard/page";
 import { useQuery } from "@/Context";
+//import {useTourActive} from "@/hooks/useTourActive";
+//import mockSurveys from "@/mockData/surveys"
 
 const permittedStatus = ["invited", "dropout"];
 export default function SurveyDashboard() {

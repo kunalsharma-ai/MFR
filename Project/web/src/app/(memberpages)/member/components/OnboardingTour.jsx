@@ -67,6 +67,7 @@ export default function OnboardingTour({ member, userName = "", greeting = "" })
       options={JOYRIDE_OPTIONS}
       styles={JOYRIDE_STYLES}
       locale={locale}
+      scrolloffset={140}
     />
   );
 }
