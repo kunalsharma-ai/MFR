@@ -43,9 +43,10 @@ const user = {
       return;
     },
   },
-  phone: {
-    required: "Phone Number is Required",
-  },
+  phone: {},
+  // phone: {
+  //   required: "Phone Number is Required",
+  // },
   dob: {
     required: "Date of Birth is Required",
   },
