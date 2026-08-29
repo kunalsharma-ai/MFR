@@ -87,7 +87,7 @@ export default function Phone({
               zIndex: "2000",
             }}
             buttonStyle={{
-              backgroundColor: inputSX.backgroundColor || "#fff",
+              backgroundColor: inputSX?.backgroundColor || "#fff",
               border: "none",
               borderRadius: "8px 0 0 8px",
             }}
