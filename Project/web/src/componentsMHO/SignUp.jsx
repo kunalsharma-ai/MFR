@@ -38,6 +38,7 @@ import {
   X,
   Apple,
   Microsoft,
+  Instagram,
   Login as LoginIcon,
 } from "@mui/icons-material";
 
@@ -75,9 +76,9 @@ const SALUTATION_OPTIONS = [
 ];
 
 const GENDER_SALUTATION_MAP = {
-  Male: "Mr.",
-  Female: "Ms.",
-  Other: "Mx.",
+  Male: ["Mr."],
+  Female: ["Ms.","Mrs."],
+  Other: ["Mx."],
 };
 
 export default function SignUp({
@@ -93,7 +94,6 @@ export default function SignUp({
     useRouter(),
   ];
   const [status, setStatus] = React.useState("signup"); // signup, success, duplicate
-  // const [status, setStatus] = React.useState("success"); // signup, success, duplicate
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
@@ -135,45 +135,31 @@ export default function SignUp({
     loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
   }, []);
 
-  const getSocialUrl = (platform, fallback = "#") => {
-    return (
-      socials.find(
-        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
-      )?.url || fallback
-    );
+  const socialIcons = {
+    linkedin: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+    facebook: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+    youtube: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+    twitter: <X sx={{ color: "black", fontSize: "22px" }} />,
+    x: <X sx={{ color: "black", fontSize: "22px" }} />,
+    Instagram: <Instagram sx={{ color: "#E4405F", fontSize: "22px" }} />,
   };
 
-  const socialsData = [
-    {
-      name: "linkedin",
-      link: getSocialUrl(
-        "Linkedin",
-        "https://www.linkedin.com/company/my-frequent-rewards",
-      ),
-      icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
-    },
-    {
-      name: "facebook",
-      link: getSocialUrl(
-        "Facebook",
-        "https://www.facebook.com/FrequentResearchFieldwork/",
-      ),
-      icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
-    },
-    {
-      name: "youtube",
-      link: getSocialUrl(
-        "Youtube",
-        "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
-      ),
-      icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
-    },
-    {
-      name: "twitter",
-      link: getSocialUrl("Twitter", "https://twitter.com/frequentrfs"),
-      icon: <X sx={{ color: "black", fontSize: "22px" }} />,
-    },
-  ];
+  const socialsData = socials
+    .filter(
+      (social) =>
+        social?.url &&
+        typeof social.url === "string" &&
+        social.url.trim() !== "",
+    )
+    .map((social) => {
+      const name = social.platform?.toLowerCase();
+
+      return {
+        name,
+        link: social.url,
+        icon: socialIcons[name] || <LoginIcon />,
+      };
+    });
 
   const [providers, setProviders] = React.useState([]);
   React.useEffect(() => {
@@ -235,7 +221,7 @@ export default function SignUp({
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
       if (temp?.status == "success") {
-        const resetTimer=30; //Modify timer if required
+        const resetTimer = 30; //Modify timer if required
         setCooldown(resetTimer);
         setStatus("success");
         setCooldown(redirectIn);
@@ -243,7 +229,6 @@ export default function SignUp({
           router.replace("/");
           window?.location?.reload();
         }, resetTimer * 1000);
-       
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -292,21 +277,33 @@ export default function SignUp({
     form.reset(userInfo);
   }, [query]);
   const gender = form.watch("gender");
-  const salutation  = form.watch("name.salutation");
-  
+  const salutation = form.watch("name.salutation");
   React.useEffect(() => {
-  const genderBasedSalutations = SALUTATION_OPTIONS
-    .filter((option) => option.genderBased)
-    .map((option) => option.value);
+    if (!gender || !salutation) return;
 
-  if (!gender || !genderBasedSalutations.includes(salutation)) return;
+    // Dr. and Prof. are not gender-specific.
+    if (salutation === "Dr." || salutation === "Prof.") {
+      return;
+    }
 
-  const newSalutation = GENDER_SALUTATION_MAP[gender];
+    const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
 
-  if (newSalutation && newSalutation !== salutation) {
-    form.setValue("name.salutation", newSalutation);
-  }
-}, [gender, salutation, form]);
+    // Current salutation is already valid for the selected gender.
+    // Female + Mrs. => keep Mrs. || Female + Ms.  => keep Ms.
+    if (validSalutations.includes(salutation)) {
+      return;
+    }
+
+    // Automatically select the first valid salutation.
+    const newSalutation = validSalutations[0];
+
+    if (newSalutation) {
+      form.setValue("name.salutation", newSalutation, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [gender, salutation]);
 
   return (
     <PopUp
@@ -777,47 +774,49 @@ export default function SignUp({
                         Log in
                       </Page.Text>
                     </Grid>
-                    <Grid
-                      container
-                      alignItems="center"
-                      justifyContent="center"
-                      spacing={4}
-                      sx={{
-                        borderTop: "1px solid",
-                        borderColor: "divider",
-                        pt: 2,
-                        mt: 1,
-                      }}
-                    >
-                      <Page.Text
-                        sx={{ fontSize: "13px", color: "text.secondary" }}
-                      >
-                        Follow us on
-                      </Page.Text>
-                      <Page.Box
+                    {socialsData.length > 0 && (
+                      <Grid
+                        container
+                        alignItems="center"
+                        justifyContent="center"
+                        spacing={4}
                         sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "20px",
-
-                          justifyContent: "center",
-                          alignItems: "center",
-                          listStyle: "none",
-                          textDecoration: "none",
+                          borderTop: "1px solid",
+                          borderColor: "divider",
+                          pt: 2,
+                          mt: 1,
                         }}
                       >
-                        {socialsData.map((social) => (
-                          <Page.Link
-                            key={social.name}
-                            href={social.link}
-                            underline="none"
-                            target="_blank"
-                          >
-                            {social.icon}
-                          </Page.Link>
-                        ))}
-                      </Page.Box>
-                    </Grid>
+                        <Page.Text
+                          sx={{ fontSize: "13px", color: "text.secondary" }}
+                        >
+                          Follow us on
+                        </Page.Text>
+                        <Page.Box
+                          sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "20px",
+
+                            justifyContent: "center",
+                            alignItems: "center",
+                            listStyle: "none",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {socialsData.map((social) => (
+                            <Page.Link
+                              key={social.name}
+                              href={social.link}
+                              underline="none"
+                              target="_blank"
+                            >
+                              {social.icon}
+                            </Page.Link>
+                          ))}
+                        </Page.Box>
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>

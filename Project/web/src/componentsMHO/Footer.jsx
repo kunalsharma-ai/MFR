@@ -21,6 +21,17 @@ const socialIcons = {
   instagram: InstagramIcon,
 };
 
+const openLink = (url) => {
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
+const handleKeyDown = (e, handler) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    handler();
+  }
+};
+
 function Footer() {
   const [socials, setSocials] = React.useState([]);
   const router = useRouter();
@@ -81,10 +92,8 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/privacy")}
-                onKeyDown={(e) =>
-                  handleKeyDown(e, () => router.push("/privacy"))
-                }
+                onClick={() => openLink("/privacy")}
+                onKeyDown={(e) => handleKeyDown(e, () => openLink("/privacy"))}
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -104,8 +113,8 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/gdpr")}
-                onKeyDown={(e) => handleKeyDown(e, () => router.push("/gdpr"))}
+                onClick={() => openLink("/gdpr")}
+                onKeyDown={(e) => handleKeyDown(e, () => openLink("/gdpr"))}
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -125,10 +134,8 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/cookies")}
-                onKeyDown={(e) =>
-                  handleKeyDown(e, () => router.push("/cookies"))
-                }
+                onClick={() => openLink("/cookies")}
+                onKeyDown={(e) => handleKeyDown(e, () => openLink("/cookies"))}
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -148,8 +155,8 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/terms")}
-                onKeyDown={(e) => handleKeyDown(e, () => router.push("/terms"))}
+                onClick={() => openLink("/terms")}
+                onKeyDown={(e) => handleKeyDown(e, () => openLink("/terms"))}
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -169,9 +176,9 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/profiling")}
+                onClick={() => openLink("/profiling")}
                 onKeyDown={(e) =>
-                  handleKeyDown(e, () => router.push("/profiling"))
+                  handleKeyDown(e, () => openLink("/profiling"))
                 }
                 sx={{
                   transition: "all 0.3s ease",
@@ -227,8 +234,8 @@ function Footer() {
               <Typography
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push("/faq")}
-                onKeyDown={(e) => handleKeyDown(e, () => router.push("/faq"))}
+                onClick={() => openLink("/faq")}
+                onKeyDown={(e) => handleKeyDown(e, () => openLink("/faq"))}
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
