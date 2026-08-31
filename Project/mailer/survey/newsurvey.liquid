@@ -1,139 +1,430 @@
-<table width="100%" cellpadding="0" cellspacing="0">
+<table
+  width="100%"
+  border="0"
+  cellspacing="0"
+  cellpadding="0"
+  bgcolor="#f4f4f4"
+  style="
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    font-family: Arial, Helvetica, sans-serif;
+  "
+>
   <tr>
     <td align="center">
-      <img
-        src="https://www.myfrequentrewards.com/images/logo/mfr-logo.png"
-        alt="My Frequent Rewards"
-        style="width: 320px; height: auto; margin: 20px 0; padding: 0"
-      />
+      <table
+        width="920"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+        bgcolor="#ffffff"
+        style="
+          max-width: 920px;
+          width: 100%;
+          background: #ffffff;
+        "
+      >
+        <tr>
+          <td height="12" bgcolor="#002b8f"></td>
+        </tr>
+        <tr>
+          <td
+            align="center"
+            style="
+              padding: 28px 20px 24px;
+              background: #ffffff;
+            "
+          >
+            <img
+              src="https://myfrequentrewards.com/images/logo/mfr-logo.png"
+              alt="MyFrequentRewards"
+              width="460"
+              style="
+                display: block;
+                max-width: 100%;
+                height: auto;
+                border: 0;
+              "
+            />
+          </td>
+        </tr>
+        <tr>
+          <td height="3" bgcolor="#fe7e00"></td>
+        </tr>
+        <tr>
+          <td
+            align="center"
+            style="
+              padding: 55px 40px 50px;
+              background: #f5f8ff;
+            "
+          >
+            <table
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              align="center"
+            >
+              <tr>
+                <td
+                  style="
+                    padding: 0 12px;
+                    color: #fe7e00;
+                    font-size: 28px;
+                    font-weight: bold;
+                  "
+                >
+                  •
+                </td>
+                <td
+                  style="
+                    padding: 0 12px;
+                    color: #002b8f;
+                    font-size: 38px;
+                    font-weight: bold;
+                  "
+                >
+                  •
+                </td>
+                <td
+                  style="
+                    padding: 0 12px;
+                    color: #fe7e00;
+                    font-size: 24px;
+                    font-weight: bold;
+                  "
+                >
+                  •
+                </td>
+                <td
+                  style="
+                    padding: 0 12px;
+                    color: #002b8f;
+                    font-size: 32px;
+                    font-weight: bold;
+                  "
+                >
+                  •
+                </td>
+                <td
+                  style="
+                    padding: 0 12px;
+                    color: #fe7e00;
+                    font-size: 26px;
+                    font-weight: bold;
+                  "
+                >
+                  •
+                </td>
+              </tr>
+            </table>
+                    <p
+              style="
+                margin: 28px 0 8px;
+                color: #fe7e00;
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+              "
+            >
+              New Survey Available
+            </p>
+            <h1
+              style="
+                margin: 0;
+                color: #0d2372;
+                font-size: 42px;
+                line-height: 52px;
+                font-weight: bold;
+              "
+            >
+              Hey {{user.name.first}}!
+              <br />
+              We Want Your Opinion
+            </h1>
+            <p
+              style="
+                margin: 22px auto 0;
+                max-width: 680px;
+                color: #263565;
+                font-size: 20px;
+                line-height: 32px;
+              "
+            >
+              A new survey is waiting for you on
+              <strong>MyFrequentRewards</strong>.
+              Share your opinion and earn rewards for your valuable insights.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 40px 55px 20px;">
+            <table
+              width="100%"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              style="
+                background: #ffffff;
+                border: 1px solid #dce5f8;
+                border-radius: 16px;
+              "
+            >
+              <tr>
+                <td
+                  width="180"
+                  align="center"
+                  valign="middle"
+                  style="
+                    padding: 35px 15px;
+                    background: #fff7ef;
+                    border-radius: 16px 0 0 16px;
+                  "
+                >
+                  <table
+                    border="0"
+                    cellspacing="0"
+                    cellpadding="0"
+                    align="center"
+                  >
+                    <tr>
+                      <td
+                        align="center"
+                        style="
+                          color: #fe7e00;
+                          font-size: 54px;
+                          line-height: 60px;
+                          font-weight: bold;
+                        "
+                      >
+                        ★
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        align="center"
+                        style="
+                          padding-top: 8px;
+                          color: #002b8f;
+                          font-size: 16px;
+                          font-weight: bold;
+                          letter-spacing: 1px;
+                        "
+                      >
+                        EARN REWARDS
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td
+                  valign="middle"
+                  style="
+                    padding: 38px 40px;
+                  "
+                >
+                  <h2
+                    style="
+                      margin: 0 0 18px;
+                      color: #0d2372;
+                      font-size: 28px;
+                      line-height: 36px;
+                    "
+                  >
+                    {{survey.name}}
+                  </h2>
+                  <table
+                    width="100%"
+                    border="0"
+                    cellspacing="0"
+                    cellpadding="0"
+                    style="
+                      font-size: 17px;
+                      color: #253562;
+                    "
+                  >
+                    <tr>
+                      <td
+                        width="42%"
+                        style="
+                          padding: 10px 0;
+                          color: #002b8f;
+                          font-weight: bold;
+                          border-bottom: 1px solid #edf1f8;
+                        "
+                      >
+                        Category
+                      </td>
+                      <td
+                        style="
+                          padding: 10px 0;
+                          border-bottom: 1px solid #edf1f8;
+                        "
+                      >
+                        {{survey.category}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          padding: 10px 0;
+                          color: #002b8f;
+                          font-weight: bold;
+                          border-bottom: 1px solid #edf1f8;
+                        "
+                      >
+                        Points
+                      </td>
+                      <td
+                        style="
+                          padding: 10px 0;
+                          border-bottom: 1px solid #edf1f8;
+                        "
+                      >
+                        <strong style="color: #fe7e00;">
+                          {{survey.points}} points
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          padding: 10px 0;
+                          color: #002b8f;
+                          font-weight: bold;
+                        "
+                      >
+                        Estimated Time
+                      </td>
+                      <td style="padding: 10px 0;">
+                        {{survey.time}} minutes
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px 55px 35px;">
+            <table
+              width="100%"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              style="
+                background: #002b8f;
+                border-radius: 16px;
+              "
+            >
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    padding: 38px 35px;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0 0 10px;
+                      color: #fe7e00;
+                      font-size: 17px;
+                      font-weight: bold;
+                      letter-spacing: 1.5px;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Your Opinion Matters
+                  </p>
+                  <h2
+                    style="
+                      margin: 0 0 14px;
+                      color: #ffffff;
+                      font-size: 30px;
+                      line-height: 40px;
+                    "
+                  >
+                    Ready to share your thoughts?
+                  </h2>
+                  <p
+                    style="
+                      margin: 0 auto 25px;
+                      max-width: 650px;
+                      color: #dce7ff;
+                      font-size: 17px;
+                      line-height: 28px;
+                    "
+                  >
+                    Your insights help brands and organizations make
+                    better decisions. Complete this survey and earn
+                    rewards for your time.
+                  </p>
+                  <a
+                    href=""
+                    target="_blank"
+                    style="
+                      display: inline-block;
+                      background: #fe7e00;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 15px 40px;
+                      border-radius: 10px;
+                      font-size: 17px;
+                      font-weight: bold;
+                    "
+                  >
+                    START SURVEY
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td
+            align="center"
+            style="
+              padding: 15px 60px 40px;
+            "
+          >
+            <table
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              align="center"
+            >
+              <tr>
+                <td
+                  height="3"
+                  width="55"
+                  bgcolor="#fe7e00"
+                ></td>
+                <td width="15"></td>
+                <td
+                  height="3"
+                  width="55"
+                  bgcolor="#002b8f"
+                ></td>
+              </tr>
+            </table>
+            <p
+              style="
+                margin: 20px 0 0;
+                color: #0d2372;
+                font-size: 20px;
+                line-height: 32px;
+                font-weight: bold;
+                font-style: italic;
+              "
+            >
+              Your opinion makes a difference.
+            </p>
+          </td>
+        </tr>
+        {% include "mailer/footer.liquid" %}
+      </table>
     </td>
   </tr>
 </table>
-
-<div
-  style="
-    max-width: 600px;
-    margin: auto;
-     background: #fff1d9;
-    border: 1px solid #F5A000;
-    border-radius: 6px;
-  "
->
-  <div style="padding: 30px 20px; font-family: Roboto, sans-serif">
-    <h2 style="color: #2a3940; font-weight: 400; margin: 0">
-      Hey {{user.name.first}},
-    </h2>
-
-    <p
-      style="
-        font-size: 17px;
-        color: #2a3940;
-        
-        margin: 20px 0;
-      "
-    >
-      A new survey is now available for you on MyFrequentRewards.
-    </p>
-
-    <table
-      cellpadding="0"
-      cellspacing="0"
-      width="100%"
-      style="
-        background: #fdf8f0;
-        border: 1px solid #dcdcdc;
-        border-radius: 4px;
-        font-family: Roboto, sans-serif;
-        font-size: 15px;
-        color: #2a3940;
-        margin: 30px auto;
-      "
-    >
-      <tr>
-        <td
-          style="
-            padding: 12px 10px;
-            border-bottom: 1px solid #eaeaea;
-            font-weight: 600;
-            width: 40%;
-          "
-        >
-          Survey Name
-        </td>
-        <td style="padding: 12px 10px; border-bottom: 1px solid #eaeaea">
-          {{survey.name}}
-        </td>
-      </tr>
-
-      <tr>
-        <td
-          style="
-            padding: 12px 10px;
-            border-bottom: 1px solid #eaeaea;
-            font-weight: 600;
-          "
-        >
-          Category
-        </td>
-        <td style="padding: 12px 10px; border-bottom: 1px solid #eaeaea">
-          {{survey.category}}
-        </td>
-      </tr>
-
-      <tr>
-        <td
-          style="
-            padding: 12px 10px;
-            border-bottom: 1px solid #eaeaea;
-            font-weight: 600;
-          "
-        >
-          Points
-        </td>
-        <td style="padding: 12px 10px; border-bottom: 1px solid #eaeaea">
-          {{survey.points}}
-        </td>
-      </tr>
-
-      <tr>
-        <td style="padding: 12px 10px; font-weight: 600">Estimated Time</td>
-        <td style="padding: 12px 10px">{{survey.time}} minutes</td>
-      </tr>
-    </table>
-
-    <p
-      style="
-        font-size: 17px;
-        color: #2a3940;
-        
-        margin: 20px 0;
-      "
-    >
-      Your insights matter, and we'd appreciate your participation. Click below
-      to start the survey.
-    </p>
-
-    <div style="text-align: center; margin: 55px 0">
-      <a
-        href=""
-        target="_blank"
-        style="
-          display: inline-block;
-          background: #001B66;
-          color: #fff;
-          padding: 12px 40px;
-          text-decoration: none;
-          font-size: 18px;
-          border-radius: 2px;
-        "
-      >
-        Start Survey
-      </a>
-    </div>
-
-    <hr style="border: 0; border-top: 2px solid #e8e8e8; margin: 30px 0" />
-
-      {% include  "mailer/footer.liquid" %}
-    </table>
-  </div>
-</div>

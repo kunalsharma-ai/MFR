@@ -43,7 +43,7 @@ import {
 
 import PopUp from "./PopUp";
 import { Form, RequiredLabel } from "@/components";
-import { api, Page } from "@/util";
+import { api, loadData, Page } from "@/util";
 import user from "@/validators/user";
 import { useToast } from "@/hooks";
 import { useMember, useQuery, useTelemetry } from "@/Context";
@@ -64,29 +64,6 @@ function capitalizeName(str) {
     .join("");
 }
 const today = new Date();
-
-const socials = [
-  {
-    name: "linkedin",
-    link: "https://www.linkedin.com/company/my-frequent-rewards",
-    icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
-  },
-  {
-    name: "facebook",
-    link: "https://www.facebook.com/frequentrfs/",
-    icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
-  },
-  {
-    name: "youtube",
-    link: "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
-    icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
-  },
-  {
-    name: "twitter",
-    link: "https://twitter.com/frequentrfs",
-    icon: <X sx={{ color: "black", fontSize: "22px" }} />,
-  },
-];
 
 export default function SignUp({
   open,
@@ -133,10 +110,54 @@ export default function SignUp({
     register,
     handleSubmit,
     reset,
-    setError,
-    clearErrors,
     formState: { errors, isDirty },
   } = form;
+
+  const [socials, setSocials] = React.useState([]);
+
+  React.useEffect(() => {
+    loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
+  }, []);
+
+  const getSocialUrl = (platform, fallback = "#") => {
+    return (
+      socials.find(
+        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
+      )?.url || fallback
+    );
+  };
+
+  const socialsData = [
+    {
+      name: "linkedin",
+      link: getSocialUrl(
+        "Linkedin",
+        "https://www.linkedin.com/company/my-frequent-rewards",
+      ),
+      icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+    },
+    {
+      name: "facebook",
+      link: getSocialUrl(
+        "Facebook",
+        "https://www.facebook.com/FrequentResearchFieldwork/",
+      ),
+      icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+    },
+    {
+      name: "youtube",
+      link: getSocialUrl(
+        "Youtube",
+        "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+      ),
+      icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+    },
+    {
+      name: "twitter",
+      link: getSocialUrl("Twitter", "https://twitter.com/frequentrfs"),
+      icon: <X sx={{ color: "black", fontSize: "22px" }} />,
+    },
+  ];
 
   const [providers, setProviders] = React.useState([]);
   React.useEffect(() => {
@@ -190,9 +211,6 @@ export default function SignUp({
   maxDOB.setFullYear(maxDOB.getFullYear() - 14);
   // const isMinor = new Date(form.watch("dob")).isMinor();
 
-  
-  const [cooldown, setCooldown] = React.useState(0);
-
   const onSubmit = async (userData) => {
     setIsLoading(true);
     try {
@@ -203,19 +221,11 @@ export default function SignUp({
 
       if (temp?.status == "success") {
         setStatus("success");
-        // setTimeout(() => {
-        //   router.replace("/");
-        // }, 30000);
-        setCooldown(60);
-      } else if (
-        temp?.message?.toLowerCase()?.includes("duplicate") ||
-        temp?.message?.toLowerCase()?.includes("already registered")
-      ){
-        setError("mail", {
-          type: "duplicate",
-          message: "This email address is already registered.",
-        });
-      }
+        setTimeout(() => {
+          router.replace("/");
+        }, 30000);
+        // setCooldown(60);
+      } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
       useToast(error);
@@ -226,22 +236,24 @@ export default function SignUp({
 
   const RESEND_SECONDS = 60;
 
+  const [cooldown, setCooldown] = React.useState(0);
+
   React.useEffect(() => {
     if (cooldown <= 0) return;
 
-    // const interval = setInterval(() => {
-    //   setCooldown((prev) => prev - 1);
-    // }, 1000);
-
     const interval = setInterval(() => {
-    setCooldown((prev) => {
-      if (prev <= 1) {
-        router.replace("/");
-        return 0;
-      }
-      return prev - 1;
-    });
-  }, 1000);
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+
+  //   const interval = setInterval(() => {
+  //   setCooldown((prev) => {
+  //     if (prev <= 1) {
+  //       router.replace("/");
+  //       return 0;
+  //     }
+  //     return prev - 1;
+  //   });
+  // }, 1000);
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
@@ -484,9 +496,7 @@ export default function SignUp({
                     <Grid size={12} container direction='row' spacing={1}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Input
-                          {...register("mail", {
-                            onChange: () => clearErrors("mail"),
-                          })}
+                          {...register("mail")}
                           control={control}
                           labelText="Email"
                           required={true}
@@ -788,7 +798,7 @@ export default function SignUp({
                           textDecoration: "none",
                         }}
                       >
-                        {socials.map((social) => (
+                        {socialsData.map((social) => (
                           <Page.Link
                             key={social.name}
                             href={social.link}
@@ -893,9 +903,9 @@ export default function SignUp({
                 >
                   Go To Home
                 </Page.MuiButton>
-                <Typography>
-                  You will be redirected to the home page in {cooldown} seconds.
-                </Typography>
+                {/* <Typography>
+                  Redirecting you to the home page in {cooldown} seconds.
+                </Typography> */}
               </Grid>
             </Grid>
           )}

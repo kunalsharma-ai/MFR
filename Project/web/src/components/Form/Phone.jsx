@@ -17,7 +17,8 @@ export default function Phone({
   onlyCountries,
   disableDropdown,
   disabled = false,
-  selectedCountry
+  selectedCountry,
+  inputSX,
 }) {
   const [defaultCountry, setDefaultCountry] = React.useState();
   React.useEffect(() => {
@@ -79,6 +80,19 @@ export default function Phone({
               color: "grey",
               fontSize: "14px",
               borderColor: errors?.message ? "red" : " #0000003b",
+              ...inputSX,
+            }}
+            containerStyle={{
+              width: "100%",
+              zIndex: "2000",
+            }}
+            buttonStyle={{
+              backgroundColor: inputSX?.backgroundColor || "#fff",
+              border: "none",
+              borderRadius: "8px 0 0 8px",
+            }}
+            dropdownStyle={{
+              color: "#000",
             }}
             inputClass="custom-phone-font"
             specialLabel={""}

@@ -29,7 +29,7 @@ import {
   Microsoft,
   Login as LoginIcon,
 } from "@mui/icons-material";
-import { api, Page, submitWithAjax } from "@/util";
+import { api, loadData, Page, submitWithAjax } from "@/util";
 import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
@@ -44,6 +44,51 @@ function Login({ open, onClose, setOpenSignUp }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [socials, setSocials] = React.useState([]);
+
+  React.useEffect(() => {
+    loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
+  }, []);
+
+  const getSocialUrl = (platform, fallback = "#") => {
+    return (
+      socials.find(
+        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
+      )?.url || fallback
+    );
+  };
+
+  const socialsData = [
+    {
+      name: "linkedin",
+      link: getSocialUrl(
+        "Linkedin",
+        "https://www.linkedin.com/company/my-frequent-rewards",
+      ),
+      icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+    },
+    {
+      name: "facebook",
+      link: getSocialUrl(
+        "Facebook",
+        "https://www.facebook.com/FrequentResearchFieldwork/",
+      ),
+      icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+    },
+    {
+      name: "youtube",
+      link: getSocialUrl(
+        "Youtube",
+        "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+      ),
+      icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+    },
+    {
+      name: "twitter",
+      link: getSocialUrl("Twitter", "https://twitter.com/frequentrfs"),
+      icon: <X sx={{ color: "black", fontSize: "22px" }} />,
+    },
+  ];
 
   return (
     <Dialog
@@ -95,6 +140,7 @@ function Login({ open, onClose, setOpenSignUp }) {
           }}
           setCardType={setCardType}
           setOpenSignUp={setOpenSignUp}
+          socials={socialsData}
         />
       ) : (
         <ForgotCard
@@ -116,30 +162,7 @@ function Login({ open, onClose, setOpenSignUp }) {
 
 export default Login;
 
-const socials = [
-  {
-    name: "linkedin",
-    link: "https://www.linkedin.com/company/my-frequent-rewards",
-    icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
-  },
-  {
-    name: "facebook",
-    link: "https://www.facebook.com/frequentrfs/",
-    icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
-  },
-  {
-    name: "youtube",
-    link: "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
-    icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
-  },
-  {
-    name: "twitter",
-    link: "https://twitter.com/frequentrfs",
-    icon: <X sx={{ color: "black", fontSize: "22px" }} />,
-  },
-];
-
-function LoginCard({ onClose, setCardType, setOpenSignUp }) {
+function LoginCard({ onClose, setCardType, setOpenSignUp, socials }) {
   const [telemetry, router] = [useTelemetry(), useRouter()];
   const [country, setCountry] = React.useState("in");
   const [errorMessage, setErrorMessage] = React.useState(null);

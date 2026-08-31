@@ -78,6 +78,12 @@ export default function SelectElement({ question, form, options, disabled }) {
           width: 0,
           visibilty: "hidden",
         },
+
+        ...(isQuestionDisabled && {
+          "& .MuiOutlinedInput-root": {
+            bgcolor: "#eee", 
+          },
+        }),
       }}
       onChange={onChange}
       hasOthers={question.hasOthers}
