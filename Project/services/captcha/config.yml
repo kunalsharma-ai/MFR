@@ -1,0 +1,61 @@
+default:
+  # Supported types: text, image_selection, puzzle, slider
+  # type: text
+  # letters: "0123456789"
+  # code_length: 6
+  # width: 240
+  # height: 80
+  # noise: 10
+  # font_size: 40
+  # font_family: "DejaVuSans-Bold"
+  type: image_selection
+  width: 420
+  height: 500
+  font_size: 24
+  image_selection:
+    rows: 3
+    columns: 3
+    target_shapes: ["circle", "square", "triangle", "diamond"]
+    min_matches: 2
+    max_matches: 4
+
+domains:
+  localhost:
+    letters: "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    code_length: 5
+    noise: 15
+
+  admin.example.com:
+    letters: "ABCDEFGHJKLMNPQRSTUVWXYZ"
+    code_length: 6
+    width: 300
+    height: 100
+
+  image.localhost:
+    type: image_selection
+    width: 420
+    height: 500
+    font_size: 24
+    image_selection:
+      rows: 3
+      columns: 3
+      target_shapes: ["circle", "square", "triangle", "diamond"]
+      min_matches: 2
+      max_matches: 4
+
+  puzzle.localhost:
+    type: puzzle
+    width: 420
+    height: 440
+    font_size: 20
+    puzzle:
+      choices: 4
+
+  slider.localhost:
+    type: slider
+    width: 420
+    height: 320
+    font_size: 20
+    slider:
+      piece_size: 46
+      tolerance: 8

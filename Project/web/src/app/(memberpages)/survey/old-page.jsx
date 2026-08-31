@@ -44,8 +44,8 @@ function CustomStepIcon(props) {
 
   return (
     <div
-      className={ className }
-      style={ {
+      className={className}
+      style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -60,9 +60,9 @@ function CustomStepIcon(props) {
         color: "white",
         fontWeight: active ? "bold" : "normal",
         fontSize: "12px",
-      } }
+      }}
     >
-      { completed ? <CheckCircle sx={ { fontSize: 16 } } /> : stepNumber }
+      {completed ? <CheckCircle sx={{ fontSize: 16 }} /> : stepNumber}
     </div>
   );
 }
@@ -120,14 +120,11 @@ export default function page() {
     retry: false,
   });
   const surveyTaken = Boolean(surveyError);
-  const {
-    data: questionList,
-    isLoading: questionsLoading,
-  } = useQuery({
+  const { data: questionList, isLoading: questionsLoading } = useQuery({
     queryKey: ["questions", survey?.pages, currentGroupIndex],
     queryFn: async ({ queryKey }) => {
       const [_key, pages, index] = queryKey;
-      const currentPage = (index > 0) ? pages[index - 1] : ["welcome"];
+      const currentPage = index > 0 ? pages[index - 1] : ["welcome"];
       const resp = await api.post("/api/v1/question", {
         name: { $in: currentPage },
       });
@@ -135,28 +132,26 @@ export default function page() {
     },
     enabled: Boolean(survey?.pages?.length),
   });
-  const {
-    data: me
-  } = useQuery({
+  const { data: me } = useQuery({
     queryKey: ["answers", survey?.pages, currentGroupIndex],
     queryFn: async ({ queryKey }) => {
-      console.log("Loading")
+      console.log("Loading");
       const [_key, pages, index] = queryKey;
-      const currentPage = (index > 0) ? pages[index - 1] : ["welcome"];
+      const currentPage = index > 0 ? pages[index - 1] : ["welcome"];
       const resp = await api.post("/api/v1/me", {
         questions: currentPage,
       });
       Object.fromEntries(
         Object.entries(resp.data)
-          .filter(ans => currentPage.includes(ans[0]))
+          .filter((ans) => currentPage.includes(ans[0]))
           .map(([key, value]) => {
-            form.setValue(key, value)
+            form.setValue(key, value);
             if (key === "age") {
-              form.setValue(key, "")
+              form.setValue(key, "");
             }
-            return [key, value]
-          })
-      )
+            return [key, value];
+          }),
+      );
       return resp.data;
     },
     enabled: Boolean(survey?.pages?.length),
@@ -272,16 +267,16 @@ export default function page() {
     } else {
       handleSubmit(onSubmit);
     }
-  }
+  };
   const visibleSteps = steps.filter((step) => step !== "Welcome");
   const visibleStepIndex = visibleSteps.indexOf(steps[currentGroupIndex]);
 
   return (
-    <LocalizationProvider dateAdapter={ AdapterDateFns } adapterLocale={ enGB }>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
       <Grid
-        size={ 12 }
+        size={12}
         container
-        sx={ {
+        sx={{
           bgcolor: "primary.main",
           backgroundImage: "url(/imagesmfr/facts-bg-last.png)",
           backgroundSize: "cover",
@@ -289,17 +284,17 @@ export default function page() {
           backgroundPosition: "center",
           minHeight: "100vh",
           minWidth: "100vw",
-        } }
+        }}
         justifyContent="center"
         alignItems="center"
-        py={ 2 }
+        py={2}
       >
         <Grid
           container
           direction="column"
           alignItems="center"
-          spacing={ 0 }
-          sx={ {
+          spacing={0}
+          sx={{
             width: { xs: "90vw", lg: "80vw", xl: "70vw" },
             minHeight: "90vh",
             overflow: "hidden",
@@ -311,29 +306,31 @@ export default function page() {
             py: 3,
             px: { xs: 1, md: 4 },
             textAlign: "justify",
-          } }
+          }}
         >
-          { isLoading && <LoadingOverlay /> }
+          {isLoading && <LoadingOverlay />}
           <Grid
             container
-            size={ 12 }
+            size={12}
             alignItems="center"
-            justifyContent={ { xs: "center", md: "space-between" } }
-            mb={ 2 }
-            spacing={ { xs: 1, md: 2 } }
-            direction={ { xs: "column", md: "row" } }
-            sx={ { borderBottom: "1px solid #f4f4f4" } }
+            justifyContent={{ xs: "center", md: "space-between" }}
+            mb={2}
+            spacing={{ xs: 1, md: 2 }}
+            direction={{ xs: "column", md: "row" }}
+            sx={{ borderBottom: "1px solid #f4f4f4" }}
           >
-            <Page.Box sx={ { position: "relative" } }>
+            <Page.Box sx={{ position: "relative" }}>
               <Page.Box
-                sx={ {
-                  // width: 220,
-                  // height: { xs: "60px", md: "80px" },
-                  // width: { xs: "180px", md: "300px" },
-                } }
+                sx={
+                  {
+                    // width: 220,
+                    // height: { xs: "60px", md: "80px" },
+                    // width: { xs: "180px", md: "300px" },
+                  }
+                }
               >
-                <img src="/images/logo/mfr/200w.webp" alt="logo" />
-              </Page.Box>{ " " }
+                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
+              </Page.Box>{" "}
               {/* <Page.Box
                 component="img"
                 src="/imagesmfr/dol-sign.gif"
@@ -348,40 +345,40 @@ export default function page() {
             </Page.Box>
 
             <Page.Text
-              sx={ {
+              sx={{
                 flex: 1,
                 textAlign: "center",
                 ml: { xs: 0, md: "-320px" },
                 fontSize: { xs: "18px", lg: "24px" },
                 fontWeight: 600,
                 color: "secondary.main",
-              } }
+              }}
             >
-              { survey?.name }
+              {survey?.name}
             </Page.Text>
           </Grid>
-          { !surveyTaken ? (
+          {!surveyTaken ? (
             !surveyCompleted ? (
               <>
-                { steps[currentGroupIndex] !== "Welcome" && (
-                  <Grid size={ 12 }>
-                    { !isMobile ? (
+                {steps[currentGroupIndex] !== "Welcome" && (
+                  <Grid size={12}>
+                    {!isMobile ? (
                       <Stepper
-                        activeStep={ visibleStepIndex }
+                        activeStep={visibleStepIndex}
                         alternativeLabel
-                        connector={ <StepConnector /> }
-                        sx={ {
+                        connector={<StepConnector />}
+                        sx={{
                           my: 1,
                           width: "100%",
-                        } }
+                        }}
                       >
-                        { visibleSteps.map((label) => (
-                          <Step key={ label }>
+                        {visibleSteps.map((label) => (
+                          <Step key={label}>
                             <StepLabel
-                              StepIconComponent={ (props) => (
-                                <CustomStepIcon { ...props } />
-                              ) }
-                              sx={ {
+                              StepIconComponent={(props) => (
+                                <CustomStepIcon {...props} />
+                              )}
+                              sx={{
                                 "& .MuiStepLabel-label": {
                                   fontSize: "12px",
 
@@ -389,47 +386,47 @@ export default function page() {
                                     fontWeight: "bold",
                                   },
                                 },
-                              } }
+                              }}
                             >
-                              { label }
+                              {label}
                             </StepLabel>
                           </Step>
-                        )) }
+                        ))}
                       </Stepper>
                     ) : (
-                      <Grid size={ 12 } container justifyContent={ "center" }>
+                      <Grid size={12} container justifyContent={"center"}>
                         <MobileStepper
                           variant="dots"
-                          steps={ visibleSteps.length }
+                          steps={visibleSteps.length}
                           position="static"
-                          activeStep={ visibleStepIndex }
-                          sx={ { my: 1 } }
+                          activeStep={visibleStepIndex}
+                          sx={{ my: 1 }}
                         />
                       </Grid>
-                    ) }
+                    )}
                   </Grid>
-                ) }
+                )}
                 <Grid
                   component="form"
-                  onFocus={ () => {
+                  onFocus={() => {
                     setValidationError(null);
-                  } }
-                  onSubmit={ handleSubmit(onSubmit) }
-                  size={ 12 }
+                  }}
+                  onSubmit={handleSubmit(onSubmit)}
+                  size={12}
                   container
                   direction="column"
                   justifyContent="space-between"
-                  sx={ {
+                  sx={{
                     minHeight:
                       steps[currentGroupIndex] !== "Welcome"
                         ? "calc(90vh - 230px)"
                         : "calc(90vh - 145px)",
-                  } }
+                  }}
                 >
                   <Grid
-                    size={ 12 }
+                    size={12}
                     container
-                    sx={ {
+                    sx={{
                       maxHeight: {
                         md:
                           steps[currentGroupIndex] !== "Welcome"
@@ -446,97 +443,101 @@ export default function page() {
                       flex: 1,
                       flexDirection: "column",
                       justifyContent: "space-between",
-                    } }
+                    }}
                   >
                     <Page.Box>
-                      { validationError && (
-                        <Page.Box sx={ { px: 1 } }>
+                      {validationError && (
+                        <Page.Box sx={{ px: 1 }}>
                           <Alert
                             severity="error"
-                            sx={ {
+                            sx={{
                               borderRadius: 2,
                               fontWeight: "500",
                               py: 0,
                               display: "flex",
                               alignItems: "center",
                               backgroundColor: "rgba(255, 219, 219, 1)",
-                            } }
+                            }}
                           >
-                            { validationError }
+                            {validationError}
                           </Alert>
                         </Page.Box>
-                      ) }
+                      )}
                       <Page.Box
-                        sx={ {
+                        sx={{
                           display: "flex",
                           width: "100%",
                           flexWrap: "wrap",
-                        } }
+                        }}
                       >
-                        { currentGroup.map((que) => {
+                        {currentGroup.map((que) => {
                           const question = questionBank[que] ?? null;
                           if (!question)
                             return (
-                              <p key={ que } style={ { width: "50%" } }>
+                              <p key={que} style={{ width: "50%" }}>
                                 Abhi ye question nahi bna hai
                               </p>
                             );
                           return (
                             <Question
-                              form={ form }
-                              key={ question.name }
-                              question={ question }
-                              control={ control }
-                              errors={ errors }
-                              watch={ watch }
+                              form={form}
+                              key={question.name}
+                              question={question}
+                              control={control}
+                              errors={errors}
+                              watch={watch}
                             />
                           );
-                        }) }
+                        })}
                       </Page.Box>
                     </Page.Box>
                   </Grid>
                   <Grid
                     container
-                    size={ 12 }
-                    spacing={ 2 }
-                    sx={ {
+                    size={12}
+                    spacing={2}
+                    sx={{
                       justifyContent: "flex-end",
                       py: 2,
-                    } }
+                    }}
                   >
-                    { isLast ? <Page.MuiButton
-                      variant="contained"
-                      color="secondary"
-                      sx={ {
-                        fontWeight: 600,
-                      } }
-                      loading={ saveOrUpdateAnswers.isPending }
-                      onClick={ handleSubmit(onSubmit) }
-                    >
-                      Submit
-                    </Page.MuiButton> : <Page.MuiButton
-                      variant="contained"
-                      color="secondary"
-                      sx={ {
-                        fontWeight: 600,
-                      } }
-                      onClick={ onNext }
-                    >
-                      Next
-                    </Page.MuiButton> }
+                    {isLast ? (
+                      <Page.MuiButton
+                        variant="contained"
+                        color="secondary"
+                        sx={{
+                          fontWeight: 600,
+                        }}
+                        loading={saveOrUpdateAnswers.isPending}
+                        onClick={handleSubmit(onSubmit)}
+                      >
+                        Submit
+                      </Page.MuiButton>
+                    ) : (
+                      <Page.MuiButton
+                        variant="contained"
+                        color="secondary"
+                        sx={{
+                          fontWeight: 600,
+                        }}
+                        onClick={onNext}
+                      >
+                        Next
+                      </Page.MuiButton>
+                    )}
                   </Grid>
                 </Grid>
               </>
             ) : (
               <Grid
-                size={ 12 }
+                size={12}
                 container
                 alignItems="space-between"
-                sx={ { minHeight: "calc(90vh - 125px)" } }
+                sx={{ minHeight: "calc(90vh - 125px)" }}
               >
                 <Page.Box
                   component="div"
-                  sx={ {
+                  sx={{
                     textAlign: "justify",
                     p: 3,
                     width: "100%",
@@ -544,20 +545,20 @@ export default function page() {
                     bgcolor: "#8cb2f333",
                     border: "1px solid #f4f4f4",
                     textShadow: "1px 1px 1px rgba(0, 0, 0, 0.1)",
-                  } }
-                  dangerouslySetInnerHTML={ { __html: survey.thankyou } }
+                  }}
+                  dangerouslySetInnerHTML={{ __html: survey.thankyou }}
                 />
-                <Grid size={ 12 } container justifyContent="center" mt={ 2 }>
+                <Grid size={12} container justifyContent="center" mt={2}>
                   <Page.MuiButton
                     variant="contained"
                     color="secondary"
-                    sx={ {
+                    sx={{
                       height: "36px",
                       fontWeight: 600,
-                    } }
-                    onClick={ () => {
+                    }}
+                    onClick={() => {
                       router.push("/member/dashboard");
-                    } }
+                    }}
                   >
                     Go to Dashboard
                   </Page.MuiButton>
@@ -565,24 +566,24 @@ export default function page() {
               </Grid>
             )
           ) : (
-            <Grid size={ 12 } container direction="column" spacing={ 3 }>
+            <Grid size={12} container direction="column" spacing={3}>
               <Grid
-                size={ 12 }
+                size={12}
                 container
-                spacing={ 2 }
+                spacing={2}
                 alignSelf="flex-start"
                 alignItems="center"
                 direction="column"
-                mt={ 6 }
+                mt={6}
               >
-                <ErrorIcon color="secondary" sx={ { fontSize: "80px" } } />
+                <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
                 <Page.Text
-                  sx={ { fontSize: "32px", textAlign: "center", my: 2 } }
+                  sx={{ fontSize: "32px", textAlign: "center", my: 2 }}
                 >
                   Survey Already Taken
                 </Page.Text>
                 <Page.Text
-                  sx={ {
+                  sx={{
                     fontSize: "16px",
                     width: { xs: "95%", lg: "75%" },
                     textAlign: "center",
@@ -591,7 +592,7 @@ export default function page() {
                     bgcolor: "#8cb2f333",
                     border: `1px solid rgba(51, 169, 202, 0.4)`,
                     borderRadius: 2,
-                  } }
+                  }}
                 >
                   You have already completed this survey. You can now go to your
                   dashboard to view your rewards and other available surveys.
@@ -599,31 +600,26 @@ export default function page() {
                 <Page.MuiButton
                   variant="contained"
                   color="secondary"
-                  sx={ { fontWeight: "bold", mt: 2 } }
-                  onClick={ () => {
+                  sx={{ fontWeight: "bold", mt: 2 }}
+                  onClick={() => {
                     router.push("/member/dashboard");
-                  } }
+                  }}
                 >
                   Go to Dashboard
                 </Page.MuiButton>
               </Grid>
             </Grid>
-          ) }
+          )}
         </Grid>
 
         <ErrorPopup
-          title={ errorPopup.title }
-          errorMessage={ errorPopup.message }
-          onOk={ errorPopup.onOk }
-          onCancel={
-            errorPopup.onCancel
-          }
-          btns={
-            errorPopup.btns
-          }
+          title={errorPopup.title}
+          errorMessage={errorPopup.message}
+          onOk={errorPopup.onOk}
+          onCancel={errorPopup.onCancel}
+          btns={errorPopup.btns}
         />
       </Grid>
     </LocalizationProvider>
   );
 }
-

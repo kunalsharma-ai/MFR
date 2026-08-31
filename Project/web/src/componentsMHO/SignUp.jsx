@@ -78,16 +78,17 @@ export default function SignUp({
     useRouter(),
   ];
   const [status, setStatus] = React.useState("signup"); // signup, success, duplicate
+  // const [status, setStatus] = React.useState("success"); // signup, success, duplicate
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
 
-  const [salutationChange , setSalutationchange ] = React.useState(false);
+  const [salutationChange, setSalutationchange] = React.useState(false);
   const form = useForm({
     defaultValues: {
       category: "b2b",
       name: {
-        salutation: "Mr.",
+        salutation: "",
         first: "",
         last: "",
       },
@@ -220,11 +221,12 @@ export default function SignUp({
       useToast(temp);
 
       if (temp?.status == "success") {
+        const redirectIn = 30;
         setStatus("success");
+        setCooldown(redirectIn);
         setTimeout(() => {
           router.replace("/");
-        }, 30000);
-        // setCooldown(60);
+        }, redirectIn * 1000);
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -240,20 +242,9 @@ export default function SignUp({
 
   React.useEffect(() => {
     if (cooldown <= 0) return;
-
     const interval = setInterval(() => {
       setCooldown((prev) => prev - 1);
     }, 1000);
-
-  //   const interval = setInterval(() => {
-  //   setCooldown((prev) => {
-  //     if (prev <= 1) {
-  //       router.replace("/");
-  //       return 0;
-  //     }
-  //     return prev - 1;
-  //   });
-  // }, 1000);
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
@@ -282,21 +273,19 @@ export default function SignUp({
     if ("email" in query) userInfo.mail = query?.email;
     form.reset(userInfo);
   }, [query]);
-  const category = form.watch("category");
   const gender = form.watch("gender");
-  const salutation  = form.watch("name.salutation");
-  
-  React.useEffect(() => {
-    if(salutationChange) return;
-
-    if(gender === "Male"){
-      form.setValue("name.salutation", "Mr.");
-    }else if(gender === "Female"){
-      form.setValue("name.salutation", "Ms.");
-    }else if(gender === "Other"){
-      form.setValue("name.salutation", "Mx.");
-    }
-  }, [gender, salutationChange, form]);
+  const salutations = [
+    {
+      gender: ["", "Male"],
+      value: "Mr.",
+      label: "Mr.",
+    },
+    { gender: ["", "Female"], value: "Ms.", label: "Ms." },
+    { gender: ["", "Female"], value: "Mrs.", label: "Mrs." },
+    { gender: ["", "Male", "Female", "Other"], value: "Dr.", label: "Dr." },
+    { gender: ["", "Male", "Female", "Other"], value: "Prof.", label: "Prof." },
+    { gender: ["", "Other"], value: "Mx.", label: "Mx." },
+  ].filter((v) => v.gender.includes(gender));
 
   return (
     <PopUp
@@ -393,9 +382,9 @@ export default function SignUp({
                       }
                     >
                       <img
-                        src="/images/logo/mfr/200w.webp"
+                        src="images/logo/mfr-logo.png"
                         alt="logo"
-                        // width={"100%"}
+                        width={220}
                       />
                     </Page.Box>{" "}
                     {/* <Page.Box
@@ -459,16 +448,10 @@ export default function SignUp({
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
-                          onChange={() => setSalutationchange(true)}
-                          options={[
-                            { value: "Mr.", label: "Mr." },
-                            { value: "Ms.", label: "Ms." },
-                            { value: "Mrs.", label: "Mrs." },
-                            { value: "Dr.", label: "Dr." },
-                            { value: "Prof.", label: "Prof." },
-                            { value: "Mx.", label: "Mx." },
-                          ]}
+                          options={salutations}
                           labelText="Sal."
+                          errors={errors?.name?.salutaion}
+                          validations={user.name.salutation}
                         />
                       </Grid>
                       <Grid size={{ xs: 12, md: 4.9 }}>
@@ -493,7 +476,7 @@ export default function SignUp({
                       </Grid>
                     </Grid>
 
-                    <Grid size={12} container direction='row' spacing={1}>
+                    <Grid size={12} container direction="row" spacing={1}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Input
                           {...register("mail")}
@@ -505,7 +488,7 @@ export default function SignUp({
                         />
                       </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Phone
                           {...register("phone")}
                           control={control}
@@ -549,6 +532,10 @@ export default function SignUp({
                           label="Gender"
                           errors={errors?.gender}
                           validations={user.gender}
+                          onChange={(e) => {
+                            console.log(form.getValues("name.salutation"));
+                            form.setValue("name.salutation", "");
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -888,7 +875,7 @@ export default function SignUp({
                     p: { xs: 2, sm: 4 },
                   }}
                 >
-                  Please check your inbox/Spam and{" "}
+                  Please check your Inbox/Spam and{" "}
                   <strong>click the verification link</strong> to confirm your
                   email and <strong>activate your account.</strong> Once
                   verified, you will be able to create your password and access
@@ -903,9 +890,9 @@ export default function SignUp({
                 >
                   Go To Home
                 </Page.MuiButton>
-                {/* <Typography>
+                <Typography>
                   Redirecting you to the home page in {cooldown} seconds.
-                </Typography> */}
+                </Typography>
               </Grid>
             </Grid>
           )}
@@ -1170,6 +1157,7 @@ function GenderRadioGroup({
   label = "Gender",
   validations,
   isDisabled = false,
+  onChange,
 }) {
   const hasError = !!errors;
   const errorMessage = errors?.message;
@@ -1203,7 +1191,10 @@ function GenderRadioGroup({
             <RadioGroup
               row
               value={field.value || ""}
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e) => {
+                field.onChange(e.target.value);
+                onChange(e);
+              }}
               sx={{
                 display: "flex",
                 gap: 1.5,

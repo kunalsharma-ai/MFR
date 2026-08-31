@@ -47,10 +47,8 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <CssBaseline />
-          { children }
-          <ContextProviders>
-            <ChatWidget />
-          </ContextProviders>
+          {children}
+          <ContextProviders>{/* <ChatWidget /> */}</ContextProviders>
           <Toast />
         </Providers>
         <GoogleTagManager gtmId="GTM-WG9FZ9LK" />

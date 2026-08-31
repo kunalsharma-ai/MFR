@@ -188,8 +188,8 @@ export default function Header({
         },
         {
           label: "CONTACT US",
-           onClick: () => {
-              document.dispatchEvent(new Event("contactus"));
+          onClick: () => {
+            document.dispatchEvent(new Event("contactus"));
           },
         },
       ];
@@ -241,9 +241,9 @@ export default function Header({
         >
           <Box
             component="img"
-            src="/images/logo/mfr/200w.webp"
+            src="images/logo/mfr-logo.png"
             alt="logo"
-            // width={220}
+            width={220}
             style={{ filter: "brightness(0) saturate(100%) invert(100%)" }}
           />
           {/* <Box
@@ -422,7 +422,7 @@ export default function Header({
         minHeight: { xs: 70, lg: 78 },
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl" px={3}>
         <Grid
           size={12}
           container
@@ -446,9 +446,10 @@ export default function Header({
           >
             <Box
               component="img"
-              src="images/logo/mfr/200w.webp"
+              // src="images/logo/mfr/200w.webp"
+              src="images/logo/mfr-logo.png"
               alt="logo"
-              // width={220}
+              width={220}
             />
           </Box>
 
@@ -495,7 +496,7 @@ export default function Header({
                 }}
               >
                 {item.label}
-{/* Helloooooo */}
+                {/* Helloooooo */}
               </Box>
             ))}
           </Box>

@@ -33,7 +33,7 @@ function page() {
     );
   }, [query]);
   function starRatingChanged(value) {
-    api.put(`/api/v1/survey/response`, { sid: query.sid, rating: value })
+    api.put(`/api/v1/survey/response`, { sid: query.sid, rating: value });
   }
   return (
     <Page.Box
@@ -103,7 +103,7 @@ function page() {
                   mb: 2,
                 }}
               >
-                <img src="/images/logo/mfr/200w.webp" alt="logo" />
+                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
                 {/* <Page.Box
                   component="img"
                   src="/imagesmfr/dol-sign.gif"
@@ -522,7 +522,7 @@ function StarRating({ onChange }) {
         precision={0.5}
         onChange={(event, newValue) => {
           setValue(newValue);
-          onChange(newValue)
+          onChange(newValue);
         }}
         onChangeActive={(event, newHover) => {
           setHover(newHover);

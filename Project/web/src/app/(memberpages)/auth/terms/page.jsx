@@ -53,7 +53,7 @@ export default function page() {
               // width: { xs: "180px", md: "300px" },
             }}
           >
-            <img src="/images/logo/mfr/200w.webp" alt="logo" />
+            <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
           </Page.Box>{" "}
           {/* <Page.Box
             component="img"
