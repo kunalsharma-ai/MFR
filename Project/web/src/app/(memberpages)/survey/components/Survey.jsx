@@ -117,7 +117,8 @@ export default function Survey({
             <>
               <p>
                 The age you entered doesn't match the information on your
-                profile. Please check and correct your age and try again.</p>
+                profile. Please check and correct your age and try again.
+              </p>
             </>
           ),
         });
@@ -166,8 +167,34 @@ export default function Survey({
             maxWidth: "100%",
             overflowY: "auto",
             borderRadius: 2,
-            bgcolor: (theme) => theme.palette.cardbg.main,
-            border: theme => `1px solid ${theme.palette.divider}`,
+            borderTopLeftRadius: isProfile ? 0 : "16px",
+            borderTopRightRadius: isProfile ? 0 : "16px",
+
+            scrollbarWidth: "thin",
+            scrollbarColor: (theme) =>
+              `${theme.palette.primary.main} ${theme.palette.page.main}`,
+
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: (theme) => theme.palette.page.main,
+              borderRadius: "10px",
+            },
+
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: (theme) => theme.palette.primary.main,
+              borderRadius: "10px",
+              border: "2px solid",
+              borderColor: (theme) => theme.palette.page.main,
+            },
+
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: (theme) => theme.palette.secondary.main,
+            },
+            bgcolor: (theme) => theme.palette.secondary.main,
+            border: (theme) => `1px solid ${theme.palette.divider}`,
             py: 2,
             px: { xs: 0, md: 2 },
             flex: 1,
@@ -235,7 +262,7 @@ export default function Survey({
                 }}
                 onClick={onNext}
               >
-                { [null, undefined].includes(currentPage) ? "Start": "Next "}
+                {[null, undefined].includes(currentPage) ? "Start" : "Next "}
               </Page.MuiButton>
             )}
           </Grid>
@@ -251,37 +278,35 @@ function SurveySteps({ currentPage, steps }) {
 
   return (
     <Grid size={12}>
-  
-        <Tabs
-          value={currentPage}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
-          sx={{
-            mb: 2,
-            borderBottom: 1,
-            borderColor: "divider",
-            "& .MuiTab-root": {
-              textTransform: "none",
-              minHeight: 48,
-              fontSize: 13,
-              fontWeight: 500,
-            },
-            "& .Mui-selected": {
-              fontWeight: 700,
-            },
-          }}
-        >
-          {steps.map((label, index) => (
-            <Tab
-              key={label}
-              value={index}
-              label={index < currentPage ? `✓ ${label}` : label}
-              disabled
-            />
-          ))}
-        </Tabs>
-  
+      <Tabs
+        value={currentPage}
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+        sx={{
+          mb: 2,
+          borderBottom: 1,
+          borderColor: "divider",
+          "& .MuiTab-root": {
+            textTransform: "none",
+            minHeight: 48,
+            fontSize: 13,
+            fontWeight: 500,
+          },
+          "& .Mui-selected": {
+            fontWeight: 700,
+          },
+        }}
+      >
+        {steps.map((label, index) => (
+          <Tab
+            key={label}
+            value={index}
+            label={index < currentPage ? `✓ ${label}` : label}
+            disabled
+          />
+        ))}
+      </Tabs>
     </Grid>
   );
 }

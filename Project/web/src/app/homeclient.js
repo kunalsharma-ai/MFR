@@ -92,12 +92,14 @@ export default function Home() {
 
       <main>
         <div ref={homeRef} className="scroll-target">
+          <ContextProviders>
           <HeroSection
             openSignUp={openSignUp}
             setOpenSignUp={setOpenSignUp}
             openLogin={openLogin}
             setOpenLogin={setOpenLogin}
           />
+          </ContextProviders>
         </div>
 
         <div ref={aboutRef} className="scroll-target">

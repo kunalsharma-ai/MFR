@@ -19,6 +19,7 @@ import { Form } from "@/components";
 
 import contact from "../validators/contact";
 import { useToast } from "@/hooks";
+import { useTelemetry } from "@/Context";
 
 
 const inputSx = {
@@ -37,11 +38,13 @@ const inputSx = {
 };
 
 export default function RequestQuote({ open, onClose }) {
+  const [telemetry] = [useTelemetry()];
+  const [country, setCountry] = React.useState("")
   const {
     control,
     handleSubmit,
     reset,
-    formState: {errors, isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm({
     mode: "onBlur",
     defaultValues: {
@@ -52,28 +55,40 @@ export default function RequestQuote({ open, onClose }) {
       message: "",
     },
   });
- 
+
   const onSubmit = async (data) => {
-    const resp=await api.put("/api/v1/quote",data);
+    const resp = await api.put("/api/v1/quote", data);
     useToast(resp);
     onClose();
     reset();
   }
 
   const handleClose = () => {
-    if(document.activeElement instanceof HTMLElement){
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
     onClose();
   }
+  React.useEffect(() => {
+    if (!telemetry) return;
+    telemetry.timezone().then((timezone) => {
+      form.setValue("timezone", timezone);
+    });
+    telemetry.ip().then((resp) => {
+      if (resp.country) {
+        // form.setValue("address.0.country", resp.country.toLowerCase());
+        setCountry(resp.country.toLowerCase());
+      }
+    });
+  }, [telemetry]);
 
   return (
     <Drawer
-      anchor={"top"}
-      open={open}
-      onClose={handleClose}
-      sx={{ zIndex: 7000 }}
-      ModalProps={{
+      anchor={ "top" }
+      open={ open }
+      onClose={ handleClose }
+      sx={ { zIndex: 7000 } }
+      ModalProps={ {
         BackdropProps: {
           sx: {
             backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -81,13 +96,13 @@ export default function RequestQuote({ open, onClose }) {
             pointerEvents: "none",
           },
         },
-      }}
+      } }
     >
       <Box
         id="drawer-container"
         component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
+        onSubmit={ handleSubmit(onSubmit) }
+        sx={ {
           width: "100vw",
           height: "100vh",
           bgcolor: "primary.main",
@@ -99,13 +114,13 @@ export default function RequestQuote({ open, onClose }) {
           p: 2,
           overflowY: "auto",
           position: "relative",
-        }}
+        } }
       >
         <IconButton
-          onClick={handleClose}
-          sx={{
+          onClick={ handleClose }
+          sx={ {
             color: "#007acc",
-            p: {xs:1,md:2},
+            p: { xs: 1, md: 2 },
             bgcolor: "white",
             position: "absolute",
             right: 15,
@@ -116,43 +131,43 @@ export default function RequestQuote({ open, onClose }) {
               bgcolor: "primary.main",
               borderColor: "white",
             },
-          }}
+          } }
         >
-          <CloseIcon sx={{ fontSize: 28 }} />
+          <CloseIcon sx={ { fontSize: 28 } } />
         </IconButton>
 
         <Grid
-          size={12}
+          size={ 12 }
           container
           alignItems="center"
           justifyContent="center"
-          sx={{ height: "100%" }}
+          sx={ { height: "100%" } }
         >
           <Container maxWidth="md">
             <Grid
-              size={12}
+              size={ 12 }
               container
               direction="column"
               alignItems="center"
               justifyContent="center"
             >
               <Typography
-                fontSize={16}
-                sx={{ letterSpacing: 5, mb: 1, fontWeight: 500 }}
+                fontSize={ 16 }
+                sx={ { letterSpacing: 5, mb: 1, fontWeight: 500 } }
               >
                 GET QUOTE
               </Typography>
               <Box
-                sx={{
+                sx={ {
                   fontWeight: "bold",
                   fontSize: { xs: "16px", md: "28px" },
                   display: "inline-block",
                   letterSpacing: 2.5,
-                }}
+                } }
               >
                 MAKE A FREE CONSULTANT
                 <Box
-                  sx={{
+                  sx={ {
                     width: "40%",
                     mx: "auto",
                     mt: 1,
@@ -161,10 +176,10 @@ export default function RequestQuote({ open, onClose }) {
                     borderRadius: 5,
                     position: "relative",
                     overflow: "hidden",
-                  }}
+                  } }
                 >
                   <Box
-                    sx={{
+                    sx={ {
                       width: 10,
                       height: 10,
                       bgcolor: "primary.main",
@@ -177,49 +192,50 @@ export default function RequestQuote({ open, onClose }) {
                         from: { left: 0 },
                         to: { left: "calc(100% - 10px)" },
                       },
-                    }}
+                    } }
                   />
                 </Box>
               </Box>
 
-              <Grid size={12} container spacing={4} mt={6}>
-                <Grid size={{ xs: 12, md: 6 }}>
+              <Grid size={ 12 } container spacing={ 4 } mt={ 6 }>
+                <Grid size={ { xs: 12, md: 6 } }>
                   <Form.Input
                     name="firstname"
-                    control={control}
-                    validations={contact.firstname}
-                    errors={errors.firstname}
-                    inputSX={inputSx}
-                    placeholder="First Name"  
+                    control={ control }
+                    validations={ contact.firstname }
+                    errors={ errors.firstname }
+                    inputSX={ inputSx }
+                    placeholder="First Name"
                   />
-                </Grid>{" "}
-                <Grid size={{ xs: 12, md: 6 }}>
+                </Grid>{ " " }
+                <Grid size={ { xs: 12, md: 6 } }>
                   <Form.Input
                     name="lastname"
-                    control={control}
-                    validations={contact.lastname}
-                    errors={errors.lastname}
-                    inputSX={inputSx}
+                    control={ control }
+                    validations={ contact.lastname }
+                    errors={ errors.lastname }
+                    inputSX={ inputSx }
                     placeholder="Last Name"
                   />
-                </Grid>{" "}
-                <Grid size={{ xs: 12, md: 6 }}>
+                </Grid>{ " " }
+                <Grid size={ { xs: 12, md: 6 } }>
                   <Form.Input
                     name="email"
-                    control={control}
-                    validations={contact.email}
-                    errors={errors.email}
-                    inputSX={inputSx}
+                    control={ control }
+                    validations={ contact.email }
+                    errors={ errors.email }
+                    inputSX={ inputSx }
                     placeholder="Email"
                   />
-                </Grid>{" "}
-                <Grid size={{ xs: 12, md: 6 }}>
+                </Grid>{ " " }
+                <Grid size={ { xs: 12, md: 6 } }>
                   <Form.Phone
                     name="phone"
-                    control={control}
-                    validations={contact.phone}
-                    errors={errors.phone}
-                    inputSX={{
+                    control={ control }
+                    selectedCountry={ country }
+                    validations={ contact.phone }
+                    errors={ errors.phone }
+                    inputSX={ {
                       height: 56,
                       borderRadius: "8px",
                       // backgroundColor: "#5B8FE8",
@@ -227,26 +243,26 @@ export default function RequestQuote({ open, onClose }) {
                       border: errors.phone
                         ? "1px solid #FFD9D9"
                         : "none",
-                    }}
+                    } }
                   />
-                </Grid>{" "}
-                 <Grid size={12}>
+                </Grid>{ " " }
+                <Grid size={ 12 }>
                   <Form.TextEditor
                     name="message"
-                    control={control}
-                    inputSX={inputSx}
+                    control={ control }
+                    inputSX={ inputSx }
                     placeholder="Message"
-                    height={300}
-                    validations={contact.message}
-                    errors={errors.message}
+                    height={ 300 }
+                    validations={ contact.message }
+                    errors={ errors.message }
                   />
-                </Grid>{" "}
-               
-                <Grid size={12} justifyContent="center" container>
+                </Grid>{ " " }
+
+                <Grid size={ 12 } justifyContent="center" container>
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
-                    sx={{
+                    disabled={ isSubmitting }
+                    sx={ {
                       bgcolor: "white",
                       width: { xs: "100%", md: "230px" },
                       height: 55,
@@ -258,9 +274,9 @@ export default function RequestQuote({ open, onClose }) {
                         bgcolor: "secondary.main",
                         color: "white",
                       },
-                    }}
+                    } }
                   >
-                    {isSubmitting ? "SENDING..." : "GET QUOTE"}
+                    { isSubmitting ? "SENDING..." : "GET QUOTE" }
                   </Button>
                 </Grid>
               </Grid>
