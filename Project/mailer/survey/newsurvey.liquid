@@ -25,9 +25,12 @@
           background: #ffffff;
         "
       >
+        <!-- Top Accent -->
         <tr>
           <td height="12" bgcolor="#002b8f"></td>
         </tr>
+
+        <!-- Logo -->
         <tr>
           <td
             align="center"
@@ -49,9 +52,13 @@
             />
           </td>
         </tr>
+
+        <!-- Orange Divider -->
         <tr>
           <td height="3" bgcolor="#fe7e00"></td>
         </tr>
+
+        <!-- Hero Section -->
         <tr>
           <td
             align="center"
@@ -60,6 +67,7 @@
               background: #f5f8ff;
             "
           >
+            <!-- Decorative Dots -->
             <table
               border="0"
               cellspacing="0"
@@ -77,6 +85,7 @@
                 >
                   •
                 </td>
+
                 <td
                   style="
                     padding: 0 12px;
@@ -87,6 +96,7 @@
                 >
                   •
                 </td>
+
                 <td
                   style="
                     padding: 0 12px;
@@ -97,6 +107,7 @@
                 >
                   •
                 </td>
+
                 <td
                   style="
                     padding: 0 12px;
@@ -107,6 +118,7 @@
                 >
                   •
                 </td>
+
                 <td
                   style="
                     padding: 0 12px;
@@ -119,31 +131,47 @@
                 </td>
               </tr>
             </table>
-                    <p
+
+            <!-- Main Heading -->
+            <h1
               style="
                 margin: 28px 0 8px;
-                color: #fe7e00;
-                font-size: 18px;
+                color: #0d2372;
+                font-size: 44px;
+                line-height: 54px;
                 font-weight: bold;
-                letter-spacing: 2px;
-                text-transform: uppercase;
               "
             >
               New Survey Available
-            </p>
-            <h1
+            </h1>
+
+            <!-- Greeting -->
+            <p
               style="
-                margin: 0;
-                color: #0d2372;
-                font-size: 42px;
-                line-height: 52px;
+                margin: 12px 0 0;
+                color: #fe7e00;
+                font-size: 18px;
+                line-height: 28px;
                 font-weight: bold;
               "
             >
               Hey {{user.name.first}}!
-              <br />
+            </p>
+
+            <!-- Secondary Heading -->
+            <h2
+              style="
+                margin: 6px 0 0;
+                color: #0d2372;
+                font-size: 28px;
+                line-height: 38px;
+                font-weight: bold;
+              "
+            >
               We Want Your Opinion
-            </h1>
+            </h2>
+
+            <!-- Description -->
             <p
               style="
                 margin: 22px auto 0;
@@ -159,6 +187,8 @@
             </p>
           </td>
         </tr>
+
+        <!-- Survey Details -->
         <tr>
           <td style="padding: 40px 55px 20px;">
             <table
@@ -173,6 +203,7 @@
               "
             >
               <tr>
+                <!-- Reward Panel -->
                 <td
                   width="180"
                   align="center"
@@ -202,6 +233,7 @@
                         ★
                       </td>
                     </tr>
+
                     <tr>
                       <td
                         align="center"
@@ -218,6 +250,8 @@
                     </tr>
                   </table>
                 </td>
+
+                <!-- Survey Information -->
                 <td
                   valign="middle"
                   style="
@@ -234,6 +268,7 @@
                   >
                     {{survey.name}}
                   </h2>
+
                   <table
                     width="100%"
                     border="0"
@@ -244,27 +279,9 @@
                       color: #253562;
                     "
                   >
-                    <tr>
-                      <td
-                        width="42%"
-                        style="
-                          padding: 10px 0;
-                          color: #002b8f;
-                          font-weight: bold;
-                          border-bottom: 1px solid #edf1f8;
-                        "
-                      >
-                        Category
-                      </td>
-                      <td
-                        style="
-                          padding: 10px 0;
-                          border-bottom: 1px solid #edf1f8;
-                        "
-                      >
-                        {{survey.category}}
-                      </td>
-                    </tr>
+                   
+
+                    <!-- Points -->
                     <tr>
                       <td
                         style="
@@ -276,6 +293,7 @@
                       >
                         Points
                       </td>
+
                       <td
                         style="
                           padding: 10px 0;
@@ -287,6 +305,8 @@
                         </strong>
                       </td>
                     </tr>
+
+                    <!-- Estimated Time -->
                     <tr>
                       <td
                         style="
@@ -297,6 +317,7 @@
                       >
                         Estimated Time
                       </td>
+
                       <td style="padding: 10px 0;">
                         {{survey.time}} minutes
                       </td>
@@ -307,6 +328,8 @@
             </table>
           </td>
         </tr>
+
+        <!-- Survey CTA -->
         <tr>
           <td style="padding: 20px 55px 35px;">
             <table
@@ -338,6 +361,7 @@
                   >
                     Your Opinion Matters
                   </p>
+
                   <h2
                     style="
                       margin: 0 0 14px;
@@ -348,6 +372,7 @@
                   >
                     Ready to share your thoughts?
                   </h2>
+
                   <p
                     style="
                       margin: 0 auto 25px;
@@ -361,27 +386,101 @@
                     better decisions. Complete this survey and earn
                     rewards for your time.
                   </p>
+
                   <a
-                    href=""
-                    target="_blank"
-                    style="
-                      display: inline-block;
-                      background: #fe7e00;
-                      color: #ffffff;
-                      text-decoration: none;
-                      padding: 15px 40px;
-                      border-radius: 10px;
-                      font-size: 17px;
-                      font-weight: bold;
-                    "
-                  >
-                    START SURVEY
-                  </a>
+  href="{{survey.link}}"
+  target="_blank"
+  style="
+    display: inline-block;
+    background: #fe7e00;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px 40px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: bold;
+  "
+>
+  START SURVEY
+</a>
+
+<table
+  border="0"
+  cellspacing="0"
+  cellpadding="0"
+  align="center"
+  width="100%"
+  style="margin-top: 22px;"
+>
+  <tr>
+    <td
+      align="center"
+      style="
+        color: #dce7ff;
+        font-size: 14px;
+        line-height: 22px;
+      "
+    >
+      If the button above doesn't work, copy and paste this link into your
+      browser:
+    </td>
+  </tr>
+
+  <tr>
+    <td
+      align="center"
+      style="
+        padding-top: 6px;
+        word-break: break-all;
+      "
+    >
+      <a
+        href="{{survey.link}}"
+        target="_blank"
+        style="
+          color: #ffffff;
+          font-size: 14px;
+          line-height: 22px;
+          text-decoration: underline;
+        "
+      >
+        {{survey.link}}
+      </a>
+    </td>
+  </tr>
+
+  <tr>
+    <td
+      align="center"
+      style="
+        padding-top: 18px;
+        color: #dce7ff;
+        font-size: 14px;
+        line-height: 22px;
+      "
+    >
+      If you can’t see or click the above button, please drop a note at
+      <a
+        href="mailto:support@myfrequentrewards.com"
+        style="
+          color: #ffffff;
+          text-decoration: underline;
+          font-weight: bold;
+        "
+      >
+        support@myfrequentrewards.com
+      </a>,
+      we would be glad to assist.
+    </td>
+  </tr>
+</table>
                 </td>
               </tr>
             </table>
           </td>
         </tr>
+
+        <!-- Closing Message -->
         <tr>
           <td
             align="center"
@@ -401,7 +500,9 @@
                   width="55"
                   bgcolor="#fe7e00"
                 ></td>
+
                 <td width="15"></td>
+
                 <td
                   height="3"
                   width="55"
@@ -409,6 +510,7 @@
                 ></td>
               </tr>
             </table>
+
             <p
               style="
                 margin: 20px 0 0;
@@ -423,7 +525,365 @@
             </p>
           </td>
         </tr>
-        {% include "mailer/footer.liquid" %}
+
+       
+
+       <tr>
+  <td
+    style="
+      padding: 18px 55px;
+      border-top: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+    "
+  >
+    <table
+      width="100%"
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+    >
+      <tr>
+        <td
+          align="center"
+          style="padding: 10px 8px;"
+        >
+          <img
+            src="https://frequentresearch.com/mailer/icons/phone.png"
+            alt="Phone"
+            width="30"
+            height="30"
+            style="
+              border: 0;
+              display: block;
+              margin: 0 auto 8px;
+            "
+          />
+          <a
+            href="tel:+919810459700"
+            style="
+              color: #000000;
+              text-decoration: none;
+              font-size: 15px;
+            "
+          >
+            +91 98104 59700
+          </a>
+        </td>
+
+        <td
+          align="center"
+          style="
+            padding: 10px 8px;
+            border-left: 2px solid #dddddd;
+          "
+        >
+          <img
+            src="https://frequentresearch.com/mailer/icons/email.png"
+            alt="Email"
+            width="30"
+            height="30"
+            style="
+              border: 0;
+              display: block;
+              margin: 0 auto 8px;
+            "
+          />
+          <a
+            href="mailto:support@myfrequentrewards.com"
+            style="
+              color: #000000;
+              text-decoration: none;
+              font-size: 15px;
+            "
+          >
+            support@myfrequentrewards.com
+          </a>
+        </td>
+
+        <td
+          align="center"
+          style="
+            padding: 10px 8px;
+            border-left: 2px solid #dddddd;
+          "
+        >
+          <img
+            src="https://frequentresearch.com/mailer/icons/internet.png"
+            alt="Website"
+            width="30"
+            height="30"
+            style="
+              border: 0;
+              display: block;
+              margin: 0 auto 8px;
+            "
+          />
+          <a
+            href="https://www.myfrequentrewards.com"
+            style="
+              color: #000000;
+              text-decoration: none;
+              font-size: 15px;
+            "
+          >
+            www.myfrequentrewards.com
+          </a>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr>
+  <td
+    align="center"
+    style="
+      padding: 35px 20px 18px;
+    "
+  >
+    <p
+      style="
+        margin: 0;
+        color: #333333;
+        font-size: 17px;
+      "
+    >
+      With Warm Regards,
+    </p>
+
+    <p
+      style="
+        margin: 10px 0;
+        color: #0d2372;
+        font-size: 30px;
+        line-height: 40px;
+        font-weight: bold;
+      "
+    >
+      My Frequent Rewards Team
+    </p>
+
+    <p
+      style="
+        margin: 0;
+        color: #666666;
+        font-size: 18px;
+      "
+    >
+      A Frequent Research Survey Panel
+    </p>
+  </td>
+</tr>
+
+<tr>
+  <td align="center">
+    <table
+      role="presentation"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+    >
+      <tr>
+        <td
+          width="300"
+          height="3"
+          bgcolor="#fe7e00"
+        ></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+
+ <!-- Research Information -->
+        <tr>
+          <td
+            align="start"
+            style="
+              padding: 30px 55px;
+              background: #f5f8ff;
+              border-top: 1px solid #dce5f8;
+            "
+          >
+            <p
+              style="
+                margin: 0 0 12px;
+                color: #555555;
+                font-size: 14px;
+                line-height: 22px;
+              "
+            >
+              All research is conducted by
+              <strong style="color: #0d2372;">
+                MyFrequentRewards
+              </strong>
+              in accordance with the
+              <strong>MRS Code of Conduct</strong>.
+            </p>
+
+            <p
+              style="
+                margin: 0 0 12px;
+                color: #555555;
+                font-size: 14px;
+                line-height: 22px;
+              "
+            >
+              Under MRS rules, all information you provide will be kept
+              anonymous and non-attributable unless you give us permission
+              to identify you.
+            </p>
+
+            <p
+              style="
+                margin: 0 0 12px;
+                color: #555555;
+                font-size: 14px;
+                line-height: 22px;
+              "
+            >
+              Have a query? Please contact our support department at
+              <a
+                href="mailto:support@myfrequentrewards.com"
+                style="
+                  color: #0d2372;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+              >
+                support@myfrequentrewards.com</a>. For more information about MyFrequentRewards, please visit
+              <a
+                href="https://www.myfrequentrewards.com"
+                style="
+                  color: #0d2372;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+              >
+                www.myfrequentrewards.com</a>. You can also read our
+              <a
+                href="https://www.myfrequentrewards.com/privacy"
+                style="
+                  color: #0d2372;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+              >
+                Privacy Policy
+              </a>.
+            </p>
+
+            <p
+              style="
+                margin: 0;
+                color: #777777;
+                font-size: 13px;
+                line-height: 21px;
+              "
+            >
+              You received this email because you signed up to receive
+              surveys from MyFrequentRewards. Please do not reply to this email. To contact us, please write
+              to
+              <a
+                href="mailto:support@myfrequentrewards.com"
+                style="
+                  color: #0d2372;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+              >
+                support@myfrequentrewards.com</a>
+              or visit our
+              <a
+                href="https://www.myfrequentrewards.com/contact"
+                style="
+                  color: #0d2372;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+              >
+                Contact Us
+              </a>
+              page.
+            </p>
+          </td>
+        </tr>
+
+<tr>
+  <td
+    align="center"
+    style="
+      padding: 28px 20px 20px;
+    "
+  >
+   <a
+      href="https://www.linkedin.com/company/my-frequent-rewards"
+      style="
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 7px;
+      "
+    >
+      <img
+        src="https://frequentresearch.com/mailer/icons/linkedin.png"
+        alt="LinkedIn"
+        width="30"
+        height="30"
+        style="
+          border: 0;
+          display: block;
+        "
+      />
+    </a>
+
+    <a
+      href="https://www.youtube.com/@MyFrequentRewards"
+      style="
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 7px;
+      "
+    >
+      <img
+        src="https://frequentresearch.com/mailer/icons/youtube.png"
+        alt="YouTube"
+        width="30"
+        height="30"
+        style="
+          border: 0;
+          display: block;
+        "
+      />
+    </a>
+
+    <a
+      href="https://www.instagram.com/myfrequentrewards/"
+      style="
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 7px;
+      "
+    >
+      <img
+        src="https://frequentresearch.com/mailer/icons/instagram.png"
+        alt="Instagram"
+        width="30"
+        height="30"
+        style="
+          border: 0;
+          display: block;
+        "
+      />
+    </a>
+  </td>
+</tr>
+
+<tr>
+  <td
+    height="10"
+    bgcolor="#fe7e00"
+  ></td>
+</tr>
       </table>
     </td>
   </tr>

@@ -104,10 +104,11 @@ function Login({ open, onClose, setOpenSignUp }) {
       sx={{
         zIndex: 3300,
         boxShadow: 24,
-        overflowY: "auto",
+        // overflowY: "auto",
         "& .MuiDialog-paper": {
           margin: 1,
           maxWidth: "unset",
+          overflow: "hidden",
         },
       }}
       slots={{ transition: Fade }}
@@ -217,18 +218,11 @@ function LoginCard({ onClose, setCardType, setOpenSignUp, socials }) {
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
-        minHeight:
-          authProviders.length > 0
-            ? btnDisabled
-              ? "838px" // providers exist + button disabled
-              : "780px" // providers exist + button enabled
-            : btnDisabled
-              ? "720px" // no providers + button disabled
-              : "600px", // no providers + button enabled
         transition: "min-height 300ms ease-in-out",
         width: { xs: "95vw", sm: "480px" },
         px: { xs: 1.5, sm: 3 },
         position: "relative",
+        overflow: "auto",
       }}
     >
       <IconButton
@@ -574,14 +568,9 @@ function LoginCard({ onClose, setCardType, setOpenSignUp, socials }) {
           justifyContent="center"
           spacing={4}
           sx={{
-            position: "absolute",
-            bottom: 10,
-            left: 0,
-            right: 0,
-            zIndex: 2,
             borderTop: "1px solid",
             borderColor: "divider",
-            pt: 2,
+            py: 1,
           }}
         >
           <Page.Text sx={{ fontSize: "13px", color: "text.secondary" }}>

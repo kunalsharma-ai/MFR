@@ -118,7 +118,7 @@ export default function page() {
                 justifyContent={"center"}
                 mb={4}
               >
-                <img src="/images/logo/mfr/200w.webp" alt="logo" />
+                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
               </Grid>
               <Page.Box
                 component="div"
@@ -172,7 +172,11 @@ export default function page() {
                       }
                     }
                   >
-                    <img src="/images/logo/mfr/200w.webp" alt="logo" />
+                    <img
+                      src="images/logo/mfr-logo.png"
+                      alt="logo"
+                      width={220}
+                    />
                   </Page.Box>{" "}
                   {/* <Page.Box
                       component="img"

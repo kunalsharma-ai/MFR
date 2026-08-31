@@ -83,10 +83,12 @@ export default function AdminHeader() {
             >
               <Box
                 component="img"
-                src="/images/logo/mfr/200w.webp"
+                // src="/images/logo/mfr/200w.webp"
+                src="images/logo/mfr-logo.png"
                 alt="logo"
-                 
-                  // style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
+                width={220}
+
+                // style={{ filter: "brightness(0) saturate(100%) invert(100%)"}}
                 // width={{ xs: "180px", sm: "225px" }}
               />
               {/* <Box
@@ -120,7 +122,13 @@ export default function AdminHeader() {
                   width: "45px",
                 }}
               />
-              <Typography fontSize={"16px"} fontWeight={500} ml={1} color={"text.primary"} display={{ xs: "none", lg: "block" }}>
+              <Typography
+                fontSize={"16px"}
+                fontWeight={500}
+                ml={1}
+                color={"text.primary"}
+                display={{ xs: "none", lg: "block" }}
+              >
                 {me?.name?.first ?? "User"}
               </Typography>
             </Button>

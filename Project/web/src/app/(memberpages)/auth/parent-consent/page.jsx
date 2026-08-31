@@ -30,7 +30,7 @@ function PasswordPage() {
         console.log(resp);
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -93,7 +93,7 @@ function PasswordPage() {
             sx={{
               textAlign: "center",
               borderRadius: 5,
-             bgcolor: "#8cb2f333",
+              bgcolor: "#8cb2f333",
               border: "1px solid #f4f4f4",
               p: 4,
             }}
@@ -217,7 +217,7 @@ function PasswordPage() {
       size={12}
       container
       sx={{
-         bgcolor: "#8cb2f333",
+        bgcolor: "#8cb2f333",
         minHeight: "100vh",
         width: "100vw",
       }}
@@ -269,13 +269,15 @@ function SetPasswordForm({ form }) {
     <>
       <Page.Box sx={{ position: "relative", pt: 3 }}>
         <Page.Box
-          sx={{
-            // width:220,
-            // height: { xs: "60px", md: "80px" },
-            // width: { xs: "180px", md: "300px" },
-          }}
+          sx={
+            {
+              // width:220,
+              // height: { xs: "60px", md: "80px" },
+              // width: { xs: "180px", md: "300px" },
+            }
+          }
         >
-          <img src="/images/logo/mfr/200w.webp" alt="logo" width="100%" />
+          <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
         </Page.Box>{" "}
         {/* <Page.Box
           component="img"

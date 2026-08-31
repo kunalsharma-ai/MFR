@@ -8,8 +8,18 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import XIcon from "@mui/icons-material/X";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import { useRouter } from "next/navigation";
 import { api, loadData } from "@/util";
+
+const socialIcons = {
+  linkedin: LinkedInIcon,
+  facebook: FacebookIcon,
+  twitter: XIcon,
+  x: XIcon,
+  youtube: YouTubeIcon,
+  instagram: InstagramIcon,
+};
 
 function Footer() {
   const [socials, setSocials] = React.useState([]);
@@ -26,13 +36,13 @@ function Footer() {
     loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
   }, []);
 
-  const getSocialUrl = (platform, fallback = "#") => {
-    return (
-      socials.find(
-        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
-      )?.url || fallback
-    );
-  };
+  const availableSocials = socials.filter(
+    (social) =>
+      social?.url &&
+      typeof social.url === "string" &&
+      social.url.trim() !== "" &&
+      socialIcons[social.platform?.toLowerCase()],
+  );
   return (
     <React.Suspense fallback={<></>}>
       <Grid
@@ -269,124 +279,53 @@ function Footer() {
                   }}
                 /> */}
               </Box>
-              <Box display="flex" alignItems="center" gap={2} mt={1} pl={1}>
-                <IconButton
-                  component="a"
-                  href={getSocialUrl(
-                    "Linkedin",
-                    "https://www.linkedin.com/company/my-frequent-rewards",
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="linkedin"
-                  sx={{
-                    color: "white",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: "secondary.main",
-                      transform: "translateX(5px)",
-                    },
-                    "&:focus-visible": {
-                      outline: "2px solid",
-                      outlineColor: "secondary.main",
-                      outlineOffset: "2px",
-                    },
-                  }}
-                >
-                  <LinkedInIcon sx={{ fontSize: 36 }} />
-                </IconButton>
-                <IconButton
-                  component="a"
-                  target="_blank"
-                  href={getSocialUrl(
-                    "Facebook",
-                    "https://www.facebook.com/FrequentResearchFieldwork/",
-                  )}
-                  rel="noopener noreferrer"
-                  aria-label="facebook"
-                  sx={{
-                    color: "white",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: "secondary.main",
-                      transform: "translateX(5px)",
-                    },
-                    "&:focus-visible": {
-                      outline: "2px solid",
-                      outlineColor: "secondary.main",
-                      outlineOffset: "2px",
-                    },
-                  }}
-                >
-                  <FacebookIcon
-                    sx={{
-                      fontSize: "36px",
-                    }}
-                  />
-                </IconButton>
-                <IconButton
-                  component="a"
-                  target="_blank"
-                  href={getSocialUrl(
-                    "Twitter",
-                    "https://twitter.com/frequentrfs",
-                  )}
-                  rel="noopener noreferrer"
-                  aria-label="twitter"
-                  sx={{
-                    color: "white",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: "secondary.main",
-                      transform: "translateX(5px)",
-                    },
-                    "&:focus-visible": {
-                      outline: "2px solid",
-                      outlineColor: "secondary.main",
-                      outlineOffset: "2px",
-                    },
-                  }}
-                >
-                  <XIcon
-                    sx={{
-                      fontSize: "30px",
-                    }}
-                  />
-                </IconButton>
 
-                <IconButton
-                  component="a"
-                  target="_blank"
-                  href={getSocialUrl(
-                    "Youtube",
-                    "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
-                  )}
-                  rel="noopener noreferrer"
-                  aria-label="youtube"
-                  sx={{
-                    color: "white",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: "secondary.main",
-                      transform: "translateX(5px)",
-                    },
-                    "&:focus-visible": {
-                      outline: "2px solid",
-                      outlineColor: "secondary.main",
-                      outlineOffset: "2px",
-                    },
-                  }}
-                >
-                  <YouTubeIcon
-                    sx={{
-                      fontSize: "36px",
-                    }}
-                  />
-                </IconButton>
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={2}
+                mt={1}
+                pl={1}
+                flexWrap="wrap"
+              >
+                {availableSocials.map((social) => {
+                  const platform = social.platform?.toLowerCase();
+                  const Icon = socialIcons[platform];
+
+                  return (
+                    <IconButton
+                      key={social._id || platform}
+                      component="a"
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.platform}
+                      sx={{
+                        color: "white",
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          cursor: "pointer",
+                          color: "secondary.main",
+                          transform: "translateX(5px)",
+                        },
+                        "&:focus-visible": {
+                          outline: "2px solid",
+                          outlineColor: "secondary.main",
+                          outlineOffset: "2px",
+                        },
+                      }}
+                    >
+                      <Icon
+                        sx={{
+                          fontSize:
+                            platform === "twitter" || platform === "x"
+                              ? 30
+                              : 36,
+                        }}
+                      />
+                    </IconButton>
+                  );
+                })}
               </Box>
             </Grid>
 
@@ -475,7 +414,7 @@ function Footer() {
                 display="flex"
                 alignItems="center"
                 component="a"
-                href="mailto:support@frequentresearch.com"
+                href="mailto:support@myfrequentrewards.com"
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -498,7 +437,7 @@ function Footer() {
                   }}
                 />
                 <Typography sx={{ fontSize: { xs: "14px", xl: "16px" } }}>
-                  support@frequentresearch.com
+                  support@myfrequentrewards.com
                 </Typography>
               </Box>
             </Grid>

@@ -26,6 +26,9 @@ const email = {
 
 const user = {
   name: {
+    salutation:{
+      required:"Please specify"
+    },
     first: {
       required: "First Name is Required",
       pattern: {
