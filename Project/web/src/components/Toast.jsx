@@ -52,7 +52,7 @@ export default function PositionedSnackbar() {
           severity={status} //Success (for Green), error(for Red), warning (for Orange), info (for Blue)
           //   variant="filled"
         >
-          {message}
+          {message instanceof Error ? message.message : String(message)}
         </Alert>
       </Snackbar>
     </Box>

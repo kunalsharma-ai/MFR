@@ -65,6 +65,21 @@ function capitalizeName(str) {
 }
 const today = new Date();
 
+const SALUTATION_OPTIONS = [
+  { value: "Mr.", label: "Mr.", genderBased: true },
+  { value: "Ms.", label: "Ms.", genderBased: true },
+  { value: "Mrs.", label: "Mrs.", genderBased: true },
+  { value: "Dr.", label: "Dr.", genderBased: false },
+  { value: "Prof.", label: "Prof.", genderBased: false },
+  { value: "Mx.", label: "Mx.", genderBased: true },
+];
+
+const GENDER_SALUTATION_MAP = {
+  Male: "Mr.",
+  Female: "Ms.",
+  Other: "Mx.",
+};
+
 export default function SignUp({
   open,
   onClose,
@@ -82,7 +97,6 @@ export default function SignUp({
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
 
-  const [salutationChange , setSalutationchange ] = React.useState(false);
   const form = useForm({
     defaultValues: {
       category: "b2b",
@@ -218,13 +232,15 @@ export default function SignUp({
       if (Boolean(query?.ref) && query.ref !== "") data.referredBy = query.ref;
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
-
       if (temp?.status == "success") {
+        const resetTimer=30; //Modify timer if required
+        setCooldown(resetTimer);
         setStatus("success");
         setTimeout(() => {
           router.replace("/");
-        }, 30000);
-        // setCooldown(60);
+          window?.location?.reload();
+        }, resetTimer * 1000);
+       
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -245,15 +261,6 @@ export default function SignUp({
       setCooldown((prev) => prev - 1);
     }, 1000);
 
-  //   const interval = setInterval(() => {
-  //   setCooldown((prev) => {
-  //     if (prev <= 1) {
-  //       router.replace("/");
-  //       return 0;
-  //     }
-  //     return prev - 1;
-  //   });
-  // }, 1000);
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
@@ -287,16 +294,18 @@ export default function SignUp({
   const salutation  = form.watch("name.salutation");
   
   React.useEffect(() => {
-    if(salutationChange) return;
+  const genderBasedSalutations = SALUTATION_OPTIONS
+    .filter((option) => option.genderBased)
+    .map((option) => option.value);
 
-    if(gender === "Male"){
-      form.setValue("name.salutation", "Mr.");
-    }else if(gender === "Female"){
-      form.setValue("name.salutation", "Ms.");
-    }else if(gender === "Other"){
-      form.setValue("name.salutation", "Mx.");
-    }
-  }, [gender, salutationChange, form]);
+  if (!gender || !genderBasedSalutations.includes(salutation)) return;
+
+  const newSalutation = GENDER_SALUTATION_MAP[gender];
+
+  if (newSalutation && newSalutation !== salutation) {
+    form.setValue("name.salutation", newSalutation);
+  }
+}, [gender, salutation, form]);
 
   return (
     <PopUp
@@ -459,15 +468,7 @@ export default function SignUp({
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
-                          onChange={() => setSalutationchange(true)}
-                          options={[
-                            { value: "Mr.", label: "Mr." },
-                            { value: "Ms.", label: "Ms." },
-                            { value: "Mrs.", label: "Mrs." },
-                            { value: "Dr.", label: "Dr." },
-                            { value: "Prof.", label: "Prof." },
-                            { value: "Mx.", label: "Mx." },
-                          ]}
+                          options={SALUTATION_OPTIONS}
                           labelText="Sal."
                         />
                       </Grid>
@@ -903,9 +904,9 @@ export default function SignUp({
                 >
                   Go To Home
                 </Page.MuiButton>
-                {/* <Typography>
+                <Typography>
                   Redirecting you to the home page in {cooldown} seconds.
-                </Typography> */}
+                </Typography>
               </Grid>
             </Grid>
           )}
