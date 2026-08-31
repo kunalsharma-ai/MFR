@@ -317,7 +317,45 @@ function SetPasswordForm({ form, isMinor }) {
             pattern: {
               value:
                 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~])(?!.*\s).{8,}$/,
-              message: "Password is insecure, try more complex password",
+              message:
+                <Grid
+                  sx={{
+                    borderRadius: 2,
+                  
+                    py: 2,
+                    pl: 2,
+                    pr: { xs: 2, md: 8 },
+                  }}
+                >
+                  <Page.Text fontSize={13}>Password should have:</Page.Text>
+                  <List
+                    sx={{
+                      listStyleType: "disc",
+                      pl: 3,
+                      "& .MuiListItem-root": {
+                        display: "list-item",
+                        p: 0.2,
+                        fontSize: "12px",
+                      },
+                    }}
+                  >
+                    <ListItem>
+                      Minimum <b>8 Characters</b>
+                    </ListItem>
+                    <ListItem>
+                      At least <b>One Lowercase Letter</b>
+                    </ListItem>
+                    <ListItem>
+                      At least <b>One Uppercase Letter</b>
+                    </ListItem>
+                    <ListItem>
+                      At least <b>One Number</b>
+                    </ListItem>
+                    <ListItem>
+                      At least <b>One Special Character</b> (e.g., @, #, $, &)
+                    </ListItem>
+                  </List>
+                </Grid>,
             },
           }}
         />
@@ -349,45 +387,7 @@ function SetPasswordForm({ form, isMinor }) {
       >
         Create Password
       </Page.MuiButton>
-      <Grid
-        sx={{
-          borderRadius: 2,
-          bgcolor: "#8cb2f333",
-          border: "1px solid #f4f4f4",
-          py: 2,
-          pl: 2,
-          pr: { xs: 2, md: 8 },
-        }}
-      >
-        <Page.Text fontSize={13}>Password should have:</Page.Text>
-        <List
-          sx={{
-            listStyleType: "disc",
-            pl: 3,
-            "& .MuiListItem-root": {
-              display: "list-item",
-              p: 0.2,
-              fontSize: "12px",
-            },
-          }}
-        >
-          <ListItem>
-            Minimum <b>8 Characters</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Lowercase Letter</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Uppercase Letter</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Number</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Special Character</b> (e.g., @, #, $, &)
-          </ListItem>
-        </List>
-      </Grid>
+      
     </>
   );
 }

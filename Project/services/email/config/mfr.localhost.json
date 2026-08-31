@@ -1,0 +1,12 @@
+{
+  "from": "support@myfrequentrewards.com",
+  "name": "My Frequent Rewards",
+  "replyTo": "support@myfrequentrewards.com",
+  "host": "email-server",
+  "port": 1025,
+  "secure": false,
+  "auth": {
+    "user": "support@myfrequentrewards.com",
+    "pass": ""
+  }
+}

@@ -65,6 +65,21 @@ function capitalizeName(str) {
 }
 const today = new Date();
 
+const SALUTATION_OPTIONS = [
+  { value: "Mr.", label: "Mr.", genderBased: true },
+  { value: "Ms.", label: "Ms.", genderBased: true },
+  { value: "Mrs.", label: "Mrs.", genderBased: true },
+  { value: "Dr.", label: "Dr.", genderBased: false },
+  { value: "Prof.", label: "Prof.", genderBased: false },
+  { value: "Mx.", label: "Mx.", genderBased: true },
+];
+
+const GENDER_SALUTATION_MAP = {
+  Male: "Mr.",
+  Female: "Ms.",
+  Other: "Mx.",
+};
+
 export default function SignUp({
   open,
   onClose,
@@ -219,14 +234,16 @@ export default function SignUp({
       if (Boolean(query?.ref) && query.ref !== "") data.referredBy = query.ref;
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
-
       if (temp?.status == "success") {
-        const redirectIn = 30;
+        const resetTimer=30; //Modify timer if required
+        setCooldown(resetTimer);
         setStatus("success");
         setCooldown(redirectIn);
         setTimeout(() => {
           router.replace("/");
-        }, redirectIn * 1000);
+          window?.location?.reload();
+        }, resetTimer * 1000);
+       
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -245,6 +262,7 @@ export default function SignUp({
     const interval = setInterval(() => {
       setCooldown((prev) => prev - 1);
     }, 1000);
+
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
@@ -274,18 +292,21 @@ export default function SignUp({
     form.reset(userInfo);
   }, [query]);
   const gender = form.watch("gender");
-  const salutations = [
-    {
-      gender: ["", "Male"],
-      value: "Mr.",
-      label: "Mr.",
-    },
-    { gender: ["", "Female"], value: "Ms.", label: "Ms." },
-    { gender: ["", "Female"], value: "Mrs.", label: "Mrs." },
-    { gender: ["", "Male", "Female", "Other"], value: "Dr.", label: "Dr." },
-    { gender: ["", "Male", "Female", "Other"], value: "Prof.", label: "Prof." },
-    { gender: ["", "Other"], value: "Mx.", label: "Mx." },
-  ].filter((v) => v.gender.includes(gender));
+  const salutation  = form.watch("name.salutation");
+  
+  React.useEffect(() => {
+  const genderBasedSalutations = SALUTATION_OPTIONS
+    .filter((option) => option.genderBased)
+    .map((option) => option.value);
+
+  if (!gender || !genderBasedSalutations.includes(salutation)) return;
+
+  const newSalutation = GENDER_SALUTATION_MAP[gender];
+
+  if (newSalutation && newSalutation !== salutation) {
+    form.setValue("name.salutation", newSalutation);
+  }
+}, [gender, salutation, form]);
 
   return (
     <PopUp
@@ -448,7 +469,7 @@ export default function SignUp({
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
-                          options={salutations}
+                          options={SALUTATION_OPTIONS}
                           labelText="Sal."
                           errors={errors?.name?.salutaion}
                           validations={user.name.salutation}
