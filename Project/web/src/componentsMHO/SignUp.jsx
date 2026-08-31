@@ -104,6 +104,8 @@ export default function SignUp({
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
+
+  const [salutationChange , setSalutationchange ] = React.useState(false);
   const form = useForm({
     defaultValues: {
       category: "b2b",
@@ -131,6 +133,8 @@ export default function SignUp({
     register,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isDirty },
   } = form;
 
@@ -186,6 +190,9 @@ export default function SignUp({
   maxDOB.setFullYear(maxDOB.getFullYear() - 14);
   // const isMinor = new Date(form.watch("dob")).isMinor();
 
+  
+  const [cooldown, setCooldown] = React.useState(0);
+
   const onSubmit = async (userData) => {
     setIsLoading(true);
     try {
@@ -196,10 +203,19 @@ export default function SignUp({
 
       if (temp?.status == "success") {
         setStatus("success");
-        setTimeout(() => {
-          router.replace("/");
-        }, 30000);
-      } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
+        // setTimeout(() => {
+        //   router.replace("/");
+        // }, 30000);
+        setCooldown(60);
+      } else if (
+        temp?.message?.toLowerCase()?.includes("duplicate") ||
+        temp?.message?.toLowerCase()?.includes("already registered")
+      ){
+        setError("mail", {
+          type: "duplicate",
+          message: "This email address is already registered.",
+        });
+      }
     } catch (error) {
       console.error(error);
       useToast(error);
@@ -210,15 +226,22 @@ export default function SignUp({
 
   const RESEND_SECONDS = 60;
 
-  const [cooldown, setCooldown] = React.useState(0);
-
   React.useEffect(() => {
     if (cooldown <= 0) return;
 
-    const interval = setInterval(() => {
-      setCooldown((prev) => prev - 1);
-    }, 1000);
+    // const interval = setInterval(() => {
+    //   setCooldown((prev) => prev - 1);
+    // }, 1000);
 
+    const interval = setInterval(() => {
+    setCooldown((prev) => {
+      if (prev <= 1) {
+        router.replace("/");
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
     return () => clearInterval(interval);
   }, [cooldown]);
   const progress = ((RESEND_SECONDS - cooldown) / RESEND_SECONDS) * 100;
@@ -248,6 +271,21 @@ export default function SignUp({
     form.reset(userInfo);
   }, [query]);
   const category = form.watch("category");
+  const gender = form.watch("gender");
+  const salutation  = form.watch("name.salutation");
+  
+  React.useEffect(() => {
+    if(salutationChange) return;
+
+    if(gender === "Male"){
+      form.setValue("name.salutation", "Mr.");
+    }else if(gender === "Female"){
+      form.setValue("name.salutation", "Ms.");
+    }else if(gender === "Other"){
+      form.setValue("name.salutation", "Mx.");
+    }
+  }, [gender, salutationChange, form]);
+
   return (
     <PopUp
       open={open}
@@ -409,13 +447,14 @@ export default function SignUp({
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
+                          onChange={() => setSalutationchange(true)}
                           options={[
                             { value: "Mr.", label: "Mr." },
                             { value: "Ms.", label: "Ms." },
                             { value: "Mrs.", label: "Mrs." },
                             { value: "Dr.", label: "Dr." },
                             { value: "Prof.", label: "Prof." },
-                            { value: "Mx. ", label: "Mx." },
+                            { value: "Mx.", label: "Mx." },
                           ]}
                           labelText="Sal."
                         />
@@ -442,32 +481,36 @@ export default function SignUp({
                       </Grid>
                     </Grid>
 
-                    <Grid size={12}>
-                      <Form.Input
-                        {...register("mail")}
-                        control={control}
-                        labelText="Email"
-                        required={true}
-                        errors={errors?.mail}
-                        validations={user.email}
-                      />
-                    </Grid>
+                    <Grid size={12} container direction='row' spacing={1}>
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <Form.Input
+                          {...register("mail", {
+                            onChange: () => clearErrors("mail"),
+                          })}
+                          control={control}
+                          labelText="Email"
+                          required={true}
+                          errors={errors?.mail}
+                          validations={user.email}
+                        />
+                      </Grid>
 
-                    <Grid size={12}>
-                      <Form.Phone
-                        {...register("phone")}
-                        control={control}
-                        labelText="Phone"
-                        required={true}
-                        // onlyCountries={ [country] }
-                        selectedCountry={country}
-                        disableDropdown={Boolean(country)}
-                        validations={user.phone}
-                        errors={errors?.phone}
-                        onBlur={(e) => {
-                          console.log(form.getValues());
-                        }}
-                      />
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Form.Phone
+                          {...register("phone")}
+                          control={control}
+                          labelText="Phone"
+                          required={false}
+                          // onlyCountries={ [country] }
+                          selectedCountry={country}
+                          disableDropdown={Boolean(country)}
+                          validations={user.phone}
+                          errors={errors?.phone}
+                          onBlur={(e) => {
+                            console.log(form.getValues());
+                          }}
+                        />
+                      </Grid>
                     </Grid>
 
                     <Grid size={12} container direction="row">
@@ -850,6 +893,9 @@ export default function SignUp({
                 >
                   Go To Home
                 </Page.MuiButton>
+                <Typography>
+                  You will be redirected to the home page in {cooldown} seconds.
+                </Typography>
               </Grid>
             </Grid>
           )}
