@@ -514,6 +514,7 @@ export default function Select({
                         return (
                           <InputTextField
                             {...params}
+                            inputRef={field.ref}
                             label={
                               isDisabled ? (
                                 label
