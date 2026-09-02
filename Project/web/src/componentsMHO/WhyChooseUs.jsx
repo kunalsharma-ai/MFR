@@ -119,13 +119,17 @@ export default function WhyChooseUs() {
                   }}
                 >
                   <source
-                    src="imagesmfr/videos/youtube-video.mp4"
-                    type="video/mp4"
-                  />
-                  <source
-                    src="imagesmfr/videos/youtube-video.webm"
-                    type="video/webm"
-                  />
+                      src="/videos/why-choose-us.mp4"
+                      type="video/mp4"
+                    />
+                    <source
+                      src="/videos/why-choose-us.ogv"
+                      type="video/ogg"
+                    />
+                    <source
+                      src="/videos/why-choose-us.webm"
+                      type="video/webm"
+                    />
                 </video>
               </Box>
             </Grid>
