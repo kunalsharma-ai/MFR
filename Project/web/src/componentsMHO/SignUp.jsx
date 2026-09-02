@@ -221,6 +221,7 @@ export default function SignUp({
       console.log(resp);
       if (resp.country) {
         form.setValue("address.0.country", resp.country.toLowerCase());
+        form.setValue("country", resp.country.toLowerCase());
         setCountry(resp.country.toLowerCase());
       }
     });

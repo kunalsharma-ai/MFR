@@ -32,9 +32,9 @@ export default function page() {
       cancel: "Go Back",
     },
     onOk: (e) => {
-      setErrorPopup({ ...errorPopup, message: null });
+      setErrorPopup({ ...prev, message: null });
     },
-    cancel: (e) => {
+    onCancel: (e) => {
       router.push("/");
     },
   });
@@ -218,7 +218,10 @@ export default function page() {
                   survey={survey}
                   user={user}
                   onError={(err) => {
-                    setErrorPopup({ ...err });
+                    setErrorPopup((prev) => ({ 
+                      ...prev,
+                      ...err 
+                    }));
                   }}
                   onComplete={(status) => {
                     setSurveyCompleted(status);
