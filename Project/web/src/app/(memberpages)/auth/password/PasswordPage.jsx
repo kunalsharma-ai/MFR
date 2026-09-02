@@ -307,6 +307,7 @@ function SetPasswordForm({ form, isMinor }) {
           {...register("password")}
           control={control}
           type="password"
+          errorColor="black"
           strengthMeter={true}
           errors={errors?.password}
           validations={{

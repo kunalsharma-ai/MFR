@@ -194,7 +194,7 @@ export default function page() {
                 <Page.Text
                   sx={{
                     flex: 1,
-                    textAlign: "center",
+                    textAlign: "right",
                     // ml: { xs: 0, md: "-220px" },
                     fontSize: { xs: "18px", lg: "24px" },
                     fontWeight: 600,

@@ -79,6 +79,12 @@ const GENDER_SALUTATION_MAP = {
   Female: ["Ms.", "Mrs.", "Dr.", "Prof."],
   Other: ["Mx.", "Dr.", "Prof."],
 };
+ 
+const DEFAULT_SALUTATION_MAP = {
+  Male: "Mr.",
+  Female: "Ms.",
+  Other: "Mx.",
+};
 
 export default function SignUp({
   open,
@@ -295,23 +301,17 @@ export default function SignUp({
 
 React.useEffect(() => {
   if (!gender) return;
-
+ 
   const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
-
-  if (!salutation) {
-    setFocus("name.salutation");
-    return;
-  }
-  const selectedSalutation = SALUTATION_OPTIONS.find(
-    (option) => option.value === salutation
-  );
-
-  if (!selectedSalutation?.genderBased) return;
-
+  const defaultSalutation = DEFAULT_SALUTATION_MAP[gender];
+ 
   if (!validSalutations.includes(salutation)) {
-    setFocus("name.salutation");
+    form.setValue("name.salutation", defaultSalutation, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   }
-}, [gender, salutation, setFocus]);
+}, [gender]);
 
   return (
     <PopUp
@@ -472,8 +472,7 @@ React.useEffect(() => {
                     >
                       <Grid size={{ xs: 12, md: 2.2 }}>
                         <Form.Select
-                          name="name.salutation"
-                          // {...register("name.salutation")}
+                          {...register("name.salutation")}
                           control={control}
                           options={
                             gender
@@ -483,7 +482,7 @@ React.useEffect(() => {
                               : SALUTATION_OPTIONS
                           }
                           labelText="Sal."
-                          // required={true}
+                          required={true}
                           errors={errors?.name?.salutation}
                           validations={user.name.salutation}
                           

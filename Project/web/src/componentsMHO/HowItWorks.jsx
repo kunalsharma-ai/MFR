@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 export default function HowItWorks() {
   return (
     <Box>
+      {/* =========================
+          HOW IT WORKS HEADING
+      ========================= */}
       <Grid
         size={12}
         container
@@ -63,10 +66,110 @@ export default function HowItWorks() {
         </Typography>
       </Grid>
 
+      {/* =========================
+          HOW IT WORKS VIDEO
+      ========================= */}
+      {/* <HowItWorksVideo /> */}
+
+      {/* =========================
+          HOW IT WORKS CARDS
+      ========================= */}
       <HowItWorksCards />
     </Box>
   );
 }
+
+/* =========================
+   HOW IT WORKS VIDEO
+========================= */
+
+// function HowItWorksVideo() {
+//   return (
+//     <Box
+//       sx={{
+//         width: "100%",
+//         px: { xs: 2, sm: 4, md: 6 },
+//         mb: { xs: 7, md: 10 },
+//       }}
+//     >
+//       <Box
+//         sx={{
+//           maxWidth: "900px",
+//           mx: "auto",
+//           borderRadius: { xs: 3, md: 5 },
+//           overflow: "hidden",
+//           bgcolor: "#0b102d",
+//           p: { xs: 1.5, sm: 2, md: 3 },
+//           boxShadow: 4,
+//         }}
+//       >
+//         {/* VIDEO TITLE */}
+//         <Box
+//           sx={{
+//             textAlign: "center",
+//             color: "white",
+//             py: { xs: 2, md: 3 },
+//             px: 2,
+//           }}
+//         >
+//           <Typography
+//             sx={{
+//               fontSize: { xs: 22, sm: 26, md: 32 },
+//               fontWeight: "bold",
+//               mb: 1,
+//             }}
+//           >
+//             See How MyFrequent Rewards Works
+//           </Typography>
+
+//           <Typography
+//             sx={{
+//               fontSize: { xs: 14, md: 16 },
+//               opacity: 0.85,
+//               maxWidth: "700px",
+//               mx: "auto",
+//             }}
+//           >
+//             Watch this short video to understand how you can register,
+//             complete your profile, participate in surveys and earn rewards.
+//           </Typography>
+//         </Box>
+
+//         {/* RESPONSIVE YOUTUBE VIDEO */}
+//         <Box
+//           sx={{
+//             position: "relative",
+//             width: "100%",
+//             paddingTop: "56.25%",
+//             borderRadius: { xs: 2, md: 3 },
+//             overflow: "hidden",
+//             bgcolor: "#000",
+//           }}
+//         >
+//           <Box
+//             component="iframe"
+//             // src="https://www.youtube.com/embed/9thN5mFH2uQ?si=9PG83_F-DTgLsb0o"
+//             title="How MyFrequent Rewards Works"
+//             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+//             allowFullScreen
+//             sx={{
+//               position: "absolute",
+//               top: 0,
+//               left: 0,
+//               width: "100%",
+//               height: "100%",
+//               border: 0,
+//             }}
+//           />
+//         </Box>
+//       </Box>
+//     </Box>
+//   );
+// }
+
+/* =========================
+   HOW IT WORKS CARDS
+========================= */
 
 function HowItWorksCards() {
   const router = useRouter();
