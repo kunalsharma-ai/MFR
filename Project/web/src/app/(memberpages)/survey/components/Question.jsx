@@ -53,13 +53,6 @@ function Que({ question, form, disabled }) {
     queryFn: async ({ queryKey }) => {
       const [endpoint, name, parentValue, parent] = queryKey;
       const method = typeof parent === "undefined" ? "get" : "post";
-      console.table({
-        endpoint,
-        name,
-        parentValue,
-        parent,
-        method
-      })
       if (![null, undefined, ""].includes(parent) && [null, "", [], undefined].includes(parentValue)) return [];
       let resp = (method === "get")
         ? await api[method](`/api/v1/${endpoint}/${name}`)
