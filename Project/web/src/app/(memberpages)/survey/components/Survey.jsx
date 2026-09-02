@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import CustomStepIcon from "./CustomStepIcon";
 import { Page, api } from "@/util";
 import Question from "./Question";
@@ -32,6 +32,7 @@ export default function Survey({
   endpage = "/api/v1/me/survey",
   isProfile = false,
 }) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = React.useState(start);
   const [validationError, setValidationError] = React.useState(null);
 
@@ -100,7 +101,7 @@ export default function Survey({
     if (pages[currentPage].includes("age")) {
       let age = form.watch("age");
       let dob = new Date(user.dob);
-      if (new Date().getFullYear() !== dob.getFullYear() + Number(age)) {
+      if (new Date().getFullYear() - dob.getFullYear() !== Number(age)) {
         onError({
           title: "Invalid Age",
           btns: {
@@ -110,7 +111,7 @@ export default function Survey({
           onOk: (e) => {
             onError({ message: null });
           },
-          cancel: (e) => {
+          onCancel: (e) => {
             router.push("/");
           },
           message: (
@@ -125,7 +126,7 @@ export default function Survey({
         return;
       }
     }
-    console.log("sab theek hai, Next page load kar lete hain");
+    // console.log("sab theek hai, Next page load kar lete hain");
     setCurrentPage(currentPage + 1);
   }
 

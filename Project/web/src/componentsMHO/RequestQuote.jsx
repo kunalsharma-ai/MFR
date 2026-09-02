@@ -40,12 +40,7 @@ const inputSx = {
 export default function RequestQuote({ open, onClose }) {
   const [telemetry] = [useTelemetry()];
   const [country, setCountry] = React.useState("")
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
+  const form=useForm({
     mode: "onBlur",
     defaultValues: {
       firstname: "",
@@ -55,6 +50,12 @@ export default function RequestQuote({ open, onClose }) {
       message: "",
     },
   });
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = form
 
   const onSubmit = async (data) => {
     const resp = await api.put("/api/v1/quote", data);

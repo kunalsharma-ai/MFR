@@ -10,8 +10,7 @@ export default function SelectElement({ question, form, options, disabled }) {
   const [showSpecify, setShowSpecify] = React.useState(false);
   const [describe, setDescribe] = React.useState("");
   const isQuestionDisabled = disabled || !(question.isEditable ?? true);
-  const errors = form?.formState?.errors;
-  console.log({ [question.name]: options, showSpecify });
+  const errors = form?.formState?.errors
 
   function onChange(e, v) {
     setShowSpecify(v?.value === "others");

@@ -93,6 +93,7 @@ export default function Input({
   onHide,
   disabled,
   inputSX,
+  errorColor = "#d32f2f",
   ...props
 }) {
   const [hide, setHide] = React.useState(false);
@@ -236,7 +237,7 @@ export default function Input({
                         sx: {
                           zIndex: 7600,
                           bgcolor: "#fff8f8",
-                          color: "#d32f2f",
+                          color: errorColor,
                           border: "1.5px solid #d32f2f",
                           fontSize: "12px",
                           px: 1,
@@ -284,7 +285,7 @@ export default function Input({
                         sx: {
                           zIndex: 7600,
                           bgcolor: "#fff8f8",
-                          color: "#d32f2f",
+                          color: errorColor,
                           border: "1.5px solid #d32f2f",
                           fontSize: "12px",
                           px: 1,

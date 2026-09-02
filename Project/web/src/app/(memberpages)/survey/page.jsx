@@ -32,9 +32,9 @@ export default function page() {
       cancel: "Go Back",
     },
     onOk: (e) => {
-      setErrorPopup({ ...errorPopup, message: null });
+      setErrorPopup({ ...prev, message: null });
     },
-    cancel: (e) => {
+    onCancel: (e) => {
       router.push("/");
     },
   });
@@ -195,7 +195,7 @@ export default function page() {
                 <Page.Text
                   sx={{
                     flex: 1,
-                    textAlign: "center",
+                    textAlign: "right",
                     // ml: { xs: 0, md: "-220px" },
                     fontSize: { xs: "18px", lg: "24px" },
                     fontWeight: 600,
@@ -219,7 +219,10 @@ export default function page() {
                   survey={survey}
                   user={user}
                   onError={(err) => {
-                    setErrorPopup({ ...err });
+                    setErrorPopup((prev) => ({ 
+                      ...prev,
+                      ...err 
+                    }));
                   }}
                   onComplete={(status) => {
                     setSurveyCompleted(status);

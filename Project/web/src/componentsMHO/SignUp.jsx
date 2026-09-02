@@ -38,7 +38,6 @@ import {
   X,
   Apple,
   Microsoft,
-  Instagram,
   Login as LoginIcon,
 } from "@mui/icons-material";
 
@@ -76,9 +75,15 @@ const SALUTATION_OPTIONS = [
 ];
 
 const GENDER_SALUTATION_MAP = {
-  Male: ["Mr."],
-  Female: ["Ms.", "Mrs."],
-  Other: ["Mx."],
+  Male: ["Mr.", "Dr.", "Prof."],
+  Female: ["Ms.", "Mrs.", "Dr.", "Prof."],
+  Other: ["Mx.", "Dr.", "Prof."],
+};
+ 
+const DEFAULT_SALUTATION_MAP = {
+  Male: "Mr.",
+  Female: "Ms.",
+  Other: "Mx.",
 };
 
 export default function SignUp({
@@ -98,7 +103,6 @@ export default function SignUp({
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
 
-  const [salutationChange, setSalutationchange] = React.useState(false);
   const form = useForm({
     defaultValues: {
       category: "b2b",
@@ -126,6 +130,7 @@ export default function SignUp({
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors, isDirty },
   } = form;
 
@@ -135,31 +140,45 @@ export default function SignUp({
     loadData(api.get("/api/v1/socials"), (resp) => setSocials(resp.data || []));
   }, []);
 
-  const socialIcons = {
-    linkedin: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
-    facebook: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
-    youtube: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
-    twitter: <X sx={{ color: "black", fontSize: "22px" }} />,
-    x: <X sx={{ color: "black", fontSize: "22px" }} />,
-    instagram: <Instagram sx={{ color: "#E4405F", fontSize: "22px" }} />,
+  const getSocialUrl = (platform, fallback = "#") => {
+    return (
+      socials.find(
+        (social) => social.platform?.toLowerCase() === platform.toLowerCase(),
+      )?.url || fallback
+    );
   };
 
-  const socialsData = socials
-    .filter(
-      (social) =>
-        social?.url &&
-        typeof social.url === "string" &&
-        social.url.trim() !== "",
-    )
-    .map((social) => {
-      const name = social.platform?.toLowerCase();
-
-      return {
-        name,
-        link: social.url,
-        icon: socialIcons[name] || <LoginIcon />,
-      };
-    });
+  const socialsData = [
+    {
+      name: "linkedin",
+      link: getSocialUrl(
+        "Linkedin",
+        "https://www.linkedin.com/company/my-frequent-rewards",
+      ),
+      icon: <LinkedIn sx={{ color: "#0077B5", fontSize: "28px" }} />,
+    },
+    {
+      name: "facebook",
+      link: getSocialUrl(
+        "Facebook",
+        "https://www.facebook.com/FrequentResearchFieldwork/",
+      ),
+      icon: <Facebook sx={{ color: "#1877F2", fontSize: "28px" }} />,
+    },
+    {
+      name: "youtube",
+      link: getSocialUrl(
+        "Youtube",
+        "https://www.youtube.com/channel/UCLxmn2kq4aACAHaL2eT6QIQ",
+      ),
+      icon: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
+    },
+    {
+      name: "twitter",
+      link: getSocialUrl("Twitter", "https://twitter.com/frequentrfs"),
+      icon: <X sx={{ color: "black", fontSize: "22px" }} />,
+    },
+  ];
 
   const [providers, setProviders] = React.useState([]);
   React.useEffect(() => {
@@ -202,6 +221,7 @@ export default function SignUp({
       console.log(resp);
       if (resp.country) {
         form.setValue("address.0.country", resp.country.toLowerCase());
+        form.setValue("country", resp.country.toLowerCase());
         setCountry(resp.country.toLowerCase());
       }
     });
@@ -221,14 +241,14 @@ export default function SignUp({
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
       if (temp?.status == "success") {
-        const resetTimer = 30; //Modify timer if required
+        const resetTimer=30; //Modify timer if required
         setCooldown(resetTimer);
         setStatus("success");
-        setCooldown(redirectIn);
         setTimeout(() => {
           router.replace("/");
           window?.location?.reload();
         }, resetTimer * 1000);
+       
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -276,34 +296,23 @@ export default function SignUp({
     if ("email" in query) userInfo.mail = query?.email;
     form.reset(userInfo);
   }, [query]);
+  const category = form.watch("category");
   const gender = form.watch("gender");
-  const salutation = form.watch("name.salutation");
-  React.useEffect(() => {
-    if (!gender || !salutation) return;
+  const salutation  = form.watch("name.salutation");
 
-    // Dr. and Prof. are not gender-specific.
-    if (salutation === "Dr." || salutation === "Prof.") {
-      return;
-    }
-
-    const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
-
-    // Current salutation is already valid for the selected gender.
-    // Female + Mrs. => keep Mrs. || Female + Ms.  => keep Ms.
-    if (validSalutations.includes(salutation)) {
-      return;
-    }
-
-    // Automatically select the first valid salutation.
-    const newSalutation = validSalutations[0];
-
-    if (newSalutation) {
-      form.setValue("name.salutation", newSalutation, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    }
-  }, [gender, salutation]);
+React.useEffect(() => {
+  if (!gender) return;
+ 
+  const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
+  const defaultSalutation = DEFAULT_SALUTATION_MAP[gender];
+ 
+  if (!validSalutations.includes(salutation)) {
+    form.setValue("name.salutation", defaultSalutation, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  }
+}, [gender]);
 
   return (
     <PopUp
@@ -400,9 +409,9 @@ export default function SignUp({
                       }
                     >
                       <img
-                        src="/images/logo/mfr-logo.png"
+                        src="/images/logo/mfr/200w.webp"
                         alt="logo"
-                        width={220}
+                        // width={"100%"}
                       />
                     </Page.Box>{" "}
                     {/* <Page.Box
@@ -466,10 +475,18 @@ export default function SignUp({
                         <Form.Select
                           {...register("name.salutation")}
                           control={control}
-                          options={SALUTATION_OPTIONS}
+                          options={
+                            gender
+                              ? SALUTATION_OPTIONS.filter((option) =>
+                                  GENDER_SALUTATION_MAP[gender]?.includes(option.value),
+                                )
+                              : SALUTATION_OPTIONS
+                          }
                           labelText="Sal."
-                          errors={errors?.name?.salutaion}
+                          required={true}
+                          errors={errors?.name?.salutation}
                           validations={user.name.salutation}
+                          
                         />
                       </Grid>
                       <Grid size={{ xs: 12, md: 4.9 }}>
@@ -494,7 +511,7 @@ export default function SignUp({
                       </Grid>
                     </Grid>
 
-                    <Grid size={12} container direction="row" spacing={1}>
+                    <Grid size={12} container direction='row' spacing={1}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Input
                           {...register("mail")}
@@ -506,7 +523,7 @@ export default function SignUp({
                         />
                       </Grid>
 
-                      <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Phone
                           {...register("phone")}
                           control={control}
@@ -550,10 +567,6 @@ export default function SignUp({
                           label="Gender"
                           errors={errors?.gender}
                           validations={user.gender}
-                          onChange={(e) => {
-                            console.log(form.getValues("name.salutation"));
-                            form.setValue("name.salutation", "");
-                          }}
                         />
                       </Grid>
                     </Grid>
@@ -774,49 +787,47 @@ export default function SignUp({
                         Log in
                       </Page.Text>
                     </Grid>
-                    {socialsData.length > 0 && (
-                      <Grid
-                        container
-                        alignItems="center"
-                        justifyContent="center"
-                        spacing={4}
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="center"
+                      spacing={4}
+                      sx={{
+                        borderTop: "1px solid",
+                        borderColor: "divider",
+                        pt: 2,
+                        mt: 1,
+                      }}
+                    >
+                      <Page.Text
+                        sx={{ fontSize: "13px", color: "text.secondary" }}
+                      >
+                        Follow us on
+                      </Page.Text>
+                      <Page.Box
                         sx={{
-                          borderTop: "1px solid",
-                          borderColor: "divider",
-                          pt: 2,
-                          mt: 1,
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "20px",
+
+                          justifyContent: "center",
+                          alignItems: "center",
+                          listStyle: "none",
+                          textDecoration: "none",
                         }}
                       >
-                        <Page.Text
-                          sx={{ fontSize: "13px", color: "text.secondary" }}
-                        >
-                          Follow us on
-                        </Page.Text>
-                        <Page.Box
-                          sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "20px",
-
-                            justifyContent: "center",
-                            alignItems: "center",
-                            listStyle: "none",
-                            textDecoration: "none",
-                          }}
-                        >
-                          {socialsData.map((social) => (
-                            <Page.Link
-                              key={social.name}
-                              href={social.link}
-                              underline="none"
-                              target="_blank"
-                            >
-                              {social.icon}
-                            </Page.Link>
-                          ))}
-                        </Page.Box>
-                      </Grid>
-                    )}
+                        {socialsData.map((social) => (
+                          <Page.Link
+                            key={social.name}
+                            href={social.link}
+                            underline="none"
+                            target="_blank"
+                          >
+                            {social.icon}
+                          </Page.Link>
+                        ))}
+                      </Page.Box>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -895,7 +906,7 @@ export default function SignUp({
                     p: { xs: 2, sm: 4 },
                   }}
                 >
-                  Please check your Inbox/Spam and{" "}
+                  Please check your inbox/Spam and{" "}
                   <strong>click the verification link</strong> to confirm your
                   email and <strong>activate your account.</strong> Once
                   verified, you will be able to create your password and access
@@ -1178,7 +1189,6 @@ function GenderRadioGroup({
   label = "Gender",
   validations,
   isDisabled = false,
-  onChange,
 }) {
   const hasError = !!errors;
   const errorMessage = errors?.message;
@@ -1212,10 +1222,7 @@ function GenderRadioGroup({
             <RadioGroup
               row
               value={field.value || ""}
-              onChange={(e) => {
-                field.onChange(e.target.value);
-                onChange(e);
-              }}
+              onChange={(e) => field.onChange(e.target.value)}
               sx={{
                 display: "flex",
                 gap: 1.5,
