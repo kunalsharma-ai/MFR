@@ -77,7 +77,7 @@ const SALUTATION_OPTIONS = [
 
 const GENDER_SALUTATION_MAP = {
   Male: ["Mr."],
-  Female: ["Ms.","Mrs."],
+  Female: ["Ms.", "Mrs."],
   Other: ["Mx."],
 };
 
@@ -141,7 +141,7 @@ export default function SignUp({
     youtube: <YouTube sx={{ color: "#FF0000", fontSize: "28px" }} />,
     twitter: <X sx={{ color: "black", fontSize: "22px" }} />,
     x: <X sx={{ color: "black", fontSize: "22px" }} />,
-    Instagram: <Instagram sx={{ color: "#E4405F", fontSize: "22px" }} />,
+    instagram: <Instagram sx={{ color: "#E4405F", fontSize: "22px" }} />,
   };
 
   const socialsData = socials
@@ -400,7 +400,7 @@ export default function SignUp({
                       }
                     >
                       <img
-                        src="images/logo/mfr-logo.png"
+                        src="/images/logo/mfr-logo.png"
                         alt="logo"
                         width={220}
                       />
@@ -1075,6 +1075,7 @@ export default function SignUp({
                     // bgcolor: "#8cb2f333",
                     color: (theme) => theme.palette.cardtext.main,
                     bgcolor: (theme) => theme.palette.cardbg.main,
+                    color: (theme) => theme.palette.cardtext.main,
                     border: "1px solid #f4f4f4",
                     p: 4,
                   }}

@@ -53,7 +53,7 @@ export default function page() {
               // width: { xs: "180px", md: "300px" },
             }}
           >
-            <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
+            <img src="/images/logo/mfr-logo.png" alt="logo" width={260} />
           </Page.Box>{" "}
           {/* <Page.Box
             component="img"
@@ -199,9 +199,12 @@ export function Terms({
           borderRadius: 2,
           border: (theme) => `1px solid ${theme.palette.secondary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           py: 2,
           px: 2,
           width: width,
+          maxHeight: "calc(100vh - 190px)",
+          overflow: "auto",
         }}
       >
         <Page.Box
@@ -228,8 +231,9 @@ export function Terms({
               mb: 1,
             },
             "& a": {
-              color: "#063686",
+              color: (theme) => theme.palette.primary.main,
               textDecoration: "none",
+              fontWeight: 600,
             },
           }}
         >
@@ -264,7 +268,7 @@ export function Terms({
                 control={
                   <Checkbox
                     size="small"
-                    color="secondary"
+                    color="primary"
                     checked={
                       option.value === "accept_all"
                         ? isAllChecked
@@ -320,7 +324,7 @@ export function Terms({
               <Page.Text
                 component="a"
                 href="mailto:support@myfrequentrewards.com"
-                sx={{ color: "secondary.main", fontWeight: 600 }}
+                sx={{ color: "primary.main", fontWeight: 600 }}
               >
                 support@myfrequentrewards.com
               </Page.Text>
@@ -334,7 +338,7 @@ export function Terms({
               onClick={handleSubmit}
               disabled={!allRequiredSelected || !isTermsChanged}
               variant="contained"
-              color="secondary"
+              color="primary"
               sx={{
                 ml: 1,
                 fontWeight: 600,

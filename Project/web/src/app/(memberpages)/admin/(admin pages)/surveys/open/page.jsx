@@ -200,7 +200,7 @@ export default function page() {
                         "completed",
                         "overquota",
                         "dropout",
-                      ].includes(u?.status)
+                      ].includes(u?.status),
                     ).length
                   }
                 </Page.MuiButton>
@@ -247,7 +247,7 @@ export default function page() {
                         "completed",
                         "overquota",
                         "dropout",
-                      ].includes(u?.status)
+                      ].includes(u?.status),
                     ).length
                   }
                 </Page.MuiButton>
@@ -270,7 +270,7 @@ export default function page() {
                 >
                   {
                     info.qualified.filter((u) =>
-                      ["disqualified"].includes(u?.status)
+                      ["disqualified"].includes(u?.status),
                     ).length
                   }
                 </Page.MuiButton>
@@ -293,7 +293,7 @@ export default function page() {
                 >
                   {
                     info.qualified.filter((u) =>
-                      ["overquota"].includes(u?.status)
+                      ["overquota"].includes(u?.status),
                     ).length
                   }
                 </Page.MuiButton>
@@ -316,7 +316,7 @@ export default function page() {
                 >
                   {
                     info.qualified.filter((u) =>
-                      ["dropout"].includes(u?.status)
+                      ["dropout"].includes(u?.status),
                     ).length
                   }
                 </Page.MuiButton>
@@ -388,7 +388,7 @@ function BatchesHistory({ setShowFilteredUsers }) {
           fontSize: "16px",
           display: "inline-block",
           fontWeight: "600",
-          borderBottom:(theme)=> `2px solid ${theme.palette.primary.main}`,
+          borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
           pb: 0.5,
         }}
       >
@@ -407,8 +407,9 @@ function BatchesHistory({ setShowFilteredUsers }) {
                 justifyContent="space-between"
                 spacing={1}
                 sx={{
-                 border:(theme) =>`1px solid ${theme.palette.primary.main}`,  
-              bgcolor: (theme) => theme.palette.cardbg.main,
+                  border: (theme) => `1px solid ${theme.palette.primary.main}`,
+                  bgcolor: (theme) => theme.palette.cardbg.main,
+                  color: (theme) => theme.palette.cardtext.main,
                   borderRadius: 4,
                   px: { xs: 3, xl: 5 },
                   py: 3,
@@ -656,7 +657,7 @@ function SendInvites({ users, survey, market, onClose }) {
           <Page.Text fontWeight={600}>Total Batches:</Page.Text>
           {Math.ceil(
             Number(market?.completes ?? 0) /
-              Number(market?.schedule?.batch ?? 1)
+              Number(market?.schedule?.batch ?? 1),
           )}
         </Grid>
       </Grid>

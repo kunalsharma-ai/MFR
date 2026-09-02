@@ -90,108 +90,111 @@ export default function () {
         .then((r) => r.data),
     enabled: !!user?.category || !editMode,
   });
-  if (profilesLoading || profiles.length === 0) return <></>
+  if (profilesLoading || profiles.length === 0) return <></>;
 
-  const activeTab = (!query.profile) ? 1 : 1 + profiles.map(profile => profile.slug).indexOf(query.profile);
-  const selectedProfile = (activeTab) ? profiles.at(activeTab - 1) : profiles[0];
+  const activeTab = !query.profile
+    ? 1
+    : 1 + profiles.map((profile) => profile.slug).indexOf(query.profile);
+  const selectedProfile = activeTab ? profiles.at(activeTab - 1) : profiles[0];
   // React.useEffect(()=>{
   //   setEditMode(false);
   // },[activeTab])
-  return <Grid container size={12} px={1} mt={2} justifyContent="center">
-    <ProfileTabs
-      profiles={ profiles?.filter?.(profile => Number(profile.status) > 0) || [] }
-      query={query}
-      onChange={e => {
-        console.log(e);
-        router.push(`?profile=${e}`, { scroll: false });
-        // setEditMode(false);
-      }}
-    />
-    <Grid container size={12} justifyContent="center" mt={2}>
-      <Grid
-        size={{ xs: 11, md: 10 }}
-        sx={{
-          bgcolor: (theme) => theme.palette.cardbg.main,
-          borderRadius: 2.5,
-          boxShadow: 1,
-
+  return (
+    <Grid container size={12} px={1} mt={2} justifyContent="center">
+      <ProfileTabs
+        profiles={
+          profiles?.filter?.((profile) => Number(profile.status) > 0) || []
+        }
+        query={query}
+        onChange={(e) => {
+          console.log(e);
+          router.push(`?profile=${e}`, { scroll: false });
+          // setEditMode(false);
         }}
-      >
+      />
+      <Grid container size={12} justifyContent="center" mt={2}>
         <Grid
-          container
-          size={12}
-          justifyContent="space-between"
-          alignItems="center"
+          size={{ xs: 11, md: 10 }}
           sx={{
-            py: 1.5,
-            px: 2,
-            color: "white",
-            bgcolor: (theme) => theme.palette.primary.main,
-            fontWeight: 600,
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
+            borderRadius: 2.5,
+            boxShadow: 1,
           }}
         >
-          <Typography
-            fontSize={16}
-            fontWeight={600}
-            textTransform="capitalize"
+          <Grid
+            container
+            size={12}
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{
+              py: 1.5,
+              px: 2,
+              color: "white",
+              bgcolor: (theme) => theme.palette.primary.main,
+              fontWeight: 600,
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+            }}
           >
-            {selectedProfile?.name}
-          </Typography>
-          <Page.Box display="flex" alignItems="center" gap={2}>
-            <Typography fontSize={16}>
-              {1}/{selectedProfile?.pages?.length ?? ""}
+            <Typography
+              fontSize={16}
+              fontWeight={600}
+              textTransform="capitalize"
+            >
+              {selectedProfile?.name}
             </Typography>
-            {!editMode && (
-              <Button
-                endIcon={<EditIcon />}
-                onClick={() => setEditMode(true)}
-                sx={{ color: "white", p: 0, fontSize: 15, textTransform: "none", ml: 1 }}
-              >
-                Update
-              </Button>
-            )}
-          </Page.Box>
+            <Page.Box display="flex" alignItems="center" gap={2}>
+              <Typography fontSize={16}>
+                {1}/{selectedProfile?.pages?.length ?? ""}
+              </Typography>
+              {!editMode && (
+                <Button
+                  endIcon={<EditIcon />}
+                  onClick={() => setEditMode(true)}
+                  sx={{
+                    color: "white",
+                    p: 0,
+                    fontSize: 15,
+                    textTransform: "none",
+                    ml: 1,
+                  }}
+                >
+                  Update
+                </Button>
+              )}
+            </Page.Box>
+          </Grid>
+          <Survey
+            editMode={editMode}
+            setEditMode={setEditMode}
+            hideSteps={true}
+            isProfile={true}
+            survey={selectedProfile}
+            start={0}
+            user={user}
+            endpage={"/api/v1/me/profile"}
+            onComplete={(e) => {
+              setEditMode(false);
+            }}
+          />
         </Grid>
-        <Survey
-          editMode={editMode}
-          setEditMode={setEditMode}
-          hideSteps={true}
-          isProfile={true}
-          survey={selectedProfile}
-          start={0}
-          user={user}
-          endpage={"/api/v1/me/profile"}
-          onComplete={e => {
-            setEditMode(false);
-          }}
-        />
       </Grid>
     </Grid>
-  </Grid>
+  );
 }
-function ProfileTabs({
-  profiles,
-  query,
-  onChange
-}) {
+function ProfileTabs({ profiles, query, onChange }) {
   const tabs = React.useMemo(() => {
     return profiles.map((p) => ({
       label: p.name,
       icon: p.icon,
       link: p.slug,
-      status: p.status
+      status: p.status,
     }));
   }, [profiles]);
 
   const activeTab = React.useMemo(() => {
-
-    if (
-      !profiles ||
-      !(profiles instanceof Array) ||
-      profiles.length === 0
-    )
+    if (!profiles || !(profiles instanceof Array) || profiles.length === 0)
       return;
     if (!query.profile) {
       onChange(tabs[0].link);
@@ -199,49 +202,54 @@ function ProfileTabs({
     }
     return profiles.map((p) => p.slug).indexOf(query.profile);
   }, [profiles, query]);
-  return <Tabs
-    value={activeTab}
-    onChange={(_, v) => {
-      onChange(tabs[v].link)
-    }}
-    variant="scrollable"
-    scrollButtons
-    allowScrollButtonsMobile
-    sx={{
-      width: "100%",
-      pb: 0.3,
-      borderBottom: "3px solid whitesmoke",
-      "& .MuiTabs-scrollButtons .MuiSvgIcon-root": { fontSize: 30 },
-      "& .MuiTabs-indicator": {
-        bgcolor: (theme) => theme.palette.primary.main,
+  return (
+    <Tabs
+      value={activeTab}
+      onChange={(_, v) => {
+        onChange(tabs[v].link);
+      }}
+      variant="scrollable"
+      scrollButtons
+      allowScrollButtonsMobile
+      sx={{
+        width: "100%",
+        pb: 0.3,
+        borderBottom: "3px solid whitesmoke",
+        "& .MuiTabs-scrollButtons .MuiSvgIcon-root": { fontSize: 30 },
+        "& .MuiTabs-indicator": {
+          bgcolor: (theme) => theme.palette.primary.main,
 
-        height: 3,
-        display: "none",
-      },
-      "& .MuiTab-root": {
-        color: "black",
-        fontSize: { xs: 14, md: 16 },
-        fontWeight: 600,
-      },
-      "& .Mui-selected": {
-        bgcolor: (theme) => theme.palette.primary.main,
-        color: "white !important",
-      },
-    }}
-  >
-    {tabs.map((tab, i) => (
-      Number(tab.status) > 0 && <Tab
-        key={tab.label}
-        sx={{ borderRadius: 2, m: 0.5, border: "2px solid whitesmoke" }}
-        label={
-          <TabLabel
-            label={tab.label}
-            icon={tab.icon}
-            selected={activeTab === i}
-            progress={tab.status}
-          />
-        }
-      />
-    ))}
-  </Tabs>
+          height: 3,
+          display: "none",
+        },
+        "& .MuiTab-root": {
+          color: "black",
+          fontSize: { xs: 14, md: 16 },
+          fontWeight: 600,
+        },
+        "& .Mui-selected": {
+          bgcolor: (theme) => theme.palette.primary.main,
+          color: "white !important",
+        },
+      }}
+    >
+      {tabs.map(
+        (tab, i) =>
+          Number(tab.status) > 0 && (
+            <Tab
+              key={tab.label}
+              sx={{ borderRadius: 2, m: 0.5, border: "2px solid whitesmoke" }}
+              label={
+                <TabLabel
+                  label={tab.label}
+                  icon={tab.icon}
+                  selected={activeTab === i}
+                  progress={tab.status}
+                />
+              }
+            />
+          ),
+      )}
+    </Tabs>
+  );
 }

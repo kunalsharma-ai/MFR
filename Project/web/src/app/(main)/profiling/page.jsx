@@ -560,6 +560,7 @@ function page() {
                 p: 2,
                 border: (theme) => `1px solid ${theme.palette.primary.main}`,
                 bgcolor: (theme) => theme.palette.cardbg.main,
+                color: (theme) => theme.palette.cardtext.main,
               }}
             >
               <Grid
@@ -608,6 +609,7 @@ function page() {
                 borderRadius: 2,
                 border: (theme) => `1px solid ${theme.palette.primary.main}`,
                 bgcolor: (theme) => theme.palette.cardbg.main,
+                color: (theme) => theme.palette.cardtext.main,
                 width: "100%",
               }}
             >

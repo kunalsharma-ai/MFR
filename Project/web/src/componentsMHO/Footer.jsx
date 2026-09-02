@@ -391,7 +391,7 @@ function Footer() {
                 display="flex"
                 alignItems="center"
                 component="a"
-                href="tel:+919810459700"
+                href="tel:+918130015743"
                 sx={{
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -414,7 +414,7 @@ function Footer() {
                   }}
                 />
                 <Typography sx={{ fontSize: { xs: "14px", xl: "16px" } }}>
-                  +919810459700
+                  +918130015743
                 </Typography>
               </Box>
               <Box

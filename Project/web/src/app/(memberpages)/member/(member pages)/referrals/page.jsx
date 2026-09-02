@@ -358,6 +358,7 @@ function InvitedEmails({ sentInvites }) {
         sx={{
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           borderRadius: 2,
           maxHeight: { xs: "400px", lg: "132px" },
           maxWidth: "100%",
@@ -377,6 +378,7 @@ function InvitedEmails({ sentInvites }) {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
               fontSize: 13,
+              color: (theme) => theme.palette.cardtext.main,
             },
             "& tbody tr": {
               height: "32px",
@@ -385,6 +387,7 @@ function InvitedEmails({ sentInvites }) {
               fontSize: 13.5,
               fontWeight: 600,
               border: "1px solid rgba(0, 0, 0, 0.12)",
+              color: (theme) => theme.palette.cardtext.main,
             },
           }}
         >
@@ -582,7 +585,11 @@ function FollowUs() {
                       }
                     }}
                   >
-                    {social.actionLabel ?? "Like"}
+                    {social.platform?.toLowerCase() === "instagram"
+                      ? "Follow"
+                      : social.platform?.toLowerCase() === "youtube"
+                        ? "Subscribe"
+                        : "Like"}
                   </Button>
 
                   {social.status === "rewarded" ? (

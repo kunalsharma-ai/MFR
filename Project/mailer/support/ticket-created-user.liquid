@@ -1,76 +1,140 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Support Ticket Confirmation</title>
-</head>
-<body style="margin:0;padding:0;background:#f4f4f4;">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f4f4f4" style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
-<tr><td align="center">
-<table width="920" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="max-width:920px;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Ticket Confirmation</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f4f4;">
+    <table
+      width="100%"
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+      bgcolor="#f4f4f4"
+      style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+      <tr>
+        <td align="center">
+          <table
+            width="920"
+            border="0"
+            cellspacing="0"
+            cellpadding="0"
+            bgcolor="#ffffff"
+            style="max-width:920px;">
 
-<tr><td height="12" bgcolor="#002b8f"></td></tr>
+            <tr>
+              <td height="12" bgcolor="#002b8f"></td>
+            </tr>
 
-<tr><td align="center" style="padding:30px 20px;background:#ffffff;">
-<img src="https://myfrequentrewards.com/images/logo/mfr-logo.png" alt="MyFrequentRewards" width="520" style="display:block;max-width:100%;" />
-</td></tr>
+            <tr>
+              <td align="center" style="padding:30px 20px;background:#ffffff;">
+                <img
+                  src="https://myfrequentrewards.com/images/logo/mfr-logo.png"
+                  alt="MyFrequentRewards"
+                  width="520"
+                  style="display:block;max-width:100%;" />
+              </td>
+            </tr>
 
-<tr><td height="1" bgcolor="#fe7e00"></td></tr>
+            <tr>
+              <td height="1" bgcolor="#fe7e00"></td>
+            </tr>
 
-<tr><td style="padding:35px 60px 15px;">
-<p style="margin:0 0 25px;font-size:28px;color:#0d2372;font-weight:bold;">Hi {{user.name}},</p>
-<p style="margin:0;font-size:22px;line-height:38px;color:#14245d;">Thank you for reaching out to MyFrequent<span style="color:#fe7e00;">Rewards</span>. We have received your support request and your ticket has been successfully created.</p>
-</td></tr>
+            <tr>
+              <td style="padding:35px 60px 15px;">
+                <p style="margin:0 0 25px;font-size:28px;color:#0d2372;font-weight:bold;">Hi {{ user.name }},</p>
+                <p style="margin:0;font-size:22px;line-height:38px;color:#14245d;">Thank you for reaching out to MyFrequent<span style="color:#fe7e00;">Rewards</span>. We have received your support request and your ticket has been successfully created.</p>
+              </td>
+            </tr>
 
-<tr><td style="padding:30px 55px;">
+            <tr>
+              <td style="padding:30px 55px;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #d7e4ff;border-radius:12px;background:#f8fbff;">
+                <table
+                  width="100%"
+                  border="0"
+                  cellspacing="0"
+                  cellpadding="0"
+                  style="border:1px solid #d7e4ff;border-radius:12px;background:#f8fbff;">
 
-<tr><td align="center" width="220" style="padding:30px;">
-<img src="https://frequentresearch.com/mailer/mail-icons/mfr/mail.png" width="150" alt="Support Ticket" style="display:block;" />
-</td>
+                  <tr>
+                    <td
+                      align="center"
+                      width="220"
+                      style="padding:30px;">
+                      <img
+                        src="https://frequentresearch.com/mailer/mail-icons/mfr/mail.png"
+                        width="150"
+                        alt="Support Ticket"
+                        style="display:block;" />
+                    </td>
 
-<td style="padding:35px 35px 35px 0;">
-<h2 style="margin:0 0 15px;color:#0d2372;font-size:30px;">Support Ticket Created</h2>
-<p style="margin:0 0 25px;color:#17285f;font-size:20px;line-height:34px;">Our support team is currently reviewing your request and will get back to you within 24 to 48 hours with an update.</p>
+                    <td style="padding:35px 35px 35px 0;">
+                      <h2 style="margin:0 0 15px;color:#0d2372;font-size:30px;">Support Ticket Created</h2>
+                      <p style="margin:0 0 25px;color:#17285f;font-size:20px;line-height:34px;">Our support team is currently reviewing your request and will get back to you within 24 to 48 hours with an update.</p>
 
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td style="background:#fe7e00;color:#ffffff;padding:12px 22px;border-radius:8px;font-size:18px;font-weight:bold;">Ticket ID: {{data.ticketNo}}</td>
-</tr>
-</table>
+                      <table
+                        border="0"
+                        cellspacing="0"
+                        cellpadding="0">
+                        <tr>
+                          <td style="background:#fe7e00;color:#ffffff;padding:12px 22px;border-radius:8px;font-size:18px;font-weight:bold;">Ticket ID: {{ data.ticketNo }}</td>
+                        </tr>
+                      </table>
 
-</td></tr>
-</table>
+                    </td>
+                  </tr>
+                </table>
 
-</td></tr>
+              </td>
+            </tr>
 
-<tr><td style="padding:0 55px 35px;">
+            <tr>
+              <td style="padding:0 55px 35px;">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#fef8f2;border:1px solid #f0d7b4;border-radius:10px;">
-<tr>
+                <table
+                  width="100%"
+                  border="0"
+                  cellspacing="0"
+                  cellpadding="0"
+                  style="background:#fef8f2;border:1px solid #f0d7b4;border-radius:10px;">
+                  <tr>
 
-<td width="120" align="center" style="padding:25px;">
-<img src="https://frequentresearch.com/mailer/mail-icons/mfr/shield.png" width="85" alt="Information" style="display:block;" />
-</td>
+                    <td
+                      width="120"
+                      align="center"
+                      style="padding:25px;">
+                      <img
+                        src="https://frequentresearch.com/mailer/mail-icons/mfr/shield.png"
+                        width="85"
+                        alt="Information"
+                        style="display:block;" />
+                    </td>
 
-<td style="padding:25px 25px 25px 0;">
-<h3 style="margin:0 0 10px;color:#0d2372;font-size:22px;">Need to Add More Information?</h3>
-<p style="margin:0;font-size:18px;line-height:30px;color:#22305f;">Please do not reply to this email. To add more details or respond to your support request, please use the Support Ticket system.</p>
-</td>
+                    <td style="padding:25px 25px 25px 0;">
+                      <h3 style="margin:0 0 10px;color:#0d2372;font-size:22px;">Need to Add More Information?</h3>
+                      <p style="margin:0;font-size:18px;line-height:30px;color:#22305f;">Please do not reply to this email. To add more details or respond to your support request, please use the Support Ticket system.</p>
+                    </td>
 
-</tr>
-</table>
+                  </tr>
+                </table>
 
-</td></tr>
+              </td>
+            </tr>
 
-<tr><td style="padding:0 55px 35px;">
-<p style="margin:0;font-size:20px;line-height:34px;color:#14245d;">Thank you for your patience and cooperation. We appreciate you reaching out to us and will work to resolve your request as soon as possible.</p>
-</td></tr>
-        {% include "mailer/footer.liquid" %}
-</table>
-</td></tr>
-</table>
-</body>
+            <tr>
+              <td style="padding:0 55px 35px;">
+                <p style="margin:0;font-size:20px;line-height:34px;color:#14245d;">Thank you for your patience and cooperation. We appreciate you reaching out to us and will work to resolve your request as soon as possible.</p>
+              </td>
+            </tr>
+            {% include "mailer/footer.liquid" %}
+            <tr>
+              <td height="10" bgcolor="#fe7e00"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

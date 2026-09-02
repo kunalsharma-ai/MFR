@@ -84,7 +84,7 @@ export default function MemberHeader() {
             >
               <Box
                 component="img"
-                src="images/logo/mfr-logo.png"
+                src="/images/logo/mfr-logo.png"
                 alt="logo"
                 width={220}
                 //  width={220}

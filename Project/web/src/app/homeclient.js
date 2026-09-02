@@ -19,6 +19,7 @@ import CommunityMember from "@/componentsMHO/CommunityMember";
 import { ContextProviders } from "@/Context";
 import FeedbackForm from "@/componentsMHO/FeedbackForm";
 import { Popup } from "@/components/Popup";
+import RecentActivityPopup from "@/componentsMHO/RecentActivityPopup";
 
 export default function Home() {
   const howitworksRef = React.useRef(null);
@@ -93,12 +94,12 @@ export default function Home() {
       <main>
         <div ref={homeRef} className="scroll-target">
           <ContextProviders>
-          <HeroSection
-            openSignUp={openSignUp}
-            setOpenSignUp={setOpenSignUp}
-            openLogin={openLogin}
-            setOpenLogin={setOpenLogin}
-          />
+            <HeroSection
+              openSignUp={openSignUp}
+              setOpenSignUp={setOpenSignUp}
+              openLogin={openLogin}
+              setOpenLogin={setOpenLogin}
+            />
           </ContextProviders>
         </div>
 
@@ -143,6 +144,7 @@ export default function Home() {
           <KeyboardArrowUpIcon sx={{ fontSize: "30px" }} />
         </Fab>
       </Zoom>
+      <RecentActivityPopup ToTopButtonVisible={visible} />
       <ContextProviders>
         <SignUp
           setOpenLogin={setOpenLogin}

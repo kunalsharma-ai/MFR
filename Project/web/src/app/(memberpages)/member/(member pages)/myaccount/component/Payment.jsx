@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Avatar,
@@ -34,7 +34,7 @@ import {
 } from "@mui/icons-material";
 import PopUp from "@/componentsMHO/PopUp";
 import { useMember } from "@/Context";
-import { api,Page } from "@/util";
+import { api, Page } from "@/util";
 export default function Payment() {
   const [openPayment, setOpenPayment] = React.useState(false);
   const [selectedMethod, setSelectedMethod] = React.useState();
@@ -68,184 +68,186 @@ export default function Payment() {
 
   return (
     <Grid
-      size={ { xs: 12, lg: 6 } }
+      size={{ xs: 12, lg: 6 }}
       container
-      spacing={ 2 }
+      spacing={2}
       justifyContent="center"
     >
-      {/* Header */ }
+      {/* Header */}
       <Box
         width="100%"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        px={ 1 }
-        pt={ 1 }
+        px={1}
+        pt={1}
         minHeight={"46px"}
       >
         <Typography
-          sx={ {
+          sx={{
             fontSize: "16px",
             fontWeight: 600,
-            borderBottom: (theme) =>
-                `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
-          } }
+          }}
         >
           Payment Method
         </Typography>
-        {payment?.method && <IconButton
-          onClick={ () => setOpenPayment(true) }
-          sx={ { color: "secondary.main" } }
-        >
-          <EditIcon sx={ { fontSize: 22 } } />
-        </IconButton>}
+        {payment?.method && (
+          <IconButton
+            onClick={() => setOpenPayment(true)}
+            sx={{ color: "secondary.main" }}
+          >
+            <EditIcon sx={{ fontSize: 22 }} />
+          </IconButton>
+        )}
       </Box>
 
-      {/* Payment display */ }
+      {/* Payment display */}
       <Grid
         container
-        size={ 12 }
+        size={12}
         direction="column"
-        spacing={ 0 }
-        px={ 2 }
-        py={ 2 }
-        sx={ {
-           border: (theme) => `1px solid ${theme.palette.primary.main}`,
+        spacing={0}
+        px={2}
+        py={2}
+        sx={{
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           borderRadius: 2,
-        } }
+        }}
       >
-        { payment?.method ? (
-          <Grid container size={ 12 } alignItems="center" py={ { xs: 0, md: 1 } }>
+        {payment?.method ? (
+          <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
             <Typography
-              width={ { xs: "100%", lg: "40%" } }
-              fontWeight={ payment.method === "Wire Transfer" ? 600 : 500 }
+              width={{ xs: "100%", lg: "40%" }}
+              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
             >
-              { payment.method }:
+              {payment.method}:
             </Typography>
-            { ["PayPal", "UPI", "Amazon"].includes(payment?.method) ? (
-              <Typography color="secondary" fontWeight={ 500 }>
-                { payment?.value?.account }
+            {["PayPal", "UPI", "Amazon"].includes(payment?.method) ? (
+              <Typography color="secondary" fontWeight={500}>
+                {payment?.value?.account}
               </Typography>
             ) : (
-              <Grid size={ 12 } mt={ 1.5 }>
+              <Grid size={12} mt={1.5}>
                 <Grid
-                  size={ 12 }
+                  size={12}
                   container
                   alignItems="center"
-                  borderBottom={ "2px solid #fff" }
-                  py={ 1 }
+                  borderBottom={"2px solid #fff"}
+                  py={1}
                 >
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     Bank:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment?.value?.bank }
-                  </Typography>{ " " }
+                    {payment?.value?.bank}
+                  </Typography>{" "}
                 </Grid>
                 <Grid
-                  size={ 12 }
+                  size={12}
                   container
                   alignItems="center"
-                  borderBottom={ "2px solid #fff" }
-                  py={ 1 }
+                  borderBottom={"2px solid #fff"}
+                  py={1}
                 >
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     IFSC/IBAN/SWIFT Code:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment?.value?.ifsc }
-                  </Typography>{ " " }
+                    {payment?.value?.ifsc}
+                  </Typography>{" "}
                 </Grid>
-                <Grid size={ 12 } container alignItems="center" py={ 1 }>
+                <Grid size={12} container alignItems="center" py={1}>
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     Account Number:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment?.value?.account }
+                    {payment?.value?.account}
                   </Typography>
                 </Grid>
               </Grid>
-            ) }
+            )}
           </Grid>
         ) : (
           <Typography py={1}>
-            No Payment method selected yet.{ " " }
+            No Payment method selected yet.{" "}
             <Typography
               color="secondary"
-              component={ "span" }
-              fontWeight={ 600 }
-              sx={ { cursor: "pointer" } }
-              onClick={ () => setOpenPayment(true) }
+              component={"span"}
+              fontWeight={600}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenPayment(true)}
             >
               Click to add
             </Typography>
           </Typography>
-        ) }
+        )}
       </Grid>
 
-      {/* Payment Popup */ }
+      {/* Payment Popup */}
       <PopUp
         title="Select Payment Method"
         maxWidth="md"
-        open={ openPayment }
-        onClose={ () => setOpenPayment(false) }
+        open={openPayment}
+        onClose={() => setOpenPayment(false)}
       >
         <Grid
-          size={ 12 }
+          size={12}
           container
           alignItems="center"
-          sx={ { bgcolor: "#f1f4f9" } }
+          sx={{ bgcolor: "#f1f4f9" }}
         >
-          {/* Payment options */ }
+          {/* Payment options */}
           <Grid
             container
-            size={ 12 }
+            size={12}
             alignItems="center"
-            spacing={ 3 }
+            spacing={3}
             justifyContent="space-evenly"
-            pt={ 5 }
-            pb={ 3 }
+            pt={5}
+            pb={3}
           >
             <RadioGroup
               row
-              value={ selectedMethod }
-              onChange={ (event) => setSelectedMethod(event.target.value) }
-              style={ { justifyContent: "space-evenly", width: "100%" } }
+              value={selectedMethod}
+              onChange={(event) => setSelectedMethod(event.target.value)}
+              style={{ justifyContent: "space-evenly", width: "100%" }}
             >
-              { paymentMethods.map((method, index) => (
+              {paymentMethods.map((method, index) => (
                 <FormControlLabel
-                  key={ index }
-                  value={ method.name }
-                  control={ <Radio /> }
+                  key={index}
+                  value={method.name}
+                  control={<Radio />}
                   label={
                     <Box
                       component="img"
-                      src={ method.icon }
-                      alt={ method.name }
-                      sx={ {
+                      src={method.icon}
+                      alt={method.name}
+                      sx={{
                         height: 63,
                         width: 100,
                         mr: 2,
@@ -261,33 +263,33 @@ export default function Payment() {
                             ? "0 0 8px #063686"
                             : "none",
                         transition: "0.2s",
-                      } }
+                      }}
                     />
                   }
                 />
-              )) }
+              ))}
             </RadioGroup>
           </Grid>
 
-          {/* Dynamic input form */ }
-          <Grid size={ 12 } container py={ 2 }>
-            {/* PayPal */ }
+          {/* Dynamic input form */}
+          <Grid size={12} container py={2}>
+            {/* PayPal */}
             <Collapse
-              in={ selectedMethod === "PayPal" }
+              in={selectedMethod === "PayPal"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your PayPal Email
@@ -296,7 +298,7 @@ export default function Payment() {
                   value={
                     payment.method === "PayPal" ? payment?.value?.account : ""
                   }
-                  onChange={ (e) =>
+                  onChange={(e) =>
                     setPayment({
                       method: "PayPal",
                       value: { account: e.target.value },
@@ -304,31 +306,31 @@ export default function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("PayPal", payment.value) }
+                  onClick={() => handleSave("PayPal", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Wire Transfer */ }
+            {/* Wire Transfer */}
             <Collapse
-              in={ selectedMethod === "Wire Transfer" }
+              in={selectedMethod === "Wire Transfer"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 2 }
+                spacing={2}
               >
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Bank
                   </Typography>
                   <Page.Input
@@ -337,7 +339,7 @@ export default function Payment() {
                         ? payment.value.bank || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, bank: e.target.value },
@@ -345,8 +347,8 @@ export default function Payment() {
                     }
                   />
                 </Grid>
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Enter your IFSC/IBAN/SWIFT Code
                   </Typography>
                   <Page.Input
@@ -355,7 +357,7 @@ export default function Payment() {
                         ? payment.value.ifsc || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, ifsc: e.target.value },
@@ -363,8 +365,8 @@ export default function Payment() {
                     }
                   />
                 </Grid>
-                <Grid size={ 12 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={12} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Account Number
                   </Typography>
                   <Page.Input
@@ -373,7 +375,7 @@ export default function Payment() {
                         ? (payment?.value?.account ?? "")
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, account: e.target.value },
@@ -382,33 +384,33 @@ export default function Payment() {
                   />
                 </Grid>
                 <Button
-                  onClick={ () => handleSave("Wire Transfer", payment.value) }
+                  onClick={() => handleSave("Wire Transfer", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, color: "white", px: 2, fontWeight: 600 } }
+                  sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Amazon */ }
+            {/* Amazon */}
             <Collapse
-              in={ selectedMethod === "Amazon" }
+              in={selectedMethod === "Amazon"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your Amazon Email
@@ -417,7 +419,7 @@ export default function Payment() {
                   value={
                     payment.method === "Amazon" ? payment?.value?.account : ""
                   }
-                  onChange={ (e) =>
+                  onChange={(e) =>
                     setPayment({
                       method: "Amazon",
                       value: { account: e.target.value },
@@ -425,33 +427,33 @@ export default function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("Amazon", payment.value) }
+                  onClick={() => handleSave("Amazon", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* UPI */ }
+            {/* UPI */}
             <Collapse
-              in={ selectedMethod === "UPI" }
+              in={selectedMethod === "UPI"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your UPI ID
@@ -460,7 +462,7 @@ export default function Payment() {
                   value={
                     payment.method === "UPI" ? payment?.value?.account : ""
                   }
-                  onChange={ (e) =>
+                  onChange={(e) =>
                     setPayment({
                       method: "UPI",
                       value: { account: e.target.value },
@@ -468,10 +470,10 @@ export default function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("UPI", payment.value) }
+                  onClick={() => handleSave("UPI", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
@@ -484,185 +486,189 @@ export default function Payment() {
   );
   return (
     <Grid
-      size={ { xs: 12, lg: 6 } }
+      size={{ xs: 12, lg: 6 }}
       container
-      spacing={ 2 }
+      spacing={2}
       justifyContent="center"
     >
-      {/* Header */ }
+      {/* Header */}
       <Box
         width="100%"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        px={ 1 }
-        pt={ 1 }
-        minHeight={ 46 }
+        px={1}
+        pt={1}
+        minHeight={46}
       >
         <Typography
-          sx={ {
+          sx={{
             fontSize: "16px",
             fontWeight: 600,
             borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
-          } }
+          }}
         >
           Payment Method
         </Typography>
-        { payment?.method && (
+        {payment?.method && (
           <IconButton
-            onClick={ () => setOpenPayment(true) }
-            sx={ { color: "secondary.main" } }
+            onClick={() => setOpenPayment(true)}
+            sx={{ color: "secondary.main" }}
           >
-            <EditIcon sx={ { fontSize: 22 } } />
+            <EditIcon sx={{ fontSize: 22 }} />
           </IconButton>
-        ) }
+        )}
       </Box>
 
-      {/* Payment display */ }
+      {/* Payment display */}
       <Grid
         container
-        size={ 12 }
+        size={12}
         direction="column"
-        spacing={ 0 }
-        px={ 2 }
-        py={ 2 }
-        sx={ {
+        spacing={0}
+        px={2}
+        py={2}
+        sx={{
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           borderRadius: 2,
-        } }
+        }}
       >
-        { payment?.method ? (
-          <Grid container size={ 12 } alignItems="center" py={ { xs: 0, md: 1 } }>
+        {payment?.method ? (
+          <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
             <Typography
-              width={ { xs: "100%", lg: "40%" } }
-              fontWeight={ payment.method === "Wire Transfer" ? 600 : 500 }
+              width={{ xs: "100%", lg: "40%" }}
+              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
             >
-              { payment.method }:
+              {payment.method}:
             </Typography>
-            { typeof payment.value === "string" ? (
-              <Typography color="secondary" fontWeight={ 500 }>
-                { payment.value }
+            {typeof payment.value === "string" ? (
+              <Typography color="secondary" fontWeight={500}>
+                {payment.value}
               </Typography>
             ) : (
-              <Grid size={ 12 } mt={ 1.5 }>
+              <Grid size={12} mt={1.5}>
                 <Grid
-                  size={ 12 }
+                  size={12}
                   container
                   alignItems="center"
-                  borderBottom={ "1px solid #fff" }
-                  py={ 1 }
+                  borderBottom={"1px solid #fff"}
+                  py={1}
                 >
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     Bank:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment.value.bank }
-                  </Typography>{ " " }
+                    {payment.value.bank}
+                  </Typography>{" "}
                 </Grid>
                 <Grid
-                  size={ 12 }
+                  size={12}
                   container
                   alignItems="center"
-                  borderBottom={ "1px solid #fff" }
-                  py={ 1 }
+                  borderBottom={"1px solid #fff"}
+                  py={1}
                 >
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     IFSC/IBAN/SWIFT Code:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment.value.ifsc }
-                  </Typography>{ " " }
+                    {payment.value.ifsc}
+                  </Typography>{" "}
                 </Grid>
-                <Grid size={ 12 } container alignItems="center" py={ 1 }>
+                <Grid size={12} container alignItems="center" py={1}>
                   <Typography
-                    width={ { xs: "100%", lg: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", lg: "40%" }}
+                    fontWeight={500}
                   >
                     Account Number:
                   </Typography>
                   <Typography
                     component="span"
                     color="secondary"
-                    fontWeight={ 500 }
+                    fontWeight={500}
                   >
-                    { payment.value.accountNumber }
+                    {payment.value.accountNumber}
                   </Typography>
                 </Grid>
               </Grid>
-            ) }
+            )}
           </Grid>
         ) : (
           <Typography>
-            No Payment method selected yet.{ " " }
+            No Payment method selected yet.{" "}
             <Typography
               color="secondary"
-              component={ "span" }
-              fontWeight={ 600 }
-              sx={ { cursor: "pointer" } }
-              onClick={ () => setOpenPayment(true) }
+              component={"span"}
+              fontWeight={600}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenPayment(true)}
             >
               Click to add
             </Typography>
           </Typography>
-        ) }
+        )}
       </Grid>
 
-      {/* Payment Popup */ }
+      {/* Payment Popup */}
       <PopUp
         title="Select Payment Method"
         maxWidth="md"
-        open={ openPayment }
-        onClose={ () => setOpenPayment(false) }
+        open={openPayment}
+        onClose={() => setOpenPayment(false)}
       >
         <Grid
-          size={ 12 }
+          size={12}
           container
           alignItems="center"
-          sx={ { bgcolor: (theme) => theme.palette.cardbg.main } }
+          sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
+          }}
         >
-          {/* Payment options */ }
+          {/* Payment options */}
           <Grid
             container
-            size={ 12 }
+            size={12}
             alignItems="center"
-            spacing={ 3 }
+            spacing={3}
             justifyContent="space-evenly"
-            pt={ 5 }
-            pb={ 3 }
+            pt={5}
+            pb={3}
           >
             <RadioGroup
               row
-              value={ selectedMethod }
-              onChange={ (event) => setSelectedMethod(event.target.value) }
-              style={ { justifyContent: "space-evenly", width: "100%" } }
+              value={selectedMethod}
+              onChange={(event) => setSelectedMethod(event.target.value)}
+              style={{ justifyContent: "space-evenly", width: "100%" }}
             >
-              { paymentMethods.map((method, index) => (
+              {paymentMethods.map((method, index) => (
                 <FormControlLabel
-                  key={ index }
-                  value={ method.name }
-                  control={ <Radio /> }
+                  key={index}
+                  value={method.name}
+                  control={<Radio />}
                   label={
                     <Box
                       component="img"
-                      src={ method.icon }
-                      alt={ method.name }
-                      sx={ {
+                      src={method.icon}
+                      alt={method.name}
+                      sx={{
                         height: 63,
                         width: 100,
                         mr: 2,
@@ -678,69 +684,69 @@ export default function Payment() {
                             ? `0 0 8px ${theme.palette.secondary.main}`
                             : "none",
                         transition: "0.2s",
-                      } }
+                      }}
                     />
                   }
                 />
-              )) }
+              ))}
             </RadioGroup>
           </Grid>
 
-          {/* Dynamic input form */ }
-          <Grid size={ 12 } container py={ 2 }>
-            {/* PayPal */ }
+          {/* Dynamic input form */}
+          <Grid size={12} container py={2}>
+            {/* PayPal */}
             <Collapse
-              in={ selectedMethod === "PayPal" }
+              in={selectedMethod === "PayPal"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your PayPal Email
                 </Typography>
                 <Page.Input
-                  value={ payment.method === "PayPal" ? payment.value : "" }
-                  onChange={ (e) =>
+                  value={payment.method === "PayPal" ? payment.value : ""}
+                  onChange={(e) =>
                     setPayment({ method: "PayPal", value: e.target.value })
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("PayPal", payment.value) }
+                  onClick={() => handleSave("PayPal", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Wire Transfer */ }
+            {/* Wire Transfer */}
             <Collapse
-              in={ selectedMethod === "Wire Transfer" }
+              in={selectedMethod === "Wire Transfer"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 2 }
+                spacing={2}
               >
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Enter your Bank Name
                   </Typography>
                   <Page.Input
@@ -749,7 +755,7 @@ export default function Payment() {
                         ? payment.value.bank || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, bank: e.target.value },
@@ -757,8 +763,8 @@ export default function Payment() {
                     }
                   />
                 </Grid>
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Enter your IFSC/IBAN/SWIFT Code
                   </Typography>
                   <Page.Input
@@ -767,7 +773,7 @@ export default function Payment() {
                         ? payment.value.ifsc || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, ifsc: e.target.value },
@@ -775,8 +781,8 @@ export default function Payment() {
                     }
                   />
                 </Grid>
-                <Grid size={ 12 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={12} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600} color="secondary">
                     Enter your Account Number
                   </Typography>
                   <Page.Input
@@ -785,7 +791,7 @@ export default function Payment() {
                         ? payment.value.accountNumber || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment((prev) => ({
                         method: "Wire Transfer",
                         value: { ...prev.value, accountNumber: e.target.value },
@@ -794,86 +800,86 @@ export default function Payment() {
                   />
                 </Grid>
                 <Button
-                  onClick={ () => handleSave("Wire Transfer", payment.value) }
+                  onClick={() => handleSave("Wire Transfer", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, color: "white", px: 2, fontWeight: 600 } }
+                  sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Amazon */ }
+            {/* Amazon */}
             <Collapse
-              in={ selectedMethod === "Amazon" }
+              in={selectedMethod === "Amazon"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your Amazon Email
                 </Typography>
                 <Page.Input
-                  value={ payment.method === "Amazon" ? payment.value : "" }
-                  onChange={ (e) =>
+                  value={payment.method === "Amazon" ? payment.value : ""}
+                  onChange={(e) =>
                     setPayment({ method: "Amazon", value: e.target.value })
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("Amazon", payment.value) }
+                  onClick={() => handleSave("Amazon", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* UPI */ }
+            {/* UPI */}
             <Collapse
-              in={ selectedMethod === "UPI" }
+              in={selectedMethod === "UPI"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
                 <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
+                  mb={1}
+                  fontSize={16}
+                  fontWeight={600}
                   color="secondary"
                 >
                   Enter your UPI ID
                 </Typography>
                 <Page.Input
-                  value={ payment.method === "UPI" ? payment.value : "" }
-                  onChange={ (e) =>
+                  value={payment.method === "UPI" ? payment.value : ""}
+                  onChange={(e) =>
                     setPayment({ method: "UPI", value: e.target.value })
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("UPI", payment.value) }
+                  onClick={() => handleSave("UPI", payment.value)}
                   variant="contained"
                   color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>

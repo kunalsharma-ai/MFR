@@ -103,7 +103,7 @@ function page() {
                   mb: 2,
                 }}
               >
-                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
+                <img src="/images/logo/mfr-logo.png" alt="logo" width={220} />
                 {/* <Page.Box
                   component="img"
                   src="/imagesmfr/dol-sign.gif"

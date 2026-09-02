@@ -711,6 +711,7 @@ function ForgotCard({ onClose, setCardType, setOpenSignUp }) {
                 borderRadius: 3,
                 bgcolor: (theme) => theme.palette.cardbg.main,
                 border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+                color: (theme) => theme.palette.cardtext.main,
                 p: 4,
               }}
             >

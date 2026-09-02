@@ -84,7 +84,7 @@ export default function AdminHeader() {
               <Box
                 component="img"
                 // src="/images/logo/mfr/200w.webp"
-                src="images/logo/mfr-logo.png"
+                src="/images/logo/mfr-logo.png"
                 alt="logo"
                 width={220}
 

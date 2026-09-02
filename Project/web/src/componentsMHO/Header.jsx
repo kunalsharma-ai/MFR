@@ -241,7 +241,7 @@ export default function Header({
         >
           <Box
             component="img"
-            src="images/logo/mfr-logo.png"
+            src="/images/logo/mfr-logo.png"
             alt="logo"
             width={220}
             style={{ filter: "brightness(0) saturate(100%) invert(100%)" }}
@@ -447,7 +447,7 @@ export default function Header({
             <Box
               component="img"
               // src="images/logo/mfr/200w.webp"
-              src="images/logo/mfr-logo.png"
+              src="/images/logo/mfr-logo.png"
               alt="logo"
               width={220}
             />

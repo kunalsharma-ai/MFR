@@ -329,7 +329,7 @@ export default function page() {
                   }
                 }
               >
-                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
+                <img src="/images/logo/mfr-logo.png" alt="logo" width={220} />
               </Page.Box>{" "}
               {/* <Page.Box
                 component="img"

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Avatar,
@@ -34,12 +34,11 @@ import {
 } from "@mui/icons-material";
 import PopUp from "@/componentsMHO/PopUp";
 import { useMember } from "@/Context";
-import { api,Page } from "@/util";
+import { api, Page } from "@/util";
 import { useToast } from "@/hooks";
 
-
 export default function Socials() {
-  const user=useMember();
+  const user = useMember();
   const [openContact, setOpenContact] = React.useState(false);
 
   const [contact, setContact] = React.useState({
@@ -115,7 +114,7 @@ export default function Socials() {
     },
   ];
 
-  const hasContacts = Object.values(contact).some(v => v?.trim());
+  const hasContacts = Object.values(contact).some((v) => v?.trim());
 
   return (
     <Grid
@@ -137,19 +136,20 @@ export default function Socials() {
           sx={{
             fontSize: "16px",
             fontWeight: 600,
-            borderBottom: (theme) =>
-                `2px solid ${theme.palette.primary.main}`,
+            borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
           }}
         >
           Social Contacts
         </Typography>
-        {hasContacts && <IconButton
-          onClick={() => setOpenContact(true)}
-          sx={{ color: "secondary.main" }}
-        >
-          <EditIcon sx={{ fontSize: 22 }} />
-        </IconButton>}
+        {hasContacts && (
+          <IconButton
+            onClick={() => setOpenContact(true)}
+            sx={{ color: "secondary.main" }}
+          >
+            <EditIcon sx={{ fontSize: 22 }} />
+          </IconButton>
+        )}
       </Box>
 
       <Grid
@@ -160,8 +160,9 @@ export default function Socials() {
         px={2}
         py={2}
         sx={{
-           border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           borderRadius: 2,
         }}
       >

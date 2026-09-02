@@ -127,7 +127,7 @@ function ChangePassword() {
       <Button
         type="submit"
         variant="contained"
-        color="secondary"
+        color="primary"
         disabled={
           inputs.cnfPassword !== inputs.newPassword ||
           inputs.newPassword === "" ||
@@ -208,6 +208,7 @@ function SurveyNotification() {
         sx={{
           border: (theme) => `1px solid ${theme.palette.secondary.main}`,
           bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           borderRadius: 2,
         }}
       >
@@ -228,7 +229,7 @@ function SurveyNotification() {
                       )
                     : setSelected([...selected, option.value]);
                 }}
-                sx={{ color: "secondary.main" }}
+                sx={{ color: "primary.main" }}
               />
             }
             label={option.label}
@@ -246,7 +247,7 @@ function SurveyNotification() {
         }}
         disabled={isUnchanged}
         variant="contained"
-        color="secondary"
+        color="primary"
         sx={{
           ml: 1,
           color: "white",

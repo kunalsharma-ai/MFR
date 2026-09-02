@@ -118,7 +118,7 @@ export default function page() {
                 justifyContent={"center"}
                 mb={4}
               >
-                <img src="images/logo/mfr-logo.png" alt="logo" width={220} />
+                <img src="/images/logo/mfr-logo.png" alt="logo" width={220} />
               </Grid>
               <Page.Box
                 component="div"
@@ -129,6 +129,7 @@ export default function page() {
                   minHeight: "calc(90vh - 215px)",
                   bgcolor: (theme) => theme.palette.cardbg.main,
                   border: (theme) => `1px solid ${theme.palette.divider}`,
+                  color: (theme) => theme.palette.cardtext.main,
                   textShadow: "1px 1px 1px rgba(0, 0, 0, 0.1)",
                 }}
                 dangerouslySetInnerHTML={{ __html: survey?.thankyou }}
@@ -173,7 +174,7 @@ export default function page() {
                     }
                   >
                     <img
-                      src="images/logo/mfr-logo.png"
+                      src="/images/logo/mfr-logo.png"
                       alt="logo"
                       width={220}
                     />

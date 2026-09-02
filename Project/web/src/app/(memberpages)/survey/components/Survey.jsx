@@ -193,7 +193,8 @@ export default function Survey({
             "&::-webkit-scrollbar-thumb:hover": {
               backgroundColor: (theme) => theme.palette.secondary.main,
             },
-            bgcolor: (theme) => theme.palette.secondary.main,
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
             border: (theme) => `1px solid ${theme.palette.divider}`,
             py: 2,
             px: { xs: 0, md: 2 },

@@ -671,7 +671,7 @@ function Payment() {
       (resp) => {
         setPaymentOptions(resp.data);
       },
-      () => { },
+      () => {},
     );
   }, []);
   React.useEffect(() => {
@@ -749,175 +749,177 @@ function Payment() {
     }
   }, [payment]);
   return (
-    <Grid size={ 12 } container spacing={ 2 } justifyContent="center">
-      {/* Header */ }
+    <Grid size={12} container spacing={2} justifyContent="center">
+      {/* Header */}
       <Box
         width="100%"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        px={ 1 }
-        pt={ 1 }
-        minHeight={ 46 }
+        px={1}
+        pt={1}
+        minHeight={46}
       >
         <Typography
-          sx={ {
+          sx={{
             fontSize: "15px",
             fontWeight: 600,
             borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
             // borderBottom: (theme) => `2px solid ${theme.palette.primary.main}`,
             pb: 0.5,
-          } }
+          }}
         >
           Payment Method
         </Typography>
-        { payment?.method && (
+        {payment?.method && (
           <IconButton
-            onClick={ () => setOpenPayment(true) }
-            sx={ { color: "#fff" } }
+            onClick={() => setOpenPayment(true)}
+            sx={{ color: "#fff" }}
           >
-            <EditIcon sx={ { fontSize: 22 } } />
+            <EditIcon sx={{ fontSize: 22 }} />
           </IconButton>
-        ) }
+        )}
       </Box>
 
-      {/* Payment display */ }
+      {/* Payment display */}
       <Grid
         container
-        size={ 12 }
+        size={12}
         direction="column"
-        spacing={ 0 }
-        px={ 1.5 }
-        py={ 1 }
-        sx={ {
+        spacing={0}
+        px={1.5}
+        py={1}
+        sx={{
           background: "rgba(255, 255, 255, 0.1)",
           borderRadius: 2,
-        } }
+        }}
       >
-        { payment?.method ? (
-          <Grid container size={ 12 } alignItems="center" py={ { xs: 0, md: 1 } }>
+        {payment?.method ? (
+          <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
             <Typography
-              width={ { xs: "100%", lg: "40%" } }
-              fontWeight={ payment.method === "Wire Transfer" ? 600 : 500 }
+              width={{ xs: "100%", lg: "40%" }}
+              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
             >
-              { payment.method }:
+              {payment.method}:
             </Typography>
 
-            <Grid size={ 12 } mt={ 1.5 }>
-              { accountDetails.map((detail, index) => (
+            <Grid size={12} mt={1.5}>
+              {accountDetails.map((detail, index) => (
                 <Grid
-                  size={ 12 }
+                  size={12}
                   container
                   alignItems="center"
-                  spacing={ 1 }
-                  borderBottom={ "1px solid rgba(255, 255, 255, 0.3)" }
-                  py={ 1 }
+                  spacing={1}
+                  borderBottom={"1px solid rgba(255, 255, 255, 0.3)"}
+                  py={1}
                 >
                   <Typography
-                    width={ { xs: "100%", xl: "40%" } }
-                    fontWeight={ 500 }
+                    width={{ xs: "100%", xl: "40%" }}
+                    fontWeight={500}
                   >
-                    { detail.name }
+                    {detail.name}
                   </Typography>
 
                   <Box
-                    sx={ {
+                    sx={{
                       display: "flex",
                       alignItems: "center",
                       flex: 1,
-                    } }
+                    }}
                   >
                     <Typography
                       component="span"
-                      sx={ {
+                      sx={{
                         color: "#fff",
                         fontWeight: 600,
                         wordBreak: "break-word",
                         flex: 1,
-                      } }
+                      }}
                     >
-                      { visibleFields[index]
+                      {visibleFields[index]
                         ? detail.value
-                        : maskValue(detail.value) }
+                        : maskValue(detail.value)}
                     </Typography>
 
                     <IconButton
                       size="small"
-                      onClick={ () => toggleField(index) }
-                      sx={ { color: "#fff", ml: 1 } }
+                      onClick={() => toggleField(index)}
+                      sx={{ color: "#fff", ml: 1 }}
                     >
-                      { visibleFields[index] ? (
+                      {visibleFields[index] ? (
                         <VisibilityOffIcon fontSize="small" />
                       ) : (
                         <VisibilityIcon fontSize="small" />
-                      ) }
+                      )}
                     </IconButton>
                   </Box>
                 </Grid>
-              )) }
+              ))}
             </Grid>
           </Grid>
         ) : (
-          <Typography py={ 1 } fontSize={ 12 }>
-            No Payment method selected yet.{ " " }
+          <Typography py={1} fontSize={12}>
+            No Payment method selected yet.{" "}
             <Typography
-              component={ "span" }
-              fontWeight={ 700 }
-              fontSize={ 12 }
-              sx={ { cursor: "pointer" } }
-              onClick={ () => setOpenPayment(true) }
+              component={"span"}
+              fontWeight={700}
+              fontSize={12}
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenPayment(true)}
             >
               Click to add
             </Typography>
           </Typography>
-        ) }
+        )}
       </Grid>
 
-      {/* Payment Popup */ }
+      {/* Payment Popup */}
       <PopUp
         title="Select Payment Method"
         maxWidth="md"
-        open={ openPayment }
-        onClose={ async () => {
+        open={openPayment}
+        onClose={async () => {
           await member.Reload();
-          setOpenPayment(false)
-
-        } }
+          setOpenPayment(false);
+        }}
       >
         <Grid
-          size={ 12 }
+          size={12}
           container
           alignItems="center"
-          sx={ { bgcolor: (theme) => theme.palette.cardbg.main } }
+          sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
+          }}
         >
           <Grid
             container
-            size={ 12 }
+            size={12}
             alignItems="center"
-            spacing={ 3 }
+            spacing={3}
             justifyContent="space-evenly"
-            pt={ 5 }
-            pb={ 3 }
+            pt={5}
+            pb={3}
           >
             <RadioGroup
               row
-              value={ payment.method }
-              onChange={ (event) => {
+              value={payment.method}
+              onChange={(event) => {
                 setPayment({ ...payment, method: event.target.value });
-              } }
-              style={ { justifyContent: "space-evenly", width: "100%" } }
+              }}
+              style={{ justifyContent: "space-evenly", width: "100%" }}
             >
-              { paymentOptions.map((method, index) => (
+              {paymentOptions.map((method, index) => (
                 <FormControlLabel
-                  key={ index }
-                  value={ method.value }
-                  control={ <Radio /> }
+                  key={index}
+                  value={method.value}
+                  control={<Radio />}
                   label={
                     <Box
                       component="img"
-                      src={ paymentMethods[method.value] }
-                      alt={ method.label }
-                      sx={ {
+                      src={paymentMethods[method.value]}
+                      alt={method.label}
+                      sx={{
                         height: 63,
                         width: 100,
                         mr: 2,
@@ -933,40 +935,36 @@ function Payment() {
                             ? `0 0 8px ${theme.palette.secondary.main}`
                             : "none",
                         transition: "0.2s",
-                      } }
+                        bgcolor: "#fff",
+                      }}
                     />
                   }
                 />
-              )) }
+              ))}
             </RadioGroup>
           </Grid>
 
-          {/* Dynamic input form */ }
-          <Grid size={ 12 } container py={ 2 }>
-            {/* PayPal */ }
+          {/* Dynamic input form */}
+          <Grid size={12} container py={2}>
+            {/* PayPal */}
             <Collapse
-              in={ payment.method === "paypal" }
+              in={payment.method === "paypal"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
-                <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
-                  color="secondary"
-                >
+                <Typography mb={1} fontSize={16} fontWeight={600}>
                   Enter your PayPal Email
                 </Typography>
                 <Page.Input
-                  value={ payment.paypalAccount }
-                  onChange={ (e) =>
+                  value={payment.paypalAccount}
+                  onChange={(e) =>
                     setPayment({
                       ...payment,
                       paypalAccount: e.target.value,
@@ -974,48 +972,47 @@ function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("PayPal", payment.value) }
+                  onClick={() => handleSave("PayPal", payment.value)}
                   variant="contained"
-                  color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Wire Transfer */ }
+            {/* Wire Transfer */}
             <Collapse
-              in={ payment.method === "wire-transfer" }
+              in={payment.method === "wire-transfer"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 2 }
+                spacing={2}
               >
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600}>
                     Bank
                   </Typography>
                   <Page.Input
                     value={
                       payment.method === "wire-transfer" ? payment.bankName : ""
                     }
-                    onChange={ (e) => {
+                    onChange={(e) => {
                       let temp = {
                         ...payment,
                         bankName: e.target.value,
                       };
                       setPayment(temp);
-                    } }
+                    }}
                   />
                 </Grid>
-                <Grid size={ 6 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={6} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600}>
                     IFSC/IBAN/SWIFT Code
                   </Typography>
                   <Page.Input
@@ -1024,7 +1021,7 @@ function Payment() {
                         ? payment.ifsc || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment({
                         ...payment,
                         ifsc: e.target.value,
@@ -1032,8 +1029,8 @@ function Payment() {
                     }
                   />
                 </Grid>
-                <Grid size={ 12 } container spacing={ 0 }>
-                  <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
+                <Grid size={12} container spacing={0}>
+                  <Typography fontSize={16} fontWeight={600}>
                     Enter your Account Number
                   </Typography>
                   <Page.Input
@@ -1042,7 +1039,7 @@ function Payment() {
                         ? payment.bankAccount || ""
                         : ""
                     }
-                    onChange={ (e) =>
+                    onChange={(e) =>
                       setPayment({
                         ...payment,
                         bankAccount: e.target.value,
@@ -1051,40 +1048,34 @@ function Payment() {
                   />
                 </Grid>
                 <Button
-                  onClick={ () => handleSave("Wire Transfer", payment.value) }
+                  onClick={() => handleSave("Wire Transfer", payment.value)}
                   variant="contained"
-                  color="secondary"
-                  sx={ { my: 2, color: "white", px: 2, fontWeight: 600 } }
+                  sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* Amazon */ }
+            {/* Amazon */}
             <Collapse
-              in={ payment.method === "amazon-gift-card" }
+              in={payment.method === "amazon-gift-card"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
-                <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
-                  color="secondary"
-                >
+                <Typography mb={1} fontSize={16} fontWeight={600}>
                   Enter your Amazon Giftcard ID
                 </Typography>
                 <Page.Input
-                  value={ payment.amazonAccount }
-                  onChange={ (e) =>
+                  value={payment.amazonAccount}
+                  onChange={(e) =>
                     setPayment({
                       ...payment,
                       amazonAccount: e.target.value,
@@ -1092,40 +1083,34 @@ function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave("Amazon", payment.value) }
+                  onClick={() => handleSave("Amazon", payment.value)}
                   variant="contained"
-                  color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
               </Grid>
             </Collapse>
 
-            {/* UPI */ }
+            {/* UPI */}
             <Collapse
-              in={ payment.method === "upi" }
+              in={payment.method === "upi"}
               unmountOnExit
-              sx={ { width: "100%" } }
+              sx={{ width: "100%" }}
             >
               <Grid
                 container
-                size={ 12 }
-                px={ 2 }
+                size={12}
+                px={2}
                 justifyContent="center"
-                spacing={ 0 }
+                spacing={0}
               >
-                <Typography
-                  mb={ 1 }
-                  fontSize={ 16 }
-                  fontWeight={ 600 }
-                  color="secondary"
-                >
+                <Typography mb={1} fontSize={16} fontWeight={600}>
                   Enter your UPI ID
                 </Typography>
                 <Page.Input
-                  value={ payment.upiAccount }
-                  onChange={ (e) =>
+                  value={payment.upiAccount}
+                  onChange={(e) =>
                     setPayment({
                       ...payment,
                       upiAccount: e.target.value,
@@ -1133,10 +1118,9 @@ function Payment() {
                   }
                 />
                 <Button
-                  onClick={ () => handleSave() }
+                  onClick={() => handleSave()}
                   variant="contained"
-                  color="secondary"
-                  sx={ { my: 2, fontWeight: 600, color: "white", px: 2 } }
+                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
                 >
                   Save
                 </Button>
@@ -1161,7 +1145,7 @@ function SocialAccounts({ user }) {
     x: "",
   });
   React.useEffect(() => {
-    if (!user) return () => { };
+    if (!user) return () => {};
     setContact(
       Object.fromEntries(
         Object.entries(user)
@@ -1179,12 +1163,12 @@ function SocialAccounts({ user }) {
   };
 
   const contactIcons = {
-    whatsapp: <WhatsAppIcon sx={ { color: "#fff" } } />,
-    instagram: <InstagramIcon sx={ { color: "#fff" } } />,
-    facebook: <FacebookIcon sx={ { color: "#fff" } } />,
-    linkedin: <LinkedInIcon sx={ { color: "#fff" } } />,
-    youtube: <YouTubeIcon sx={ { color: "#fff" } } />,
-    x: <XIcon sx={ { color: "#fff" } } />,
+    whatsapp: <WhatsAppIcon sx={{ color: "#fff" }} />,
+    instagram: <InstagramIcon sx={{ color: "#fff" }} />,
+    facebook: <FacebookIcon sx={{ color: "#fff" }} />,
+    linkedin: <LinkedInIcon sx={{ color: "#fff" }} />,
+    youtube: <YouTubeIcon sx={{ color: "#fff" }} />,
+    x: <XIcon sx={{ color: "#fff" }} />,
   };
 
   const socialChannels = [
@@ -1196,141 +1180,144 @@ function SocialAccounts({ user }) {
     {
       name: "Instagram",
       key: "instagram",
-      icon: <InstagramIcon sx={ { color: "#C13584" } } />,
+      icon: <InstagramIcon sx={{ color: "#C13584" }} />,
     },
     {
       name: "Facebook",
       key: "facebook",
-      icon: <FacebookIcon sx={ { color: "#3b5998" } } />,
+      icon: <FacebookIcon sx={{ color: "#3b5998" }} />,
     },
     {
       name: "LinkedIn",
       key: "linkedin",
-      icon: <LinkedInIcon sx={ { color: "#0e76a8" } } />,
+      icon: <LinkedInIcon sx={{ color: "#0e76a8" }} />,
     },
     {
       name: "YouTube",
       key: "youtube",
-      icon: <YouTubeIcon sx={ { color: "#FF0000" } } />,
+      icon: <YouTubeIcon sx={{ color: "#FF0000" }} />,
     },
     {
       name: "X (formerly Twitter)",
       key: "x",
-      icon: <XIcon sx={ { color: "black" } } />,
+      icon: <XIcon sx={{ color: "black" }} />,
     },
   ];
 
   return (
-    <Grid size={ 12 } container spacing={ 2 } justifyContent="center">
+    <Grid size={12} container spacing={2} justifyContent="center">
       <Box
         width="100%"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        px={ 1 }
-        pt={ 1 }
-        minHeight={ 46 }
+        px={1}
+        pt={1}
+        minHeight={46}
       >
         <Typography
-          sx={ {
+          sx={{
             fontSize: "15px",
             fontWeight: 600,
             borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
             pb: 0.5,
-          } }
+          }}
         >
           Social Contacts
         </Typography>
-        { Object.values(contact).some((value) => value?.trim()) && (
+        {Object.values(contact).some((value) => value?.trim()) && (
           <IconButton
-            onClick={ () => setOpenContact(true) }
-            sx={ { color: "#fff" } }
+            onClick={() => setOpenContact(true)}
+            sx={{ color: "#fff" }}
           >
-            <EditIcon sx={ { fontSize: 22 } } />
+            <EditIcon sx={{ fontSize: 22 }} />
           </IconButton>
-        ) }
+        )}
       </Box>
 
-      <Grid container size={ 12 } spacing={ 1.5 }>
-        { Object.entries(contact).filter(([_, value]) => value?.trim())
+      <Grid container size={12} spacing={1.5}>
+        {Object.entries(contact).filter(([_, value]) => value?.trim())
           .length ? (
           Object.entries(contact)
             .filter(([_, value]) => value?.trim())
             .map(([key, value], index, arr) => (
               <Tooltip
-                title={ `${key?.Capitalize()} :  ${value}` }
-                key={ index }
+                title={`${key?.Capitalize()} :  ${value}`}
+                key={index}
                 placement="top"
               >
-                <Page.Box px={ 1.5 }>{ contactIcons[key] }</Page.Box>
+                <Page.Box px={1.5}>{contactIcons[key]}</Page.Box>
               </Tooltip>
             ))
         ) : (
           <Page.Box
-            px={ 1.5 }
-            py={ 1 }
-            sx={ {
+            px={1.5}
+            py={1}
+            sx={{
               width: "100%",
               background: "rgba(255, 255, 255, 0.1)",
               borderRadius: 2,
-            } }
+            }}
           >
-            <Typography py={ 1 } fontSize={ 12 }>
-              No social contact method added.{ " " }
+            <Typography py={1} fontSize={12}>
+              No social contact method added.{" "}
               <Typography
-                component={ "span" }
-                fontWeight={ 700 }
-                fontSize={ 12 }
-                sx={ { cursor: "pointer" } }
-                onClick={ () => setOpenContact(true) }
+                component={"span"}
+                fontWeight={700}
+                fontSize={12}
+                sx={{ cursor: "pointer" }}
+                onClick={() => setOpenContact(true)}
               >
                 Click to add
               </Typography>
             </Typography>
           </Page.Box>
-        ) }
+        )}
       </Grid>
 
       <PopUp
         maxWidth="md"
         title="Add Contact"
-        open={ openContact }
-        onClose={ () => setOpenContact(false) }
+        open={openContact}
+        onClose={() => setOpenContact(false)}
       >
         <Grid
-          size={ 12 }
+          size={12}
           container
           alignItems="center"
           justifyContent="center"
-          px={ 2 }
-          pt={ 2 }
-          sx={ { bgcolor: (theme) => theme.palette.cardbg.main } }
+          px={2}
+          pt={2}
+          sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
+          }}
         >
-          <Grid size={ 12 } container spacing={ 2 } justifyContent="center" p={ 2 }>
-            { socialChannels.map(({ name, key, icon }, index) => (
-              <Grid key={ index } container size={ 6 } spacing={ 0 }>
-                <Typography fontSize={ 16 } fontWeight={ 600 } color="secondary">
-                  { name }
+          <Grid size={12} container spacing={2} p={2}>
+            {socialChannels.map(({ name, key, icon }, index) => (
+              <Grid key={index} container size={6} spacing={0}>
+                <Typography fontSize={16} fontWeight={600}>
+                  {name}
                 </Typography>
                 <Page.Input
-                  value={ contact[key] }
-                  onChange={ handleChange(key) }
-                  InputProps={ {
+                  value={contact[key]}
+                  onChange={handleChange(key)}
+                  InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton edge="end" disabled>
-                          { icon }
+                          {icon}
                         </IconButton>
                       </InputAdornment>
                     ),
-                  } }
+                  }}
                 />
               </Grid>
-            )) }
+            ))}
           </Grid>
 
           <Button
-            onClick={ async () => {
+            onClick={async () => {
               const socials = Object.fromEntries(
                 Object.entries(contact).map((c) => [
                   `social-media-${c[0]}`,
@@ -1341,16 +1328,15 @@ function SocialAccounts({ user }) {
               useToast(resp);
               setOpenContact(false);
               user.Reload();
-            } }
+            }}
             variant="contained"
-            color="secondary"
-            sx={ {
+            sx={{
               my: 3,
               fontWeight: 600,
               color: "white",
               px: 2,
               py: 0.5,
-            } }
+            }}
           >
             Save
           </Button>

@@ -19,7 +19,7 @@ const theme = createTheme({
   //     main: "#e8f0fd"// "#c6e3f4"  //   "#8cb2f333",
   //   }
   // },
-    palette: {
+  palette: {
     primary: {
       main: "#001B66",
     },
@@ -34,17 +34,16 @@ const theme = createTheme({
       main: "#ffffff",
     },
     cardbg: {
-      main: "#FFD4AD",  // #FFE4CC
+      main: "#fe7e00", // "#FFD4AD",  // #FFE4CC
     },
-     cardtext: {
-      main: "#001B66", 
+    cardtext: {
+      main: "#fff",
     },
   },
   typography: {
     color: "black",
     fontSize: 14,
-    fontFamily: "'Fira Sans', ui-sans-serif, system-ui, sans-serif"
-    
+    fontFamily: "'Fira Sans', ui-sans-serif, system-ui, sans-serif",
   },
   components: {
     MuiCssBaseline: {
@@ -63,7 +62,7 @@ const theme = createTheme({
         },
         "*": {
           scrollbarWidth: "thin",
-          scrollbarColor: "#fe7e00 transparent",
+          scrollbarColor: "#001B66 transparent",
         },
         "*::-webkit-scrollbar": {
           width: "8px",
@@ -73,13 +72,13 @@ const theme = createTheme({
           background: "transparent",
         },
         "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "#fe7e00",
+          backgroundColor: "#001B66",
           borderRadius: "8px",
           border: "2px solid transparent",
           backgroundClip: "content-box",
         },
         "*::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#fe7e00",
+          backgroundColor: "#001B66",
         },
       },
     },

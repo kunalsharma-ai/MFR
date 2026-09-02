@@ -509,7 +509,8 @@ function SurveyQuestions({ surveyID = null, close }) {
               p: 2,
               borderRadius: 2,
               border: (theme) => `1px solid ${theme.palette.primary.main}`,
-              bgcolor: (theme) => theme.palette.cardbg.main,
+              bgcolor: (theme) => "#effeff",
+              // color: (theme) => theme.palette.cardtext.main,
             }}
           >
             <Grid container alignItems="center" justifyContent="space-between">
