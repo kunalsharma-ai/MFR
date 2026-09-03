@@ -14,6 +14,7 @@ import { api, Page } from "@/util";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 import ParentDetailsForm from "../password/ParentDetailsForm";
+import MinorConsentPending from './MinorConsentPending';
 
 export default function page() {
   return (
@@ -103,8 +104,13 @@ export function Terms({
   React.useEffect(() => {
     if (!user) return;
     setIsLoading(true);
-    if (pathName === "/auth/terms" && user?.terms?.length > 0)
-      router.push("/survey?name=welcome");
+    if (pathName === "/auth/terms" && 
+        user?.terms?.length > 0  && (
+          !user?.isMinor || user?.parent?.consentStatus === "approved"
+        )
+      ){
+        router.push("/survey?name=welcome");
+      }
     setAcceptedTerms(user.terms);
     setInitialTerms(user.terms || []);
     api
@@ -157,7 +163,7 @@ export function Terms({
     .every((t) => acceptedTerms?.includes(t.value));
 
   const handleSubmit = async () => {
-    let resp = api.put(`/api/v1/user/${user._id}`, {
+    let resp = await api.put(`/api/v1/user/${user._id}`, {
       terms: acceptedTerms,
     });
     // if (pathName === "/auth/terms") router.push("/survey?name=welcome");
@@ -171,17 +177,32 @@ export function Terms({
   if (isLoading && !hideLoading) {
     return <LoadingOverlay />;
   }
-  if (user?.isMinor && [null, undefined, ""].includes(user?.parent?.email)) {
-    return (
-      <form
-        onSubmit={form.handleSubmit(async (data) => {
-          let resp = await api.patch(`/api/v1/me/parent-details`, data);
-          user.update(resp.data);
-        })}
-      >
-        <ParentDetailsForm form={form} submitLabel={"Submit"} />
-      </form>
-    );
+  if(user?.isMinor){
+    // Parent details not submitted yet
+    if(!user?.parent?.email){
+      return(
+        <form
+          onSubmit={form.handleSubmit(async (data) => {
+            let resp = await api.patch(
+              `/api/v1/me/parent-details`,
+              data
+            );
+
+            user.update(resp.data);
+          })}
+        >
+          <ParentDetailsForm 
+            form={form}
+            submitLabel="Submit"
+          />
+        </form>
+      );
+    }
+
+    // Parent details submitted, waiting for consent
+    if(!user?.parent?.consentStatus || user?.parent?.consentStatus === "pending"){
+      return <MinorConsentPending />;
+    }
   }
   return (
     <>
