@@ -83,6 +83,11 @@ export default function () {
             ),
           },
           {
+            id:"sortOrder",
+            label:"Sort Order",
+            render:info=>info.sortOrder
+          },
+          {
             id: "info",
             label: "advancedInfo",
             render: (info) => {

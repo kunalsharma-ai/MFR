@@ -59,6 +59,10 @@ export default function DateField({
         name={name}
         control={control}
         rules={disabled ? {} : validate}
+        onChange={(value) => {
+          field.onChange(value ? value.toDate() : null);
+          field.onBlur();
+        }}
         render={({ field }) => {
           const handleBlur = (event) => {
             field.onBlur();
