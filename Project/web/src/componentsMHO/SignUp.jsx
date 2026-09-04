@@ -131,6 +131,7 @@ export default function SignUp({
     handleSubmit,
     reset,
     setFocus,
+    trigger,
     formState: { errors, isDirty },
   } = form;
 
@@ -520,6 +521,9 @@ React.useEffect(() => {
                           required={true}
                           errors={errors?.mail}
                           validations={user.email}
+                          onBlur={() => {
+                            trigger("mail");
+                          }}
                         />
                       </Grid>
 
