@@ -404,8 +404,9 @@ React.useEffect(() => {
                     <Page.Box
                     >
                       <img
-                        src="/images/logo/mfr/800w.webp"
+                        src="/images/logo/mfr-logo.png"
                         alt="logo"
+                        width="220px"
                       />
                     </Page.Box>{" "}
                   </Page.Box>
