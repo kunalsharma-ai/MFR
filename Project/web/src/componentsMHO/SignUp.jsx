@@ -104,6 +104,7 @@ export default function SignUp({
   const [btnDisabled, setBtnDisabled] = React.useState(true);
 
   const form = useForm({
+    mode:"onBlur",
     defaultValues: {
       category: "b2b",
       name: {
@@ -119,7 +120,7 @@ export default function SignUp({
       address: [
         {
           tag: "home",
-          country: "in",
+          country: "",
         },
       ],
     },
@@ -401,31 +402,12 @@ React.useEffect(() => {
                     }}
                   >
                     <Page.Box
-                      sx={
-                        {
-                          // width: 220,
-                          // height: { xs: "60px", md: "80px" },
-                          // width: { xs: "180px", md: "300px" },
-                        }
-                      }
                     >
                       <img
-                        src="/images/logo/mfr/200w.webp"
+                        src="/images/logo/mfr/800w.webp"
                         alt="logo"
-                        // width={"100%"}
                       />
                     </Page.Box>{" "}
-                    {/* <Page.Box
-                      component="img"
-                      src="/imagesmfr/dol-sign.gif"
-                      alt="logo"
-                      width={{ xs: 15, md: 20 }}
-                      sx={{
-                        position: "absolute",
-                        right: -4.5,
-                        top: { xs: 24, md: 32 },
-                      }}
-                    /> */}
                   </Page.Box>
                   <IconButton
                     sx={{
@@ -458,7 +440,6 @@ React.useEffect(() => {
                       fontSize: { xs: "18px", md: "24px" },
                       fontWeight: 600,
                       color: "primary.main",
-
                       my: 1,
                     }}
                   >
@@ -521,9 +502,6 @@ React.useEffect(() => {
                           required={true}
                           errors={errors?.mail}
                           validations={user.email}
-                          onBlur={() => {
-                            trigger("mail");
-                          }}
                         />
                       </Grid>
 
