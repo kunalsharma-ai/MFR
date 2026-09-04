@@ -265,9 +265,9 @@ function Footer() {
             >
               <Box sx={{ position: "relative" }}>
                 <img
-                  src="/images/logo/mfr/300w.webp"
+                  src="/images/logo/mfr-logo.png"
                   alt="logo"
-                  // width={220}
+                  width={220}
                   style={{
                     filter: "brightness(0) saturate(100%) invert(100%)",
                   }}

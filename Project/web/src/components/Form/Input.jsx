@@ -92,7 +92,6 @@ export default function Input({
   onStrengthChanged,
   onHide,
   disabled,
-  onBlur,
   inputSX,
   errorColor = "#d32f2f",
   ...props
@@ -333,10 +332,6 @@ export default function Input({
                 { ...props }
                 { ...field }
                 value={ field.value ?? "" }
-                onBlur={(e) => {
-                  field.onBlur(e);
-                  onBlur?.(e);
-                }}
                 inputSX={inputSX}
                 type={
                   type === "password" ? (masked ? "password" : "text") : type
