@@ -11,7 +11,7 @@ import TextElement from "./Text";
 import PhoneElement from "./Phone";
 import SelectElement from "./Select";
 import MultiSelectElement from "./MultiSelect";
-export default function Question({ que, user, form, disabled }) {
+export default function Question({ que, user, form, disabled, onQuestionStateChange }) {
   if (que === "alternate-phone-whatsapp") return <></>;
   const question = useQuery({
     queryKey: ["question", que],
@@ -31,13 +31,23 @@ export default function Question({ que, user, form, disabled }) {
   ) : question.isError ? (
     <></>
   ) : Boolean(question.data) ? (
-    <Que question={question.data} form={form} disabled={disabled} />
+    <Que question={question.data} form={form} disabled={disabled} onQuestionStateChange={onQuestionStateChange} />
   ) : (
     <></>
   );
 }
-function Que({ question, form, disabled }) {
+function Que({ question, form, disabled, onQuestionStateChange }) {
   if (!question || !question.name) return <></>;
+
+  const isQuestionDisabled =
+  disabled || !(question.isEditable ?? true);
+  React.useEffect(() => {
+    onQuestionStateChange?.(
+      question.name,
+      !isQuestionDisabled
+    );
+  }, [question.name, isQuestionDisabled, onQuestionStateChange,]);
+
   const parentValue = question.parent ? form.watch(question.parent) : null;
   const { data: options, isLoading } = useQuery({
     queryKey: [
@@ -49,13 +59,6 @@ function Que({ question, form, disabled }) {
     queryFn: async ({ queryKey }) => {
       const [endpoint, name, parentValue, parent] = queryKey;
       const method = typeof parent === "undefined" ? "get" : "post";
-      console.table({
-        endpoint,
-        name,
-        parentValue,
-        parent,
-        method,
-      });
       if (
         ![null, undefined, ""].includes(parent) &&
         [null, "", [], undefined].includes(parentValue)

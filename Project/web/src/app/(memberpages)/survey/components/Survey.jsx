@@ -35,34 +35,114 @@ export default function Survey({
   const router = useRouter();
   const [currentPage, setCurrentPage] = React.useState(start);
   const [validationError, setValidationError] = React.useState(null);
+  const questionStatesRef = React.useRef({});
+  React.useEffect(() => {
+    questionStatesRef.current = {};
+  }, [currentPage]);
 
   const pages = survey.pages;
   const form = useForm({
     mode: "onChange",
     // defaultValues: {...user,age:""}
   });
+
+  const isLoadingAnswersRef  = React.useRef(false);
+  const isResettingRef = React.useRef(false);
+  const previousValuesRef = React.useRef({});
+
   let questions = pages[currentPage];
   if (questions?.includes("phone")) questions.push("phone-whatsapp");
   if (questions?.includes("alternate-phone"))
     questions.push("alternate-phone-whatsapp");
   questions = questions?.unique();
+  
+  const pageQuestionsForReset = React.useMemo(() => {
+  if ([null, undefined].includes(currentPage)) return [];
+
+    return [...(pages?.[currentPage] || [])].slice(1);
+  }, [pages, currentPage]);
+
+  React.useEffect(() => {
+    previousValuesRef.current = form.getValues();
+
+    const subscription = form.watch((values, { name }) => {
+      if (!name) return;
+
+      // Ignore API/server value loading
+      if (isLoadingAnswersRef.current) return;
+
+      // Ignore values cleared by our reset logic
+      if (isResettingRef.current) return;
+
+      const changedIndex = pageQuestionsForReset.indexOf(name);
+
+      // Question is not on current page
+      if (changedIndex === -1) return;
+
+      // Only an enabled/editable question can trigger reset
+      if (questionStatesRef.current[name] !== true) return;
+
+      const previousValue = previousValuesRef.current[name];
+      const currentValue = values?.[name];
+
+      // No actual value change
+      if (JSON.stringify(previousValue) === JSON.stringify(currentValue)){
+        return;
+      }
+
+      previousValuesRef.current[name] = currentValue;
+
+      const questionsToClear = pageQuestionsForReset.slice(changedIndex + 1);
+
+      if (!questionsToClear.length) return;
+
+      isResettingRef.current = true;
+
+      questionsToClear.forEach((question) => {
+        if (!question) return;
+
+        // Don't clear disabled/fixed questions
+        if (questionStatesRef.current[question] !== true) {
+          return;
+        }
+
+        form.setValue(question, null);
+      });
+
+      isResettingRef.current = false;
+
+      previousValuesRef.current = form.getValues();
+    });
+
+    return () => subscription.unsubscribe();
+  }, [currentPage, pageQuestionsForReset, form]);
+
   const { data: me } = useQuery({
     queryKey: ["answers", pages?.[currentPage]?.[0], currentPage],
     queryFn: async ({ queryKey }) => {
       const resp = await api.post("/api/v1/me", {
         questions,
       });
-      Object.fromEntries(
-        Object.entries(resp.data)
-          .filter((ans) => questions.includes(ans[0]))
-          .map(([key, value]) => {
-            form.setValue(key, value);
-            if (key === "age") {
-              form.setValue(key, "");
-            }
-            return [key, value];
-          }),
-      );
+      
+      isLoadingAnswersRef.current = true;
+      try {
+        Object.fromEntries(
+          Object.entries(resp.data)
+            .filter((ans) => questions.includes(ans[0]))
+            .map(([key, value]) => {
+              form.setValue(key, value);
+
+              if (key === "age") {
+                form.setValue(key, "");
+              }
+
+              return [key, value];
+            }),
+        );
+      } finally {
+        previousValuesRef.current = form.getValues();
+        isLoadingAnswersRef.current = false;
+      }
       return resp.data;
     },
     enabled:
@@ -129,6 +209,11 @@ export default function Survey({
     // console.log("sab theek hai, Next page load kar lete hain");
     setCurrentPage(currentPage + 1);
   }
+
+  const handleQuestionStateChange = React.useCallback(
+    (name, isEnabled) => {
+      questionStatesRef.current[name] = isEnabled;
+    },[],);
 
   return (
     <>
@@ -217,6 +302,7 @@ export default function Survey({
                   user={user}
                   form={form}
                   disabled={!editMode}
+                  onQuestionStateChange={handleQuestionStateChange}
                 />
               ))
           )}
