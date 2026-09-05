@@ -248,7 +248,7 @@ function SurveyList({ surveys, query, isLoading }) {
         data={surveys}
         isLoading={isLoading}
         filter={filters.find((filter) => filter.label === activeFilter)}
-        pageSize={4}
+        pageSize={12}
         getSearchText={(row) => row.name}
         renderToolbar={() => (
           <Box
