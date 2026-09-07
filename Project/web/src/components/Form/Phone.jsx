@@ -25,9 +25,9 @@ export default function Phone({
     if (onlyCountries && onlyCountries.length > 0)
       setDefaultCountry(onlyCountries[0]);
   }, [onlyCountries]);
-  React.useEffect(()=>{
-    if(selectedCountry)setDefaultCountry(selectedCountry)
-  },[selectedCountry])
+  React.useEffect(() => {
+    if (selectedCountry) setDefaultCountry(selectedCountry);
+  }, [selectedCountry]);
   return (
     <>
       {labelText && (
@@ -45,10 +45,8 @@ export default function Phone({
             : {
                 ...validations,
                 validate: (val) => {
-                  if (!val) return true; 
-                  if (val.length < 4)
-                    
-                    return true;
+                  if (!val) return true;
+                  if (val.length < 4) return true;
 
                   // if (!val || val.trim() === "") return ""; // allow blank
                   try {
@@ -87,7 +85,7 @@ export default function Phone({
               zIndex: "2000",
             }}
             buttonStyle={{
-              backgroundColor: inputSX?.backgroundColor || "#fff",
+              backgroundColor: inputSX?.backgroundColor || "transparent",
               border: "none",
               borderRadius: "8px 0 0 8px",
             }}
