@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -6,18 +7,42 @@ import {
   Checkbox,
   List,
   ListItem,
+  Typography,
+  Button,
+  Container,
+  IconButton,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import ErrorIcon from "@mui/icons-material/Error";
-import { useMember } from "@/Context";
-import { api, Page } from "@/util";
+import { useMember, useQuery } from "@/Context";
+import { api, loadData, Page } from "@/util";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
-import ParentDetailsForm from "../password/ParentDetailsForm";
-import MinorConsentPending from "../terms/MinorConsentPending";
 
 export default function page() {
   const [submitted, setSubmitted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [User, setUser] = React.useState({});
+  const query = useQuery();
+  React.useEffect(() => {
+    setIsLoading(true);
+    loadData(
+      api.post(`/api/v1/user/${query.user}`, {
+        code: query.code,
+        channel: "parent-consent",
+      }),
+      async (resp) => {
+        setUser(resp?.data);
+        setIsLoading(false);
+      },
+    );
+  }, [query.user]);
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+  if (!User) {
+    return <LinkExpired />;
+  }
   if (submitted) {
     return (
       <Grid
@@ -185,7 +210,11 @@ export default function page() {
             on behalf of your child.
           </Page.Text>
         </Page.Box>
-        <Terms maxHeight="calc(100vh - 500px)" setSubmitted={setSubmitted} />
+        <Terms
+          maxHeight="calc(100vh - 500px)"
+          setSubmitted={setSubmitted}
+          User={User}
+        />
       </Grid>
     </Grid>
   );
@@ -196,6 +225,7 @@ function Terms({
   hideLoading = false,
   maxHeight = "calc(100vh - 190px)",
   setSubmitted,
+  User,
 }) {
   const [user, router, pathName] = [useMember(), useRouter(), usePathname()];
   const [category, setCategory] = React.useState({});
@@ -209,6 +239,17 @@ function Terms({
   const [initialTerms, setInitialTerms] = React.useState([]);
 
   React.useEffect(() => {
+    console.log({ User });
+    loadData(
+      api.post(`/api/v1/category`, {
+        name: User?.category,
+      }),
+      async (resp) => {
+        setCategory(resp?.data?.[0]);
+      },
+    );
+  }, [User.category]);
+  React.useEffect(() => {
     if (!category?.terms) return;
     setTermsOptions([
       termOptions[0],
@@ -221,31 +262,7 @@ function Terms({
       }),
     ]);
   }, [category]);
-  React.useEffect(() => {
-    if (!user) return;
-    setIsLoading(true);
-    if (
-      pathName === "/auth/terms" &&
-      user?.terms?.length > 0 &&
-      (!user?.isMinor || user?.parent?.consentStatus === "approved")
-    ) {
-      router.push("/survey?name=welcome");
-    }
-    setAcceptedTerms(user.terms);
-    setInitialTerms(user.terms || []);
-    api
-      .post(`/api/v1/category`, {
-        name: user.category,
-      })
-      .then((resp) => {
-        if (resp.status === "success") {
-          setCategory(resp.data[0] ?? null);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [user]);
+
   const handleCheckboxChange = (value) => {
     setAcceptedTerms((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
@@ -295,34 +312,7 @@ function Terms({
         message: "Terms acceptance updated successfully",
       });
   };
-  if (isLoading && !hideLoading) {
-    return <LoadingOverlay />;
-  }
-  if (user?.isMinor) {
-    // Parent details not submitted yet
-    if (!user?.parent?.email) {
-      return (
-        <form
-          onSubmit={form.handleSubmit(async (data) => {
-            let resp = await api.patch(`/api/v1/me/parent-details`, data);
 
-            user.update(resp.data);
-          })}
-          style={{ padding: "16px" }}
-        >
-          <ParentDetailsForm form={form} submitLabel="Submit" />
-        </form>
-      );
-    }
-
-    // Parent details submitted, waiting for consent
-    if (
-      !user?.parent?.consentStatus ||
-      user?.parent?.consentStatus === "pending"
-    ) {
-      return <MinorConsentPending />;
-    }
-  }
   return (
     <>
       {/* <Page.Text
