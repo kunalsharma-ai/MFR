@@ -43,6 +43,12 @@ export default function RootLayout({ children }) {
           survey incentive platform, 
           online rewards community "
         />
+        <link
+          rel="preload"
+          as="image"
+          href="/imagesmfr/slider/01.jpg"
+          fetchPriority="high"
+        />
       </head>
       <body>
         <Providers>
