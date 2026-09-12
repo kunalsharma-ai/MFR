@@ -172,20 +172,20 @@ export default function Header({
           path: "/",
           sectionLabel: "STEPS TO JOIN",
         },
-        {
-          label: "COVERAGE",
-          onClick: () => {
-            (window.open(
-              "//panels.frequentresearch.com/",
-              "_blank",
-              "noopener,noreferrer",
-            ),
-              //  router.push("//panels.frequentresearch.com/")
-              handleDrawerClose());
-          },
-          path: null,
-          sectionLabel: null,
-        },
+        // {
+        //   label: "COVERAGE",
+        //   onClick: () => {
+        //     (window.open(
+        //       "//panels.frequentresearch.com/",
+        //       "_blank",
+        //       "noopener,noreferrer",
+        //     ),
+        //       //  router.push("//panels.frequentresearch.com/")
+        //       handleDrawerClose());
+        //   },
+        //   path: null,
+        //   sectionLabel: null,
+        // },
         {
           label: "CONTACT US",
           onClick: () => {
