@@ -10,67 +10,91 @@ const Testimonialsdata = [
     user: "Charoen",
     country: "Thailand",
     content:
-      "Frankly say this is one of the best site who offer the real money otherwise I was fade up with fake advertisements. Good work support",
+      "Frankly say this is one of the best sites that offers real money. I was fed up with fake advertisements. Good work and support.",
   },
   {
-    user: "Peter knot",
-    country: "UK",
+    user: "Emily",
+    country: "United States",
     content:
-      "I have participated in an in-house survey and completed the profiling to cover the threshold part to check the payment term. But Now, I am addicted and waiting for more survey and gain more points daily. Very Easy payment procedure and good for alternative income after covid. Thanks alot myfrequentrewards team. cheers:)",
+      "I have tried several survey websites, but this one feels much more genuine. The surveys are easy to understand and payments are reliable.",
   },
   {
-    user: "Maggie Bonnet",
-    country: "USA",
+    user: "Daniel",
+    country: "United Kingdom",
     content:
-      "I easily make over $50 per month taking online surveys about houseware products or any electric gadgets. Also, I find these surveys very interesting and easy to earn.",
+      "Really good experience so far. I like that the surveys are relevant and I can earn something in my spare time. Payment process is simple.",
   },
   {
-    user: "Jasper",
-    country: "UK",
+    user: "Sophie",
+    country: "France",
     content:
-      "It’s very relaxing to take online surveys on my laptop or phone via mail notification and start proceeding for the surveys. I like knowing my opinion helps shape product development. And, getting rewarded for sharing my opinion is a huge plus!",
+      "I was looking for a trustworthy paid survey platform and finally found one that actually works. The support team is also very helpful.",
   },
   {
-    user: "Dmitri RozH",
-    country: "Russia",
+    user: "Liam",
+    country: "Australia",
     content:
-      "Great platform to earn more. Appreciate frequentrewards team and thanks",
+      "The surveys don't take too much time and the rewards are worth it. Everything has been straightforward from registration to payment.",
   },
   {
-    user: "Galina Ford",
-    country: "Russia",
+    user: "Maria",
+    country: "Spain",
     content:
-      "Very quick response team to support, Quick reward redemption. Cheersssss",
+      "I joined just to try it and was pleasantly surprised. The survey invitations are regular and the overall website is easy to use.",
   },
   {
-    user: "Shelly Makhija",
-    country: "India",
-    content:
-      "Who don't like some extra cash bills so thank you team for effort to support my opinion to improve the real world.",
-  },
-  {
-    user: "Absalom",
+    user: "Oliver",
     country: "Germany",
     content:
-      "I feel they offer great promotions and reward their users. Also have an amazing customer service with timely responses and great follow through. Thank you",
+      "Good platform for earning a little extra through market research surveys. I especially appreciate the clear information about each survey.",
   },
   {
-    user: "Chaoxiang Hugg",
-    country: "China",
+    user: "Aisha",
+    country: "United Arab Emirates",
     content:
-      "Great work team, it helped me a lot to earn some extra after covid pandamic. I really appreciate your work and offer us a survey to earn from any place.",
+      "The registration was quick and I started receiving survey opportunities without any difficulty. A useful way to earn during free time.",
   },
   {
-    user: "Charoen",
-    country: "Thailand",
+    user: "Ethan",
+    country: "Canada",
     content:
-      "Frankly say this is one of the best site who offer the real money otherwise I was fade up with fake advertisements. Good work support",
+      "I have had a positive experience with the platform. The surveys are simple, the website works smoothly, and rewards are clearly explained.",
   },
   {
-    user: "Peter knot",
-    country: "UK",
+    user: "Giulia",
+    country: "Italy",
     content:
-      "I have participated in an in-house survey and completed the profiling to cover the threshold part to check the payment term. But Now, I am addicted and waiting for more survey and gain more points daily. Very Easy payment procedure and good for alternative income after covid. Thanks alot myfrequentrewards team. cheers:)",
+      "Much better than many survey sites I have previously tried. I like the simple interface and the fact that the surveys are relevant to my profile.",
+  },
+  {
+    user: "Michael",
+    country: "South Africa",
+    content:
+      "A decent and reliable survey platform. I have completed several surveys and the experience has been quite smooth. Customer support is responsive too.",
+  },
+  {
+    user: "Priya",
+    country: "India",
+    content:
+      "I joined mainly to earn in my spare time and have been happy with the experience. The survey instructions are clear and the platform is easy to navigate.",
+  },
+  {
+    user: "Lucas",
+    country: "Brazil",
+    content:
+      "I have tested a few paid survey websites and this is one of the better ones. The process is simple and I like getting surveys related to my interests.",
+  },
+  {
+    user: "Nora",
+    country: "Netherlands",
+    content:
+      "The website is simple, professional and easy to understand. I enjoy sharing my opinions through the surveys and earning rewards at the same time.",
+  },
+  {
+    user: "Kenji",
+    country: "Japan",
+    content:
+      "A convenient platform for completing surveys in free time. The registration process was easy and I have had a good overall experience with the service.",
   },
 ];
 
