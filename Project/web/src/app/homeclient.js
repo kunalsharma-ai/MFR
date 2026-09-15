@@ -16,6 +16,7 @@ import WhoWeAre from "@/componentsMHO/WhoWeAre";
 import HowItWorks from "@/componentsMHO/HowItWorks";
 // import WhyChooseUs from "@/componentsMHO/WhyChooseUs";
 import WhyChooseUs from "@/componentsMHO/WhyChooseUsNew";
+import RewardsClaim from "@/componentsMHO/RewardsClaim";
 import CommunityMember from "@/componentsMHO/CommunityMember";
 import { ContextProviders } from "@/Context";
 import FeedbackForm from "@/componentsMHO/FeedbackForm";
@@ -30,6 +31,7 @@ export default function Home() {
 
   const homeRef = React.useRef(null);
   const aboutRef = React.useRef(null);
+  const rewardsClaimsRef = React.useRef(null);
 
   const [visible, setVisible] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
@@ -59,16 +61,17 @@ export default function Home() {
     }
   };
 
-  const sections = [
+   const sections = [
     { label: "ABOUT US", ref: aboutRef },
     { label: "HOW IT WORKS", ref: howitworksRef },
     { label: "WHY US", ref: whyusRef },
     { label: "STEPS TO JOIN", ref: stepstojoinRef },
-    {
-      label: "COVERAGE",
-      external: true,
-      href: "//panels.frequentresearch.com/",
-    },
+    // {
+    //   label: "COVERAGE",
+    //   external: true,
+    //   href: "//panels.frequentresearch.com/",
+    // },
+    { label: "REWARDS CLAIM", ref: rewardsClaimsRef },
   ];
 
   return (
@@ -118,7 +121,9 @@ export default function Home() {
         <div ref={whyusRef} className="scroll-target">
           <WhyChooseUs />
         </div>
-
+        <div ref={rewardsClaimsRef} className="scroll-target">
+          <RewardsClaim />
+        </div>
         <div ref={stepstojoinRef} className="scroll-target">
           <CommunityMember />
         </div>
