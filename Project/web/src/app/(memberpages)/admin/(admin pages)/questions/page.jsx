@@ -12,6 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useToast } from "@/hooks";
 import { SideDrawer } from "@/components/Popup";
 import { DateRangeSelector } from "@/components/Form";
+import iconList from "../../components/icons.js";
 const endpoint = `/api/v1/question`;
 export default function () {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -350,6 +351,23 @@ function CreateOrEditQuestion({ questionID = null, close }) {
               { label: "Document", value: "document" },
               { label: "address", value: "address" },
             ]}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Select
+            control={control}
+            {...form.register("icon")}
+            label="Prefix Icon"
+            options={iconList}
+            className="fa-brands"
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Input
+            control={control}
+            {...form.register("iconspecs.color")}
+            label="Prefix Icon Color"
           />
         </Grid>
         {form.watch("type") == "date" && (
