@@ -58,7 +58,7 @@ export default function SelectElement({ question, form, options, disabled }) {
           control={form.control}
           watch={form.watch}
           isDisabled={isQuestionDisabled}
-          maxSelections={question?.maxSelections}
+          // maxSelections={question?.maxSelections}
           options={formattedOptions.map((opt) => {
             if (typeof opt === "string")
               return {

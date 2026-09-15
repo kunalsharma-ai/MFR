@@ -52,6 +52,7 @@ export default function MultiSelectElement({
           watch={form.watch}
           multiple={true}
           isDisabled={isQuestionDisabled}
+          maxSelections={question?.maxSelections}
           options={options.map((opt) => {
             if (typeof opt === "string")
               return {
