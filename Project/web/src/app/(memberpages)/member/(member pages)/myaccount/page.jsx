@@ -804,11 +804,17 @@ function Payment() {
       >
         {payment?.method ? (
           <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
-            <Typography
-              width={{ xs: "100%", lg: "40%" }}
-              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
-            >
-              {payment.method}:
+            <Typography>
+              {payment.method === "wire-transfer"
+                ? "Wire Transfer"
+                : payment.method === "upi"
+                  ? "UPI"
+                  : payment.method === "amazon-gift-card"
+                    ? "Amazon Gift Card"
+                    : payment.method === "paypal"
+                      ? "PayPal"
+                      : payment.method}{" "}
+              Details:
             </Typography>
 
             <Grid size={12} mt={1.5}>
