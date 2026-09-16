@@ -302,6 +302,13 @@ function UserInfo({ user }) {
     });
   }, [user]);
 
+  const rating =
+    user?.qualityScoreTotal > 0
+      ? Math.round(
+          ((user?.qualityScore ?? 0) / user.qualityScoreTotal) * 5 * 2,
+        ) / 2
+      : 0;
+
   const userData = [
     {
       icon: <CakeIcon sx={{ fontSize: 18 }} />,
@@ -502,12 +509,13 @@ function UserInfo({ user }) {
 
           <Rating
             name="account-rating"
-            value={4}
+            value={rating}
+            precision={0.5}
             readOnly
             size="large"
             emptyIcon={
               <StarIcon
-                style={{ opacity: 0.28, color: "secondary.main" }}
+                style={{ opacity: 0.28, color: "#fff" }}
                 fontSize="inherit"
               />
             }
