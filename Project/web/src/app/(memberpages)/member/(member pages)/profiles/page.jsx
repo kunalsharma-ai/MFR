@@ -96,6 +96,27 @@ export default function () {
     ? 1
     : 1 + profiles.map((profile) => profile.slug).indexOf(query.profile);
   const selectedProfile = activeTab ? profiles.at(activeTab - 1) : profiles[0];
+  const currentProfileIndex = query.profile
+  ? profiles.findIndex((profile) => profile.slug === query.profile)
+  : 0;
+
+  const isFirstProfile = currentProfileIndex <= 0;
+  const isLastProfile = currentProfileIndex >= profiles.length - 1;
+
+  const handlePreviousProfile = () => {
+    if(isFirstProfile) return;
+
+    const previousProfile = profiles[currentProfileIndex - 1];
+    router.push(`?profile=${previousProfile.slug}`, {scroll: false});
+  };
+
+  const handleNextProfile = () => {
+    if(isLastProfile) return;
+
+    const nextProfile = profiles[currentProfileIndex + 1];
+    router.push(`?profile=${nextProfile.slug}`, {scroll: false });
+  };
+
   // React.useEffect(()=>{
   //   setEditMode(false);
   // },[activeTab])
@@ -115,11 +136,15 @@ export default function () {
       <Grid container size={12} justifyContent="center" mt={2}>
         <Grid
           size={{ xs: 11, md: 10 }}
-          sx={{
-            bgcolor: (theme) => theme.palette.cardbg.main,
-            color: (theme) => theme.palette.cardtext.main,
-            borderRadius: 2.5,
+           sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main, 
+            color: (theme) => theme.palette.cardtext.main, 
+            borderRadius: 2.5, 
             boxShadow: 1,
+            height: "calc(90vh - 160px)",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Grid
@@ -165,19 +190,68 @@ export default function () {
               )}
             </Page.Box>
           </Grid>
-          <Survey
-            editMode={editMode}
-            setEditMode={setEditMode}
-            hideSteps={true}
-            isProfile={true}
-            survey={selectedProfile}
-            start={0}
-            user={user}
-            endpage={"/api/v1/me/profile"}
-            onComplete={(e) => {
-              setEditMode(false);
+          <Box
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              overflow: "hidden",
             }}
-          />
+          >
+            <Survey
+              editMode={editMode}
+              setEditMode={setEditMode}
+              hideSteps={true}
+              isProfile={true}
+              survey={selectedProfile}
+              start={0}
+              user={user}
+              endpage={"/api/v1/me/profile"}
+              onComplete={(e) => {
+                setEditMode(false);
+              }}
+            />
+          </Box>
+          
+          {!editMode && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                px: 2,
+                py: 1,
+                flexShrink: 0,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<KeyboardArrowLeft />}
+                onClick={handlePreviousProfile}
+                disabled={isFirstProfile}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                }}
+              >
+                Back
+              </Button>
+
+              <Button
+                variant="contained"
+                color="primary"
+                endIcon={<KeyboardArrowRight />}
+                onClick={handleNextProfile}
+                disabled={isLastProfile}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                }}
+              >
+                Next
+              </Button>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Grid>
