@@ -1,0 +1,316 @@
+<table
+  width="100%"
+  border="0"
+  cellspacing="0"
+  cellpadding="0"
+  bgcolor="#f4f4f4"
+  style="
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    font-family: Arial, Helvetica, sans-serif;
+  ">
+  <tr>
+    <td align="center">
+      <table
+        width="920"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+        bgcolor="#ffffff"
+        style="
+          max-width: 920px;
+          width: 100%;
+          background: #ffffff;
+        ">
+        <!-- Top Brand Bar -->
+        <tr>
+          <td height="12" bgcolor="#001B66"></td>
+        </tr>
+
+        <!-- Logo -->
+        <tr>
+          <td align="center" style="
+          padding: 28px 20px 24px;
+          background: #ffffff;
+        ">
+            <img
+              src="https://myfrequentrewards.com/images/logo/mfr-logo.png"
+              alt="MyFrequentRewards"
+              width="460"
+              style="
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border: 0;
+          " />
+          </td>
+        </tr>
+
+        <!-- Accent Bar -->
+        <tr>
+          <td height="3" bgcolor="#fe7e00"></td>
+        </tr>
+
+        <!-- Hero -->
+        <tr>
+          <td align="center" style="
+          padding: 55px 40px 50px;
+          background: #f5f8ff;
+        ">
+            <table
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              align="center">
+              <tr>
+                <td style="padding: 0 12px; color: #fe7e00; font-size: 28px; font-weight: bold;">•</td>
+                <td style="padding: 0 12px; color: #001B66; font-size: 38px; font-weight: bold;">•</td>
+                <td style="padding: 0 12px; color: #fe7e00; font-size: 24px; font-weight: bold;">•</td>
+                <td style="padding: 0 12px; color: #001B66; font-size: 32px; font-weight: bold;">•</td>
+                <td style="padding: 0 12px; color: #fe7e00; font-size: 26px; font-weight: bold;">•</td>
+              </tr>
+            </table>
+
+            <p style="
+            margin: 28px 0 8px;
+            color: #fe7e00;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+          ">
+              Consent Confirmed
+            </p>
+
+            <h1 style="
+            margin: 0;
+            color: #001B66;
+            font-size: 42px;
+            line-height: 52px;
+            font-weight: bold;
+          ">
+              Dear {{ user.parent.name.first }},
+              <br/>
+              Thank You for Your Approval
+            </h1>
+
+            <p style="
+            margin: 22px auto 0;
+            max-width: 680px;
+            color: #263565;
+            font-size: 20px;
+            line-height: 32px;
+          ">
+              Your parental consent for
+              <strong>{{ user.name.first }}</strong>
+              has been successfully 
+          recorded.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Consent Details -->
+        <tr>
+          <td style="padding: 40px 55px 20px;">
+            <table
+              width="100%"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              style="
+            background: #ffffff;
+            border: 1px solid #dce5f8;
+            border-radius: 16px;
+          ">
+              <tr>
+                <td
+                  width="180"
+                  align="center"
+                  valign="middle"
+                  style="
+                padding: 35px 15px;
+                background: #fff7ef;
+                border-radius: 16px 0 0 16px;
+              ">
+                  <table
+                    border="0"
+                    cellspacing="0"
+                    cellpadding="0"
+                    align="center">
+                    <tr>
+                      <td align="center" style="
+                      color: #fe7e00;
+                      font-size: 50px;
+                      line-height: 60px;
+                      font-weight: bold;
+                    ">
+                        ✓
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="
+                      padding-top: 8px;
+                      color: #001B66;
+                      font-size: 15px;
+                      font-weight: bold;
+                      letter-spacing: 1px;
+                    ">
+                        CONSENT CONFIRMED
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+                <td valign="middle" style="padding: 38px 40px;">
+                  <h2 style="
+                  margin: 0 0 18px;
+                  color: #001B66;
+                  font-size: 28px;
+                  line-height: 36px;
+                ">
+                    Your Consent Has Been Recorded
+                  </h2>
+
+                  <p style="
+                  margin: 0;
+                  color: #253562;
+                  font-size: 17px;
+                  line-height: 28px;
+                ">
+                    Thank you for confirming your consent for your child,
+                    <strong>{{ user.name.first }}</strong>, to participate in 
+                MyFrequentRewards.
+                  </p>
+
+                  <p style="
+                  margin: 18px 0 0;
+                  color: #253562;
+                  font-size: 17px;
+                  line-height: 28px;
+                ">
+                    Your parental approval has been successfully recorded, 
+                and {{ user.name.first }}'s registration is now approved.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Participation -->
+        <tr>
+          <td style="padding: 25px 55px 10px;">
+            <h2 style="
+            margin: 0 0 12px;
+            color: #001B66;
+            font-size: 26px;
+            line-height: 36px;
+          ">
+              Your Child's Participation
+            </h2>
+
+            <p style="
+            margin: 0;
+            color: #253562;
+            font-size: 17px;
+            line-height: 28px;
+          ">
+              {{ user.name.first }} may now participate in eligible surveys 
+          and earn rewards by sharing opinions on various topics through
+          MyFrequentRewards.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Safe Research Environment -->
+        <tr>
+          <td style="padding: 25px 55px 10px;">
+            <table
+              width="100%"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+              style="
+            background: #f5f8ff;
+            border-radius: 14px;
+          ">
+              <tr>
+                <td style="padding: 28px 30px;">
+                  <h2 style="
+                  margin: 0 0 12px;
+                  color: #001B66;
+                  font-size: 26px;
+                  line-height: 36px;
+                ">
+                    A Safe Research Environment
+                  </h2>
+
+                  <p style="
+                  margin: 0;
+                  color: #253562;
+                  font-size: 17px;
+                  line-height: 28px;
+                ">
+                    We appreciate your cooperation and support in helping us 
+                maintain a safe, secure, and responsible research
+                environment for all participants.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Parent Rights -->
+        <tr>
+          <td style="padding: 25px 55px 35px;">
+            <h2 style="
+            margin: 0 0 12px;
+            color: #001B66;
+            font-size: 26px;
+            line-height: 36px;
+          ">
+              Your Rights as a Parent or Guardian
+            </h2>
+
+            <p style="
+            margin: 0 0 10px;
+            color: #253562;
+            font-size: 17px;
+            line-height: 28px;
+          ">
+              If you have any questions, would like to withdraw your consent, 
+          or request account deletion, please contact our support team.
+            </p>
+
+            <p style="
+            margin: 18px 0 0;
+            color: #253562;
+            font-size: 17px;
+            line-height: 28px;
+          ">
+              We value your support in helping us provide a responsible 
+          experience for young participants on MyFrequentRewards.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td>
+            {% include "mailer/footer.liquid" %}
+          </td>
+        </tr>
+
+        <!-- Bottom Orange Bar -->
+        <tr>
+          <td height="10" bgcolor="#fe7e00"></td>
+        </tr>
+
+      </table>
+    </td>
+
+
+  </tr>
+</table>

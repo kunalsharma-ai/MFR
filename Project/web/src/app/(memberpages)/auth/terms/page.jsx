@@ -76,6 +76,7 @@ export default function page() {
 export function Terms({
   width = { xs: "90vw", lg: "80vw", xl: "70vw" },
   hideLoading = false,
+  maxHeight = "calc(100vh - 190px)",
 }) {
   const [user, router, pathName] = [useMember(), useRouter(), usePathname()];
   const [category, setCategory] = React.useState({});
@@ -196,7 +197,7 @@ export function Terms({
 
     // Parent details submitted, waiting for consent
     if (
-      !user?.parent?.consentStatus ||
+      (user?.isMinor && !user?.parent?.consentStatus) ||
       user?.parent?.consentStatus === "pending"
     ) {
       return <MinorConsentPending />;
@@ -222,7 +223,7 @@ export function Terms({
           py: 2,
           px: 2,
           width: width,
-          maxHeight: "calc(100vh - 190px)",
+          maxHeight: maxHeight,
           overflow: "auto",
         }}
       >

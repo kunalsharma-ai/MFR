@@ -2,11 +2,11 @@
   "from": "support@myfrequentrewards.com",
   "name": "My Frequent Rewards",
   "replyTo": "support@myfrequentrewards.com",
-  "host": "smtppro.zoho.in",
-  "port": 465,
-  "secure": true,
+  "host": "mfr.sampledge.duckdns.org",
+  "port": 25,
+  "secure": false,
   "auth": {
     "user": "support@myfrequentrewards.com",
-    "pass": "whMrMjwEq9cM"
+    "pass": ""
   }
 }

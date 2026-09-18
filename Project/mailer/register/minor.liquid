@@ -137,7 +137,7 @@
                 font-size: 20px;
                 line-height: 32px;
               ">
-              Your child has registered with MyFrequentRewards 
+              Your child has registered with MyFrequentRewards  
               and has indicated that they are under the age of 18.
             </p>
           </td>
@@ -217,7 +217,7 @@
                       line-height: 28px;
                     ">
                     Your child,
-                    <strong>{{ user.name.first }}</strong>, 
+                    <strong>{{ user.name.first }}</strong>,  
                     has registered on
                     <a
                       href="https://{{user.origin}}"
@@ -228,7 +228,7 @@
                         text-decoration: none;
                       ">
                       MyFrequentRewards
-                    </a>, 
+                    </a>,  
                     an online survey and market research panel operated
                     by Frequent Research Fieldwork Solutions Pvt. Ltd.
                   </p>
@@ -239,7 +239,7 @@
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    During registration, your child indicated that they 
+                    During registration, your child indicated that they  
                     are under the age of 18 and provided your email address
                     as their
                     <strong>{{ user.parent.relation }}</strong>.
@@ -268,7 +268,7 @@
                 font-size: 17px;
                 line-height: 28px;
               ">
-              In accordance with our Child Protection and Privacy Policy, 
+              In accordance with our Child Protection and Privacy Policy,  
               we require verified parental approval before allowing access
               to our platform. We are committed to maintaining a safe and
               secure environment for all participants, especially minors.
@@ -361,9 +361,9 @@
           </td>
         </tr>
 
-        <!-- Contact CTA -->
+        <!-- Verification CTA -->
         <tr>
-          <td style="padding: 25px 55px 35px;">
+          <td style="padding: 25px 55px 20px;">
             <table
               width="100%"
               border="0"
@@ -375,7 +375,7 @@
               ">
               <tr>
                 <td align="center" style="
-                    padding: 35px 30px;
+                    padding: 38px 35px;
                   ">
                   <p style="
                       margin: 0 0 10px;
@@ -385,7 +385,7 @@
                       letter-spacing: 1.5px;
                       text-transform: uppercase;
                     ">
-                    We're Here to Help
+                    Action Required
                   </p>
 
                   <h2 style="
@@ -394,31 +394,35 @@
                       font-size: 30px;
                       line-height: 40px;
                     ">
-                    Have Questions?
+                    Approve Your Child's Registration
                   </h2>
 
                   <p style="
-                      margin: 0 auto 20px;
+                      margin: 0 auto 25px;
                       max-width: 650px;
                       color: #dce7ff;
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    For assistance, clarification, or any request regarding 
-                    your child's account, please contact us.
+                    Please verify that you are the legal parent or guardian   
+                    and approve your child's participation on
+                    MyFrequentRewards.
                   </p>
 
-                  <a href="mailto:support@{{user.origin}}" style="
+                  <a
+                    href="https://{{user.origin}}/auth/parent-consent?user={{user._id}}&code={{otp.code}}"
+                    target="_blank"
+                    style="
                       display: inline-block;
                       background: #fe7e00;
                       color: #ffffff;
                       text-decoration: none;
-                      padding: 14px 38px;
+                      padding: 15px 40px;
                       border-radius: 10px;
                       font-size: 17px;
                       font-weight: bold;
                     ">
-                    CONTACT SUPPORT
+                    VERIFY &amp; APPROVE
                   </a>
                 </td>
               </tr>
@@ -458,7 +462,7 @@
                 line-height: 30px;
                 font-weight: bold;
               ">
-              Thank you for helping us maintain a safe and 
+              Thank you for helping us maintain a safe and  
               responsible research environment.
             </p>
           </td>

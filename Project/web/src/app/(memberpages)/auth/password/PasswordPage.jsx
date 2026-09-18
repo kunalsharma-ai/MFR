@@ -270,25 +270,16 @@ function SetPasswordForm({ form, isMinor }) {
     <>
       <Page.Box sx={{ position: "relative", pt: 3 }}>
         <Page.Box
-          sx={{
-            // width: 220,
-            // height: { xs: "60px", md: "80px" },
-            // width: { xs: "180px", md: "300px" },
-          }}
+          sx={
+            {
+              // width: 220,
+              // height: { xs: "60px", md: "80px" },
+              // width: { xs: "180px", md: "300px" },
+            }
+          }
         >
-          <img src="/images/logo/mfr/300w.webp" alt="logo"  />
+          <img src="/images/logo/mfr-logo.png" alt="logo" width="220px" />
         </Page.Box>{" "}
-        {/* <Page.Box
-          component="img"
-          src="/imagesmfr/dol-sign.gif"
-          alt="logo"
-          width={ { xs: 15, md: 20 } }
-          sx={ {
-            position: "absolute",
-            right: -4.5,
-            top: { xs: 24, md: 32 },
-          } }
-        /> */}
       </Page.Box>
       <Page.Text
         sx={{
@@ -318,11 +309,11 @@ function SetPasswordForm({ form, isMinor }) {
             pattern: {
               value:
                 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~])(?!.*\s).{8,}$/,
-              message:
+              message: (
                 <Grid
                   sx={{
                     borderRadius: 2,
-                  
+
                     py: 2,
                     pl: 2,
                     pr: { xs: 2, md: 8 },
@@ -356,7 +347,8 @@ function SetPasswordForm({ form, isMinor }) {
                       At least <b>One Special Character</b> (e.g., @, #, $, &)
                     </ListItem>
                   </List>
-                </Grid>,
+                </Grid>
+              ),
             },
           }}
         />
@@ -384,11 +376,10 @@ function SetPasswordForm({ form, isMinor }) {
         }
         variant="contained"
         color="secondary"
-        sx={{ my: 2, fontWeight: 600, width: "100%", p: 1 }}
+        sx={{ mt: 2, mb: 5, fontWeight: 600, width: "100%", p: 1 }}
       >
         Create Password
       </Page.MuiButton>
-      
     </>
   );
 }

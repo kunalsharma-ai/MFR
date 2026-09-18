@@ -33,6 +33,35 @@ export default function page() {
       id: "survey",
       label: "Survey",
       render: (info) => info.survey.name,
+    },    {
+      id: "createdAt",
+      label: "CreatedAt",
+      render: (info) =>
+        info.createdAt
+          ? new Date(info.createdAt).toLocaleString("en-IN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
+          : "-",
+    },
+    {
+      id: "updatedAt",
+      label: "UpdatedAt",
+      render: (info) =>
+        info.updatedAt
+          ? new Date(info.updatedAt).toLocaleString("en-IN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
+          : "-",
     },
     {
       id: "status",

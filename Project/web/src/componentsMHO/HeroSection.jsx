@@ -417,7 +417,7 @@ export default function HeroSection({
               <motion.div
                 key={currentSlide}
                 variants={heroContent}
-                initial="hidden"
+                initial={currentSlide === 0 ? false : "hidden"}
                 animate="visible"
                 style={{
                   width: "100%",
@@ -898,16 +898,16 @@ function HeroCards({ setOpenQuote, setOpenLogin, setOpenSignUp }) {
     },
   ];
 
-// This handles the click event for "CONTACT US" in the header
-React.useEffect(()=>{
-  function handleContactUs(){
-    setOpenQuote(true);
-  }
-  document.addEventListener("contactus", handleContactUs);
+  // This handles the click event for "CONTACT US" in the header
+  React.useEffect(() => {
+    function handleContactUs() {
+      setOpenQuote(true);
+    }
+    document.addEventListener("contactus", handleContactUs);
     return () => {
       document.removeEventListener("contactus", handleContactUs);
     };
-},[]);
+  }, []);
 
   return (
     <Container

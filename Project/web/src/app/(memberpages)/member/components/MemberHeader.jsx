@@ -106,7 +106,10 @@ export default function MemberHeader() {
             gap={{ xs: 0, md: 2 }}
             pb={1}
           >
-            <QualityScore value={user?.qualityScore ?? 0} total={200} />
+            <QualityScore
+              value={user?.qualityScore ?? 0}
+              total={user?.qualityScoreTotal ?? 0}
+            />
             <MemberNotification />
 
             <Button

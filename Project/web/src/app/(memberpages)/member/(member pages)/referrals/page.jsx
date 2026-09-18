@@ -17,6 +17,7 @@ import {
   TableRow,
   Tooltip,
   Collapse,
+  Chip,
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
@@ -42,20 +43,66 @@ export default function page() {
     invited: [],
   });
 
-  React.useEffect(() => {
-    if (!window) return;
-    if (!user) return;
-    setReferralLink(`${window.location.origin}/?ref=${user._id}&signup`);
-    api
-      .post(`/api/v1/user`, {
-        referredBy: user._id,
-      })
-      .then((resp) => {
-        if ("data" in resp) {
-          setReferrals(resp.data);
-        }
-      });
-  }, [user]);
+  // React.useEffect(() => {
+  //   if (!window) return;
+  //   if (!user) return;
+  //   setReferralLink(`${window.location.origin}/?ref=${user._id}&signup`);
+  //   api
+  //     .post(`/api/v1/user`, {
+  //       referredBy: user._id,
+  //     })
+  //     .then((resp) => {
+  //       if ("data" in resp) {
+  //         setReferrals(resp.data);
+  //       }
+  //     });
+  // }, [user]);
+  const loadReferralHistory = React.useCallback(() => {
+  if (!user) return;
+
+  Promise.all([
+    api.get(`/api/v1/me/invite`),
+    api.post(`/api/v1/user`, {
+      referredBy: user._id,
+    }),
+  ]).then(([inviteResp, referralResp]) => {
+    const invites = inviteResp?.data || [];
+    const registeredUsers = referralResp?.data || [];
+
+    const mergedData = invites.map((invite) => {
+      const registeredUser = registeredUsers.find(
+        (referral) =>
+          referral.mail?.toLowerCase() === invite.email?.toLowerCase()
+      );
+
+      return {
+        email: invite.email,
+        registered: registeredUser ? "Registered" : "Not Registered",
+        sentAt: invite.createdAt,
+        name: registeredUser?.fullName || "",
+        status: registeredUser?.isVerified?.email || "",
+        dateOfJoining: registeredUser?.createdAt || "",
+      };
+    });
+
+    setReferrals(mergedData);
+  });
+}, [user]);
+
+React.useEffect(() => {
+  if (!user) return;
+
+  setReferralLink(`${window.location.origin}/?ref=${user._id}&signup`);
+
+  loadReferralHistory();
+
+  const interval = setInterval(() => {
+    loadReferralHistory();
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [user, loadReferralHistory]);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(referralLink);
@@ -88,16 +135,39 @@ export default function page() {
     setEmails(newEmails);
   };
   const columns = [
-    { id: "name", label: "Name", data: "fullName" },
-    { id: "email", label: "E-mail", data: "mail" },
-    { id: "status", label: "Status", render: (info) => info.isVerified.email },
-    {
-      id: "date",
-      label: "Date of Joining",
-      render: (info) => new Date(info.createdAt).showDate(),
-    },
-  ];
-
+  { id: "email", label: "Email", data: "email" },
+  { id: "registered", label: "Registered", data: "registered" },
+  {
+    id: "sentAt",
+    label: "Sent At",
+    render: (info) =>
+      info.sentAt ? new Date(info.sentAt).toLocaleString() : "",
+  },
+  { id: "name", label: "Name", data: "name" },
+  {
+    id: "status",
+    label: "Status",
+    render: (info) =>
+      info.status ? (
+        <Chip
+          size="small"
+          color={info.status === "verified" ? "success" : "error"}
+          label={info.status}
+          sx={{ textTransform: "capitalize" }}
+        />
+      ) : (
+        ""
+      ),
+  },
+  {
+    id: "date",
+    label: "Date of Joining",
+    render: (info) =>
+      info.dateOfJoining
+        ? new Date(info.dateOfJoining).showDate()
+        : "",
+  },
+];
   return (
     <Grid
       size={12}
@@ -245,6 +315,7 @@ export default function page() {
                 });
                 if (resp.status === "success") {
                   setSentInvites(resp.data);
+                  loadReferralHistory();
                 } else {
                   useToast(resp);
                 }
@@ -272,7 +343,7 @@ export default function page() {
           </Box>
         </Grid>
 
-        <InvitedEmails sentInvites={sentInvites} />
+        {/* <InvitedEmails sentInvites={sentInvites} /> */}
       </Grid>
       {referrals?.length > 0 && (
         <Grid size={12}>
@@ -326,136 +397,146 @@ export default function page() {
     </Grid>
   );
 }
-function InvitedEmails({ sentInvites }) {
-  const [users, setUsers] = React.useState([]);
-  React.useEffect(() => {
-    api.get(`/api/v1/me/invite`).then((resp) => {
-      if ("data" in resp) setUsers(resp.data);
-    });
-  }, [sentInvites]);
-  if (!users || users.length === 0) return null;
-  return (
-    <Grid
-      size={{ xs: 12, lg: 6 }}
-      container
-      mt={2}
-      alignSelf="flex-start"
-      spacing={2}
-    >
-      <Box width={"100%"}>
-        <Typography
-          color="secondary"
-          sx={{
-            fontSize: "16px",
-            fontWeight: "700",
-          }}
-        >
-          Invite History:
-        </Typography>
-      </Box>
+// function InvitedEmails({ sentInvites }) {
+//   const [users, setUsers] = React.useState([]);
+//   React.useEffect(() => {
+//     api.get(`/api/v1/me/invite`).then((resp) => {
+//       if ("data" in resp) setUsers(resp.data);
+//     });
+//   }, [sentInvites]);
+//   if (!users || users.length === 0) return null;
+//   return (
+//     <Grid
+//       size={{ xs: 12, lg: 6 }}
+//       container
+//       mt={2}
+//       alignSelf="flex-start"
+//       spacing={2}
+//     >
+//       <Box width={"100%"}>
+//         <Typography
+//           color="secondary"
+//           sx={{
+//             fontSize: "16px",
+//             fontWeight: "700",
+//           }}
+//         >
+//           Invite History:
+//         </Typography>
+//       </Box>
 
-      <TableContainer
-        sx={{
-          border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          bgcolor: (theme) => theme.palette.cardbg.main,
-          color: (theme) => theme.palette.cardtext.main,
-          borderRadius: 2,
-          maxHeight: { xs: "400px", lg: "132px" },
-          maxWidth: "100%",
-          overflow: "auto",
-        }}
-      >
-        <Table
-          size="small"
-          sx={{
-            // overflow: "scroll",
-            tableLayout: "fixed",
-            "& tbody td": {
-              height: "32px",
-              fontWeight: 500,
-              border: "1px solid rgba(0, 0, 0, 0.12)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              fontSize: 13,
-              color: (theme) => theme.palette.cardtext.main,
-            },
-            "& tbody tr": {
-              height: "32px",
-            },
-            "& thead th": {
-              fontSize: 13.5,
-              fontWeight: 600,
-              border: "1px solid rgba(0, 0, 0, 0.12)",
-              color: (theme) => theme.palette.cardtext.main,
-            },
-          }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">Email</TableCell>
-              <TableCell align="center">Registered</TableCell>
-              <TableCell align="center">Sent At</TableCell>
-            </TableRow>
-          </TableHead>
+//       <TableContainer
+//         sx={{
+//           border: (theme) => `1px solid ${theme.palette.primary.main}`,
+//           bgcolor: (theme) => theme.palette.cardbg.main,
+//           color: (theme) => theme.palette.cardtext.main,
+//           borderRadius: 2,
+//           maxHeight: { xs: "400px", lg: "132px" },
+//           maxWidth: "100%",
+//           overflow: "auto",
+//         }}
+//       >
+//         <Table
+//           size="small"
+//           sx={{
+//             // overflow: "scroll",
+//             tableLayout: "fixed",
+//             "& tbody td": {
+//               height: "32px",
+//               fontWeight: 500,
+//               border: "1px solid rgba(0, 0, 0, 0.12)",
+//               overflow: "hidden",
+//               textOverflow: "ellipsis",
+//               whiteSpace: "nowrap",
+//               fontSize: 13,
+//               color: (theme) => theme.palette.cardtext.main,
+//             },
+//             "& tbody tr": {
+//               height: "32px",
+//             },
+//             "& thead th": {
+//               fontSize: 13.5,
+//               fontWeight: 600,
+//               border: "1px solid rgba(0, 0, 0, 0.12)",
+//               color: (theme) => theme.palette.cardtext.main,
+//             },
+//           }}
+//         >
+//           <TableHead>
+//             <TableRow>
+//               <TableCell align="center">Email</TableCell>
+//               <TableCell align="center">Registered</TableCell>
+//               <TableCell align="center">Sent At</TableCell>
+//             </TableRow>
+//           </TableHead>
 
-          <TableBody>
-            {users.map((user) => (
-              <TableRow
-                key={user.id}
-                // sx={{
-                //   "&:hover": {
-                //     bgcolor: "#bad6e7",
-                //   },
-                // }}
-              >
-                <TableCell align="center">
-                  <Tooltip title={user.email} placement="left">
-                    {user.email}
-                  </Tooltip>
-                </TableCell>
+//           <TableBody>
+//             {users.map((user) => (
+//               <TableRow
+//                 key={user.id}
+//                 // sx={{
+//                 //   "&:hover": {
+//                 //     bgcolor: "#bad6e7",
+//                 //   },
+//                 // }}
+//               >
+//                 <TableCell align="center">
+//                   <Tooltip title={user.email} placement="left">
+//                     {user.email}
+//                   </Tooltip>
+//                 </TableCell>
 
-                <TableCell align="center">
-                  {user.isActive ? "Not Registered" : "Registered"}
-                </TableCell>
+//                 <TableCell align="center">
+//                   {user.isActive ? "Not Registered" : "Registered"}
+//                 </TableCell>
 
-                <TableCell align="center">
-                  {new Date(user.createdAt).toLocaleString()}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Grid>
-  );
-}
+//                 <TableCell align="center">
+//                   {new Date(user.createdAt).toLocaleString()}
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//     </Grid>
+//   );
+// }
 
 const platformConfig = {
   instagram: {
     title: "Verify Instagram Follow",
     message:
       "Follow our Instagram page and submit your Instagram username for verification.",
+    inputLabel: "Instagram Username or Handle",
+    inputPlaceholder: "Enter your Instagram username or handle",
   },
   youtube: {
     title: "Verify YouTube Subscription",
     message:
       "Subscribe to our YouTube channel and submit your YouTube channel name or handle for verification.",
+    inputLabel: "YouTube Channel Name or Handle",
+    inputPlaceholder: "Enter your YouTube channel name or handle",
   },
   facebook: {
     title: "Verify Facebook Like",
     message:
       "Like our Facebook page and submit your Facebook profile name for verification.",
+    inputLabel: "Facebook Profile Name",
+    inputPlaceholder: "Enter your Facebook profile name",
   },
   twitter: {
     title: "Verify Twitter Follow",
     message:
       "Follow our Twitter profile and submit your Twitter username or handle for verification.",
+    inputLabel: "Twitter Username or Handle",
+    inputPlaceholder: "Enter your Twitter username or handle",
   },
   linkedin: {
     title: "Verify LinkedIn Follow",
     message:
       "Follow our LinkedIn page and submit your LinkedIn profile name or URL for verification.",
+    inputLabel: "LinkedIn Profile Name or URL",
+    inputPlaceholder: "Enter your LinkedIn profile name or URL",
   },
 };
 
@@ -543,9 +624,41 @@ function FollowUs() {
       </Grid>
 
       <Grid size={12}>
-        <Typography fontSize={15} mb={3}>
+        <Typography
+          sx={{
+            fontSize: 15,
+            lineHeight: 1.6,
+            mb: 1.5,
+          }}
+        >
           Follow us on social media to earn bonus reward points and stay updated
           with the latest opportunities, surveys, and community updates.
+        </Typography>
+
+        <Typography
+          sx={{
+            fontSize: { xs: 15, sm: 16 },
+            fontWeight: 600,
+            mb: 0.5,
+          }}
+        >
+          How it works
+        </Typography>
+
+        <Typography
+          sx={{
+            fontSize: 14,
+            lineHeight: 1.6,
+            color: "text.secondary",
+            mb: 3,
+            textAlign: "justify",
+          }}
+        >
+          Click the button for the social platform you want to connect with and
+          complete the required action (Like, Follow, or Subscribe). Then click
+          Verify and submit your social media username/handle along with a
+          screenshot showing that you have completed the action. Once your
+          submission is verified, you will receive the displayed bonus points.
         </Typography>
 
         <Grid container spacing={2}>
@@ -608,6 +721,7 @@ function FollowUs() {
                     target="_blank"
                     variant="outlined"
                     size="small"
+                    sx={{ fontWeight: 600 }}
                     onClick={() => {
                       if (social.status === "not_started") {
                         setSocials((prev) =>
@@ -621,10 +735,16 @@ function FollowUs() {
                     }}
                   >
                     {social.platform?.toLowerCase() === "facebook"
-                      ? "Like"
+                      ? "Like on Facebook"
                       : social.platform?.toLowerCase() === "youtube"
-                        ? "Subscribe"
-                        : "Follow"}
+                        ? "Subscribe on YouTube"
+                        : social.platform?.toLowerCase() === "instagram"
+                          ? "Follow on Instagram"
+                          : social.platform?.toLowerCase() === "linkedin"
+                            ? "Follow on LinkedIn"
+                            : social.platform?.toLowerCase() === "twitter"
+                              ? "Follow on Twitter"
+                              : `Follow on ${social.platform}`}
                   </Button>
 
                   {social.status === "rewarded" ? (
@@ -658,7 +778,7 @@ function FollowUs() {
                       }}
                     >
                       Verify{" "}
-                      {social.platform?.toLowerCase() === "Facebook"
+                      {social.platform?.toLowerCase() === "facebook"
                         ? "Like"
                         : social.platform?.toLowerCase() === "youtube"
                           ? "Subscription"
@@ -683,8 +803,8 @@ function FollowUs() {
 
           <Page.Input
             fullWidth
-            label={selectedSocial?.verificationLabel}
-            placeholder={selectedSocial?.verificationLabel}
+            label={currentPlatform.inputLabel}
+            placeholder={currentPlatform.inputPlaceholder}
             value={socialId}
             onChange={(e) => setSocialId(e.target.value)}
             sx={{ mb: 2 }}
@@ -710,9 +830,9 @@ function FollowUs() {
             />
           </Button>
 
-          <Typography mt={2} fontSize={14} color="error.main">
+          {/* <Typography mt={2} fontSize={12} color="error.main">
             Maximum 2MB file size allowed
-          </Typography>
+          </Typography> */}
 
           <Typography mt={1} fontSize={12} color="text.secondary">
             Upload a screenshot showing that you have followed, subscribed to,

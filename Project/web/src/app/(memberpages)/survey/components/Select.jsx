@@ -10,7 +10,7 @@ export default function SelectElement({ question, form, options, disabled }) {
   const [showSpecify, setShowSpecify] = React.useState(false);
   const [describe, setDescribe] = React.useState("");
   const isQuestionDisabled = disabled || !(question.isEditable ?? true);
-  const errors = form?.formState?.errors
+  const errors = form?.formState?.errors;
 
   function onChange(e, v) {
     setShowSpecify(v?.value === "others");
@@ -26,12 +26,10 @@ export default function SelectElement({ question, form, options, disabled }) {
   if (question.isMoney) {
     let country = form.watch("country");
     if (!country) return null;
-    formattedOptions = options
-      .sortRange("asc")
-      .map((range) => ({
-        ...range,
-        label: range.label.toMoneyRange(getCurrency(country), "en-IN"),
-      }));
+    formattedOptions = options.sortRange("asc").map((range) => ({
+      ...range,
+      label: range.label.toMoneyRange(getCurrency(country), "en-IN"),
+    }));
   }
   return (
     <>
@@ -60,6 +58,7 @@ export default function SelectElement({ question, form, options, disabled }) {
           control={form.control}
           watch={form.watch}
           isDisabled={isQuestionDisabled}
+          // maxSelections={question?.maxSelections}
           options={formattedOptions.map((opt) => {
             if (typeof opt === "string")
               return {

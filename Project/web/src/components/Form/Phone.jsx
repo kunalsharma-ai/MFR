@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch} from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import { parsePhoneNumber } from "libphonenumber-js";
 import "react-phone-input-2/lib/material.css";
@@ -20,14 +20,21 @@ export default function Phone({
   selectedCountry,
   inputSX,
 }) {
+  const watchedValue = useWatch({
+    control,
+    name,
+  });
   const [defaultCountry, setDefaultCountry] = React.useState();
   React.useEffect(() => {
+    if(watchedValue) return;
     if (onlyCountries && onlyCountries.length > 0)
       setDefaultCountry(onlyCountries[0]);
   }, [onlyCountries]);
-  React.useEffect(()=>{
-    if(selectedCountry)setDefaultCountry(selectedCountry)
-  },[selectedCountry])
+  React.useEffect(() => {
+    if(watchedValue) return;
+    if (selectedCountry) setDefaultCountry(selectedCountry);
+  }, [selectedCountry]);
+
   return (
     <>
       {labelText && (
@@ -45,10 +52,8 @@ export default function Phone({
             : {
                 ...validations,
                 validate: (val) => {
-                  if (!val) return true; 
-                  if (val.length < 4)
-                    
-                    return true;
+                  if (!val) return true;
+                  if (val.length < 4) return true;
 
                   // if (!val || val.trim() === "") return ""; // allow blank
                   try {
@@ -66,7 +71,7 @@ export default function Phone({
             onlyCountries={onlyCountries}
             disableDropdown={disabled || disableDropdown}
             disabled={disabled}
-            value={field.value}
+            value={field.value || ""}
             onChange={(value) => field.onChange(value)}
             countryCodeEditable={!Boolean(selectedCountry)}
             inputProps={{
@@ -87,7 +92,7 @@ export default function Phone({
               zIndex: "2000",
             }}
             buttonStyle={{
-              backgroundColor: inputSX?.backgroundColor || "#fff",
+              backgroundColor: inputSX?.backgroundColor || "transparent",
               border: "none",
               borderRadius: "8px 0 0 8px",
             }}

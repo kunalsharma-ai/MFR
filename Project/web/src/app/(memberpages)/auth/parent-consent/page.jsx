@@ -1,393 +1,559 @@
 "use client";
 import React from "react";
-import { useRouter } from "next/navigation";
-import { Grid, List, ListItem } from "@mui/material";
-import { api, Page } from "@/util";
-import { useQuery, useTelemetry } from "@/Context";
-import { useForm } from "react-hook-form";
-import { Form } from "@/components";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Grid,
+  FormControlLabel,
+  Checkbox,
+  List,
+  ListItem,
+  Typography,
+  Button,
+  Container,
+  IconButton,
+} from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
+import { useMember, useQuery } from "@/Context";
+import { api, loadData, Page } from "@/util";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 
-function PasswordPage() {
-  const [query, telemetry] = [useQuery(), useTelemetry()];
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [status, setStatus] = React.useState("");
-  const router = useRouter();
+export default function page() {
+  const [submitted, setSubmitted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [User, setUser] = React.useState({});
+  const query = useQuery();
   React.useEffect(() => {
-    if (!query.user || !query.code) return;
     setIsLoading(true);
-    api
-      .post(`/api/v1/user/${query.user}`, { code: query.code })
-      .then((resp) => {
-        setStatus(resp.status);
-        if (resp.status === "success") {
-          form.setValue("userID", query.user);
-          form.setValue("emailOTP", query.code);
-        }
-        console.log(resp);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
+    loadData(
+      api.post(`/api/v1/user/${query.user}`, {
+        code: query.code,
+        channel: "parent-consent",
+      }),
+      async (resp) => {
+        setUser(resp?.data);
         setIsLoading(false);
-      });
-  }, [query]);
-  const form = useForm({
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
-  const {
-    handleSubmit,
-    formState: { errors },
-    watch,
-    register,
-    control,
-  } = form;
-
-  const onSubmit = async (data) => {
-    let resp = await api.patch(`/api/v1/user`, {
-      ...data,
-      action: "set-password",
-    });
-    useToast(resp);
-    router.replace(`/?login`);
-  };
-
-  function LinkExpiredMessage() {
-    return (
-      <>
-        <Grid
-          size={12}
-          container
-          spacing={4}
-          alignItems="center"
-          direction="column"
-          p={{ xs: 1, md: 6 }}
-        >
-          <Page.Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            gap={1.5}
-          >
-            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
-            <Page.Text
-              component="span"
-              sx={{
-                color: "secondary.main",
-                fontSize: { xs: "18px", md: "26px" },
-                fontWeight: 600,
-              }}
-            >
-              Link Expired!
-            </Page.Text>{" "}
-          </Page.Box>
-          <Page.Box
-            sx={{
-              textAlign: "center",
-              borderRadius: 5,
-              bgcolor: "#8cb2f333",
-              border: "1px solid #f4f4f4",
-              p: 4,
-            }}
-          >
-            <Page.Text
-              sx={{
-                mt: 2,
-                fontSize: "16px",
-                fontWeight: 500,
-                maxWidth: "600px",
-              }}
-            >
-              Verification link you used has expired , please request a new one
-              by clicking on <strong>Resend Verification Email</strong> button
-              below.
-            </Page.Text>
-          </Page.Box>
-          <Page.Box sx={{ display: "flex", gap: 2 }}>
-            <Page.MuiButton
-              variant="contained"
-              color="secondary"
-              sx={{ fontWeight: "bold", mt: 2, color: "white" }}
-              onClick={async () => {
-                let temp = await api.patch(`/api/v1/user/${query.user}`, {
-                  action: "resend-otp",
-                });
-                console.log(temp);
-                if (temp.status === "success") setStatus("resent");
-              }}
-            >
-              Resend Verification Email
-            </Page.MuiButton>{" "}
-            <Page.MuiButton
-              variant="outlined"
-              color="secondary"
-              sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
-              onClick={() => {
-                router.push("/");
-              }}
-            >
-              Go To Home
-            </Page.MuiButton>
-          </Page.Box>
-        </Grid>
-      </>
+      },
     );
+  }, [query.user]);
+  if (isLoading) {
+    return <LoadingOverlay />;
   }
-  function LinkResentSuccessfully() {
+  if (!User) {
+    return <LinkExpired />;
+  }
+  if (submitted) {
     return (
-      <>
+      <Grid
+        size={12}
+        container
+        sx={{
+          bgcolor: "#f4f4f4",
+          minHeight: "100vh",
+          minWidth: "100vw",
+        }}
+        justifyContent="center"
+        alignItems="center"
+        py={2}
+      >
         <Grid
-          size={12}
           container
-          spacing={4}
-          alignItems="center"
           direction="column"
-          p={{ xs: 1, md: 6 }}
+          alignItems="center"
+          spacing={0}
+          sx={{
+            bgcolor: "white",
+            borderRadius: 4,
+            boxShadow: 24,
+            py: 4,
+            px: { xs: 2, md: 5 },
+            width: { xs: "92vw", md: "70vw", lg: "50vw" },
+            textAlign: "center",
+          }}
         >
-          <Page.Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            gap={1.5}
-          >
-            <ErrorIcon color="secondary" sx={{ fontSize: "80px" }} />
-            <Page.Text
-              component="span"
-              sx={{
-                color: "secondary.main",
-                fontSize: { xs: "18px", md: "26px" },
-                fontWeight: 600,
-              }}
-            >
-              Link Resent!
-            </Page.Text>{" "}
+          <Page.Box sx={{ height: 60, mb: 3 }}>
+            <img
+              src="/images/logo/mfr-logo.png"
+              alt="My Frequent Rewards"
+              height="100%"
+            />
           </Page.Box>
+
           <Page.Box
             sx={{
-              textAlign: "center",
-              borderRadius: 5,
-              bgcolor: "rgba(163, 243, 206, 0.21)",
-              border: "1px solid #f4f4f4",
-              p: 4,
+              width: "100%",
+              p: { xs: 3, md: 5 },
+              borderRadius: 2,
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
+              bgcolor: "#f4f8ff",
             }}
           >
             <Page.Text
               sx={{
-                mt: 2,
-                fontSize: "16px",
-                fontWeight: 500,
-                maxWidth: "600px",
+                fontSize: { xs: 22, md: 28 },
+                fontWeight: 700,
+                color: "primary.main",
+                mb: 2,
               }}
             >
-              Please check your inbox/Spam and{" "}
-              <strong>click the verification link</strong> to confirm your email
-              and <strong>activate your account.</strong> Once verified, you
-              will be able to create your password and access available surveys
-              and research opportunities surveys made just for you!
+              Consent Successfully Submitted
+            </Page.Text>
+
+            <Page.Text sx={{ fontSize: { xs: 15, md: 17 }, lineHeight: 1.7 }}>
+              Thank you for reviewing and accepting the terms. Your consent has
+              been successfully recorded.
+            </Page.Text>
+
+            <Page.Text
+              sx={{
+                fontSize: { xs: 15, md: 17 },
+                lineHeight: 1.7,
+                mt: 1.5,
+              }}
+            >
+              Your child may now continue participating in MyFrequentRewards.
             </Page.Text>
           </Page.Box>
-          <Page.Box sx={{ display: "flex", gap: 2 }}>
-            <Page.MuiButton
-              variant="outlined"
-              color="secondary"
-              sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
-              onClick={() => {
-                router.push("/");
-              }}
-            >
-              Go To Home
-            </Page.MuiButton>
-          </Page.Box>
         </Grid>
-      </>
+      </Grid>
     );
   }
   return (
     <Grid
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
       size={12}
       container
       sx={{
         bgcolor: "#8cb2f333",
         minHeight: "100vh",
-        width: "100vw",
+        minWidth: "100vw",
       }}
       justifyContent="center"
       alignItems="center"
-      p={{ xs: 1, md: 2 }}
+      py={2}
     >
       <Grid
         container
         direction="column"
         alignItems="center"
-        spacing={2}
+        spacing={0}
         sx={{
           bgcolor: "white",
           borderRadius: 4,
           boxShadow: 24,
           py: 3,
-          px: { xs: 2, md: 4 },
+          px: { xs: 1, md: 4 },
+          textAlign: "justify",
         }}
       >
-        {isLoading ? (
-          <LoadingOverlay />
-        ) : (
-          <>
-            {status === "success" ? (
-              <SetPasswordForm form={form} />
-            ) : status === "error" ? (
-              <LinkExpiredMessage />
-            ) : status === "resent" ? (
-              <LinkResentSuccessfully />
-            ) : (
-              <LoadingOverlay />
-            )}
-          </>
-        )}
+        <Page.Box sx={{ position: "relative", pt: 2 }}>
+          <Page.Box sx={{ pb: 2 }}>
+            <img src="/images/logo/mfr-logo.png" alt="logo" width={260} />
+          </Page.Box>
+        </Page.Box>
+
+        <Page.Box
+          sx={{
+            width: { xs: "90vw", lg: "80vw", xl: "70vw" },
+            mb: 2,
+            p: { xs: 2, md: 3 },
+            borderRadius: 2,
+            border: (theme) => `1px solid ${theme.palette.primary.main}`,
+            bgcolor: "#f8f9fc",
+          }}
+        >
+          <Page.Text
+            sx={{
+              fontSize: { xs: 20, md: 26 },
+              fontWeight: 700,
+              color: "primary.main",
+              mb: 1.5,
+            }}
+          >
+            Your Child's Participation Has Been Approved
+          </Page.Text>
+
+          <Page.Text
+            sx={{
+              fontSize: { xs: 14, md: 16 },
+              lineHeight: 1.7,
+              mb: 1.5,
+            }}
+          >
+            Thank you for confirming your approval for your child to participate
+            in <strong>MyFrequentRewards</strong>, an online survey and market
+            research panel operated by Frequent Research Fieldwork Solutions
+            Pvt. Ltd.
+          </Page.Text>
+
+          <Page.Text
+            sx={{
+              fontSize: { xs: 14, md: 16 },
+              lineHeight: 1.7,
+              mb: 1.5,
+            }}
+          >
+            As the parent or legal guardian, you are now requested to review the
+            terms below and accept them on behalf of your child.
+          </Page.Text>
+
+          <Page.Text
+            sx={{
+              fontSize: { xs: 14, md: 16 },
+              lineHeight: 1.7,
+              fontWeight: 600,
+              color: "primary.main",
+            }}
+          >
+            By selecting the required acceptance options, you confirm that you
+            have reviewed and understood the applicable terms and agree to them
+            on behalf of your child.
+          </Page.Text>
+        </Page.Box>
+        <Terms
+          maxHeight="calc(100vh - 500px)"
+          setSubmitted={setSubmitted}
+          User={User}
+        />
       </Grid>
     </Grid>
   );
 }
-function SetPasswordForm({ form }) {
-  const {
-    handleSubmit,
-    formState: { errors },
-    watch,
-    register,
-    control,
-  } = form;
+
+function Terms({
+  width = { xs: "90vw", lg: "80vw", xl: "70vw" },
+  hideLoading = false,
+  maxHeight = "calc(100vh - 190px)",
+  setSubmitted,
+  User,
+}) {
+  const [category, setCategory] = React.useState({});
+  React.useEffect(() => {
+    console.log({ User });
+    loadData(
+      api.post(`/api/v1/category`, {
+        name: User?.category,
+      }),
+      async (resp) => {
+        setCategory(resp?.data?.[0]);
+      },
+    );
+  }, [User.category]);
+
+  const [termOptions, setTermsOptions] = React.useState([
+    { label: "I Accept all", value: "accept_all", required: false },
+  ]);
+  const [acceptedTerms, setAcceptedTerms] = React.useState([]);
+  const [initialTerms, setInitialTerms] = React.useState([]);
+
+  React.useEffect(() => {
+    if (!category?.terms) return;
+    setTermsOptions([
+      termOptions[0],
+      ...category.terms.map((term) => {
+        return {
+          label: <div dangerouslySetInnerHTML={{ __html: term.body }} />,
+          value: term.name,
+          required: term.isRequired ?? false,
+        };
+      }),
+    ]);
+  }, [category]);
+
+  const handleCheckboxChange = (value) => {
+    setAcceptedTerms((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+    );
+  };
+
+  const handleAcceptAll = () => {
+    const allOtherValues = termOptions
+      .filter((t) => t.value !== "accept_all")
+      .map((t) => t.value);
+
+    const allChecked = allOtherValues.every((v) => acceptedTerms.includes(v));
+
+    if (allChecked) {
+      setAcceptedTerms([]);
+    } else {
+      setAcceptedTerms(allOtherValues);
+    }
+  };
+
+  const allRequiredSelected = termOptions.reduce((a, c) => {
+    return c.required ? a && acceptedTerms?.includes(c.value) : a;
+  }, true);
+
+  const isTermsChanged = React.useMemo(() => {
+    const sortArr = (arr) => [...arr].sort();
+    return (
+      JSON.stringify(sortArr(initialTerms)) !==
+      JSON.stringify(sortArr(acceptedTerms))
+    );
+  }, [initialTerms, acceptedTerms]);
+
+  const isAllChecked = termOptions
+    .filter((t) => t.value !== "accept_all")
+    .every((t) => acceptedTerms?.includes(t.value));
+
+  const handleSubmit = async () => {
+    let resp = await api.put(`/api/v1/user/parent-consent/${User._id}`, {
+      terms: acceptedTerms,
+    });
+    // if (pathName === "/auth/terms") router.push("/survey?name=welcome");
+    // if ("Reload" in user) user.Reload();
+    // else
+    useToast({
+      status: "success",
+      message: "Terms acceptance updated successfully",
+    });
+    setSubmitted(true);
+  };
+
   return (
     <>
-      <Page.Box sx={{ position: "relative", pt: 3 }}>
-        <Page.Box
-          sx={
-            {
-              // width:220,
-              // height: { xs: "60px", md: "80px" },
-              // width: { xs: "180px", md: "300px" },
-            }
-          }
-        >
-          <img src="/images/logo/mfr-logo.png" alt="logo" width={220} />
-        </Page.Box>{" "}
-        {/* <Page.Box
-          component="img"
-          src="/imagesmfr/dol-sign.gif"
-          alt="logo"
-          width={{ xs: 15, md: 20 }}
-          sx={{
-            position: "absolute",
-            right: -4.5,
-            top: { xs: 24, md: 32 },
-          }}
-        /> */}
-      </Page.Box>
-      <Page.Text
-        sx={{
-          fontSize: { xs: "24px", md: "32px" },
-          fontWeight: 600,
-          color: "secondary.main",
-          my: { xs: 1, md: 2 },
-        }}
-      >
-        Create Password
-      </Page.Text>
-
-      <Grid size={12}>
-        <Page.Text>Enter your Password</Page.Text>
-        <Form.Input
-          {...register("password")}
-          control={control}
-          type="password"
-          strengthMeter={true}
-          errors={errors?.password}
-          validations={{
-            required: {
-              value: true,
-              message: "Password is required",
-            },
-            pattern: {
-              value:
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~])(?!.*\s).{8,}$/,
-              message: "Password is insecure, try more complex password",
-            },
-          }}
-        />
-      </Grid>
-
-      <Grid size={12}>
-        <Page.Text>Confirm Password</Page.Text>
-        <Form.Input
-          {...register("confirmPassword")}
-          control={control}
-          type="password"
-          errors={errors?.confirmPassword}
-          // validations={}
-        />
-      </Grid>
-
-      <Page.MuiButton
-        type="submit"
-        // loading={loading}
-        loadingIndicator="Creating Password..."
-        disabled={
-          !watch("password") || watch("password") !== watch("confirmPassword")
-        }
-        variant="contained"
-        color="secondary"
-        sx={{ my: 2, fontWeight: 600, width: "100%", p: 1 }}
-      >
-        Create Password
-      </Page.MuiButton>
       <Grid
         sx={{
           borderRadius: 2,
-          bgcolor: "#8cb2f333",
-          border: "1px solid #f4f4f4",
+          border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+          bgcolor: (theme) => theme.palette.cardbg.main,
+          color: (theme) => theme.palette.cardtext.main,
           py: 2,
-          pl: 2,
-          pr: { xs: 2, md: 8 },
+          px: 2,
+          width: width,
+          maxHeight: { md: maxHeight },
+          overflow: "auto",
         }}
       >
-        <Page.Text fontSize={13}>Password should have:</Page.Text>
-        <List
+        <Page.Box
+          fontSize={15}
+          py={2}
           sx={{
-            listStyleType: "disc",
-            pl: 3,
-            "& .MuiListItem-root": {
-              display: "list-item",
-              p: 0.2,
-              fontSize: "12px",
+            textAlign: "justify",
+            "& p": {
+              fontSize: 14,
+              mb: 2,
+              lineHeight: 1.7,
+            },
+            "& h2": {
+              fontSize: 16,
+              my: 1,
+              fontWeight: 600,
+            },
+            "& ul": {
+              pl: 3,
+              mb: 2,
+            },
+            "& li": {
+              fontSize: 14,
+              mb: 1,
+            },
+            "& a": {
+              color: (theme) => theme.palette.primary.main,
+              textDecoration: "none",
+              fontWeight: 600,
             },
           }}
         >
-          <ListItem>
-            Minimum <b>8 Characters</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Lowercase Letter</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Uppercase Letter</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Number</b>
-          </ListItem>
-          <ListItem>
-            At least <b>One Special Character</b> (e.g., @, #, $, &)
-          </ListItem>
-        </List>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: category?.termsMessage ?? "",
+            }}
+          />
+        </Page.Box>
+
+        <Grid
+          size={12}
+          container
+          direction={"column"}
+          mt={2}
+          gap={0}
+          sx={{
+            "& ul": {
+              pl: 3,
+              my: 1,
+            },
+          }}
+        >
+          {termOptions.map((option, index) => (
+            <Page.Box
+              key={index}
+              sx={{
+                borderBottom: "1px solid #fcfcfc",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    color="primary"
+                    checked={
+                      option.value === "accept_all"
+                        ? isAllChecked
+                        : acceptedTerms.includes(option.value)
+                    }
+                    onChange={() =>
+                      option.value === "accept_all"
+                        ? handleAcceptAll()
+                        : handleCheckboxChange(option.value)
+                    }
+                  />
+                }
+                label={
+                  <Page.Box display="flex" alignItems="flex-start" gap={0.5}>
+                    <Page.Box>{option.label}</Page.Box>
+                    {option.required && (
+                      <Page.Text
+                        component="span"
+                        sx={{
+                          color: "error.main",
+                          fontWeight: 700,
+                          lineHeight: 1,
+                        }}
+                      >
+                        *
+                      </Page.Text>
+                    )}
+                  </Page.Box>
+                }
+                sx={{
+                  alignItems: "flex-start",
+                  "& .MuiFormControlLabel-label": {
+                    my: "6px",
+                  },
+                }}
+              />
+            </Page.Box>
+          ))}
+
+          <Page.Text pt={3}>
+            <em>
+              Your data will be stored securely and used solely for market
+              research and opinion analysis purposes in compliance with
+              applicable data protection laws (such as GDPR and relevant local
+              regulations)
+            </em>
+          </Page.Text>
+          <Page.Text mt={1}>
+            <em>
+              {" "}
+              You may withdraw your consent or deactivate your account at any
+              time by contacting{" "}
+              <Page.Text
+                component="a"
+                href="mailto:support@myfrequentrewards.com"
+                sx={{ color: "primary.main", fontWeight: 600 }}
+              >
+                support@myfrequentrewards.com
+              </Page.Text>
+              . Upon withdrawal, your profile and data will be deleted or
+              anonymized per our data retention policy.
+            </em>
+          </Page.Text>
+
+          <Grid size={12} container justifyContent={"flex-end"} my={2}>
+            <Page.MuiButton
+              onClick={handleSubmit}
+              disabled={!allRequiredSelected || !isTermsChanged}
+              variant="contained"
+              color="primary"
+              sx={{
+                ml: 1,
+                fontWeight: 600,
+                color: "white",
+                px: 2,
+              }}
+            >
+              Accept and allow {User?.name?.first} to use this panel
+            </Page.MuiButton>
+          </Grid>
+        </Grid>
       </Grid>
     </>
   );
 }
-export default PasswordPage;
+
+function LinkExpired() {
+  const router = useRouter();
+
+  return (
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      size={12}
+      sx={{
+        textAlign: "center",
+        minHeight: "100vh",
+        background: "linear-gradient(90deg, #fff 0, #f4f4f4 100%)",
+      }}
+    >
+      <Container maxWidth="lg">
+        <IconButton disabled>
+          <ErrorIcon sx={{ color: "#001B66", fontSize: 120 }} />
+        </IconButton>
+
+        <Typography
+          sx={{
+            my: 6,
+            fontSize: { xs: 38, md: 48 },
+            fontWeight: "bold",
+            color: "#001B66",
+          }}
+        >
+          Link Expired
+        </Typography>
+
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: 26,
+            fontWeight: 700,
+            lineHeight: 1.2,
+            mt: 2,
+            color: "black",
+          }}
+        >
+          This parent consent link is no longer valid.
+        </Typography>
+
+        <Typography
+          variant="h5"
+          sx={{
+            fontSize: 18,
+            fontWeight: 400,
+            lineHeight: 1.5,
+            mt: 4,
+            mb: 2,
+            color: "#777",
+          }}
+        >
+          The link may have expired or already been used. Please contact My
+          Frequent Rewards support if you still need to complete the parent
+          consent process.
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={() => {
+            router.replace("/");
+          }}
+          sx={{
+            height: 58,
+            background: "#001B66",
+            color: "white",
+            borderRadius: 20,
+            fontSize: 16,
+            fontWeight: 700,
+            padding: "18px 40px",
+            "&:hover": {
+              background: "#fe7e00",
+            },
+          }}
+        >
+          Go to Home Page
+        </Button>
+      </Container>
+    </Grid>
+  );
+}

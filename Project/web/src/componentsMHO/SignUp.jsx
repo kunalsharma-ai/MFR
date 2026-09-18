@@ -79,7 +79,7 @@ const GENDER_SALUTATION_MAP = {
   Female: ["Ms.", "Mrs.", "Dr.", "Prof."],
   Other: ["Mx.", "Dr.", "Prof."],
 };
- 
+
 const DEFAULT_SALUTATION_MAP = {
   Male: "Mr.",
   Female: "Ms.",
@@ -104,7 +104,7 @@ export default function SignUp({
   const [btnDisabled, setBtnDisabled] = React.useState(true);
 
   const form = useForm({
-    mode:"onBlur",
+    mode: "onBlur",
     defaultValues: {
       category: "b2b",
       name: {
@@ -243,14 +243,13 @@ export default function SignUp({
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
       if (temp?.status == "success") {
-        const resetTimer=30; //Modify timer if required
+        const resetTimer = 30; //Modify timer if required
         setCooldown(resetTimer);
         setStatus("success");
         setTimeout(() => {
           router.replace("/");
           window?.location?.reload();
         }, resetTimer * 1000);
-       
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
       console.error(error);
@@ -300,21 +299,21 @@ export default function SignUp({
   }, [query]);
   const category = form.watch("category");
   const gender = form.watch("gender");
-  const salutation  = form.watch("name.salutation");
+  const salutation = form.watch("name.salutation");
 
-React.useEffect(() => {
-  if (!gender) return;
- 
-  const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
-  const defaultSalutation = DEFAULT_SALUTATION_MAP[gender];
- 
-  if (!validSalutations.includes(salutation)) {
-    form.setValue("name.salutation", defaultSalutation, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  }
-}, [gender]);
+  React.useEffect(() => {
+    if (!gender) return;
+
+    const validSalutations = GENDER_SALUTATION_MAP[gender] || [];
+    const defaultSalutation = DEFAULT_SALUTATION_MAP[gender];
+
+    if (!validSalutations.includes(salutation)) {
+      form.setValue("name.salutation", defaultSalutation, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [gender]);
 
   return (
     <PopUp
@@ -401,8 +400,7 @@ React.useEffect(() => {
                       // pt: 3
                     }}
                   >
-                    <Page.Box
-                    >
+                    <Page.Box>
                       <img
                         src="/images/logo/mfr-logo.png"
                         alt="logo"
@@ -461,7 +459,9 @@ React.useEffect(() => {
                           options={
                             gender
                               ? SALUTATION_OPTIONS.filter((option) =>
-                                  GENDER_SALUTATION_MAP[gender]?.includes(option.value),
+                                  GENDER_SALUTATION_MAP[gender]?.includes(
+                                    option.value,
+                                  ),
                                 )
                               : SALUTATION_OPTIONS
                           }
@@ -469,7 +469,6 @@ React.useEffect(() => {
                           required={true}
                           errors={errors?.name?.salutation}
                           validations={user.name.salutation}
-                          
                         />
                       </Grid>
                       <Grid size={{ xs: 12, md: 4.9 }}>
@@ -494,7 +493,7 @@ React.useEffect(() => {
                       </Grid>
                     </Grid>
 
-                    <Grid size={12} container direction='row' spacing={1}>
+                    <Grid size={12} container direction="row" spacing={1}>
                       <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Input
                           {...register("mail")}
@@ -506,7 +505,7 @@ React.useEffect(() => {
                         />
                       </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                         <Form.Phone
                           {...register("phone")}
                           control={control}
@@ -553,29 +552,29 @@ React.useEffect(() => {
                         />
                       </Grid>
                     </Grid>
-                    <Collapse in={!!btnDisabled} sx={{ width: "100%" }}>
-                      <Grid
-                        sx={{
-                          py: 1,
-                          my: 1,
-                          px: 2,
-                          border: "1px solid",
-                          borderColor: "divider",
-                          bgcolor: "#fff",
-                          borderRadius: 2,
+
+                    <Grid
+                      sx={{
+                        py: 1,
+                        my: 1,
+                        px: 2,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        bgcolor: "#fff",
+                        borderRadius: 2,
+                      }}
+                      size={12}
+                      container
+                      direction="row"
+                      alignItems="center"
+                    >
+                      <Captcha
+                        onVerified={() => {
+                          setBtnDisabled(false);
                         }}
-                        size={12}
-                        container
-                        direction="row"
-                        alignItems="center"
-                      >
-                        <Captcha
-                          onVerified={() => {
-                            setBtnDisabled(false);
-                          }}
-                        />
-                      </Grid>
-                    </Collapse>
+                      />
+                    </Grid>
+
                     <Grid
                       size={12}
                       container
@@ -629,11 +628,7 @@ React.useEffect(() => {
                       color="primary"
                       loading={isLoading}
                       loadingIndicator="Signing Up..."
-                      disabled={
-                        // !Boolean(form.watch("agreedtoterms")) &&
-                        // !Boolean(form.watch("parent.email")) &&
-                        !!btnDisabled || !form.watch("agreedtoterms") 
-                      }
+                      disabled={btnDisabled || !form.watch("agreedtoterms")}
                       sx={{
                         bgcolor: "secondary.main",
                         mt: 2,

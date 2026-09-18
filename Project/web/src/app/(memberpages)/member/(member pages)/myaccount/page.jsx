@@ -302,6 +302,13 @@ function UserInfo({ user }) {
     });
   }, [user]);
 
+  const rating =
+    user?.qualityScoreTotal > 0
+      ? Math.round(
+          ((user?.qualityScore ?? 0) / user.qualityScoreTotal) * 5 * 2,
+        ) / 2
+      : 0;
+
   const userData = [
     {
       icon: <CakeIcon sx={{ fontSize: 18 }} />,
@@ -502,12 +509,13 @@ function UserInfo({ user }) {
 
           <Rating
             name="account-rating"
-            value={4}
+            value={rating}
+            precision={0.5}
             readOnly
             size="large"
             emptyIcon={
               <StarIcon
-                style={{ opacity: 0.28, color: "secondary.main" }}
+                style={{ opacity: 0.28, color: "#fff" }}
                 fontSize="inherit"
               />
             }
@@ -796,11 +804,17 @@ function Payment() {
       >
         {payment?.method ? (
           <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
-            <Typography
-              width={{ xs: "100%", lg: "40%" }}
-              fontWeight={payment.method === "Wire Transfer" ? 600 : 500}
-            >
-              {payment.method}:
+            <Typography>
+              {payment.method === "wire-transfer"
+                ? "Wire Transfer"
+                : payment.method === "upi"
+                  ? "UPI"
+                  : payment.method === "amazon-gift-card"
+                    ? "Amazon Gift Card"
+                    : payment.method === "paypal"
+                      ? "PayPal"
+                      : payment.method}{" "}
+              Details:
             </Typography>
 
             <Grid size={12} mt={1.5}>
