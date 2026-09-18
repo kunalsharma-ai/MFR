@@ -228,18 +228,17 @@ export default function MyAccountPoints() {
                 Payout]
               </Typography>
 
-              <Typography
-                sx={{
-                  position: "absolute",
-                  right: 0,
-                  top: 32,
-                  color: "secondary.main",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: { xs: "block", md: "none", xl: "block" },
-                }}
-              >
-                {threshold.toLocaleString()} pt
+              <Typography 
+                sx={{ 
+                  mt: 1, 
+                  color: "secondary.main", 
+                  fontSize: "12px", 
+                  fontWeight: 700, 
+                  lineHeight: 1.4,
+                }} 
+              > 
+                Users can claim their rewards once they reach the{" "}
+                {threshold.toLocaleString()} pts.
               </Typography>
             </Box>
 
