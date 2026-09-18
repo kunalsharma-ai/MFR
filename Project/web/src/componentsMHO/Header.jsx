@@ -187,15 +187,6 @@ export default function Header({
         //   sectionLabel: null,
         // },
         {
-          label: "REWARDS CLAIM",
-          onClick: () => {
-            handleNavigation("/", "REWARDS CLAIM");
-            handleDrawerClose();
-          },
-          path: "/",
-          sectionLabel: "REWARDS CLAIM",
-        },
-        {
           label: "CONTACT US",
           onClick: () => {
             document.dispatchEvent(new Event("contactus"));

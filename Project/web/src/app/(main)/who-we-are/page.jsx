@@ -170,7 +170,7 @@ function page() {
                     <img src={`/imagesmfr/${item?.img}.png`} />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography fontSize={24} fontWeight={500} mb={1}>
+                    <Typography fontSize={21} fontWeight={500} mb={1}>
                       {item?.heading}
                     </Typography>
                     <Typography mb={1} fontWeight={500} fontStyle="italic">
@@ -187,8 +187,8 @@ function page() {
                   sx={{ bgcolor: "#eee", borderRight: "5px solid #0c5adb" }}
                   p={4}
                 >
-                  <Box sx={{ flex: 1, textAlign: "right" }}>
-                    <Typography fontSize={24} fontWeight={500} mb={1}>
+                  <Box sx={{ flex: 1, textAlign: "justify" }}>
+                    <Typography fontSize={21} fontWeight={500} mb={1}>
                       {item?.heading}
                     </Typography>
                     <Typography mb={1} fontWeight={500} fontStyle="italic">
