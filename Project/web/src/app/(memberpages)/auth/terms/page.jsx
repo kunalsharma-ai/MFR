@@ -197,7 +197,7 @@ export function Terms({
 
     // Parent details submitted, waiting for consent
     if (
-      !user?.parent?.consentStatus ||
+      (user?.isMinor && !user?.parent?.consentStatus) ||
       user?.parent?.consentStatus === "pending"
     ) {
       return <MinorConsentPending />;

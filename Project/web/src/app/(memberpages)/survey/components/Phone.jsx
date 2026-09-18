@@ -38,7 +38,7 @@ export default function PhoneElement({ question, form, disabled }) {
     },
     enabled: [undefined, null].includes(value),
   });
-  let validations = undefined;
+  let validations = {};
   if (question.required) validations["required"] = "This field is required";
   return (
     <Grid
@@ -64,11 +64,19 @@ export default function PhoneElement({ question, form, disabled }) {
       <Form.Phone
         name={question.name}
         control={form.control}
-        disabled={isQuestionDisabled && Boolean(value)}
+        disabled={isQuestionDisabled}
         validations={validations}
         selectedCountry={country}
         disableDropdown={Boolean(country)}
         errors={errors?.[question.name]}
+        inputSX={{
+          ...(isQuestionDisabled && {
+            backgroundColor: "#f0f0f0",
+            color: "#555 !important",
+            WebkitTextFillColor: "#555",
+            opacity: 1,
+          }),
+        }}
       />
       {Boolean(value) && false && !Boolean(errors[question.name]) && (
         <Controller

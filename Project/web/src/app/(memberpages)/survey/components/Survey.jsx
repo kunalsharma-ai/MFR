@@ -149,6 +149,7 @@ export default function Survey({
       ![null, undefined].includes(currentPage) &&
       Boolean(pages?.[currentPage]?.length),
   });
+  const phoneHasValue = Boolean(me?.phone);
   const saveOrUpdateAnswers = useMutation({
     mutationFn: (data) =>
       api.patch(endpage, {
@@ -295,13 +296,15 @@ export default function Survey({
           ) : (
             pages[currentPage]
               ?.slice(1)
+              ?.filter((que) => que !== "alternate-phone" || phoneHasValue)
               ?.map((que, index) => (
                 <Question
                   key={`${que}-${index}`}
                   que={que}
                   user={user}
                   form={form}
-                  disabled={!editMode}
+                  // disabled={!editMode}
+                  disabled={que === "phone" ? (!editMode || phoneHasValue) : !editMode}
                   onQuestionStateChange={handleQuestionStateChange}
                 />
               ))

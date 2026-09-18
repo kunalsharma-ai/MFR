@@ -119,6 +119,7 @@ function CreateOrEditCategory({ categoryID = null, close, categories }) {
         underfall: "",
         overfall: "",
       },
+      qualityScoreScale: "",
       threshold: "",
       terms: [],
       showOnRegistration: false,
@@ -234,6 +235,14 @@ function CreateOrEditCategory({ categoryID = null, close, categories }) {
             {...form.register("thresholdPoints")}
             type="number"
             label="Threshold to Redeem"
+          />
+        </Grid>
+        <Grid size={6}>
+          <Form.Input
+            control={control}
+            {...form.register("qualityScoreScale")}
+            type="number"
+            label="Max Quality Score"
           />
         </Grid>
         <Grid size={6}>

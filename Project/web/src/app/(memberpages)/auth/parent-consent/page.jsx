@@ -12,7 +12,6 @@ import {
   Container,
   IconButton,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useMember, useQuery } from "@/Context";
 import { api, loadData, Page } from "@/util";
@@ -112,7 +111,7 @@ export default function page() {
                 mt: 1.5,
               }}
             >
-              Your child may now continue participating in My Frequent Rewards.
+              Your child may now continue participating in MyFrequentRewards.
             </Page.Text>
           </Page.Box>
         </Grid>
@@ -181,7 +180,7 @@ export default function page() {
             }}
           >
             Thank you for confirming your approval for your child to participate
-            in <strong>My Frequent Rewards</strong>, an online survey and market
+            in <strong>MyFrequentRewards</strong>, an online survey and market
             research panel operated by Frequent Research Fieldwork Solutions
             Pvt. Ltd.
           </Page.Text>
@@ -227,17 +226,7 @@ function Terms({
   setSubmitted,
   User,
 }) {
-  const [user, router, pathName] = [useMember(), useRouter(), usePathname()];
   const [category, setCategory] = React.useState({});
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [termOptions, setTermsOptions] = React.useState([
-    { label: "I Accept all", value: "accept_all", required: false },
-  ]);
-  const form = useForm();
-
-  const [acceptedTerms, setAcceptedTerms] = React.useState([]);
-  const [initialTerms, setInitialTerms] = React.useState([]);
-
   React.useEffect(() => {
     console.log({ User });
     loadData(
@@ -249,6 +238,13 @@ function Terms({
       },
     );
   }, [User.category]);
+
+  const [termOptions, setTermsOptions] = React.useState([
+    { label: "I Accept all", value: "accept_all", required: false },
+  ]);
+  const [acceptedTerms, setAcceptedTerms] = React.useState([]);
+  const [initialTerms, setInitialTerms] = React.useState([]);
+
   React.useEffect(() => {
     if (!category?.terms) return;
     setTermsOptions([
@@ -300,30 +296,21 @@ function Terms({
     .every((t) => acceptedTerms?.includes(t.value));
 
   const handleSubmit = async () => {
-    let resp = await api.put(`/api/v1/user/${user._id}`, {
+    let resp = await api.put(`/api/v1/user/parent-consent/${User._id}`, {
       terms: acceptedTerms,
     });
-    setSubmitted(true);
     // if (pathName === "/auth/terms") router.push("/survey?name=welcome");
-    if ("Reload" in user) user.Reload();
-    else
-      useToast({
-        status: "success",
-        message: "Terms acceptance updated successfully",
-      });
+    // if ("Reload" in user) user.Reload();
+    // else
+    useToast({
+      status: "success",
+      message: "Terms acceptance updated successfully",
+    });
+    setSubmitted(true);
   };
 
   return (
     <>
-      {/* <Page.Text
-        sx={{
-          fontSize: { xs: "24px", md: "32px" },
-          fontWeight: 600,
-          color: "secondary.main",
-          my: { xs: 1, md: 2 },
-        }}
-      ></Page.Text> */}
-
       <Grid
         sx={{
           borderRadius: 2,
@@ -476,7 +463,7 @@ function Terms({
                 px: 2,
               }}
             >
-              Accept
+              Accept and allow {User?.name?.first} to use this panel
             </Page.MuiButton>
           </Grid>
         </Grid>

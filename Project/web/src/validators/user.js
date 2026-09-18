@@ -65,6 +65,9 @@ const user = {
   category: {
     required: "Account Type is Required",
   },
+  agreedtoterms: {
+    required: "You must agree to the Terms & Conditions and Privacy Policy",
+  },
   parent: {
     email: {
       validate: async (v) => {

@@ -61,11 +61,12 @@ export default async function getOptions(field, parameter = null, populateFn = n
     if (parameters[field] !== "" && (parameter === null || parameter === "")) return null;
     const cacheKey = btoa(`${field}_${parameter ?? ""}`);
     let temp = window.localStorage.getItem(cacheKey);
-    if (true) {
+    if (!temp) {
         temp = await updateOption(field, parameter, cacheKey)
-    } else {
-        updateOption(field, parameter, cacheKey)
-    }
+    } 
+    // else {
+    //     updateOption(field, parameter, cacheKey)
+    // }
     let populateFunction = populate.default;
     if (populate[field]) populateFunction = populate[field];
     if (!!populateFn) populateFunction = populateFn;

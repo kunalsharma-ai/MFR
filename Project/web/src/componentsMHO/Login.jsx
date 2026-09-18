@@ -398,8 +398,21 @@ function LoginCard({ onClose, setCardType, setOpenSignUp, socials }) {
             }}
           />
         </Collapse>
-        {errorMessage && <Page.Error message={errorMessage} />}
-
+        {errorMessage && (
+          <Page.Error
+            message={
+              errorMessage === "Account is inactive" ||
+              errorMessage === "E-Mail id or Password is invalid"
+                ? (
+                    <>
+                      {errorMessage}. You can reset your password using{" "}
+                      <strong>Forgot your password?</strong> to activate your account.
+                    </>
+                  ) 
+                : errorMessage
+            }
+          />
+        )}
         <Page.MuiButton
           disabled={btnDisabled}
           type="submit"

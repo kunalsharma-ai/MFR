@@ -552,29 +552,29 @@ export default function SignUp({
                         />
                       </Grid>
                     </Grid>
-                    <Collapse in={!!btnDisabled} sx={{ width: "100%" }}>
-                      <Grid
-                        sx={{
-                          py: 1,
-                          my: 1,
-                          px: 2,
-                          border: "1px solid",
-                          borderColor: "divider",
-                          bgcolor: "#fff",
-                          borderRadius: 2,
+
+                    <Grid
+                      sx={{
+                        py: 1,
+                        my: 1,
+                        px: 2,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        bgcolor: "#fff",
+                        borderRadius: 2,
+                      }}
+                      size={12}
+                      container
+                      direction="row"
+                      alignItems="center"
+                    >
+                      <Captcha
+                        onVerified={() => {
+                          setBtnDisabled(false);
                         }}
-                        size={12}
-                        container
-                        direction="row"
-                        alignItems="center"
-                      >
-                        <Captcha
-                          onVerified={() => {
-                            setBtnDisabled(false);
-                          }}
-                        />
-                      </Grid>
-                    </Collapse>
+                      />
+                    </Grid>
+
                     <Grid
                       size={12}
                       container
@@ -585,6 +585,8 @@ export default function SignUp({
                         size="medium"
                         {...register("agreedtoterms")}
                         control={control}
+                        validations={user.agreedtoterms}
+                        errors={errors?.agreedtoterms}
                       />
                       <Typography
                         sx={{ flex: 1, ml: -1.5, textAlign: "justify" }}
@@ -626,11 +628,7 @@ export default function SignUp({
                       color="primary"
                       loading={isLoading}
                       loadingIndicator="Signing Up..."
-                      disabled={
-                        // !Boolean(form.watch("agreedtoterms")) &&
-                        // !Boolean(form.watch("parent.email")) &&
-                        !!btnDisabled
-                      }
+                      disabled={btnDisabled || !form.watch("agreedtoterms")}
                       sx={{
                         bgcolor: "secondary.main",
                         mt: 2,
@@ -829,7 +827,11 @@ export default function SignUp({
               }}
             >
               <Grid size={12} container justifyContent="center" mb={1.5}>
-                <img src="/images/logo/mfr-logo.png" alt="logo" width="220px" />
+                 <img
+                        src="/images/logo/mfr-logo.png"
+                        alt="logo"
+                        width="220px"
+                      />
               </Grid>
               <Grid
                 size={12}
@@ -888,7 +890,7 @@ export default function SignUp({
                     p: { xs: 2, sm: 4 },
                   }}
                 >
-                  Please check your inbox/Spam and{" "}
+                  Please check your Inbox/Spam and{" "}
                   <strong>click the verification link</strong> to confirm your
                   email and <strong>activate your account.</strong> Once
                   verified, you will be able to create your password and access
@@ -954,7 +956,7 @@ export default function SignUp({
                       fontWeight: 500,
                     }}
                   >
-                    Please check your inbox/Spam and{" "}
+                    Please check your Inbox/Spam and{" "}
                     <strong>click the verification link</strong> to confirm your
                     email and <strong>activate your account.</strong> Once
                     verified, you will be able to create your password and
@@ -1050,55 +1052,131 @@ export default function SignUp({
                 alignItems="center"
                 direction="column"
               >
-                <ErrorIcon color="primary" sx={{ fontSize: "80px" }} />
+                <ErrorIcon
+                  color="primary"
+                  sx={{
+                    fontSize: { xs: "70px", md: "80px" },
+                  }}
+                />
+
                 <Page.Text
                   component="span"
                   sx={{
-                    color: "secondary.main",
-                    fontSize: { xs: "18px", md: "26px" },
-                    fontWeight: 600,
+                    color: "primary.main",
+                    fontSize: { xs: "30px", md: "40px" },
+                    fontWeight: 700,
+                    textAlign: "center",
                   }}
                 >
-                  Email Already Registered
-                </Page.Text>{" "}
+                  Almost There! Let's Get You Started
+                </Page.Text>
+
                 <Page.Box
                   sx={{
-                    textAlign: "center",
-                    borderRadius: 5,
-                    // bgcolor: "#8cb2f333",
+                    width: "100%",
+                    maxWidth: 900,
+                    textAlign: "left",
+                    borderRadius: 4,
                     color: (theme) => theme.palette.cardtext.main,
                     bgcolor: (theme) => theme.palette.cardbg.main,
-                    color: (theme) => theme.palette.cardtext.main,
-                    border: "1px solid #f4f4f4",
-                    p: 4,
+                    border: "1px solid #e5e7eb",
+                    p: { xs: 3, md: 4 },
                   }}
                 >
                   <Page.Text
                     sx={{
-                      fontSize: "16px",
+                      fontSize: { xs: "15px", md: "16px" },
                       fontWeight: 500,
+                      lineHeight: 1.6,
                     }}
                   >
-                    Please check your inbox/Spam and{" "}
-                    <strong>click the verification link</strong> to confirm your
-                    email and <strong>activate your account.</strong> Once
-                    verified, you will be able to create your password and
-                    access available surveys and research opportunities surveys
-                    made just for you!
+                    Welcome! We're excited to have you. To make sure your account is
+                    secure and ready for surveys, you just need to verify your email
+                    address.
                   </Page.Text>
                   <Page.Text
                     sx={{
                       mt: 2,
+                      mb: 1,
                       fontSize: "16px",
-                      fontWeight: 500,
+                      fontWeight: 700,
+                      color: "primary.main"
                     }}
                   >
-                    In case, verification link is expired, please request a new
-                    one by clicking on{" "}
-                    <strong>Resend Verification Email</strong> button below.
+                    What should you do?
                   </Page.Text>
+
+                  {/* Point 1 */}
+                  <Page.Box
+                    sx={{
+                      display: "flex",
+                      gap: 1.5, 
+                      alignItems: "flex-start",
+                      mt: 1,
+                    }}
+                  >
+                    <CheckCircleIcon
+                      color="primary"
+                      sx={{
+                        fontSize: 20,
+                        mt: "3px",
+                        flexShrink: 0,
+                      }}
+                    />
+
+                    <Page.Text
+                      sx={{
+                        fontSize: { xs: "15px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Please check your inbox (and Spam folder) for your unique
+                      verification link.
+                    </Page.Text>
+                  </Page.Box>
+
+                  {/* Point 2 */}
+                  <Page.Box
+                    sx={{
+                      display: "flex",
+                      gap: 1.5,
+                      alignItems: "flex-start",
+                      mt: 1.5,
+                    }}
+                  >
+                    <CheckCircleIcon
+                      color="primary"
+                      sx={{
+                        fontSize: 20,
+                        mt: "3px",
+                        flexShrink: 0,
+                      }}
+                    />
+
+                    <Page.Text
+                      sx={{
+                        fontSize: { xs: "15px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Clicking this link will activate your account, allowing you to
+                      create a password and start accessing opportunities right away!
+                    </Page.Text>
+                  </Page.Box>
                 </Page.Box>
-                <Page.Box sx={{ display: "flex", gap: 2 }}>
+
+                {/* Buttons - Outside Box */}
+                <Page.Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    justifyContent: "center",
+                    flexDirection: { xs: "column", sm: "row" },
+                    mt: 1,
+                  }}
+                >
                   <Page.MuiButton
                     variant="contained"
                     color="secondary"
@@ -1106,34 +1184,26 @@ export default function SignUp({
                     sx={{
                       position: "relative",
                       fontWeight: "bold",
-                      mt: 2,
                       color: "white",
+                      minWidth: { xs: 240, sm: 280 },
+                      height: 56,
+                      padding: "12px 28px",
+                      fontSize: "15px",
+                      borderRadius: 2,
                       background:
                         cooldown > 0
                           ? `linear-gradient(to right,
-            #437ad4 ${progress}%,
-            rgba(255,255,255,0.2) ${progress}%
-          )`
+                              #437ad4 ${progress}%,
+                              rgba(255,255,255,0.2) ${progress}%
+                            )`
                           : undefined,
-                      padding: "12px 24px",
-                      "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 3,
-                        backgroundColor: "#063686",
-                        borderRadius: "999px",
-                        zIndex: -1,
-                      },
-                      "& > span": {
-                        position: "relative",
-                        zIndex: 1,
-                      },
                     }}
                     onClick={async () => {
                       let resp = await api.post(`/api/v1/user/resend`, {
                         mail: query.verifyemail,
                         action: "resend-otp",
                       });
+
                       useToast(resp);
                       setCooldown(RESEND_SECONDS);
                     }}
@@ -1146,7 +1216,15 @@ export default function SignUp({
                   <Page.MuiButton
                     variant="outlined"
                     color="secondary"
-                    sx={{ fontWeight: "bold", mt: 2, borderWidth: 3 }}
+                    sx={{
+                      fontWeight: "bold",
+                      minWidth: { xs: 180, sm: 200 },
+                      height: 56,
+                      padding: "12px 28px",
+                      fontSize: "15px",
+                      borderWidth: 2,
+                      borderRadius: 2,
+                    }}
                     onClick={() => {
                       onClose();
                       router.replace("/");
@@ -1158,7 +1236,7 @@ export default function SignUp({
               </Grid>
             </Grid>
           )}
-        </>
+          </>
       }
     />
   );

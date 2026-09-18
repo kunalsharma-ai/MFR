@@ -12,6 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useToast } from "@/hooks";
 import { SideDrawer } from "@/components/Popup";
 import { DateRangeSelector } from "@/components/Form";
+import iconList from "../../components/icons.js";
 const endpoint = `/api/v1/question`;
 export default function () {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -242,6 +243,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
       name: "",
       category: [],
       size: 12,
+      maxSelections: 0,
     },
   });
 
@@ -257,7 +259,10 @@ function CreateOrEditQuestion({ questionID = null, close }) {
     if (!questionID) return;
     api.get(`${endpoint}/${questionID}`).then((resp) => {
       if (resp.status === "success") {
-        form.reset(resp.data);
+        form.reset({
+          ...resp.data,
+          maxSelections: resp.data.maxSelections ?? 0,
+        });
       }
     });
   }, [questionID]);
@@ -270,6 +275,9 @@ function CreateOrEditQuestion({ questionID = null, close }) {
     form.reset();
     close();
   };
+
+  const questionType = form.watch("type");
+  const isMultiselect = questionType === "multiselect";
 
   return (
     <Grid
@@ -345,6 +353,23 @@ function CreateOrEditQuestion({ questionID = null, close }) {
             ]}
           />
         </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Select
+            control={control}
+            {...form.register("icon")}
+            label="Prefix Icon"
+            options={iconList}
+            className="fa-brands"
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Form.Input
+            control={control}
+            {...form.register("iconspecs.color")}
+            label="Prefix Icon Color"
+          />
+        </Grid>
         {form.watch("type") == "date" && (
           <Grid size={12} container alignItems="center">
             <Page.Text color={"grey"}>Date Range: </Page.Text>
@@ -371,16 +396,28 @@ function CreateOrEditQuestion({ questionID = null, close }) {
           editorId={id}
           dialogScoped
         />{" "}
-        <Form.Input
-          control={control}
-          {...form.register("size")}
-          label="Question Width (out of 12)"
-          type="number"
-          inputProps={{
-            min: 1,
-            max: 12,
-          }}
-        />
+        <Grid size={{ xs: 12, md: isMultiselect ? 6 : 12 }}>
+          <Form.Input
+            control={control}
+            {...form.register("size")}
+            label="Question Width (out of 12)"
+            type="number"
+            inputProps={{
+              min: 1,
+              max: 12,
+            }}
+          />
+        </Grid>
+        {isMultiselect && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Form.Input
+              control={control}
+              {...form.register("maxSelections")}
+              label="Max selections (0 = All)"
+              type="number"
+            />
+          </Grid>
+        )}
         <Grid size={12} direction="column" container pl={2}>
           <Form.Checkbox
             control={control}
