@@ -137,7 +137,7 @@
                 font-size: 20px;
                 line-height: 32px;
               ">
-              Your child has registered with MyFrequentRewards  
+              Your child has registered with MyFrequentRewards   
               and has indicated that they are under the age of 18.
             </p>
           </td>
@@ -217,7 +217,7 @@
                       line-height: 28px;
                     ">
                     Your child,
-                    <strong>{{ user.name.first }}</strong>,  
+                    <strong>{{ user.name.first }}</strong>,   
                     has registered on
                     <a
                       href="https://{{user.origin}}"
@@ -228,7 +228,7 @@
                         text-decoration: none;
                       ">
                       MyFrequentRewards
-                    </a>,  
+                    </a>,   
                     an online survey and market research panel operated
                     by Frequent Research Fieldwork Solutions Pvt. Ltd.
                   </p>
@@ -239,7 +239,7 @@
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    During registration, your child indicated that they  
+                    During registration, your child indicated that they   
                     are under the age of 18 and provided your email address
                     as their
                     <strong>{{ user.parent.relation }}</strong>.
@@ -268,7 +268,7 @@
                 font-size: 17px;
                 line-height: 28px;
               ">
-              In accordance with our Child Protection and Privacy Policy,  
+              In accordance with our Child Protection and Privacy Policy,   
               we require verified parental approval before allowing access
               to our platform. We are committed to maintaining a safe and
               secure environment for all participants, especially minors.
@@ -404,7 +404,7 @@
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    Please verify that you are the legal parent or guardian   
+                    Please verify that you are the legal parent or guardian    
                     and approve your child's participation on
                     MyFrequentRewards.
                   </p>
@@ -424,6 +424,31 @@
                     ">
                     VERIFY &amp; APPROVE
                   </a>
+                  <p style="
+      margin:18px 0 0;
+      font-size:13px;
+      line-height:20px;
+      color:#fff;
+    ">
+                    Or copy and paste the URL below into your browser to continue:
+                  </p>
+
+                  <p style="
+      margin:8px 0 0;
+      font-size:13px;
+      line-height:20px;
+      word-break:break-all;
+      color:#fff;
+    ">
+                    https://{{ user.origin }}/auth/parent-consent?user={{ user._id }}&code={{ otp.code }}</p>
+                  <p style="
+      margin:15px 0 0;
+      font-size:13px;
+      line-height:20px;
+      color:#fff;
+    ">
+                    This link will expire after 24 hours.
+                  </p>
                 </td>
               </tr>
             </table>
@@ -462,7 +487,7 @@
                 line-height: 30px;
                 font-weight: bold;
               ">
-              Thank you for helping us maintain a safe and  
+              Thank you for helping us maintain a safe and   
               responsible research environment.
             </p>
           </td>

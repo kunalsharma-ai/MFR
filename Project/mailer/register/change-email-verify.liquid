@@ -130,7 +130,7 @@
                 font-size: 20px;
                 line-height: 32px;
               ">
-              We received a request to change the email address 
+              We received a request to change the email address  
               associated with your MyFrequentRewards account.
             </p>
           </td>
@@ -217,7 +217,7 @@
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    Click the button below to confirm this request. 
+                    Click the button below to confirm this request.  
                     The verification link is valid for
                     <strong style="color: #fe7e00;">24 hours</strong>.
                   </p>
@@ -269,7 +269,7 @@
                       font-size: 17px;
                       line-height: 28px;
                     ">
-                    Please verify this request to complete the 
+                    Please verify this request to complete the  
                     email address change on your account.
                   </p>
 
@@ -288,6 +288,31 @@
                     ">
                     VERIFY EMAIL
                   </a>
+                  <p style="
+      margin:18px 0 0;
+      font-size:13px;
+      line-height:20px;
+      color:#fff;
+    ">
+                    Or copy and paste the URL below into your browser to continue:
+                  </p>
+
+                  <p style="
+      margin:8px 0 0;
+      font-size:13px;
+      line-height:20px;
+      word-break:break-all;
+      color:#fff;
+    ">
+                    https://{{ user.origin }}/auth/change-email?updatecode={{ token }}</p>
+                  <p style="
+      margin:15px 0 0;
+      font-size:13px;
+      line-height:20px;
+      color:#fff;
+    ">
+                    This link will expire after 24 hours.
+                  </p>
                 </td>
               </tr>
             </table>

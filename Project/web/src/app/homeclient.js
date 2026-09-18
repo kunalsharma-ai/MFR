@@ -61,7 +61,7 @@ export default function Home() {
     }
   };
 
-   const sections = [
+  const sections = [
     { label: "ABOUT US", ref: aboutRef },
     { label: "HOW IT WORKS", ref: howitworksRef },
     { label: "WHY US", ref: whyusRef },
@@ -77,95 +77,95 @@ export default function Home() {
   return (
     <div
       id="scroll-container"
-      style={{
+      style={ {
         height: "100vh",
         overflowY: "auto",
-      }}
+      } }
     >
-      <Box sx={{ width: "100%", height: { xs: "70px", lg: "78px" } }} />
+      <Box sx={ { width: "100%", height: { xs: "70px", lg: "78px" } } } />
       <ContextProviders>
-        <React.Suspense fallback={<></>}>
+        <React.Suspense fallback={ <></> }>
           <Header
-            sections={sections}
-            open={openLogin}
-            setOpen={setOpenLogin}
-            setOpenSignUp={setOpenSignUp}
-            setEmailUnverified={setEmailUnverified}
+            sections={ sections }
+            open={ openLogin }
+            setOpen={ setOpenLogin }
+            setOpenSignUp={ setOpenSignUp }
+            setEmailUnverified={ setEmailUnverified }
           />
         </React.Suspense>
       </ContextProviders>
 
       <main>
-        <div ref={homeRef} className="scroll-target">
+        <div ref={ homeRef } className="scroll-target">
           <ContextProviders>
             <HeroSection
-              openSignUp={openSignUp}
-              setOpenSignUp={setOpenSignUp}
-              openLogin={openLogin}
-              setOpenLogin={setOpenLogin}
+              openSignUp={ openSignUp }
+              setOpenSignUp={ setOpenSignUp }
+              openLogin={ openLogin }
+              setOpenLogin={ setOpenLogin }
             />
           </ContextProviders>
         </div>
 
-        <div ref={aboutRef} className="scroll-target">
+        <div ref={ aboutRef } className="scroll-target">
           <AboutUs />
         </div>
-        <div ref={whoweareRef} className="scroll-target">
+        <div ref={ whoweareRef } className="scroll-target">
           <WhoWeAre />
         </div>
         <Stats />
-        <div ref={howitworksRef} className="scroll-target">
+        <div ref={ howitworksRef } className="scroll-target">
           <HowItWorks />
         </div>
         <Testimonial />
-        <div ref={whyusRef} className="scroll-target">
+        <div ref={ whyusRef } className="scroll-target">
           <WhyChooseUs />
         </div>
-        <div ref={rewardsClaimsRef} className="scroll-target">
+        <div ref={ rewardsClaimsRef } className="scroll-target">
           <RewardsClaim />
         </div>
-        <div ref={stepstojoinRef} className="scroll-target">
+        <div ref={ stepstojoinRef } className="scroll-target">
           <CommunityMember />
         </div>
       </main>
 
-      <React.Suspense fallback={<></>}>
-        <Footer sections={sections} />
+      <React.Suspense fallback={ <></> }>
+        <Footer sections={ sections } />
       </React.Suspense>
-      <Zoom in={visible} unmountOnExit>
+      <Zoom in={ visible } unmountOnExit>
         <Fab
           size="medium"
           color="secondary"
-          onClick={scrollToTop}
+          onClick={ scrollToTop }
           aria-label="scroll to top button"
-          sx={{
+          sx={ {
             position: "fixed",
             bottom: 15,
             left: 15,
             boxShadow: 4,
             zIndex: 999,
             color: "white",
-          }}
+          } }
         >
-          <KeyboardArrowUpIcon sx={{ fontSize: "30px" }} />
+          <KeyboardArrowUpIcon sx={ { fontSize: "30px" } } />
         </Fab>
       </Zoom>
-      <RecentActivityPopup ToTopButtonVisible={visible} />
+      <RecentActivityPopup ToTopButtonVisible={ visible } />
       <ContextProviders>
         <SignUp
-          setOpenLogin={setOpenLogin}
-          open={openSignUp}
-          onClose={() => {
+          setOpenLogin={ setOpenLogin }
+          open={ openSignUp }
+          onClose={ () => {
             setOpenSignUp(false);
-          }}
-          emailUnverified={emailUnverified}
+          } }
+          emailUnverified={ emailUnverified }
         />
         <Login
-          open={openLogin}
-          setOpenSignUp={setOpenSignUp}
-          onClose={() => {
+          open={ openLogin }
+          setOpenSignUp={ setOpenSignUp }
+          onClose={ () => {
             setOpenLogin(false);
-          }}
+          } }
         />
         {/* <Popup open={true} onClose={() => {}} hideTitle maxWidth="sm">
           <FeedbackForm />
