@@ -20,6 +20,7 @@ import {
   Stack,
   Card,
   CardContent,
+  TextField,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import MaleIcon from "@mui/icons-material/Male";
@@ -40,8 +41,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useForm } from "react-hook-form";
-
-import { Form } from "@/components";
+import { Datatable, Form } from "@/components";
+import { DateRangeSelector } from "@/components/Form";
 import PopUp from "@/componentsMHO/PopUp";
 import { api, loadData, Page } from "@/util";
 import DataList from "@/componentsMHO/DataList";
@@ -49,6 +50,11 @@ import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 import MyAccountPoints from "../../components/MyAccountPoints";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 const paymentMethods = {
   paypal: "/images/payment/paypal.png",
   "wire-transfer": "/images/payment/wire-transfer.png",
@@ -87,6 +93,12 @@ const getGenderIcon = (gender) => {
     default:
       return null;
   }
+};
+
+const getAge = (age) => {
+  if (!age) return "";
+  const { years = 0, month = 0, day = 0 } = age;
+  return month > 0 || day > 0 ? years + 1 : years;
 };
 
 export default function page() {
@@ -184,14 +196,14 @@ function Stats() {
       title: "Approved Surveys",
       value: (statistics?.approved ?? 0).toLocaleString("en-US"),
       subtitle: "Approved responses",
-      icon: "/images/myaccount/disqualifiedsurvey.png",
+      icon: "/images/myaccount/approvedsurvey.png",
       bg: "rgba(0, 150, 136, 0.12)",
     },
     {
       title: "Rejected Surveys",
       value: (statistics?.rejected ?? 0).toLocaleString("en-US"),
       subtitle: "Rejected responses",
-      icon: "/images/myaccount/abandonedsurvey.png",
+      icon: "/images/myaccount/rejectedsurvey.png",
       bg: "rgba(233, 30, 99, 0.12)",
     },
   ];
@@ -282,7 +294,8 @@ function UserInfo({ user }) {
   const form = useForm();
 
   const [visibleFields, setVisibleFields] = React.useState({});
-
+  const [editingField, setEditingField] = React.useState(null);
+  const [alternateContact, setAlternateContact] = React.useState({ email: "", phone: "" });
   const toggleField = (index) => {
     setVisibleFields((prev) => ({
       ...prev,
@@ -293,12 +306,46 @@ function UserInfo({ user }) {
   const maskValue = (value) => {
     return value ? "xxxxxx" : "";
   };
+  const handleAlternateChange = (field) => (e) => {
+    setAlternateContact((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleAlternateEdit = (field) => setEditingField(field);
+
+  const handleAlternateCancel = (field) => {
+    setAlternateContact((prev) => ({
+      ...prev,
+      [field]: user?.[field === "email" ? "alternate-email" : "alternate-phone"] || "",
+    }));
+    setEditingField(null);
+  };
+
+  const handleAlternateDone = async (field) => {
+    const fieldName = field === "email" ? "alternate-email" : "alternate-phone";
+    const value = alternateContact[field];
+    try {
+      const resp = await api.patch(`/api/v1/me/answer`, { [fieldName]: value });
+      useToast(resp);
+
+      const alterResp = await api.post(`/api/v1/me`, {
+        questions: ["alternate-email", "alternate-phone"],
+      });
+      user.update(alterResp.data);
+      setEditingField(null);
+    } catch (error) {
+      console.error(`Failed to update ${fieldName}:`, error);
+    }
+  };
 
   React.useEffect(() => {
     if (!user) return;
 
     form.reset({
       profilePicture: user.profilePicture ?? "/images/logo/user.png",
+    });
+    setAlternateContact({
+      email: user?.["alternate-email"] || "",
+      phone: user?.["alternate-phone"] || "",
     });
   }, [user]);
 
@@ -311,24 +358,45 @@ function UserInfo({ user }) {
 
   const userData = [
     {
+      type: "view",
       icon: <CakeIcon sx={{ fontSize: 18 }} />,
       label: "Birth Date",
-      value: new Date(user?.dob).showDate(),
+      value: `${new Date(user?.dob).showDate()} (${getAge(user?.age)} yrs)`,
     },
     {
+      type: "view",
       icon: <EventNoteIcon sx={{ fontSize: 18 }} />,
       label: "Joined on",
       value: new Date(user?.createdAt).showDate(),
     },
     {
+      type: "view",
+      truncate: true,
       icon: <EmailIcon sx={{ fontSize: 18 }} />,
       label: "Email",
       value: user?.mail,
     },
     {
+      type: "edit",
+      field: "email",
+      icon: <EmailIcon sx={{ fontSize: 18 }} />,
+      label: "Alternate Email",
+      value: alternateContact.email,
+      placeholder: "Enter alternate email",
+    },
+    {
+      type: "view",
       icon: <PhoneIcon sx={{ fontSize: 18 }} />,
       label: "Mobile",
       value: `+${user?.phone}`,
+    },
+    {
+      type: "edit",
+      field: "phone",
+      icon: <PhoneIcon sx={{ fontSize: 18 }} />,
+      label: "Alternate Mobile",
+      value: alternateContact.phone,
+      placeholder: "Enter alternate phone",
     },
   ];
 
@@ -540,12 +608,16 @@ function UserInfo({ user }) {
           // py={{ xs: 1, md: 0 }}
         >
           {userData.map((item, index) => {
+            const isEdit = item.type === "edit";
+            const isEditing = isEdit && editingField === item.field;
+            const isEmailField = item.field === "email" || item.label === "Email";
+            const isPhoneField = item.field === "phone" || item.label === "Mobile";
             return (
               <Grid
                 key={index}
                 size={12}
                 container
-                alignItems="center"
+                alignItems="flex-start"
                 spacing={0}
                 sx={{
                   background: "rgba(255,255,255,0.08)",
@@ -556,57 +628,222 @@ function UserInfo({ user }) {
                   py: 1.2,
                 }}
               >
+                {/* Icon */}
                 <Box
                   sx={{
                     mr: 1.2,
                     display: "flex",
                     alignItems: "center",
                     color: "secondary.main",
+                    pt: 0.2,
                   }}
                 >
                   {item.icon}
                 </Box>
 
-                <Typography
-                  sx={{
-                    color: "rgba(255,255,255,0.72)",
-                    pr: 0.5,
-                    fontWeight: 500,
-                  }}
-                >
-                  {item.label}:
-                </Typography>
+                {/* Main content */}
+                <Box sx={{ flex: 1, minWidth: 0 }}>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    flex: 1,
-                  }}
-                >
-                  <Typography
-                    component="span"
+                  {/* FIRST LINE */}
+                  <Box
                     sx={{
-                      color: "#fff",
-                      fontWeight: 600,
-                      wordBreak: "break-word",
-                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      minWidth: 0,
                     }}
                   >
-                    {visibleFields[index] ? item.value : maskValue(item.value)}
-                  </Typography>
+                    {/* Label */}
+                    <Typography
+                      sx={{
+                        color: "rgba(255,255,255,0.72)",
+                        pr: 0.5,
+                        fontWeight: 500,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.label}:
+                    </Typography>
 
-                  <IconButton
-                    size="small"
-                    onClick={() => toggleField(index)}
-                    sx={{ color: "#fff", ml: 1 }}
-                  >
-                    {visibleFields[index] ? (
-                      <VisibilityOffIcon fontSize="small" />
-                    ) : (
-                      <VisibilityIcon fontSize="small" />
-                    )}
-                  </IconButton>
+                    {/* Value */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: 1,
+                        minWidth: 0,
+                      }}
+                    >
+                      {isEmailField && (item.truncate || isEdit) && visibleFields[index] ? (
+                        <Tooltip title={item.value || ""} placement="top">
+                          <Typography
+                            component="span"
+                            noWrap
+                            sx={{
+                              color: "#fff",
+                              fontWeight: 600,
+                              flex: 1,
+                              fontSize: 13,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              minWidth: 0,
+                            }}
+                          >
+                            {item.value?.length > 12
+                              ? item.value.slice(0, 12) + "..."
+                              : item.value || "Not added"}
+                          </Typography>
+                        </Tooltip>
+                      ) : isPhoneField && visibleFields[index] ? (
+                        <Tooltip title={item.value || ""} placement="top">
+                          <Typography
+                            component="span"
+                            noWrap
+                            sx={{
+                              color: "#fff",
+                              fontWeight: 600,
+                              flex: 1,
+                              fontSize: 13,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              minWidth: 0,
+                            }}
+                          >
+                            {item.value
+                              ? `...${item.value.slice(-4)}`
+                              : "Not added"}
+                          </Typography>
+                        </Tooltip>
+                      ) : (
+                        <Typography
+                          component="span"
+                          noWrap
+                          sx={{
+                            color: "#fff",
+                            fontWeight: 600,
+                            flex: 1,
+                            fontSize: 13,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            minWidth: 0,
+                          }}
+                        >
+                          {isEdit
+                            ? visibleFields[index]
+                              ? item.value || "Not added"
+                              : "xxxxxx"
+                            : visibleFields[index]
+                            ? item.value
+                            : maskValue(item.value)}
+                        </Typography>
+                      )}
+
+                      {/* Edit icon */}
+                      {!isEditing && isEdit && visibleFields[index] && (
+                        <IconButton
+                          size="small"
+                          onClick={() => handleAlternateEdit(item.field)}
+                          sx={{
+                            color: "#fff",
+                            ml: 0.5,
+                            flexShrink: 0,
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      )}
+
+                      {/* Eye icon - ALWAYS FIRST LINE */}
+                      {!isEditing && (
+                        <IconButton
+                          size="small"
+                          onClick={() => toggleField(index)}
+                          sx={{
+                            color: "#fff",
+                            ml: 0.5,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {visibleFields[index] ? (
+                            <VisibilityOffIcon fontSize="small" />
+                          ) : (
+                            <VisibilityIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                      )}
+                    </Box>
+                  </Box>
+
+                  {/* SECOND LINE - ONLY WHEN EDITING */}
+                  {isEditing && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        mt: 0.5,
+                      }}
+                    >
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        variant="standard"
+                        value={alternateContact[item.field]}
+                        onChange={handleAlternateChange(item.field)}
+                        placeholder={item.placeholder}
+                        size="small"
+                        InputProps={{
+                          disableUnderline: false,
+                        }}
+                        sx={{
+                          flex: 1, 
+                          minWidth: 0, 
+                          "& .MuiInputBase-input": { 
+                            color: "#fff", 
+                            fontSize: 13, 
+                          }, 
+                          "& .MuiInput-underline:before": { 
+                            borderBottomColor: "rgba(245, 160, 0, 0.5)", 
+                          }, 
+                          "& .MuiInput-underline:hover:before": { 
+                            borderBottomColor: "secondary.main", 
+                          }, 
+                          "& .MuiInput-underline:after": { 
+                            borderBottomColor: "secondary.main", 
+                          }, 
+                        }}
+                      />
+
+                      {/* Tick */}
+                      <IconButton
+                        size="small"
+                        onClick={() => handleAlternateDone(item.field)}
+                        sx={{
+                          color: "secondary.main",
+                          ml: 0.5,
+                          flexShrink: 0,
+                        }}
+                      >
+                        ✓
+                      </IconButton>
+
+                      {/* Cross */}
+                      <IconButton
+                        size="small"
+                        onClick={() => handleAlternateCancel(item.field)}
+                        sx={{
+                          color: "#fff",
+                          ml: 0.5,
+                          flexShrink: 0,
+                        }}
+                      >
+                        ✕
+                      </IconButton>
+                    </Box>
+                  )}
                 </Box>
               </Grid>
             );
@@ -653,27 +890,34 @@ function UserInfo({ user }) {
   );
 }
 
+const methodFieldsConfig = {
+  "wire-transfer": [
+    { key: "bankName", label: "Bank", placeholder: "Enter bank name" },
+    { key: "ifsc", label: "IFSC/IBAN/SWIFT", placeholder: "Enter IFSC/IBAN/SWIFT code" },
+    { key: "bankAccount", label: "Account Number", placeholder: "Enter account number" },
+  ],
+  upi: [
+    { key: "upiAccount", label: "VPA", placeholder: "Enter UPI ID" },
+  ],
+  paypal: [
+    { key: "paypalAccount", label: "PayPal Email", placeholder: "Enter PayPal email" },
+  ],
+  "amazon-gift-card": [
+    { key: "amazonAccount", label: "Amazon ID", placeholder: "Enter Amazon Giftcard ID" },
+  ],
+};
+
 function Payment() {
   const [paymentOptions, setPaymentOptions] = React.useState([]);
-  const [openPayment, setOpenPayment] = React.useState(false);
-  const [selectedMethod, setSelectedMethod] = React.useState("Wire Transfer");
+
   const [payment, setPayment] = React.useState({});
-
-  const [visibleFields, setVisibleFields] = React.useState({});
-
-  const toggleField = (index) => {
-    setVisibleFields((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
-
-  const maskValue = (value) => {
-    return value ? "xxxxxx" : "";
-  };
+  const [expandedMethod, setExpandedMethod] = React.useState(false);
+  const [editingMethod, setEditingMethod] = React.useState(null);
+  const [editBackup, setEditBackup] = React.useState({});
+  const [primaryMethod, setPrimaryMethod] = React.useState(null);
 
   const member = useMember();
-  React.useState(() => {
+  React.useEffect(() => {
     loadData(
       api.get(`/api/v1/option/payment-method`),
       (resp) => {
@@ -694,68 +938,81 @@ function Payment() {
       paypalAccount: member["payment-method-paypal"],
       upiAccount: member["payment-method-upi"],
     });
+    setPrimaryMethod(member["payment-method-primary"] || null);
   }, [member]);
 
-  const handleSave = async (method, value) => {
-    const resp = await api.patch(`/api/v1/me/answer`, {
-      "payment-method": payment.method,
-      "payment-method-bank-ifsc": payment.ifsc,
-      "payment-method-bank-account": payment.bankAccount,
-      "payment-method-bank-name": payment.bankName,
-      "payment-method-amazon": payment.amazonAccount,
-      "payment-method-paypal": payment.paypalAccount,
-      "payment-method-upi": payment.upiAccount,
-    });
-    await member.Reload();
-    useToast(resp);
-    setOpenPayment(false);
+  const hasData = (methodValue) => {
+    const fields = methodFieldsConfig[methodValue] || [];
+    return fields.some((f) => payment[f.key]?.toString().trim());
   };
-  const accountDetails = React.useMemo(() => {
-    switch (payment.method) {
-      case "wire-transfer":
-        return [
-          {
-            name: "Bank",
-            value: payment.bankName,
-          },
-          {
-            name: "IFSC / Swift / IBAN Code",
-            value: payment.ifsc,
-          },
-          {
-            name: "Account Number",
-            value: payment.bankAccount,
-          },
-        ];
-        break;
-      case "upi":
-        return [
-          {
-            name: "Virtual Payment Address (VPA)",
-            value: payment.upiAccount,
-          },
-        ];
-        break;
-      case "paypal":
-        return [
-          {
-            name: "Paypal Account",
-            value: payment.paypalAccount,
-          },
-        ];
-        break;
-      case "amazon-gift-card":
-        return [
-          {
-            name: "Amazon ID",
-            value: payment.amazonAccount,
-          },
-        ];
-        break;
-      default:
-        break;
+
+  const handleFieldChange = (key) => (e) => {
+    setPayment((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+
+  const handleAccordionChange = (methodValue) => (e, isExpanded) => {
+    setExpandedMethod(isExpanded ? methodValue : false);
+    if (!isExpanded) setEditingMethod(null);
+  };
+
+  const handleEditMethod = (methodValue) => {
+    setEditBackup((prev) => ({
+      ...prev,
+      [methodValue]: { ...payment },
+    }));
+
+    setEditingMethod(methodValue);
+  };
+
+  const handleCancelEdit = (methodValue) => {
+    const backup = editBackup[methodValue];
+
+    if (backup) {
+      setPayment(backup);
     }
-  }, [payment]);
+
+    setEditingMethod(null);
+  };
+
+  const handleSaveMethod = async (methodValue) => {
+    try {
+      const resp = await api.patch(`/api/v1/me/answer`, {
+        "payment-method-bank-ifsc": payment.ifsc,
+        "payment-method-bank-account": payment.bankAccount,
+        "payment-method-bank-name": payment.bankName,
+        "payment-method-amazon": payment.amazonAccount,
+        "payment-method-paypal": payment.paypalAccount,
+        "payment-method-upi": payment.upiAccount,
+      });
+      useToast(resp);
+      await member.Reload();
+    } catch (error) {
+      console.error(`Failed to update payment method ${methodValue}:`, error);
+    } finally {
+      setEditingMethod(null);
+    }
+  };
+
+  const handleSetPrimary = async (methodValue) => {
+    setPrimaryMethod(methodValue);
+    try {
+      const resp = await api.patch(`/api/v1/me/answer`, {
+        "payment-method-primary": methodValue,
+      });
+      useToast(resp);
+      // loadData(
+      //   api.post(`/api/v1/me`, {
+      //   questions:["bank-ifsc","bank-account","bank-name","amazon","upi","paypal","upi","primary"].map(q=>`payment-method-${q}`)
+      // }),
+      // resp=>{
+      //   member.Update(resp.data)
+      // })
+      // await member.Reload();
+    } catch (error) {
+      console.error(`Failed to set primary payment method:`, error);
+    }
+  };
+
   return (
     <Grid size={12} container spacing={2} justifyContent="center">
       {/* Header */}
@@ -763,7 +1020,7 @@ function Payment() {
         width="100%"
         display="flex"
         alignItems="center"
-        justifyContent="space-between"
+        // justifyContent="space-between"
         px={1}
         pt={1}
         minHeight={46}
@@ -777,372 +1034,181 @@ function Payment() {
             pb: 0.5,
           }}
         >
-          Payment Method
+          Payment Methods
         </Typography>
-        {payment?.method && (
-          <IconButton
-            onClick={() => setOpenPayment(true)}
-            sx={{ color: "#fff" }}
-          >
-            <EditIcon sx={{ fontSize: 22 }} />
-          </IconButton>
-        )}
       </Box>
 
-      {/* Payment display */}
-      <Grid
-        container
-        size={12}
-        direction="column"
-        spacing={0}
-        px={1.5}
-        py={1}
-        sx={{
-          background: "rgba(255, 255, 255, 0.1)",
-          borderRadius: 2,
-        }}
-      >
-        {payment?.method ? (
-          <Grid container size={12} alignItems="center" py={{ xs: 0, md: 1 }}>
-            <Typography>
-              {payment.method === "wire-transfer"
-                ? "Wire Transfer"
-                : payment.method === "upi"
-                  ? "UPI"
-                  : payment.method === "amazon-gift-card"
-                    ? "Amazon Gift Card"
-                    : payment.method === "paypal"
-                      ? "PayPal"
-                      : payment.method}{" "}
-              Details:
-            </Typography>
+      <Grid size={12} container spacing={1}>
+        {paymentOptions.map((method, index) => {
+          const methodValue = method.value;
+          const isEditing = editingMethod === methodValue;
+          const filled = hasData(methodValue);
+          const isPrimary = primaryMethod === methodValue;
+          const fields = methodFieldsConfig[methodValue] || [];
 
-            <Grid size={12} mt={1.5}>
-              {accountDetails.map((detail, index) => (
-                <Grid
-                  size={12}
-                  container
-                  alignItems="center"
-                  spacing={1}
-                  borderBottom={"1px solid rgba(255, 255, 255, 0.3)"}
-                  py={1}
+          return (
+            <Grid size={12} key={index}>
+              <Accordion
+                expanded={expandedMethod === methodValue}
+                onChange={handleAccordionChange(methodValue)}
+                sx={{
+                  background: "rgba(255,255,255,0.08)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  color: "#fff",
+                  "&:before": { display: "none" },
+                  borderRadius: "10px !important",
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
                 >
-                  <Typography
-                    width={{ xs: "100%", xl: "40%" }}
-                    fontWeight={500}
-                  >
-                    {detail.name}
-                  </Typography>
-
                   <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      flex: 1,
+                      width: "100%",
+                      gap: 1,
                     }}
                   >
-                    <Typography
-                      component="span"
-                      sx={{
-                        color: "#fff",
-                        fontWeight: 600,
-                        wordBreak: "break-word",
-                        flex: 1,
-                      }}
-                    >
-                      {visibleFields[index]
-                        ? detail.value
-                        : maskValue(detail.value)}
+                    {filled && (
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          bgcolor: "secondary.main",
+                          flexShrink: 0,
+                        }}
+                      />
+                    )}
+
+                    <Typography sx={{ flex: 1, fontWeight: 500 }}>
+                      {method.label}
                     </Typography>
 
                     <IconButton
+                      component="span"
                       size="small"
-                      onClick={() => toggleField(index)}
-                      sx={{ color: "#fff", ml: 1 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSetPrimary(methodValue);
+                      }}
+                      sx={{ color: isPrimary ? "secondary.main" : "#fff" }}
                     >
-                      {visibleFields[index] ? (
-                        <VisibilityOffIcon fontSize="small" />
+                      {isPrimary ? (
+                        <StarIcon fontSize="small" />
                       ) : (
-                        <VisibilityIcon fontSize="small" />
+                        <StarBorderIcon fontSize="small" />
                       )}
                     </IconButton>
                   </Box>
-                </Grid>
-              ))}
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <Grid container spacing={1}>
+                    {fields.map((f) => (
+                      <Grid
+                        key={f.key}
+                        size={12}
+                        container
+                        alignItems="center"
+                        spacing={0}
+                        sx={{
+                          background: "rgba(255,255,255,0.06)",
+                          borderRadius: "10px",
+                          px: 1.5,
+                          py: 1,
+                        }}
+                      >
+                        
+
+                        <Box 
+                          sx={{ 
+                            display: "flex", 
+                            alignItems: "center", 
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        >
+                          {isEditing ? ( 
+                            <TextField 
+                              fullWidth 
+                              variant="standard" 
+                              value={payment[f.key] || ""} 
+                              onChange={handleFieldChange(f.key)} 
+                              placeholder={f.placeholder} 
+                              size="small" 
+                              InputProps={{ disableUnderline: true }} 
+                              sx={{ 
+                                flex: 1,
+                                minWidth: 0,
+                                "& .MuiInputBase-input": { 
+                                  color: "#fff", 
+                                  fontSize: 13, 
+                                }, 
+                              }} 
+                            /> 
+                          ) : ( 
+                            <Typography 
+                              component="span" 
+                              sx={{ 
+                                color: "#fff", 
+                                fontWeight: 600, 
+                                flex: 1, 
+                                fontSize: 13, 
+                              }} 
+                            > 
+                              xxxxxx 
+                            </Typography> 
+                          )}
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              flexShrink: 0,
+                              ml: 1,
+                            }}
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                isEditing
+                                  ? handleSaveMethod(methodValue)
+                                  : handleEditMethod(methodValue)
+                              }
+                              sx={{
+                                color: isEditing ? "secondary.main" : "#fff",
+                              }}
+                            >
+                              {isEditing ? "✓" : <EditIcon fontSize="small" />}
+                            </IconButton>
+
+                            {isEditing && (
+                              <IconButton
+                                size="small"
+                                onClick={() => handleCancelEdit(methodValue)}
+                                sx={{
+                                  color: "#fff",
+                                  ml: 0.5,
+                                }}
+                              >
+                                ✕
+                              </IconButton>
+                            )}
+                          </Box>
+                        </Box>
+                      </Grid>
+                    ))}
+
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
             </Grid>
-          </Grid>
-        ) : (
-          <Typography py={1} fontSize={12}>
-            No Payment method selected yet.{" "}
-            <Typography
-              component={"span"}
-              fontWeight={700}
-              fontSize={12}
-              sx={{ cursor: "pointer" }}
-              onClick={() => setOpenPayment(true)}
-            >
-              Click to add
-            </Typography>
-          </Typography>
-        )}
+          );
+        })}
       </Grid>
-
-      {/* Payment Popup */}
-      <PopUp
-        title="Select Payment Method"
-        maxWidth="md"
-        open={openPayment}
-        onClose={async () => {
-          await member.Reload();
-          setOpenPayment(false);
-        }}
-      >
-        <Grid
-          size={12}
-          container
-          alignItems="center"
-          sx={{
-            bgcolor: (theme) => theme.palette.cardbg.main,
-            color: (theme) => theme.palette.cardtext.main,
-          }}
-        >
-          <Grid
-            container
-            size={12}
-            alignItems="center"
-            spacing={3}
-            justifyContent="space-evenly"
-            pt={5}
-            pb={3}
-          >
-            <RadioGroup
-              row
-              value={payment.method}
-              onChange={(event) => {
-                setPayment({ ...payment, method: event.target.value });
-              }}
-              style={{ justifyContent: "space-evenly", width: "100%" }}
-            >
-              {paymentOptions.map((method, index) => (
-                <FormControlLabel
-                  key={index}
-                  value={method.value}
-                  control={<Radio />}
-                  label={
-                    <Box
-                      component="img"
-                      src={paymentMethods[method.value]}
-                      alt={method.label}
-                      sx={{
-                        height: 63,
-                        width: 100,
-                        mr: 2,
-                        p: 1,
-                        borderRadius: 2,
-                        cursor: "pointer",
-                        border: (theme) =>
-                          payment.method === method.name
-                            ? `2px solid ${theme.palette.primary.main}`
-                            : "2px solid transparent",
-                        boxShadow: (theme) =>
-                          payment.method === method.name
-                            ? `0 0 8px ${theme.palette.secondary.main}`
-                            : "none",
-                        transition: "0.2s",
-                        bgcolor: "#fff",
-                      }}
-                    />
-                  }
-                />
-              ))}
-            </RadioGroup>
-          </Grid>
-
-          {/* Dynamic input form */}
-          <Grid size={12} container py={2}>
-            {/* PayPal */}
-            <Collapse
-              in={payment.method === "paypal"}
-              unmountOnExit
-              sx={{ width: "100%" }}
-            >
-              <Grid
-                container
-                size={12}
-                px={2}
-                justifyContent="center"
-                spacing={0}
-              >
-                <Typography mb={1} fontSize={16} fontWeight={600}>
-                  Enter your PayPal Email
-                </Typography>
-                <Page.Input
-                  value={payment.paypalAccount}
-                  onChange={(e) =>
-                    setPayment({
-                      ...payment,
-                      paypalAccount: e.target.value,
-                    })
-                  }
-                />
-                <Button
-                  onClick={() => handleSave("PayPal", payment.value)}
-                  variant="contained"
-                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Collapse>
-
-            {/* Wire Transfer */}
-            <Collapse
-              in={payment.method === "wire-transfer"}
-              unmountOnExit
-              sx={{ width: "100%" }}
-            >
-              <Grid
-                container
-                size={12}
-                px={2}
-                justifyContent="center"
-                spacing={2}
-              >
-                <Grid size={6} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600}>
-                    Bank
-                  </Typography>
-                  <Page.Input
-                    value={
-                      payment.method === "wire-transfer" ? payment.bankName : ""
-                    }
-                    onChange={(e) => {
-                      let temp = {
-                        ...payment,
-                        bankName: e.target.value,
-                      };
-                      setPayment(temp);
-                    }}
-                  />
-                </Grid>
-                <Grid size={6} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600}>
-                    IFSC/IBAN/SWIFT Code
-                  </Typography>
-                  <Page.Input
-                    value={
-                      payment.method === "wire-transfer"
-                        ? payment.ifsc || ""
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setPayment({
-                        ...payment,
-                        ifsc: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid size={12} container spacing={0}>
-                  <Typography fontSize={16} fontWeight={600}>
-                    Enter your Account Number
-                  </Typography>
-                  <Page.Input
-                    value={
-                      payment.method === "wire-transfer"
-                        ? payment.bankAccount || ""
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setPayment({
-                        ...payment,
-                        bankAccount: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Button
-                  onClick={() => handleSave("Wire Transfer", payment.value)}
-                  variant="contained"
-                  sx={{ my: 2, color: "white", px: 2, fontWeight: 600 }}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Collapse>
-
-            {/* Amazon */}
-            <Collapse
-              in={payment.method === "amazon-gift-card"}
-              unmountOnExit
-              sx={{ width: "100%" }}
-            >
-              <Grid
-                container
-                size={12}
-                px={2}
-                justifyContent="center"
-                spacing={0}
-              >
-                <Typography mb={1} fontSize={16} fontWeight={600}>
-                  Enter your Amazon Giftcard ID
-                </Typography>
-                <Page.Input
-                  value={payment.amazonAccount}
-                  onChange={(e) =>
-                    setPayment({
-                      ...payment,
-                      amazonAccount: e.target.value,
-                    })
-                  }
-                />
-                <Button
-                  onClick={() => handleSave("Amazon", payment.value)}
-                  variant="contained"
-                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Collapse>
-
-            {/* UPI */}
-            <Collapse
-              in={payment.method === "upi"}
-              unmountOnExit
-              sx={{ width: "100%" }}
-            >
-              <Grid
-                container
-                size={12}
-                px={2}
-                justifyContent="center"
-                spacing={0}
-              >
-                <Typography mb={1} fontSize={16} fontWeight={600}>
-                  Enter your UPI ID
-                </Typography>
-                <Page.Input
-                  value={payment.upiAccount}
-                  onChange={(e) =>
-                    setPayment({
-                      ...payment,
-                      upiAccount: e.target.value,
-                    })
-                  }
-                />
-                <Button
-                  onClick={() => handleSave()}
-                  variant="contained"
-                  sx={{ my: 2, fontWeight: 600, color: "white", px: 2 }}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Collapse>
-          </Grid>
-        </Grid>
-      </PopUp>
     </Grid>
   );
 }
@@ -1168,7 +1234,6 @@ function SocialAccounts({ user }) {
       ),
     );
   }, [user]);
-  console.table(contact);
   const handleChange = (key) => (e) => {
     setContact((prev) => ({
       ...prev,
@@ -1405,6 +1470,8 @@ function Summary() {
     },
   ];
   const [activeTab, setActiveTab] = React.useState(0);
+  const [rewardsDataRange,  setRewardsDateRange]=React.useState([])
+  const [rejectedDataRange , setRejectedDataRange]=React.useState([])
   const tabs = [
     // {
     //   label: "Rewards Summary",
@@ -1417,16 +1484,120 @@ function Summary() {
     {
       label: "Rewards Processed Summary",
       render: (
-        <Grid size={12} container justifyContent="center" py={7}>
-          No Reward Processed yet.
+        <Grid size={12} data-tour="myaccount-rewards-processed">
+          <Datatable
+            isLoading={false}
+            pagination={[10, 20, 50]}
+            pageSize={20}
+            hideColumnSelector
+            hideDownload
+            noDataMsg="No Record Found."
+            // data={tourActive ? mockRewardsProcessed.data : []}
+            extra={
+            <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
+              <DateRangeSelector
+                onUpdate={(e) => {
+                  setRewardsDateRange(
+                    e.map((d) => new Date(d.toDate()).toISOString().split("T")[0]),
+                  );
+                }}
+              />
+            </Box>
+          }
+            columns={[
+              {
+                id: "claimedPoints",
+                label: "Claimed Points",
+                render: (info) => `${info.claimedPoints} pts`,
+              },
+              {
+                id: "claimedAmount",
+                label: "Claimed Amount",
+                render: (info) => `₹${info.claimedAmount}`,
+              },
+              {
+                id: "dateTime",
+                label: "Date - Time",
+                render: (info) => new Date(info.dateTime).toLocaleString(),
+              },
+              {
+                id: "transactionId",
+                label: "Transaction ID",
+                render: (info) => info.transactionId,
+              },
+              {
+                id: "paymentMethod",
+                label: "Payment Method",
+                render: (info) => info.paymentMethod,
+              },
+              {
+                id: "paymentProcessedDate",
+                label: "Payment Processed Date",
+                render: (info) =>
+                  info.paymentProcessedDate
+                    ? new Date(info.paymentProcessedDate).toLocaleDateString()
+                    : "-",
+              },
+              {
+                id: "status",
+                label: "Status",
+                render: (info) => (
+                  <span style={{ textTransform: "capitalize" }}>{info.status}</span>
+                ),
+              },
+            ]}
+          />
         </Grid>
       ),
     },
     {
       label: "Rejected Responses",
       render: (
-        <Grid size={12} container justifyContent="center" py={7}>
-          No Rejected Responses.
+        <Grid size={12} container justifyContent="center" >
+          <Datatable
+            hideColumnSelector
+            hideDownload
+            data={[]}
+            extra={
+            <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
+              <DateRangeSelector
+                onUpdate={(e) => {
+                  setRejectedDataRange(
+                    e.map((d) => new Date(d.toDate()).toISOString().split("T")[0]),
+                  );
+                }}
+              />
+            </Box>
+          }
+            columns={[
+              {
+                id: "survey",
+                label: "Survey Name",
+                render: (info) => info.survey?.name,
+              },
+              {
+                id: "createdAt",
+                label: "created At",
+                render: (info) => new Date(info.createdAt).toLocaleString(),
+              },
+              {
+                id: "points",
+                label: "Points",
+                render: (info) => `${info.points} pts`,
+              },
+              {
+                id: "reason",
+                label: "Reason",
+                render: (info) => info.reason,
+              },
+              {
+                id: "status",
+                label: "Status",
+                render: (info) => info.status,
+              },
+            ]}
+            isLoading={false}
+          />
         </Grid>
       ),
     },
