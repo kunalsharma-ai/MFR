@@ -391,15 +391,28 @@ function LoginCard({ onClose, setCardType, setOpenSignUp, socials }) {
             </Page.MuiButton>
           </Box>
         </Grid>
-
-        <Captcha
-          onVerified={() => {
-            setBtnDisabled(false);
-          }}
-        />
-
-        {errorMessage && <Page.Error message={errorMessage} />}
-
+        <Collapse in={!!btnDisabled} sx={{ width: "100%" }}>
+          <Captcha
+            onVerified={() => {
+              setBtnDisabled(false);
+            }}
+          />
+        </Collapse>
+        {errorMessage && (
+          <Page.Error
+            message={
+              errorMessage === "Account is inactive" ||
+              errorMessage === "E-Mail id or Password is invalid"
+                ? (
+                    <>
+                      {errorMessage}. You can reset your password using{" "}
+                      <strong>Forgot your password?</strong> to activate your account.
+                    </>
+                  ) 
+                : errorMessage
+            }
+          />
+        )}
         <Page.MuiButton
           disabled={btnDisabled}
           type="submit"
