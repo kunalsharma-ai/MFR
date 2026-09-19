@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
-import { Page, api, useCustomState } from "@/util";
+import { Page, api } from "@/util";
 
 import { Grid, IconButton, Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -16,15 +16,14 @@ import iconList from "../../components/icons.js";
 const endpoint = `/api/v1/question`;
 export default function () {
   const [isLoading, setIsLoading] = React.useState(true);
-  // const [questions, setQuestions] = React.useState([]);
-  const questions = useCustomState([]);
+  const [questions, setQuestions] = React.useState([]);
   const [open, setOpen] = React.useState({ open: false, id: null });
   const router = useRouter();
 
   React.useEffect(() => {
     setIsLoading(true);
     api.get(endpoint).then((resp) => {
-      questions.update(resp.data);
+      setQuestions(resp.data);
       setIsLoading(false);
     });
   }, [open]);
@@ -146,7 +145,7 @@ export default function () {
             render: (info) =>
               ["radio", "checkbox", "select", "multiselect"].includes(
                 info?.type,
-              ) && (
+              ) ? (
                 <Page.Text
                   component="a"
                   href={`/admin/options?id=${info._id}`}
@@ -155,6 +154,19 @@ export default function () {
                 >
                   View Options
                 </Page.Text>
+              ) : Boolean(info.type === "text") ? (
+                <>
+                  <Page.Text
+                    component="a"
+                    href={`/admin/validations?que=${info._id}`}
+                    target="_blank"
+                    sx={{ color: "secondary.main", fontWeight: 500, p: 0 }}
+                  >
+                    Validations
+                  </Page.Text>
+                </>
+              ) : (
+                <>N/A</>
               ),
           },
           {
@@ -173,7 +185,7 @@ export default function () {
             ),
           },
         ]}
-        data={questions.value}
+        data={questions}
         isLoading={isLoading}
         pagination={[10, 20, 50, 100]}
         pageSize={50}
@@ -189,7 +201,7 @@ export default function () {
               router.push("/admin/profiles");
             }}
             variant="contained"
-            color="primary"
+            color="secondary"
             size="small"
             sx={{
               fontWeight: "bold",
@@ -299,7 +311,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
         title={questionID ? "Edit Question" : "Add Question"}
         sx={{ justifyContent: "space-between" }}
       >
-        <IconButton onClick={close} color="primary">
+        <IconButton onClick={close} color="secondary">
           <CloseIcon />
         </IconButton>
       </SectionTitle>
@@ -362,7 +374,6 @@ function CreateOrEditQuestion({ questionID = null, close }) {
             className="fa-brands"
           />
         </Grid>
-
         <Grid size={{ xs: 12, md: 6 }}>
           <Form.Input
             control={control}
@@ -468,7 +479,7 @@ function CreateOrEditQuestion({ questionID = null, close }) {
         <Page.MuiButton
           type="submit"
           variant="contained"
-          color="primary"
+          color="secondary"
           sx={{
             fontWeight: "bold",
           }}

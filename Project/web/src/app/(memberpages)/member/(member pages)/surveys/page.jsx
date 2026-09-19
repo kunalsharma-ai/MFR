@@ -666,7 +666,7 @@ function SurveyCard({ survey }) {
               opacity: 0.85,
             }}
           >
-            Reward Points
+            Reward Points{" "}($ {survey.points / 1000})
           </Typography>
         </Box>
 
