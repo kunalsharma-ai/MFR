@@ -44,6 +44,8 @@ import { useForm } from "react-hook-form";
 import { Datatable, Form } from "@/components";
 import { DateRangeSelector } from "@/components/Form";
 import PopUp from "@/componentsMHO/PopUp";
+import { Input } from "@/components/Form";
+import { Phone } from "@/components/Form";
 import { api, loadData, Page } from "@/util";
 import DataList from "@/componentsMHO/DataList";
 import { useMember } from "@/Context";
@@ -292,10 +294,11 @@ function Stats() {
 
 function UserInfo({ user }) {
   const form = useForm();
+  const [defaultCountry,setDefaultCountry]= React.useState("us")
 
   const [visibleFields, setVisibleFields] = React.useState({});
   const [editingField, setEditingField] = React.useState(null);
-  const [alternateContact, setAlternateContact] = React.useState({ email: "", phone: "" });
+  
   const toggleField = (index) => {
     setVisibleFields((prev) => ({
       ...prev,
@@ -306,23 +309,21 @@ function UserInfo({ user }) {
   const maskValue = (value) => {
     return value ? "xxxxxx" : "";
   };
-  const handleAlternateChange = (field) => (e) => {
-    setAlternateContact((prev) => ({ ...prev, [field]: e.target.value }));
-  };
+
 
   const handleAlternateEdit = (field) => setEditingField(field);
 
   const handleAlternateCancel = (field) => {
-    setAlternateContact((prev) => ({
-      ...prev,
-      [field]: user?.[field === "email" ? "alternate-email" : "alternate-phone"] || "",
-    }));
+    const formField = field === "phone" ? "alternatePhone" : "alternateEmail";
+    const dbField = field === "phone" ? "alternate-phone" : "alternate-email";
+    form.setValue(formField, user?.[dbField] || "");
     setEditingField(null);
   };
 
   const handleAlternateDone = async (field) => {
     const fieldName = field === "email" ? "alternate-email" : "alternate-phone";
-    const value = alternateContact[field];
+    const formField = field === "email" ? "alternateEmail" : "alternatePhone";
+    const value = form.getValues(formField);
     try {
       const resp = await api.patch(`/api/v1/me/answer`, { [fieldName]: value });
       useToast(resp);
@@ -342,11 +343,9 @@ function UserInfo({ user }) {
 
     form.reset({
       profilePicture: user.profilePicture ?? "/images/logo/user.png",
-    });
-    setAlternateContact({
-      email: user?.["alternate-email"] || "",
-      phone: user?.["alternate-phone"] || "",
-    });
+      alternatePhone: user?.["alternate-phone"] || "",
+      alternateEmail: user?.["alternate-email"] || "",
+  });
   }, [user]);
 
   const rating =
@@ -381,7 +380,7 @@ function UserInfo({ user }) {
       field: "email",
       icon: <EmailIcon sx={{ fontSize: 18 }} />,
       label: "Alternate Email",
-      value: alternateContact.email,
+      value: user?.["alternate-email"] || "",
       placeholder: "Enter alternate email",
     },
     {
@@ -395,10 +394,23 @@ function UserInfo({ user }) {
       field: "phone",
       icon: <PhoneIcon sx={{ fontSize: 18 }} />,
       label: "Alternate Mobile",
-      value: alternateContact.phone,
+      value: user?.["alternate-phone"] || "",
       placeholder: "Enter alternate phone",
     },
   ];
+
+
+  React.useEffect(()=>{
+const getCountry=async()=>{
+    const resp = await api.get("/api/v1/get-country");
+      resp.country = resp.country.toLowerCase().trim();
+      setDefaultCountry(resp.country)
+      
+      }
+getCountry()
+  },[])
+
+
 
   return (
     <Grid
@@ -690,9 +702,7 @@ function UserInfo({ user }) {
                               minWidth: 0,
                             }}
                           >
-                            {item.value?.length > 12
-                              ? item.value.slice(0, 12) + "..."
-                              : item.value || "Not added"}
+                            {item.value || ""}
                           </Typography>
                         </Tooltip>
                       ) : isPhoneField && visibleFields[index] ? (
@@ -711,9 +721,7 @@ function UserInfo({ user }) {
                               minWidth: 0,
                             }}
                           >
-                            {item.value
-                              ? `...${item.value.slice(-4)}`
-                              : "Not added"}
+                            {item.value || ""}
                           </Typography>
                         </Tooltip>
                       ) : (
@@ -733,8 +741,8 @@ function UserInfo({ user }) {
                         >
                           {isEdit
                             ? visibleFields[index]
-                              ? item.value || "Not added"
-                              : "xxxxxx"
+                              ? item.value || ""
+                              : maskValue(item.value)
                             : visibleFields[index]
                             ? item.value
                             : maskValue(item.value)}
@@ -787,36 +795,69 @@ function UserInfo({ user }) {
                         mt: 0.5,
                       }}
                     >
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        variant="standard"
-                        value={alternateContact[item.field]}
-                        onChange={handleAlternateChange(item.field)}
-                        placeholder={item.placeholder}
-                        size="small"
-                        InputProps={{
-                          disableUnderline: false,
-                        }}
-                        sx={{
-                          flex: 1, 
-                          minWidth: 0, 
-                          "& .MuiInputBase-input": { 
-                            color: "#fff", 
-                            fontSize: 13, 
-                          }, 
-                          "& .MuiInput-underline:before": { 
-                            borderBottomColor: "rgba(245, 160, 0, 0.5)", 
-                          }, 
-                          "& .MuiInput-underline:hover:before": { 
-                            borderBottomColor: "secondary.main", 
-                          }, 
-                          "& .MuiInput-underline:after": { 
-                            borderBottomColor: "secondary.main", 
-                          }, 
-                        }}
-                      />
-
+                      {item.field === "phone" ? (
+                        <Box sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 20 }}>
+                          <Phone
+                            control={form.control}
+                            name="alternatePhone"
+                            onlyCountries={[defaultCountry]}
+                              disableDropdown={true}
+                            inputSX={{
+                              backgroundColor: "transparent",
+                              color: "#fff",
+                              border: "none",
+                              borderRadius: 0,
+                              borderBottom: "1px solid rgba(245, 160, 0, 0.5)",
+                              boxShadow: "none",
+                              paddingLeft: "52px",
+                            }}
+                          />
+                        </Box>
+                      ) : (
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Input
+                            control={form.control}
+                            name="alternateEmail"
+                            variant="standard"
+                            placeholder={item.placeholder}
+                            autoFocus
+                            inputSX={{
+                              color: "#fff",
+                              fontSize: 13,
+                              backgroundColor: "transparent",
+                            }}
+                            sx={{
+                              "& .MuiInputBase-root": {
+                                backgroundColor: "transparent",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                border: "none",
+                              },
+                              "& .MuiOutlinedInput-root": {
+                                backgroundColor: "transparent",
+                                "&:hover .MuiOutlinedInput-notchedOutline": {
+                                  border: "none",
+                                },
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                  border: "none",
+                                },
+                              },
+                              "& .MuiInput-underline:before": {
+                                borderBottomColor: "rgba(245, 160, 0, 0.5)",
+                              },
+                              "& .MuiInput-underline:hover:before": {
+                                borderBottomColor: "secondary.main",
+                              },
+                              "& .MuiInput-underline:after": {
+                                borderBottomColor: "secondary.main",
+                              },
+                              "& .MuiInputBase-input": {
+                                color: "#fff",
+                              },
+                            }}
+                          />
+                        </Box>
+                      )}
                       {/* Tick */}
                       <IconButton
                         size="small"
@@ -927,20 +968,31 @@ function Payment() {
     );
   }, []);
   React.useEffect(() => {
-    if (!member) return;
-
-    setPayment({
-      method: member["payment-method"],
-      ifsc: member["payment-method-bank-ifsc"],
-      bankAccount: member["payment-method-bank-account"],
-      bankName: member["payment-method-bank-name"],
-      amazonAccount: member["payment-method-amazon"],
-      paypalAccount: member["payment-method-paypal"],
-      upiAccount: member["payment-method-upi"],
-    });
-    setPrimaryMethod(member["payment-method-primary"] || null);
-  }, [member]);
-
+    api.post(`/api/v1/me`, {
+      questions: [
+        "payment-method",
+        "payment-method-bank-ifsc",
+        "payment-method-bank-account",
+        "payment-method-bank-name",
+        "payment-method-amazon",
+        "payment-method-paypal",
+        "payment-method-upi",
+        "payment-method-primary",
+      ],
+    }).then((resp) => {
+      const data = resp.data;
+      setPayment({
+        method: data["payment-method"],
+        ifsc: data["payment-method-bank-ifsc"],
+        bankAccount: data["payment-method-bank-account"],
+        bankName: data["payment-method-bank-name"],
+        amazonAccount: data["payment-method-amazon"],
+        paypalAccount: data["payment-method-paypal"],
+        upiAccount: data["payment-method-upi"],
+      });
+      setPrimaryMethod(data["payment-method-primary"] || null);
+    }).catch((err) => console.error(err));
+  }, []);
   const hasData = (methodValue) => {
     const fields = methodFieldsConfig[methodValue] || [];
     return fields.some((f) => payment[f.key]?.toString().trim());
@@ -1150,16 +1202,21 @@ function Payment() {
                               }} 
                             /> 
                           ) : ( 
-                            <Typography 
+                             <Typography 
                               component="span" 
+                              noWrap
                               sx={{ 
-                                color: "#fff", 
+                                color: payment[f.key] ? "#fff" : "rgba(255,255,255,0.55)", 
                                 fontWeight: 600, 
                                 flex: 1, 
                                 fontSize: 13, 
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                minWidth: 0,
                               }} 
                             > 
-                              xxxxxx 
+                              {payment[f.key] ? "xxxxxx" : f.placeholder}
                             </Typography> 
                           )}
 
