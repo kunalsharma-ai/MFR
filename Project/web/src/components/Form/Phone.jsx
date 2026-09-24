@@ -98,6 +98,7 @@ export default function Phone({
             }}
             dropdownStyle={{
               color: "#000",
+              zIndex: 99999999,
             }}
             inputClass="custom-phone-font"
             specialLabel={""}
