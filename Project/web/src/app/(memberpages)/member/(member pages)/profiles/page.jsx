@@ -195,6 +195,8 @@ export default function () {
               flex: 1,
               minHeight: 0,
               overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Survey
@@ -269,13 +271,17 @@ function ProfileTabs({ profiles, query, onChange }) {
 
   const activeTab = React.useMemo(() => {
     if (!profiles || !(profiles instanceof Array) || profiles.length === 0)
-      return;
-    if (!query.profile) {
-      onChange(tabs[0].link);
-      return;
-    }
+      return -1;
+    if (!query.profile) return -1;
     return profiles.map((p) => p.slug).indexOf(query.profile);
   }, [profiles, query]);
+
+  React.useEffect(() => {
+    if (!tabs.length) return;
+    if (!query.profile) {
+      onChange(tabs[0].link);
+    }
+  }, [tabs, query.profile]);
   return (
     <Tabs
       value={activeTab}

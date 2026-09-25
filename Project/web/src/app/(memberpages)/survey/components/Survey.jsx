@@ -234,23 +234,28 @@ export default function Survey({
         direction="column"
         justifyContent="space-between"
         sx={{
-          minHeight: [undefined, null].includes(currentPage)
-            ? "calc(90vh - 170px)"
-            : "calc(90vh - 214px)",
-          // steps[currentGroupIndex] !== "Welcome"
-          //   ? "calc(90vh - 230px)"
+          ...(isProfile
+            ? { height: "100%" , minHeight: 0 }
+            : {
+                minHeight: [undefined, null].includes(currentPage)
+                ? "calc(90vh - 170px)"
+                : "calc(90vh - 214px)",
+              }
+          )
         }}
       >
         <Grid
           size={12}
           container
           sx={{
-            maxHeight: {
-              md: editMode ? "calc(90vh - 240px)" : "calc(90vh - 185px)",
-              // steps[currentGroupIndex] !== "Welcome"
-              //   ? "calc(90vh - 300px)"
-              //   : "calc(90vh - 215px)",
-            },
+            ...(isProfile
+              ? { flex: 1, minHeight: 0 }
+              : {
+                maxHeight: {
+                  md: editMode ? "calc(90vh - 240px)" : "calc(90vh - 185px)",
+                },
+              }
+            ),
             maxWidth: "100%",
             overflowY: "auto",
             borderRadius: 2,
@@ -316,6 +321,7 @@ export default function Survey({
             size={12}
             spacing={2}
             sx={{
+              flexShrink: 0,
               justifyContent: "flex-end",
               py: 2,
               px: isProfile ? 2 : 0,

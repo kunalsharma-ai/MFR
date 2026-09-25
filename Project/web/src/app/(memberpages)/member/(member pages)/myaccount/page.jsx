@@ -44,8 +44,6 @@ import { useForm } from "react-hook-form";
 import { Datatable, Form } from "@/components";
 import { DateRangeSelector } from "@/components/Form";
 import PopUp from "@/componentsMHO/PopUp";
-import { Input } from "@/components/Form";
-import { Phone } from "@/components/Form";
 import { api, loadData, Page } from "@/util";
 import DataList from "@/componentsMHO/DataList";
 import { useMember } from "@/Context";
@@ -797,7 +795,7 @@ getCountry()
                     >
                       {item.field === "phone" ? (
                         <Box sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 20 }}>
-                          <Phone
+                          <Form.Phone
                             control={form.control}
                             name="alternatePhone"
                             onlyCountries={[defaultCountry]}
@@ -815,7 +813,7 @@ getCountry()
                         </Box>
                       ) : (
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Input
+                          <Form.Input
                             control={form.control}
                             name="alternateEmail"
                             variant="standard"
