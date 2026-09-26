@@ -137,7 +137,7 @@ function FAQ() {
                 sx={{
                   width: "100%",
                   boxShadow: 0,
-                  bgcolor: "#385e9e",
+                  bgcolor: "primary.main",
                   border: `1px solid #e0e0e0`,
                   p: 1.5,
                   borderRadius: 3,
