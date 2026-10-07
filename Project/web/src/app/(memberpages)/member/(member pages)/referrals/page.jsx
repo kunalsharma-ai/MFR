@@ -57,14 +57,13 @@ export default function page() {
   //       }
   //     });
   // }, [user]);
-  const loadReferralHistory = React.useCallback(() => {
-  if (!user) return;
+const userId = user?._id;
+const loadReferralHistory = React.useCallback(() => {
+  if (!userId) return;
 
   Promise.all([
     api.get(`/api/v1/me/invite`),
-    api.post(`/api/v1/user`, {
-      referredBy: user._id,
-    }),
+    api.post(`/api/v1/user`, { referredBy: userId }),
   ]).then(([inviteResp, referralResp]) => {
     const invites = inviteResp?.data || [];
     const registeredUsers = referralResp?.data || [];
@@ -72,14 +71,15 @@ export default function page() {
     const mergedData = invites.map((invite) => {
       const registeredUser = registeredUsers.find(
         (referral) =>
-          referral.mail?.toLowerCase() === invite.email?.toLowerCase()
+          referral.mail?.toLowerCase() === invite.email?.toLowerCase(),
       );
+      const n = registeredUser?.name;
 
       return {
         email: invite.email,
         registered: registeredUser ? "Registered" : "Not Registered",
         sentAt: invite.createdAt,
-        name: registeredUser?.fullName || "",
+        name: n ? [n.first, n.middle, n.last].filter(Boolean).join(" ") : "",
         status: registeredUser?.isVerified?.email || "",
         dateOfJoining: registeredUser?.createdAt || "",
       };
@@ -87,21 +87,14 @@ export default function page() {
 
     setReferrals(mergedData);
   });
-}, [user]);
+}, [userId]);
 
 React.useEffect(() => {
-  if (!user) return;
-
-  setReferralLink(`${window.location.origin}/?ref=${user._id}&signup`);
-
+  if (!userId) return;
+  setReferralLink(`${window.location.origin}/?ref=${userId}&signup`);
   loadReferralHistory();
+}, [userId, loadReferralHistory]);
 
-  const interval = setInterval(() => {
-    loadReferralHistory();
-  }, 3000);
-
-  return () => clearInterval(interval);
-}, [user, loadReferralHistory]);
 
   const handleCopy = async () => {
     try {

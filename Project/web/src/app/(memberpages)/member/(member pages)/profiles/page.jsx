@@ -102,18 +102,18 @@ export default function () {
 
   const isFirstProfile = currentProfileIndex <= 0;
   const isLastProfile = currentProfileIndex >= profiles.length - 1;
-
+  const allProfiles= profiles?.filter?.((profile) => Number(profile.status) > 0) || []
   const handlePreviousProfile = () => {
-    if(isFirstProfile) return;
+    if(isFirstProfile) return; 
 
-    const previousProfile = profiles[currentProfileIndex - 1];
+    const previousProfile = allProfiles[currentProfileIndex - 1];
     router.push(`?profile=${previousProfile.slug}`, {scroll: false});
   };
 
   const handleNextProfile = () => {
     if(isLastProfile) return;
 
-    const nextProfile = profiles[currentProfileIndex + 1];
+    const nextProfile = allProfiles[currentProfileIndex + 1];
     router.push(`?profile=${nextProfile.slug}`, {scroll: false });
   };
 
