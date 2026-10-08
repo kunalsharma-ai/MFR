@@ -180,7 +180,7 @@ function Surveys() {
       link: "/member/surveys?source=internal",
       description:
         "Handpicked opportunities curated specifically around your unique profile insights. Complete these high-value matches to maximize your earnings securely and directly.",
-      isAvailable: Boolean(availableSurveys?.internal),
+      isAvailable: Boolean(availableSurveys?.internal?.all ?? 0) > 0,
       stat: [
         {
           title: "All New Surveys",
@@ -207,24 +207,24 @@ function Surveys() {
       link: "/member/surveys?source=external",
       description:
         "High-frequency, rotating questionnaires updated constantly throughout the day. Dive in anytime for quick, continuous chances to boost your daily points balance.",
-      isAvailable: Boolean(availableSurveys?.external),
+      isAvailable: Boolean(availableSurveys?.external?.all ?? 0) > 0,
       stat: [
         {
           title: "All New Surveys",
           filter: null,
-          count: 0,
+          count: availableSurveys?.external?.all ?? 0,
           bg: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
         },
         {
           title: "High Reward Surveys",
           filter: "High Reward Surveys",
-          count: 0,
+          count: availableSurveys?.external?.highRewards ?? 0,
           bg: "linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)",
         },
         {
           filter: "Short Surveys",
           title: "Short Surveys",
-          count: 0,
+          count: availableSurveys?.external?.short ?? 0,
           bg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
         },
       ],
@@ -569,7 +569,7 @@ export function SurveyHistory() {
             },
           }}
         >
-          Continue
+          Dropout
         </Page.Link>
       );
     }
