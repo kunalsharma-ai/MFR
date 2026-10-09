@@ -189,7 +189,7 @@ export default function Header({
         {
           label:"REWARDS CLAIM",
           onClick:()=>{
-            handleNavigation(`/`,"REWARDS-CLAIM")
+            handleNavigation(`/`,"REWARDS CLAIM")
             handleDrawerClose();
           },
           path:"/",

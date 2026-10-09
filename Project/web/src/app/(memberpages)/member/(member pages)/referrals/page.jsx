@@ -57,44 +57,61 @@ export default function page() {
   //       }
   //     });
   // }, [user]);
-const userId = user?._id;
-const loadReferralHistory = React.useCallback(() => {
-  if (!userId) return;
+  const userId = user?._id;
+  const loadReferralHistory = React.useCallback(() => {
+    if (!userId) return;
 
-  Promise.all([
-    api.get(`/api/v1/me/invite`),
-    api.post(`/api/v1/user`, { referredBy: userId }),
-  ]).then(([inviteResp, referralResp]) => {
-    const invites = inviteResp?.data || [];
-    const registeredUsers = referralResp?.data || [];
+    Promise.all([
+      api.get(`/api/v1/me/invite`),
+      api.post(`/api/v1/user`, { referredBy: userId }),
+    ]).then(([inviteResp, referralResp]) => {
+      const invites = inviteResp?.data || [];
+      const registeredUsers = referralResp?.data || [];
 
-    const mergedData = invites.map((invite) => {
-      const registeredUser = registeredUsers.find(
-        (referral) =>
-          referral.mail?.toLowerCase() === invite.email?.toLowerCase(),
-      );
-      const n = registeredUser?.name;
+      const mergedData = [
+        ...invites.map((invite) => {
+          const registeredUser = registeredUsers.find(
+            (referral) =>
+              referral.mail?.toLowerCase() === invite.email?.toLowerCase(),
+          );
 
-      return {
-        email: invite.email,
-        registered: registeredUser ? "Registered" : "Not Registered",
-        sentAt: invite.createdAt,
-        name: n ? [n.first, n.middle, n.last].filter(Boolean).join(" ") : "",
-        status: registeredUser?.isVerified?.email || "",
-        dateOfJoining: registeredUser?.createdAt || "",
-      };
+          return {
+            email: invite.email,
+            registered: registeredUser ? "Registered" : "Not Registered",
+            sentAt: invite.createdAt,
+            name: registeredUser?.fullName || "",
+            status: registeredUser?.isVerified?.email || "",
+            dateOfJoining: registeredUser?.createdAt || "",
+          };
+        }),
+
+        ...registeredUsers
+          .filter(
+            (user) =>
+              !invites.some(
+                (invite) =>
+                  invite.email?.toLowerCase() === user.mail?.toLowerCase(),
+              ),
+          )
+          .map((user) => ({
+            email: user.mail,
+            registered: "Registered",
+            sentAt: "",
+            name: user.fullName || "",
+            status: user.isVerified?.email || "",
+            dateOfJoining: user.createdAt || "",
+          })),
+      ];
+
+      setReferrals(mergedData);
     });
+  }, [userId]);
 
-    setReferrals(mergedData);
-  });
-}, [userId]);
-
-React.useEffect(() => {
-  if (!userId) return;
-  setReferralLink(`${window.location.origin}/?ref=${userId}&signup`);
-  loadReferralHistory();
-}, [userId, loadReferralHistory]);
-
+  React.useEffect(() => {
+    if (!userId) return;
+    setReferralLink(`${window.location.origin}/?ref=${userId}&signup`);
+    loadReferralHistory();
+  }, [userId, loadReferralHistory]);
 
   const handleCopy = async () => {
     try {
@@ -128,39 +145,37 @@ React.useEffect(() => {
     setEmails(newEmails);
   };
   const columns = [
-  { id: "email", label: "Email", data: "email" },
-  { id: "registered", label: "Registered", data: "registered" },
-  {
-    id: "sentAt",
-    label: "Sent At",
-    render: (info) =>
-      info.sentAt ? new Date(info.sentAt).toLocaleString() : "",
-  },
-  { id: "name", label: "Name", data: "name" },
-  {
-    id: "status",
-    label: "Status",
-    render: (info) =>
-      info.status ? (
-        <Chip
-          size="small"
-          color={info.status === "verified" ? "success" : "error"}
-          label={info.status}
-          sx={{ textTransform: "capitalize" }}
-        />
-      ) : (
-        ""
-      ),
-  },
-  {
-    id: "date",
-    label: "Date of Joining",
-    render: (info) =>
-      info.dateOfJoining
-        ? new Date(info.dateOfJoining).showDate()
-        : "",
-  },
-];
+    { id: "email", label: "Email", data: "email" },
+    { id: "registered", label: "Registered", data: "registered" },
+    {
+      id: "sentAt",
+      label: "Sent At",
+      render: (info) =>
+        info.sentAt ? new Date(info.sentAt).toLocaleString() : "",
+    },
+    { id: "name", label: "Name", data: "name" },
+    {
+      id: "status",
+      label: "Status",
+      render: (info) =>
+        info.status ? (
+          <Chip
+            size="small"
+            color={info.status === "verified" ? "success" : "error"}
+            label={info.status}
+            sx={{ textTransform: "capitalize" }}
+          />
+        ) : (
+          ""
+        ),
+    },
+    {
+      id: "date",
+      label: "Date of Joining",
+      render: (info) =>
+        info.dateOfJoining ? new Date(info.dateOfJoining).showDate() : "",
+    },
+  ];
   return (
     <Grid
       size={12}

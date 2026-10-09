@@ -78,6 +78,12 @@ export default function () {
             render: (info) => info.name.Capitalize(),
           },
           {
+            id: "sortOrder",
+            label: "sortOrder",
+            feature: ["sortable"],
+            data: "sortOrder",
+          },
+          {
             id: "questionsList",
             label: "Questions List",
             render: (info) => (
@@ -104,35 +110,35 @@ export default function () {
                 >
                   <EditIcon fontSize="small" color="primary" />
                 </IconButton>
-                {/* <IconButton
-                  sx={ { p: 0 } }
+                <IconButton
+                  sx={{ p: 0 }}
                   title="Move Up in Sort Order"
-                  onClick={ async () => {
-                    let temp = await api.put(
-                      `/api/v1/profile/${info._id}`,
-                      { ...info, sortOrder: Number(info.sortOrder) + 1 },
-                    );
+                  onClick={async () => {
+                    let temp = await api.put(`/api/v1/profile/${info._id}`, {
+                      ...info,
+                      sortOrder: Number(info.sortOrder || 0) + 1,
+                    });
                     // useToast(temp);
-                    setReload(reload+1)
-                  } }
+                    setReload(reload + 1);
+                  }}
                 >
                   <KeyboardArrowUpIcon fontSize="small" color="primary" />
                 </IconButton>
 
                 <IconButton
-                  sx={ { p: 0 } }
+                  sx={{ p: 0 }}
                   title="Move Down in Sort Order"
-                  onClick={ async () => {
-                    let temp = await api.put(
-                      `/api/v1/profile/${info._id}`,
-                      { ...info, sortOrder: Number(info.sortOrder) - 1 },
-                    );
+                  onClick={async () => {
+                    let temp = await api.put(`/api/v1/profile/${info._id}`, {
+                      ...info,
+                      sortOrder: Number(info.sortOrder || 0) - 1,
+                    });
                     // useToast(temp);
-                   setReload(reload+1)
-                  } }
+                    setReload(reload + 1);
+                  }}
                 >
                   <KeyboardArrowDownIcon fontSize="small" color="primary" />
-                </IconButton> */}
+                </IconButton>
               </>
             ),
           },
