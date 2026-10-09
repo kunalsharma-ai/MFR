@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Datatable, Form, Icon, SectionTitle } from "@/components";
 import { Page, api } from "@/util";
-import { Grid, IconButton, Chip } from "@mui/material";
+import { Grid, IconButton, Chip, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,7 +34,11 @@ export default function () {
       try {
         setIsLoading(true);
         const resp = await api.get(endpoint);
-        setProfiles(resp.data);
+        setProfiles(
+          [...resp.data].sort(
+            (a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0)
+          )
+        );
       } catch (err) {
         console.error("Failed to fetch profiles:", err);
       } finally {
@@ -43,7 +47,7 @@ export default function () {
     };
 
     fetchProfiles();
-  }, [open]);
+  }, [open, reload]);
 
   return (
     <Page.Box
@@ -79,9 +83,28 @@ export default function () {
           },
           {
             id: "sortOrder",
-            label: "sortOrder",
-            feature: ["sortable"],
-            data: "sortOrder",
+            label: "Sort Order",
+            render: (info) => (
+              <TextField
+                type="number"
+                size="small"
+                defaultValue={info.sortOrder ?? ""}
+                onBlur={async (e) => {
+                  const sortOrder = Number(e.target.value);
+
+                  if (Number.isNaN(sortOrder)) return;
+
+                  const resp = await api.put(`/api/v1/profile/${info._id}`, {
+                    ...info,
+                    sortOrder,
+                  });
+
+                  useToast(resp);
+                  setReload((prev) => prev + 1);
+                }}
+                sx={{ width: 80 }}
+              />
+            ),
           },
           {
             id: "questionsList",

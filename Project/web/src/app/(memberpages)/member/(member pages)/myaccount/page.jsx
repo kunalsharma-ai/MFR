@@ -993,7 +993,7 @@ function Payment() {
   }, []);
   const hasData = (methodValue) => {
     const fields = methodFieldsConfig[methodValue] || [];
-    return fields.some((f) => payment[f.key]?.toString().trim());
+    return fields.length > 0 && fields.every((f) => payment[f.key]?.toString().trim());
   };
 
   const handleFieldChange = (key) => (e) => {
@@ -1035,6 +1035,10 @@ function Payment() {
         "payment-method-upi": payment.upiAccount,
       });
       useToast(resp);
+      if (primaryMethod && !hasData(primaryMethod)) {
+        setPrimaryMethod(null);
+        await api.patch(`/api/v1/me/answer`, { "payment-method-primary": "" });
+      }
       await member.Reload();
     } catch (error) {
       console.error(`Failed to update payment method ${methodValue}:`, error);
@@ -1044,24 +1048,33 @@ function Payment() {
   };
 
   const handleSetPrimary = async (methodValue) => {
+    if (!hasData(methodValue)) {
+      useToast({ status: "error", message: "Please fill in the details first." });
+      return;
+    }
+    if (primaryMethod === methodValue) return;
+
+    const previous = primaryMethod;
     setPrimaryMethod(methodValue);
+
     try {
       const resp = await api.patch(`/api/v1/me/answer`, {
         "payment-method-primary": methodValue,
       });
       useToast(resp);
-      // loadData(
-      //   api.post(`/api/v1/me`, {
-      //   questions:["bank-ifsc","bank-account","bank-name","amazon","upi","paypal","upi","primary"].map(q=>`payment-method-${q}`)
-      // }),
-      // resp=>{
-      //   member.Update(resp.data)
-      // })
-      // await member.Reload();
     } catch (error) {
       console.error(`Failed to set primary payment method:`, error);
+      setPrimaryMethod(previous);
     }
   };
+
+  const sortedOptions = React.useMemo(() => {
+    return [...paymentOptions].sort((a, b) => {
+      if (a.value === primaryMethod) return -1;
+      if (b.value === primaryMethod) return 1;
+      return 0;
+    });
+  }, [paymentOptions, primaryMethod]);
 
   return (
     <Grid size={12} container spacing={2} justifyContent="center">
@@ -1089,7 +1102,7 @@ function Payment() {
       </Box>
 
       <Grid size={12} container spacing={1}>
-        {paymentOptions.map((method, index) => {
+        {sortedOptions.map((method, index) => {
           const methodValue = method.value;
           const isEditing = editingMethod === methodValue;
           const filled = hasData(methodValue);
@@ -1097,7 +1110,7 @@ function Payment() {
           const fields = methodFieldsConfig[methodValue] || [];
 
           return (
-            <Grid size={12} key={index}>
+            <Grid size={12} key={methodValue}>
               <Accordion
                 expanded={expandedMethod === methodValue}
                 onChange={handleAccordionChange(methodValue)}
@@ -1144,7 +1157,13 @@ function Payment() {
                         e.stopPropagation();
                         handleSetPrimary(methodValue);
                       }}
-                      sx={{ color: isPrimary ? "secondary.main" : "#fff" }}
+                      sx={{
+                        color: isPrimary
+                          ? "secondary.main"
+                          : filled
+                          ? "#fff"
+                          : "rgba(255,255,255,0.3)",
+                      }}
                     >
                       {isPrimary ? (
                         <StarIcon fontSize="small" />
