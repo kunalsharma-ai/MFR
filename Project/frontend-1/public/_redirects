@@ -1,0 +1,2 @@
+# Netlify / Cloudflare Pages: prerendered folders are served automatically; unknown paths get 404.html
+/*  /404.html  404

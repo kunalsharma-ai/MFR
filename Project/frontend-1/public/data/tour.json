@@ -1,0 +1,141 @@
+[
+  { "route": "/member/dashboard",
+    "target": "[data-tour=\"greeting\"]",
+    "title": "{{greeting}} , {{name}} 👋",
+    "content": "This is your dashboard — your home base for everything related to your account. Here, you can track your surveys, check your rewards, and stay updated on your latest activity. Let’s take a quick walkthrough so you can see how everything works and easily find your way around."
+  },
+  { "route":"/member/dashboard",
+    "target": "[data-tour=\"stats\"]",
+    "title": "Your Stats at a Glance",
+    "content": "Here’s a quick snapshot of your survey activity, including the surveys you’ve participated in, completed, or been disqualified from."
+  },
+  { "route":"/member/dashboard",
+    "target": "[data-tour=\"surveys\"]",
+    "title": "Available Surveys",
+    "content": "New surveys that match your profile will appear right here. Keep an eye out for surveys offering higher rewards."
+  },
+  { "route":"/member/dashboard",
+    "target": "[data-tour=\"survey-history\"]",
+    "title": "Recent Activity",
+    "content": "This is where you can view your recent survey activity and check the current status of each survey."
+  },
+
+ {
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-profile-info\"]",
+  "title": "Your Profile Details",
+  "content": "Here, you’ll find your date of birth, join date, email address, and mobile number. Tap the eye icon next to any field to view the details.",
+  "placement": "right"
+},
+{
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-payment\"]",
+  "title": "Payment Method",
+  "content": "Add or update your preferred reward method — whether it’s a bank transfer, UPI, PayPal, or an Amazon gift card.",
+  "placement": "top"
+},
+{
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-social\"]",
+  "title": "Social Accounts",
+  "content": "Link your social media accounts here to stay connected and access potential perks and benefits in the future.",
+  "placement": "top"
+},
+{
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-current-rewards\"]",
+  "title": "Current Rewards",
+  "content": "This shows your current points balance and how close you are to the next payout threshold.",
+  "placement": "bottom"
+},
+{
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-stats-cards\"]",
+  "title": "Your Activity Summary",
+  "content": "A full breakdown of your surveys completed, disqualified, abandoned, and more all in one glance.",
+  "placement": "top"
+},
+{
+  "route": "/member/myaccount",
+  "target": "[data-tour=\"myaccount-rewards-processed\"]",
+  "title": "Rewards Processed Summary",
+  "content": "Once your rewards are approved and processed for payout, you can view your complete reward history right here.",
+  "placement": "top"
+},
+ {
+  "route": "/member/profiles",
+  "target": "[data-tour=\"profiles-tabs\"]",
+  "title": "Your Profile Categories",
+  "content": "Complete each category to build a more detailed profile. The more complete your profile is, the better your chances of being matched with relevant surveys.",
+  "placement": "bottom"
+},
+
+{
+  "route": "/member/profiles",
+  "target": "[data-tour=\"profiles-survey-form\"]",
+  "title": "Fill In Your Details",
+  "content": "Answer the questions here, and tap Update anytime to keep your profile information up to date.",
+  "placement": "top"
+},
+{
+  "route": "/member/surveys",
+  "target": "[data-tour=\"surveys-stats\"]",
+  "title": "Survey Stats",
+  "content": "See how many surveys are available, your total earning potential, and the average time and reward for each survey.",
+  "placement": "bottom"
+},
+{
+  "route": "/member/surveys",
+  "target": "[data-tour=\"surveys-list\"]",
+  "title": "Browse Surveys",
+  "content": "Filter surveys by higher rewards or shorter completion times, then tap any survey card to get started.",
+  "placement": "top"
+},
+{
+  "route": "/member/surveys",
+  "target": "[data-tour=\"surveys-historys\"]",
+  "title": "Recent Activity",
+  "content": "Track the status of the surveys you’ve recently participated in, all in one place.",
+  "placement": "top"
+},
+  { "route":"/member/rewards",  
+    "target": "[data-tour=\"rewards-history-table\"]",
+    "title": "Rewards",
+    "content": "Here’s a preview of your rewards history. As you complete surveys and earn rewards, your activity will appear here.",
+    "placement": "bottom"
+  },
+  { "route":"/member/referrals",
+    "target": "[data-tour=\"referrals-history-table\"]",
+    "title": "Referrals",
+    "content": "Here’s a preview of your referral history. Once you start referring others, your referral activity will appear here.",
+    "placement": "top"
+  },
+ {
+  "route": "/member/settings",
+  "target": "[data-tour=\"settings-password\"]",
+  "title": "Change Password",
+  "content": "Keep your account secure by updating your password here whenever needed.",
+  "placement": "bottom"
+},
+{
+  "route": "/member/settings",
+  "target": "[data-tour=\"settings-notifications\"]",
+  "title": "Survey Notifications",
+  "content": "Choose how you’d like to receive notifications when new surveys become available for you.",
+  "placement": "bottom"
+},
+{
+  "route": "/member/settings",
+  "target": "[data-tour=\"settings-terms\"]",
+  "title": "Terms and Conditions",
+  "content": "Review our terms and conditions anytime, right here.",
+  "placement": "auto"
+},
+  {
+    "route": "/member/support",
+    "target": "[data-tour=\"support-tickets-table\"]",
+    "title": "Help & Support",
+    "content": "This is where you can track your support tickets and check their status. Need help? Create a new ticket anytime, and our support team will be happy to assist! 🎉",
+    "placement": "bottom"
+  }
+]

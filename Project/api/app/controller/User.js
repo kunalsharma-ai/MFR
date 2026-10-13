@@ -8,6 +8,11 @@ Date.prototype.isMinor = function (cn = "IN") {
 import { CrudController, Mutate } from "../utils/index.js";
 import { User as userModel, Invites as invitesModel, Answers, Survey,Response as responseModel } from "../model/index.js";
 import fs from "fs"
+
+const COMM_QUESTION = "communication-methods";
+// signup channel -> question ke option ka value (is question me WhatsApp ka option nahi hai)
+const COMM_VALUE = { dashboard: "dashboard", email: "email", sms: "sms" };
+
 class User extends CrudController {
     fixUserIssue() {
         super.request = {
@@ -36,44 +41,67 @@ class User extends CrudController {
         console.log(query)
         return await super.list(query, populateFields, sort, project)
     }
-    async create(data) {
-        this.fixUserIssue();
-        invitesModel.updateMany({
-            email: data.mail
-        }, {
-            isActive: false
-        })
-        const user = await super.create(data);
-        
-        // Auto-invite to active surveys with autoInvite enabled
-        try {
-            const surveys = await modelSurvey.find({
-                category: user.category,
-                autoInvite: true,
-                status: "active",
-                ...this.commonFilters
-            });
-            
-            if (surveys.length > 0) {
-                const autoInvites = surveys.map(s => ({
-                    user: user._id,
-                    survey: {
-                        name: s.name,
-                        slug: s.slug
-                    },
-                    status: "invited",
-                    source: s.source,
-                    points: s.points,
-                    ...this.commonFilters
-                }));
-                await responseModel.insertMany(autoInvites, { ordered: false });
-            }
-        } catch (e) {
-            console.Log("Auto-invite failed for new user", e.message);
-        }
 
-        return user;
+    async saveCommunicationAnswer(user) {
+    console.log("saveCommunicationAnswer called", String(user._id), (user.notification || []).map((n) => n.channel));
+    try {
+        const values = [...new Set(
+            (user.notification || []).map((n) => COMM_VALUE[n.channel]).filter(Boolean)
+        )];
+        if (!values.length) return;
+        await Answers.updateOne(
+            { user: String(user._id), question: COMM_QUESTION, origin: user.origin || this.request?.origin },
+            {
+                $set: { answer: values },
+                $setOnInsert: { isActive: true, isDeleted: false, sortOrder: 0 },
+            },
+            { upsert: true, setDefaultsOnInsert: true }
+        );
+    } catch (e) {
+        console.log("communication-methods answer not saved:", e.message); // signup kabhi fail nahi hona chahiye
     }
+}
+   async create(data) {
+    console.log("User.create hit", data.mail);
+    this.fixUserIssue();
+    invitesModel.updateMany({
+        email: data.mail
+    }, {
+        isActive: false
+    })
+    const user = await super.create(data);
+
+    await this.saveCommunicationAnswer(user);   // naya
+
+    // Auto-invite to active surveys with autoInvite enabled
+    try {
+        const surveys = await Survey.find({     // modelSurvey nahi, Survey
+            category: user.category,
+            autoInvite: true,
+            status: "active",
+            ...this.commonFilters
+        });
+
+        if (surveys.length > 0) {
+            const autoInvites = surveys.map(s => ({
+                user: user._id,
+                survey: {
+                    name: s.name,
+                    slug: s.slug
+                },
+                status: "invited",
+                source: s.source,
+                points: s.points,
+                ...this.commonFilters
+            }));
+            await responseModel.insertMany(autoInvites, { ordered: false });
+        }
+    } catch (e) {
+        console.log("Auto-invite failed for new user", e.message);   // console.log, chhota l
+    }
+
+    return user;
+}
     async update(id, data) {
         this.fixUserIssue();
         return await super.update(id, data);
