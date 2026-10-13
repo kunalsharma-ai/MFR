@@ -1,0 +1,7 @@
+# robots.txt — MyFrequentRewards
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /api/
+
+Sitemap: https://www.myfrequentrewards.com/sitemap.xml
