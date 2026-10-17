@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand, FaqList } from '../components/Common.jsx';
+import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { DemographicRibbons, InterestMosaic } from '../sections/ProfileSections.jsx';
 import { PayoutFan } from '../sections/RewardSections.jsx';
+import { FAQ_CONSUMERS, FAQ_WHO } from '../data/faqs.js';
+import CountryAtlas from '../sections/CountryAtlas.jsx';
 
 const page = PAGES.consumers;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'For Consumers', path: page.path }];
@@ -13,8 +15,8 @@ const PERSONAS = [
   { icon: 'book', t: 'Students', d: 'Earn between classes — tech, media and education studies love young voices.', to: '/blog/online-earning-for-students-without-investment' },
   { icon: 'heart', t: 'Homemakers & parents', d: 'Your household decisions shape grocery, family and home brands.', to: '/blog/online-earning-for-homemakers' },
   { icon: 'mobile', t: 'Gamers & streamers', d: 'Mobile, console and PC players are in constant demand.', to: '/blog/earn-money-online-on-mobile' },
-  { icon: 'activity', t: 'Drivers & EV owners', d: 'Automotive, insurance and mobility research needs you.', to: '/who-can-join' },
-  { icon: 'globe', t: 'Travellers', d: 'Airlines, hotels and travel apps want your experiences.', to: '/who-can-join' },
+  { icon: 'activity', t: 'Drivers & EV owners', d: 'Automotive, insurance and mobility research needs you.', to: '/paid-surveys-for-consumers#countries' },
+  { icon: 'globe', t: 'Travellers', d: 'Airlines, hotels and travel apps want your experiences.', to: '/paid-surveys-for-consumers#countries' },
   { icon: 'clock', t: 'Retirees', d: 'Decades of perspective for health, finance and leisure studies.', to: '/blog/online-earning-for-retirees' },
 ];
 
@@ -28,13 +30,8 @@ const WEEK = [
   { d: 'Sun', t: 'Claim reward', i: 'gift' },
 ];
 
-const FAQS = [
-  { q: 'Who counts as a consumer member?', a: 'Any eligible adult — students, workers, parents, homemakers, retirees — sharing opinions about everyday products and services.' },
-  { q: 'Can I earn money online from home with consumer surveys?', a: 'Yes, consumer surveys are completed online from any device, wherever you are.' },
-  { q: 'What topics will I see?', a: 'Shopping, food and beverages, technology, travel, finance, automotive, beauty, pets, health, gaming and more.' },
-  { q: 'Do I need any experience?', a: 'No — your everyday experience as a consumer is exactly what researchers need.' },
-  { q: 'Is joining really free?', a: 'Yes, there is no investment or fee of any kind.' },
-];
+// v2.5: eligibility questions from the former Who Can Join page live here now
+const FAQS = [...FAQ_CONSUMERS, ...FAQ_WHO.filter((f) => !/industry and department/i.test(f.q))];
 
 export default function Consumers() {
   return (
@@ -44,7 +41,9 @@ export default function Consumers() {
         crumbs={crumbs}
         eyebrow="For consumers"
         title={page.h1}
-        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal or gift cards — plus UPI in India."
+        tagline={[['cart', 'Shop it.'], ['star', 'Rate it.'], ['coins', 'Get paid for it.']]}
+        tone="con"
+        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal, cash, vouchers or gift cards — plus UPI in India."
         art="bubbles"
         theme="berry"
       >
@@ -53,21 +52,26 @@ export default function Consumers() {
         </div>
       </PageHero>
 
-      <section className="section personas" aria-labelledby="per-title">
+      <section className="section lny" aria-labelledby="per-title">
+        <div className="lny-rail" aria-hidden="true" />
         <div className="container">
-          <div className="sec-head reveal">
+          <div className="sec-head sec-center reveal">
             <p className="eyebrow">Made for real life</p>
             <h2 id="per-title">Find yourself here</h2>
-            <p className="sec-sub">Online earning without investment works best when it fits your day. Pick your world.</p>
+            <p className="sec-sub">Online earning without investment works best when it fits your day. Grab your badge.</p>
           </div>
-          <ul className="persona-grid">
+          <ul className="lny-row">
             {PERSONAS.map((p, i) => (
-              <li key={p.t} className="persona reveal" style={{ '--d': `${i * 0.06}s` }}>
-                <Link to={p.to}>
-                  <span className="persona-ico"><Icon name={p.icon} size={28} /></span>
+              <li key={p.t} className="lny-item" style={{ '--i': i, '--c': ['#FF8A00', '#FF3B8D', '#8B5CF6', '#2F6BFF', '#14C9B5', '#E5A100'][i] }}>
+                <span className="lny-strap" aria-hidden="true" />
+                <Link to={p.to} className="lny-badge">
+                  <span className="lny-clip" aria-hidden="true" />
+                  <span className="lny-photo"><Icon name={p.icon} size={30} /></span>
+                  <span className="lny-role">Member pass</span>
                   <h3>{p.t}</h3>
                   <p>{p.d}</p>
-                  <span className="persona-go"><Icon name="arrow" size={18} /></span>
+                  <span className="lny-bar" aria-hidden="true">{Array.from({ length: 14 }, (_, k) => <i key={k} style={{ '--w': `${1 + ((k * 7 + i) % 3)}px` }} />)}</span>
+                  <span className="lny-go">Explore <Icon name="arrow" size={14} /></span>
                 </Link>
               </li>
             ))}
@@ -97,25 +101,36 @@ export default function Consumers() {
       </section>
 
       <DemographicRibbons />
+      <CountryAtlas variant="consumer" />
 
-      <section className="section prose-sec" aria-labelledby="cs-deep">
-        <div className="container prose-cols reveal">
-          <h2 id="cs-deep">Why consumer opinions are worth rewarding</h2>
-          <div>
-            <p>Every product on a shelf and every app on your phone was shaped by research. Before a brand changes a recipe, a price or a package, it asks people like you. Your answers reduce the risk of costly mistakes — that is why consumer research communities reward participation.</p>
-            <p>At MyFrequentRewards you never pay to take part. You simply keep your profile honest, answer invitations that match you and claim your balance when you are ready. Learn the basics in <Link to="/blog/earn-money-online-free-guide">earn money online free</Link>, or see the <Link to="/quality-and-data-security">security checks</Link> that keep the community fair.</p>
+      <section className="section ojr" aria-labelledby="cs-deep">
+        <div className="container">
+          <div className="sec-head sec-center reveal">
+            <p className="eyebrow">The bigger picture</p>
+            <h2 id="cs-deep">Why consumer opinions are worth rewarding</h2>
           </div>
+          <ol className="ojr-flow">
+            {[
+              ['sparkle', 'A brand has an idea', 'A new recipe, price, package or app feature.', '#8B5CF6'],
+              ['chat', 'You share your opinion', 'Before it launches, they ask people like you.', '#FF8A00'],
+              ['trend', 'The product gets better', 'Your answers cut the risk of costly mistakes.', '#14C9B5'],
+              ['gift', 'You’re rewarded', 'Eligible answers add to your balance.', '#FF3B8D'],
+            ].map(([ic, t, d, c], i) => (
+              <li key={t} className="reveal" style={{ '--c': c, '--i': i }}>
+                <span className="ojr-n">0{i + 1}</span>
+                <span className="ojr-ico"><Icon name={ic} size={26} /></span>
+                <h3>{t}</h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="ojr-note reveal">At MyFrequentRewards you never pay to take part — keep your profile honest, answer invitations that match you and claim your balance when you are ready. Learn the basics in <Link to="/blog/earn-money-online-free-guide">earn money online free</Link>, or see the <Link to="/quality-and-data-security">security checks</Link> that keep the community fair.</p>
         </div>
       </section>
 
       <PayoutFan />
 
-      <section className="section faq-split" aria-labelledby="cs-faq">
-        <div className="container faq-home-row">
-          <div className="reveal"><p className="eyebrow">FAQ</p><h2 id="cs-faq">Consumer questions</h2></div>
-          <FaqList faqs={FAQS} />
-        </div>
-      </section>
+      <FaqSplit id="cs-faq" title="Consumer questions" faqs={FAQS} hue="#FF5E7E" hue2="#FF8A00" />
       <CtaBand title="Your everyday opinion has value." sub="Join free and start sharing it today." variant="berry" />
     </>
   );

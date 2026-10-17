@@ -10,7 +10,6 @@
 
 /* No backdrop blur on moving/rotating elements. */
 .orb-in, .art-bubbles span, .btn-glass, .ph-active { -webkit-backdrop-filter: none; backdrop-filter: none; }
-.orb-in { background: linear-gradient(140deg, rgba(60, 90, 190, .75), rgba(20, 35, 95, .8)); }
 .btn-glass { --bg: rgba(255, 255, 255, .14); }
 .ph-active { background: rgba(10, 20, 60, .55); }
 
@@ -33,15 +32,11 @@
 @keyframes liveHalo { from { transform: scale(1); opacity: .6; } to { transform: scale(2.6); opacity: 0; } }
 
 /* Hero motto shimmer: a few passes on arrival, then rest (it repaints text every frame while running). */
-.motto-text { animation-iteration-count: 3; }
 
 /* Writing-pen bars: scaleX instead of width. */
-.art-pen span { width: calc(60% + var(--i) * 6%); transform-origin: left center; }
 @keyframes penWrite { 0% { transform: scaleX(0); } 40%, 80% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
 
 /* Grid blink: fade an overlay instead of animating background + shadow. */
-.art-grid span { position: relative; animation: none; }
-.art-grid span::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--amber); opacity: 0; animation: gridGlow 3.6s infinite; animation-delay: calc(var(--i) * .15s); }
 @keyframes gridGlow { 0%, 70%, 100% { opacity: 0; } 35% { opacity: 1; } }
 
 /* Invitation progress bar: scaleX instead of width. */
@@ -65,7 +60,6 @@
 .hero-aurora.a1 { background: radial-gradient(closest-side, rgba(255, 138, 0, .9), rgba(255, 138, 0, .35) 45%, transparent); }
 .hero-aurora.a2 { background: radial-gradient(closest-side, rgba(47, 107, 255, .9), rgba(47, 107, 255, .35) 45%, transparent); }
 .hero-aurora.a3 { background: radial-gradient(closest-side, rgba(139, 92, 246, .9), rgba(139, 92, 246, .35) 45%, transparent); }
-.sp-glow { background: radial-gradient(closest-side, rgba(255, 255, 255, .35), transparent); }
 .hero-aurora, .sx-orb, .sp-glow { will-change: transform; }
 /* Hero headline entrance without a blur filter (blur on large text delayed the first paint). */
 @keyframes lineUp { from { opacity: 0; transform: translateY(40px); } }
@@ -76,10 +70,128 @@
 /* Hero orbit: a flat (2D) scene is far cheaper to composite than a whole 3D-sorted tree that tilts every frame.
    Rings still spin, icons still orbit, the coin still flips (its own perspective), cards still float. */
 .orbit-scene, .ring { transform-style: flat; }
-.orbit-scene { animation: none; }
 @keyframes coinSpin { 0%, 18% { transform: perspective(900px) rotateY(0); } 50%, 68% { transform: perspective(900px) rotateY(180deg); } 100% { transform: perspective(900px) rotateY(360deg); } }
 
 /* Globe glow painted once by CSS instead of on every canvas frame. */
 .globe-wrap { position: relative; }
 .globe-wrap::before { content: ''; position: absolute; inset: 0; background: radial-gradient(56% 56% at 37% 37%, rgba(47, 107, 255, .35), rgba(6, 15, 51, 0) 80%); -webkit-clip-path: circle(44% at 50% 50%); clip-path: circle(44% at 50% 50%); pointer-events: none; }
 .globe-canvas { position: relative; }
+/* Closed chat: no hidden animations running in the background */
+.hc:not(.is-open), .hc:not(.is-open) *, .hc:not(.is-open) *::before, .hc:not(.is-open) *::after { animation-play-state: paused !important; }
+/* Small phones (≤400px): logo, Join and menu all fit on one row */
+@media (max-width: 400px) {
+  .header-row { gap: 8px !important; column-gap: 8px !important; }
+  .site-header .brand { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+  .site-header .brand .blogo { max-width: 100%; }
+  .header-cta { flex: none; gap: 6px; }
+  .header-cta .hdr-join { padding: 9px 12px !important; font-size: .84rem !important; }
+  .header-cta .hdr-join-spark { display: none !important; }
+  .burger { width: 42px; height: 42px; flex: none; }
+  .burger span { left: 10px; right: 10px; } .burger span:nth-child(1) { top: 13px; } .burger span:nth-child(2) { top: 20px; } .burger span:nth-child(3) { top: 27px; }
+  .burger.is-open span:nth-child(1), .burger.is-open span:nth-child(3) { top: 20px; }
+}
+@media (max-width: 400px) { .brand .blogo { width: 140px !important; } }
+@media (max-width: 345px) { .brand .blogo { width: 118px !important; } .header-cta .hdr-join { padding: 8px 10px !important; font-size: .8rem !important; } }
+/* v2.0 — Skip rendering work for sections that are off-screen. The browser keeps their size (auto remembers the
+   last rendered height) but does no style, layout or paint for them until they come near the viewport. */
+/* v2.0 — Skip rendering work for sections that are off-screen. The browser keeps their size (auto remembers the
+   last rendered height) but does no style, layout or paint for them until they come near the viewport.
+   In-page jumps re-check their position until they land exactly (Layout.jsx → jumpTo). */
+#main > section:not(.hero):not(:first-child), #main > div > section, .site-footer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+/* v2.0 — remove the last effects that repainted large areas every frame */
+.btn-glow { animation: none; box-shadow: 0 8px 24px rgba(255, 138, 0, .35); } /* header "Join free": static glow instead of an animated box-shadow */
+.stop { animation: none; }
+.stop::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid #FFC233; box-shadow: 0 0 30px rgba(255, 194, 51, .35); opacity: 0; pointer-events: none; animation: stopHalo 9s infinite; animation-delay: calc(var(--i) * 1.8s); }
+@keyframes stopHalo { 0%, 15%, 100% { opacity: 0; } 5% { opacity: 1; } }
+.journey-dash { animation-timing-function: steps(10); } /* full-width SVG stroke: 7 repaints a second instead of 60 */
+.phone { will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .stop::after { animation: none; } }
+/* v2.0 — narrow phones (320 px): long words/lines could push past the screen edge */
+.ph-row > * { min-width: 0; }
+.legal-sec ul { grid-template-columns: minmax(0, 1fr); }
+.legal-sec li { min-width: 0; overflow-wrap: anywhere; }
+.vc-front > * { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 360px) { .vc-front strong { font-size: .92em; } }
+/* One-shot entrance animations on the testimonial wall must never be held by the off-screen pause above */
+/* v2.4 — Lite profile (html.lite, set in main.jsx for touch / low-power devices). An earlier draft capped every
+   animation at 3 plays, which also replayed one-shot entrances three times on phones — removed. Endless loops are
+   now handled by calm mode (utils/calm.js), the off-screen pause above and the finite chrome loops below. */
+/* Heavy blurs and big glows cost the most on phones */
+.lite .rw-veil, .lite .rc-veil { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* v2.4 — Always-on "chrome" (header logo, nav badge, dock buttons, custom cursor) is fixed on screen, so its loops
+   never paused and kept the browser restyling every frame for as long as the page stayed open — the main cause of
+   the "hanging" feel. They now play a few attention cycles and then rest, on every device. Hovering replays them. */
+.blogo-mono, .blogo-star, .blogo-shine::before, .fr-shine::before, .nav-hot, .nav-hot::after,
+.site-header .btn::after, .hdr-join-spark, .dock-wa, .dock-wa::before, .dock-chat-ico, .dock-ring::before,
+.dock-rate-stars i, .rq-stars i::after { animation-iteration-count: 3 !important; }
+.dock-rate::before, .dock-rate-orb { animation-iteration-count: 5 !important; }
+.dock-wa:hover, .dock-wa:hover::before, .dock-rate:hover::before, .dock-rate:hover .dock-rate-orb,
+.dock-rate:hover .dock-rate-stars i { animation-iteration-count: infinite !important; }
+.cursor-ring i { animation: none; } /* the colour ring stays, it just doesn't spin 60×/s forever */
+/* v2.4 — hero: every looping element costs a style pass per frame, so the hero keeps only its storytelling loops
+   (the machine cycle and the motto words). Ambient extras settle after a few rounds; the aurora glow is static. */
+.hero-aurora { animation: none !important; }
+.hero-spark { animation-iteration-count: 2 !important; }
+.vm-float, .hero-scroll span, .iso-lab, .iso-badge, .rs-bubble, .bg-chip { animation-iteration-count: 3 !important; }
+/* v2.4 — calm when idle (utils/calm.js): decorative motion freezes in place after ~9 s without input and resumes on
+   the next touch / scroll / mouse move. Dialogs, chat, toasts and loaders keep moving. */
+.calm *, .calm *::before, .calm *::after { animation-play-state: paused !important; }
+.calm .rw-veil *, .calm .rw-veil *::before, .calm .rw-veil *::after,
+.calm .hc.is-open *, .calm .hc.is-open *::before, .calm .hc.is-open *::after,
+.calm .rwt, .calm .rwt *, .calm .page-loading span { animation-play-state: running !important; }
+/* ───── v2.5 — Phone menu (≤767px): a full-screen drawer under the header ─────
+   Bug fixed: `.main-nav { position: relative }` (brand.css, loaded after global.css) silently replaced the drawer's
+   `position: fixed`, so on phones the open menu was squeezed into a thin strip between the logo and the buttons.
+   This block is loaded last and owns the phone menu completely. */
+@media (max-width: 767px) {
+  .menu-open .site-header { z-index: 95; background: #fff; }
+  .site-header .main-nav {
+    position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; width: 100%; height: auto; max-width: none;
+    z-index: 95; margin: 0; padding: 14px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 2px;
+    background: #fff; border-top: 1px solid rgba(11, 30, 91, .08); box-shadow: 0 30px 60px -20px rgba(11, 30, 91, .35);
+    overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    transform: translateX(100%); visibility: hidden; transition: transform .32s cubic-bezier(.3, 1, .4, 1), visibility 0s .32s;
+  }
+  .site-header .main-nav.is-open { transform: none; visibility: visible; transition: transform .32s cubic-bezier(.3, 1, .4, 1); }
+  .site-header .main-nav::before { display: none; }
+  .site-header .main-nav .nav-link { width: 100%; justify-content: space-between; min-height: 52px; padding: 12px 14px; border-radius: 14px; font-size: 1.08rem; font-weight: 600; white-space: normal; }
+  .site-header .main-nav .nav-link::after { display: none; }
+  .site-header .main-nav .nav-link.is-active, .site-header .main-nav .nav-drop-btn.is-here { background: #FFF4E8; color: #C2410C; }
+  .site-header .main-nav > .nav-link:not(:last-child), .site-header .main-nav > .nav-drop { border-bottom: 1px solid #F1EEF7; }
+  .site-header .main-nav .nav-drop { width: 100%; }
+  .site-header .main-nav .nav-panel { position: static; width: auto; margin: 0 0 8px; padding: 4px 0 4px 8px; box-shadow: none; border: 0; border-radius: 0; opacity: 1; visibility: visible; transform: none; display: none; background: transparent; }
+  .site-header .main-nav .nav-drop.is-open .nav-panel { display: grid; gap: 4px; }
+  .site-header .main-nav .nav-panel-item { padding: 10px; background: #F8F6FD; border-radius: 14px; }
+  .site-header .main-nav .nav-panel-item small { display: block; font-size: .8rem; }
+  .site-header .main-nav .nav-hot { margin-left: auto; }
+  .site-header .main-nav .nav-cta-mobile { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .site-header .main-nav .nav-cta-mobile .btn { width: 100%; justify-content: center; min-height: 50px; }
+  /* floating buttons and the review tab step aside while the menu is open */
+  .menu-open .dock, .menu-open .rq-tab, .menu-open .rwt, .menu-open .cursor-dot, .menu-open .cursor-ring { visibility: hidden; }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) { .site-header .main-nav { transition: none; } }
+/* v2.5 — tablets (768–1300px): dropdowns centre under the full-width menu row so they never leave the screen */
+@media (min-width: 768px) and (max-width: 1300px) {
+  .site-header .main-nav .nav-drop { position: static; }
+  .site-header .main-nav .nav-panel { top: calc(100% - 2px); left: 50%; margin-left: -165px; z-index: 5; }
+}
+/* the menu's entrance animation must not leave a transform behind (it would trap the dropdown inside its item) */
+.nav-in, .main-nav.is-open .nav-in { animation-fill-mode: backwards !important; }
+/* ───── v2.5 — universal "never wider than the screen" rules ─────
+   Grid / flex children default to min-width: auto, so one long word, a nowrap label or a wide control could
+   stretch a whole column past the phone screen, where it was silently cut off (sign-up, login, org-chart section,
+   legal pages, reviews filters). Children of page containers may now shrink to the screen. */
+.container > *, .container > * > *, .section > *, .page-hero .ph-row > * { min-width: 0; }
+img, svg, video, canvas, iframe { max-width: 100%; }
+p, li, h1, h2, h3, h4, blockquote, label, dd, dt, td, th { overflow-wrap: break-word; }
+a[href^="mailto:"], a[href^="tel:"] { overflow-wrap: anywhere; }
+.legal-contact { flex-wrap: wrap; }
+.legal-contact p { min-width: 0; flex: 1 1 200px; overflow-wrap: anywhere; }
+
+.size-ladder li { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+@media (max-width: 480px) { .size-ladder ol { gap: 4px; } .size-ladder li { font-size: .64rem; line-height: 1.2; } }
+.sx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sx-grid > *, .sx-card *, .lx-card * { min-width: 0; }
+@media (max-width: 560px) { .sx-grid, .sx-types, .sx-switches { grid-template-columns: minmax(0, 1fr); } }
+.faq-item p, .faq-item li { overflow-wrap: anywhere; }

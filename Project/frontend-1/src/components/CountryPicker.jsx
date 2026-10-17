@@ -41,7 +41,11 @@ export default function CountryPicker({ id, list, value, onChange, mode = 'count
   const items = useMemo(() => {
     const t = q.trim().toLowerCase().replace(/^\+/, '');
     if (!t) return list;
-    return list.filter((c) => c.name.toLowerCase().includes(t) || c.iso.toLowerCase() === t || c.dial.replace('+', '').startsWith(t));
+    const hits = list.filter((c) => c.name.toLowerCase().includes(t) || c.iso.toLowerCase() === t || c.dial.replace('+', '').startsWith(t));
+    // Best matches first: exact name, then ISO code, then names starting with the text (so "India" → India, not
+    // British Indian Ocean Territory), then everything else in alphabetical order.
+    const rank = (c) => { const n = c.name.toLowerCase(); return n === t ? 0 : c.iso.toLowerCase() === t ? 1 : n.startsWith(t) ? 2 : 3; };
+    return hits.map((c, i) => [rank(c), i, c]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
   }, [q, list]);
 
   useEffect(() => {

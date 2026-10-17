@@ -244,7 +244,7 @@ export const EXTRA_C = {
         h2: 'Best paid surveys go to the best-matched members',
         p: [
           'The highest-value studies target specific, hard-to-reach groups. You cannot fake your way into them — but you can make sure you are visible when you genuinely qualify. That means a complete business profile if you work, accurate product ownership details and quick responses.',
-          'See the range of [profiles we welcome](/who-can-join) and compare your profile against it.',
+          'See the range of [profiles we welcome](/paid-surveys-for-consumers#countries) and compare your profile against it.',
         ],
       },
       {

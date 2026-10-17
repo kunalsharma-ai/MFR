@@ -7,9 +7,11 @@ export const STATIC_ROUTES = [
   { path: '/rewards-and-payouts', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-consumers', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-professionals', priority: '0.9', changefreq: 'monthly' },
-  { path: '/who-can-join', priority: '0.8', changefreq: 'monthly' },
   { path: '/quality-and-data-security', priority: '0.8', changefreq: 'monthly' },
+  { path: '/who-can-join', priority: '0.8', changefreq: 'monthly' },
   { path: '/about-us', priority: '0.7', changefreq: 'monthly' },
+  { path: '/about-us/reviews', priority: '0.7', changefreq: 'weekly' },
+  { path: '/scan-and-connect', priority: '0.5', changefreq: 'monthly' },
   { path: '/faq', priority: '0.8', changefreq: 'monthly' },
   { path: '/contact-us', priority: '0.6', changefreq: 'yearly' },
   { path: '/blog', priority: '0.9', changefreq: 'weekly' },
@@ -20,6 +22,7 @@ export const STATIC_ROUTES = [
   { path: '/terms', priority: '0.4', changefreq: 'yearly' },
   { path: '/profiling', priority: '0.5', changefreq: 'yearly' },
 ];
+
 
 // Prerendered but excluded from the sitemap (noindex)
 export const NOINDEX_ROUTES = [{ path: '/login' }, { path: '/auth/password' }, { path: '/404' }];

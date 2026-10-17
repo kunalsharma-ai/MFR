@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import FrLogo from '../components/FrLogo.jsx';
+import { IsoScene } from '../components/HeroScenes.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand, FaqList } from '../components/Common.jsx';
+import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { BRAND } from '../data/site.js';
 import GlobeReach from '../sections/GlobeReach.jsx';
+import { FAQ_ABOUT } from '../data/faqs.js';
 
 const page = PAGES.about;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'About Us', path: page.path }];
@@ -17,13 +19,7 @@ const VALUES = [
   { icon: 'globe', t: 'Inclusion', d: 'Every country, culture and career is welcome.', c: '#FF8A00' },
 ];
 
-const FAQS = [
-  { q: 'Who runs MyFrequentRewards?', a: `MyFrequentRewards is operated by ${BRAND.legalName}, trading as MyFrequentRewards.` },
-  { q: 'What is the relationship with Frequent Research?', a: 'MyFrequentRewards is the consumer and business opinion community of Frequent Research, an ISO-certified market research company.' },
-  { q: 'Where are you based?', a: 'Our office is in Mangolpur Kalan, New Delhi, India, and our members are worldwide.' },
-  { q: 'How can I contact the team?', a: 'Use 24/7 Live Help, WhatsApp, email or phone — all listed on our contact page.' },
-  { q: 'Is MyFrequentRewards legitimate?', a: 'Yes — it is free to join, publishes its policies and is run by a registered research company.' },
-];
+const FAQS = FAQ_ABOUT;
 
 export default function About() {
   return (
@@ -34,22 +30,35 @@ export default function About() {
         eyebrow="About us"
         title={page.h1}
         lead="We are the worldwide consumer and business opinion community of Frequent Research — built on a simple belief: when you help the world make better decisions, you deserve to be rewarded."
-        art="pen"
         theme="navy"
+        artNode={<IsoScene />}
       />
 
-      <section className="section story" aria-labelledby="story-title">
-        <div className="container story-row">
-          <div className="story-quote reveal">
-            <Icon name="sparkle" size={32} />
-            <p>“{BRAND.tagline}”</p>
-            <span>— The MyFrequentRewards promise</span>
+      <section className="section story2" aria-labelledby="story-title">
+        <div className="container story2-row">
+          <div className="mr reveal">
+            <div className="mr-ribbon" aria-label={BRAND.tagline}>
+              <span className="mr-tail l" aria-hidden="true" />
+              <p aria-hidden="true">{BRAND.tagline.split('. ').map((w, i, a) => <span key={w} style={{ '--i': i }}>{i < a.length - 1 ? `${w}.` : w}</span>)}</p>
+              <span className="mr-tail r" aria-hidden="true" />
+            </div>
+            <small className="mr-by">— The MyFrequentRewards promise</small>
+            <ul className="mr-facts">
+              <li style={{ '--c': '#FF8A00' }}><span><Icon name="user" size={20} /></span><b>Consumers</b><small>everyday opinions</small></li>
+              <li style={{ '--c': '#6D5BF7' }}><span><Icon name="briefcase" size={20} /></span><b>Professionals</b><small>expert B2B views</small></li>
+              <li style={{ '--c': '#14B8A6' }}><span><Icon name="gift" size={20} /></span><b>Rewards</b><small>for every eligible survey</small></li>
+            </ul>
           </div>
-          <div className="reveal">
+          <div className="story2-copy reveal">
             <p className="eyebrow">Who we are</p>
             <h2 id="story-title">A research community with a reward at its heart</h2>
-            <p>MyFrequentRewards welcomes consumers and business professionals to take part in wide-ranging market research studies. Members share honest perspectives on products, services, workplaces and ideas — and receive rewards for every eligible contribution.</p>
-            <p>Behind the community stands <a href={BRAND.parent.url} target="_blank" rel="noopener noreferrer">Frequent Research</a>, a fieldwork and data collection company serving brands and agencies worldwide. That expertise means real studies, verified respondents and reliable payouts. Learn <Link to="/how-it-works">how it works</Link> or read our <Link to="/blog">blogs</Link>.</p>
+            <ul className="story2-list">
+              <li style={{ '--c': '#FF8A00' }}><span><Icon name="globe" size={18} /></span><p>MyFrequentRewards welcomes <b>consumers and business professionals</b> to take part in wide-ranging market research studies.</p></li>
+              <li style={{ '--c': '#E8457A' }}><span><Icon name="chat" size={18} /></span><p>Members share <b>honest perspectives</b> on products, services, workplaces and ideas.</p></li>
+              <li style={{ '--c': '#14B8A6' }}><span><Icon name="coins" size={18} /></span><p>They receive <b>rewards for every eligible contribution</b>.</p></li>
+              <li style={{ '--c': '#6D5BF7' }}><span><img src={BRAND.monogram} alt="" width="22" height="22" /></span><p>Behind the community stands <a href={BRAND.parent.url} target="_blank" rel="noopener noreferrer">Frequent Research</a>, a fieldwork and data collection company serving brands and agencies worldwide — which means real studies, verified respondents and reliable payouts.</p></li>
+            </ul>
+            <p className="story2-links"><Link to="/about-us/reviews"><Icon name="star" size={14} /> Ratings &amp; reviews</Link><Link to="/how-it-works">How it works <Icon name="arrow" size={14} /></Link><Link to="/blog">Read our blogs <Icon name="arrow" size={14} /></Link></p>
           </div>
         </div>
       </section>
@@ -83,12 +92,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="section faq-split" aria-labelledby="ab-faq">
-        <div className="container faq-home-row">
-          <div className="reveal"><p className="eyebrow">FAQ</p><h2 id="ab-faq">About the company</h2></div>
-          <FaqList faqs={FAQS} />
-        </div>
-      </section>
+      <FaqSplit id="ab-faq" title="About the company" faqs={FAQS} hue="#14C9B5" hue2="#2F6BFF" />
       <CtaBand />
     </>
   );

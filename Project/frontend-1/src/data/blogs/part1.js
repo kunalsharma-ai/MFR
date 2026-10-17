@@ -116,7 +116,7 @@ export const PART1 = [
         list: ['Skill needed: honest opinions', 'Time: minutes per survey', 'Best for: everyone, especially busy people'],
       },
       {
-        h2: '2. Product testing and feedback panels',
+        h2: '2. Product testing and feedback groups',
         p: [
           'Some research studies ask you to try a product at home, use an app for a week or join an online discussion. These often come through the same survey communities once your profile shows you are a good fit.',
         ],
@@ -362,7 +362,7 @@ export const PART1 = [
       {
         h2: 'Start today',
         p: [
-          'See [how MyFrequentRewards works](/how-it-works), check the [profiles we welcome](/who-can-join), and [join free](/sign-up).',
+          'See [how MyFrequentRewards works](/how-it-works), check the [profiles we welcome](/paid-surveys-for-consumers#countries), and [join free](/sign-up).',
         ],
       },
     ],
@@ -457,7 +457,7 @@ export const PART1 = [
       {
         h2: 'Who gets international studies?',
         p: [
-          'Profiles that are in demand worldwide: technology users, decision-makers, healthcare professionals, car owners, parents, travellers and gamers. Business professionals are especially valued — see the [job titles and industries we welcome](/who-can-join).',
+          'Profiles that are in demand worldwide: technology users, decision-makers, healthcare professionals, car owners, parents, travellers and gamers. Business professionals are especially valued — see the [job titles and industries we welcome](/paid-surveys-for-professionals).',
         ],
       },
       {

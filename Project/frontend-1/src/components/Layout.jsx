@@ -5,8 +5,10 @@ import Footer from './Footer.jsx';
 import LiveChat from './LiveChat.jsx';
 import ActivityToasts from './ActivityToasts.jsx';
 import ReviewPopup from './ReviewPopup.jsx';
+import VerifyEmailGate from './VerifyEmailGate.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
+import { LangSuggest } from './LangPicker.jsx';
 import useReveal from '../hooks/useReveal.js';
 import { PagesContext, pageFor } from '../router/pages.js';
 import { welcomePop } from '../utils/sound.js';
@@ -47,6 +49,19 @@ export default function Layout({ children }) {
     };
   }, [pages]);
 
+  // Off-screen sections skip rendering (content-visibility in perf.css), so their heights are estimates until they
+  // are seen and a jump can land a little off. Scroll, then re-check a few times and settle exactly on the target.
+  const jumpTo = useCallback((el) => {
+    const target = () => Math.round(el.getBoundingClientRect().top - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0));
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    let n = 0;
+    const fix = () => {
+      if (Math.abs(target()) > 4) el.scrollIntoView({ behavior: n < 3 ? 'auto' : 'smooth', block: 'start' });
+      if (++n < 6) setTimeout(fix, 260);
+    };
+    setTimeout(fix, 900);
+  }, []);
+
   // In-page anchors (#section) must scroll, not navigate. With hash routing (preview / file://) a raw
   // "#section" link would otherwise be treated as a route and show the 404 page.
   useEffect(() => {
@@ -58,12 +73,12 @@ export default function Layout({ children }) {
       const el = document.getElementById(decodeURIComponent(href.slice(1)));
       if (!el) return;
       e.preventDefault();
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      jumpTo(el);
       if (el.tabIndex < 0 && el.id === 'main') el.focus({ preventScroll: true });
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, []);
+  }, [jumpTo]);
   useEffect(() => {
     if (!hash) {
       window.scrollTo(0, 0);
@@ -75,13 +90,20 @@ export default function Layout({ children }) {
       const el = document.getElementById(decodeURIComponent(hash.slice(1)));
       if (el || ++tries > 20) {
         clearInterval(t);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el) jumpTo(el);
       }
     }, 100);
     return () => clearInterval(t);
-  }, [pathname, hash]);
+  }, [pathname, hash, jumpTo]);
 
   const closeChat = useCallback(() => setChat(false), []);
+  // Any component can open Live Help (optionally with a question): window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }))
+  const [seed, setSeed] = useState(null);
+  useEffect(() => {
+    const open = (e) => { setChat(true); if (e.detail && e.detail.q) setSeed({ q: e.detail.q, at: Date.now() }); };
+    window.addEventListener('mfr:open-chat', open);
+    return () => window.removeEventListener('mfr:open-chat', open);
+  }, []);
 
   return (
     <>
@@ -89,10 +111,12 @@ export default function Layout({ children }) {
       <Header />
       <main id="main" tabIndex={-1}>{children}</main>
       <Footer />
+      <LangSuggest />
+      <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />
       {mounted ? (
         <>
-          <LiveChat open={chat} onClose={closeChat} />
+          <LiveChat open={chat} onClose={closeChat} seed={seed} />
           <ActivityToasts />
           <ReviewPopup />
           <CookieBanner />

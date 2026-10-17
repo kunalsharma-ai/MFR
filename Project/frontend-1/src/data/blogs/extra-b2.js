@@ -148,7 +148,7 @@ export const EXTRA_B2 = {
       },
       {
         h2: 'Get paid for your opinion — the professional way',
-        p: ['“Get paid for your opinion” sounds casual, but in B2B research it is a serious exchange: your expertise for a fair incentive, under strict confidentiality. If you value that balance, you will find surveys a worthwhile use of spare moments. Explore the full [professional profiles map](/who-can-join) or contact our team via [contact us](/contact-us) with any questions.'],
+        p: ['“Get paid for your opinion” sounds casual, but in B2B research it is a serious exchange: your expertise for a fair incentive, under strict confidentiality. If you value that balance, you will find surveys a worthwhile use of spare moments. Explore the full [professional profiles map](/paid-surveys-for-professionals) or contact our team via [contact us](/contact-us) with any questions.'],
       },
     ],
     faqs: [

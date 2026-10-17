@@ -18,20 +18,63 @@ export function Breadcrumbs({ items }) {
   );
 }
 
-export function FaqList({ faqs, variant = 'stack' }) {
+export const askLiveHelp = (q) => window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }));
+
+// FAQ list — "answer cards": numbered question cards that open into a tinted answer bubble with a
+// follow-up button that hands the question to Live Help. Uses <details> so answers are in the HTML for SEO.
+export function FaqList({ faqs, hue, followUp = true }) {
   return (
-    <div className={`faq-list faq-${variant}`}>
+    <div className="faq-list" style={hue ? { '--fh': hue } : undefined}>
       {faqs.map((f, i) => (
         <details key={f.q} className="faq-item" style={{ '--i': i }}>
           <summary>
-            <span className="faq-n">{String(i + 1).padStart(2, '0')}</span>
+            <span className="faq-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <span className="faq-q">{f.q}</span>
             <span className="faq-plus" aria-hidden="true" />
           </summary>
-          <p>{f.a}</p>
+          <div className="faq-a">
+            <span className="faq-a-av" aria-hidden="true">A</span>
+            <div>
+              <p>{f.a}</p>
+              {followUp ? (
+                <button type="button" className="faq-ask" onClick={() => askLiveHelp(f.q)}>
+                  <Icon name="chat" size={14} /> Ask a follow-up in Live Help
+                </button>
+              ) : null}
+            </div>
+          </div>
         </details>
       ))}
     </div>
+  );
+}
+
+// FAQ section used on every page: left column = title + a floating 3D "question deck" + Live Help prompt,
+// right column = the answer cards. `hue` gives each page its own colour.
+export function FaqSplit({ id, title, sub, faqs, hue = '#FF8A00', hue2 = '#8B5CF6', eyebrow = 'FAQ', children }) {
+  return (
+    <section className="section fq" aria-labelledby={id} style={{ '--fh': hue, '--fh2': hue2 }}>
+      <div className="container fq-row">
+        <div className="fq-side reveal">
+          <p className="eyebrow">{eyebrow}</p>
+          <h2 id={id}>{title}</h2>
+          {sub ? <p className="sec-sub">{sub}</p> : null}
+          {children}
+          <div className="fq-deck" aria-hidden="true">
+            <span className="fq-card c1"><b>?</b><i /><i /></span>
+            <span className="fq-card c2"><b>!</b><i /><i /></span>
+            <span className="fq-card c3"><Icon name="check" size={30} stroke={3} /><i /><i /></span>
+            <span className="fq-orb" />
+          </div>
+          <button type="button" className="fq-help" onClick={() => askLiveHelp('')}>
+            <span className="fq-help-ico"><Icon name="chat" size={18} /></span>
+            <span><b>Still curious?</b><small>Ask Live Help — instant answers 24/7</small></span>
+            <Icon name="arrow" size={16} />
+          </button>
+        </div>
+        <FaqList faqs={faqs} />
+      </div>
+    </section>
   );
 }
 
@@ -66,6 +109,11 @@ export function FloatingDock({ onChat, chatOpen }) {
   }, [chatOpen]);
   return (
     <div className="dock" aria-label="Quick help">
+      <button type="button" className="dock-rate" onClick={() => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }))} aria-label="Rate your experience" aria-haspopup="dialog">
+        <span className="dock-rate-orb" aria-hidden="true"><Icon name="star" size={24} fill="currentColor" /></span>
+        <span className="dock-rate-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
+        <span className="dock-tip">Rate &amp; review us</span>
+      </button>
       <a className="dock-wa" href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp (+91 81782 00573)">
         <Icon name="whatsapp" size={28} stroke={1.6} />
         <span className="dock-tip">WhatsApp us</span>
@@ -78,7 +126,7 @@ export function FloatingDock({ onChat, chatOpen }) {
             <small>Payouts, surveys, sign-up — instant answers 24/7</small>
           </button>
         ) : null}
-        <button type="button" className={`dock-chat ${chatOpen ? 'is-open' : ''}`} onClick={onChat} aria-expanded={chatOpen} aria-label="Open Live Help 24/7">
+        <button type="button" className={`dock-chat ${chatOpen ? 'is-open' : ''}`} onPointerEnter={() => import('../utils/chatEngine.js')} onClick={onChat} aria-expanded={chatOpen} aria-label="Open Live Help 24/7">
           <span className="dock-ring" aria-hidden="true" />
           <span className="dock-chat-ico" aria-hidden="true"><Icon name={chatOpen ? 'close' : 'chat'} size={24} /></span>
           <span className="dock-label">Live Help <b>24/7</b></span>

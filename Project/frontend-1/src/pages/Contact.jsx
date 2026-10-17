@@ -3,24 +3,20 @@ import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import Captcha from '../components/Captcha.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { FaqList } from '../components/Common.jsx';
+import { FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { CONTACT, whatsappLink } from '../data/site.js';
 import { validateContact } from '../utils/validate.js';
 import { postJSON } from '../utils/api.js';
+import { FAQ_CONTACT } from '../data/faqs.js';
+import { putJSON } from '../utils/api.js';
 
 const page = PAGES.contact;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Contact Us', path: page.path }];
-const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || '/api/contact';
+const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || '/api/v1/contact';
 const MAPS = 'https://www.google.com/maps/search/?api=1&query=Mangolpur+Kalan+New+Delhi+110085';
 
-const FAQS = [
-  { q: 'What is the fastest way to reach support?', a: 'Live Help 24/7 gives instant answers, and WhatsApp connects you with our team.' },
-  { q: 'What should I include in a reward query?', a: 'Your registered email and the approximate claim date — never your password or OTP.' },
-  { q: 'Do you offer phone support?', a: `Yes, you can call ${CONTACT.phone} during business hours.` },
-  { q: 'How do I report a scam using your name?', a: 'Forward the message to our support email so we can investigate.' },
-  { q: 'Can I request my data or account deletion here?', a: 'Yes — choose “Privacy & data” as the topic and we will verify and process your request.' },
-];
+const FAQS = FAQ_CONTACT;
 
 // Channel deck — the meter shows typical response speed (visual, relative).
 const CHANNELS = [
@@ -63,7 +59,7 @@ export default function Contact() {
     if (v.website || Object.keys(es).length) return;
     setStatus('sending');
     try {
-      await postJSON(ENDPOINT, { name: v.name.trim(), email: v.email.trim(), topic: v.topic, message: v.message.trim().slice(0, 2000), captchaToken: capRef.current?.token?.() });
+      await putJSON(ENDPOINT, { name: v.name.trim(), email: v.email.trim(), topic: v.topic, message: v.message.trim().slice(0, 2000), captchaToken: capRef.current?.token?.() });
       setStatus('done');
     } catch {
       setStatus('error');
@@ -204,12 +200,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <section className="section faq-split" aria-labelledby="ct-faq">
-        <div className="container faq-home-row">
-          <div className="reveal"><p className="eyebrow">FAQ</p><h2 id="ct-faq">Support questions</h2><p className="sec-sub">Browse the <Link to="/faq">full FAQ</Link>.</p></div>
-          <FaqList faqs={FAQS} />
-        </div>
-      </section>
+      <FaqSplit id="ct-faq" title="Support questions" sub={<>Browse the <Link to="/faq">full FAQ</Link>.</>} faqs={FAQS} hue="#8B5CF6" hue2="#FF5E7E" />
     </>
   );
 }

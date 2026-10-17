@@ -46,11 +46,17 @@ export default function useReveal() {
         }
       });
     };
+    // Safety sweep for very fast flicks — throttled to ~4 times a second (it reads layout), and it stops
+    // listening once nothing is left to reveal.
     let queued = false;
+    let lastSweep = 0;
     const sweep = () => {
       queued = false;
+      lastSweep = performance.now();
+      const pending = document.querySelectorAll('.reveal:not(.is-in)');
+      if (!pending.length) return;
       const limit = window.innerHeight * 0.96;
-      document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
+      pending.forEach((el) => {
         if (el.getBoundingClientRect().top < limit) {
           el.classList.add('is-in');
           io.unobserve(el);
@@ -58,10 +64,14 @@ export default function useReveal() {
       });
     };
     const onScroll = () => {
-      if (!queued) { queued = true; requestAnimationFrame(sweep); }
+      if (queued) return;
+      queued = true;
+      const wait = Math.max(0, 250 - (performance.now() - lastSweep));
+      setTimeout(() => requestAnimationFrame(sweep), wait);
     };
     scan();
-    const mo = new MutationObserver(scan);
+    let scanQ = false; // React re-renders add/remove nodes often — scan at most once per frame
+    const mo = new MutationObserver(() => { if (!scanQ) { scanQ = true; requestAnimationFrame(() => { scanQ = false; scan(); }); } });
     mo.observe(document.getElementById('main') || document.body, { childList: true, subtree: true });
     window.addEventListener('scroll', onScroll, { passive: true });
     const safety = setTimeout(sweep, 1200);

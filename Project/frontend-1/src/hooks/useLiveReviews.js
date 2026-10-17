@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { REVIEW_EVENT, mergeReviews, normalizeReview, ownReviews } from '../utils/reviews.js';
 import { TESTIMONIALS } from '../data/community.js';
+import { SUPPLIED_TESTIMONIALS } from '../data/testimonialsSupplied.js';
 import { DEMO_MODE } from '../data/site.js';
 
 const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || '/api/reviews';
 const FALLBACK = '/data/reviews.json';
 const POLL_MS = 30000;
-const BASE = TESTIMONIALS.map(normalizeReview).filter(Boolean);
+// Static testimonials: the original member set plus any supplied entry the business has verified (publish: true).
+// In the HTML preview build (DEMO_MODE) the unpublished supplied entries are shown too, flagged `preview` and
+// labelled on the wall, so the design can be judged with a full set. They never appear in the production build.
+const BASE = [...TESTIMONIALS, ...SUPPLIED_TESTIMONIALS.filter((t) => t.publish || DEMO_MODE).map((t) => (t.publish ? t : { ...t, preview: true }))].map(normalizeReview).filter(Boolean);
 
 async function fetchFeed(url) {
   const res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });

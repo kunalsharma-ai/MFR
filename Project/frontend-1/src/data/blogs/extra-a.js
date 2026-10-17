@@ -32,7 +32,7 @@ export const EXTRA_A = {
         h2: 'Consumer surveys vs professional surveys',
         p: [
           'Consumer studies ask about everyday life — groceries, streaming, phones, travel, banking. They are often short and frequent. Professional or B2B studies ask about your job — the software your team uses, how your company buys equipment, or how hospitals manage patient flow. They are less frequent but usually carry higher incentives, because verified specialists are harder to find.',
-          'If you work in IT, healthcare, finance, manufacturing, HR or management, add your professional details to your profile. Read more about [paid surveys for professionals](/paid-surveys-for-professionals) or browse [the profiles we welcome](/who-can-join).',
+          'If you work in IT, healthcare, finance, manufacturing, HR or management, add your professional details to your profile. Read more about [paid surveys for professionals](/paid-surveys-for-professionals) or browse [the profiles we welcome](/paid-surveys-for-consumers#countries).',
         ],
       },
       {
@@ -122,7 +122,7 @@ export const EXTRA_A = {
         h2: 'The student advantage in market research',
         p: [
           'Young consumers are early adopters. You try new apps first, switch phone brands faster and influence what your friends buy. Research clients need that perspective, and it is often hard to reach — which makes students valuable members of any opinion community.',
-          'Students in technical and professional courses can also become relevant for B2B research later, as interns and early-career professionals. Keep your profile updated as your course and career progress. See [who can join](/who-can-join) for the full range of profiles we welcome.',
+          'Students in technical and professional courses can also become relevant for B2B research later, as interns and early-career professionals. Keep your profile updated as your course and career progress. See [who can join](/paid-surveys-for-professionals) for the full range of profiles we welcome.',
         ],
       },
       {

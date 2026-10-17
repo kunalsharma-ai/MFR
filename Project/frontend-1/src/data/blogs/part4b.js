@@ -247,7 +247,7 @@ export const PART4B = [
           'Retirees and part-timers — a calm, flexible routine with no targets',
         ],
         p: [
-          'Because invitations are matched to profiles, each group sees different studies. Check [who can join](/who-can-join) for eligibility — the only firm requirements are being 18 or over and being honest about yourself.',
+          'Because invitations are matched to profiles, each group sees different studies. Check [who can join](/paid-surveys-for-consumers#countries) for eligibility — the only firm requirements are being 18 or over and being honest about yourself.',
         ],
       },
       {

@@ -1,0 +1,40 @@
+/* ═════════════ v1.8 — Sign-up: "sunset magenta" grade + live member card ═════════════ */
+.sx { background: radial-gradient(900px 700px at 0% 0%, #7A1FA2 0%, transparent 60%), radial-gradient(800px 700px at 100% 30%, #FF5E3A 0%, transparent 55%), radial-gradient(900px 700px at 60% 110%, #2C1A7A 0%, transparent 60%), #1A0B3D; }
+.sx::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(115deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 26px); }
+.sx-row { z-index: 1; }
+.lc-stage { position: relative; margin: 26px 0 22px; perspective: 1100px; }
+.lc-card { position: relative; width: min(380px, 100%); aspect-ratio: 1.586; padding: 18px 20px; border-radius: 22px; color: #fff; overflow: hidden; display: flex; flex-direction: column; background: radial-gradient(circle at 85% 10%, rgba(255, 255, 255, .35), transparent 40%), linear-gradient(135deg, #FF8A00, #FF3B8D 55%, #8B5CF6); box-shadow: 0 40px 70px -30px rgba(255, 59, 141, .8), inset 0 1px 0 rgba(255, 255, 255, .4); transform: rotateX(8deg) rotateY(-14deg); animation: lcFloat 7s ease-in-out infinite; transition: background .6s, box-shadow .6s; }
+.lc-card.is-pro { background: radial-gradient(circle at 85% 10%, rgba(255, 255, 255, .3), transparent 40%), linear-gradient(135deg, #0B1E5B, #2F6BFF 55%, #14C9B5); box-shadow: 0 40px 70px -30px rgba(47, 107, 255, .8), inset 0 1px 0 rgba(255, 255, 255, .35); }
+@keyframes lcFloat { 50% { transform: rotateX(2deg) rotateY(-6deg) translateY(-8px); } }
+.lc-holo { position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .5) 45%, rgba(180, 255, 240, .35) 50%, transparent 62%); background-size: 260% 100%; animation: lcHolo 4.5s ease-in-out infinite; mix-blend-mode: soft-light; }
+@keyframes lcHolo { 0% { background-position: 130% 0; } 60%, 100% { background-position: -130% 0; } }
+.lc-top { position: relative; display: flex; align-items: center; justify-content: space-between; }
+.lc-top img { width: 40px; height: 40px; border-radius: 50%; background: #fff; padding: 3px; }
+.lc-type { font-size: .62rem; font-weight: 800; letter-spacing: .16em; padding: 4px 9px; border-radius: 999px; background: rgba(255, 255, 255, .2); }
+.lc-mid { position: relative; display: flex; justify-content: space-between; align-items: center; margin: auto 0 6px; }
+.lc-chip { width: 46px; height: 34px; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 5px; background: linear-gradient(135deg, #FFE7A3, #E5A100); }
+.lc-chip i { border-radius: 2px; background: rgba(120, 70, 0, .3); }
+.lc-ring { --p: 0; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(#fff calc(var(--p) * 1%), rgba(255, 255, 255, .22) 0); transition: background .4s; }
+.lc-ring b { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-size: .72rem; background: rgba(0, 0, 0, .22); }
+.lc-name { position: relative; margin: 0; font: 800 1.35rem/1.2 var(--font-d); letter-spacing: .02em; text-shadow: 0 2px 8px rgba(0, 0, 0, .25); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: lcName .5s cubic-bezier(.3, 1.4, .5, 1); }
+.lc-card:not(.has-name) .lc-name { opacity: .55; }
+@keyframes lcName { from { opacity: 0; transform: translateY(8px); } }
+.lc-foot { position: relative; display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; font-size: .7rem; font-weight: 700; opacity: .92; }
+.lc-foot span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-foot .flag, .lc-foot .flag-fb { border-radius: 2px; }
+.lc-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 22px 0 0; padding: 0; width: min(380px, 100%); position: relative; }
+.lc-steps::before { content: ''; position: absolute; left: 12%; right: 12%; top: 17px; height: 2px; background: rgba(255, 255, 255, .18); }
+.lc-steps li { position: relative; display: grid; justify-items: center; gap: 6px; text-align: center; color: rgba(255, 255, 255, .6); }
+.lc-steps li span { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #2A1660; border: 2px solid rgba(255, 255, 255, .2); transition: background .4s, border-color .4s, transform .4s cubic-bezier(.3, 1.5, .5, 1); }
+.lc-steps li small { font-size: .7rem; font-weight: 700; }
+.lc-steps li.now { color: #fff; }
+.lc-steps li.now span { background: linear-gradient(135deg, #FF8A00, #FF3B8D); border-color: #fff; transform: scale(1.15); box-shadow: 0 0 0 6px rgba(255, 94, 126, .25); }
+.lc-steps li.done span { background: #12B76A; border-color: #12B76A; color: #fff; }
+.lc-hint { margin: 14px 0 0; font-weight: 700; color: #FFD6A8; }
+@media (max-width: 960px) {
+  .sx-aside .lc-stage { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; margin: 16px 0 6px; }
+  .lc-card { width: 230px; padding: 12px 14px; border-radius: 16px; animation: none; transform: rotate(-3deg); }
+  .lc-top img { width: 28px; height: 28px; } .lc-type { font-size: .5rem; } .lc-name { font-size: .95rem; } .lc-ring { width: 40px; height: 40px; } .lc-ring b { width: 31px; height: 31px; font-size: .6rem; } .lc-chip { width: 32px; height: 24px; } .lc-foot { font-size: .58rem; }
+  .lc-steps { display: none; } .lc-hint { margin: 0; font-size: .9rem; }
+}
+@media (max-width: 420px) { .lc-card { width: 190px; } .lc-foot span:last-child { display: none; } }

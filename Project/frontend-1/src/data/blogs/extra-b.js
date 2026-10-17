@@ -77,7 +77,7 @@ export const EXTRA_B = {
         h2: 'Which studies are dollar-valued?',
         p: [
           'Many international research projects are commissioned and budgeted in US dollars, regardless of where respondents live. Global brands testing a new product in several markets, technology companies researching IT buyers worldwide, and consultancies tracking industry trends often run multi-country studies.',
-          'Your eligibility depends on whether your profile matches the target: country, language, age, occupation, product ownership and so on. That is why complete profiles matter so much for international studies. See the [countries and profiles we welcome](/who-can-join).',
+          'Your eligibility depends on whether your profile matches the target: country, language, age, occupation, product ownership and so on. That is why complete profiles matter so much for international studies. See the [countries and profiles we welcome](/paid-surveys-for-professionals).',
         ],
       },
       {
@@ -240,7 +240,7 @@ export const EXTRA_B = {
       {
         h2: 'Roles in highest demand',
         list: ['IT decision-makers: CIOs, IT managers, architects, security leads', 'Healthcare: physicians, hospital administrators, pharmacists', 'Finance: CFOs, finance managers, bankers, insurance professionals', 'Operations: plant managers, procurement and supply-chain heads', 'People functions: HR directors, L&D and recruitment managers', 'Founders and owners of small and mid-sized businesses'],
-        p: ['See the full map of [job titles, industries and departments](/who-can-join) we welcome.'],
+        p: ['See the full map of [job titles, industries and departments](/paid-surveys-for-professionals) we welcome.'],
       },
       {
         h2: 'What B2B survey questions look like',

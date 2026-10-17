@@ -64,8 +64,6 @@
 .hc-bubble p { margin: 0; }
 .hc-msg.bot .hc-bubble { background: #fff; color: var(--ink); border: 1px solid #E6EAF6; border-bottom-left-radius: 6px; box-shadow: 0 6px 16px -10px rgba(11, 30, 91, .3); }
 .hc-msg.me .hc-bubble { background: linear-gradient(135deg, #FF8A00, #FF5E7E); color: #fff; border-bottom-right-radius: 6px; box-shadow: 0 10px 20px -10px rgba(255, 94, 126, .7); }
-.hc-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; border-radius: 999px; background: #EEF2FF; color: var(--blue); font-size: .82rem; font-weight: 600; text-decoration: none; }
-.hc-link:hover { background: var(--blue); color: #fff; }
 .hc-human { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .hc-human a, .hc-human button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 600 .8rem var(--font-b); text-decoration: none; cursor: pointer; }
 .hc-human a.wa { background: #25D366; border-color: #25D366; color: #fff; }
@@ -122,10 +120,23 @@
   .hc, .hc-aurora, .hc-avatar-ring::before, .hc-dot::after, .hc-wave-hand, .hc-welcome, .hc-topic, .hc-wa-card, .hc-msg, .hc-popular-track, .hc-input-ico, .hc-send.flew svg, .dock-chat-ico, .dock-tease, .dock-badge { animation: none !important; transition: none; }
 }
 
-/* Reward toast: payout-method chip (UPI only ever appears for members in India) */
-.toast-method { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px 1px 5px; border-radius: 999px; font-size: .78rem; font-weight: 600; vertical-align: 1px; background: #EEF2FF; color: #1E3A9E; }
-.toast-method.m-upi { background: #E8F7EE; color: #097939; }
-.toast-method.m-paypal { background: #E6F0FF; color: #003087; }
-.toast-method.m-gift { background: #FFF3E0; color: #B45309; }
-.toast-method.m-bank { background: #EEF2FF; color: #0B1E5B; }
-.toast small .flag, .toast small .flag-fb { vertical-align: -1px; margin-right: 2px; border-radius: 2px; }
+/* ── v1.8: sources, related questions, typing hints, lead form ── */
+.hc-unsure { font-size: .74rem; font-weight: 700; color: #B45309; margin-bottom: 4px !important; }
+.hc-src { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.hc-src-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 6px 11px; border-radius: 10px; background: linear-gradient(135deg, #EEF2FF, #F5EEFF); color: #2A3FBF; border: 1px solid #DCE2FF; font-size: .76rem; font-weight: 700; text-decoration: none; transition: transform .2s, background .2s, color .2s; }
+.hc-src-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hc-src-chip:hover { transform: translateY(-1px); background: #2F6BFF; color: #fff; }
+.hc-src-chip.alt { background: #FFF6EA; border-color: #FFE0B8; color: #B45309; }
+.hc-src-chip.alt:hover { background: #FF8A00; color: #fff; }
+.hc-related { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 9px; border-top: 1px dashed #E3E7F3; }
+.hc-related small { width: 100%; font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; color: #8A93B5; }
+.hc-related button { padding: 6px 10px; border-radius: 999px; border: 1px solid #E1E6F5; background: #F8F9FE; color: var(--ink-2); font: 600 .74rem var(--font-b); cursor: pointer; text-align: left; transition: background .2s, border-color .2s; }
+.hc-related button:hover { background: #FFF2E2; border-color: var(--orange); }
+.hc-notit { margin-top: 8px; padding: 0; border: 0; background: none; color: #B45309; font: 700 .74rem var(--font-b); text-decoration: underline; cursor: pointer; }
+.hc-hints { list-style: none; margin: 0; padding: 6px 10px; display: grid; gap: 4px; border-top: 1px solid #E6EAF6; background: #fff; }
+.hc-hints button { width: 100%; display: flex; align-items: center; gap: 7px; padding: 7px 10px; border: 0; border-radius: 10px; background: #F7F8FE; color: var(--ink); font: 600 .8rem var(--font-b); text-align: left; cursor: pointer; }
+.hc-hints button:hover { background: #FFF2E2; }
+.hc-hints .ico { color: var(--orange); flex: none; }
+@keyframes hcPopIn { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (max-width: 380px) { .hc-lead-grid { grid-template-columns: 1fr; } }
+.hc-msg.bot:has(.hc-lead) { max-width: 100%; } .hc-msg.bot:has(.hc-lead) .hc-bubble { flex: 1; min-width: 0; }

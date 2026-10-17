@@ -27,7 +27,7 @@ export const PAGES = {
     primaryKeyword: 'earn money online cash',
     secondaryKeywords: ['paid surveys for cash', 'surveys for cash', 'make money online paypal', 'surveys for amazon gift cards', 'earn cash online', 'surveys that pay real money'],
     metaTitle: 'Survey Rewards & Payouts: PayPal, UPI, Gift Cards | MFR',
-    metaDescription: 'Turn opinions into cash: claim MyFrequentRewards survey rewards via PayPal, UPI, wire transfer or Amazon gift card, with alerts by SMS, WhatsApp and email.',
+    metaDescription: 'Turn opinions into rewards: claim via PayPal, cash, bank or wire transfer, shopping, grocery or digital gift card vouchers, or UPI in India.',
     h1: 'Get rewarded your way',
   },
   consumers: {
@@ -75,6 +75,24 @@ export const PAGES = {
     metaDescription: 'MyFrequentRewards is the global consumer and business opinion community of Frequent Research — ISO-certified, free to join and built on rewarding your voice.',
     h1: 'About MyFrequentRewards',
   },
+  reviews: {
+    path: '/about-us/reviews',
+    name: 'Ratings & Reviews',
+    primaryKeyword: 'MyFrequentRewards reviews',
+    secondaryKeywords: ['paid survey site reviews', 'is MyFrequentRewards legit', 'survey rewards reviews', 'member testimonials', 'earn money online reviews'],
+    metaTitle: 'MyFrequentRewards Reviews | Ratings from Real Members',
+    metaDescription: 'Read ratings and reviews from MyFrequentRewards consumers and professionals around the world — published as members write them — and share your own.',
+    h1: 'Ratings & reviews from our members',
+  },
+  connect: {
+    path: '/scan-and-connect',
+    name: 'Scan & Connect',
+    primaryKeyword: 'MyFrequentRewards social media',
+    secondaryKeywords: ['MyFrequentRewards QR code', 'Turn2Opinion', 'MyHealthOpinions', 'Frequent Research', 'survey community social media'],
+    metaTitle: 'Scan & Connect | MyFrequentRewards & Sister Brands',
+    metaDescription: 'Scan QR codes or tap to follow MyFrequentRewards, Turn2Opinion, MyHealthOpinions and Frequent Research on their official websites and social channels.',
+    h1: 'Scan & Connect with every brand',
+  },
   faq: {
     path: '/faq',
     name: 'FAQ',
@@ -111,6 +129,14 @@ export const PAGES = {
     metaDescription: 'Create your free MyFrequentRewards account in minutes. Verify your email and phone, complete your profile and start earning rewards for your opinions today.',
     h1: 'Create your free account',
   },
+  login: {
+    path: '/login',
+    name: 'Log In',
+    noindex: true,
+    metaTitle: 'Log In | MyFrequentRewards Member Account and Dashboard',
+    metaDescription: 'Log in to your MyFrequentRewards account to see survey invitations, track your reward balance, update your profile and claim via PayPal, UPI or gift card.',
+    h1: 'Welcome back',
+  },
    forgotPassword: {
     path: '/forgot-password',
     name: 'Forgot Password',
@@ -127,47 +153,10 @@ export const PAGES = {
     metaDescription: 'Your email is confirmed. Finish your profile and create a password to activate your free MyFrequentRewards account and start earning rewards for your opinions.',
     h1: 'Finish setting up your account',
   },
-  login: {
-    path: '/login',
-    name: 'Log In',
-    noindex: true,
-    metaTitle: 'Log In | MyFrequentRewards Member Account and Dashboard',
-    metaDescription: 'Log in to your MyFrequentRewards account to see survey invitations, track your reward balance, update your profile and claim via PayPal, UPI or gift card.',
-    h1: 'Welcome back',
-  },
 };
 
-export const HOME_FAQS = [
-  { q: 'Is MyFrequentRewards free to join?', a: 'Yes. Joining, taking surveys and claiming rewards are completely free — we never ask for any payment.' },
-  { q: 'How do I earn money online with MyFrequentRewards?', a: 'Sign up, verify your account, complete your profile and take the paid surveys you are matched with; rewards build up in your balance.' },
-  { q: 'Who can join?', a: 'Everyday consumers and business professionals who meet the minimum age in a supported country can join.' },
-  { q: 'How do I get paid?', a: 'Once you reach the claim threshold, members in India can claim via UPI, PayPal, wire transfer or an Amazon gift card; members in other countries can choose PayPal, wire transfer or an Amazon gift card.' },
-  { q: 'How will I know about new surveys?', a: 'Choose alerts through your Account Dashboard, SMS, WhatsApp or email.' },
-  { q: 'Is my personal information safe?', a: 'Yes — your personal details are never sold or shared, and answers reach clients only in anonymised form.' },
-];
-
-export const ALL_FAQS = [
-  { cat: 'Getting started', q: 'How do I become a member?', a: 'Complete the short sign-up form, then click the verification link in the confirmation email we send you. Once verified, log in and start taking surveys — please use a valid email address.' },
-  { cat: 'Getting started', q: 'Do I have to pay to join?', a: 'No. Registration is completely free and you will never be asked to pay any fee to join or take part in surveys.' },
-  { cat: 'Getting started', q: 'What can I do as a member?', a: 'Take part in surveys on many topics, share your opinions with leading brands and research organisations, and earn reward points for successful participation.' },
-  { cat: 'Getting started', q: 'Who can join?', a: 'Members must be at least 18 years old (or the legal age in their country); if you are under 18, parental acknowledgement may be required before activation. Membership availability may vary by country.' },
-  { cat: 'Account', q: 'How do I change my email address or password?', a: 'For security, email changes are handled by support at support@myfrequentrewards.com. To change your password, log in and go to Settings → Change Password.' },
-  { cat: 'Account', q: 'Can I update my profile information?', a: 'Yes — most details can be updated in your profile settings, though core details such as date of birth, age and gender may be locked for data integrity. Keeping your profile updated increases your chances of qualifying.' },
-  { cat: 'Account', q: 'How do I delete my account?', a: 'Email support@myfrequentrewards.com and confirm the request in the email you receive within 24–48 hours. You can restore your account within 30 days, after which all data is permanently deleted.' },
-  { cat: 'Surveys', q: 'How do I receive surveys?', a: 'Surveys are matched to your profile and announced by email invitations, dashboard notifications and survey alerts. Log in, check the Available Surveys box and click “Take Survey”.' },
-  { cat: 'Surveys', q: 'How many points will I earn per survey?', a: 'Points depend on survey length, complexity and sponsor requirements. The reward amount is always shown before you begin.' },
-  { cat: 'Surveys', q: 'How many survey invitations will I get?', a: 'It depends on your demographic profile, survey availability, your frequency preferences and your qualification rate. A complete, up-to-date profile increases your invitations.' },
-  { cat: 'Surveys', q: 'Why does it say “Survey Closed”?', a: 'Surveys close once the required number of participants is reached, so the quota has already been filled. Check your dashboard regularly for new opportunities.' },
-  { cat: 'Surveys', q: 'Why am I asked the same questions repeatedly?', a: 'Questions such as age, location and household details are repeated to verify accuracy, confirm eligibility, maintain quality control and meet client targeting requirements.' },
-  { cat: 'Surveys', q: 'A survey is not loading — what should I do?', a: 'Wait a few minutes, clear your browser cache or try another browser or device. If it continues, email support@myfrequentrewards.com with a screenshot of the error.' },
-  { cat: 'Rewards', q: 'How do I redeem my rewards?', a: 'Once you reach the minimum redemption threshold, use the “Redeem Now” section in your dashboard. Options may include PayPal, gift cards, bank transfer and UPI (subject to country regulations).' },
-  { cat: 'Rewards', q: 'How long does redemption take?', a: 'Our team verifies your account and participation, then the accounts department processes the request. This may take 2–3 weeks depending on queue volume and verification.' },
-  { cat: 'Privacy & security', q: 'Is my personal information safe?', a: 'Your data is stored securely, personal information is not sold to third parties and survey responses are aggregated and anonymised. Your data is used only for research matching purposes.' },
-  { cat: 'Privacy & security', q: 'Why do you need my demographic details?', a: 'Some surveys need specific groups, so accurate details help match you with relevant surveys and improve your qualification rate. All personal data is handled securely and confidentially.' },
-  { cat: 'Privacy & security', q: 'What happens if I give inconsistent answers?', a: 'Inconsistent or false responses may lead to survey disqualification, account review, or suspension and termination. We encourage honest, thoughtful participation.' },
-  { cat: 'Support', q: 'How can I contact support?', a: 'Email support@myfrequentrewards.com (please allow 24–72 business hours), chat with Live Help 24/7 or message us on WhatsApp at +91 81782 00573.' },
-  { cat: 'Support', q: 'Will I ever have to buy anything?', a: 'Never. You will not be required to purchase products or services as a result of joining.' },
-];
+// FAQ arrays live in ./faqs.js (re-exported here so existing imports keep working).
+export { HOME_FAQS, ALL_FAQS } from './faqs.js';
 
 // Team block: support desks (no individual names until the business supplies real people — see README MISSING).
 

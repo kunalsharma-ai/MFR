@@ -5,8 +5,11 @@ import Rewards from '../pages/Rewards.jsx';
 import Consumers from '../pages/Consumers.jsx';
 import Professionals from '../pages/Professionals.jsx';
 import WhoCanJoin from '../pages/WhoCanJoin.jsx';
+import Moved from '../pages/Moved.jsx';
 import Quality from '../pages/Quality.jsx';
 import About from '../pages/About.jsx';
+import Reviews from '../pages/Reviews.jsx';
+import Connect from '../pages/Connect.jsx';
 import Faq from '../pages/Faq.jsx';
 import Contact from '../pages/Contact.jsx';
 import BlogList from '../pages/BlogList.jsx';
@@ -18,5 +21,5 @@ import ForgotPassword from '../pages/ForgotPassword.jsx';
 import LegalPage from '../pages/LegalPage.jsx';
 import NotFound from '../pages/NotFound.jsx';
 
-const MAP = { Home, HowItWorks, Rewards, Consumers, Professionals, WhoCanJoin, Quality, About, Faq, Contact, BlogList, BlogPost, SignUp, Login, SetPassword, ForgotPassword, LegalPage, NotFound };
+const MAP = { Home, HowItWorks, Rewards, Consumers, Professionals, WhoCanJoin, Moved, Quality, About, Reviews, Connect, Faq, Contact, BlogList, BlogPost, SignUp, Login, SetPassword, ForgotPassword, LegalPage, NotFound };
 export const eagerPages = { get: (n) => MAP[n], load: () => Promise.resolve() };
