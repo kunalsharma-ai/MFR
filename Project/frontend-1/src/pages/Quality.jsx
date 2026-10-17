@@ -2,22 +2,17 @@ import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import FrLogo from '../components/FrLogo.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand, FaqList } from '../components/Common.jsx';
+import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { QUALITY_LAYERS } from '../data/quality.js';
 import { BRAND } from '../data/site.js';
 import { PrivacyVault, QualityRadar, VerificationScanner } from '../sections/TrustSections.jsx';
+import { FAQ_QUALITY } from '../data/faqs.js';
 
 const page = PAGES.quality;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Quality & Security', path: page.path }];
 
-const FAQS = [
-  { q: 'Why so many quality checks?', a: 'They protect honest members and research clients from bots, fraud and duplicate accounts, which keeps rewards flowing.' },
-  { q: 'Do the checks collect extra personal data?', a: 'Checks use technical signals such as device, timezone and network to detect fraud, not to advertise to you.' },
-  { q: 'Why was my VPN blocked?', a: 'GEO-IP, proxy and TOR detection require you to connect from your real location.' },
-  { q: 'Who carries out manual reviews?', a: 'Our quality verification team reviews flagged accounts and validates professional credentials where applicable.' },
-  { q: 'Is my data shared with anyone?', a: 'No, your personal details are never sold or shared with anyone else.' },
-];
+const FAQS = FAQ_QUALITY;
 
 export default function Quality() {
   return (
@@ -72,12 +67,7 @@ export default function Quality() {
         </div>
       </section>
 
-      <section className="section faq-split" aria-labelledby="q-faq">
-        <div className="container faq-home-row">
-          <div className="reveal"><p className="eyebrow">FAQ</p><h2 id="q-faq">Security questions</h2><p className="sec-sub">Learn to <Link to="/blog/legit-survey-sites-spot-scams">spot fake survey sites</Link>.</p></div>
-          <FaqList faqs={FAQS} />
-        </div>
-      </section>
+      <FaqSplit id="q-faq" title="Security questions" sub={<>Learn to <Link to="/blog/legit-survey-sites-spot-scams">spot fake survey sites</Link>.</>} faqs={FAQS} hue="#0EA5A0" hue2="#2F6BFF" />
       <CtaBand title="Join a community you can trust." variant="teal" />
     </>
   );

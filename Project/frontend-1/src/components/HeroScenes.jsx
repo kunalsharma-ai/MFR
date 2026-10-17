@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon.jsx';
 import { BRAND } from '../data/site.js';
+import { isCalm } from '../utils/calm.js';
 
 // One distinct, animated hero scene per page — no two pages share a visual idea.
 // Everything is HTML/CSS/SVG (transform/opacity animations only), decorative (aria-hidden by PageHero),
@@ -30,57 +31,58 @@ export function OriginScene() {
   );
 }
 
-/* Consumers — "Topic phone": survey topics flip through a 3D phone while rewards pop out */
-const TOPICS = [
-  { t: 'Shopping habits', icon: 'gift', c: '#FF8A00' },
-  { t: 'Gaming & apps', icon: 'mobile', c: '#8B5CF6' },
-  { t: 'Food & lifestyle', icon: 'heart', c: '#FF5E7E' },
-  { t: 'Travel plans', icon: 'globe', c: '#14C9B5' },
-  { t: 'Entertainment', icon: 'star', c: '#2F6BFF' },
-];
+/* Consumers — "Reward bag": survey topics pop out of a 3D shopping bag in arcs while coins drop in */
+const POPS = [['cart', '#FF8A00', 'Shopping'], ['mobile', '#8B5CF6', 'Gaming'], ['globe', '#14C9B5', 'Travel'], ['heart', '#FF3B8D', 'Food'], ['activity', '#2F6BFF', 'Cars'], ['star', '#E5A100', 'Movies']];
 export function PhoneScene() {
   return (
-    <div className="sc sc-phone">
-      <div className="ph3">
-        <span className="ph3-notch" />
-        <p className="ph3-head">For you today</p>
-        <div className="ph3-stack">
-          {TOPICS.map((x, k) => (
-            <div className="ph3-card" key={x.t} style={{ '--k': k, '--c': x.c }}>
-              <span className="ph3-ico"><Icon name={x.icon} size={18} /></span>
-              <b>{x.t}</b>
-              <small>~10 min · rewarded</small>
-            </div>
-          ))}
-        </div>
-        <span className="ph3-btn">Start survey</span>
-      </div>
-      <span className="ph3-toast"><Icon name="coins" size={16} /> Reward added</span>
-      {[0, 1, 2, 3].map((k) => <span key={k} className="ph3-coin" style={{ '--k': k }}>★</span>)}
-      {[['Shopping', '-24px', '40px'], ['Gaming', '-40px', '150px'], ['Food', '-14px', '270px'], ['Travel', '316px', '170px'], ['Beauty', '300px', '262px'], ['Pets', '290px', '8px']].map(([t, x, y], k) => (
-        <span key={t} className="ph3-tag" style={{ '--k': k, left: x, top: y }}>{t}</span>
+    <div className="sc sc-bag">
+      <span className="bg-halo" />
+      {POPS.map(([ic, c, t], k) => (
+        <span key={t} className="bg-pop" style={{ '--k': k, '--c': c, '--x': `${(k - 2.5) * 62}px` }}><Icon name={ic} size={20} /><small>{t}</small></span>
       ))}
+      <div className="bg-bag">
+        <span className="bg-handle" />
+        <span className="bg-front"><img src={BRAND.monogram} alt="" width="58" height="58" /><b>Your rewards</b></span>
+        <span className="bg-side" />
+      </div>
+      {[0, 1, 2].map((k) => <i key={k} className="bg-coin" style={{ '--k': k }}>$</i>)}
+      <span className="bg-chip c1"><Icon name="clock" size={13} /> ~10 min surveys</span>
+      <span className="bg-chip c2"><Icon name="gift" size={13} /> Vouchers · cash · UPI (India)</span>
     </div>
   );
 }
 
-/* Professionals — "Executive dashboard": live B2B study panel with growing bars and orbiting roles */
+/* Professionals — "Verified ID": a professional ID card flips (front: role, back: verification checks) above an org chart */
+const ROLES_CYCLE = ['CIO', 'Plant Director', 'HR Manager', 'Chartered Accountant', 'Founder', 'Medical Director'];
 export function DashboardScene() {
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => !isCalm() && setK((x) => (x + 1) % ROLES_CYCLE.length), 2600);
+    return () => clearInterval(t);
+  }, []);
   return (
-    <div className="sc sc-dash">
-      <div className="db">
-        <div className="db-top"><span className="db-dot" /><span className="db-dot" /><span className="db-dot" /><b>B2B study · IT decision makers</b></div>
-        <div className="db-kpis">
-          <span><small>Length</small><b>20 min</b></span>
-          <span><small>Match</small><b>98%</b></span>
-          <span className="hot"><small>Reward</small><b>High</b></span>
+    <div className="sc sc-id">
+      <div className="id-card">
+        <div className="id-face id-front">
+          <span className="id-holo" />
+          <div className="id-top"><img src={BRAND.monogram} alt="" width="34" height="34" /><b>PROFESSIONAL</b></div>
+          <div className="id-mid">
+            <span className="id-avatar"><Icon name="user" size={34} /></span>
+            <div><small>Role</small><strong key={k}>{ROLES_CYCLE[k]}</strong><small>B2B member</small></div>
+          </div>
+          <span className="id-ok"><Icon name="check" size={13} stroke={3} /> Verified</span>
         </div>
-        <div className="db-bars">{[46, 72, 58, 88, 66, 94].map((h, k) => <i key={k} style={{ '--h': `${h}%`, '--k': k }} />)}</div>
-        <svg className="db-line" viewBox="0 0 200 60" preserveAspectRatio="none"><path d="M0 50 C 30 44 40 30 70 32 S 120 12 150 16 S 185 4 200 6" /></svg>
+        <div className="id-face id-back">
+          <p>Verification</p>
+          <ul>{['Company email', 'Phone check', 'Public profile', 'Manual review'].map((x) => <li key={x}><Icon name="check" size={12} stroke={3} /> {x}</li>)}</ul>
+          <small>Identity never shared with clients</small>
+        </div>
       </div>
-      <span className="db-stamp"><Icon name="check" size={16} stroke={3} /> Credentials verified</span>
-      <div className="db-orbit">
-        {['CXO', 'IT Manager', 'HR Head', 'Doctor', 'Engineer', 'Finance'].map((r, k) => <span key={r} style={{ '--k': k }}><i>{r}</i></span>)}
+      <svg className="id-tree" viewBox="0 0 380 120"><path d="M190 0 V40 M60 40 H320 M60 40 V70 M190 40 V70 M320 40 V70" /></svg>
+      <div className="id-nodes">
+        {[['briefcase', 'Strategy'], ['database', 'Technology'], ['coins', 'Finance']].map(([ic, t], i) => (
+          <span key={t} style={{ '--i': i }}><Icon name={ic} size={18} /><small>{t}</small></span>
+        ))}
       </div>
     </div>
   );
@@ -131,8 +133,8 @@ export function JourneyScene() {
 const PAY = [
   { t: 'PayPal', icon: 'paypal', c: '#003087' },
   { t: 'UPI', icon: 'upi', c: '#097939', tag: 'India' },
-  { t: 'Wire', icon: 'bank', c: '#0B1E5B' },
-  { t: 'Amazon', icon: 'gift', c: '#232F3E' },
+  { t: 'Bank', icon: 'bank', c: '#0E7C66' },
+  { t: 'Vouchers', icon: 'cart', c: '#E8590C' },
 ];
 export function VaultScene() {
   return (
@@ -225,6 +227,58 @@ export function CoverWall({ posts = [] }) {
         </div>
       ))}
       <span className="cw-badge"><Icon name="trend" size={14} /> {posts.length}+ honest guides</span>
+    </div>
+  );
+}
+
+/* About — "Motto cube": a 3D cube turns through Your Voice → Your Value → Your Rewards → Frequent Research */
+export function CubeScene() {
+  return (
+    <div className="sc sc-cube">
+      <div className="cube-orbit">
+        <span><Icon name="badge" size={13} /> ISO 20252 · 9001 · 27001</span>
+        <span><Icon name="globe" size={13} /> 5 world regions</span>
+        <span><Icon name="shield" size={13} /> Data never sold</span>
+      </div>
+      <div className="cube">
+        <div className="cube-f f1"><Icon name="chat" size={24} /><span><small>Share</small>Your Voice.</span></div>
+        <div className="cube-f f2"><Icon name="badge" size={24} /><span><small>Matter</small>Your Value.</span></div>
+        <div className="cube-f f3"><Icon name="gift" size={24} /><span><small>Earn</small>Your Rewards.</span></div>
+        <div className="cube-f f4"><img src={BRAND.monogram} alt="" width="74" height="74" /><span><small>A community of</small>Frequent Research</span></div>
+      </div>
+      <span className="cube-shadow" />
+    </div>
+  );
+}
+
+// About hero (v2.1) — an isometric "community city": members, Frequent Research HQ and the rewards vault stand on
+// one platform; opinion tokens travel from members to HQ and reward coins travel from the vault back to members.
+// Pure CSS 3D (one preserve-3d world), transform-only loops, frozen for reduced motion.
+const ISO_BOX = [
+  { id: 'm', x: 26, y: 170, w: 92, h: 64, c: '#FF8A00', c2: '#FFB547', label: 'Members', icon: 'user' },
+  { id: 'hq', x: 140, y: 34, w: 112, h: 132, c: '#6D5BF7', c2: '#9B8CFF', label: 'Frequent Research', icon: 'badge' },
+  { id: 'v', x: 176, y: 186, w: 92, h: 86, c: '#14B8A6', c2: '#5EEAD4', label: 'Rewards vault', icon: 'gift' },
+];
+export function IsoScene() {
+  return (
+    <div className="sc sc-iso">
+      <div className="iso-world">
+        <div className="iso-plate"><i className="iso-road r1" /><i className="iso-road r2" /></div>
+        {ISO_BOX.map((b) => (
+          <div key={b.id} className={`iso-box b-${b.id}`} style={{ left: b.x, top: b.y, width: b.w, height: b.w, '--h': `${b.h}px`, '--c': b.c, '--c2': b.c2 }}>
+            <span className="iso-f top"><Icon name={b.icon} size={26} /></span>
+            <span className="iso-f s1" style={{ width: b.w, height: b.h, top: b.w }} />
+            <span className="iso-f s2" style={{ width: b.h, height: b.w, left: b.w }} />
+          </div>
+        ))}
+        <i className="iso-tok t1" /><i className="iso-tok t2" /><i className="iso-coin c1" /><i className="iso-coin c2" />
+      </div>
+      <span className="iso-lab l-m"><Icon name="user" size={13} /> Members</span>
+      <span className="iso-lab l-hq"><Icon name="badge" size={13} /> Frequent Research</span>
+      <span className="iso-lab l-v"><Icon name="gift" size={13} /> Rewards</span>
+      <span className="iso-badge b1"><Icon name="badge" size={13} /> ISO 20252 · 9001 · 27001</span>
+      <span className="iso-badge b2"><Icon name="shield" size={13} /> Data never sold</span>
+      <span className="iso-badge b3"><Icon name="globe" size={13} /> 5 world regions</span>
     </div>
   );
 }

@@ -488,7 +488,7 @@ export const PART4A = [
         list: [
           'Can I find the operating company’s legal name and registered address?',
           'Is joining completely free, with no deposit or “activation” charge?',
-          'Does it state the minimum age and [who can join](/who-can-join) from my country?',
+          'Does it state the minimum age and [who can join](/paid-surveys-for-consumers#countries) from my country?',
           'Is the redemption threshold published, along with a realistic processing time?',
           'Are payout methods I actually use, such as PayPal or UPI, listed?',
           'Does the privacy policy say my personal details are never sold?',

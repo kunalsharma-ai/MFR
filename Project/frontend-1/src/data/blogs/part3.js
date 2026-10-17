@@ -108,7 +108,7 @@ export const PART3 = [
       { h2: 'The cost of guessing', p: ['Launching the wrong product, choosing the wrong price or running the wrong advert can cost a company far more than research. Asking real people first is cheaper and smarter.'] },
       { h2: 'From client brief to your inbox', list: ['A brand or agency defines what it needs to learn', 'Researchers design the questionnaire and target audience', 'A research company like Frequent Research finds matching, verified respondents', 'You receive an invitation if your profile fits', 'Your verified responses become insights; you receive a reward'] },
       { h2: 'Why verification is part of the price', p: ['Clients pay for real people. Fraudulent or careless answers destroy value, which is why we run [multi-layer quality checks](/quality-and-data-security) and follow standards such as [ISO 20252](https://www.iso.org/standard/73671.html) for market research.'] },
-      { h2: 'Consumers and professionals both matter', p: ['Consumer studies explain everyday choices; B2B studies explain how businesses buy. Both need diverse voices — see the [profiles we cover](/who-can-join).'] },
+      { h2: 'Consumers and professionals both matter', p: ['Consumer studies explain everyday choices; B2B studies explain how businesses buy. Both need diverse voices — see the [profiles we cover](/paid-surveys-for-consumers#countries).'] },
       { h2: 'What your opinion changes', p: ['Packaging that is easier to open, apps that are simpler to use, healthcare services that respect patient time — many of these started as survey insights.'] },
       { h2: 'Your part', p: ['Answer honestly, keep your profile current and enjoy being heard. [Join free](/sign-up).'] },
     ],

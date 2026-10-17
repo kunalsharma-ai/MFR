@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import useInView from '../hooks/useInView.js';
-import { NOTIFY_CHANNELS, PAYOUTS } from '../data/site.js';
+import { NOTIFY_CHANNELS, PAYOUTS, REWARD_KINDS } from '../data/site.js';
 import useActivityFeed, { initials } from '../hooks/useActivityFeed.js';
+import { isCalm } from '../utils/calm.js';
 
 // Survey Invitations — phone mock-up with channel-synced notifications
 const NOTES = {
@@ -20,7 +21,7 @@ export function InvitationsPhone() {
   useEffect(() => {
     if (paused) return undefined;
     if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setI((x) => (x + 1) % NOTIFY_CHANNELS.length), 2800);
+    const t = setInterval(() => !isCalm() && setI((x) => (x + 1) % NOTIFY_CHANNELS.length), 2800);
     return () => clearInterval(t);
   }, [paused, visible]);
   const ch = NOTIFY_CHANNELS[i];
@@ -70,49 +71,201 @@ export function InvitationsPhone() {
   );
 }
 
-// Payouts — interactive 3D card fan
-export function PayoutFan() {
-  const [vref, visible] = useInView({ once: false, threshold: 0, rootMargin: '100px 0px' });
-  const [front, setFront] = useState(0);
+// Rewards page — "Reward explorer": filter by kind, 3D flip cards (front: the reward, back: how it lands)
+const LANDS = {
+  paypal: ['PayPal email', 'Wallet balance'], cash: ['Your account details', 'Cash reward'], bank: ['Verified bank account', 'Bank credit'],
+  wire: ['Bank / SWIFT details', 'International transfer'], upi: ['UPI ID (India only)', 'Instant bank credit'], shopping: ['Email for delivery', 'Store voucher'],
+  grocery: ['Email for delivery', 'Grocery voucher'], giftcards: ['Email for delivery', 'Digital gift code'],
+};
+// Rewards (v2.6) — two completely different worlds:
+//  • Consumers: "Scratch & Win" — a strip of lottery tickets. Every few seconds a coin scratches the silver foil off
+//    the next ticket and a reward pops out with confetti; tap any ticket to scratch it yourself.
+//  • Professionals: "Payout Route" — a fintech console. The honorarium travels as a glowing packet through
+//    Study completed → Quality verified → Approved → the payout rail you choose, then shows a "Settled" receipt.
+// Both cycle through the eight real reward types, pause off-screen / on hover / when the page is calm.
+function useCycle(n, ms, visible, hold) {
+  const [sel, setSel] = useState(0);
   useEffect(() => {
-    if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setFront((f) => (f + 1) % PAYOUTS.length), 3400);
+    if (!visible || hold) return undefined;
+    const t = setInterval(() => !isCalm() && setSel((x) => (x + 1) % n), ms);
     return () => clearInterval(t);
-  }, [visible]);
+  }, [visible, hold, n, ms]);
+  return [sel, setSel];
+}
+
+function ScratchRewards({ title, sub }) {
+  const [vref, visible] = useInView({ once: false, threshold: 0.15 });
+  const [hold, setHold] = useState(false);
+  const [sel, setSel] = useCycle(PAYOUTS.length, 3200, visible, hold);
+  const [opened, setOpened] = useState(() => new Set());
+  useEffect(() => {
+    setOpened((o) => {
+      const n = new Set(o);
+      if (n.size >= PAYOUTS.length) n.clear(); // every ticket scratched → fresh tickets
+      n.add(sel);
+      return n;
+    });
+  }, [sel]);
+  const p = PAYOUTS[sel];
+  const kind = REWARD_KINDS[p.kind];
   return (
-    <section ref={vref} className="section payouts" aria-labelledby="pay-title">
-      <div className="container pay-row">
-        <div className="fan-stage reveal" aria-hidden="true">
-          {PAYOUTS.map((p, k) => {
-            const pos = (k - front + PAYOUTS.length) % PAYOUTS.length;
+    <section ref={vref} className="section scw" aria-labelledby="scw-title" style={{ '--h1': p.hue, '--h2': p.hue2 }}>
+      <div className="scw-bg" aria-hidden="true"><i /><i /><i /></div>
+      <div className="container">
+        <div className="scw-head reveal">
+          <p className="eyebrow">Rewards · scratch &amp; win</p>
+          <h2 id="scw-title">{title || <>Get rewarded <span className="scw-hl">your way</span></>}</h2>
+          <p className="sec-sub">{sub || 'Every completed survey adds to your balance — then you choose how it pays out. Scratch a ticket to reveal each of the eight rewards.'}</p>
+        </div>
+        <ul className="scw-strip" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
+          {PAYOUTS.map((r, i) => {
+            const open = opened.has(i);
             return (
-              <div key={p.id} className={`pcard pp-${pos}`} style={{ '--h1': p.hue, '--h2': p.hue2 }} onMouseEnter={() => setFront(k)}>
-                <div className="pcard-chip" />
-                <span className="pcard-ico"><Icon name={p.icon} size={28} /></span>
-                <strong>{p.name}</strong>
-                <small>MyFrequentRewards · Reward payout</small>
-                <span className="pcard-shine" />
-              </div>
+              <li key={r.id} className={`scw-t ${open ? 'open' : ''} ${i === sel ? 'now' : ''}`} style={{ '--h1': r.hue, '--h2': r.hue2, '--i': i }}>
+                <button type="button" onClick={() => setSel(i)} aria-pressed={i === sel} aria-label={`Scratch to reveal: ${r.name}${r.only === 'IN' ? ' (India only)' : ''}`}>
+                  <span className="scw-prize">
+                    <span className="scw-ico"><Icon name={r.icon} size={26} /></span>
+                    <b>{r.short}</b>
+                    <small>{r.only === 'IN' ? 'India only' : 'You win'}</small>
+                  </span>
+                  <span className="scw-foil" aria-hidden="true"><em>SCRATCH</em><i>?</i></span>
+                  {i === sel ? <span className="scw-coin" key={`c${sel}`} aria-hidden="true">$</span> : null}
+                  {i === sel ? <span className="scw-pop" key={`p${sel}`} aria-hidden="true">{Array.from({ length: 8 }, (_, k) => <i key={k} style={{ '--k': k }} />)}</span> : null}
+                  <span className="scw-no" aria-hidden="true">No. 00{i + 1}</span>
+                </button>
+              </li>
             );
           })}
+        </ul>
+        <div className="scw-win" aria-live="polite" key={p.id}>
+          <span className="scw-win-ico"><Icon name={p.icon} size={26} /></span>
+          <div>
+            <p className="rgx-kind" style={{ '--kc': kind.c }}><i />{kind.label}</p>
+            <h3>{p.name}</h3>
+            <p>{p.line}</p>
+          </div>
+          <ul className="scw-facts">
+            <li><small>You provide</small><b>{LANDS[p.id][0]}</b></li>
+            <li><small>Lands as</small><b>{LANDS[p.id][1]}</b></li>
+            <li><small>Available</small><b>{p.only === 'IN' ? 'India only' : 'All member countries'}</b></li>
+          </ul>
+          <Link to="/rewards-and-payouts" className="scw-link">How claims work <Icon name="arrow" size={16} /></Link>
         </div>
-        <div className="pay-copy reveal">
-          <p className="eyebrow">Rewards</p>
-          <h2 id="pay-title">Get rewarded <span className="hl-orange">your way</span></h2>
-          <p className="sec-sub">Receive your survey incentives through secure and convenient payment methods that suit your preferences.</p>
-          <ul className="pay-list">
-            {PAYOUTS.map((p, k) => (
-              <li key={p.id}>
-                <button type="button" className={k === front ? 'on' : ''} onClick={() => setFront(k)} onFocus={() => setFront(k)}>
-                  <span className="pay-dot" style={{ '--h1': p.hue, '--h2': p.hue2 }}><Icon name={p.icon} size={18} /></span>
-                  <span><strong>{p.name}</strong><small>{p.line}</small></span>
-                  <em>{p.best}</em>
+      </div>
+    </section>
+  );
+}
+
+const ROUTE = [['clipboard', 'Study completed'], ['shield', 'Quality verified'], ['badge', 'Honorarium approved']];
+function PayoutRoute() {
+  const [vref, visible] = useInView({ once: false, threshold: 0.15 });
+  const [hold, setHold] = useState(false);
+  const [sel, setSel] = useCycle(PAYOUTS.length, 5200, visible, hold);
+  const p = PAYOUTS[sel];
+  return (
+    <section ref={vref} className="section prt" aria-labelledby="prt-title" style={{ '--h1': p.hue, '--h2': p.hue2 }}>
+      <div className="prt-bg" aria-hidden="true"><span className="prt-grid" /><i /><i /></div>
+      <div className="container prt-row">
+        <div className="prt-copy reveal">
+          <p className="eyebrow">Rewards for professionals</p>
+          <h2 id="prt-title">Your expertise, <span className="prt-hl">paid your way</span></h2>
+          <p className="sec-sub">Every honorarium is routed to the payout rail you choose — the same eight options as consumers, with UPI for members in India. Pick a rail and watch it settle.</p>
+          <ul className="prt-rails" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
+            {PAYOUTS.map((r, i) => (
+              <li key={r.id} style={{ '--h1': r.hue, '--h2': r.hue2 }}>
+                <button type="button" className={i === sel ? 'on' : ''} onClick={() => setSel(i)} aria-pressed={i === sel}>
+                  <span className="prt-ri"><Icon name={r.icon} size={16} /></span>
+                  <span>{r.short}</span>
+                  {r.only === 'IN' ? <em>IN</em> : null}
                 </button>
               </li>
             ))}
           </ul>
-          <Link to="/rewards-and-payouts" className="link-arrow">How claims work <Icon name="arrow" size={16} /></Link>
+          <Link to="/rewards-and-payouts" className="link-arrow prt-link">How claims work <Icon name="arrow" size={16} /></Link>
         </div>
+        <div className="prt-console" aria-live="polite">
+          <div className="prt-top"><span className="prt-dots" aria-hidden="true"><i /><i /><i /></span><b>Honorarium transfer</b><span className="prt-live"><i /> Live route</span></div>
+          <div className="prt-flow" key={p.id}>
+            {ROUTE.map(([ic, t], i) => (
+              <div className="prt-node" key={t} style={{ '--n': i }}>
+                <span className="prt-dot"><Icon name={ic} size={16} /></span>
+                <p><b>{t}</b><small>Step {i + 1}</small></p>
+                <span className="prt-ok" aria-hidden="true"><Icon name="check" size={12} stroke={3} /></span>
+              </div>
+            ))}
+            <div className="prt-node prt-dest">
+              <span className="prt-dot"><Icon name={p.icon} size={18} /></span>
+              <p><b>{p.name}</b><small>{LANDS[p.id][1]}</small></p>
+              <span className="prt-ok" aria-hidden="true"><Icon name="check" size={12} stroke={3} /></span>
+            </div>
+            <span className="prt-wire" aria-hidden="true"><i className="prt-packet" /></span>
+          </div>
+          <div className="prt-receipt" key={`r${p.id}`}>
+            <span className="prt-stamp">SETTLED</span>
+            <dl>
+              <div><dt>Paid via</dt><dd>{p.name}</dd></div>
+              <div><dt>You provide</dt><dd>{LANDS[p.id][0]}</dd></div>
+              <div><dt>Available</dt><dd>{p.only === 'IN' ? 'Members in India' : 'All member countries'}</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function RewardGalaxy({ title, sub, tone = 'con' }) {
+  return tone === 'pro' ? <PayoutRoute /> : <ScratchRewards title={title} sub={sub} />;
+}
+export const PayoutFan = RewardGalaxy;
+
+export function RewardExplorer() {
+  const [k, setK] = useState('all');
+  const [flip, setFlip] = useState(null);
+  const list = PAYOUTS.filter((p) => k === 'all' || p.kind === k);
+  return (
+    <section className="section rex" aria-labelledby="rex-title">
+      <div className="container">
+        <div className="rex-head reveal">
+          <div>
+            <p className="eyebrow">Compare</p>
+            <h2 id="rex-title">Pick the reward that fits your life</h2>
+            <p className="sec-sub">Choose a different reward each time you claim. UPI is available to members in India only; every other reward is open to consumers and professionals in all member countries (availability can vary by study). Learn about UPI from <a href="https://www.npci.org.in/what-we-do/upi/product-overview" target="_blank" rel="noopener noreferrer">NPCI</a>.</p>
+          </div>
+          <div className="rex-tabs" role="tablist" aria-label="Reward kinds">
+            {[['all', 'All rewards', '#0B1E5B'], ...Object.entries(REWARD_KINDS).map(([id, v]) => [id, v.label, v.c])].map(([id, label, c]) => (
+              <button type="button" role="tab" key={id} aria-selected={k === id} className={k === id ? 'on' : ''} style={{ '--kc': c }} onClick={() => { setK(id); setFlip(null); }}>
+                {label} <b>{id === 'all' ? PAYOUTS.length : PAYOUTS.filter((p) => p.kind === id).length}</b>
+              </button>
+            ))}
+          </div>
+        </div>
+        <ul className="rex-grid" key={k}>
+          {list.map((p, i) => (
+            <li key={p.id} style={{ '--i': i, '--h1': p.hue, '--h2': p.hue2 }} className={`rex-card ${flip === p.id ? 'is-flip' : ''}`}>
+              <button type="button" onClick={() => setFlip(flip === p.id ? null : p.id)} aria-expanded={flip === p.id} aria-label={`${p.name}: show details`}>
+                <span className="rex-in">
+                  <span className="rex-front">
+                    <span className="rex-ico"><Icon name={p.icon} size={30} /></span>
+                    <strong>{p.name}</strong>
+                    <small>{REWARD_KINDS[p.kind].label}</small>
+                    {p.only === 'IN' ? <em className="rex-only">India only</em> : null}
+                    <span className="rex-turn"><Icon name="refresh" size={14} /> Details</span>
+                  </span>
+                  <span className="rex-back">
+                    <strong>{p.name}</strong>
+                    <span>{p.line}</span>
+                    <dl>
+                      <div><dt>You need</dt><dd>{LANDS[p.id][0]}</dd></div>
+                      <div><dt>Lands as</dt><dd>{LANDS[p.id][1]}</dd></div>
+                      <div><dt>Who</dt><dd>Consumers &amp; professionals</dd></div>
+                    </dl>
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -130,7 +283,7 @@ export function ClaimMeter() {
   const [s, setS] = useState(0);
   useEffect(() => {
     if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setS((x) => (x + 1) % (CLAIM.length + 1)), 1800);
+    const t = setInterval(() => !isCalm() && setS((x) => (x + 1) % (CLAIM.length + 1)), 1800);
     return () => clearInterval(t);
   }, [visible]);
   return (
@@ -157,45 +310,89 @@ export function ClaimMeter() {
   );
 }
 
-// Incentive stories — random, smoothly cross-fading reward moments (only when a real feed exists)
+// Incentive stories — "Rewards in motion": a 3D card stack where real reward moments rise, settle and slide away.
+// Real feed → member payouts (consumers in warm tones, professionals in cool tones).
+// No feed → true community facts only (never invented people).
 export function IncentiveStories() {
+  // "Reward gate": reward parcels ride a 3D conveyor belt through a glowing scanner gate. The card under the gate
+  // is read out in full; the reward-type mix of the feed is charted below. Real consented payouts only (or labelled
+  // preview data / true community facts when there are none yet).
   const [vref, visible] = useInView({ once: false, threshold: 0, rootMargin: '100px 0px' });
-  const { items, isPreview } = useActivityFeed();
+  const { items, isPreview, pulse } = useActivityFeed();
   const [order, setOrder] = useState([]);
   const [k, setK] = useState(0);
   useEffect(() => {
-    if (!items.length) return;
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    setOrder(shuffled);
-  }, [items]);
+    const src = items.length >= 5 ? items : [...items, ...pulse];
+    setOrder([...src].sort(() => Math.random() - 0.5));
+  }, [items, pulse]);
   useEffect(() => {
-    if (!order.length) return undefined;
-    if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setK((x) => (x + 1) % order.length), 3200);
+    if (!order.length || !visible) return undefined;
+    const t = setInterval(() => !isCalm() && setK((x) => x + 1), 2800);
     return () => clearInterval(t);
   }, [order.length, visible]);
   if (!order.length) return null;
-  const vis = [0, 1, 2].map((o) => order[(k + o) % order.length]);
+  const real = Boolean(items.length);
+  const n = order.length;
+  const slots = [-3, -2, -1, 0, 1, 2, 3].map((o) => ({ v: order[(((k + o) % n) + n) % n], key: k + o, pos: o }));
+  const counts = real ? { biz: items.filter((x) => x.segment === 'business').length, con: items.filter((x) => x.segment !== 'business').length, places: new Set(items.map((x) => x.iso)).size } : null;
+  const mix = real ? Object.entries(items.reduce((m, x) => { m[x.method] = (m[x.method] || 0) + 1; return m; }, {})).sort((a, b) => b[1] - a[1]).slice(0, 6) : [];
+  const top = mix.length ? mix[0][1] : 1;
   return (
-    <section ref={vref} className="section stories" aria-labelledby="stories-title">
-      <div className="container stories-row">
-        <div className="stories-copy reveal">
+    <section ref={vref} className="section gate" aria-labelledby="stories-title">
+      <div className="gate-sky" aria-hidden="true"><i /><i /><i /></div>
+      <div className="container">
+        <div className="gate-head reveal">
           <p className="eyebrow eyebrow-light">Rewards in motion</p>
-          <h2 id="stories-title">Consumers and professionals, <span className="grad-text">rewarded around the world</span></h2>
-          <p className="muted-light">A live look at incentives members are receiving — across regions, roles and payout methods.{isPreview ? ' ' : ''}{isPreview ? <em className="preview-tag">Preview data</em> : null}</p>
+          <h2 id="stories-title">Consumers and professionals, <span className="gate-hl">rewarded around the world</span></h2>
+          <p>{real ? 'Recent rewards members have received — across regions, roles and reward types.' : 'Our community at a glance — rewards paid, surveys completed and categories open right now.'}{isPreview ? <em className="rwt-prev">Preview</em> : null}</p>
+          {real ? (
+            <ul className="gate-legend">
+              <li className="c"><i /> Consumers <b>{counts.con}</b></li>
+              <li className="b"><i /> Professionals <b>{counts.biz}</b></li>
+              <li><Icon name="globe" size={14} /> Countries <b>{counts.places}</b></li>
+            </ul>
+          ) : null}
         </div>
-        <div className="stories-deck" aria-live="polite">
-          {vis.map((v, i) => (
-            <article key={`${k}-${i}`} className={`story s-${i} ${v.segment === 'business' ? 'is-biz' : ''}`}>
-              <div className="story-av">{initials(v.name)}</div>
-              <div className="story-body">
-                <p className="story-who"><strong>{v.name}</strong> · {v.role}</p>
-                <p className="story-amt">{v.amount}</p>
-                <p className="story-meta"><Icon name={v.segment === 'business' ? 'briefcase' : 'user'} size={14} /> {v.segment === 'business' ? 'Professional' : 'Consumer'} · <Icon name="pin" size={14} /> {v.place} · {v.method}</p>
-              </div>
-            </article>
-          ))}
+        <div className="gate-stage">
+          <div className="gate-arch" aria-hidden="true"><span className="gate-beam" /><b>REWARD GATE</b><i className="gate-led l" /><i className="gate-led r" /></div>
+          <div className="gate-belt" aria-hidden="true"><i /></div>
+          <div className="gate-track" aria-live="polite">
+            {slots.map(({ v, key, pos }) => {
+              const style = { transform: `translateX(calc(${pos} * var(--gx))) translateZ(${-Math.abs(pos) * 110}px) rotateY(${pos * -14}deg) scale(${pos === 0 ? 1.08 : 1})`, opacity: Math.abs(pos) === 3 ? 0 : 1 - Math.abs(pos) * 0.22, zIndex: 10 - Math.abs(pos) };
+              if (v.kind === 'pulse') {
+                return (
+                  <article key={key} className={`gc is-pulse ${pos === 0 ? 'on' : ''}`} style={{ ...style, '--tone': v.tone }} aria-hidden={pos !== 0}>
+                    <span className="gc-ico"><Icon name={v.icon} size={22} /></span>
+                    <p className="gc-amt">{v.big}</p>
+                    <p className="gc-line">{v.line}</p>
+                  </article>
+                );
+              }
+              const info = PAYOUTS.find((p) => p.name === v.method) || PAYOUTS[0];
+              const biz = v.segment === 'business';
+              return (
+                <article key={key} className={`gc ${biz ? 'is-biz' : 'is-con'} ${pos === 0 ? 'on' : ''}`} style={{ ...style, '--h1': info.hue, '--h2': info.hue2 }} aria-hidden={pos !== 0}>
+                  <p className="gc-top"><span className="gc-av">{initials(v.name)}</span><span className="gc-seg">{biz ? 'Professional' : 'Consumer'}</span>{v.ago ? <time>{v.ago}</time> : null}</p>
+                  <p className="gc-amt">{v.amount || v.method}</p>
+                  <p className="gc-who"><b>{v.name}</b> · {v.role}</p>
+                  <p className="gc-meta"><span><Icon name="pin" size={12} /> {v.place}</span>{v.amount ? <span className="gc-m"><Icon name={info.icon} size={12} /> {v.method}</span> : null}</p>
+                </article>
+              );
+            })}
+          </div>
+          <span className="gate-floor" aria-hidden="true" />
         </div>
+        {mix.length ? (
+          <div className="gate-mix">
+            <p className="gate-mix-h"><Icon name="trend" size={14} /> Reward types in this feed</p>
+            <ul>
+              {mix.map(([m, c], i) => {
+                const info = PAYOUTS.find((p) => p.name === m) || PAYOUTS[0];
+                return <li key={m} style={{ '--h1': info.hue, '--h2': info.hue2, '--w': c / top, '--i': i }}><span><Icon name={info.icon} size={13} /> {m}</span><i /><b>{c}</b></li>;
+              })}
+            </ul>
+          </div>
+        ) : null}
       </div>
     </section>
   );

@@ -1,8 +1,4 @@
-// Member reviews → live testimonials.
-// A review submitted in the "Rate your experience" popup is POSTed to VITE_REVIEW_ENDPOINT and, once the server
-// publishes it (automatically after spam checks, or after moderation — see server/README), it is returned by
-// VITE_REVIEWS_FEED_URL and appears in the home-page testimonials for everyone. The reviewer also sees their own
-// review there immediately (kept locally until the live feed includes it).
+
 import { COUNTRIES } from '../data/countries.js';
 import { store } from './storage.js';
 
@@ -13,7 +9,7 @@ export const REVIEW_EVENT = 'mfr:review-submitted';
 
 const clean = (s, n) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, n);
 
-// Accepts the API shape ({ name, country, iso, company, rating, text, createdAt }) and the older static
+// Accepts the API shape ({ name, country, iso, designation, company, segment, rating, text, createdAt }) and the older static
 // shape ({ name, place, text, rating }). Returns null for anything unusable.
 export function normalizeReview(r) {
   if (!r || typeof r !== 'object') return null;
@@ -28,11 +24,14 @@ export function normalizeReview(r) {
     iso,
     country: clean(r.country && r.country.length > 2 ? r.country : BY_ISO[iso] || r.place || '', 60),
     company: clean(r.company, 60),
+    designation: clean(r.designation, 60),
+    segment: r.segment === 'professional' || (!r.segment && clean(r.company, 60)) ? 'professional' : 'consumer',
     rating: rating >= 1 && rating <= 5 ? Math.round(rating) : null,
     text,
     createdAt: r.createdAt || null,
     own: Boolean(r.own),
     pending: Boolean(r.pending),
+    preview: Boolean(r.preview),
   };
 }
 
@@ -43,7 +42,7 @@ export function rememberOwnReview(r) {
   window.dispatchEvent(new CustomEvent(REVIEW_EVENT, { detail: r }));
 }
 
-const key = (r) => `${r.name.toLowerCase()}|${r.text.slice(0, 40).toLowerCase()}`;
+const key = (r) => `${r.segment === 'professional' ? 'p' : 'c'}|${r.name.toLowerCase()}|${r.text.slice(0, 40).toLowerCase()}`; // same person + same words + same member type = one review
 // Newest live reviews first, then the reviewer's own (if not yet live), then the static set — de-duplicated.
 export function mergeReviews(live, own, base) {
   const seen = new Set();
@@ -59,3 +58,10 @@ export function mergeReviews(live, own, base) {
 }
 
 export const isRecent = (r, days = 14) => Boolean(r.own) || (r.createdAt && Date.now() - new Date(r.createdAt).getTime() < days * 864e5);
+
+// "Priya S." from first + optional last name (the public form used everywhere).
+export const publicName = (first, last) => {
+  const f = clean(first, 40);
+  const l = clean(last, 40);
+  return l ? `${f} ${l.slice(0, 1).toUpperCase()}.` : f;
+};

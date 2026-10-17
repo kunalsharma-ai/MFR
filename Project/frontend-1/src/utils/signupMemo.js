@@ -44,7 +44,17 @@ export async function flushPendingProfile() {
     const entry = userId ? load()[userId] : null;
     console.log('[flush] me id:', userId, '| entry mila:', Boolean(entry?.answers), '| keys:', Object.keys(load()));
     if (!entry?.answers) return false;
-    await patchJSON(`${ME_API}/answer`, entry.answers);
+    try {
+      await patchJSON(`${ME_API}/answer`, entry.answers);
+    } catch (bulkErr) {
+      // One answer the backend refuses must not throw the others away: retry them one by one.
+      console.warn('[flush] bulk save failed, retrying one by one:', bulkErr);
+      let saved = 0;
+      for (const [k, val] of Object.entries(entry.answers)) {
+        try { await patchJSON(`${ME_API}/answer`, { [k]: val }); saved += 1; } catch (e) { console.warn('[flush] answer not saved:', k, e); }
+      }
+      if (!saved) throw bulkErr;
+    }
     const all = load();
     delete all[userId];
     store(all);

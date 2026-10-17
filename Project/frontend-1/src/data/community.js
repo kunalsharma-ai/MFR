@@ -27,19 +27,22 @@ export const SURVEY_CATEGORIES = [
 ];
 
 // Member testimonials (as supplied; one duplicate entry removed). `iso` drives the flag.
+// `segment`: 'consumer' | 'professional' — shown in the Consumer or Professional voices panel. The supplied
+// testimonials did not say which group each member belongs to, so all are 'consumer' until you change them.
+// Add `company` (and segment: 'professional') for any member who is a business professional.
 export const TESTIMONIALS = [
-  { name: 'Lucas', country: 'Brazil', iso: 'BR', text: 'I have tested a few paid survey websites and this is one of the better ones. The process is simple and I like getting surveys related to my interests.' },
-  { name: 'Emily', country: 'United States', iso: 'US', text: 'I have tried several survey websites, but this one feels much more genuine. The surveys are easy to understand and payments are reliable.' },
-  { name: 'Daniel', country: 'United Kingdom', iso: 'GB', text: 'Really good experience so far. I like that the surveys are relevant and I can earn something in my spare time. Payment process is simple.' },
-  { name: 'Sophie', country: 'France', iso: 'FR', text: 'I was looking for a trustworthy paid survey platform and finally found one that actually works. The support team is also very helpful.' },
-  { name: 'Maria', country: 'Spain', iso: 'ES', text: 'I joined just to try it and was pleasantly surprised. The survey invitations are regular and the overall website is easy to use.' },
-  { name: 'Oliver', country: 'Germany', iso: 'DE', text: 'Good platform for earning a little extra through market research surveys. I especially appreciate the clear information about each survey.' },
-  { name: 'Aisha', country: 'United Arab Emirates', iso: 'AE', text: 'The registration was quick and I started receiving survey opportunities without any difficulty. A useful way to earn during free time.' },
-  { name: 'Ethan', country: 'Canada', iso: 'CA', text: 'I have had a positive experience with the platform. The surveys are simple, the website works smoothly, and rewards are clearly explained.' },
-  { name: 'Giulia', country: 'Italy', iso: 'IT', text: 'Much better than many survey sites I have previously tried. I like the simple interface and the fact that the surveys are relevant to my profile.' },
-  { name: 'Michael', country: 'South Africa', iso: 'ZA', text: 'A decent and reliable survey platform. I have completed several surveys and the experience has been quite smooth. Customer support is responsive too.' },
-  { name: 'Priya', country: 'India', iso: 'IN', text: 'I joined mainly to earn in my spare time and have been happy with the experience. The survey instructions are clear and the platform is easy to navigate.' },
-  { name: 'Nora', country: 'Netherlands', iso: 'NL', text: 'The website is simple, professional and easy to understand. I enjoy sharing my opinions through the surveys and earning rewards at the same time.' },
-  { name: 'Kenji', country: 'Japan', iso: 'JP', text: 'A convenient platform for completing surveys in free time. The registration process was easy and I have had a good overall experience with the service.' },
-  { name: 'Charoen', country: 'Thailand', iso: 'TH', text: 'Frankly say this is one of the best sites that offers real money. I was fed up with fake advertisements. Good work and support.' },
+  { name: 'Lucas', country: 'Brazil', iso: 'BR', segment: 'consumer', text: 'I have tested a few paid survey websites and this is one of the better ones. The process is simple and I like getting surveys related to my interests.' },
+  { name: 'Emily', country: 'United States', iso: 'US', segment: 'consumer', text: 'I have tried several survey websites, but this one feels much more genuine. The surveys are easy to understand and payments are reliable.' },
+  { name: 'Daniel', country: 'United Kingdom', iso: 'GB', segment: 'consumer', text: 'Really good experience so far. I like that the surveys are relevant and I can earn something in my spare time. Payment process is simple.' },
+  { name: 'Sophie', country: 'France', iso: 'FR', segment: 'consumer', text: 'I was looking for a trustworthy paid survey platform and finally found one that actually works. The support team is also very helpful.' },
+  { name: 'Maria', country: 'Spain', iso: 'ES', segment: 'consumer', text: 'I joined just to try it and was pleasantly surprised. The survey invitations are regular and the overall website is easy to use.' },
+  { name: 'Oliver', country: 'Germany', iso: 'DE', segment: 'consumer', text: 'Good platform for earning a little extra through market research surveys. I especially appreciate the clear information about each survey.' },
+  { name: 'Aisha', country: 'United Arab Emirates', iso: 'AE', segment: 'consumer', text: 'The registration was quick and I started receiving survey opportunities without any difficulty. A useful way to earn during free time.' },
+  { name: 'Ethan', country: 'Canada', iso: 'CA', segment: 'consumer', text: 'I have had a positive experience with the platform. The surveys are simple, the website works smoothly, and rewards are clearly explained.' },
+  { name: 'Giulia', country: 'Italy', iso: 'IT', segment: 'consumer', text: 'Much better than many survey sites I have previously tried. I like the simple interface and the fact that the surveys are relevant to my profile.' },
+  { name: 'Michael', country: 'South Africa', iso: 'ZA', segment: 'consumer', text: 'A decent and reliable survey platform. I have completed several surveys and the experience has been quite smooth. Customer support is responsive too.' },
+  { name: 'Priya', country: 'India', iso: 'IN', segment: 'consumer', text: 'I joined mainly to earn in my spare time and have been happy with the experience. The survey instructions are clear and the platform is easy to navigate.' },
+  { name: 'Nora', country: 'Netherlands', iso: 'NL', segment: 'consumer', text: 'The website is simple, professional and easy to understand. I enjoy sharing my opinions through the surveys and earning rewards at the same time.' },
+  { name: 'Kenji', country: 'Japan', iso: 'JP', segment: 'consumer', text: 'A convenient platform for completing surveys in free time. The registration process was easy and I have had a good overall experience with the service.' },
+  { name: 'Charoen', country: 'Thailand', iso: 'TH', segment: 'consumer', text: 'Frankly say this is one of the best sites that offers real money. I was fed up with fake advertisements. Good work and support.' },
 ];

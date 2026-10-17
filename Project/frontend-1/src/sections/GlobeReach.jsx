@@ -6,6 +6,7 @@ import { REGIONS } from '../data/profiles.js';
 import { GEO } from '../data/geo.js';
 import { COUNTRIES } from '../data/countries.js';
 import { prefersReducedMotion } from '../utils/storage.js';
+import { isCalm } from '../utils/calm.js';
 
 // "Signal Globe": a dotted 3D globe (canvas, no library) where glowing opinion signals arc from member
 // countries to Frequent Research HQ in New Delhi. Choosing a region spins the globe to face it; hovering a
@@ -50,11 +51,11 @@ function Globe({ active, focus }) {
     const cvs = ref.current;
     if (!cvs) return undefined;
     const ctx = cvs.getContext('2d');
-    let raf;
+    let raf = 0;
     let visible = true;
     let rot = -1.35; // start facing India
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const N = 900;
+    const N = 640; // v2.0: fewer dots (was 900) — same look, ~30% less canvas work per frame
     const dots = [];
     const ga = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < N; i++) {
@@ -77,8 +78,13 @@ function Globe({ active, focus }) {
     };
     resize();
     window.addEventListener('resize', resize);
-    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
+    // v2.4: the loop fully sleeps (no rAF at all) while off-screen or in a background tab — before, an
+    // idle rAF kept waking the renderer 60×/s even when nobody could see the globe.
+    const wake = () => { if (!raf && visible && !document.hidden) raf = requestAnimationFrame(draw); };
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; wake(); }, { rootMargin: '80px 0px' });
     io.observe(cvs);
+    document.addEventListener('visibilitychange', wake);
+    window.addEventListener('mfr:wake', wake);
 
     const tilt = -0.32;
     const cosT = Math.cos(tilt);
@@ -98,9 +104,10 @@ function Globe({ active, focus }) {
     let lastT = 0;
     let t = 0;
     const draw = (now = 0) => {
+      raf = 0;
+      if (!visible || document.hidden || isCalm()) return; // sleep; IntersectionObserver / visibilitychange wake it
       raf = requestAnimationFrame(draw);
-      if (!visible || document.hidden) return;
-      if (now - lastT < 32) return;
+      if (now - lastT < 40) return; // ~25 fps is plenty for a slow spin
       lastT = now;
       t += 1;
       const { active: act, focus: foc } = state.current;
@@ -135,8 +142,8 @@ function Globe({ active, focus }) {
         ctx.fillStyle = `rgba(170,190,255,${(0.1 + ((b + 0.5) / BANDS) * 0.42).toFixed(3)})`;
         ctx.beginPath();
         for (let k = 0; k < arr.length; k += 3) {
-          ctx.moveTo(arr[k] + arr[k + 2], arr[k + 1]);
-          ctx.arc(arr[k], arr[k + 1], arr[k + 2], 0, Math.PI * 2);
+          const s = arr[k + 2] * 1.7; // tiny squares rasterise far faster than arcs and look the same at this size
+          ctx.rect(arr[k] - s / 2, arr[k + 1] - s / 2, s, s);
         }
         ctx.fill();
       }
@@ -232,6 +239,8 @@ function Globe({ active, focus }) {
     draw();
     return () => {
       cancelAnimationFrame(raf);
+      document.removeEventListener('visibilitychange', wake);
+      window.removeEventListener('mfr:wake', wake);
       window.removeEventListener('resize', resize);
       io.disconnect();
     };
@@ -262,7 +271,7 @@ export default function GlobeReach({ withLink = true }) {
         <div className="globe-copy reveal">
           <p className="eyebrow eyebrow-light">Global reach</p>
           <h2 id="globe-title">Five regions. <span className="grad-text">One community.</span></h2>
-          <p className="muted-light">From Bogotá to Bengaluru, Lagos to London — watch opinions travel from every corner of the world. Pick a region, then hover a flag.</p>
+          <p className="muted-light">From Bogotá to Bengaluru, Lagos to London — watch opinions travel from every corner of the world. Pick a region to see every country, then hover one to spin the globe to it.</p>
           <div className="region-tabs" role="tablist" aria-label="Choose a region">
             <button type="button" role="tab" aria-selected={active === 'all'} className={active === 'all' ? 'on' : ''} onClick={() => setActive('all')} style={{ '--rc': '#fff' }}>All regions</button>
             {REGIONS.map((r) => (
@@ -271,23 +280,30 @@ export default function GlobeReach({ withLink = true }) {
               </button>
             ))}
           </div>
-          <ul className={`flag-deck ${active === 'all' ? 'is-all' : ''}`} key={active} aria-live="polite">
-            {list.map(({ c, color }, i) => (
-              <li
-                key={c}
-                style={{ '--i': Math.min(i, 40), '--rc': color }}
-                onMouseEnter={() => setFocus(c)}
-                onMouseLeave={() => setFocus(null)}
-                onFocus={() => setFocus(c)}
-                onBlur={() => setFocus(null)}
-                tabIndex={0}
-              >
-                <span className="fd-flag"><Flag iso={isoOf(c)} size={active === 'all' ? 18 : 26} /></span>
-                <span className="fd-name">{c}</span>
-              </li>
-            ))}
-          </ul>
-          {withLink ? <Link to="/who-can-join" className="link-arrow light">See every profile we welcome <Icon name="arrow" size={16} /></Link> : null}
+          {/* v2.5: no scrolling box, no cut-off names — five region cards, or every country of one region in full */}
+          {active === 'all' ? (
+            <ul className="gr-regions" key="all">
+              {REGIONS.map((r, i) => (
+                <li key={r.id} style={{ '--rc': r.color, '--i': i }}>
+                  <button type="button" onClick={() => setActive(r.id)} onMouseEnter={() => setFocus(r.countries[0])} onMouseLeave={() => setFocus(null)}>
+                    <span className="gr-n"><b>{r.countries.length}</b><small>countries</small></span>
+                    <span className="gr-name">{r.name}</span>
+                    <span className="gr-flags" aria-hidden="true">{r.countries.slice(0, 5).map((c) => <i key={c}><Flag iso={isoOf(c)} size={16} /></i>)}{r.countries.length > 5 ? <em>+{r.countries.length - 5}</em> : null}</span>
+                    <span className="gr-go"><Icon name="arrow" size={14} /></span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="gr-list" key={active} aria-live="polite" style={{ '--rc': reg.color }}>
+              {list.map(({ c }, i) => (
+                <li key={c} style={{ '--i': Math.min(i, 30) }} onMouseEnter={() => setFocus(c)} onMouseLeave={() => setFocus(null)} onFocus={() => setFocus(c)} onBlur={() => setFocus(null)} tabIndex={0}>
+                  <Flag iso={isoOf(c)} size={18} /> {c}
+                </li>
+              ))}
+            </ul>
+          )}
+          {withLink ? <Link to="/paid-surveys-for-consumers#countries" className="link-arrow light">See every country we cover <Icon name="arrow" size={16} /></Link> : null}
         </div>
       </div>
     </section>

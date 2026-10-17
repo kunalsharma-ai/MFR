@@ -1,149 +1,340 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from './Icon.jsx';
+import CountryPicker, { Flag } from './CountryPicker.jsx';
 import { COUNTRIES } from '../data/countries.js';
-import { SOCIALS } from '../data/site.js';
-import { getJSON, postJSON } from '../utils/api.js';
+import { postJSON } from '../utils/api.js';
 import { session, store } from '../utils/storage.js';
 import { EMAIL_RE } from '../utils/validate.js';
-import { normalizeReview, rememberOwnReview } from '../utils/reviews.js';
+import { publicName, rememberOwnReview } from '../utils/reviews.js';
+import { chime, fanfare, setSound, soundOn } from '../utils/sound.js';
 
-// "Reward Ticket" rates & reviews experience.
-// • A "Rate your experience" tab lives on the RIGHT edge of every page (slides in a few seconds after entry),
-//   breathes/nudges periodically and occasionally shows a small "How are we doing?" bubble.
-// • The full popup NEVER opens on entry. It auto-opens only after real engagement (≥ 45 s on site and
-//   ≥ 35 % scrolled) — or on exit-intent — and only at a quiet moment (no typing, chat, cookie banner or
-//   active scrolling). Pacing (see AUTO): max 2 per visit at least 4 min apart, then at most once a day,
-//   never more than 6 times in total. Never again after a review is submitted. Never on /sign-up or /login.
-// • Reviews shown inside come only from VITE_REVIEWS_FEED_URL (approved, genuine). No rating schema is emitted.
+// Rate & Review (v2.4) — everything lives on the RIGHT-HAND side:
+// 1) TAB on the right edge of every page ("Rate your experience") with five stars that twinkle in sequence.
+// 2) DOCK BUTTON "Rate us" in the bottom-right stack, above WhatsApp and Live Help (rendered by Common.jsx → Dock,
+//    which dispatches the `mfr:rate` event).
+// 3) REVIEW SCREEN — a four-step wizard (You → Rate → About you → Review). It opens BY ITSELF only after the visitor
+//    has been browsing for a while (≥ 20 s on the site, ≥ 20 % of a page scrolled, at a quiet moment) — never the
+//    moment someone arrives — and asks again while they keep scrolling, paced (PACE): up to 4 times per visit, at
+//    least 2 minutes and 1.5 screen-heights of scrolling apart, then again after 12 hours, 12 times in total. Never while typing or chatting, never on /sign-up or /login, and never again after a review or
+//    "Don't ask again". The tab and the dock button open it at any time.
+//    Mandatory: consumer / professional, rating, review, full name, email, country (flag), company.
+//    Optional: designation, phone (country code + flag). Published straight into Client Testimonials:
+//    name (first name + last-name initial by default — REVIEW_NAME_FORMAT on the server), flag, country,
+//    designation, company, rating, review. Email and phone are never published.
 
-const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || '/api/reviews';
 const ENDPOINT = import.meta.env.VITE_REVIEW_ENDPOINT || '/api/reviews';
 const BLOCKED = ['/sign-up', '/login'];
-const COINS = [
-  { v: 1, label: 'Meh', hue: '#FF5E7E' },
-  { v: 2, label: 'Okay', hue: '#FF8A00' },
-  { v: 3, label: 'Good', hue: '#FFC233' },
-  { v: 4, label: 'Great', hue: '#14C9B5' },
-  { v: 5, label: 'Brilliant', hue: '#2F6BFF' },
-];
-const HIGHLIGHTS = ['Easy sign-up', 'Relevant surveys', 'Quick payouts', 'Helpful support', 'Mobile-friendly', 'Clear rewards', 'Feels secure', 'Great for professionals'];
-const AUTO = {
-  minSeconds: 45, // time on site before the first auto prompt
-  minScroll: 0.35, // scroll depth on any page
-  exitAfterSeconds: 25, // exit-intent allowed after this
-  gapInVisitSeconds: 240, // between the 1st and 2nd prompt of the same visit
-  maxPerVisit: 2,
-  gapBetweenVisitsHours: 20,
-  maxEver: 6,
-  quietMs: 2500, // visitor must be idle this long (not scrolling/typing) before we ask
-  tabDelayMs: 4000, // right-edge tab slides in after this
-  bubbleEverySeconds: 75, // small "How are we doing?" bubble cadence
+const PACE = {
+  minSeconds: 20, // time on site before the screen may open by itself
+  minScroll: 0.2, // scroll depth on the current page before the first ask
+  rescrollScreens: 1.5, // before asking again: the visitor must have scrolled this many screen-heights since last time
+  quietMs: 1500, // visitor idle (not scrolling / typing) before we ask
+  exitAfterSeconds: 25, // exit intent counts only after this
+  maxPerVisit: 4,
+  gapInVisitMinutes: 2,
+  gapBetweenVisitsHours: 12,
+  maxEver: 12,
+  tabDelayMs: 3000,
 };
 
-function Jar({ level }) {
-  // SVG jar that fills with coins as rating rises
-  const h = (level / 5) * 112;
+const SEG = {
+  consumer: {
+    label: 'Consumer',
+    who: 'Shopper · student · parent · gamer',
+    motto: 'Everyday life, rewarded',
+    icon: 'cart',
+    levels: ['Not for me', 'Meh', 'Pretty good', 'Really good', 'Love it!'],
+    sparks: ['What I like most is ', 'The surveys are ', 'My rewards arrived ', 'Compared with other sites, '],
+    company: 'Where you work or study — or “Self-employed”',
+  },
+  professional: {
+    label: 'Professional',
+    who: 'Manager · specialist · founder · doctor',
+    motto: 'Expertise, rewarded',
+    icon: 'briefcase',
+    levels: ['Poor', 'Fair', 'Good', 'Very good', 'Excellent'],
+    sparks: ['As a ', 'The studies are relevant because ', 'The honorarium for my time is ', 'What I value most is '],
+    company: 'Your organisation',
+  },
+};
+const byIso = (iso) => COUNTRIES.find((c) => c.iso === iso);
+const busy = () =>
+  document.hidden ||
+  Boolean(document.activeElement && document.activeElement.matches && document.activeElement.matches('input, textarea, select, [contenteditable="true"]')) ||
+  Boolean(document.querySelector('.hc.is-open, .cookie, .rw-veil'));
+const initialsOf = (name) => String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '★';
+
+/* ───────── Testimonial card (also used on the wall): story card for consumers, executive card for professionals ───────── */
+export function ReviewCard({ seg, rating, text, name, iso, designation, company, placeholder = true, tone = 0 }) {
+  const c = byIso(iso);
+  const quote = text || (placeholder ? 'Your review appears here as you type…' : '');
+  const who = name || (placeholder ? 'Your name' : '');
+  if (seg === 'professional') {
+    const role = [designation, company].filter(Boolean).join(' · ');
+    return (
+      <figure className="xc">
+        <span className="xc-shine" aria-hidden="true" />
+        <p className="xc-top"><span className="xc-badge"><Icon name="briefcase" size={12} /> Professional member</span><ScoreChip rating={rating} /></p>
+        <blockquote className="xc-q">{quote}</blockquote>
+        <figcaption className="xc-who">
+          <span className="xc-mono" aria-hidden="true">{initialsOf(who)}</span>
+          <span className="xc-id"><b>{who}</b><small>{role || (placeholder ? 'Designation · Company' : 'Professional member')}</small></span>
+          <span className="xc-flag">{c ? <Flag iso={c.iso} size={16} /> : <Icon name="globe" size={16} />}<small>{c ? c.name : placeholder ? 'Country' : ''}</small></span>
+        </figcaption>
+      </figure>
+    );
+  }
+  const role = [designation, company].filter(Boolean).join(' · ');
   return (
-    <svg viewBox="0 0 120 160" className="rt-jar" aria-hidden="true">
-      <defs>
-        <clipPath id="jarclip"><path d="M24 30h72v8c10 6 14 16 14 30v66c0 12-8 20-20 20H30c-12 0-20-8-20-20V68c0-14 4-24 14-30z" /></clipPath>
-        <linearGradient id="coinfill" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stopColor="#FF8A00" /><stop offset="1" stopColor="#FFC233" /></linearGradient>
-      </defs>
-      <g clipPath="url(#jarclip)">
-        <rect x="0" y={154 - h} width="120" height={h + 6} fill="url(#coinfill)" className="rt-jar-fill" />
-        {Array.from({ length: level * 3 }).map((_, i) => (
-          <circle key={i} cx={22 + ((i * 29) % 78)} cy={150 - (Math.floor(i / 3) * 22 + (i % 2) * 8)} r="7" fill="#FFE08A" stroke="#C26B00" strokeWidth="1.5" className="rt-jar-coin" style={{ animationDelay: `${i * 40}ms` }} />
-        ))}
-      </g>
-      <path d="M24 30h72v8c10 6 14 16 14 30v66c0 12-8 20-20 20H30c-12 0-20-8-20-20V68c0-14 4-24 14-30z" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="3" />
-      <rect x="20" y="18" width="80" height="14" rx="5" fill="#FFC233" />
-      <rect x="44" y="21" width="32" height="5" rx="2.5" fill="#0B1E5B" />
-    </svg>
+    <figure className={`sc3 t${tone % 5}`}>
+      <span className="sc3-blob" aria-hidden="true" />
+      <p className="sc3-top">
+        <span className="sc3-av" aria-hidden="true">{initialsOf(who)}<i>{c ? <Flag iso={c.iso} size={12} /> : null}</i></span>
+        <span className="sc3-id"><b>{who}</b><small>{c ? c.name : placeholder ? 'Country' : ''}</small></span>
+        <VibeChip rating={rating} />
+      </p>
+      <blockquote className="sc3-q">“{quote}”</blockquote>
+      {role ? <p className="sc3-role"><Icon name="user" size={12} /> {role}</p> : null}
+    </figure>
   );
+}
+
+/* ───────── Rating controls (v2.4) — plain language first, no stars, no smileys ─────────
+   Consumers: "Vibe meter" — a big, chunky slider like a volume control. Slide or tap 1–5; a headline word, a colour
+   wash and a little reward badge react straight away ("Love it!" lights the whole bar).
+   Professionals: "Scorecard gauge" — a business-style dial with five labelled zones (Poor → Excellent) and a needle,
+   read like a KPI. Tap a zone or a label underneath.
+   Both are real form controls (native range input / radio buttons): keyboard, touch and screen-reader friendly. */
+export const VIBE = [
+  { w: 'Not for me', s: 'It didn’t work for me', ic: 'close' },
+  { w: 'Meh', s: 'Some good, some not', ic: 'refresh' },
+  { w: 'Pretty good', s: 'Worth my time', ic: 'check' },
+  { w: 'Really good', s: 'I’d tell a friend', ic: 'heart' },
+  { w: 'Love it!', s: 'Easily my favourite', ic: 'sparkle' },
+];
+export const SCORE = ['Poor', 'Fair', 'Good', 'Very good', 'Excellent'];
+
+function VibeMeter({ value, onPick }) {
+  const [hov, setHov] = useState(0);
+  const lit = hov || value;
+  const v = VIBE[lit - 1];
+  return (
+    <div className={`vb l${lit}`} onMouseLeave={() => setHov(0)}>
+      <div className="vb-head" aria-hidden="true">
+        <span className="vb-badge"><Icon name={v ? v.ic : 'arrow'} size={22} /></span>
+        <span className="vb-say"><b key={lit}>{v ? v.w : 'Slide to rate'}</b><small>{v ? v.s : 'Drag the bar or tap a number below'}</small></span>
+        <span className="vb-score"><b>{lit || '–'}</b><small>/5</small></span>
+      </div>
+      <div className="vb-track" style={{ '--p': lit ? (lit - 1) / 4 : 0 }}>
+        <span className="vb-fill" />
+        {[1, 2, 3, 4, 5].map((n) => <span key={n} className={`vb-dot ${n <= lit ? 'on' : ''}`} style={{ '--n': n }} />)}
+        <span className={`vb-thumb ${lit ? '' : 'idle'}`}><i>{lit || '?'}</i></span>
+        <input
+          type="range" min="1" max="5" step="1" value={value || 1}
+          aria-label="Your rating, 1 to 5" aria-valuetext={value ? `${value} – ${VIBE[value - 1].w}` : 'Not rated yet'}
+          onChange={(e) => onPick(+e.target.value)}
+          onPointerUp={(e) => onPick(+e.currentTarget.value)}
+          onKeyUp={(e) => onPick(+e.currentTarget.value)}
+        />
+      </div>
+      <div className="vb-ticks" role="radiogroup" aria-label="Or pick a number">
+        {VIBE.map((x, i) => (
+          <button type="button" key={x.w} role="radio" aria-checked={value === i + 1} className={`${i + 1 <= lit ? 'lit' : ''} ${value === i + 1 ? 'on' : ''}`} onMouseEnter={() => setHov(i + 1)} onFocus={() => setHov(i + 1)} onBlur={() => setHov(0)} onClick={() => onPick(i + 1)}>
+            <b>{i + 1}</b><small>{x.w}</small>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// semicircle gauge geometry: 5 zones of 36° from 180° (left) to 0° (right)
+const G = { cx: 120, cy: 118, r: 92, w: 26 };
+const pt = (deg, r) => [G.cx + r * Math.cos((deg * Math.PI) / 180), G.cy - r * Math.sin((deg * Math.PI) / 180)];
+const zone = (i) => {
+  const a0 = 180 - i * 36 - 1.5;
+  const a1 = 180 - (i + 1) * 36 + 1.5;
+  const [x0, y0] = pt(a0, G.r);
+  const [x1, y1] = pt(a1, G.r);
+  const [x2, y2] = pt(a1, G.r - G.w);
+  const [x3, y3] = pt(a0, G.r - G.w);
+  return `M${x0} ${y0} A${G.r} ${G.r} 0 0 1 ${x1} ${y1} L${x2} ${y2} A${G.r - G.w} ${G.r - G.w} 0 0 0 ${x3} ${y3} Z`;
+};
+const ZONES = [0, 1, 2, 3, 4].map(zone);
+
+function ScoreGauge({ value, onPick }) {
+  const [hov, setHov] = useState(0);
+  const lit = hov || value;
+  const angle = lit ? -90 + (lit - 0.5) * 36 : -96; // needle: rest just left of "Poor"
+  return (
+    <div className={`gg l${lit}`} onMouseLeave={() => setHov(0)}>
+      <div className="gg-dial">
+        <svg viewBox="0 0 240 132" className="gg-svg" aria-hidden="true">
+          {ZONES.map((d, i) => (
+            <path key={i} d={d} className={`gg-z z${i + 1} ${i + 1 <= lit ? 'on' : ''}`} onMouseEnter={() => setHov(i + 1)} onClick={() => onPick(i + 1)} />
+          ))}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const [x, y] = pt(180 - (i + 0.5) * 36, G.r - G.w / 2);
+            return <text key={i} x={x} y={y + 4} className={`gg-n ${i + 1 <= lit ? 'on' : ''}`}>{i + 1}</text>;
+          })}
+        </svg>
+        <span className="gg-needle" style={{ transform: `rotate(${angle}deg)` }}><i /></span>
+        <span className="gg-hub" />
+      </div>
+      <p className="gg-read" aria-live="polite"><b>{lit ? SCORE[lit - 1] : 'Your score'}</b><small>{lit ? `${lit} / 5 · tap to change` : 'Tap a zone on the dial or a label below'}</small></p>
+      <div className="gg-btns" role="radiogroup" aria-label="Your score">
+        {SCORE.map((s, i) => (
+          <button type="button" key={s} role="radio" aria-checked={value === i + 1} className={`z${i + 1} ${i + 1 <= lit ? 'lit' : ''} ${value === i + 1 ? 'on' : ''}`} onMouseEnter={() => setHov(i + 1)} onFocus={() => setHov(i + 1)} onBlur={() => setHov(0)} onClick={() => onPick(i + 1)}>
+            <b>{i + 1}</b><small>{s}</small>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Compact read-outs used on testimonial cards and the reviews page
+export function VibeChip({ rating }) {
+  if (!rating) return null;
+  return <span className={`vchip l${rating}`} role="img" aria-label={`Rated ${rating} out of 5 – ${VIBE[rating - 1].w}`}><span className="vchip-bar">{[1, 2, 3, 4, 5].map((n) => <i key={n} className={n <= rating ? 'on' : ''} />)}</span><b>{VIBE[rating - 1].w}</b></span>;
+}
+export function ScoreChip({ rating }) {
+  if (!rating) return null;
+  return <span className={`schip l${rating}`} role="img" aria-label={`Scored ${rating} out of 5 – ${SCORE[rating - 1]}`}><svg viewBox="0 0 36 20" aria-hidden="true"><path d="M3 18a15 15 0 0 1 30 0" className="schip-bg" /><path d="M3 18a15 15 0 0 1 30 0" className="schip-fg" style={{ strokeDasharray: `${(rating / 5) * 47.1} 47.1` }} /></svg><b>{rating}/5</b><small>{SCORE[rating - 1]}</small></span>;
+}
+
+/* ───────── Right-edge tab ───────── */
+function RateTab({ shown, onOpen }) {
+  return (
+    <button type="button" className={`rq-tab ${shown ? 'is-in' : ''}`} onClick={onOpen} aria-label="Rate your experience with MyFrequentRewards" aria-haspopup="dialog">
+      <span className="rq-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
+      <span className="rq-txt"><span className="rq-long">Rate your experience</span><span className="rq-short">Rate us</span></span>
+    </button>
+  );
+}
+
+const STEPS = [['user', 'You'], ['star', 'Rate'], ['badge', 'About you'], ['check', 'Review']];
+const EMPTY = { text: '', full: '', email: '', iso: '', company: '', designation: '', dial: '', phone: '', consent: false, website: '' };
+
+// Left "stage" art: changes with the step and with consumer / professional.
+function StageArt({ step, seg }) {
+  const pro = seg === 'professional';
+  if (step === 0) {
+    return (
+      <div className="rw-art a0">
+        <span className="rw-planet"><span className="rw-ring" /><span className="rw-core"><Icon name="star" size={40} fill="currentColor" /></span></span>
+        {[['cart', 'c'], ['briefcase', 'p'], ['heart', 'c'], ['trend', 'p']].map(([ic, k], i) => <span key={ic} className={`rw-moon m${i} k-${k}`}><Icon name={ic} size={18} /></span>)}
+        <p className="rw-art-t">Your voice, <b>one minute</b></p>
+        <small>Reviews go live in Client Testimonials</small>
+      </div>
+    );
+  }
+  if (step === 1) {
+    return (
+      <div className="rw-art a1">
+        <span className="rw-meter">{[1, 2, 3, 4, 5].map((k) => <i key={k} style={{ '--k': k }} />)}</span>
+        <p className="rw-art-t">{pro ? 'Score the studies' : 'How did it feel?'}</p>
+        <small>{pro ? 'Relevance · reward · respect for your time' : 'Topics · rewards · ease'}</small>
+      </div>
+    );
+  }
+  return null;
 }
 
 export default function ReviewPopup() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState(1);
+  const [tabIn, setTabIn] = useState(false);
+  const [reviewed, setReviewed] = useState(false);
+  const [step, setStep] = useState(0);
+  const [seg, setSeg] = useState('');
   const [rating, setRating] = useState(0);
-  const [drop, setDrop] = useState(0);
-  const [tags, setTags] = useState([]);
-  const [f, setF] = useState({ text: '', name: '', country: '', company: '', email: '', consent: false, website: '' });
+  const [f, setF] = useState(EMPTY);
   const [errs, setErrs] = useState({});
-  const [status, setStatus] = useState('idle');
-  const [reviews, setReviews] = useState([]);
-  const [ri, setRi] = useState(0);
-  const [peek, setPeek] = useState(false);
-  const [bubble, setBubble] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | sending | error | done
+  const [msg, setMsg] = useState('');
   const [live, setLive] = useState(true);
-  const cardRef = useRef(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const dlg = useRef(null);
+  const body = useRef(null);
   const lastFocus = useRef(null);
   const pathRef = useRef(pathname);
+  const travel = useRef(0); // pixels scrolled since the screen last opened by itself
   pathRef.current = pathname;
+  const [sound, setSoundState] = useState(true);
+  useEffect(() => setSoundState(soundOn()), []);
+  const toggleSound = () => { const n = !sound; setSound(n); setSoundState(n); if (n) chime({ volume: 0.12 }); };
 
-  const done = () => Boolean(store.get('mfr_reviewed'));
+  useEffect(() => setReviewed(Boolean(store.get('mfr_reviewed'))), []);
 
-  const canAuto = () => {
-    if (done() || BLOCKED.includes(pathRef.current)) return false;
-    const log = store.get('mfr_rt_log', { n: 0, last: 0 });
-    const inVisit = session.get('mfr_rt_n', 0);
-    const visitLast = session.get('mfr_rt_last', 0);
+  const canAsk = () => {
+    if (store.get('mfr_reviewed') || store.get('mfr_rv_never') || BLOCKED.includes(pathRef.current)) return false;
+    const log = store.get('mfr_rv_log', { n: 0, last: 0 });
+    const inVisit = session.get('mfr_rv_n', 0);
+    const visitLast = session.get('mfr_rv_last', 0);
     const now = Date.now();
-    if (log.n >= AUTO.maxEver || inVisit >= AUTO.maxPerVisit) return false;
-    if (inVisit === 0 && log.last && now - log.last < AUTO.gapBetweenVisitsHours * 3600e3) return false;
-    if (inVisit > 0 && now - visitLast < AUTO.gapInVisitSeconds * 1000) return false;
+    if (log.n >= PACE.maxEver || inVisit >= PACE.maxPerVisit) return false;
+    if (inVisit === 0 && log.last && now - log.last < PACE.gapBetweenVisitsHours * 3600e3) return false;
+    if (inVisit > 0 && now - visitLast < PACE.gapInVisitMinutes * 60e3) return false;
     return true;
   };
-  // Never interrupt: typing, chat open, cookie banner showing, tab hidden.
-  const busy = () =>
-    document.hidden ||
-    Boolean(document.activeElement && document.activeElement.matches && document.activeElement.matches('input, textarea, select, [contenteditable="true"]')) ||
-    Boolean(document.querySelector('.chat-panel.is-open, .cookie'));
 
-  const show = (auto) => {
+  const openScreen = (preset = {}, auto = false) => {
     if (BLOCKED.includes(pathRef.current)) return;
     if (auto) {
-      if (!canAuto()) return;
-      const log = store.get('mfr_rt_log', { n: 0, last: 0 });
-      store.set('mfr_rt_log', { n: log.n + 1, last: Date.now() });
-      session.set('mfr_rt_n', session.get('mfr_rt_n', 0) + 1);
-      session.set('mfr_rt_last', Date.now());
+      if (!canAsk() || busy()) return;
+      const log = store.get('mfr_rv_log', { n: 0, last: 0 });
+      store.set('mfr_rv_log', { n: log.n + 1, last: Date.now() });
+      session.set('mfr_rv_n', session.get('mfr_rv_n', 0) + 1);
+      session.set('mfr_rv_last', Date.now());
+      travel.current = 0;
     }
-    setBubble(false);
+    chime(); // notification chime (silent until the browser allows sound, i.e. after the first click / tap)
+    if (status === 'done') { setStatus('idle'); setF(EMPTY); setRating(0); setErrs({}); setSeg(''); setStep(0); }
+    if (preset.segment) { setSeg(preset.segment); setStep((s) => (s === 0 ? 1 : s)); }
     lastFocus.current = document.activeElement;
     setOpen(true);
   };
 
+  // Tab, dock button and any page button: window.dispatchEvent(new CustomEvent('mfr:rate', { detail: { segment } }))
   useEffect(() => {
-    const take = (d) => setReviews((Array.isArray(d) ? d : (d && d.reviews) || []).map(normalizeReview).filter(Boolean));
-    getJSON(FEED).then(take).catch(() => getJSON('/data/reviews.json').then(take).catch(() => {}));
-    const t = setTimeout(() => setPeek(true), AUTO.tabDelayMs); // tab slides in shortly after entry
-    return () => clearTimeout(t);
+    const onRate = (e) => {
+      const s = e.detail && e.detail.segment;
+      openScreen({ segment: s === 'professional' || s === 'consumer' ? s : '' });
+    };
+    window.addEventListener('mfr:rate', onRate);
+    const t = setTimeout(() => setTabIn(true), PACE.tabDelayMs);
+    return () => { window.removeEventListener('mfr:rate', onRate); clearTimeout(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Engagement trigger: time on site (whole visit) + scroll depth, asked only at a quiet moment; or exit intent.
+  // Opens by itself only after some browsing (time on site + scroll depth + a quiet moment) — or on exit intent.
   useEffect(() => {
     const t0 = session.get('mfr_t0', 0) || Date.now();
     session.set('mfr_t0', t0);
     let maxScroll = 0;
     let lastActive = Date.now();
+    let lastY = window.scrollY;
+    // Cheap scroll bookkeeping: only scrollY is read on scroll; page height is measured by the 2 s timer below.
+    let maxY = 0;
     const onScroll = () => {
       lastActive = Date.now();
-      const h = document.documentElement;
-      const max = h.scrollHeight - h.clientHeight;
-      if (max > 0) maxScroll = Math.max(maxScroll, h.scrollTop / max);
+      const y = window.scrollY;
+      if (y > maxY) maxY = y;
+      travel.current += Math.abs(y - lastY);
+      lastY = y;
     };
     const onActive = () => { lastActive = Date.now(); };
     const tick = setInterval(() => {
-      const secs = (Date.now() - t0) / 1000;
-      const quiet = Date.now() - lastActive >= AUTO.quietMs;
-      if (secs >= AUTO.minSeconds && maxScroll >= AUTO.minScroll && quiet && !busy() && canAuto()) show(true);
-    }, 1500);
-    const onLeave = (e) => {
-      if (e.clientY <= 0 && (Date.now() - t0) / 1000 >= AUTO.exitAfterSeconds && !busy() && canAuto()) show(true);
-    };
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      if (max > 0) maxScroll = Math.max(maxScroll, maxY / max);
+      const asked = session.get('mfr_rv_n', 0) > 0;
+      const scrolledEnough = asked ? travel.current >= window.innerHeight * PACE.rescrollScreens : maxScroll >= PACE.minScroll;
+      if ((Date.now() - t0) / 1000 >= PACE.minSeconds && scrolledEnough && Date.now() - lastActive >= PACE.quietMs) openScreen({}, true);
+    }, 2000);
+    const onLeave = (e) => { if (e.clientY <= 0 && (Date.now() - t0) / 1000 >= PACE.exitAfterSeconds) openScreen({}, true); };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', onActive);
     window.addEventListener('pointerdown', onActive);
@@ -156,225 +347,288 @@ export default function ReviewPopup() {
       document.documentElement.removeEventListener('mouseleave', onLeave);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
-  // Gentle reminder bubble beside the tab every so often (never while the popup is open).
-  useEffect(() => {
-    if (open || done()) return undefined;
-    let hide;
-    const t = setInterval(() => {
-      if (busy() || BLOCKED.includes(pathRef.current)) return;
-      setBubble(true);
-      hide = setTimeout(() => setBubble(false), 6000);
-    }, AUTO.bubbleEverySeconds * 1000);
-    return () => { clearInterval(t); clearTimeout(hide); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  useEffect(() => { if (BLOCKED.includes(pathname)) setOpen(false); }, [pathname]);
 
   useEffect(() => {
     if (!open) return undefined;
-    const onKey = (e) => e.key === 'Escape' && close();
+    const onKey = (e) => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Tab' && dlg.current) {
+        const els = dlg.current.querySelectorAll('button:not([disabled]), input, textarea, select, a[href]');
+        if (!els.length) return;
+        const first = els[0];
+        const last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
     window.addEventListener('keydown', onKey);
-    setTimeout(() => cardRef.current && cardRef.current.focus(), 60);
-    return () => window.removeEventListener('keydown', onKey);
+    const t = setTimeout(() => dlg.current && dlg.current.focus(), 60);
+    document.documentElement.classList.add('rv-lock');
+    return () => { window.removeEventListener('keydown', onKey); clearTimeout(t); document.documentElement.classList.remove('rv-lock'); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  useEffect(() => {
-    if (!open || reviews.length < 2) return undefined;
-    const t = setInterval(() => setRi((i) => (i + 1) % reviews.length), 5000);
-    return () => clearInterval(t);
-  }, [open, reviews.length]);
-
-  useEffect(() => {
-    if (BLOCKED.includes(pathname)) setOpen(false);
-  }, [pathname]);
+  useEffect(() => { if (body.current) body.current.scrollTop = 0; }, [step]);
 
   function close() {
     setOpen(false);
-    if (session.get('mfr_rt_n', 0) > 0) session.set('mfr_rt_last', Date.now());
+    if (session.get('mfr_rv_n', 0) > 0) session.set('mfr_rv_last', Date.now());
     if (lastFocus.current && lastFocus.current.focus) lastFocus.current.focus();
   }
+  const never = () => { store.set('mfr_rv_never', Date.now()); close(); };
 
-  function pick(v) {
-    setRating(v);
-    setDrop(v);
-    setTimeout(() => setStep(2), 650);
-  }
-
-  function validate(v = f) {
+  const checkStep = (s, v = f) => {
     const e = {};
-    if (v.text.trim().length < 20) e.text = 'Please write at least 20 characters.';
-    if (!/^[\p{L}][\p{L}\s.'-]{1,39}$/u.test(v.name.trim())) e.name = 'Please enter your first name.';
-    if (!v.country) e.country = 'Please choose your country.';
-    if (v.company.trim().length > 60) e.company = 'Keep the company name under 60 characters.';
-    if (/https?:|www\./i.test(v.text + v.company)) e.text = 'Please remove links from your review.';
-    if (!EMAIL_RE.test(v.email.trim())) e.email = 'Please enter a valid email.';
-    if (!v.consent) e.consent = 'Please accept so we can store your review.';
+    if (s === 0 && !seg) e.seg = 'Please choose consumer or professional.';
+    if (s === 1) {
+      if (!rating) e.rating = 'Please choose a rating.';
+      const txt = v.text.trim();
+      if (txt.length < 20) e.text = 'Please write at least 20 characters.';
+      else if (/https?:|www\./i.test(txt)) e.text = 'Please remove links from your review.';
+    }
+    if (s === 2) {
+      if (!/^[\p{L}][\p{L}\s.'-]{1,79}$/u.test(v.full.trim())) e.full = 'Please enter your full name.';
+      if (!EMAIL_RE.test(v.email.trim())) e.email = 'Please enter a valid email address.';
+      if (!v.iso) e.iso = 'Please choose your country.';
+      if (v.company.trim().length < 2) e.company = 'Please enter your company name.';
+      else if (/https?:|www\./i.test(v.company + v.designation)) e.company = 'Please remove links.';
+      const digits = v.phone.replace(/\D/g, '');
+      if (digits && (digits.length < 6 || digits.length > 15)) e.phone = 'Please enter 6–15 digits.';
+      if (digits && !v.dial) e.phone = 'Please choose a country code.';
+    }
+    if (s === 3 && !v.consent) e.consent = 'Please accept so we can publish your review.';
     return e;
-  }
+  };
+  const set = (k, val) => {
+    const n = { ...f, [k]: val };
+    if (k === 'iso' && !f.phone) n.dial = val; // code follows the country until a number is typed
+    setF(n);
+    if (errs[k]) setErrs((x) => { const y = { ...x }; delete y[k]; return y; });
+  };
+  const pickSeg = (s) => { setSeg(s); setErrs({}); setTimeout(() => setStep(1), 420); };
+  const pickRating = (r) => { setRating(r); setErrs((x) => { const y = { ...x }; delete y.rating; return y; }); };
+  const goStep = (to) => {
+    if (to <= step) { setStep(to); setErrs({}); return; }
+    for (let s = step; s < to; s++) {
+      const e = checkStep(s);
+      if (Object.keys(e).length) { setErrs(e); setStep(s); return; }
+    }
+    setErrs({});
+    setStep(to);
+  };
 
-  async function submit(ev) {
-    ev.preventDefault();
-    const e = validate();
-    setErrs(e);
-    if (f.website || Object.keys(e).length) return;
+  async function submit() {
+    const all = { ...checkStep(0), ...checkStep(1), ...checkStep(2), ...checkStep(3) };
+    if (f.website) return;
+    if (Object.keys(all).length) {
+      setErrs(all);
+      if (all.seg) setStep(0); else if (all.rating || all.text) setStep(1); else if (all.full || all.email || all.iso || all.company || all.phone) setStep(2);
+      return;
+    }
     setStatus('sending');
-    const countryName = (COUNTRIES.find((c) => c.iso === f.country) || {}).name || '';
-    const payload = { rating, highlights: tags, text: f.text.trim().slice(0, 600), firstName: f.name.trim(), country: f.country, countryName, company: f.company.trim(), email: f.email.trim(), page: pathname, consentPublish: true };
+    setMsg('');
+    const c = byIso(f.iso) || {};
+    const dialC = byIso(f.dial);
+    const full = f.full.trim().replace(/\s+/g, ' ');
+    const payload = {
+      segment: seg, rating, text: f.text.trim().slice(0, 600),
+      fullName: full, email: f.email.trim(), country: f.iso, countryName: c.name || '',
+      company: f.company.trim(), designation: f.designation.trim(),
+      dial: f.phone.trim() && dialC ? dialC.dial : '', phone: f.phone.replace(/\D/g, ''),
+      page: pathname, consentPublish: true,
+    };
     try {
       const res = await postJSON(ENDPOINT, payload);
       store.set('mfr_reviewed', Date.now());
-      // Show the reviewer their own testimonial straight away; everyone else sees it once the server publishes it.
-      rememberOwnReview({ id: res.id, name: payload.firstName, iso: f.country, country: countryName, company: payload.company, rating, text: payload.text, createdAt: new Date().toISOString(), pending: res.status === 'pending' });
+      setReviewed(true);
+      const [fn, ...rest] = full.split(' ');
+      rememberOwnReview({ id: res.id, name: publicName(fn, rest.join(' ')), iso: f.iso, country: c.name, designation: payload.designation, company: payload.company, segment: seg, rating, text: payload.text, createdAt: new Date().toISOString(), pending: res.status === 'pending' });
       setLive(res.status !== 'pending');
-      setStatus('idle');
-      setStep(3);
-    } catch {
+      setStatus('done');
+      fanfare();
+    } catch (err) {
+      setMsg((err && err.message && err.message !== 'Failed to fetch' && err.message.length < 160) ? err.message : 'We couldn’t send your review. Please try again.');
       setStatus('error');
     }
   }
+  const next = () => (step < 3 ? goStep(step + 1) : submit());
 
-  const set = (k, v) => {
-    const n = { ...f, [k]: v };
-    setF(n);
-    if (Object.keys(errs).length) setErrs(validate(n));
+  const S = SEG[seg] || SEG.consumer;
+  const [first, ...rest] = f.full.trim().split(/\s+/);
+  const name = publicName(first || '', rest.join(' '));
+  const c = byIso(f.iso);
+  const onTilt = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -10, y: ((e.clientX - r.left) / r.width - 0.5) * 14 });
   };
-
-  const coin = COINS.find((c) => c.v === rating);
-  const r = reviews[ri];
+  const showTab = !BLOCKED.includes(pathname);
+  const done = status === 'done';
+  const TITLES = ['Rate your experience', seg === 'professional' ? 'Score your experience' : 'How was it for you?', 'A little about you', 'Check & publish'];
+  const SUBS = ['First, tell us who you are — consumers and professionals each rate us their own way.', 'Pick a rating, then say it in your own words.', 'Your name, flag, company and role appear on your testimonial.', 'This is exactly how your review will appear in Client Testimonials.'];
 
   return (
     <>
-      {!done() && !BLOCKED.includes(pathname) ? (
-        <button type="button" className={`rt-tab ${peek ? 'is-in' : ''} ${bubble ? 'is-nudge' : ''}`} onClick={() => show(false)} aria-label="Rate your experience with MyFrequentRewards" aria-haspopup="dialog">
-          <span className="rt-tab-face">
-            <span className="rt-tab-star"><Icon name="star" size={16} fill="currentColor" /></span>
-            <span className="rt-tab-txt">Rate your experience</span>
-            <span className="rt-tab-shine" aria-hidden="true" />
-          </span>
-          <span className="rt-tab-dot" aria-hidden="true" />
-          {bubble ? <span className="rt-bubble" aria-hidden="true">How are we doing? <b>Tap to rate</b> <span className="rt-bubble-stars">★★★★★</span></span> : null}
-        </button>
-      ) : null}
+      {showTab && !reviewed ? <RateTab shown={tabIn && !open} onOpen={() => openScreen()} /> : null}
 
       {open ? (
-        <div className="rt-overlay" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-          <div className="rt-ticket" role="dialog" aria-modal="true" aria-labelledby="rt-title" tabIndex={-1} ref={cardRef}>
-            <aside className="rt-stub">
-              <p className="rt-kicker"><Icon name="gift" size={14} /> Reward ticket</p>
-              <Jar level={drop} />
-              <p className="rt-score">{rating ? <><b>{rating}</b>/5 · {coin.label}</> : 'Drop a coin to rate'}</p>
-              <ol className="rt-steps">
-                {['Rate', 'Tell us', 'Done'].map((s, i) => (
-                  <li key={s} className={step > i + 1 ? 'done' : step === i + 1 ? 'now' : ''}><span>{step > i + 1 ? '✓' : i + 1}</span>{s}</li>
-                ))}
-              </ol>
-              <p className="rt-serial">No. MFR-{String(new Date().getFullYear())}-{rating || 0}{tags.length}</p>
-            </aside>
-            <div className="rt-perf" aria-hidden="true" />
-            <section className="rt-main">
-              <button type="button" className="rt-x" onClick={close} aria-label="Close"><Icon name="close" size={18} /></button>
-
-              {step === 1 ? (
-                <div className="rt-pane" key="s1">
-                  <h2 id="rt-title">Enjoying MyFrequentRewards?</h2>
-                  <p className="muted">Drop a reward coin into the jar — it takes under a minute and helps other people decide.</p>
-                  <div className="rt-coins" role="radiogroup" aria-label="Your rating">
-                    {COINS.map((c) => (
-                      <button type="button" role="radio" aria-checked={rating === c.v} key={c.v} className={`rt-coin ${rating === c.v ? 'on' : ''}`} style={{ '--h': c.hue }} onClick={() => pick(c.v)}>
-                        <span className="rt-coin-face"><b>{c.v}</b><Icon name="star" size={14} fill="currentColor" /></span>
-                        <small>{c.label}</small>
-                      </button>
-                    ))}
+        <div className="rw-veil" onMouseDown={(e) => e.target === e.currentTarget && close()}>
+          <div className={`rw rw-${seg || 'none'} st-${done ? 'done' : step}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
+            <aside className="rw-stage" onMouseMove={onTilt} onMouseLeave={() => setTilt({ x: 0, y: 0 })} aria-hidden="true">
+              <span className="rw-glow g1" /><span className="rw-glow g2" /><span className="rw-grid" />
+              {!done && step < 2 ? <StageArt step={step} seg={seg} key={`${step}${seg}`} /> : (
+                <div className="rw-art a2">
+                  <p className="rw-art-k">{done ? (live ? 'Now live in Client Testimonials' : 'On its way to Client Testimonials') : 'Live preview'}</p>
+                  <div className={`rw-tilt ${done ? 'is-sent' : ''}`} style={{ transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }}>
+                    <ReviewCard seg={seg || 'consumer'} rating={rating} text={f.text.trim()} name={name} iso={f.iso} designation={f.designation.trim()} company={f.company.trim()} />
                   </div>
-                  {r ? (
-                    <figure className="rt-quote" key={ri}>
-                      <blockquote>“{r.text}”</blockquote>
-                      <figcaption>— {r.name}{r.country ? `, ${r.country}` : ''}</figcaption>
-                    </figure>
-                  ) : null}
-                  <button type="button" className="rt-later" onClick={close}>Maybe later</button>
                 </div>
-              ) : null}
+              )}
+            </aside>
 
-              {step === 2 ? (
-                <form className="rt-pane" key="s2" onSubmit={submit} noValidate>
-                  <h2 id="rt-title"><span className="rt-badge" style={{ '--h': coin?.hue }}>{rating}★ {coin?.label}</span> What stood out?</h2>
-                  <div className="rt-tags" role="group" aria-label="Highlights (optional)">
-                    {HIGHLIGHTS.map((t) => (
-                      <button type="button" key={t} aria-pressed={tags.includes(t)} className={tags.includes(t) ? 'on' : ''} onClick={() => setTags((x) => (x.includes(t) ? x.filter((y) => y !== t) : [...x, t]))}>
-                        {tags.includes(t) ? <Icon name="check" size={14} stroke={2.6} /> : <Icon name="sparkle" size={14} />} {t}
-                      </button>
-                    ))}
-                  </div>
-                  <div className={`rt-field ${errs.text ? 'err' : ''}`}>
-                    <label htmlFor="rt-text">Your review <i>*</i></label>
-                    <textarea id="rt-text" rows={3} maxLength={1000} value={f.text} onChange={(e) => set('text', e.target.value)} placeholder="What did we do well? What could we do better?" aria-invalid={Boolean(errs.text)} />
-                    <span className="rt-count">{f.text.trim().length}/20+</span>
-                    {errs.text ? <p className="f-err" role="alert">{errs.text}</p> : null}
-                  </div>
-                  <div className="rt-row">
-                    <div className={`rt-field ${errs.name ? 'err' : ''}`}>
-                      <label htmlFor="rt-name">First name <i>*</i></label>
-                      <input id="rt-name" autoComplete="given-name" maxLength={40} value={f.name} onChange={(e) => set('name', e.target.value)} aria-invalid={Boolean(errs.name)} />
-                      {errs.name ? <p className="f-err" role="alert">{errs.name}</p> : null}
-                    </div>
-                    <div className={`rt-field ${errs.country ? 'err' : ''}`}>
-                      <label htmlFor="rt-country">Country <i>*</i></label>
-                      <select id="rt-country" value={f.country} onChange={(e) => set('country', e.target.value)} aria-invalid={Boolean(errs.country)}>
-                        <option value="">Select</option>
-                        {COUNTRIES.map((c) => <option key={c.iso} value={c.iso}>{c.name}</option>)}
-                      </select>
-                      {errs.country ? <p className="f-err" role="alert">{errs.country}</p> : null}
-                    </div>
-                  </div>
-                  <div className="rt-row">
-                    <div className={`rt-field ${errs.company ? 'err' : ''}`}>
-                      <label htmlFor="rt-company">Company <small>(optional)</small></label>
-                      <input id="rt-company" autoComplete="organization" maxLength={60} value={f.company} onChange={(e) => set('company', e.target.value)} aria-invalid={Boolean(errs.company)} />
-                      {errs.company ? <p className="f-err" role="alert">{errs.company}</p> : null}
-                    </div>
-                    <div className={`rt-field ${errs.email ? 'err' : ''}`}>
-                      <label htmlFor="rt-email">Email <i>*</i> <small>(never shown)</small></label>
-                      <input id="rt-email" type="email" autoComplete="email" maxLength={120} value={f.email} onChange={(e) => set('email', e.target.value)} aria-invalid={Boolean(errs.email)} />
-                      {errs.email ? <p className="f-err" role="alert">{errs.email}</p> : null}
-                    </div>
-                  </div>
-                  <div className="hp" aria-hidden="true"><label htmlFor="rt-web">Website</label><input id="rt-web" tabIndex={-1} value={f.website} onChange={(e) => setF({ ...f, website: e.target.value })} /></div>
-                  <label className={`rt-consent ${errs.consent ? 'err' : ''}`}>
-                    <input type="checkbox" checked={f.consent} onChange={(e) => set('consent', e.target.checked)} />
-                    <span>I agree that MyFrequentRewards may store these details and contact me about my review (<Link to="/privacy" onClick={close}>Privacy Policy</Link>). My first name, country, company (if given), rating and review may be published as a member testimonial on this website. My email is never shown.</span>
-                  </label>
-                  {errs.consent ? <p className="f-err" role="alert">{errs.consent}</p> : null}
-                  {status === 'error' ? <p className="form-error" role="alert">We couldn’t send your review. Please try again.</p> : null}
-                  <div className="rt-actions">
-                    <button type="button" className="btn btn-ghost-dark" onClick={() => setStep(1)}>Back</button>
-                    <button type="submit" className="btn btn-primary" disabled={status === 'sending'}>{status === 'sending' ? 'Sending…' : <>Send my review <Icon name="send" size={16} /></>}</button>
-                  </div>
-                </form>
-              ) : null}
-
-              {step === 3 ? (
-                <div className="rt-pane rt-done" key="s3">
-                  <div className="rt-stamp" aria-hidden="true">RECEIVED<small>with thanks</small></div>
-                  <h2 id="rt-title">Thank you, {f.name.split(' ')[0]}!</h2>
-                  <p className="muted">{live ? 'Your review is now part of our member testimonials — with your name, flag and rating.' : 'Your review will join our member testimonials after a quick automated check.'}</p>
-                  <Link to={{ pathname: '/', hash: '#voices' }} className="rt-see" onClick={close}><Icon name="chat" size={16} /> See it in member testimonials <Icon name="arrow" size={14} /></Link>
-                  <p className="muted rt-follow">Follow us for survey drops and payout tips:</p>
-                  <ul className="rt-qr">
-                    {SOCIALS.map((s) => (
-                      <li key={s.id} style={{ '--sc': s.color }}>
-                        <a href={s.url} target="_blank" rel="noopener noreferrer">
-                          <img src={s.qr} alt={`QR code for MyFrequentRewards on ${s.name}`} width="84" height="84" loading="lazy" />
-                          <span><Icon name={s.id} size={14} /> {s.name}</span>
-                        </a>
+            <div className="rw-main">
+              <header className="rw-head">
+                {!done ? (
+                  <ol className="rw-steps" aria-label="Progress">
+                    {STEPS.map(([ic, t], i) => (
+                      <li key={t} className={i < step ? 'done' : i === step ? 'now' : ''}>
+                        <button type="button" onClick={() => goStep(i)} aria-current={i === step ? 'step' : undefined}>
+                          <span>{i < step ? <Icon name="check" size={12} stroke={3} /> : i + 1}</span><em>{t}</em>
+                        </button>
                       </li>
                     ))}
-                  </ul>
-                  <button type="button" className="btn btn-dark" onClick={close}>Back to the site</button>
-                </div>
+                  </ol>
+                ) : <span />}
+                <button type="button" className={`rw-snd ${sound ? '' : 'off'}`} onClick={toggleSound} aria-pressed={!sound} aria-label={sound ? 'Mute sounds' : 'Turn sounds on'} title={sound ? 'Sound on' : 'Sound off'}>
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" />{sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}</svg>
+                </button>
+                <button type="button" className="rw-x" onClick={close} aria-label="Close"><Icon name="close" size={18} /></button>
+              </header>
+
+              <div className="rw-body" ref={body}>
+                {done ? (
+                  <div className="rw-done">
+                    <span className="rw-burst" aria-hidden="true">{Array.from({ length: 16 }).map((_, i) => <i key={i} style={{ '--i': i }} />)}</span>
+                    <span className="rw-done-ico" aria-hidden="true"><Icon name="check" size={34} stroke={3} /></span>
+                    <h2 id="rw-title">Thank you, {first}!</h2>
+                    <p>{live ? `Your review is now live in the ${seg === 'professional' ? 'Professional' : 'Consumer'} testimonials, with your name, flag and rating.` : 'Your review will appear in Client Testimonials after a quick check.'}</p>
+                    <div className="rw-done-acts">
+                      <Link to={{ pathname: '/', hash: '#voices' }} className="rw-next" onClick={close}><Icon name="chat" size={16} /> See Client Testimonials</Link>
+                      <Link to="/about-us/reviews" className="rw-ghost" onClick={close}>All ratings &amp; reviews <Icon name="arrow" size={14} /></Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rw-pane" key={step}>
+                    <h2 id="rw-title">{TITLES[step]}</h2>
+                    <p className="rw-sub">{SUBS[step]}</p>
+
+                    {step === 0 ? (
+                      <>
+                        <div className="rw-who" role="radiogroup" aria-label="I am a">
+                          {['consumer', 'professional'].map((k) => (
+                            <button type="button" role="radio" aria-checked={seg === k} key={k} className={`rw-door d-${k} ${seg === k ? 'on' : ''}`} onClick={() => pickSeg(k)}>
+                              <span className="rw-door-ico" aria-hidden="true"><Icon name={SEG[k].icon} size={28} /></span>
+                              <span className="rw-door-t"><b>I’m a {SEG[k].label.toLowerCase()}</b><small>{SEG[k].who}</small><em>{SEG[k].motto}</em></span>
+                              <span className="rw-door-go" aria-hidden="true"><Icon name={seg === k ? 'check' : 'arrow'} size={16} stroke={seg === k ? 3 : 1.8} /></span>
+                            </button>
+                          ))}
+                        </div>
+                        {errs.seg ? <p className="f-err" role="alert">{errs.seg}</p> : null}
+                        <p className="rw-later"><button type="button" onClick={close}>Maybe later</button><button type="button" onClick={never}>Don’t ask again</button></p>
+                      </>
+                    ) : null}
+
+                    {step === 1 ? (
+                      <>
+                        <div className={errs.rating ? 'is-bad' : ''}>
+                          {seg === 'professional' ? <ScoreGauge value={rating} onPick={pickRating} /> : <VibeMeter value={rating} onPick={pickRating} />}
+                          {errs.rating ? <p className="f-err" role="alert">{errs.rating}</p> : null}
+                        </div>
+                        <div className="rc-sparks">{S.sparks.map((s) => <button type="button" key={s} onClick={() => set('text', (f.text ? `${f.text.trim()} ` : '') + s)}><Icon name="sparkle" size={11} /> {s.trim()}…</button>)}</div>
+                        <div className={`rc-area ${errs.text ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-text">Your review <i>*</i></label>
+                          <textarea id="rc-text" rows={4} maxLength={600} value={f.text} onChange={(e) => set('text', e.target.value)} placeholder={seg === 'professional' ? 'How relevant were the studies? How was the reward and support?' : 'What do you enjoy? How were the surveys and rewards?'} aria-invalid={Boolean(errs.text)} />
+                          <span className="rc-count">{f.text.trim().length < 20 ? `${20 - f.text.trim().length} more characters` : `${f.text.length}/600`}</span>
+                          {errs.text ? <p className="f-err" role="alert">{errs.text}</p> : null}
+                        </div>
+                      </>
+                    ) : null}
+
+                    {step === 2 ? (
+                      <div className="rc-grid">
+                        <div className={`rc-field ${errs.full ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-full">Full name <i>*</i></label>
+                          <span className="rc-in"><Icon name="user" size={16} /><input id="rc-full" autoComplete="name" maxLength={80} value={f.full} onChange={(e) => set('full', e.target.value)} aria-invalid={Boolean(errs.full)} placeholder="First and last name" /></span>
+                          {errs.full ? <p className="f-err" role="alert">{errs.full}</p> : null}
+                        </div>
+                        <div className={`rc-field ${errs.email ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-email">Email ID <i>*</i> <small>never shown</small></label>
+                          <span className="rc-in"><Icon name="mail" size={16} /><input id="rc-email" type="email" autoComplete="email" maxLength={120} value={f.email} onChange={(e) => set('email', e.target.value)} aria-invalid={Boolean(errs.email)} placeholder="you@email.com" /></span>
+                          {errs.email ? <p className="f-err" role="alert">{errs.email}</p> : null}
+                        </div>
+                        <div className={`rc-field ${errs.iso ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-country">Country <i>*</i></label>
+                          <div className="rc-country">
+                            <span className="rc-flag" key={f.iso || 'none'} aria-hidden="true">{f.iso ? <Flag iso={f.iso} size={22} /> : <Icon name="globe" size={18} />}</span>
+                            <CountryPicker id="rc-country" list={COUNTRIES} value={f.iso} onChange={(x) => set('iso', x.iso)} invalid={Boolean(errs.iso)} />
+                          </div>
+                          {errs.iso ? <p className="f-err" role="alert">{errs.iso}</p> : null}
+                        </div>
+                        <div className={`rc-field ${errs.company ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-co">Company name <i>*</i></label>
+                          <span className="rc-in"><Icon name="briefcase" size={16} /><input id="rc-co" autoComplete="organization" maxLength={60} value={f.company} onChange={(e) => set('company', e.target.value)} aria-invalid={Boolean(errs.company)} placeholder={S.company} /></span>
+                          {errs.company ? <p className="f-err" role="alert">{errs.company}</p> : null}
+                        </div>
+                        <div className="rc-field">
+                          <label htmlFor="rc-des">Designation <small>optional</small></label>
+                          <span className="rc-in"><Icon name="badge" size={16} /><input id="rc-des" autoComplete="organization-title" maxLength={60} value={f.designation} onChange={(e) => set('designation', e.target.value)} placeholder={seg === 'professional' ? 'IT Manager' : 'Student, homemaker…'} /></span>
+                        </div>
+                        <div className={`rc-field ${errs.phone ? 'is-bad' : ''}`}>
+                          <label htmlFor="rc-phone">Phone number <small>optional · never shown</small></label>
+                          <div className="rc-phone">
+                            <CountryPicker id="rc-dial" list={COUNTRIES} value={f.dial} onChange={(x) => set('dial', x.iso)} mode="dial" placeholder="Code" />
+                            <input id="rc-phone" type="tel" inputMode="tel" autoComplete="tel-national" maxLength={20} value={f.phone} onChange={(e) => set('phone', e.target.value.replace(/[^\d\s-]/g, ''))} aria-invalid={Boolean(errs.phone)} placeholder="Number" />
+                          </div>
+                          {f.dial && byIso(f.dial) ? <small className="rc-dial"><Flag iso={f.dial} size={11} /> {byIso(f.dial).name} {byIso(f.dial).dial}</small> : null}
+                          {errs.phone ? <p className="f-err" role="alert">{errs.phone}</p> : null}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {step === 3 ? (
+                      <>
+                        <div className="rw-mobile-card"><ReviewCard seg={seg || 'consumer'} rating={rating} text={f.text.trim()} name={name} iso={f.iso} designation={f.designation.trim()} company={f.company.trim()} /></div>
+                        <ul className="rw-sum">
+                          <li><Icon name={S.icon} size={15} /> <span>{S.label}</span><button type="button" onClick={() => goStep(0)}>Edit</button></li>
+                          <li><Icon name="star" size={15} /> <span>{rating}/5 · {S.levels[rating - 1]}</span><button type="button" onClick={() => goStep(1)}>Edit</button></li>
+                          <li>{c ? <Flag iso={c.iso} size={14} /> : <Icon name="globe" size={15} />} <span>{name} · {c ? c.name : ''}</span><button type="button" onClick={() => goStep(2)}>Edit</button></li>
+                          <li><Icon name="briefcase" size={15} /> <span>{[f.designation.trim(), f.company.trim()].filter(Boolean).join(' · ')}</span><button type="button" onClick={() => goStep(2)}>Edit</button></li>
+                        </ul>
+                        <div className="hp" aria-hidden="true"><label htmlFor="rc-web">Website</label><input id="rc-web" tabIndex={-1} autoComplete="off" value={f.website} onChange={(e) => setF({ ...f, website: e.target.value })} /></div>
+                        <label className={`rc-consent ${errs.consent ? 'is-bad' : ''}`}>
+                          <input type="checkbox" checked={f.consent} onChange={(e) => set('consent', e.target.checked)} />
+                          <span>Publish my review in Client Testimonials with my name (first name and last-name initial), flag, country, company and — if given — designation. MyFrequentRewards may store these details and contact me about my review (<Link to="/privacy" onClick={close}>Privacy Policy</Link>). Email and phone are never shown.</span>
+                        </label>
+                        {errs.consent ? <p className="f-err" role="alert">{errs.consent}</p> : null}
+                        {status === 'error' ? <p className="form-error" role="alert">{msg}</p> : null}
+                      </>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              {!done ? (
+                <footer className="rw-foot">
+                  <span className="rw-private"><Icon name="lock" size={13} /> Email and phone stay private</span>
+                  {step > 0 ? <button type="button" className="rw-back" onClick={() => goStep(step - 1)}><Icon name="arrow" size={15} /> Back</button> : null}
+                  <button type="button" className="rw-next" onClick={next} disabled={status === 'sending'}>
+                    {step < 3 ? <>Continue <Icon name="arrow" size={16} /></> : status === 'sending' ? 'Publishing…' : <>Publish my review <Icon name="send" size={16} /></>}
+                  </button>
+                </footer>
               ) : null}
-            </section>
+            </div>
           </div>
         </div>
       ) : null}

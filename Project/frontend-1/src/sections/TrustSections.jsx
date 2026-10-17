@@ -5,6 +5,7 @@ import FrLogo from '../components/FrLogo.jsx';
 import useInView from '../hooks/useInView.js';
 import { PRIVACY_PROMISES, QUALITY_CHECKS, QUALITY_LAYERS, VERIFICATION_PROTOCOLS } from '../data/quality.js';
 import { BRAND } from '../data/site.js';
+import { isCalm } from '../utils/calm.js';
 
 // Quality & Security Checks — radar sweep + layered hex grid that lights up in sequence
 export function QualityRadar({ withLink = true }) {
@@ -13,7 +14,7 @@ export function QualityRadar({ withLink = true }) {
   const [layer, setLayer] = useState('all');
   useEffect(() => {
     if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setLit((x) => (x + 1) % QUALITY_CHECKS.length), 650);
+    const t = setInterval(() => !isCalm() && setLit((x) => (x + 1) % QUALITY_CHECKS.length), 650);
     return () => clearInterval(t);
   }, [visible]);
   const checks = QUALITY_CHECKS.map((c, i) => ({ ...c, i }));
@@ -71,7 +72,7 @@ export function VerificationScanner() {
   const [g, setG] = useState(0);
   useEffect(() => {
     if (!visible) return undefined; // pause when off-screen
-    const t = setInterval(() => setG((x) => (x + 1) % (VERIFICATION_PROTOCOLS.length + 1)), 1500);
+    const t = setInterval(() => !isCalm() && setG((x) => (x + 1) % (VERIFICATION_PROTOCOLS.length + 1)), 1500);
     return () => clearInterval(t);
   }, [visible]);
   return (

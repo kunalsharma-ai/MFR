@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand, FaqList } from '../components/Common.jsx';
+import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import JourneyPath from '../sections/JourneyPath.jsx';
 import { InvitationsPhone } from '../sections/RewardSections.jsx';
+import { FAQ_HOW } from '../data/faqs.js';
 
 const page = PAGES.howItWorks;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'How It Works', path: page.path }];
@@ -32,19 +33,12 @@ const DEEP = [
   },
   {
     icon: 'gift', color: '#FF5E7E', t: 'Track, claim and receive rewards',
-    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, claim via PayPal, wire transfer or Amazon gift card — or UPI if you live in India. Unclaimed balances carry forward.',
-    bullets: ['Transparent balance history', 'Four payout methods', 'Support on WhatsApp and Live Help'],
+    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers — or UPI if you live in India. Unclaimed balances carry forward.',
+    bullets: ['Transparent balance history', 'Eight reward types', 'Support on WhatsApp and Live Help'],
   },
 ];
 
-const FAQS = [
-  { q: 'How long does it take to join?', a: 'Most people register, verify and start their first profile survey within a few minutes.' },
-  { q: 'Do I need to log in every day to find surveys?', a: 'No — invitations come to you by dashboard, SMS, WhatsApp or email, so you can simply respond when one arrives.' },
-  { q: 'Why are profile surveys so important?', a: 'They tell us which studies fit you, so a complete and honest profile leads to more relevant invitations.' },
-  { q: 'What happens if I do not qualify for a survey?', a: 'You are politely screened out, and new matching invitations will keep arriving.' },
-  { q: 'How do I claim my rewards?', a: 'Open your dashboard, choose claim once you reach the threshold, pick a payout method and confirm.' },
-  { q: 'Can I take part from any device?', a: 'Yes, surveys work on phones, tablets and computers with a modern browser.' },
-];
+const FAQS = FAQ_HOW;
 
 export default function HowItWorks() {
   return (
@@ -150,16 +144,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="section faq-split" aria-labelledby="hiw-faq">
-        <div className="container faq-home-row">
-          <div className="reveal">
-            <p className="eyebrow">FAQ</p>
-            <h2 id="hiw-faq">How it works — answered</h2>
-            <p className="sec-sub">More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</p>
-          </div>
-          <FaqList faqs={FAQS} />
-        </div>
-      </section>
+      <FaqSplit id="hiw-faq" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
       <CtaBand title="Ready for step one?" sub="It’s free, it’s quick, and your first profile survey is waiting." variant="ocean" />
     </>
   );

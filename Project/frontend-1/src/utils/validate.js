@@ -70,7 +70,7 @@ export const STEP_FIELDS = {
   1: ['memberType', 'firstName', 'lastName', 'gender', 'dob', 'country'],
   2: ['email', 'phone','captcha', 'agreeTerms'],
   3: ['password', 'confirm'],
-  4: ['jobTitle', 'industry', 'companyEmail'],
+  4: ['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department', 'jobrole', 'jobTitleOther', 'companyEmail'],
   
 };
 
@@ -98,8 +98,17 @@ export function validateSignup(v) {
 export function validateProfile(v) {
   const e = {};
   if (v.memberType === 'professional') {
-    if ((v.jobTitle || '').trim().length < 2) e.jobTitle = 'Enter your job title.';
-    if (!v.industry) e.industry = 'Select your industry.';
+    // `skip` = questions that do not apply to this member (the backend has no choices for them)
+    const skip = new Set(v.skip || []);
+    if (!v.empstat && !skip.has('empstat')) e.empstat = 'Select your employment status.';
+    if (!(v.hw || []).length && !skip.has('hw')) e.hw = 'Pick at least one.';
+    if (!v.freelancer && !skip.has('freelancer')) e.freelancer = 'Select your job profile.';
+    if (!v.jobseeker && !skip.has('jobseeker')) e.jobseeker = 'Please choose Yes or No.';
+    if (!v.industry && !skip.has('industry')) e.industry = 'Select your industry.';
+    if (!v.sector && !skip.has('sector')) e.sector = 'Select your specialization.';
+    if (!v.department && !skip.has('department')) e.department = 'Select your department.';
+    if (!v.jobrole && !skip.has('jobrole')) e.jobrole = 'Select your job title.';
+    else if (v.jobrole === 'Other' && (v.jobTitleOther || '').trim().length < 2) e.jobTitleOther = 'Type your job title.';
     const ce = (v.companyEmail || '').trim();
     if (ce && !EMAIL_RE.test(ce)) e.companyEmail = 'Enter a valid company email.';
     else if (ce && isFreeMail(ce)) e.companyEmail = 'Use your work domain, not a free email provider.';

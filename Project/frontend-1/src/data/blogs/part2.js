@@ -32,7 +32,7 @@ export const PART2 = [
       {
         h2: 'Profiles that get more invitations in India',
         list: ['IT professionals and software developers', 'Doctors, pharmacists and hospital administrators', 'Small business owners and shopkeepers', 'Car and two-wheeler owners', 'Parents and primary grocery shoppers', 'Students and young professionals'],
-        p: ['Explore the full range on [who can join](/who-can-join).'],
+        p: ['Explore the full range on [who can join](/paid-surveys-for-consumers#countries).'],
       },
       {
         h2: 'Best times to respond',
@@ -140,7 +140,7 @@ export const PART2 = [
       {
         h2: 'Who is invited to business surveys?',
         p: [
-          'Decision-makers and specialists across industries — from C-suite leaders and department heads to engineers, procurement officers, IT architects, HR managers, clinicians, lawyers and business owners. See the full map of [job titles, industries and departments](/who-can-join).',
+          'Decision-makers and specialists across industries — from C-suite leaders and department heads to engineers, procurement officers, IT architects, HR managers, clinicians, lawyers and business owners. See the full map of [job titles, industries and departments](/paid-surveys-for-professionals).',
         ],
       },
       {
@@ -202,7 +202,7 @@ export const PART2 = [
       { h2: 'Myth 2: You must pay to unlock high-paying work', p: ['Fact: genuine platforms are paid by their clients. Joining, participating and claiming rewards at MyFrequentRewards are free.'] },
       { h2: 'Myth 3: Survey sites sell your data', p: ['Fact: reputable research companies follow professional codes such as the [ESOMAR guidelines](https://esomar.org/codes-and-guidelines) and protect respondent identity. We never sell your personal details.'] },
       { h2: 'Myth 4: Fast answers mean more money', p: ['Fact: speeding and random answers are caught by attention checks and quality reviews. Careful answers build a better [quality score](/profiling).'] },
-      { h2: 'Myth 5: Only certain countries get surveys', p: ['Fact: studies run across Asia-Pacific, Europe, North and South America, the Middle East and Africa. See [where our members come from](/who-can-join).'] },
+      { h2: 'Myth 5: Only certain countries get surveys', p: ['Fact: studies run across Asia-Pacific, Europe, North and South America, the Middle East and Africa. See [where our members come from](/paid-surveys-for-consumers#countries).'] },
       { h2: 'Myth 6: Professionals do not take surveys', p: ['Fact: B2B research with managers, engineers, doctors and owners is a major part of the industry — and often rewarded more highly.'] },
       { h2: 'Myth 7: Rewards never actually arrive', p: ['Fact: legitimate platforms publish their payout methods and terms. Ours are on the [rewards page](/rewards-and-payouts) and in the [terms of use](/terms).'] },
       {
@@ -305,7 +305,7 @@ export const PART2 = [
       { h2: 'Update after life changes', p: ['New job, new car, new baby, new city — update your profile within days so matching stays accurate.'] },
       { h2: 'Answer screeners carefully', p: ['Screening questions decide eligibility. Read them fully and answer from real experience. Learn about [screening filters and gate surveys](/quality-and-data-security).'] },
       { h2: 'Protect your quality score', p: ['Thoughtful open-ended answers, consistent responses and passing attention checks build your score. Read about the [profiling and quality score](/profiling).'] },
-      { h2: 'Next step', p: ['Log in, review each profile section and [check the profiles we welcome](/who-can-join).'] },
+      { h2: 'Next step', p: ['Log in, review each profile section and [check the profiles we welcome](/paid-surveys-for-consumers#countries).'] },
     ],
     faqs: [
       { q: 'Why do I get screened out often?', a: 'Quotas are specific, so screen-outs are normal; a complete, accurate profile helps reduce them.' },

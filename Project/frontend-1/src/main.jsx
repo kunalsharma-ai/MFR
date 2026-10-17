@@ -4,7 +4,6 @@ import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { PagesContext, pageFor } from './router/pages.js';
 import { lazyPages } from './router/lazyPages.js';
-import { registerSW } from 'virtual:pwa-register';
 import './styles/global.css';
 import './styles/sections.css';
 import './styles/pages.css';
@@ -16,16 +15,42 @@ import './styles/brand.css';
 import './styles/blog.css';
 import './styles/scenes.css';
 import './styles/contact.css';
+import './styles/rewards.css';
+import './styles/faq.css';
+import './styles/profiles.css';
+import './styles/voices.css';
+import './styles/footer.css';
+import './styles/hero.css';
+import './styles/auth2.css';
+import './styles/verify-modal.css';
+import './styles/home2.css';
 import './styles/cursor.css';
+import './styles/chat2.css';
+import './styles/review.css';
+import './styles/sections21.css';
+import './styles/wall.css';
+import './styles/v20.css';
+import './styles/connect.css';
+import './styles/atlas.css';
+import './styles/v25.css';
 import './styles/perf.css';
-registerSW({
-  immediate: true
-});
+import { startCalm } from './utils/calm.js';
+
 document.documentElement.classList.add('js');
 
-// Routing strategy (prevents "404 – This page wandered off" when the site is opened in an unexpected way):
-// • VITE_ROUTER=hash (single-file preview) or the site opened straight from disk (file://) → HashRouter.
-// • Otherwise BrowserRouter with clean URLs.
+// "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
+// times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth
+// and stops the page from heating up / hanging on weaker devices. See perf.css → html.lite.
+try {
+  const nav = navigator;
+  const conn = nav.connection || {};
+  const lowPower = (nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) || (nav.deviceMemory && nav.deviceMemory <= 4) || conn.saveData;
+  const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if (lowPower || touch) document.documentElement.classList.add('lite');
+} catch { /* ignore */ }
+startCalm();
+
+
 const useHash = import.meta.env.VITE_ROUTER === 'hash' || window.location.protocol === 'file:';
 if (useHash && window.location.protocol === 'file:' && !window.location.hash) window.location.hash = '#/';
 const Router = useHash ? HashRouter : BrowserRouter;
@@ -43,8 +68,7 @@ const tree = (
 );
 
 const root = document.getElementById('root');
-// Hydrate only when the prerendered HTML belongs to THIS url. If a host served index.html or 404.html as a
-// fallback for another route, render fresh on the client so the correct page appears instead of a 404.
+
 const prerenderedFor = root.getAttribute('data-route');
 const matches = !useHash && root.hasChildNodes() && prerenderedFor && normalize(prerenderedFor) === normalize(window.location.pathname);
 // Download the current page's chunk first, so hydration renders exactly the prerendered markup.

@@ -16,7 +16,7 @@ export const EXTRA_B3 = {
         h2: 'Checklist for international earners',
         list: ['Profile completed for your real country and city', 'Language preference set correctly', 'Device time set to automatic', 'PayPal account verified for receiving funds', 'WhatsApp or SMS alerts switched on'],
         p: [
-          'International earning rewards consistency more than luck. Members who keep these five basics in order see fewer screen-outs and smoother redemptions. If you have questions about eligibility in your country, ask our Live Help assistant or check the [who can join](/who-can-join) page, which lists the regions and countries where our community is active today.',
+          'International earning rewards consistency more than luck. Members who keep these five basics in order see fewer screen-outs and smoother redemptions. If you have questions about eligibility in your country, ask our Live Help assistant or check the [who can join](/paid-surveys-for-consumers#countries) page, which lists the regions and countries where our community is active today.',
         ],
       },
     ],

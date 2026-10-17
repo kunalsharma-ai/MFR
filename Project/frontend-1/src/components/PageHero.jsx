@@ -1,3 +1,4 @@
+import Icon from './Icon.jsx';
 import Motto from './Motto.jsx';
 import { AnswerScene, DashboardScene, JourneyScene, OriginScene, PeopleScene, PhoneScene, ScannerScene, SupportScene, VaultScene } from './HeroScenes.jsx';
 import { Breadcrumbs } from './Common.jsx';
@@ -39,7 +40,7 @@ const ART = {
   pen: OriginScene, // About
 };
 
-export default function PageHero({ eyebrow, title, lead, crumbs, theme = 'navy', art = 'grid', artNode = null, children }) {
+export default function PageHero({ eyebrow, title, lead, crumbs, theme = 'navy', art = 'grid', artNode = null, tagline = null, tone = 'con', children }) {
   const Art = ART[art] || ART.grid;
   return (
     <section className={`page-hero ph-${theme}`}>
@@ -50,6 +51,11 @@ export default function PageHero({ eyebrow, title, lead, crumbs, theme = 'navy',
           <Motto />
           {eyebrow ? <p className="eyebrow eyebrow-light">{eyebrow}</p> : null}
           <h1>{title}</h1>
+          {tagline ? (
+            <p className={`ph-tag t-${tone}`} aria-label={tagline.map((x) => x[1]).join(' ')}>
+              {tagline.map(([ic, t], k) => <span key={t} className="ph-slot" style={{ '--k': k }} aria-hidden="true"><span><Icon name={ic} size={16} /> {t}</span></span>)}
+            </p>
+          ) : null}
           {lead ? <p className="ph-lead">{lead}</p> : null}
           {children}
         </div>

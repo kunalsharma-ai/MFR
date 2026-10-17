@@ -5,7 +5,9 @@ import Field from '../components/SxField.jsx';
 import SxRail, { railPct } from '../components/SxRail.jsx';
 import { PageSeo } from '../components/PageHero.jsx';
 import { PAGES } from '../data/pages.js';
-import { CONSUMER_INTERESTS, INDUSTRIES } from '../data/profiles.js';
+import { CONSUMER_INTERESTS } from '../data/profiles.js';
+import { OTHER, industryQuestion } from '../data/employmentProfile.js';
+import { WORLD_FIELDS, clearBelow, loadWorldOptions, worldModel } from '../utils/worldForm.js';
 import { STEPS } from '../data/signupSteps.js';
 import { MEMBER_CATEGORIES, USER_API } from '../data/site.js';
 import { STEP_FIELDS, passwordChecks, passwordScore, validateNewPassword, validateProfile } from '../utils/validate.js';
@@ -15,6 +17,8 @@ import { recallSignup, savePendingProfile } from '../utils/signupMemo.js';
 import { recallNotify, forgetNotify } from '../utils/notifyMemo.js';
 
 const page = PAGES.setPassword;
+const WORLD_ICON = { empstat: 'briefcase', freelancer: 'briefcase', jobseeker: 'question', industry: 'layers', sector: 'badge', department: 'clipboard', jobrole: 'user' };
+const WORLD_HINT = { empstat: 'Loading choices…', freelancer: 'Choose your employment status first.', jobseeker: 'Choose your employment status first.', industry: 'Choose your employment status first.', sector: 'Choose your industry first.', department: 'Choose your specialization first.', jobrole: 'Choose your department first.' };
 const STRENGTH = ['Too weak', 'Weak', 'Fair', 'Strong', 'Excellent'];
 const FIRST_STEP = 3; // steps 1–2 were done on /sign-up
 const LAST_STEP = 4;
@@ -36,12 +40,16 @@ export default function SetPassword() {
   const [memberType, setMemberType] = useState('consumer');
   const [firstName, setFirstName] = useState('');
   const [channels, setChannels] = useState([]);
-  const [v, setV] = useState({ jobTitle: '', industry: '', companyEmail: '', interests: [], password: '', confirm: '' });
+  const [v, setV] = useState({ empstat: '', hw: [], freelancer: '', jobseeker: '', industry: '', sector: '', department: '', jobrole: '', jobTitleOther: '', companyEmail: '', interests: [], password: '', confirm: '' });
   const [touched, setTouched] = useState({});
   const [showPw, setShowPw] = useState(false);
   const [serverMsg, setServerMsg] = useState('');
   const cardRef = useRef(null);
-  const errors = useMemo(() => ({ ...validateProfile({ ...v, memberType }), ...validateNewPassword(v) }), [v, memberType]);
+  // Professional "Your world" choices come from the backend; 'loading' → 'api' (or 'static' if they cannot be loaded).
+  const [worldMode, setWorldMode] = useState('loading');
+  const [worldOpts, setWorldOpts] = useState({});
+  const world = useMemo(() => worldModel(worldMode, worldOpts, v), [worldMode, worldOpts, v]);
+  const errors = useMemo(() => ({ ...validateProfile({ ...v, memberType, skip: world.na }), ...validateNewPassword(v) }), [v, memberType, world.na]);
 
   useEffect(() => {
     if (!userId || !code) {
@@ -81,6 +89,36 @@ const fromServer = Array.isArray(verified.notification)
   }, [userId, code]);
 
   const set = (k, val) => setV((s) => ({ ...s, [k]: val }));
+  const worldLabel = (f) => ({
+    empstat: 'What is your current employment status?',
+    hw: 'Which role you play in your homemaking?',
+    freelancer: 'If you are a Freelancer, please specify your job profile?',
+    jobseeker: 'Are you seeking a job?',
+    industry: v.empstat ? industryQuestion(v.empstat) : 'Which industry do you work in?',
+    sector: 'What is your specialization?',
+    department: 'Which department do you work in?',
+    jobrole: 'What is your job title?',
+  }[f]);
+  const pickWorld = (field, val) => setV((s) => ({ ...clearBelow(s, field), [field]: val }));
+
+  useEffect(() => {
+    if (phase !== 'steps' || memberType !== 'professional' || worldMode !== 'loading') return undefined;
+    let live = true;
+    loadWorldOptions(['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department']).then((o) => {
+      if (!live) return;
+      setWorldOpts(o);
+      setWorldMode(o.empstat.length ? 'api' : 'static');
+    });
+    return () => { live = false; };
+  }, [phase, memberType, worldMode]);
+
+  // The job-title list is large, so it is only fetched once the member gets to that question.
+  useEffect(() => {
+    if (worldMode !== 'api' || !world.ready.jobrole || worldOpts.jobrole) return undefined;
+    let live = true;
+    loadWorldOptions(['jobrole']).then((o) => { if (live) setWorldOpts((s) => ({ ...s, ...o })); });
+    return () => { live = false; };
+  }, [worldMode, world.ready.jobrole, worldOpts.jobrole]);
   const touch = (k) => setTouched((t) => ({ ...t, [k]: true }));
   const err = (k) => (touched[k] ? errors[k] : undefined);
   const ok = (k) => touched[k] && !errors[k];
@@ -116,7 +154,7 @@ const fromServer = Array.isArray(verified.notification)
     setServerMsg('');
     try {
       await patchJSON(USER_API, { userID: userId, emailOTP: code, password: v.password, confirmPassword: v.confirm });
-       savePendingProfile(userId, buildProfileAnswers(memberType, v, channels));
+       savePendingProfile(userId, buildProfileAnswers(memberType, { ...v, jobrole: v.jobrole === OTHER ? v.jobTitleOther.trim() : v.jobrole }, channels));
        forgetNotify(userId);
       setPhase('done');
     } catch (ex) {
@@ -193,15 +231,36 @@ const fromServer = Array.isArray(verified.notification)
                           <h2 className="sx-h">Tell us about your work</h2>
                           <p className="sx-sub">Verified professional details unlock higher-value B2B studies. They are never shared with research clients.</p>
                           <div className="sx-grid">
-                            <Field id="jobTitle" label="Job title" error={err('jobTitle')} ok={ok('jobTitle')} half icon="briefcase">
-                              <input id="jobTitle" placeholder=" " autoComplete="organization-title" maxLength={80} value={v.jobTitle} onChange={(e) => set('jobTitle', e.target.value)} {...aria('jobTitle')} />
-                            </Field>
-                            <Field id="industry" label="Industry" error={err('industry')} ok={ok('industry')} half icon="layers">
-                              <select id="industry" className={v.industry ? 'has-val' : ''} value={v.industry} onChange={(e) => { set('industry', e.target.value); touch('industry'); }} {...aria('industry')}>
-                                <option value="" disabled hidden />
-                                {INDUSTRIES.map((g) => <optgroup key={g.group} label={g.group}>{g.items.map((i) => <option key={i} value={i}>{i}</option>)}</optgroup>)}
-                              </select>
-                            </Field>
+                            {WORLD_FIELDS.filter((f) => !world.na.includes(f)).map((f) => (f === 'hw' ? (
+                                <div key={f} className={`sx-field ${err(f) ? 'bad' : ''}`} style={{ gridColumn: '1 / -1' }}>
+                                  <p id={`${f}-label`} className="sx-sub" style={{ margin: '0 0 6px' }}>{worldLabel(f)}</p>
+                                  <div className="sx-interests" role="group" aria-labelledby={`${f}-label`}>
+                                    {world.lists.hw.map((o) => {
+                                      const on = v.hw.includes(o.value);
+                                      return (
+                                        <button type="button" key={o.value} aria-pressed={on} className={on ? 'on' : ''} onClick={() => { pickWorld('hw', on ? v.hw.filter((x) => x !== o.value) : [...v.hw, o.value]); touch('hw'); }}>
+                                          <Icon name={on ? 'check' : 'heart'} size={16} stroke={on ? 2.6 : 1.8} /> {o.label}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                  {err(f) ? <p className="f-err" id={`${f}-err`} role="alert">{err(f)}</p> : null}
+                                </div>
+                              ) : (
+                              <Field key={f} id={f} label={worldLabel(f)} error={err(f)} ok={ok(f)} hint={world.ready[f] ? undefined : WORLD_HINT[f]} half icon={WORLD_ICON[f]}>
+                                <select id={f} disabled={!world.ready[f]} className={v[f] ? 'has-val' : ''} value={v[f]} onChange={(e) => { pickWorld(f, e.target.value); touch(f); }} {...aria(f)}>
+                                  <option value="" disabled hidden />
+                                  {world.lists[f].some((o) => o.group)
+                                    ? [...new Set(world.lists[f].map((o) => o.group))].map((g) => <optgroup key={g} label={g}>{world.lists[f].filter((o) => o.group === g).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</optgroup>)
+                                    : world.lists[f].map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                                </select>
+                              </Field>
+                            )))}
+                            {v.jobrole === OTHER ? (
+                              <Field id="jobTitleOther" label="Type your job title" error={err('jobTitleOther')} ok={ok('jobTitleOther')} icon="pen">
+                                <input id="jobTitleOther" placeholder=" " autoComplete="organization-title" maxLength={80} value={v.jobTitleOther} onChange={(e) => set('jobTitleOther', e.target.value)} {...aria('jobTitleOther')} />
+                              </Field>
+                            ) : null}
                             <Field id="companyEmail" label="Company email (optional — speeds up verification)" error={err('companyEmail')} ok={ok('companyEmail') && v.companyEmail} icon="mail">
                               <input id="companyEmail" type="email" placeholder=" " autoComplete="work email" maxLength={120} value={v.companyEmail} onChange={(e) => set('companyEmail', e.target.value)} {...aria('companyEmail')} />
                             </Field>

@@ -7,7 +7,6 @@ import { PAGES } from '../data/pages.js';
 import { BRAND, DEMO_MODE, MEMBER_PORTAL_URL } from '../data/site.js';
 import { postJSON } from '../utils/api.js';
 import { EMAIL_RE } from '../utils/validate.js';
-import { prefersReducedMotion } from '../utils/storage.js';
 import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
@@ -33,63 +32,56 @@ const maskEmail = (e) => {
   return `${vis}${u.length > 3 ? '•'.repeat(Math.min(6, u.length - 3)) : ''}${e.includes('@') ? '@' + d : ''}`;
 };
 
+const ORBIT = [['paypal', '#1E6FD9'], ['cash', '#1FAF7A'], ['upi', '#7B3FE4'], ['card', '#FF8A00'], ['bank', '#14B8A6'], ['cart', '#E8457A']];
 function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
-  const card = useRef(null);
-  useEffect(() => {
-    const el = card.current;
-    if (!el || prefersReducedMotion() || window.matchMedia('(hover: none)').matches) return undefined;
-    let raf = 0;
-    const onMove = (e) => {
-      const r = el.getBoundingClientRect();
-      const x = (e.clientX - (r.left + r.width / 2)) / r.width;
-      const y = (e.clientY - (r.top + r.height / 2)) / r.height;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        el.style.setProperty('--rx', `${(-y * 14).toFixed(2)}deg`);
-        el.style.setProperty('--ry', `${(x * 18).toFixed(2)}deg`);
-        el.style.setProperty('--gx', `${(50 + x * 60).toFixed(1)}%`);
-      });
-    };
-    const reset = () => { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    document.addEventListener('pointerleave', reset);
-    return () => { window.removeEventListener('pointermove', onMove); document.removeEventListener('pointerleave', reset); cancelAnimationFrame(raf); };
-  }, []);
+  const ref = useRef(null);
   const ready = emailOk && pwOk && human;
   const lights = [
-    { k: 'Email', on: emailOk, icon: 'mail' },
-    { k: 'Password', on: pwOk, icon: 'lock' },
-    { k: 'Human', on: human, icon: 'captcha' },
+    { k: 'Email', on: emailOk, icon: 'mail', v: emailOk ? maskEmail(email) : 'waiting' },
+    { k: 'Password', on: pwOk, icon: 'lock', v: pwLen ? '•'.repeat(Math.min(pwLen, 8)) : 'waiting' },
+    { k: 'Human check', on: human, icon: 'captcha', v: human ? 'verified' : 'waiting' },
   ];
+  // pointer tilt — written straight to CSS variables (no re-render), eased by a CSS transition
+  const move = (e) => {
+    const el = ref.current;
+    if (!el || e.pointerType === 'touch') return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.setProperty('--ry', `${(x * 22).toFixed(1)}deg`);
+    el.style.setProperty('--rx', `${(-y * 18).toFixed(1)}deg`);
+    el.style.setProperty('--gx', `${Math.round((x + 0.5) * 100)}%`);
+  };
+  const leave = () => { const el = ref.current; if (el) { el.style.removeProperty('--ry'); el.style.removeProperty('--rx'); el.style.removeProperty('--gx'); } };
   return (
-    <div className="mp-stage" aria-hidden="true">
-      <div className={`mp-card ${ready ? 'is-ready' : ''} ${phase === 'success' ? 'is-flipped' : ''}`} ref={card}>
-        <div className="mp-face mp-front">
-          <div className="mp-glare" />
-          <div className="mp-top">
-            <img src={BRAND.monogram} alt="" width="44" height="44" />
-            <span className="mp-brand">Myfrequent<b>rewards</b></span>
-            <span className="mp-tag">MEMBER PASS</span>
-          </div>
-          <div className="mp-chip"><i /><i /><i /><i /></div>
-          <p className="mp-email">{maskEmail(email)}</p>
-          <p className="mp-dots">{Array.from({ length: 12 }, (_, i) => <i key={i} className={i < pwLen ? 'on' : ''} />)}</p>
-          <ul className="mp-lights">
-            {lights.map((l) => (
-              <li key={l.k} className={l.on ? 'on' : ''}><Icon name={l.on ? 'check' : l.icon} size={13} stroke={l.on ? 3 : 2} /> {l.k}</li>
-            ))}
-          </ul>
-          <span className="mp-ready">{ready ? 'READY ✓' : 'LOCKED'}</span>
+    <div className="mcd-stage" aria-hidden="true" ref={ref} onPointerMove={move} onPointerLeave={leave}>
+      <span className="mcd-aura" />
+      <div className="mcd-orbit">
+        {ORBIT.map(([ic, c], i) => <span key={ic} className="mcd-sat" style={{ '--i': i, '--c': c }}><i><Icon name={ic} size={16} /></i></span>)}
+      </div>
+      <div className={`mcd ${ready ? 'is-ready' : ''} ${phase === 'success' ? 'is-open' : ''} ${phase === 'sending' ? 'is-busy' : ''}`}>
+        <div className="mcd-front">
+          <span className="mcd-holo" />
+          <p className="mcd-top"><img src={BRAND.monogram} alt="" width="38" height="38" /><b>MEMBER PASS</b><em className={ready ? 'ok' : ''}>{ready ? 'UNLOCKED' : 'LOCKED'}</em></p>
+          <span className="mcd-chip" />
+          <p className="mcd-num">{emailOk ? maskEmail(email) : email ? email.slice(0, 22) : 'your@email.com'}</p>
+          <p className="mcd-row">
+            <span className="mcd-pin">{Array.from({ length: 6 }, (_, i) => <i key={i} className={i < Math.min(6, pwLen) ? 'on' : ''} />)}</span>
+            <span className={`mcd-seal ${human ? 'on' : ''}`}><Icon name={human ? 'check' : 'shield'} size={14} stroke={human ? 3 : 2} /> {human ? 'Human' : 'Check'}</span>
+          </p>
+          <p className="mcd-foot"><span>MyFrequentRewards</span><span>Your Voice · Your Rewards</span></p>
         </div>
-        <div className="mp-face mp-back">
-          <span className="mp-burst"><Icon name="check" size={46} stroke={3} /></span>
-          <p className="mp-welcome">Welcome back!</p>
-          <p className="mp-sub">Opening your dashboard…</p>
+        <div className="mcd-back">
+          {[0, 1, 2, 3, 4, 5].map((i) => <i key={i} className="mcd-coin" style={{ '--i': i }}>$</i>)}
+          <b>Welcome back!</b>
+          <small>Opening your dashboard…</small>
         </div>
       </div>
-      <div className="mp-orbit">
-        {['coins', 'gift', 'wallet', 'shield', 'star', 'chat'].map((ic, i) => <span key={ic} style={{ '--i': i }}><Icon name={ic} size={18} /></span>)}
-      </div>
+      <ul className="vd-checks">
+        {lights.map((l) => (
+          <li key={l.k} className={l.on ? 'on' : ''}><span><Icon name={l.on ? 'check' : l.icon} size={14} stroke={l.on ? 3 : 2} /></span><b>{l.k}</b><small>{l.v}</small></li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -151,7 +143,7 @@ export default function Login() {
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
     setPhase('success');
     const to = res.redirect || MEMBER_PORTAL_URL || '/member/dashboard';
-      if (!res.demo && to) setTimeout(() => window.location.assign(to), 1400);
+      if (!res.demo && to) setTimeout(() => window.location.href="/member/dashboard", 1400);
       if (res.demo) setMsg('Preview mode: login simulated — no real account was accessed.');
     } catch (ex) {
       setPhase('idle');
@@ -175,17 +167,17 @@ export default function Login() {
       <PageSeo page={page} />
       <section className="lx" aria-labelledby="lx-title">
         <div className="lx-bg" aria-hidden="true">
-          <span className="lx-ring r1" /><span className="lx-ring r2" /><span className="lx-ring r3" />
-          {Array.from({ length: 14 }, (_, i) => <i key={i} className="lx-spark" style={{ '--i': i }} />)}
+          <span className="lx-mesh m1" /><span className="lx-mesh m2" /><span className="lx-mesh m3" />
+          <span className="lx-grid2" />
         </div>
         <div className="container lx-row">
           <div className="lx-art">
             <p className="lx-eyebrow"><span className="live-dot" /> Secure member area</p>
-            <h2 className="lx-hero">Your opinions, <span>your rewards</span> — all in one pass.</h2>
+            <h2 className="lx-hero">Your rewards are <span>one tap away</span> — welcome back.</h2>
             <MemberPass email={f.email} pwLen={Math.min(12, f.password.length)} emailOk={emailOk} pwOk={pwOk} human={f.captchaOk} phase={phase} />
             <ul className="lx-perks">
               <li style={{ '--c': '#FFC233' }}><Icon name="clipboard" size={20} /><span><b>New invitations</b> waiting in your dashboard</span></li>
-              <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> via PayPal, UPI, bank or gift card</span></li>
+              <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> as PayPal, cash, bank transfer, vouchers or gift cards — UPI in India</span></li>
               <li style={{ '--c': '#B49CFF' }}><Icon name="layers" size={20} /><span><b>Profile surveys</b> that unlock better matches</span></li>
             </ul>
           </div>

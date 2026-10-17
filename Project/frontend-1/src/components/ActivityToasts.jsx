@@ -1,63 +1,133 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon.jsx';
 import { Flag } from './CountryPicker.jsx';
-import { METHOD_ICON } from '../utils/payouts.js';
+import { METHOD_INFO, NON_MONEY } from '../utils/payouts.js';
 import useActivityFeed, { initials } from '../hooks/useActivityFeed.js';
 import { prefersReducedMotion, session } from '../utils/storage.js';
 
-// Bottom-left pop-up notifications showing reward activity in random order.
+// Compact bottom-left reward notifications.
+// • Real payouts from the activity feed (consumers and professionals, every region and reward type).
+// • When no real feed is connected: true community facts (rewards paid, surveys completed, open categories).
+// Shown in random order with a smooth coin-drop entrance, a lifetime bar, and a close button that mutes them
+// for the rest of the visit. Paused while the tab is hidden.
+const SHOW_MS = 5600;
+
+// Counts the number inside an amount ("₹1,150", "AED 86", "$25") up from zero
+function CountUp({ value }) {
+  const m = /^(\D*)([\d,]+(?:\.\d+)?)(.*)$/.exec(String(value || ''));
+  const target = m ? Number(m[2].replace(/,/g, '')) : 0;
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!m) return undefined;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / 900);
+      setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  if (!m) return value;
+  return `${m[1]}${n.toLocaleString('en-US')}${m[3]}`;
+}
+const Burst = () => <span className="rwt-burst" aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>;
+
 export default function ActivityToasts() {
-  const { items, isPreview } = useActivityFeed();
+  const { items, isPreview, pulse } = useActivityFeed();
   const [cur, setCur] = useState(null);
   const [show, setShow] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [n, setN] = useState(0);
+  const last = useRef(-1);
 
   useEffect(() => {
     setMuted(Boolean(session.get('mfr_toasts_muted', false)));
   }, []);
 
   useEffect(() => {
-    if (!items.length || muted) return undefined;
+    if (muted) return undefined;
     let t1;
     let t2;
-    let last = -1;
-    const cycle = () => {
+    let k = 0;
+    const pickReal = () => {
       let i = Math.floor(Math.random() * items.length);
-      if (i === last) i = (i + 1) % items.length;
-      last = i;
-      setCur(items[i]);
-      setShow(true);
-      t1 = setTimeout(() => setShow(false), 5200);
-      t2 = setTimeout(cycle, 5200 + 6000 + Math.random() * 6000);
+      if (i === last.current && items.length > 1) i = (i + 1) % items.length;
+      last.current = i;
+      return items[i];
     };
-    t2 = setTimeout(cycle, prefersReducedMotion() ? 9000 : 6500);
+    const cycle = () => {
+      if (document.hidden) { t2 = setTimeout(cycle, 4000); return; }
+      k += 1;
+      // real payouts first; every 4th notification (or all, if no feed) is a community fact
+      const usePulse = !items.length || k % 4 === 0;
+      setCur(usePulse ? pulse[(k * 3) % pulse.length] : pickReal());
+      setN((x) => x + 1);
+      setShow(true);
+      t1 = setTimeout(() => setShow(false), SHOW_MS);
+      t2 = setTimeout(cycle, SHOW_MS + 7000 + Math.random() * 7000);
+    };
+    t2 = setTimeout(cycle, prefersReducedMotion() ? 10000 : 7000);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [items, muted]);
+  }, [items, pulse, muted]);
 
   if (!cur || muted) return null;
-  const biz = cur.segment === 'business';
-  return (
-    <div className={`toast ${show ? 'is-in' : ''} ${biz ? 'is-biz' : ''}`} role="status" aria-live="polite">
-      <div className="toast-av">{initials(cur.name)}<i><Icon name={biz ? 'briefcase' : 'user'} size={11} /></i></div>
-      <div className="toast-txt">
-        <p><strong>{cur.name}</strong> <span className="toast-role">· {cur.role}</span></p>
-        <p className="toast-earn">received <b>{cur.amount}</b> via <span className={`toast-method m-${(METHOD_ICON[cur.method] || 'wallet')}`}><Icon name={METHOD_ICON[cur.method] || 'wallet'} size={12} /> {cur.method}</span></p>
-        <small><Flag iso={cur.iso} size={11} /> {cur.place} · {cur.ago}{isPreview ? <em className="preview-tag">Preview data</em> : null}</small>
+  const close = (
+    <button
+      type="button"
+      className="rwt-x"
+      aria-label="Hide reward notifications"
+      onClick={() => {
+        session.set('mfr_toasts_muted', true);
+        setMuted(true);
+      }}
+    >
+      <Icon name="close" size={12} />
+    </button>
+  );
+
+  if (cur.kind === 'pulse') {
+    return (
+      <div key={n} className={`rwt is-pulse ${show ? 'is-in' : ''}`} style={{ '--tone': cur.tone }} role="status" aria-live="polite">
+        <Burst />
+        <div className="rwt-av"><Icon name={cur.icon} size={18} /><span className="rwt-spark" aria-hidden="true" /></div>
+        <div className="rwt-body">
+          <p className="rwt-l1"><strong className="rwt-amt">{cur.big}</strong> {cur.line}</p>
+          <p className="rwt-l3"><i /> MyFrequentRewards community</p>
+        </div>
+        {close}
+        <span className="rwt-bar" aria-hidden="true" />
       </div>
-      <button
-        type="button"
-        className="toast-x"
-        aria-label="Hide reward notifications"
-        onClick={() => {
-          session.set('mfr_toasts_muted', true);
-          setMuted(true);
-        }}
-      >
-        <Icon name="close" size={14} />
-      </button>
+    );
+  }
+
+  const info = METHOD_INFO[cur.method] || { icon: 'wallet', hue: '#0B1E5B', hue2: '#2F6BFF' };
+  const biz = cur.segment === 'business';
+  const nonMoney = NON_MONEY.includes(cur.method) || !cur.amount;
+  return (
+    <div key={n} className={`rwt ${biz ? 'is-biz' : 'is-con'} ${show ? 'is-in' : ''}`} style={{ '--h1': info.hue, '--h2': info.hue2 }} role="status" aria-live="polite">
+      <Burst />
+      <div className="rwt-av">
+        {initials(cur.name)}
+        <i className="rwt-coin" aria-hidden="true"><Icon name={info.icon} size={11} stroke={2.2} /></i>
+      </div>
+      <div className="rwt-body">
+        <p className="rwt-l1">
+          <b>{cur.name}</b> {nonMoney ? <>received a <strong className="rwt-amt">{cur.method}</strong></> : <>earned <strong className="rwt-amt"><CountUp value={cur.amount} /></strong></>}
+        </p>
+        <p className="rwt-l2">
+          {nonMoney ? null : <span className="rwt-m"><Icon name={info.icon} size={11} stroke={2.2} /> {cur.method}</span>}
+          <span className="rwt-place"><Flag iso={cur.iso} size={10} /> {String(cur.place || '').split(',')[0]}{cur.ago ? ` · ${cur.ago}` : ''}</span>
+        </p>
+        <p className="rwt-l3"><i /> {cur.role}{cur.role ? ' · ' : ''}{biz ? 'Professional' : 'Consumer'}{isPreview ? <em className="rwt-prev">Preview</em> : null}</p>
+      </div>
+      {close}
+      <span className="rwt-bar" aria-hidden="true" />
     </div>
   );
 }

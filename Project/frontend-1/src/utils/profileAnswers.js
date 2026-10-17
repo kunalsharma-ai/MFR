@@ -1,9 +1,14 @@
-// Backend Answer keys for the "Your world" step. A key MUST equal the Question `name` in the database
-// (the Question model stores names in lowercase, so use lowercase here).
+
 export const ANSWER_KEYS = {
-  jobTitle: 'jobtitle',
+  empstat: 'empstat',
+  hw: 'hw',
+  freelancer: 'freelancer',
+  jobseeker: 'jobseeker',
   industry: 'industry',
-  companyEmail: 'companyemail',
+  sector: 'sector',
+  department: 'department',
+  jobrole: 'jobrole',
+  companyEmail: 'workemail',
   interests: 'interests',
   communication: 'communication-methods',
 };
@@ -24,8 +29,14 @@ export function buildProfileAnswers(memberType, v, channels = []) {
     if (s) out[ANSWER_KEYS[field]] = s;
   };
   if (memberType === 'professional') {
-    text('jobTitle', v.jobTitle);
+    text('empstat', v.empstat);
+    if (Array.isArray(v.hw) && v.hw.length) out[ANSWER_KEYS.hw] = v.hw;
+    text('freelancer', v.freelancer);
+    text('jobseeker', v.jobseeker);
     text('industry', v.industry);
+    text('sector', v.sector);
+    text('department', v.department);
+    text('jobrole', v.jobrole);
     text('companyEmail', String(v.companyEmail || '').toLowerCase());
   } else if (Array.isArray(v.interests) && v.interests.length) {
     out[ANSWER_KEYS.interests] = v.interests;

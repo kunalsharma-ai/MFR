@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import Captcha from '../components/Captcha.jsx';
-import CountryPicker from '../components/CountryPicker.jsx';
+import CountryPicker, { Flag } from '../components/CountryPicker.jsx';
 import DobPicker from '../components/DobPicker.jsx';
 import Field from '../components/SxField.jsx';
 import SxRail, { railPct } from '../components/SxRail.jsx';
@@ -11,7 +11,7 @@ import { PageSeo } from '../components/PageHero.jsx';
 import { PAGES } from '../data/pages.js';
 import { COUNTRIES, SUPPORTED_COUNTRIES } from '../data/countries.js';
 import { STEPS } from '../data/signupSteps.js';
-import { MEMBER_CATEGORIES, MIN_SIGNUP_AGE, NOTIFY_CHANNELS, USER_API } from '../data/site.js';
+import { BRAND, MEMBER_CATEGORIES, MIN_SIGNUP_AGE, NOTIFY_CHANNELS, USER_API } from '../data/site.js';
 //import { ADULT_AGE, GENDERS, STEP_FIELDS, ageFromDob,validateSignup } from '../utils/validate.js';
 import { postJSON, putJSON } from '../utils/api.js';
 import { buildRegisterPayload } from '../utils/registerPayload.js';
@@ -28,6 +28,42 @@ const crumbs = [{ name: 'Home', path: '/' }, { name: 'Sign Up', path: page.path 
 
 const LAST_STEP = 2;
 const RESEND_WAIT = 30; // seconds between "resend" clicks
+
+
+function LiveCard({ v, step, progress, sent }) {
+  const pro = v.memberType === 'professional';
+  const c = COUNTRIES.find((x) => x.iso === v.country);
+  const name = `${v.firstName || ''} ${v.lastName || ''}`.trim();
+  return (
+    <div className="lc-stage" aria-hidden="true">
+      <div className={`lc-card ${pro ? 'is-pro' : ''} ${name ? 'has-name' : ''}`}>
+        <span className="lc-holo" />
+        <div className="lc-top">
+          <img src={BRAND.monogram} alt="" width="40" height="40" />
+          <span className="lc-type">{pro ? 'PROFESSIONAL' : 'CONSUMER'} MEMBER</span>
+        </div>
+        <div className="lc-mid">
+          <span className="lc-chip"><i /><i /><i /><i /></span>
+          <span className="lc-ring" style={{ '--p': progress }}><b>{progress}%</b></span>
+        </div>
+        <p className="lc-name" key={name || 'x'}>{name || 'Your name here'}</p>
+        <div className="lc-foot">
+          <span>{c ? <><Flag iso={c.iso} size={12} /> {c.name}</> : 'Choose your country'}</span>
+          <span>Member since {new Date().getFullYear()}</span>
+        </div>
+      </div>
+      <ol className="lc-steps">
+        {STEPS.map((x) => (
+          <li key={x.n} className={sent || x.n < step ? 'done' : x.n === step ? 'now' : ''}>
+            <span><Icon name={sent || x.n < step ? 'check' : x.icon} size={14} stroke={sent || x.n < step ? 3 : 2} /></span>
+            <small>{x.t}</small>
+          </li>
+        ))}
+      </ol>
+      <p className="lc-hint">{sent ? 'Check your inbox' : STEPS[step - 1].art}</p>
+    </div>
+  );
+}
 
 export default function SignUp() {
   const { search } = useLocation();
@@ -203,13 +239,10 @@ rememberSignup(res.data?.user, { memberType: v.memberType, firstName: v.firstNam
             <p className="eyebrow eyebrow-light">Join free · about 2 minutes</p>
             <h1>{page.h1}</h1>
             <p className="muted-light">Earn money online by sharing your opinion — no investment, no fees, ever.</p>
-            <div className="sx-stage" aria-hidden="true">
-              <div className={`sx-badge s${status === 'sent' ? 4 : step}`}><Icon name={status === 'sent' ? 'mail' : STEPS[step - 1].icon} size={44} stroke={1.4} /></div>
-              <p className="sx-stage-t">{status === 'sent' ? 'Check your inbox' : STEPS[step - 1].art}</p>
-            </div>
+            <LiveCard v={v} step={step} progress={Math.max(0, Math.min(100, status === 'sent' ? 100 : pct))} sent={status === 'sent'} />
             <ul className="sx-perks">
               <li><Icon name="heart" size={18} /> 100% free membership</li>
-              <li><Icon name="wallet" size={18} /> PayPal · UPI · Bank · Gift cards</li>
+              <li><Icon name="wallet" size={18} /> PayPal · Cash · Bank · Vouchers · UPI (India)</li>
               <li><Icon name="lock" size={18} /> Your details are never sold or shared</li>
             </ul>
           </aside>

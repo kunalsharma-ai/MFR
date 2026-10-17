@@ -1,0 +1,99 @@
+/* v2.4 — Scan & Connect page (/scan-and-connect) */
+/* Hero: a slowly turning 3D cube whose faces are the brands' QR codes, scanned by a phone beam */
+.sc.sc-qr { display: grid; place-items: center; perspective: 900px; }
+.qx-glow { position: absolute; inset: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(192, 132, 252, .55), transparent 65%); }
+.qx-cube { position: relative; width: 170px; height: 170px; transform-style: preserve-3d; animation: qxTurn 16s linear infinite; }
+@keyframes qxTurn { from { transform: rotateX(-14deg) rotateY(0); } to { transform: rotateX(-14deg) rotateY(360deg); } }
+.qx-face { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 4px; border-radius: 22px; background: #fff; box-shadow: inset 0 0 0 6px var(--c), inset 0 0 0 9px var(--c2); backface-visibility: hidden; }
+.qx-face img { width: 112px; height: 112px; }
+.qx-face b { font: 900 .72rem var(--font-b); letter-spacing: .12em; color: var(--c); }
+.qx-face.f0 { transform: translateZ(85px); } .qx-face.f1 { transform: rotateY(90deg) translateZ(85px); }
+.qx-face.f2 { transform: rotateY(180deg) translateZ(85px); } .qx-face.f3 { transform: rotateY(-90deg) translateZ(85px); }
+.qx-face.top, .qx-face.bottom { background: linear-gradient(135deg, #FF8A00, #FF3B8D 50%, #8B5CF6); box-shadow: none; }
+.qx-face.top { transform: rotateX(90deg) translateZ(85px); } .qx-face.bottom { transform: rotateX(-90deg) translateZ(85px); }
+.qx-beam { position: absolute; left: 50%; bottom: 38px; width: 150px; height: 120px; margin-left: -75px; clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0); background: linear-gradient(0deg, rgba(255, 194, 51, .6), rgba(255, 194, 51, 0)); animation: qxBeam 2.4s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes qxBeam { 50% { opacity: .35; transform: scaleX(.8); } }
+.qx-phone { position: absolute; left: 50%; bottom: 0; width: 54px; height: 54px; margin-left: -27px; border-radius: 16px; display: grid; place-items: center; color: #2A1A6E; background: #FFC233; box-shadow: 0 14px 26px -10px rgba(0, 0, 0, .5); }
+.qx-chip { position: absolute; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--t); box-shadow: 0 10px 20px -8px var(--t); animation: hmBob 5s ease-in-out infinite; }
+.qx-chip.k0 { left: 18px; top: 60px; } .qx-chip.k1 { right: 20px; top: 40px; animation-delay: -1s; } .qx-chip.k2 { right: 6px; top: 200px; animation-delay: -2s; }
+.qx-chip.k3 { left: 4px; top: 220px; animation-delay: -3s; } .qx-chip.k4 { left: 70px; top: 10px; animation-delay: -4s; }
+.qx-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.qx-jump a { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 4px 14px 4px 4px; border-radius: 99px; background: rgba(255, 255, 255, .12); color: #fff; text-decoration: none; font: 700 .84rem var(--font-b); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); transition: background .2s, transform .2s; }
+.qx-jump a:hover { background: rgba(255, 255, 255, .22); transform: translateY(-2px); }
+.qx-jump b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 900 .62rem var(--font-b); background: linear-gradient(140deg, var(--c), var(--c2)); }
+
+/* Brand worlds — each brand gets its own colour grading */
+.qb { position: relative; overflow: hidden; scroll-margin-top: 90px; }
+.qb::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 70% at 0% 0%, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%), radial-gradient(50% 60% at 100% 100%, color-mix(in srgb, var(--c2) 14%, transparent), transparent 70%); pointer-events: none; }
+.qb-mfr { background: #FFF8F1; } .qb-t2o { background: #F0FBFA; } .qb-mho { background: #FFF5F6; } .qb-fr { background: linear-gradient(170deg, #0D1A42, #12295E); color: #E6ECFF; }
+.qb-row { position: relative; display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 40px; align-items: start; }
+.qb-head { position: sticky; top: 100px; }
+.qb-mono { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 26px; background: linear-gradient(140deg, var(--c), var(--c2)); color: #fff; font: 900 1.2rem var(--font-d); letter-spacing: .04em; box-shadow: 0 20px 34px -16px var(--c); transform: perspective(400px) rotateY(-16deg) rotateX(8deg); margin-bottom: 14px; }
+.qb-mono span { transform: translateZ(20px); }
+.qb h2 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin: 4px 0 8px; overflow-wrap: break-word; }
+.qb-fr h2 { color: #fff; }
+.qb-tag { margin: 0 0 6px; font-weight: 700; color: var(--c); }
+.qb-fr .qb-tag { color: #7FE6DA; }
+.qb-note { margin: 0 0 12px; color: #5D5A80; }
+.qb-fr .qb-note, .qb-fr .eyebrow { color: #A9B6DA; }
+.qb-count { display: inline-flex; gap: 6px; align-items: baseline; margin: 0; padding: 6px 14px; border-radius: 99px; background: color-mix(in srgb, var(--c) 12%, #fff); color: #3E3A66; font: 600 .8rem var(--font-b); }
+.qb-count b { font: 900 1.1rem var(--font-d); color: var(--c); }
+.qb-fr .qb-count { background: rgba(255, 255, 255, .08); color: #C9D4F5; }
+.qb-fr .qb-count b { color: #7FE6DA; }
+
+/* Channel cards — 3D tilt with a scanner frame */
+.qc-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; perspective: 1000px; }
+.qc { animation: ftUp .7s calc(var(--i) * 80ms) cubic-bezier(.3, 1.3, .5, 1) both; }
+@keyframes ftUp { from { opacity: 0; transform: translateY(20px); } }
+.qc-in { height: 100%; display: grid; justify-items: center; gap: 10px; padding: 16px 16px 14px; border-radius: 24px; background: #fff; color: #1B1F45; box-shadow: 0 24px 40px -30px color-mix(in srgb, var(--t) 80%, #000), inset 0 0 0 1px color-mix(in srgb, var(--t) 22%, #fff); transition: transform .45s cubic-bezier(.3, 1.3, .5, 1), box-shadow .45s; transform-style: preserve-3d; }
+.qc:hover .qc-in, .qc:focus-within .qc-in { transform: rotateX(8deg) rotateY(-8deg) translateY(-6px); box-shadow: 0 34px 50px -30px color-mix(in srgb, var(--t) 90%, #000), inset 0 0 0 2px var(--t); }
+.qc-top { width: 100%; margin: 0; display: flex; align-items: center; gap: 10px; }
+.qc-ico { flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: #fff; background: var(--t); box-shadow: 0 8px 16px -8px var(--t); }
+.qc-id { display: grid; min-width: 0; }
+.qc-id b { font: 800 1rem var(--font-d); }
+.qc-id small { color: #6E6A8E; font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qc-scan { position: relative; padding: 12px; border-radius: 18px; background: #fff; line-height: 0; transform: translateZ(30px); }
+.qc-scan img { width: 168px; height: 168px; }
+.qc-corners i { position: absolute; width: 22px; height: 22px; border: 3px solid var(--t); }
+.qc-corners i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; border-radius: 8px 0 0 0; }
+.qc-corners i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; border-radius: 0 8px 0 0; }
+.qc-corners i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 8px; }
+.qc-corners i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; border-radius: 0 0 8px 0; }
+.qc-laser { position: absolute; left: 10px; right: 10px; top: 12px; height: 3px; border-radius: 3px; background: var(--t); box-shadow: 0 0 14px var(--t); opacity: 0; }
+.qc:hover .qc-laser, .qc:focus-within .qc-laser { opacity: 1; animation: qcLaser 1.2s ease-in-out infinite alternate; }
+@keyframes qcLaser { to { transform: translateY(166px); } }
+.qc-hint { margin: 0; font-size: .72rem; color: #8E8AA8; }
+.qc-act { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.qc-act a, .qc-act button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 40px; padding: 0 6px; border: 0; border-radius: 12px; font: 700 .74rem var(--font-b); cursor: pointer; text-decoration: none; color: #3E3A66; background: #F3F1FA; white-space: nowrap; transition: background .2s, color .2s; }
+.qc-act a:hover, .qc-act button:hover { background: color-mix(in srgb, var(--t) 14%, #fff); color: #1B1F45; }
+.qc-act .qc-open { color: #fff; background: var(--t); }
+.qc-act .qc-open:hover { color: #fff; background: color-mix(in srgb, var(--t) 85%, #000); }
+.qc-dl { transform: rotate(90deg); }
+.qc-act a:focus-visible, .qc-act button:focus-visible, .qx-jump a:focus-visible { outline: 3px solid #2F6BFF; outline-offset: 2px; }
+
+.qx-tips { background: #F7F4FF; }
+.qx-tips h2 { text-align: center; }
+.qx-steps { list-style: none; margin: 24px auto 0; padding: 0; max-width: 900px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+.qx-steps li { display: grid; justify-items: start; gap: 6px; padding: 18px; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px #E7E1F7; color: #5D5A80; }
+.qx-steps li > .ico { color: #6D5BF7; }
+.qx-steps b { color: #1B1F45; }
+.qx-steps small { font-size: .84rem; }
+.qx-back { text-align: center; margin: 20px 0 0; }
+.qx-back a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .qb-row { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .qb-head { position: static; }
+  .qx-steps { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .qc-grid { grid-template-columns: minmax(0, 1fr); }
+  .qc-scan img { width: 200px; height: 200px; }
+  @keyframes qcLaser { to { transform: translateY(198px); } }
+  .qx-cube { width: 140px; height: 140px; }
+  .qx-face img { width: 92px; height: 92px; }
+  .qx-face.f0 { transform: translateZ(70px); } .qx-face.f1 { transform: rotateY(90deg) translateZ(70px); }
+  .qx-face.f2 { transform: rotateY(180deg) translateZ(70px); } .qx-face.f3 { transform: rotateY(-90deg) translateZ(70px); }
+  .qx-face.top { transform: rotateX(90deg) translateZ(70px); } .qx-face.bottom { transform: rotateX(-90deg) translateZ(70px); }
+}
+@media (prefers-reduced-motion: reduce) { .qx-cube, .qx-beam, .qx-chip, .qc, .qc-laser { animation: none !important; } .qc-in { transition: none; } }
