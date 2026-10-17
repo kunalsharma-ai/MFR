@@ -4,6 +4,7 @@ import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { PagesContext, pageFor } from './router/pages.js';
 import { lazyPages } from './router/lazyPages.js';
+import { registerSW } from 'virtual:pwa-register';
 import './styles/global.css';
 import './styles/sections.css';
 import './styles/pages.css';
@@ -17,7 +18,9 @@ import './styles/scenes.css';
 import './styles/contact.css';
 import './styles/cursor.css';
 import './styles/perf.css';
-
+registerSW({
+  immediate: true
+});
 document.documentElement.classList.add('js');
 
 // Routing strategy (prevents "404 – This page wandered off" when the site is opened in an unexpected way):
