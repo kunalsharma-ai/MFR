@@ -19,6 +19,9 @@ import { play } from "./sound.js";
 import { asset } from "./assets.js";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useMember } from "@/Context/member.js";
+import { api } from "@/util/api.js";
+import useToast from "@/hooks/useToast.js";
 
 const THEME_KEY = "mfr.consent.theme"; // the member's own light/dark choice (wins over everything)
 const ls = {
@@ -90,6 +93,7 @@ const fmtDate = (iso, lang) => {
 };
 
 export default function App({ cfg }) {
+  const user = useMember();
   const { t, lang, meta, mtBusy } = useI18n();
   const [mounted, setMounted] = useState(false);
   // A fresh (non-hydrating) render paints the intro + wheel first and mounts the chapters one by one in the next
@@ -297,26 +301,31 @@ export default function App({ cfg }) {
     const started = Date.now();
 
     try {
-      const response = await fetch("/auth/terms", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          ...(cfg.headers || {}),
-        },
-        body: JSON.stringify(rec),
-      });
+      useToast(
+        await api.put(`/api/v1/user/${user._id}`, {
+          terms: rec.terms,
+        }),
+      );
+      // const response = await fetch("/auth/terms", {
+      //   method: "POST",
+      //   credentials: "include",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Accept: "application/json",
+      //     ...(cfg.headers || {}),
+      //   },
+      //   body: JSON.stringify(rec),
+      // });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`HTTP ${response.status}`);
+      // }
 
-      const data = await response.json().catch(() => ({}));
+      // const data = await response.json().catch(() => ({}));
 
-      if (data?.consentId) {
-        rec.consentId = data.consentId;
-      }
+      // if (data?.consentId) {
+      //   rec.consentId = data.consentId;
+      // }
 
       // Let the signing animation finish (at least 1.1 seconds).
       await new Promise((resolve) =>
