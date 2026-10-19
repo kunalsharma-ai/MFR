@@ -74,7 +74,7 @@ class ValidUser {
       if (!this.emailVerified())
         return this.router.replace(`/?verifyemail=${this.userinfo.mail}`);
 
-      if (!this.termsAccepted()) return this.router.replace("/auth/terms");
+      if (!this.termsAccepted()) return this.router.replace("/auth/consent");
 
       if (!(await this.hasCompletedWelcomeSurvey()))
         return this.router.replace("/survey?name=welcome");
