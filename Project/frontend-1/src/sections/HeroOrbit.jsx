@@ -159,7 +159,7 @@ function ProWorld({ pay }) {
         {[0, 1, 2, 3, 4].map((k) => <b key={k} className={`hg-city c${k}`} />)}
         <span className="hg-gloss" />
       </div>
-      <svg className="hg-orbit" viewBox="0 0 520 520" aria-hidden="true"><ellipse cx="260" cy="250" rx="225" ry="78" /></svg>
+      <svg className="hg-orbit" viewBox="0 0 520 520" role="img" aria-label="Orbit ring of reward types"><ellipse cx="260" cy="250" rx="225" ry="78" /></svg>
       {ROLES.map(([t, ic], i) => (
         <span key={t} className="hg-role" style={{ '--i': i }}><span><Icon name={ic} size={14} /></span>{t}</span>
       ))}

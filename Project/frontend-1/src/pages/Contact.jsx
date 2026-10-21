@@ -128,7 +128,7 @@ export default function Contact() {
 
             <a className="ct-map" href={MAPS} target="_blank" rel="noopener noreferrer">
               <span className="ct-map-art" aria-hidden="true">
-                <svg viewBox="0 0 300 140" preserveAspectRatio="none"><path d="M0 100 C 60 80 90 120 150 96 S 250 60 300 80" /><path d="M0 40 C 80 50 120 20 180 36 S 260 70 300 52" /><path d="M120 0 V140 M210 0 V140" /></svg>
+                <svg viewBox="0 0 300 140" preserveAspectRatio="none" role="img" aria-label="Support availability wave chart"><path d="M0 100 C 60 80 90 120 150 96 S 250 60 300 80" /><path d="M0 40 C 80 50 120 20 180 36 S 260 70 300 52" /><path d="M120 0 V140 M210 0 V140" /></svg>
                 <span className="ct-pin"><Icon name="pin" size={22} /></span>
               </span>
               <span className="ct-map-copy">

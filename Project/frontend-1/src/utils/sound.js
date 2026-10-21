@@ -196,3 +196,8 @@ export function welcomePop() {
   return () => { off(); clearTimeout(early); };
 }
  
+
+/** A language sound is about to play — skip the welcome chime so the two never overlap. */
+export function skipWelcome() {
+  welcomed = true;
+}

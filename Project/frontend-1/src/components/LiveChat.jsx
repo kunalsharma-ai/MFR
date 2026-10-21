@@ -6,6 +6,7 @@ import CountryPicker, { Flag } from './CountryPicker.jsx';
 import { API_BASE, BRAND, CONTACT, DEMO_MODE, whatsappLink } from '../data/site.js';
 import { EMAIL_RE } from '../utils/validate.js';
 import { pop, setSound, soundOn } from '../utils/sound.js';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 24/7 Live Help.
 // • Answers instantly from the website's own knowledge base (every FAQ, policy, guide FAQ and key data —
@@ -195,6 +196,8 @@ function LeadForm({ question, tab, onDone }) {
 }
 
 export default function LiveChat({ open, onClose, seed }) {
+  // Translated pages show the greeting whole (a letter-by-letter typewriter cannot be translated mid-word).
+  const { lang } = useI18n();
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -270,7 +273,7 @@ export default function LiveChat({ open, onClose, seed }) {
         <div className="hc-head-row">
           <div className="hc-avatar" aria-hidden="true">
             <span className="hc-avatar-ring" />
-            <img src={BRAND.monogram} alt="" width="40" height="40" />
+            <img src={BRAND.monogram} alt="MyFrequentRewards Live Help assistant" width="40" height="40" />
             <i className="hc-online" />
           </div>
           <div className="hc-title">
@@ -278,7 +281,7 @@ export default function LiveChat({ open, onClose, seed }) {
             <small><i className="hc-dot" /> Online now · instant answers</small>
           </div>
           <button type="button" className={`hc-snd ${sound ? '' : 'off'}`} onClick={toggleSound} aria-pressed={!sound} aria-label={sound ? 'Mute chat sounds' : 'Turn chat sounds on'} title={sound ? 'Sound on' : 'Sound off'} tabIndex={tab}>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Sound icon">
               <path d="M11 5 6 9H3v6h3l5 4z" />
               {sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}
             </svg>
@@ -286,7 +289,7 @@ export default function LiveChat({ open, onClose, seed }) {
           <button type="button" className="hc-x" onClick={onClose} aria-label="Close chat" tabIndex={tab}><Icon name="close" size={18} /></button>
         </div>
         <div className="hc-wave" aria-hidden="true">
-          <svg viewBox="0 0 400 24" preserveAspectRatio="none"><path d="M0 12 C 60 0, 100 24, 160 12 S 260 0, 320 12 S 380 24, 400 12 V24 H0Z" /></svg>
+          <svg viewBox="0 0 400 24" preserveAspectRatio="none" role="img" aria-label="Decorative wave"><path d="M0 12 C 60 0, 100 24, 160 12 S 260 0, 320 12 S 380 24, 400 12 V24 H0Z" /></svg>
         </div>
       </div>
 
@@ -294,7 +297,7 @@ export default function LiveChat({ open, onClose, seed }) {
         {!started ? (
           <div className="hc-welcome">
             <p className="hc-hi"><span className="hc-wave-hand" aria-hidden="true">👋</span> Hi there!</p>
-            <h3>{open ? <Typewriter lines={GREETINGS} /> : GREETINGS[0]}</h3>
+            <h3>{open && lang === 'en' ? <Typewriter lines={GREETINGS} /> : GREETINGS[0]}</h3>
             <p className="hc-sub">Ask anything about joining, surveys, rewards, payouts, privacy or your account — every answer links to the page it comes from.</p>
             <div className="hc-topics">
               {TOPICS.map((t, i) => (
@@ -316,7 +319,7 @@ export default function LiveChat({ open, onClose, seed }) {
         {msgs.map((m, i) => (
           <Fragment key={i}>
           <div className={`hc-msg ${m.from}`}>
-            {m.from === 'bot' ? <img className="hc-msg-av" src={BRAND.monogram} alt="" width="28" height="28" /> : null}
+            {m.from === 'bot' ? <img className="hc-msg-av" src={BRAND.monogram} alt="MyFrequentRewards assistant" width="28" height="28" /> : null}
             <div className="hc-bubble">
               {m.unsure ? <p className="hc-unsure">Here’s the closest answer I found:</p> : null}
               <p>{m.a || m.text}</p>
@@ -363,7 +366,7 @@ export default function LiveChat({ open, onClose, seed }) {
         ))}
         {typing ? (
           <div className="hc-msg bot">
-            <img className="hc-msg-av" src={BRAND.monogram} alt="" width="28" height="28" />
+            <img className="hc-msg-av" src={BRAND.monogram} alt="MyFrequentRewards assistant" width="28" height="28" />
             <div className="hc-bubble hc-typing" aria-label="Support is typing"><span /><span /><span /></div>
           </div>
         ) : null}

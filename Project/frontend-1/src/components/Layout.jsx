@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
@@ -8,12 +8,17 @@ import ReviewPopup from './ReviewPopup.jsx';
 import VerifyEmailGate from './VerifyEmailGate.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
-import { LangSuggest } from './LangPicker.jsx';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
 import { PagesContext, pageFor } from '../router/pages.js';
 import { welcomePop } from '../utils/sound.js';
 
+// The language picker and the translation pill are only downloaded when they are needed.
+const LanguagePicker = lazy(() => import('./LanguagePicker.jsx').then((m) => ({ default: m.LanguagePicker })));
+const TranslateStatus = lazy(() => import('./LanguagePicker.jsx').then((m) => ({ default: m.TranslateStatus })));
+
 export default function Layout({ children }) {
+  const { picker, lang } = useI18n();
   const [chat, setChat] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { pathname, hash } = useLocation();
@@ -111,7 +116,6 @@ export default function Layout({ children }) {
       <Header />
       <main id="main" tabIndex={-1}>{children}</main>
       <Footer />
-      <LangSuggest />
       <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />
       {mounted ? (
@@ -123,6 +127,10 @@ export default function Layout({ children }) {
           <CustomCursor />
         </>
       ) : null}
+      <Suspense fallback={null}>
+        {picker ? <LanguagePicker /> : null}
+        {lang !== 'en' ? <TranslateStatus /> : null}
+      </Suspense>
     </>
   );
 }

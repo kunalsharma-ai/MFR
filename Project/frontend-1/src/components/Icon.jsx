@@ -67,11 +67,92 @@ const P = {
   key: 'M14.5 4a5.5 5.5 0 11-4.6 8.5L3.5 19v2h3v-2h2v-2h2l1.4-1.4A5.5 5.5 0 0114.5 4zM16.5 7.5h.01',
   bolt: 'M13 2.5L5 13.5h6l-1 8 8-11h-6z',
   book: 'M4 4.5A1.5 1.5 0 015.5 3H20v15H5.5A1.5 1.5 0 004 19.5zM4 19.5A1.5 1.5 0 005.5 21H20',
+  x: 'M6 6l12 12M18 6L6 18',
+  search: 'M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15zM16 16l5 5',
+  volume: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11',
   headset: 'M4 14v-2a8 8 0 0116 0v2M4 14h3v6H5a1 1 0 01-1-1zM20 14h-3v6h2a1 1 0 001-1zM17 20c0 1-1.5 1.5-4 1.5',
 };
 
-export default function Icon({ name, size = 22, stroke = 1.8, className = '', title, fill = 'none' }) {
+// Alternative text for every icon (also listed in ALT-TEXT.md). Pass `alt` to describe a specific use.
+export const ICON_ALT = {
+  "arrow": "Arrow icon",
+  "check": "Check mark icon",
+  "close": "Close icon",
+  "menu": "Menu icon",
+  "chevron": "Expand icon",
+  "star": "Star icon",
+  "gift": "Gift icon",
+  "wallet": "Wallet icon",
+  "clipboard": "Survey clipboard icon",
+  "badge": "Verified badge icon",
+  "user": "Person icon",
+  "briefcase": "Briefcase icon",
+  "globe": "Globe icon",
+  "shield": "Security shield icon",
+  "lock": "Padlock icon",
+  "fingerprint": "Fingerprint icon",
+  "clock": "Clock icon",
+  "bot": "Assistant bot icon",
+  "link": "Link icon",
+  "copy": "Copy icon",
+  "pin": "Location pin icon",
+  "captcha": "Human check icon",
+  "gate": "Reward gate icon",
+  "question": "Question mark icon",
+  "filter": "Filter icon",
+  "pen": "Pen icon",
+  "eye": "Eye icon",
+  "layers": "Layers icon",
+  "mail": "Envelope icon",
+  "phone": "Phone icon",
+  "language": "Language icon",
+  "onion": "Layered security icon",
+  "cookie": "Cookie icon",
+  "duplicate": "Duplicate check icon",
+  "doubleCheck": "Double check mark icon",
+  "database": "Database icon",
+  "activity": "Activity pulse icon",
+  "audit": "Audit icon",
+  "linkedin": "LinkedIn icon",
+  "youtube": "YouTube icon",
+  "facebook": "Facebook icon",
+  "instagram": "Instagram icon",
+  "whatsapp": "WhatsApp icon",
+  "sms": "Text message icon",
+  "dashboard": "Dashboard icon",
+  "email": "Email icon",
+  "paypal": "PayPal icon",
+  "upi": "UPI icon",
+  "bank": "Bank icon",
+  "chat": "Chat bubble icon",
+  "send": "Send icon",
+  "sparkle": "Sparkle icon",
+  "refresh": "Refresh icon",
+  "calendar": "Calendar icon",
+  "trend": "Rising trend icon",
+  "heart": "Heart icon",
+  "mobile": "Mobile phone icon",
+  "coins": "Coins icon",
+  "cash": "Cash icon",
+  "cart": "Shopping cart icon",
+  "basket": "Grocery basket icon",
+  "card": "Gift card icon",
+  "medical": "Medical cross icon",
+  "rocket": "Rocket icon",
+  "key": "Key icon",
+  "bolt": "Lightning bolt icon",
+  "book": "Book icon",
+  "x": "Close icon",
+  "search": "Search icon",
+  "volume": "Sound icon",
+  "headset": "Support headset icon"
+};
+
+// v3.1: every icon carries alternative text (role="img" + aria-label). `title` (older prop) and `alt` override it;
+// `decorative` hides an icon from assistive technology when the text next to it already says the same thing.
+export default function Icon({ name, size = 22, stroke = 1.8, className = '', title, alt, decorative = false, fill = 'none' }) {
   const d = P[name] || P.sparkle;
+  const label = alt || title || ICON_ALT[name] || 'Icon';
   return (
     <svg
       className={`ico ${className}`}
@@ -83,10 +164,11 @@ export default function Icon({ name, size = 22, stroke = 1.8, className = '', ti
       strokeWidth={stroke}
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden={title ? undefined : 'true'}
-      role={title ? 'img' : undefined}
+      role={decorative ? undefined : 'img'}
+      aria-label={decorative ? undefined : label}
+      aria-hidden={decorative ? 'true' : undefined}
+      focusable="false"
     >
-      {title ? <title>{title}</title> : null}
       <path d={d} />
     </svg>
   );

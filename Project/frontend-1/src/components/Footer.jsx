@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
+import { LanguageButton } from './Language.jsx';
 import BrandLogo from './BrandLogo.jsx';
 import { BRAND, CONTACT, PAYOUTS, whatsappLink } from '../data/site.js';
 import { CONNECT_BRANDS } from '../data/connect.js';
@@ -62,7 +63,7 @@ export default function Footer() {
         <div className="ft-coin3d" aria-hidden="true">
           <div className="ft-coin">
             {Array.from({ length: 7 }).map((_, i) => <span key={i} className="ft-coin-edge" style={{ '--z': i }} />)}
-            <span className="ft-coin-face front"><img src={BRAND.monogram} alt="" width="74" height="74" loading="lazy" /></span>
+            <span className="ft-coin-face front"><img src={BRAND.monogram} alt="MyFrequentRewards reward coin" width="74" height="74" loading="lazy" /></span>
             <span className="ft-coin-face back"><Icon name="star" size={46} fill="currentColor" /></span>
           </div>
           <span className="ft-coin-shadow" />
@@ -168,6 +169,7 @@ export default function Footer() {
         <div className="container ft-bottom-row">
           <p>Copyright {year} © {BRAND.legalName} ({BRAND.dba}). All Rights Reserved.</p>
           <p className="ft-safe"><Icon name="lock" size={14} /> We never sell or share your personal details.</p>
+          <LanguageButton compact />
           <button type="button" className="ft-top" onClick={toTop} aria-label="Back to top"><Icon name="rocket" size={18} /></button>
         </div>
       </div>

@@ -36,13 +36,18 @@ export function savePendingProfile(userId, answers) {
   store(all);
 }
 
+// Is there a sign-up answers entry waiting for this member? (synchronous, no network)
+export function hasPendingProfile(userId) {
+  if (!userId) return false;
+  const entry = load()[userId];
+  return Boolean(entry && entry.answers && Object.keys(entry.answers).length);
+}
 
-export async function flushPendingProfile() {
+// Uploads the waiting answers. Pass the member's id when it is already known, otherwise it is asked from /api/v1/me.
+export async function flushPendingProfile(knownUserId) {
   try {
-    const me = await getData(ME_API);
-    const userId = me.data?._id;
+    const userId = knownUserId || (await getData(ME_API)).data?._id;
     const entry = userId ? load()[userId] : null;
-    console.log('[flush] me id:', userId, '| entry mila:', Boolean(entry?.answers), '| keys:', Object.keys(load()));
     if (!entry?.answers) return false;
     try {
       await patchJSON(`${ME_API}/answer`, entry.answers);
@@ -58,7 +63,6 @@ export async function flushPendingProfile() {
     const all = load();
     delete all[userId];
     store(all);
-    console.log('[flush] success');
     return true;
   } catch (e) {
     console.warn('[flush] failed:', e);

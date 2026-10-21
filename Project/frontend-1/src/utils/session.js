@@ -1,9 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { API_BASE, DEMO_MODE, ME_API, MEMBER_PORTAL_URL } from '../data/site.js';
+import { flushPendingProfile, hasPendingProfile } from './signupMemo.js';
 
 // Where a logged-in member belongs (the member portal). Same target the Login page uses after a successful login.
 export const DASHBOARD_URL = MEMBER_PORTAL_URL || '/member/dashboard';
+
+// The hop from this site to the member portal must never be answered from the browser's cache (for example an old
+// "404" cached for the very same URL before the member was logged in). A throw-away ?_= value makes every hop a new URL.
+export function freshHref(url) {
+  try {
+    const u = new URL(url, window.location.href);
+    u.searchParams.set('_', Date.now().toString(36));
+    return u.href;
+  } catch {
+    return url;
+  }
+}
 
 // Who is logged in? Asks the backend (GET /api/v1/me with the "authorization" cookie). Never throws:
 // 401 / network error / anything unexpected simply means "nobody is logged in" (null).
@@ -47,7 +60,12 @@ export function useSession() {
   const [user, setUser] = useState(null);
   useEffect(() => {
     let alive = true;
-    fetchSession().then((u) => alive && setUser(u));
+    fetchSession().then((u) => {
+      if (!alive) return;
+      setUser(u);
+      // Logged in by any route (also Google / social login): upload the answers given at sign-up, once.
+      if (u && hasPendingProfile(u._id)) flushPendingProfile(u._id);
+    });
     const onShow = (e) => { if (e.persisted) fetchSession({ force: true }).then((u) => alive && setUser(u)); };
     window.addEventListener('pageshow', onShow);
     return () => { alive = false; window.removeEventListener('pageshow', onShow); };
@@ -66,7 +84,7 @@ export function useGuestRedirect(active = true) {
   useEffect(() => {
     if (!active) return undefined;
     let alive = true;
-    const check = (force) => fetchSession({ force }).then((u) => { if (alive && u) window.location.replace(DASHBOARD_URL); });
+    const check = (force) => fetchSession({ force }).then((u) => { if (alive && u) window.location.replace(freshHref(DASHBOARD_URL)); });
     check(false);
     const onShow = (e) => { if (e.persisted) check(true); };
     window.addEventListener('pageshow', onShow);

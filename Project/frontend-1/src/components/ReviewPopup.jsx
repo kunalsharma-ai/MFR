@@ -9,20 +9,6 @@ import { EMAIL_RE } from '../utils/validate.js';
 import { publicName, rememberOwnReview } from '../utils/reviews.js';
 import { chime, fanfare, setSound, soundOn } from '../utils/sound.js';
 
-// Rate & Review (v2.4) — everything lives on the RIGHT-HAND side:
-// 1) TAB on the right edge of every page ("Rate your experience") with five stars that twinkle in sequence.
-// 2) DOCK BUTTON "Rate us" in the bottom-right stack, above WhatsApp and Live Help (rendered by Common.jsx → Dock,
-//    which dispatches the `mfr:rate` event).
-// 3) REVIEW SCREEN — a four-step wizard (You → Rate → About you → Review). It opens BY ITSELF only after the visitor
-//    has been browsing for a while (≥ 20 s on the site, ≥ 20 % of a page scrolled, at a quiet moment) — never the
-//    moment someone arrives — and asks again while they keep scrolling, paced (PACE): up to 4 times per visit, at
-//    least 2 minutes and 1.5 screen-heights of scrolling apart, then again after 12 hours, 12 times in total. Never while typing or chatting, never on /sign-up or /login, and never again after a review or
-//    "Don't ask again". The tab and the dock button open it at any time.
-//    Mandatory: consumer / professional, rating, review, full name, email, country (flag), company.
-//    Optional: designation, phone (country code + flag). Published straight into Client Testimonials:
-//    name (first name + last-name initial by default — REVIEW_NAME_FORMAT on the server), flag, country,
-//    designation, company, rating, review. Email and phone are never published.
-
 const ENDPOINT = import.meta.env.VITE_REVIEW_ENDPOINT || '/api/reviews';
 const BLOCKED = ['/sign-up', '/login'];
 const PACE = {
@@ -170,7 +156,7 @@ function ScoreGauge({ value, onPick }) {
   return (
     <div className={`gg l${lit}`} onMouseLeave={() => setHov(0)}>
       <div className="gg-dial">
-        <svg viewBox="0 0 240 132" className="gg-svg" aria-hidden="true">
+        <svg viewBox="0 0 240 132" className="gg-svg" role="img" aria-label="Rating gauge">
           {ZONES.map((d, i) => (
             <path key={i} d={d} className={`gg-z z${i + 1} ${i + 1 <= lit ? 'on' : ''}`} onMouseEnter={() => setHov(i + 1)} onClick={() => onPick(i + 1)} />
           ))}
@@ -502,7 +488,7 @@ export default function ReviewPopup() {
                   </ol>
                 ) : <span />}
                 <button type="button" className={`rw-snd ${sound ? '' : 'off'}`} onClick={toggleSound} aria-pressed={!sound} aria-label={sound ? 'Mute sounds' : 'Turn sounds on'} title={sound ? 'Sound on' : 'Sound off'}>
-                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" />{sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}</svg>
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Sound icon"><path d="M11 5 6 9H3v6h3l5 4z" />{sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}</svg>
                 </button>
                 <button type="button" className="rw-x" onClick={close} aria-label="Close"><Icon name="close" size={18} /></button>
               </header>

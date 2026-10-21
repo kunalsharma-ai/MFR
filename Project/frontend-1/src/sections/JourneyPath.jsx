@@ -20,7 +20,7 @@ export default function JourneyPath({ compact = false }) {
           <p className="muted-light">Five simple stops. Follow the token.</p>
         </div>
         <div className="journey-map reveal">
-          <svg className="journey-svg" viewBox="0 0 1000 220" aria-hidden="true">
+          <svg className="journey-svg" viewBox="0 0 1000 220" role="img" aria-label="Journey path from joining to getting rewarded">
             <defs>
               <linearGradient id="jg" x1="0" x2="1">
                 <stop offset="0" stopColor="#FF8A00" />

@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from './Icon.jsx';
+import { asset } from '../utils/asset.js';
+import { COUNTRIES } from '../data/countries.js';
 
-// Flag image by ISO code (flagcdn.com — free CDN, 20–40px PNGs). Falls back to the ISO letters if blocked.
+const FLAG_NAME = Object.fromEntries(COUNTRIES.map((c) => [c.iso, c.name]));
+
+// Flag image by ISO code — self-hosted SVGs in /public/flags (flag-icons, MIT): no third-party CDN, so flags also load
+// on strict networks and in mainland China. Falls back to the ISO letters if a file is missing.
 export function Flag({ iso, size = 22 }) {
   const [err, setErr] = useState(false);
   const ref = useRef(null);
@@ -16,11 +21,10 @@ export function Flag({ iso, size = 22 }) {
     <img
       ref={ref}
       className="flag"
-      src={`https://flagcdn.com/w40/${code}.png`}
-      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+      src={asset(`/flags/${code}.svg`)}
       width={Math.round(size * 1.4)}
       height={size}
-      alt=""
+      alt={`${FLAG_NAME[iso.toUpperCase()] || iso} flag`}
       loading="lazy"
       decoding="async"
       onError={() => setErr(true)}
