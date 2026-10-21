@@ -10,7 +10,8 @@ function MemberFooter() {
         // borderTop: "1px solid #222222",
         py: 0.5,
         color: "#bdbdbd",
-        bgcolor: "#24292e",
+        // bgcolor: "#24292e",
+        bgcolor: "#050e2e",
         fontSize: 12,
         zIndex: 999,
       }}

@@ -92,10 +92,10 @@ export default function App() {
         )}
       </ErrorBoundary>
       <LangWipe lang={lang} />
-      <footer className="foot">
+      {/* <footer className="foot">
         <span>{t('foot')}</span>
         <span className="foot-tag">{t('brandTag')}</span>
-      </footer>
+      </footer> */}
       <LanguagePicker open={langOpen} onClose={() => setLangOpen(false)} />
     </>
   );
