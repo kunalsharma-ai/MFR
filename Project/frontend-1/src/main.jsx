@@ -35,6 +35,7 @@ import './styles/atlas.css';
 import './styles/v25.css';
 import './styles/perf.css';
 import './styles/i18n.css';
+import './styles/theme-light.css';
 import { startCalm } from './utils/calm.js';
 
 document.documentElement.classList.add('js');

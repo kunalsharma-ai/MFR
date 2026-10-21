@@ -457,7 +457,7 @@ export default function ReviewPopup() {
 
   return (
     <>
-      {showTab && !reviewed ? <RateTab shown={tabIn && !open} onOpen={() => openScreen()} /> : null}
+     
 
       {open ? (
         <div className="rw-veil" onMouseDown={(e) => e.target === e.currentTarget && close()}>

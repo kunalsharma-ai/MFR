@@ -28,7 +28,7 @@ export function agoFrom(at) {
 }
 
 export const PULSE = [
-  { kind: 'pulse', icon: 'coins', big: `$${STATS.rewardsPaidUsd.toLocaleString('en-US')}+`, line: 'in rewards paid to our members', tone: '#FFC233' },
+  { kind: 'pulse', icon: 'coins', big: `$${STATS.rewardsPaidUsd.toLocaleString('en-US')}+`, line: 'in rewards paid to our members', tone: '#14C9B5' },
   { kind: 'pulse', icon: 'clipboard', big: STATS.surveysCompletedThisMonth.toLocaleString('en-US'), line: 'surveys completed this month', tone: '#14C9B5' },
   { kind: 'pulse', icon: 'user', big: STATS.membersRegistered.toLocaleString('en-US'), line: 'members registered worldwide', tone: '#8B5CF6' },
   ...SURVEY_CATEGORIES.map((s) => ({ kind: 'pulse', icon: s.icon, big: `$${s.reward}`, line: `${s.title} surveys · about ${s.mins} min · open now`, tone: s.tone })),

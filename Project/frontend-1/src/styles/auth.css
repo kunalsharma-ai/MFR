@@ -7,7 +7,7 @@
 .lx-ring.r1 { width: 520px; height: 520px; }
 .lx-ring.r2 { width: 760px; height: 760px; animation-duration: 90s; animation-direction: reverse; border-style: solid; border-color: rgba(255, 194, 51, .08); }
 .lx-ring.r3 { width: 1000px; height: 1000px; animation-duration: 140s; }
-.lx-spark { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #FFC233; left: calc(4% + var(--i) * 6.8%); top: calc(8% + (var(--i) * 41 % 84) * 1%); opacity: 0; animation: spark 5s ease-in-out infinite; animation-delay: calc(var(--i) * .37s); }
+.lx-spark { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #FFC233; left: calc(4% + var(--i) * 6.8%); top: calc(8% + var(--i) * 3.1%); opacity: 0; animation: spark 5s ease-in-out infinite; animation-delay: calc(var(--i) * .37s); }
 .lx-row { position: relative; display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(28px, 5vw, 70px); align-items: center; }
 .lx-eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .12); font-size: .85rem; color: #BFF8EF; }
 .lx-hero { color: #fff; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.15; margin: 0 0 26px; max-width: 520px; }
@@ -139,3 +139,20 @@
   .lx-ring, .lx-spark, .mp-orbit span, .dp-body, .dp-pop, .dp-age, .mp-card.is-flipped .mp-burst { animation: none !important; }
   .mp-card { transition: none; }
 }
+/* ───────── frontend-1 only: sign-up gender picker + set-password (not in the design source) ───────── */
+/* GenderPicker.jsx — this CSS was sitting inside a JS comment, so it never loaded */
+.sx-gender { display: flex; gap: 8px; min-height: var(--sx-ctl-h, 54px); outline: none; }
+.sx-gender label {
+  position: relative; flex: 1 1 0; display: flex; align-items: center; justify-content: center;
+  padding: 0 10px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff;
+  font-weight: 700; font-size: .92rem; color: var(--ink-2); cursor: pointer; user-select: none;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.sx-gender label:hover { border-color: var(--orange); }
+.sx-gender label.on { border-color: var(--orange); background: var(--paper-3); color: var(--ink); }
+.sx-gender label:focus-within { outline: 3px solid var(--orange); outline-offset: 1px; }
+.sx-gender input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.sx-field.bad .sx-gender label { border-color: #EF4444; }
+
+/* SetPassword.jsx — "Email confirmed" line (reuses the green of .lx-msg.ok) */
+.sx-verified { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: #EFFFF5; color: #106B35; font-size: .9rem; font-weight: 600; }

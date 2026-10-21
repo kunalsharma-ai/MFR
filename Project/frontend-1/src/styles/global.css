@@ -2,6 +2,10 @@
    MyFrequentRewards — design tokens, base, layout chrome, shared components
    Brand: navy #0B1E5B + orange #FF8A00 (from logo). Complementary accents per section.
    ========================================================================== */
+/* Self-hosted variable fonts (OFL, public/fonts). Manrope 600–700 = headings, numbers, statistics;
+   Inter 400–500 = body, 500–600 = buttons & navigation. Heavier weights in older rules render at 700/600. */
+@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-var.woff2') format('woff2'), url('/fonts/manrope-var.woff') format('woff'); font-weight: 500 700; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-var.woff2') format('woff2'), url('/fonts/inter-var.woff') format('woff'); font-weight: 400 600; font-display: swap; }
 :root {
   --navy: #0B1E5B;
   --navy-950: #040A26;

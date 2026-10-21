@@ -3,7 +3,8 @@
    Visual result is the same or very close; scrolling and animations stay smooth on mid-range phones. */
 
 /* Sections far off-screen pause their animations (attribute set by useReveal). */
-[data-off], [data-off] *, [data-off] *::before, [data-off] *::after { animation-play-state: paused !important; }
+/* v3.0: off-screen sections are paused by components/AnimationGate.jsx through the Web Animations API (the old
+   [data-off] * attribute rule forced a full subtree re-style on every toggle while scrolling). */
 
 /* Sticky header: live background blur was re-computed on every scroll frame → solid glass instead. */
 .site-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, .96); }
@@ -62,7 +63,9 @@
 .hero-aurora.a3 { background: radial-gradient(closest-side, rgba(139, 92, 246, .9), rgba(139, 92, 246, .35) 45%, transparent); }
 .hero-aurora, .sx-orb, .sp-glow { will-change: transform; }
 /* Hero headline entrance without a blur filter (blur on large text delayed the first paint). */
-@keyframes lineUp { from { opacity: 0; transform: translateY(40px); } }
+/* v3.0: transform-only (no fade) — the H1 is the Largest Contentful Paint element and a fade from opacity 0 delayed
+   LCP until the end of the animation. The headline still rises into place exactly as before. */
+@keyframes lineUp { from { transform: translateY(40px); } }
 .sx-orb.o1 { background: radial-gradient(closest-side, rgba(255, 138, 0, .9), rgba(255, 138, 0, .35) 45%, transparent); }
 .sx-orb.o2 { background: radial-gradient(closest-side, rgba(47, 107, 255, .9), rgba(47, 107, 255, .35) 45%, transparent); }
 .sx-orb.o3 { background: radial-gradient(closest-side, rgba(139, 92, 246, .9), rgba(139, 92, 246, .35) 45%, transparent); }
@@ -135,10 +138,7 @@
 .vm-float, .hero-scroll span, .iso-lab, .iso-badge, .rs-bubble, .bg-chip { animation-iteration-count: 3 !important; }
 /* v2.4 — calm when idle (utils/calm.js): decorative motion freezes in place after ~9 s without input and resumes on
    the next touch / scroll / mouse move. Dialogs, chat, toasts and loaders keep moving. */
-.calm *, .calm *::before, .calm *::after { animation-play-state: paused !important; }
-.calm .rw-veil *, .calm .rw-veil *::before, .calm .rw-veil *::after,
-.calm .hc.is-open *, .calm .hc.is-open *::before, .calm .hc.is-open *::after,
-.calm .rwt, .calm .rwt *, .calm .page-loading span { animation-play-state: running !important; }
+/* v3.0: calm mode now pauses animations through the Web Animations API (utils/calm.js + AnimationGate.jsx). */
 /* ───── v2.5 — Phone menu (≤767px): a full-screen drawer under the header ─────
    Bug fixed: `.main-nav { position: relative }` (brand.css, loaded after global.css) silently replaced the drawer's
    `position: fixed`, so on phones the open menu was squeezed into a thin strip between the logo and the buttons.
@@ -195,3 +195,15 @@ a[href^="mailto:"], a[href^="tel:"] { overflow-wrap: anywhere; }
 .sx-grid > *, .sx-card *, .lx-card * { min-width: 0; }
 @media (max-width: 560px) { .sx-grid, .sx-types, .sx-switches { grid-template-columns: minmax(0, 1fr); } }
 .faq-item p, .faq-item li { overflow-wrap: anywhere; }
+
+/* v3.1 — skip rendering work for sections that are off screen (style, layout and paint happen only when a
+   section comes near the viewport). Huge win for first load and for scrolling on phones. The reserved height
+   ("auto" remembers the real height once rendered) keeps the scrollbar and anchors stable. */
+#main > section.section,
+#main > .cta-band,
+#main > .page-section,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+.site-footer { contain-intrinsic-size: auto 700px; }

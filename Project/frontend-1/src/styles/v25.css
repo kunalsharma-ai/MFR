@@ -46,7 +46,53 @@
 
 .hl-gold { background: linear-gradient(90deg, #FFE08A, #E7B04A); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* (mfr v2.5 holographic-Login block removed here: frontend-1 keeps its own Login page and styles) */
+/* ── Login: holographic member card on an aurora mesh ── */
+.lx { background: linear-gradient(135deg, #12052E 0%, #2A0B4A 35%, #0A2B4E 70%, #062A2E 100%) !important; }
+.lx-mesh { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; }
+.lx-mesh.m1 { left: -10%; top: -10%; width: 45%; height: 60%; background: #FF3B8D; }
+.lx-mesh.m2 { right: -12%; top: 20%; width: 45%; height: 60%; background: #14C9B5; opacity: .4; }
+.lx-mesh.m3 { left: 30%; bottom: -25%; width: 40%; height: 55%; background: #FF8A00; opacity: .35; }
+.lx-grid2 { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 46px 46px; -webkit-mask-image: radial-gradient(70% 70% at 30% 50%, #000, transparent); mask-image: radial-gradient(70% 70% at 30% 50%, #000, transparent); }
+.lx-hero span { background: linear-gradient(100deg, #FFD166, #FF8A3D 45%, #FF3B8D) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mcd-stage { --rx: 6deg; --ry: -14deg; --gx: 30%; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 210px); gap: 22px; align-items: center; margin-bottom: 22px; perspective: 1100px; }
+.mcd-aura { position: absolute; left: 6%; top: 50%; width: 360px; height: 260px; margin-top: -130px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 138, 61, .45), transparent); pointer-events: none; }
+.mcd-orbit { position: absolute; left: calc((100% - 232px) / 2); top: 50%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(70deg) rotateZ(0); animation: mcdOrbit 16s linear infinite; pointer-events: none; }
+@keyframes mcdOrbit { to { transform: rotateX(70deg) rotateZ(360deg); } }
+.mcd-sat { position: absolute; left: 0; top: 0; transform: rotateZ(calc(var(--i) * 60deg)) translateX(190px); transform-style: preserve-3d; }
+.mcd-sat i { display: grid; place-items: center; width: 34px; height: 34px; margin: -17px; border-radius: 12px; color: #fff; background: var(--c); box-shadow: 0 0 16px var(--c); transform: rotateZ(calc(var(--i) * -60deg)) rotateX(-70deg); animation: mcdSat 16s linear infinite; }
+@keyframes mcdSat { to { transform: rotateZ(calc(var(--i) * -60deg - 360deg)) rotateX(-70deg); } }
+.mcd { position: relative; width: min(100%, 360px); aspect-ratio: 1.586; justify-self: center; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s cubic-bezier(.3, 1.2, .5, 1); }
+.mcd.is-open { transform: rotateX(0) rotateY(180deg); transition-duration: .9s; }
+.mcd-front, .mcd-back { position: absolute; inset: 0; border-radius: 22px; backface-visibility: hidden; overflow: hidden; }
+.mcd-front { padding: 16px 18px; display: grid; grid-template-rows: auto auto 1fr auto auto; color: #fff; background: linear-gradient(135deg, #1B1446, #3B1F7A 40%, #0E4C6E); box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8), inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.mcd.is-ready .mcd-front { box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8), inset 0 0 0 2px #5FE3B6, 0 0 40px -6px rgba(95, 227, 182, .6); }
+.mcd-holo { position: absolute; inset: -40%; background: conic-gradient(from 0deg at var(--gx) 40%, rgba(255, 94, 108, .0), rgba(255, 94, 108, .35), rgba(255, 209, 102, .35), rgba(95, 227, 182, .35), rgba(47, 107, 255, .35), rgba(139, 92, 246, .35), rgba(255, 94, 108, .0)); mix-blend-mode: screen; opacity: .55; transition: background-position .3s; pointer-events: none; }
+.mcd-top { position: relative; margin: 0; display: flex; align-items: center; gap: 10px; }
+.mcd-top img { border-radius: 50%; background: #fff; padding: 2px; }
+.mcd-top b { font: 900 .82rem var(--font-d); letter-spacing: .16em; }
+.mcd-top em { margin-left: auto; padding: 3px 9px; border-radius: 99px; font: 800 .6rem var(--font-b); letter-spacing: .12em; font-style: normal; background: rgba(255, 94, 108, .25); color: #FFB3BB; }
+.mcd-top em.ok { background: rgba(95, 227, 182, .25); color: #9BF5D4; }
+.mcd-chip { position: relative; margin-top: 12px; width: 46px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, #FFF1BF, #E7B04A 55%, #B9852A); box-shadow: inset 0 0 0 1px rgba(120, 80, 0, .45); }
+.mcd-num { position: relative; align-self: end; margin: 0; font: 700 clamp(.82rem, 2.4vw, 1rem) ui-monospace, Menlo, monospace; letter-spacing: .06em; color: #F2F4FF; text-shadow: 0 1px 0 rgba(0, 0, 0, .4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mcd-row { position: relative; margin: 8px 0 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mcd-pin { display: inline-flex; gap: 6px; }
+.mcd-pin i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .2); transition: background .2s, transform .2s; }
+.mcd-pin i.on { background: #FFD166; transform: scale(1.15); box-shadow: 0 0 8px #FFD166; }
+.mcd-seal { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font: 800 .66rem var(--font-b); background: rgba(255, 255, 255, .12); color: #C9D4F5; }
+.mcd-seal.on { background: #5FE3B6; color: #06302A; }
+.mcd-foot { position: relative; margin: 10px 0 0; display: flex; justify-content: space-between; gap: 8px; font: 700 .62rem var(--font-b); letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .65); }
+.mcd-back { transform: rotateY(180deg); display: grid; place-content: center; justify-items: center; gap: 4px; color: #06302A; background: linear-gradient(135deg, #9BF5D4, #5FE3B6 45%, #FFD166); box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8); }
+.mcd-back b { font: 900 1.6rem var(--font-d); }
+.mcd-back small { font: 700 .82rem var(--font-b); }
+.mcd-coin { position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px; border-radius: 50%; display: grid; place-items: center; font: 900 .8rem var(--font-d); font-style: normal; color: #6B3B00; background: radial-gradient(circle at 35% 30%, #FFF3BF, #FFC233 55%, #E08A00); opacity: 0; }
+.mcd.is-open .mcd-coin { animation: mcdCoin 1.2s calc(.5s + var(--i) * .08s) ease-out both; }
+@keyframes mcdCoin { 0% { opacity: 1; transform: translate(0, 0) scale(.4); } 100% { opacity: 0; transform: translate(calc((var(--i) - 2.5) * 46px), -110px) scale(1.1); } }
+.mcd.is-busy .mcd-front::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, #5FE3B6, transparent); animation: mcdScan 1s linear infinite; }
+@keyframes mcdScan { from { transform: translateY(0); } to { transform: translateY(220px); } }
+@media (max-width: 960px) { .mcd-stage { grid-template-columns: minmax(0, 1fr); } .mcd-orbit { left: 50%; } .mcd-aura { left: 50%; margin-left: -180px; } }
+@media (max-width: 480px) { .mcd-sat { transform: rotateZ(calc(var(--i) * 60deg)) translateX(150px); } .mcd-sat i { width: 28px; height: 28px; margin: -14px; } .mcd-stage { --ry: -8deg; } }
+@media (prefers-reduced-motion: reduce) { .mcd-orbit, .mcd-sat i, .mcd-coin { animation: none !important; } .mcd { transition: none; } }
+
 /* ── Ratings & Reviews page (v2.5) ── */
 /* hero: review stack */
 .sc.sc-rv { display: grid; place-items: center; perspective: 900px; }
@@ -183,21 +229,8 @@
 @media (max-width: 360px) { .rvw-seg button span { display: none; } }
 @media (max-width: 420px) { .rvw-seg button { gap: 4px; } .md button { grid-template-columns: minmax(0, 104px) minmax(0, 1fr) 26px; gap: 6px; } }
 @media (prefers-reduced-motion: reduce) { .rv-c, .rv-badge, .rv-bub, .md-bar i, .rv2, .apb-flags button { animation: none !important; } .ap-fg, .ap-needle i { transition: none; } }
-/* one-time suggestion */
-.lsug { position: fixed; left: 50%; top: calc(var(--header-h) + 12px); z-index: 70; display: flex; align-items: center; gap: 10px; width: min(460px, calc(100vw - 24px)); padding: 10px 10px 10px 12px; border-radius: 20px; background: #1B1446; color: #fff; box-shadow: 0 24px 50px -20px rgba(20, 10, 60, .7); transform: translateX(-50%); animation: lsugIn .5s cubic-bezier(.3, 1.4, .5, 1); }
-@keyframes lsugIn { from { opacity: 0; transform: translate(-50%, -20px); } }
-.lsug-glyph { flex: none; width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; font: 900 1.3rem var(--font-d); background: conic-gradient(from 0deg, #FF8A00, #FF3B8D, #8B5CF6, #2F6BFF, #14C9B5, #FF8A00); }
-.lsug p { margin: 0; flex: 1; min-width: 0; display: grid; } .lsug p b { font-size: .98rem; } .lsug p small { color: #C9C2F5; font-size: .76rem; }
-.lsug-yes, .lsug-no { flex: none; min-height: 40px; padding: 0 14px; border: 0; border-radius: 12px; font: 800 .82rem var(--font-b); cursor: pointer; }
-.lsug-yes { background: #FFC233; color: #1B1446; } .lsug-no { background: rgba(255, 255, 255, .12); color: #fff; }
-.menu-open .lsug { display: none; }
-/* Google's own translate bar / tooltip stay hidden — our switcher is the only control */
-.goog-te-banner-frame, iframe.skiptranslate, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
-body { top: 0 !important; }
-.goog-text-highlight { background: none !important; box-shadow: none !important; }
-font { background: transparent !important; }
-.lang-open .site-header { z-index: 96; }
-.lang-open .dock, .lang-open .rq-tab { visibility: hidden; }
+
+/* v3.0: the v2.5 language switcher (Google Translate) was replaced by the language picker in i18n.css. */
 /* translated pages: menu labels change length, so the desktop header always uses the roomy two-row layout and the
    menu may wrap — nothing can overlap the language / log-in buttons */
 @media (min-width: 768px) {
@@ -331,50 +364,3 @@ font { background: transparent !important; }
 @media (max-width: 520px) { .prt-rails { grid-template-columns: repeat(2, minmax(0, 1fr)); } .prt-console { padding: 14px; } }
 @media (prefers-reduced-motion: reduce) { .prt-packet, .prt-node, .prt-ok, .prt-dest, .prt-receipt, .prt-stamp { animation: none !important; } .prt-ok { transform: none; } }
 @media (max-width: 560px) { .scw-no { display: none; } }
-
-/* ── Login: holographic member card on an aurora mesh ── */
-.lx { background: linear-gradient(135deg, #12052E 0%, #2A0B4A 35%, #0A2B4E 70%, #062A2E 100%) !important; }
-.lx-mesh { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; }
-.lx-mesh.m1 { left: -10%; top: -10%; width: 45%; height: 60%; background: #FF3B8D; }
-.lx-mesh.m2 { right: -12%; top: 20%; width: 45%; height: 60%; background: #14C9B5; opacity: .4; }
-.lx-mesh.m3 { left: 30%; bottom: -25%; width: 40%; height: 55%; background: #FF8A00; opacity: .35; }
-.lx-grid2 { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 46px 46px; -webkit-mask-image: radial-gradient(70% 70% at 30% 50%, #000, transparent); mask-image: radial-gradient(70% 70% at 30% 50%, #000, transparent); }
-.lx-hero span { background: linear-gradient(100deg, #FFD166, #FF8A3D 45%, #FF3B8D) !important; -webkit-background-clip: text !important; background-clip: text !important; }
-.mcd-stage { --rx: 6deg; --ry: -14deg; --gx: 30%; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 210px); gap: 22px; align-items: center; margin-bottom: 22px; perspective: 1100px; }
-.mcd-aura { position: absolute; left: 6%; top: 50%; width: 360px; height: 260px; margin-top: -130px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 138, 61, .45), transparent); pointer-events: none; }
-.mcd-orbit { position: absolute; left: calc((100% - 232px) / 2); top: 50%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(70deg) rotateZ(0); animation: mcdOrbit 16s linear infinite; pointer-events: none; }
-@keyframes mcdOrbit { to { transform: rotateX(70deg) rotateZ(360deg); } }
-.mcd-sat { position: absolute; left: 0; top: 0; transform: rotateZ(calc(var(--i) * 60deg)) translateX(190px); transform-style: preserve-3d; }
-.mcd-sat i { display: grid; place-items: center; width: 34px; height: 34px; margin: -17px; border-radius: 12px; color: #fff; background: var(--c); box-shadow: 0 0 16px var(--c); transform: rotateZ(calc(var(--i) * -60deg)) rotateX(-70deg); animation: mcdSat 16s linear infinite; }
-@keyframes mcdSat { to { transform: rotateZ(calc(var(--i) * -60deg - 360deg)) rotateX(-70deg); } }
-.mcd { position: relative; width: min(100%, 360px); aspect-ratio: 1.586; justify-self: center; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s cubic-bezier(.3, 1.2, .5, 1); }
-.mcd.is-open { transform: rotateX(0) rotateY(180deg); transition-duration: .9s; }
-.mcd-front, .mcd-back { position: absolute; inset: 0; border-radius: 22px; backface-visibility: hidden; overflow: hidden; }
-.mcd-front { padding: 16px 18px; display: grid; grid-template-rows: auto auto 1fr auto auto; color: #fff; background: linear-gradient(135deg, #1B1446, #3B1F7A 40%, #0E4C6E); box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8), inset 0 0 0 1px rgba(255, 255, 255, .25); }
-.mcd.is-ready .mcd-front { box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8), inset 0 0 0 2px #5FE3B6, 0 0 40px -6px rgba(95, 227, 182, .6); }
-.mcd-holo { position: absolute; inset: -40%; background: conic-gradient(from 0deg at var(--gx) 40%, rgba(255, 94, 108, .0), rgba(255, 94, 108, .35), rgba(255, 209, 102, .35), rgba(95, 227, 182, .35), rgba(47, 107, 255, .35), rgba(139, 92, 246, .35), rgba(255, 94, 108, .0)); mix-blend-mode: screen; opacity: .55; transition: background-position .3s; pointer-events: none; }
-.mcd-top { position: relative; margin: 0; display: flex; align-items: center; gap: 10px; }
-.mcd-top img { border-radius: 50%; background: #fff; padding: 2px; }
-.mcd-top b { font: 900 .82rem var(--font-d); letter-spacing: .16em; }
-.mcd-top em { margin-left: auto; padding: 3px 9px; border-radius: 99px; font: 800 .6rem var(--font-b); letter-spacing: .12em; font-style: normal; background: rgba(255, 94, 108, .25); color: #FFB3BB; }
-.mcd-top em.ok { background: rgba(95, 227, 182, .25); color: #9BF5D4; }
-.mcd-chip { position: relative; margin-top: 12px; width: 46px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, #FFF1BF, #E7B04A 55%, #B9852A); box-shadow: inset 0 0 0 1px rgba(120, 80, 0, .45); }
-.mcd-num { position: relative; align-self: end; margin: 0; font: 700 clamp(.82rem, 2.4vw, 1rem) ui-monospace, Menlo, monospace; letter-spacing: .06em; color: #F2F4FF; text-shadow: 0 1px 0 rgba(0, 0, 0, .4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mcd-row { position: relative; margin: 8px 0 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.mcd-pin { display: inline-flex; gap: 6px; }
-.mcd-pin i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .2); transition: background .2s, transform .2s; }
-.mcd-pin i.on { background: #FFD166; transform: scale(1.15); box-shadow: 0 0 8px #FFD166; }
-.mcd-seal { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font: 800 .66rem var(--font-b); background: rgba(255, 255, 255, .12); color: #C9D4F5; }
-.mcd-seal.on { background: #5FE3B6; color: #06302A; }
-.mcd-foot { position: relative; margin: 10px 0 0; display: flex; justify-content: space-between; gap: 8px; font: 700 .62rem var(--font-b); letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .65); }
-.mcd-back { transform: rotateY(180deg); display: grid; place-content: center; justify-items: center; gap: 4px; color: #06302A; background: linear-gradient(135deg, #9BF5D4, #5FE3B6 45%, #FFD166); box-shadow: 0 30px 50px -24px rgba(0, 0, 0, .8); }
-.mcd-back b { font: 900 1.6rem var(--font-d); }
-.mcd-back small { font: 700 .82rem var(--font-b); }
-.mcd-coin { position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px; border-radius: 50%; display: grid; place-items: center; font: 900 .8rem var(--font-d); font-style: normal; color: #6B3B00; background: radial-gradient(circle at 35% 30%, #FFF3BF, #FFC233 55%, #E08A00); opacity: 0; }
-.mcd.is-open .mcd-coin { animation: mcdCoin 1.2s calc(.5s + var(--i) * .08s) ease-out both; }
-@keyframes mcdCoin { 0% { opacity: 1; transform: translate(0, 0) scale(.4); } 100% { opacity: 0; transform: translate(calc((var(--i) - 2.5) * 46px), -110px) scale(1.1); } }
-.mcd.is-busy .mcd-front::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, #5FE3B6, transparent); animation: mcdScan 1s linear infinite; }
-@keyframes mcdScan { from { transform: translateY(0); } to { transform: translateY(220px); } }
-@media (max-width: 960px) { .mcd-stage { grid-template-columns: minmax(0, 1fr); } .mcd-orbit { left: 50%; } .mcd-aura { left: 50%; margin-left: -180px; } }
-@media (max-width: 480px) { .mcd-sat { transform: rotateZ(calc(var(--i) * 60deg)) translateX(150px); } .mcd-sat i { width: 28px; height: 28px; margin: -14px; } .mcd-stage { --ry: -8deg; } }
-@media (prefers-reduced-motion: reduce) { .mcd-orbit, .mcd-sat i, .mcd-coin { animation: none !important; } .mcd { transition: none; } }

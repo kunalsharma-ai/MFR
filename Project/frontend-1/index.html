@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -9,12 +9,22 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
-    />
+    <!-- Fonts are self-hosted (public/fonts, OFL): Manrope 600–700 headings & numbers, Inter 400–600 body & UI.
+         No Google Fonts request → faster first paint and it also works in mainland China. -->
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/manrope-var.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Theme before first paint: English = white theme, every other language = classic MyFrequentRewards look.
+         Reads the visitor's saved language (or ?lang=) so a returning Chinese/Hindi/… visitor never sees a flash. -->
+    <script>
+      (function () {
+        try {
+          var d = document.documentElement, q = new URLSearchParams(location.search).get('lang'), l = q || localStorage.getItem('mfr.lang') || localStorage.getItem('mfr_lang') || 'en', en = /^(en|english)(-|$)/i.test(l);
+          d.setAttribute('data-theme', en ? 'light' : 'classic');
+          if (!en) d.classList.add('i18n-boot', 'is-translated'); // page text waits (max 1.2 s) for the dictionary: no flash of English
+        } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+      })();
+    </script>
+    <style>html.i18n-boot #root{opacity:0;animation:i18nShow .2s 1.2s forwards}@keyframes i18nShow{to{opacity:1}}</style>
     <!--app-head-->
     <!-- ANALYTICS: paste the approved GTM / GA4 / Meta Pixel snippets here ONCE (see README §Analytics). -->
   </head>
