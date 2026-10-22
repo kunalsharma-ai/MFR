@@ -313,10 +313,13 @@ export default function App({ cfg }) {
 
     const started = Date.now();
 
+    const termsToSend = Object.entries(rec.consents)
+      .filter(([, value]) => value === true)
+      .map(([key]) => key);
     try {
       useToast(
         await api.put(`/api/v1/user/${user._id}`, {
-          terms: rec.terms,
+          terms: termsToSend,
         }),
       );
       // const response = await fetch("/auth/terms", {

@@ -132,13 +132,13 @@ export default function Header() {
               </button>
               <div className="nav-panel" role="menu">
                 {DROPS[n.drop].items.map((e) => (
-                  <Link key={e.to} to={e.to} className="nav-panel-item" role="menuitem">
+                  <a key={e.to} href={e.to} className="nav-panel-item" role="menuitem">
                     <span className="npi-ico"><Icon name={e.icon} /></span>
                     <span>
                       <strong>{e.label}</strong>
                       <small>{e.sub}</small>
                     </span>
-                  </Link>
+                  </a>
                 ))}
               </div>
             </div>

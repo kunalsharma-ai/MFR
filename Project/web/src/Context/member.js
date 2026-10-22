@@ -80,11 +80,15 @@ class ValidUser {
         const consentPages = {
           b2b: "/auth/consent/b2b",
           "b2b-minor": "/auth/consent/b2b",
+          b2c: "/auth/consent/consumer",
+          "b2c-minor": "/auth/consent/consumer",
           consumer: "/auth/consent/consumer",
           "consumer-minor": "/auth/consent/consumer",
         };
 
-        return this.router.replace(consentPages[category] || "/auth/consent");
+        return this.router.replace(
+          consentPages[category] || "/auth/consent/consumer",
+        );
       }
 
       if (!(await this.hasCompletedWelcomeSurvey()))
