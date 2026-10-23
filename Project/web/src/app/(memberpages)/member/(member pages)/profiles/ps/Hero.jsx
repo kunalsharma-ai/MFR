@@ -61,7 +61,7 @@ export default function Hero({ onStart, stats }) {
               <span className="cc-star">★</span>
             </span>
             <img className="cc-logo" src={assetUrl('images/brand/mfr-mark-384.webp')} srcSet={`${assetUrl('images/brand/mfr-mark-192.webp')} 192w, ${assetUrl('images/brand/mfr-mark-384.webp')} 384w`}
-              sizes="120px" alt="" width="120" height="120" fetchpriority="high" decoding="async" />
+              sizes="120px" alt="" width="120" height="120" fetchPriority="high" decoding="async" />
             <span className="cc-brand">Myfrequent<b>rewards</b></span>
             <span className="cc-details">
               <span><small>{t('hero.stat.p')}</small>{nf.format(stats.profiles)}</span>

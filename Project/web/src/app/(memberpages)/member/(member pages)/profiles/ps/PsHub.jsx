@@ -1,111 +1,54 @@
 "use client";
 // Profile hub (design: "Rewards Club"): hero + a membership card for every profile the API returns.
 // Data comes from POST /api/v1/profile (see page.jsx); nothing here talks to the backend.
-import React, {
-  Suspense,
-  lazy,
-  useDeferredValue,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import React, { Suspense, lazy, useDeferredValue, useMemo, useState, useSyncExternalStore } from "react";
 import { useI18n } from "./i18n.js";
 import { themeFor, MAP } from "./themes.js";
 import { emojiUrl } from "./assets.js";
 import ProgressRing from "./ProgressRing.jsx";
 import MemberCard from "./MemberCard.jsx";
 import Hero from "./Hero.jsx";
-import { ISearch, IArrow, IEdit } from "./Icons.jsx";
-import {
-  subscribeRewards,
-  rewardsVersion,
-  POINTS_PER_PROFILE,
-} from "./rules.js";
+import { ISearch, IArrow, IEdit, ILock } from "./Icons.jsx";
+import { subscribeRewards, rewardsVersion, POINTS_PER_PROFILE } from "./rules.js";
+import { isCore, basicsDone } from "./profileRules.js";
+import "./ps-lock.css";
 
 // "Your Prize Machine": loads when the hub opens; a same-height placeholder keeps the page still meanwhile.
 const PrizeMachine = lazy(() => import("./PrizeMachine.jsx"));
 
-const norm = (s) =>
-  String(s || "")
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+const norm = (s) => String(s || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 /** Theme for a portal profile: by slug first, then by its name, otherwise the default "Aurora" card. */
 export function themeOfProfile(p) {
   const s = String(p?.slug || "").toLowerCase();
   const key = MAP[s] ? s : MAP[norm(p?.name)] ? norm(p?.name) : s;
   return themeFor(key);
 }
-export const questionCount = (p) =>
-  (p?.pages || []).reduce((n, pg) => n + Math.max(0, (pg?.length || 1) - 1), 0);
+export const questionCount = (p) => (p?.pages || []).reduce((n, pg) => n + Math.max(0, (pg?.length || 1) - 1), 0);
 export const progressOf = (p) => {
   const pct = Math.max(0, Math.min(100, Math.round(Number(p?.status) || 0)));
   return { pct, done: pct >= 100 };
 };
 
-const MIN_STATUS = 1;
-
-function WorldCard({ p, i, onOpen }) {
+function WorldCard({ p, i, onOpen, locked = false }) {
   const { t } = useI18n();
   const th = themeOfProfile(p);
   const st = progressOf(p);
   const q = questionCount(p);
   const name = p.name;
-
-  const cls = st.done ? "is-done" : st.pct > 0 ? "is-going" : "is-new";
-
-  // Black and white when the profile does not meet the status threshold.
-  const isFiltered = Number(p.status) < MIN_STATUS;
-
+  const cls = locked ? "is-locked" : st.done ? "is-done" : st.pct > 0 ? "is-going" : "is-new";
   return (
-    <button
-      type="button"
-      className={`world ${cls} cat-b2c`}
-      onClick={() => onOpen(p)}
-      style={{
-        "--i": Math.min(i, 12),
-        filter: isFiltered ? "grayscale(1)" : "none",
-      }}
-      aria-label={`${name} - ${t("hub.q", { n: q })}${
-        st.done
-          ? " - " + t("hub.done")
-          : st.pct
-            ? " - " + t("hub.progress", { p: st.pct })
-            : ""
-      }`}
-    >
-      <MemberCard theme={th} name={name} done={st.done} variant="hub">
+    <button type="button" className={`world ${cls} cat-b2c`} onClick={() => onOpen(p)} style={{ "--i": Math.min(i, 12) }} aria-disabled={locked || undefined}
+      aria-label={locked ? `${name} - ${t("hub.locked")}` : `${name} - ${t("hub.q", { n: q })}${st.done ? " - " + t("hub.done") : st.pct ? " - " + t("hub.progress", { p: st.pct }) : ""}`}>
+      <MemberCard theme={th} name={name} done={st.done && !locked} variant="hub">
+        {locked && <span className="mc-lock" aria-hidden="true"><ILock /></span>}
         <span className="mc-meta">
           <span>{t("hub.q", { n: q })}</span>
-
-          <span className={`mc-pill ${st.done ? "ok" : st.pct ? "go" : ""}`}>
-            {st.done ? (
-              <>
-                <IEdit /> {t("hub.review")}
-              </>
-            ) : st.pct ? (
-              t("hub.progress", { p: st.pct })
-            ) : (
-              <>
-                {t("hub.start")} <IArrow />
-              </>
-            )}
+          <span className={`mc-pill ${locked ? "lk" : st.done ? "ok" : st.pct ? "go" : ""}`}>
+            {locked ? <><ILock /> {t("hub.locked")}</> : st.done ? <><IEdit /> {t("hub.review")}</> : st.pct ? t("hub.progress", { p: st.pct }) : <>{t("hub.start")} <IArrow /></>}
           </span>
         </span>
-
-        <span className="mc-bar">
-          <i style={{ transform: `scaleX(${st.pct / 100})` }} />
-        </span>
-
-        <span
-          className={"mc-prize" + (st.done ? " got" : "")}
-          aria-hidden="true"
-        >
-          {st.done
-            ? "✓ " + t("rw.earned")
-            : t("rw.plus", { n: POINTS_PER_PROFILE })}
-        </span>
+        <span className="mc-bar"><i style={{ transform: `scaleX(${st.pct / 100})` }} /></span>
+        <span className={"mc-prize" + (st.done ? " got" : "")} aria-hidden="true">{locked ? t("hub.lockedHint") : st.done ? "✓ " + t("rw.earned", { n: POINTS_PER_PROFILE }) : t("rw.plus", { n: POINTS_PER_PROFILE })}</span>
       </MemberCard>
     </button>
   );
@@ -115,13 +58,7 @@ function Section({ id, title, emoji, count, children, tone }) {
   return (
     <section className={`hub-sec sec-${tone}`} aria-labelledby={id}>
       <h3 className="hub-sec-h" id={id}>
-        <img
-          src={emojiUrl(emoji)}
-          alt=""
-          width="34"
-          height="34"
-          aria-hidden="true"
-        />
+        <img src={emojiUrl(emoji)} alt="" width="34" height="34" aria-hidden="true" />
         <span>{title}</span>
         <span className="hub-sec-n">{count}</span>
       </h3>
@@ -130,170 +67,61 @@ function Section({ id, title, emoji, count, children, tone }) {
   );
 }
 
-export default function PsHub({
-  profiles,
-  onOpen,
-  cat = "b2c",
-  rewardsReady = true,
-}) {
+export default function PsHub({ profiles, onOpen, cat = "b2c", rewardsReady = true }) {
   const { t } = useI18n();
-
-  useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion);
-
+  useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion); // chips follow the points from the database
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q);
-
   const list = useMemo(() => {
     const s = dq.trim().toLowerCase();
-    return profiles.filter(
-      (p) => !s || String(p.name).toLowerCase().includes(s),
-    );
+    return profiles.filter((p) => !s || String(p.name).toLowerCase().includes(s));
   }, [profiles, dq]);
-
-  const going = list.filter(
-    (p) => progressOf(p).pct > 0 && !progressOf(p).done,
-  );
-  const fresh = list.filter((p) => progressOf(p).pct <= 0);
+  // Basic / Education / Professional / Financial are always "continue where you left off" until done, even at 0 %
+  const goingNow = (p) => !progressOf(p).done && (progressOf(p).pct > 0 || isCore(p.slug));
+  const going = list.filter(goingNow);
+  const fresh = list.filter((p) => !progressOf(p).done && !goingNow(p));
   const done = list.filter((p) => progressOf(p).done);
-
   const doneAll = profiles.filter((p) => progressOf(p).done).length;
-
-  const pct = profiles.length
-    ? Math.round(
-        profiles.reduce((n, p) => n + progressOf(p).pct, 0) / profiles.length,
-      )
-    : 0;
-
-  const stats = {
-    profiles: profiles.length,
-    done: doneAll,
-    pct,
-  };
-
-  // Render every profile; WorldCard applies grayscale based on MIN_STATUS.
-  const renderWorldCard = (p, i) => (
-    <WorldCard key={p.slug || p.name} p={p} i={i} onOpen={onOpen} />
-  );
-
+  const pct = profiles.length ? Math.round(profiles.reduce((n, p) => n + progressOf(p).pct, 0) / profiles.length) : 0;
+  // the other profiles stay locked until Basic, Education, Professional and Financial are complete (same rule as page.jsx)
+  const basicsOk = basicsDone(profiles);
+  const lockedOf = (p) => !basicsOk && !isCore(p.slug);
+  const stats = { profiles: profiles.length, done: doneAll, pct };
   return (
     <>
-      <Hero
-        stats={stats}
-        onStart={() =>
-          document
-            .getElementById("worlds")
-            ?.scrollIntoView({ behavior: "smooth" })
-        }
-      />
-
+      <Hero stats={stats} onStart={() => document.getElementById("worlds")?.scrollIntoView({ behavior: "smooth" })} />
       <section className="hub wrap" id="worlds" aria-labelledby="hub-title">
         <div className="hub-head">
           <h2 id="hub-title">{t("hub.title")}</h2>
-
           <div className="hub-tools">
             <div className="seg" role="tablist" aria-label={t("hub.title")}>
-              {/* Category is determined at signup and cannot be changed here. */}
-              <button
-                type="button"
-                role="tab"
-                aria-selected="true"
-                className="on"
-                disabled
-              >
-                <img
-                  src={emojiUrl(cat === "minor" ? "child" : "person")}
-                  alt=""
-                  width="20"
-                  height="20"
-                  aria-hidden="true"
-                />{" "}
-                {cat === "minor" ? t("hub.minors") : t("hub.adults")}{" "}
-                <span className="seg-n">{profiles.length}</span>
+              {/* Adults / Under 18 is decided at sign-up (date of birth) and never switched here */}
+              <button type="button" role="tab" aria-selected="true" className="on" disabled>
+                <img src={emojiUrl(cat === "minor" ? "child" : "person")} alt="" width="20" height="20" aria-hidden="true" /> {cat === "minor" ? t("hub.minors") : t("hub.adults")} <span className="seg-n">{profiles.length}</span>
               </button>
             </div>
-
             <label className="search">
               <ISearch />
-              <input
-                type="search"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder={t("hub.search")}
-                aria-label={t("hub.search")}
-              />
+              <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("hub.search")} aria-label={t("hub.search")} />
             </label>
           </div>
-
           <div className="overall" aria-label={t("hub.complete")}>
-            <ProgressRing
-              pct={pct}
-              size={64}
-              stroke={7}
-              label={`${t("hub.complete")} ${pct}%`}
-            >
-              <b>{pct}%</b>
-            </ProgressRing>
-
+            <ProgressRing pct={pct} size={64} stroke={7} label={`${t("hub.complete")} ${pct}%`}><b>{pct}%</b></ProgressRing>
             <div className="overall-txt">
               <b>{t("hub.complete")}</b>
               <span>{t("hub.count", { d: doneAll, t: profiles.length })}</span>
             </div>
           </div>
         </div>
-
         {rewardsReady ? (
-          <Suspense
-            fallback={<div className="pm-ph" id="rewards" aria-hidden="true" />}
-          >
-            <PrizeMachine
-              key={cat}
-              cat={cat}
-              onOpen={(p) =>
-                onOpen(profiles.find((x) => x.slug === p.s) || { slug: p.s })
-              }
-            />
+          <Suspense fallback={<div className="pm-ph" id="rewards" aria-hidden="true" />}>
+            <PrizeMachine key={cat + ":" + profiles.map((p) => p.slug).join(",")} cat={cat} onOpen={(p) => onOpen(profiles.find((x) => x.slug === p.s) || { slug: p.s })} />
           </Suspense>
-        ) : (
-          <div className="pm-ph" id="rewards" aria-hidden="true" />
-        )}
-
+        ) : <div className="pm-ph" id="rewards" aria-hidden="true" />}
         {!list.length && <p className="empty">{t("hub.none")}</p>}
-
-        {going.length > 0 && (
-          <Section
-            id="sec-going"
-            tone="going"
-            emoji="hourglass"
-            title={t("hub.sec.going")}
-            count={going.length}
-          >
-            {going.map(renderWorldCard)}
-          </Section>
-        )}
-
-        {fresh.length > 0 && (
-          <Section
-            id="sec-new"
-            tone="new"
-            emoji="rocket"
-            title={t("hub.sec.new")}
-            count={fresh.length}
-          >
-            {fresh.map(renderWorldCard)}
-          </Section>
-        )}
-
-        {done.length > 0 && (
-          <Section
-            id="sec-done"
-            tone="done"
-            emoji="trophy"
-            title={t("hub.sec.done")}
-            count={done.length}
-          >
-            {done.map(renderWorldCard)}
-          </Section>
-        )}
+        {going.length > 0 && <Section id="sec-going" tone="going" emoji="hourglass" title={t("hub.sec.going")} count={going.length}>{going.map((p, i) => <WorldCard key={p.slug || p.name} p={p} i={i} onOpen={onOpen} locked={lockedOf(p)} />)}</Section>}
+        {fresh.length > 0 && <Section id="sec-new" tone="new" emoji="rocket" title={t("hub.sec.new")} count={fresh.length}>{fresh.map((p, i) => <WorldCard key={p.slug || p.name} p={p} i={i} onOpen={onOpen} locked={lockedOf(p)} />)}</Section>}
+        {done.length > 0 && <Section id="sec-done" tone="done" emoji="trophy" title={t("hub.sec.done")} count={done.length}>{done.map((p, i) => <WorldCard key={p.slug || p.name} p={p} i={i} onOpen={onOpen} locked={lockedOf(p)} />)}</Section>}
       </section>
     </>
   );

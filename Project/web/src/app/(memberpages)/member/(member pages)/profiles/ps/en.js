@@ -1,8 +1,8 @@
 // English source strings. Every other language lives in public/i18n/ui/<code>.json
 // with exactly these keys. {placeholders} are replaced at runtime.
 export default {
-  skip: "Skip to content",
-  brandTag: "Rewarding loyalty. Enriching everyday.",
+  "skip": "Skip to content",
+  "brandTag": "Rewarding loyalty. Enriching everyday.",
   "lang.button": "Language",
   "lang.choose": "Choose your language",
   "lang.search": "Search 100+ languages…",
@@ -17,13 +17,12 @@ export default {
   "hero.kicker": "Member Profile Studio",
   "hero.title1": "Build a profile",
   "hero.title2": "that feels like you.",
-  "hero.sub":
-    "Choose a profile, answer one question at a time and unlock surveys and rewards that truly match you.",
+  "hero.sub": "Choose a world, answer one question at a time and unlock surveys and rewards that truly match you.",
   "hero.cta": "Start building",
   "hero.stat.q": "Questions",
-  "hero.stat.p": "Profiles",
+  "hero.stat.p": "Profile worlds",
   "hero.stat.l": "Languages",
-  "hub.title": "Pick your next profile",
+  "hub.title": "Pick your next profile world",
   "hub.adults": "Adults",
   "hub.minors": "Under 18",
   "hub.search": "Search profiles…",
@@ -32,6 +31,8 @@ export default {
   "hub.done": "Completed",
   "hub.progress": "{p}% done",
   "hub.start": "Start",
+  "hub.locked": "Locked",
+  "hub.lockedHint": "Complete basics first",
   "hub.continue": "Continue",
   "hub.review": "Review",
   "hub.overall": "Your overall progress",
@@ -85,8 +86,7 @@ export default {
   "e.nameChars": "Please use letters only - hyphens and apostrophes are fine",
   "e.nameRepeat": "This doesn’t look like a real name",
   "e.namePlaceholder": "Please enter your real name",
-  "e.namePattern":
-    "This looks like a keyboard pattern - please enter your real name",
+  "e.namePattern": "This looks like a keyboard pattern - please enter your real name",
   "e.nameLong": "Name is too long",
   "e.emailLong": "Email address is too long",
   "e.emailSpace": "Email addresses can’t contain spaces",
@@ -162,8 +162,7 @@ export default {
   "err.sub": "Please check your connection and try again.",
   "err.retry": "Try again",
   "err.crashTitle": "Oops - that screen hiccupped",
-  "err.crashSub":
-    "Your answers are saved. Try again or go back to your profiles.",
+  "err.crashSub": "Your answers are saved. Try again or go back to your profiles.",
   "q.otherSpecify": "Please specify",
   "q.otherPh": "Type your answer here",
   "e.otherSpecify": "Please tell us what “Other” is",
@@ -172,9 +171,8 @@ export default {
   "hub.sec.going": "Continue where you left off",
   "hub.sec.new": "Start a new profile",
   "hub.sec.done": "Completed profiles",
-  "hub.sec.doneEmpty":
-    "Profiles you finish appear here - you can review or edit them any time.",
-  foot: "© MyFrequentRewards. All rights reserved.",
+  "hub.sec.doneEmpty": "Profiles you finish appear here - you can review or edit them any time.",
+  "foot": "© MyFrequentRewards. All rights reserved.",
   "p.basic": "Basic",
   "p.professional": "Professional",
   "p.educational": "Education",
@@ -216,8 +214,7 @@ export default {
   "s.pet": "Pet ownership",
   // Prize Machine rewards (v4.1)
   "rw.title": "Your Prize Machine",
-  "rw.sub":
-    "Every profile you complete wins a prize capsule worth {n} points. {rate} points = {usd}.",
+  "rw.sub": "Every profile you complete wins a prize capsule worth {n} points. {rate} points = {usd}.",
   "rw.machine": "PRIZE MACHINE",
   "rw.points": "Reward points",
   "rw.pts": "pts",
@@ -234,8 +231,7 @@ export default {
   "rw.max": "Machine empty: you collected every capsule!",
   "rw.rate": "{rate} pts = {usd}",
   "rw.crank": "Turn the crank",
-  "rw.crankHint":
-    "Can't decide? Turn the crank and the machine picks your next profile.",
+  "rw.crankHint": "Can't decide? Turn the crank and the machine picks your next profile.",
   "rw.pick": "Your pick",
   "rw.pickMeta": "+{n} pts · about {m} min",
   "rw.start": "Start it",
@@ -243,13 +239,10 @@ export default {
   "rw.close": "Close",
   "rw.cta": "Win your next capsule: {name}",
   "rw.plus": "+{n} pts",
-  "rw.earned": "+100 won",
-  "rw.slotDone":
-    "{name}: capsule collected, 100 points won. Open to review or edit.",
-  "rw.slotTodo":
-    "{name}: capsule still in the machine. Complete this profile to win it and 100 points.",
-  "rw.boardAria":
-    "{rank}. {pts} reward points, worth {usd}. {n} of {total} capsules collected.",
+  "rw.earned": "+{n} won",
+  "rw.slotDone": "{name}: capsule collected, {n} points won. Open to review or edit.",
+  "rw.slotTodo": "{name}: capsule still in the machine. Complete this profile to win it and {n} points.",
+  "rw.boardAria": "{rank}. {pts} reward points, worth {usd}. {n} of {total} capsules collected.",
   "rw.pillAria": "{pts} reward points, worth {usd}. Show your Prize Machine",
   "rw.rankUp": "Rank up: {rank}!",
   "rw.ticket": "Prize ticket",
@@ -261,5 +254,5 @@ export default {
   "cur.upto": "Up to {a}",
   "cur.above": "{a} and above",
   "cur.less": "Less than {a}",
-  "cur.more": "{a} or more",
+  "cur.more": "{a} or more"
 };

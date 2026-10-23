@@ -23,11 +23,13 @@ import { useMember, useQuery as useQueryParameters } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { bumpRewards, creditProfileRewards } from "@/hooks/useRewardsRefresh";
 import "./ps/ps.css";
 import PsHub from "./ps/PsHub";
 import PsFlow from "./ps/PsFlow";
 import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
+import { visibleProfiles, normalizeInterests, basicsDone, nextBasic, isCore } from "./ps/profileRules";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -102,25 +104,24 @@ function ClassicProfiles() {
     : 1 + profiles.map((profile) => profile.slug).indexOf(query.profile);
   const selectedProfile = activeTab ? profiles.at(activeTab - 1) : profiles[0];
   const currentProfileIndex = query.profile
-    ? profiles.findIndex((profile) => profile.slug === query.profile)
-    : 0;
+  ? profiles.findIndex((profile) => profile.slug === query.profile)
+  : 0;
 
   const isFirstProfile = currentProfileIndex <= 0;
   const isLastProfile = currentProfileIndex >= profiles.length - 1;
-  const allProfiles =
-    profiles?.filter?.((profile) => Number(profile.status) > 0) || [];
+  const allProfiles= profiles?.filter?.((profile) => Number(profile.status) > 0) || []
   const handlePreviousProfile = () => {
-    if (isFirstProfile) return;
+    if(isFirstProfile) return; 
 
     const previousProfile = allProfiles[currentProfileIndex - 1];
-    router.push(`?profile=${previousProfile.slug}`, { scroll: false });
+    router.push(`?profile=${previousProfile.slug}`, {scroll: false});
   };
 
   const handleNextProfile = () => {
-    if (isLastProfile) return;
+    if(isLastProfile) return;
 
     const nextProfile = allProfiles[currentProfileIndex + 1];
-    router.push(`?profile=${nextProfile.slug}`, { scroll: false });
+    router.push(`?profile=${nextProfile.slug}`, {scroll: false });
   };
 
   // React.useEffect(()=>{
@@ -142,10 +143,10 @@ function ClassicProfiles() {
       <Grid container size={12} justifyContent="center" mt={2}>
         <Grid
           size={{ xs: 11, md: 10 }}
-          sx={{
-            bgcolor: (theme) => theme.palette.cardbg.main,
-            color: (theme) => theme.palette.cardtext.main,
-            borderRadius: 2.5,
+           sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main, 
+            color: (theme) => theme.palette.cardtext.main, 
+            borderRadius: 2.5, 
             boxShadow: 1,
             height: "calc(90vh - 160px)",
             overflow: "hidden",
@@ -219,7 +220,7 @@ function ClassicProfiles() {
               }}
             />
           </Box>
-
+          
           {!editMode && (
             <Box
               sx={{
@@ -342,86 +343,118 @@ function ProfileTabs({ profiles, query, onChange }) {
 
 /* ---------------------------------------------------------------------------------------------------------
    Profiles page, "Rewards Club" design. Same data and logic as ClassicProfiles above (same profile API call,
-   same status > 0 filter, same ?profile=<slug> link); only the look changed. Add ?classic=1 to the address to
-   open the previous design.
+   same ?profile=<slug> link); only the look changed. Add ?classic=1 to the address to open the previous design.
+
+   What the member sees (ps/profileRules.js): Basic, Education, Professional and Financial first, then the other profiles
+   below them. Those others cannot be opened until the basics are complete: clicking one shows a short message instead.
+   Points and quality score: the API pays them when a profile is completed and stores them in the database; this page only
+   reads them (GET /api/v1/me/points) and tells the other screens to read them again (bumpRewards, user.Reload).
    --------------------------------------------------------------------------------------------------------- */
-// Like the previous page, only profiles with status > 0 are shown (status = completion % from the backend).
-// Use 0 to also show profiles the member has not started ("Start a new profile", one prize capsule each).
+// The other profiles follow the member's sign-up interests; a profile that is already started is always listed (status > 0).
+// Use 0 to also list every profile the member has not started when they picked interests.
 const MIN_STATUS = 1;
+const fetchProfileList = (category) => api.post("/api/v1/profile", { category }).then((r) => r.data);
 
 function SkinProfiles() {
-  const [user, query, router, pathname, qc] = [
-    useMember(),
-    useQueryParameters(),
-    useRouter(),
-    usePathname(),
-    useQueryClient(),
-  ];
-
+  const [user, query, router, pathname, qc] = [useMember(), useQueryParameters(), useRouter(), usePathname(), useQueryClient()];
+  // Adults / Under 18 is decided at sign-up (date of birth -> user.category) and the profile API returns that set.
   const cat = user?.category === "minor" ? "minor" : "b2c";
   const profileKey = ["profiles", user?.category, "false"];
-
-  const fetchProfiles = React.useCallback(
-    () =>
-      api
-        .post("/api/v1/profile", { category: user.category })
-        .then((r) => r.data),
-    [user?.category],
-  );
-
-  const { data: profiles = [], isLoading } = useQuery({
-    queryKey: profileKey,
-    queryFn: fetchProfiles,
+  const fetchProfiles = React.useCallback(() => fetchProfileList(user.category), [user?.category]);
+  const { data: profiles = [], isLoading } = useQuery({ queryKey: profileKey, queryFn: fetchProfiles });
+  // the interests the member ticked at sign-up (saved as the answer "interests"); decide which other profiles are listed
+  const { data: interests = [], isLoading: interestsLoading } = useQuery({
+    queryKey: ["ps-interests", user?._id],
+    queryFn: () => api.post("/api/v1/me", { questions: ["interests"] }).then((r) => normalizeInterests(r?.data?.interests)),
+    enabled: Boolean(user?._id),
   });
+  // the member's rewards as the database holds them: profileRewards, profilePoints, pointsPerProfile (null when the call fails)
+  const pointsKey = ["ps-points", user?._id];
+  const fetchPoints = React.useCallback(() => api.get("/api/v1/me/points").then((r) => (r?.status === "error" ? null : r?.data ?? null)), []);
+  const { data: points, isFetched: pointsFetched } = useQuery({ queryKey: pointsKey, queryFn: fetchPoints, enabled: Boolean(user?._id), retry: false });
+  const visible = React.useCallback((list) => visibleProfiles(Array.isArray(list) ? list : [], interests, MIN_STATUS), [interests]);
+  const shown = React.useMemo(() => visible(profiles), [profiles, visible]);
 
-  // Keep all profiles visible, regardless of status.
-  const shown = React.useMemo(() => profiles || [], [profiles]);
-
-  // Prize Machine: completed profiles = collected capsules = 100 points.
-  const applyRewards = React.useCallback(
-    (list) => {
-      setProfileNames(list);
-      setRewardData({ uid: user?._id, cat, profiles: list });
-    },
-    [user?._id, cat],
-  );
-
+  // ---- the basics first: the other profiles open only when Basic, Education, Professional and Financial are complete
+  const unlocked = React.useMemo(() => basicsDone(profiles), [profiles]);
+  const isLocked = (slug) => !unlocked && !isCore(slug);
+  const [notice, setNotice] = React.useState(null); // { text, id } - the same pill the design uses for its messages
+  const noticeTimer = React.useRef(null);
+  React.useEffect(() => () => clearTimeout(noticeTimer.current), []);
+  const askBasicsFirst = (p) => {
+    const first = nextBasic(profiles);
+    const text = first ? `Complete ${first.name} first to open ${p?.name || "this profile"}.` : "Complete your basic profiles first.";
+    setNotice({ text, id: Date.now() });
+    clearTimeout(noticeTimer.current);
+    noticeTimer.current = setTimeout(() => setNotice(null), 3400);
+  };
+  // a link such as ?profile=travel while the basics are open: back to the hub with the message
+  const blockedLink = Boolean(query.profile) && !isLoading && !interestsLoading && isLocked(query.profile);
   React.useEffect(() => {
-    applyRewards(shown);
-  }, [applyRewards, shown]);
+    if (!blockedLink) return;
+    askBasicsFirst(profiles.find((p) => p.slug === query.profile));
+    router.replace(pathname, { scroll: false });
+  }, [blockedLink]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Reload profiles after saving.
+  // ---- Quality Score: +1 for every completed profile, once per profile.
+  // The profiles already counted are kept in the database as the answer "quality-credited" (PATCH /api/v1/me/answer), so a profile is never
+  // counted twice (not on another device, not after a reload). The new score is written with PUT /api/v1/me.
+  const qualityBusy = React.useRef(false);
+  const creditQuality = React.useCallback(async (list) => {
+    if (qualityBusy.current || !Array.isArray(list)) return;
+    qualityBusy.current = true;
+    try {
+      const done = list.filter((p) => Number(p?.status) >= 100).map((p) => p.slug);
+      if (!done.length) return;
+      const me = await api.post("/api/v1/me", { questions: ["quality-credited"] }).then((r) => r?.data);
+      if (!me) return;
+      const counted = [].concat(me["quality-credited"] ?? []).filter(Boolean);
+      const add = done.filter((s) => !counted.includes(s));
+      if (!add.length) return;
+      const score = Math.min(200, (Number(me.qualityScore) || 0) + add.length);
+      const saved = await api.put("/api/v1/me", { qualityScore: score });
+      if (saved?.status === "error") return;
+      await api.patch("/api/v1/me/answer", { "quality-credited": [...counted, ...add] });
+      user?.Reload?.(); // the header / My Account read the new Quality Score
+    } catch (e) {
+      console.log(e);
+    } finally {
+      qualityBusy.current = false;
+    }
+  }, [user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ---- Prize Machine: capsules = the profiles listed; which of them are won = the rewards the database holds
+  const [rewardsReady, setRewardsReady] = React.useState(false);
+  const applyRewards = React.useCallback((all, pts) => {
+    const list = Array.isArray(all) ? all : [];
+    setProfileNames(list);
+    setRewardData({ uid: user?._id, cat, profiles: visible(list), completed: list, points: pts });
+  }, [user?._id, cat, visible]);
+  React.useEffect(() => {
+    if (!Array.isArray(profiles) || isLoading || interestsLoading || !pointsFetched) return;
+    applyRewards(profiles, points);
+    creditProfileRewards(user, profiles).then((n) => { if (n) bumpRewards(); }).catch(() => {}); // completed profiles without a reward yet are paid once
+    creditQuality(profiles); // profiles that were already complete are counted once
+    setRewardsReady(true); // the machine is built only now, so it never starts empty
+  }, [applyRewards, creditQuality, profiles, points, isLoading, interestsLoading, pointsFetched, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
+  // called by the flow right after a profile was saved: the API has just paid its points and raised the quality score
   const afterSave = React.useCallback(async () => {
-    const fresh = await qc.fetchQuery({
-      queryKey: profileKey,
-      queryFn: fetchProfiles,
-      staleTime: 0,
-    });
+    const fresh = await qc.fetchQuery({ queryKey: profileKey, queryFn: fetchProfiles, staleTime: 0 });
+    const pts = await qc.fetchQuery({ queryKey: pointsKey, queryFn: fetchPoints, staleTime: 0 });
+    applyRewards(fresh, pts);
+    await creditProfileRewards(user, fresh).catch(() => 0); // the profile just completed pays its points into the database (PUT /api/v1/rewards)
+    bumpRewards(); // sidebar, dashboard and My Account read the new Reward Balance
+    await creditQuality(fresh); // +1 Quality Score for every newly completed profile (also reloads the user)
+    user?.Reload?.(); // the header reads the new Quality Score
+  }, [qc, fetchProfiles, fetchPoints, applyRewards, creditQuality, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    applyRewards(fresh || []);
-    qc.invalidateQueries({ queryKey: ["profiles"] });
-  }, [qc, fetchProfiles, applyRewards, profileKey]);
-
-  const open = (p) => router.push(`?profile=${p.slug}`, { scroll: false });
-
+  const open = (p) => (isLocked(p.slug) ? askBasicsFirst(p) : router.push(`?profile=${p.slug}`, { scroll: false }));
   const hub = () => router.push(pathname, { scroll: false });
-
-  if (isLoading) return <></>;
-
-  const current = query.profile
-    ? shown.find((p) => p.slug === query.profile)
-    : null;
-
+  if (isLoading || interestsLoading) return <></>;
+  const current = query.profile && !isLocked(query.profile) ? shown.find((p) => p.slug === query.profile) : null;
   const at = current ? shown.indexOf(current) : -1;
-
+  const next = at >= 0 ? shown[at + 1] : null;
   return (
-    <div
-      className="ps"
-      style={{
-        minHeight: "calc(100vh - 70px)",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="ps" style={{ minHeight: "calc(100vh - 70px)", overflowX: "hidden" }}>
       {current ? (
         <PsFlow
           key={current.slug}
@@ -430,14 +463,17 @@ function SkinProfiles() {
           endpage="/api/v1/me/profile"
           onHub={hub}
           onSaved={afterSave}
-          hasNext={at >= 0 && at < shown.length - 1}
-          onNextProfile={() =>
-            at >= 0 && at < shown.length - 1 && open(shown[at + 1])
-          }
+          hasNext={Boolean(next) && !isLocked(next.slug)}
+          onNextProfile={() => next && open(next)}
         />
       ) : (
-        <PsHub profiles={shown} onOpen={open} cat={cat} />
+        <PsHub profiles={shown} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
       )}
+      {notice ? (
+        <div className="toasts" role="status" aria-live="polite">
+          <div className="toast" key={notice.id}>{notice.text}</div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -449,8 +485,7 @@ export default function ProfilesPage() {
   const [classic, setClassic] = React.useState(false);
   React.useEffect(() => {
     try {
-      if (query.classic === "1")
-        sessionStorage.setItem("profiles-classic", "1");
+      if (query.classic === "1") sessionStorage.setItem("profiles-classic", "1");
       if (query.classic === "0") sessionStorage.removeItem("profiles-classic");
       setClassic(sessionStorage.getItem("profiles-classic") === "1");
     } catch {
