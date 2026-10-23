@@ -24,7 +24,11 @@ function QrCube() {
       <div className="qx-cube">
         {faces.map(({ b, c }, i) => (
           <span key={b.id} className={`qx-face f${i}`} style={{ '--c': b.color, '--c2': b.color2 }}>
+<<<<<<< HEAD
             <img src={c.qr} alt={`QR code for ${b.name || b.short} ${c.label || 'website'}`} width="120" height="120" />
+=======
+            <img src={c.qr} alt="" width="120" height="120" />
+>>>>>>> main
             <b>{b.short}</b>
           </span>
         ))}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Supported interface languages (51 — the 42 Turn2Opinion languages plus the 9 MyFrequentRewards already offered).
 //
 //   code    BCP-47 tag written to <html lang> and used for dictionaries (src/i18n/dict/<code>.js)
@@ -97,3 +98,63 @@ export function resolveLang(value) {
   const exact = LANGUAGES.find((l) => l.code.toLowerCase() === v.toLowerCase() || l.name.toLowerCase() === v.toLowerCase());
   return exact ? exact.code : matchLocale([v]);
 }
+=======
+// v2.5 — languages offered in the language switcher. `code` is the Google Translate code; `glyph` is a short
+// sample of the script shown on the tile; `rtl` marks right-to-left scripts.
+// English is the source language of the site.
+export const LANGUAGES = [
+  { code: 'en', name: 'English', native: 'English', glyph: 'Aa' },
+  { code: 'zh-CN', name: 'Chinese (Simplified)', native: '简体中文', glyph: '中' },
+  { code: 'zh-TW', name: 'Chinese (Traditional)', native: '繁體中文', glyph: '繁' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', glyph: 'अ' },
+  { code: 'es', name: 'Spanish', native: 'Español', glyph: 'Ñ' },
+  { code: 'ar', name: 'Arabic', native: 'العربية', glyph: 'ع', rtl: true },
+  { code: 'pt', name: 'Portuguese', native: 'Português', glyph: 'Ç' },
+  { code: 'fr', name: 'French', native: 'Français', glyph: 'É' },
+  { code: 'de', name: 'German', native: 'Deutsch', glyph: 'ß' },
+  { code: 'ja', name: 'Japanese', native: '日本語', glyph: 'あ' },
+  { code: 'ko', name: 'Korean', native: '한국어', glyph: '한' },
+  { code: 'ru', name: 'Russian', native: 'Русский', glyph: 'Ж' },
+  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', glyph: 'Id' },
+  { code: 'ms', name: 'Malay', native: 'Bahasa Melayu', glyph: 'Ms' },
+  { code: 'th', name: 'Thai', native: 'ไทย', glyph: 'ก' },
+  { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', glyph: 'Ơ' },
+  { code: 'tl', name: 'Filipino', native: 'Filipino', glyph: 'Ng' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা', glyph: 'অ' },
+  { code: 'ta', name: 'Tamil', native: 'தமிழ்', glyph: 'த' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు', glyph: 'త' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी', glyph: 'म' },
+  { code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', glyph: 'ગ' },
+  { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', glyph: 'ಕ' },
+  { code: 'ml', name: 'Malayalam', native: 'മലയാളം', glyph: 'മ' },
+  { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', glyph: 'ਪ' },
+  { code: 'ur', name: 'Urdu', native: 'اردو', glyph: 'ا', rtl: true },
+  { code: 'ne', name: 'Nepali', native: 'नेपाली', glyph: 'न' },
+  { code: 'si', name: 'Sinhala', native: 'සිංහල', glyph: 'ස' },
+  { code: 'km', name: 'Khmer', native: 'ខ្មែរ', glyph: 'ក' },
+  { code: 'it', name: 'Italian', native: 'Italiano', glyph: 'À' },
+  { code: 'nl', name: 'Dutch', native: 'Nederlands', glyph: 'IJ' },
+  { code: 'pl', name: 'Polish', native: 'Polski', glyph: 'Ł' },
+  { code: 'cs', name: 'Czech', native: 'Čeština', glyph: 'Ř' },
+  { code: 'ro', name: 'Romanian', native: 'Română', glyph: 'Ș' },
+  { code: 'bg', name: 'Bulgarian', native: 'Български', glyph: 'Б' },
+  { code: 'uk', name: 'Ukrainian', native: 'Українська', glyph: 'Ї' },
+  { code: 'el', name: 'Greek', native: 'Ελληνικά', glyph: 'Ω' },
+  { code: 'hu', name: 'Hungarian', native: 'Magyar', glyph: 'Ő' },
+  { code: 'sv', name: 'Swedish', native: 'Svenska', glyph: 'Å' },
+  { code: 'no', name: 'Norwegian', native: 'Norsk', glyph: 'Ø' },
+  { code: 'da', name: 'Danish', native: 'Dansk', glyph: 'Æ' },
+  { code: 'fi', name: 'Finnish', native: 'Suomi', glyph: 'Ä' },
+  { code: 'tr', name: 'Turkish', native: 'Türkçe', glyph: 'Ğ' },
+  { code: 'fa', name: 'Persian', native: 'فارسی', glyph: 'پ', rtl: true },
+  { code: 'iw', name: 'Hebrew', native: 'עברית', glyph: 'א', rtl: true },
+  { code: 'sw', name: 'Swahili', native: 'Kiswahili', glyph: 'Sw' },
+  { code: 'am', name: 'Amharic', native: 'አማርኛ', glyph: 'አ' },
+  { code: 'ha', name: 'Hausa', native: 'Hausa', glyph: 'Ƙ' },
+  { code: 'yo', name: 'Yoruba', native: 'Yorùbá', glyph: 'Ẹ' },
+  { code: 'zu', name: 'Zulu', native: 'isiZulu', glyph: 'Zu' },
+  { code: 'af', name: 'Afrikaans', native: 'Afrikaans', glyph: 'Ê' },
+];
+export const POPULAR = ['zh-CN', 'hi', 'es', 'ar', 'pt', 'fr', 'id', 'ja'];
+export const byCode = (c) => LANGUAGES.find((l) => l.code === c);
+>>>>>>> main

@@ -48,7 +48,11 @@ function Applause({ avg, n }) {
   return (
     <div className={`ap ${seen ? 'go' : ''}`} ref={ref} style={{ '--p': pct }}>
       <div className="ap-dial">
+<<<<<<< HEAD
       <svg viewBox="0 0 220 124" className="ap-svg" role="img" aria-label="Applause meter showing the average rating">
+=======
+      <svg viewBox="0 0 220 124" className="ap-svg" aria-hidden="true">
+>>>>>>> main
         <defs><linearGradient id="apg" x1="0" x2="1"><stop offset="0" stopColor="#E5484D" /><stop offset=".35" stopColor="#F2A33A" /><stop offset=".65" stopColor="#E8C33A" /><stop offset="1" stopColor="#2FBF8F" /></linearGradient></defs>
         <path d="M20 112a90 90 0 0 1 180 0" className="ap-bg" />
         <path d="M20 112a90 90 0 0 1 180 0" className="ap-fg" pathLength="100" />

@@ -1,6 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Icon from './Icon.jsx';
+import { COUNTRIES } from '../data/countries.js';
+import CountryPicker, { Flag } from './CountryPicker.jsx';
+import { API_BASE, BRAND, CONTACT, DEMO_MODE, whatsappLink } from '../data/site.js';
+import { EMAIL_RE } from '../utils/validate.js';
 import { COUNTRIES } from '../data/countries.js';
 import CountryPicker, { Flag } from './CountryPicker.jsx';
 import { API_BASE, BRAND, CONTACT, DEMO_MODE, whatsappLink } from '../data/site.js';
@@ -19,15 +25,28 @@ import { useI18n } from '../i18n/I18nProvider.jsx';
 const TAWK_P = import.meta.env.VITE_TAWK_PROPERTY_ID;
 const TAWK_W = import.meta.env.VITE_TAWK_WIDGET_ID;
 const LEAD_ENDPOINT = import.meta.env.VITE_CHAT_LEAD_ENDPOINT || '/api/chat-leads';
+const LEAD_ENDPOINT = import.meta.env.VITE_CHAT_LEAD_ENDPOINT || '/api/chat-leads';
 
 const TOPICS = [
   { q: 'How do I join?', t: 'Joining', d: 'Free · 2 minutes', icon: 'user', c: '#FF8A00' },
   { q: 'What rewards can I get?', t: 'Rewards', d: '8 reward types', icon: 'gift', c: '#14C9B5' },
   { q: 'How much can I earn per survey?', t: 'Earnings', d: 'Rates & times', icon: 'coins', c: '#FFC233' },
   { q: 'When will I get paid?', t: 'Payouts', d: 'Claims & timing', icon: 'wallet', c: '#2F6BFF' },
+  { q: 'What rewards can I get?', t: 'Rewards', d: '8 reward types', icon: 'gift', c: '#14C9B5' },
+  { q: 'How much can I earn per survey?', t: 'Earnings', d: 'Rates & times', icon: 'coins', c: '#FFC233' },
+  { q: 'When will I get paid?', t: 'Payouts', d: 'Claims & timing', icon: 'wallet', c: '#2F6BFF' },
   { q: 'Is my data safe?', t: 'Privacy', d: 'Never sold or shared', icon: 'shield', c: '#8B5CF6' },
   { q: 'Talk to a real person', t: 'Real person', d: 'Leave your details', icon: 'headset', c: '#E8457A' },
+  { q: 'Talk to a real person', t: 'Real person', d: 'Leave your details', icon: 'headset', c: '#E8457A' },
 ];
+const POPULAR = ['Is it really free?', 'Is UPI available?', 'Can professionals join?', 'Why was I screened out?', 'I forgot my password', 'Do I need an app?', 'Is MyFrequentRewards legit?', 'How many surveys will I get?', 'Do you give gift cards?', 'How do I delete my account?'];
+const GREETINGS = ['How can we help today?', 'Ask about rewards & payouts', 'Curious how surveys work?', 'Questions about privacy?'];
+
+let enginePromise = null;
+export const loadEngine = () => {
+  if (!enginePromise) enginePromise = import('../utils/chatEngine.js');
+  return enginePromise;
+};
 const POPULAR = ['Is it really free?', 'Is UPI available?', 'Can professionals join?', 'Why was I screened out?', 'I forgot my password', 'Do I need an app?', 'Is MyFrequentRewards legit?', 'How many surveys will I get?', 'Do you give gift cards?', 'How do I delete my account?'];
 const GREETINGS = ['How can we help today?', 'Ask about rewards & payouts', 'Curious how surveys work?', 'Questions about privacy?'];
 
@@ -204,6 +223,8 @@ export default function LiveChat({ open, onClose, seed }) {
   const [sent, setSent] = useState(0);
   const [hints, setHints] = useState([]);
   const [engine, setEngine] = useState(null);
+  const [hints, setHints] = useState([]);
+  const [engine, setEngine] = useState(null);
   const bodyRef = useRef(null);
   const inputRef = useRef(null);
   const started = msgs.length > 0;
@@ -213,6 +234,7 @@ export default function LiveChat({ open, onClose, seed }) {
   useEffect(() => {
     if (open) {
       pop(); // pop every time the chat opens
+      loadEngine().then(setEngine).catch(() => {});
       loadEngine().then(setEngine).catch(() => {});
       setTimeout(() => inputRef.current && inputRef.current.focus({ preventScroll: true }), 300);
     }
@@ -235,12 +257,17 @@ export default function LiveChat({ open, onClose, seed }) {
   useEffect(() => {
     setHints(engine && input.trim().length >= 3 ? engine.suggest(input) : []);
   }, [input, engine]);
+  useEffect(() => {
+    setHints(engine && input.trim().length >= 3 ? engine.suggest(input) : []);
+  }, [input, engine]);
 
+  const ask = async (text) => {
   const ask = async (text) => {
     const q = text.trim();
     if (!q || typing) return;
     setMsgs((m) => [...m, { from: 'me', text: q, at: timeNow() }]);
     setInput('');
+    setHints([]);
     setHints([]);
     setSent((s) => s + 1);
     setTyping(true);
@@ -252,12 +279,27 @@ export default function LiveChat({ open, onClose, seed }) {
     } catch {
       res = { a: 'Sorry — I couldn’t load answers just now. Please leave your details and our team will reply.', lead: true };
     }
+    let res;
+    try {
+      const eng = engine || (await loadEngine());
+      if (!engine) setEngine(eng);
+      res = eng.answer(q);
+    } catch {
+      res = { a: 'Sorry — I couldn’t load answers just now. Please leave your details and our team will reply.', lead: true };
+    }
     setTimeout(() => {
       setTyping(false);
       setMsgs((m) => [...m, { from: 'bot', q, ...res, at: timeNow() }]);
+      setMsgs((m) => [...m, { from: 'bot', q, ...res, at: timeNow() }]);
       pop({ volume: 0.1, pitch: 1.3 }); // gentle pop for each reply
     }, 650 + Math.min(q.length * 10, 800));
+    }, 650 + Math.min(q.length * 10, 800));
   };
+  useEffect(() => {
+    if (seed && seed.q) setTimeout(() => ask(seed.q), 450);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seed]);
+  const patch = (idx, obj) => setMsgs((m) => m.map((x, i) => (i === idx ? { ...x, ...obj } : x)));
   useEffect(() => {
     if (seed && seed.q) setTimeout(() => ask(seed.q), 450);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,6 +320,7 @@ export default function LiveChat({ open, onClose, seed }) {
           </div>
           <div className="hc-title">
             <strong>Live Help <span>24/7</span></strong>
+            <small><i className="hc-dot" /> Online now · instant answers</small>
             <small><i className="hc-dot" /> Online now · instant answers</small>
           </div>
           <button type="button" className={`hc-snd ${sound ? '' : 'off'}`} onClick={toggleSound} aria-pressed={!sound} aria-label={sound ? 'Mute chat sounds' : 'Turn chat sounds on'} title={sound ? 'Sound on' : 'Sound off'} tabIndex={tab}>
@@ -328,6 +371,13 @@ export default function LiveChat({ open, onClose, seed }) {
                   {m.src ? <Link to={m.src.path} className="hc-src-chip" onClick={onClose} tabIndex={tab}><Icon name="book" size={13} /> <span>Source: {m.src.label}</span> <Icon name="arrow" size={12} /></Link> : null}
                   {m.more && (!m.src || m.more.path !== m.src.path) ? <Link to={m.more.path} className="hc-src-chip alt" onClick={onClose} tabIndex={tab}><Icon name="link" size={13} /> <span>{m.more.label}</span></Link> : null}
                 </div>
+              {m.unsure ? <p className="hc-unsure">Here’s the closest answer I found:</p> : null}
+              <p>{m.a || m.text}</p>
+              {m.src || m.more ? (
+                <div className="hc-src">
+                  {m.src ? <Link to={m.src.path} className="hc-src-chip" onClick={onClose} tabIndex={tab}><Icon name="book" size={13} /> <span>Source: {m.src.label}</span> <Icon name="arrow" size={12} /></Link> : null}
+                  {m.more && (!m.src || m.more.path !== m.src.path) ? <Link to={m.more.path} className="hc-src-chip alt" onClick={onClose} tabIndex={tab}><Icon name="link" size={13} /> <span>{m.more.label}</span></Link> : null}
+                </div>
               ) : null}
               {m.human ? (
                 <div className="hc-human">
@@ -345,20 +395,38 @@ export default function LiveChat({ open, onClose, seed }) {
                   {m.related.map((r) => <button type="button" key={r} onClick={() => ask(r)} tabIndex={tab}>{r}</button>)}
                 </div>
               ) : null}
+              {m.from === 'bot' && m.unsure && !m.lead && !m.showLead ? (
+                <button type="button" className="hc-notit" onClick={() => patch(i, { showLead: true })} tabIndex={tab}>Not what I asked — contact the team</button>
+              ) : null}
+              {m.related && m.related.length ? (
+                <div className="hc-related" aria-label="Related questions">
+                  <small>Related</small>
+                  {m.related.map((r) => <button type="button" key={r} onClick={() => ask(r)} tabIndex={tab}>{r}</button>)}
+                </div>
+              ) : null}
               <span className="hc-meta">
                 {m.at}
+                {m.from === 'bot' && !m.lead ? (
+                  m.rated ? <em className="hc-thanks">{m.rated === 'down' ? 'Thanks — tell us more below.' : 'Thanks for the feedback!'}</em> : (
                 {m.from === 'bot' && !m.lead ? (
                   m.rated ? <em className="hc-thanks">{m.rated === 'down' ? 'Thanks — tell us more below.' : 'Thanks for the feedback!'}</em> : (
                     <span className="hc-rate">
                       Helpful?
                       <button type="button" onClick={() => patch(i, { rated: 'up' })} aria-label="Yes, helpful" tabIndex={tab}>👍</button>
                       <button type="button" onClick={() => patch(i, { rated: 'down', showLead: true })} aria-label="Not helpful" tabIndex={tab}>👎</button>
+                      <button type="button" onClick={() => patch(i, { rated: 'up' })} aria-label="Yes, helpful" tabIndex={tab}>👍</button>
+                      <button type="button" onClick={() => patch(i, { rated: 'down', showLead: true })} aria-label="Not helpful" tabIndex={tab}>👎</button>
                     </span>
                   )
+                ) : m.from === 'me' ? <span className="hc-tick" aria-label="Sent">✓✓</span> : null}
                 ) : m.from === 'me' ? <span className="hc-tick" aria-label="Sent">✓✓</span> : null}
               </span>
             </div>
           </div>
+          {m.from === 'bot' && (m.lead || m.showLead) ? (
+            <div className="hc-leadrow"><LeadForm question={m.q} tab={tab} onDone={() => pop({ volume: 0.12, pitch: 1.5 })} /></div>
+          ) : null}
+          </Fragment>
           {m.from === 'bot' && (m.lead || m.showLead) ? (
             <div className="hc-leadrow"><LeadForm question={m.q} tab={tab} onDone={() => pop({ volume: 0.12, pitch: 1.5 })} /></div>
           ) : null}
@@ -372,6 +440,19 @@ export default function LiveChat({ open, onClose, seed }) {
         ) : null}
       </div>
 
+      {hints.length ? (
+        <ul className="hc-hints" aria-label="Suggested questions">
+          {hints.map((h) => <li key={h}><button type="button" onClick={() => ask(h)} tabIndex={tab}><Icon name="sparkle" size={13} /> {h}</button></li>)}
+        </ul>
+      ) : (
+        <div className="hc-popular" aria-label="Popular questions">
+          <div className="hc-popular-track">
+            {[...POPULAR, ...POPULAR].map((q, i) => (
+              <button type="button" key={q + i} onClick={() => ask(q)} tabIndex={i < POPULAR.length ? tab : -1} aria-hidden={i >= POPULAR.length}>{q}</button>
+            ))}
+          </div>
+        </div>
+      )}
       {hints.length ? (
         <ul className="hc-hints" aria-label="Suggested questions">
           {hints.map((h) => <li key={h}><button type="button" onClick={() => ask(h)} tabIndex={tab}><Icon name="sparkle" size={13} /> {h}</button></li>)}

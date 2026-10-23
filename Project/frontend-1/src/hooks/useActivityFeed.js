@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
 import { DEMO_MODE } from '../data/site.js';
 import { STATS, SURVEY_CATEGORIES } from '../data/community.js';
+import { STATS, SURVEY_CATEGORIES } from '../data/community.js';
 import { getJSON } from '../utils/api.js';
 import { sanitizeActivity } from '../utils/payouts.js';
 
+// Reward-activity feed for the notifications and the "Rewards in motion" section.
+// Production: REAL payouts only — from VITE_ACTIVITY_FEED_URL (default /api/activity, served by server/index.mjs,
+// where your team records payouts members have agreed to show). Expected item shape:
+//   { "name": "Priya K.", "place": "Pune, India", "iso": "IN", "role": "HR Manager", "segment": "business",
+//     "amount": "₹450", "method": "UPI (India)", "at": "2026-10-14T09:12:00Z" }
+// UPI items outside India (or rupee amounts outside India) are dropped automatically.
+// When the feed is empty or unreachable, `pulse` holds true community facts (rewards paid, surveys completed,
+// open survey categories) so the notifications still show real activity — never invented people.
+const FEED = import.meta.env.VITE_ACTIVITY_FEED_URL || '/api/activity';
 // Reward-activity feed for the notifications and the "Rewards in motion" section.
 // Production: REAL payouts only — from VITE_ACTIVITY_FEED_URL (default /api/activity, served by server/index.mjs,
 // where your team records payouts members have agreed to show). Expected item shape:
@@ -38,6 +48,7 @@ export default function useActivityFeed() {
   const [items, setItems] = useState(cache || []);
   useEffect(() => {
     if (cache) return undefined;
+    if (cache) return undefined;
     let alive = true;
     (async () => {
       try {
@@ -50,8 +61,10 @@ export default function useActivityFeed() {
           data = await getJSON(FEED);
         }
         cache = sanitizeActivity(Array.isArray(data) ? data : []).map((it) => ({ ...it, ago: it.ago || agoFrom(it.at) }));
+        cache = sanitizeActivity(Array.isArray(data) ? data : []).map((it) => ({ ...it, ago: it.ago || agoFrom(it.at) }));
         if (alive) setItems(cache);
       } catch {
+        cache = [];
         cache = [];
         if (alive) setItems([]);
       }
@@ -61,10 +74,12 @@ export default function useActivityFeed() {
     };
   }, []);
   return { items, isPreview: DEMO_MODE, pulse: PULSE };
+  return { items, isPreview: DEMO_MODE, pulse: PULSE };
 }
 
 export const initials = (name = '') =>
   name
+    .replace(/^(dr|mr|mrs|ms)\.?\s+/i, '')
     .replace(/^(dr|mr|mrs|ms)\.?\s+/i, '')
     .split(/\s+/)
     .map((p) => p[0])

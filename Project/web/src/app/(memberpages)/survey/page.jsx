@@ -38,6 +38,15 @@ export default function page() {
       router.push("/");
     },
   });
+  const consentPages = {
+    b2b: "/auth/consent/b2b",
+    "b2b-minor": "/auth/consent/b2b",
+    b2c: "/auth/consent/consumer",
+    "b2c-minor": "/auth/consent/consumer",
+    consumer: "/auth/consent/consumer",
+    "consumer-minor": "/auth/consent/consumer",
+  };
+
   React.useEffect(() => {
     if (!user) return;
     if (
@@ -45,7 +54,7 @@ export default function page() {
       user.terms === undefined ||
       user.terms.length === 0
     ) {
-      router.replace("/auth/terms");
+      router.replace(consentPages[user?.category] || "/auth/consent/consumer");
     }
   }, [user]);
   const {
@@ -219,9 +228,9 @@ export default function page() {
                   survey={survey}
                   user={user}
                   onError={(err) => {
-                    setErrorPopup((prev) => ({ 
+                    setErrorPopup((prev) => ({
                       ...prev,
-                      ...err 
+                      ...err,
                     }));
                   }}
                   onComplete={(status) => {

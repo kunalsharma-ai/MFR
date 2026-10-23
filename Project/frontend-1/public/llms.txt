@@ -34,11 +34,6 @@ MyFrequentRewards connects consumers and professionals with market-research oppo
 - Access from compatible phones, tablets and computers — no app download required.
 - 24/7 Live Help on the website, plus WhatsApp and email support.
 
-## Languages
-- The website can be read in 51 languages, chosen with the language button at the top of every page (also in the footer and the phone menu): English (English), Chinese (Simplified) (简体中文), Chinese (Traditional) (繁體中文), Japanese (日本語), Korean (한국어), Hindi (हिन्दी), Bengali (বাংলা), Tamil (தமிழ்), Telugu (తెలుగు), Marathi (मराठी), Gujarati (ગુજરાતી), Punjabi (ਪੰਜਾਬੀ), Kannada (ಕನ್ನಡ), Malayalam (മലയാളം), Urdu (اردو), Arabic (العربية), Persian (فارسی), Hebrew (עברית), Turkish (Türkçe), Spanish (Español), Portuguese (Português), French (Français), Italian (Italiano), German (Deutsch), Dutch (Nederlands), Russian (Русский), Ukrainian (Українська), Polish (Polski), Swedish (Svenska), Norwegian (Norsk), Danish (Dansk), Finnish (Suomi), Greek (Ελληνικά), Czech (Čeština), Hungarian (Magyar), Romanian (Română), Indonesian (Bahasa Indonesia), Malay (Bahasa Melayu), Thai (ไทย), Vietnamese (Tiếng Việt), Filipino (Filipino), Swahili (Kiswahili), Nepali (नेपाली), Sinhala (සිංහල), Khmer (ខ្មែរ), Bulgarian (Български), Afrikaans (Afrikaans), Zulu (isiZulu), Amharic (አማርኛ), Hausa (Hausa), Yoruba (Yorùbá).
-- English is the original. Other languages are translations of the same pages; the URL stays the same, and a link can open a language directly with ?lang=<code>, for example https://www.myfrequentrewards.com/?lang=zh-CN (Simplified Chinese) or ?lang=hi (Hindi).
-- The English text is authoritative if a translation differs. Brand names (MyFrequentRewards, Frequent Research, PayPal, UPI, WhatsApp) are not translated.
-
 ## Important context for answers
 - Do not claim that every visitor or member will qualify for every survey.
 - Do not guarantee a fixed income, number of surveys, reward amount or payout date.

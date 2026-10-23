@@ -1,0 +1,15 @@
+Dockerfile
+MASTER_PROMPT.md
+README.md
+files.txt
+index.html
+nginx.conf
+package-lock.json
+package.json
+public
+scripts
+server
+shots
+src
+vercel.json
+vite.config.js

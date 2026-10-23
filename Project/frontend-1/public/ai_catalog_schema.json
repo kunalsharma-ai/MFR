@@ -1,0 +1,93 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "MyFrequentRewards",
+    "identifier": "myfrequentrewards.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:home",
+      "displayName": "MyFrequentRewards Home",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/",
+      "description": "Main page of MyFrequentRewards, a rewards service where members can earn by taking paid surveys. Start here for an overview and to join."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:about-us",
+      "displayName": "About MyFrequentRewards",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/about-us",
+      "description": "Information about the MyFrequentRewards company, its mission and how the service works."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:paid-surveys-consumers",
+      "displayName": "Paid Surveys for Consumers",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/paid-surveys-for-consumers",
+      "description": "Details on paid survey opportunities for everyday consumers, including how members take part and earn rewards."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:paid-surveys-professionals",
+      "displayName": "Paid Surveys for Professionals",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/paid-surveys-for-professionals",
+      "description": "Details on higher-value paid survey opportunities for working professionals and industry experts."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:who-can-join",
+      "displayName": "Who Can Join",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/who-can-join",
+      "description": "Eligibility information explaining who can become a MyFrequentRewards member."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:blog",
+      "displayName": "MyFrequentRewards Blog",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/blog",
+      "description": "Articles, tips and updates about paid surveys, rewards and getting the most from membership."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:sign-up",
+      "displayName": "Sign Up",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/sign-up",
+      "description": "Registration page for creating a free MyFrequentRewards membership account."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:site:contact-us",
+      "displayName": "Contact Us",
+      "type": "text/html",
+      "url": "https://www.myfrequentrewards.com/contact-us",
+      "description": "Contact page for questions, support and general enquiries to the MyFrequentRewards team."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:social:youtube",
+      "displayName": "MyFrequentRewards on YouTube",
+      "type": "text/html",
+      "url": "https://www.youtube.com/@MyFrequentRewards",
+      "description": "Official MyFrequentRewards YouTube channel with videos about the service."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:social:facebook",
+      "displayName": "MyFrequentRewards on Facebook",
+      "type": "text/html",
+      "url": "https://www.facebook.com/myfrequentreswards/",
+      "description": "Official MyFrequentRewards Facebook page for community updates and news."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:social:instagram",
+      "displayName": "MyFrequentRewards on Instagram",
+      "type": "text/html",
+      "url": "https://www.instagram.com/myfrequentrewards/",
+      "description": "Official MyFrequentRewards Instagram profile with updates and member-focused content."
+    },
+    {
+      "identifier": "urn:ai:myfrequentrewards.com:social:linkedin",
+      "displayName": "MyFrequentRewards on LinkedIn",
+      "type": "text/html",
+      "url": "https://www.linkedin.com/company/myfrequentrewards/",
+      "description": "Official MyFrequentRewards LinkedIn company page with company news and professional updates."
+    }
+  ]
+}

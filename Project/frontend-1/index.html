@@ -9,6 +9,26 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
+    />
+    <!-- GTM-NTTDHPV -->
+     <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || []; w[l].push({
+          'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-NTTDHPV');
+    </script>
+
     <!-- Fonts are self-hosted (public/fonts, OFL): Manrope 600–700 headings & numbers, Inter 400–600 body & UI.
          No Google Fonts request → faster first paint and it also works in mainland China. -->
     <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
@@ -29,6 +49,10 @@
     <!-- ANALYTICS: paste the approved GTM / GA4 / Meta Pixel snippets here ONCE (see README §Analytics). -->
   </head>
   <body>
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NTTDHPV" height="0" width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
     <div id="root"><!--app-html--></div>
     <noscript>MyFrequentRewards works best with JavaScript enabled. All pages, policies and blog articles remain readable without it.</noscript>
     <script type="module" src="/src/main.jsx"></script>

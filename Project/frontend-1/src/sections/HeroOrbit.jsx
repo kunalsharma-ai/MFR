@@ -22,14 +22,39 @@ const MODE = {
   consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
 };
+import { BRAND, PAYOUTS } from '../data/site.js';
+import { STATS, SURVEY_CATEGORIES } from '../data/community.js';
+import { isCalm } from '../utils/calm.js';
+
+// Home hero (v2.0). Left: brand motto, the H1, a Consumer / Professional switch that re-colours the whole hero
+// (warm sunset for consumers, emerald & gold for professionals), a slot-roll audience motto with tagline, live
+// community figures and the calls to action.
+// Right: a different world per audience — the consumer "Opinion Orbit" (a live mini-survey on a phone, the eight
+// reward types circling it in 3D) or the professional holographic expert globe with orbiting roles and a gold invitation.
+// Timers pause off-screen; CSS honours reduced motion.
+const WHO = {
+  consumer: ['students', 'homemakers', 'gamers', 'parents', 'retirees', 'shoppers', 'travellers', 'drivers'],
+  pro: ['IT managers', 'doctors', 'founders', 'engineers', 'CXOs', 'HR leaders', 'marketers', 'consultants'],
+};
+const MOTTO_ICONS = ['chat', 'badge', 'gift'];
+// Audience mottos — each word rolls into its own slot window; a tagline follows.
+const MODE = {
+  consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
+  pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
+};
 
 export default function HeroOrbit() {
   const [vref, visible] = useInView({ once: false, threshold: 0, rootMargin: '100px 0px' });
   const [seg, setSeg] = useState('consumer');
+  const [seg, setSeg] = useState('consumer');
   const [w, setW] = useState(0);
+  const [r, setR] = useState(0);
   const [r, setR] = useState(0);
   useEffect(() => {
     if (!visible) return undefined; // pause when off-screen
+    const t = setInterval(() => !isCalm() && setW((i) => i + 1), 2200);
+    const t2 = setInterval(() => !isCalm() && setR((i) => (i + 1) % PAYOUTS.length), 3800);
+    return () => { clearInterval(t); clearInterval(t2); };
     const t = setInterval(() => !isCalm() && setW((i) => i + 1), 2200);
     const t2 = setInterval(() => !isCalm() && setR((i) => (i + 1) % PAYOUTS.length), 3800);
     return () => { clearInterval(t); clearInterval(t2); };
@@ -38,10 +63,17 @@ export default function HeroOrbit() {
   const pay = PAYOUTS[r];
   const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
   const words = BRAND.motto.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
+  const who = WHO[seg];
+  const pay = PAYOUTS[r];
+  const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
+  const words = BRAND.motto.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
 
   return (
     <section ref={vref} className={`hero hm-hero seg-${seg}`} aria-labelledby="hero-title">
+    <section ref={vref} className={`hero hm-hero seg-${seg}`} aria-labelledby="hero-title">
       <div className="hero-bg" aria-hidden="true">
+        <div className="hm-tint t-con" />
+        <div className="hm-tint t-pro" />
         <div className="hm-tint t-con" />
         <div className="hm-tint t-pro" />
         <div className="hero-aurora a1" />
@@ -49,10 +81,18 @@ export default function HeroOrbit() {
         <div className="hero-aurora a3" />
         <div className="hero-grid" />
         {Array.from({ length: 8 }).map((_, i) => <i key={i} className="hero-spark" style={{ "--i": i * 1.7 }} />)}
+        {Array.from({ length: 8 }).map((_, i) => <i key={i} className="hero-spark" style={{ "--i": i * 1.7 }} />)}
       </div>
 
       <div className="container hero-row">
         <div className="hero-copy">
+          <p className="hm-motto" aria-label={BRAND.motto}>
+            {words.map((x, k) => (
+              <span key={x} className="hm-mw" style={{ '--k': k }} aria-hidden="true">
+                <span className="hm-mi"><Icon name={MOTTO_ICONS[k]} size={15} /></span>{x}
+              </span>
+            ))}
+          </p>
           <p className="hm-motto" aria-label={BRAND.motto}>
             {words.map((x, k) => (
               <span key={x} className="hm-mw" style={{ '--k': k }} aria-hidden="true">
@@ -79,8 +119,26 @@ export default function HeroOrbit() {
             </p>
             <p className="hm-roll-tag">{MODE[seg].tag}</p>
           </div>
+
+          <div className="hm-seg" role="tablist" aria-label="I am a">
+            <span className="hm-seg-pill" aria-hidden="true" />
+            <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => setSeg('consumer')}><Icon name="user" size={16} /> Consumer</button>
+            <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => setSeg('pro')}><Icon name="briefcase" size={16} /> Professional</button>
+          </div>
+
+          <div className="hm-roll" key={`m-${seg}`}>
+            <p className="hm-roll-w" aria-label={MODE[seg].words.map((x) => x[1]).join(' ')}>
+              {MODE[seg].words.map(([ic, t], k) => (
+                <span key={t} className="hm-slot" style={{ '--k': k }} aria-hidden="true"><span className="hm-slot-in"><Icon name={ic} size={18} /> {t}</span></span>
+              ))}
+            </p>
+            <p className="hm-roll-tag">{MODE[seg].tag}</p>
+          </div>
           <p className="hero-who" aria-live="off">
             Paid surveys built for{' '}
+            <span className="who-swap" key={seg}>
+              {who.map((x, i) => (
+                <span key={x} className={i === w % who.length ? 'on' : ''} aria-hidden={i !== w % who.length}>{x}</span>
             <span className="who-swap" key={seg}>
               {who.map((x, i) => (
                 <span key={x} className={i === w % who.length ? 'on' : ''} aria-hidden={i !== w % who.length}>{x}</span>
@@ -89,11 +147,17 @@ export default function HeroOrbit() {
           </p>
           <p className="hero-lead">
             No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
+            No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
           </p>
           <div className="hero-actions">
             <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-lg btn-shine">Start earning free <Icon name="arrow" size={20} /></Link>
+            <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-lg btn-shine">Start earning free <Icon name="arrow" size={20} /></Link>
             <Link to="/how-it-works" className="btn btn-glass btn-lg"><span className="play-dot" /> How it works</Link>
           </div>
+          <ul className="hm-stats" aria-label="Community figures">
+            <li><b>${STATS.rewardsPaidUsd.toLocaleString('en-US')}+</b><small>rewards paid</small></li>
+            <li><b>{STATS.membersRegistered.toLocaleString('en-US')}</b><small>members registered</small></li>
+            <li><b>{STATS.monthlyAvailableSurveys}+</b><small>surveys monthly</small></li>
           <ul className="hm-stats" aria-label="Community figures">
             <li><b>${STATS.rewardsPaidUsd.toLocaleString('en-US')}+</b><small>rewards paid</small></li>
             <li><b>{STATS.membersRegistered.toLocaleString('en-US')}</b><small>members registered</small></li>
@@ -102,6 +166,7 @@ export default function HeroOrbit() {
         </div>
 
         <div className="hero-stage" aria-hidden="true">
+          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : <ConsumerWorld pay={pay} r={r} cat={cat} key="con" />}
           {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : <ConsumerWorld pay={pay} r={r} cat={cat} key="con" />}
         </div>
       </div>
