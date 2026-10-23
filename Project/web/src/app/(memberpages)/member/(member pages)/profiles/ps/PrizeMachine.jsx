@@ -150,8 +150,8 @@ export default function PrizeMachine({ cat, onOpen }) {
     return (
       <li key={p.s}>
         <button type="button" className={'pm-slot ' + (got ? 'got' : '')} data-s={p.s} onClick={() => open(p, i)} title={name}
-          aria-label={got ? t('rw.slotDone', { name }) : t('rw.slotTodo', { name })}>
-          {got ? <Capsule slug={p.s} open className="mini" /> : <span className="pm-empty" aria-hidden="true">+100</span>}
+          aria-label={got ? t('rw.slotDone', { name, n: POINTS_PER_PROFILE }) : t('rw.slotTodo', { name, n: POINTS_PER_PROFILE })}>
+          {got ? <Capsule slug={p.s} open className="mini" /> : <span className="pm-empty" aria-hidden="true">+{POINTS_PER_PROFILE}</span>}
         </button>
       </li>
     );

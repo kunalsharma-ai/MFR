@@ -127,7 +127,7 @@ export default function SignUp() {
     email: "",
     phoneIso: "",
     phone: "",
-    notify: { dashboard: true, sms: true, whatsapp: true, email: true },
+    notify: { dashboard: true, sms: true, whatsapp: false, email: true },
     captchaOk: false,
     agreeTerms: false,
     marketing: false,

@@ -1,10 +1,11 @@
-// Reward points ("Prize Machine"): 100 points for every completed profile, 1,000 points = 1 USD.
+// Reward points ("Prize Machine"): POINTS_PER_PROFILE points for every completed profile, 1,000 points = 1 USD.
 //
-// DATA COMES FROM THE DATABASE through the existing profile API: a profile's completion % (status) decides whether its
-// capsule is collected (100) and the points are 100 per collected capsule. Nothing is written to the backend.
-// Only the *show* state lives in this browser: which capsules were already dispensed (seen) and which +100 already
+// DATA COMES FROM THE DATABASE: when a profile is completed the API pays its points once and stores the reward on the member
+// (User.profileRewards); GET /api/v1/me/points returns that list. Only if the API does not send it (not updated yet) the capsules
+// are worked out from each profile's completion % (status >= 100) instead.
+// Only the *show* state lives in this browser: which capsules were already dispensed (seen) and which +points already
 // landed on the counter (paid), so the animation plays once per profile and never replays for earlier ones.
-export const POINTS_PER_PROFILE = 100;
+export let POINTS_PER_PROFILE = 50; // what the API says (pointsPerProfile in GET /api/v1/me/points) replaces this
 export const POINTS_PER_USD = 1000;
 /** Arcade ranks, at this share of a category's profiles collected. */
 export const RANK_SHARE = [0, 0.2, 0.45, 0.7, 1];
@@ -33,16 +34,14 @@ function add(n, k) { const l = list(n); if (l.includes(k)) return; store.set(sna
  * browser, profiles that are already complete count as collected and paid (no replay); only profiles completed from now on
  * play the capsule show.
  */
-export function setRewardData({ uid, cat, profiles }) {
-  const list = profiles || [];
-  const rewarded = new Set(list.filter((p) => Number(p.status) >= 100).map((p) => p.slug));
-  D = {
-    uid: uid || 'anon',
-    profiles: list.map((p) => ({ c: cat, s: p.slug, q: 0 })),
-    rewarded,
-    total: rewarded.size * POINTS_PER_PROFILE,
-    profilePts: rewarded.size * POINTS_PER_PROFILE,
-  };
+export function setRewardData({ uid, cat, profiles, completed, points }) {
+  const list = profiles || []; // the profiles listed on the page = the capsules in the machine
+  if (points && Number(points.pointsPerProfile) > 0) POINTS_PER_PROFILE = Number(points.pointsPerProfile);
+  // the rewards the database holds; without them: every completed profile (also one that is not listed right now)
+  const fromDb = points && Array.isArray(points.profileRewards) ? points.profileRewards.map((r) => r.profile) : null;
+  const rewarded = new Set(fromDb || (completed || list).filter((p) => Number(p.status) >= 100).map((p) => p.slug));
+  const pts = fromDb && Number.isFinite(Number(points.profilePoints)) ? Number(points.profilePoints) : rewarded.size * POINTS_PER_PROFILE;
+  D = { uid: uid || 'anon', profiles: list.map((p) => ({ c: cat, s: p.slug, q: 0 })), rewarded, total: pts, profilePts: pts };
   if (list.length) {
     const keys = [...rewarded].map((s) => cat + ':' + s);
     for (const n of ['seen', 'paid']) if (store.get(sname(n)) == null) store.set(sname(n), keys);
@@ -60,7 +59,7 @@ export const markSeen = (k) => { add('paid', k); add('seen', k); };
 /** completed profiles whose capsule has not been dispensed on the hub yet */
 export const pendingKeys = () => D.profiles.filter((p) => isDone(p) && !isSeen(key(p))).map(key);
 /** points already shown in the counter: everything that is not a profile reward + the +100s that have landed */
-export const paidPoints = () => Math.max(0, D.total - D.profilePts) + D.profiles.filter((p) => isDone(p) && isPaid(key(p))).length * POINTS_PER_PROFILE;
+export const paidPoints = () => Math.max(0, D.total - D.profiles.filter((p) => isDone(p) && !isPaid(key(p))).length * POINTS_PER_PROFILE);
 
 const usdF = new Map();
 /** 1200 -> "$1.20" */

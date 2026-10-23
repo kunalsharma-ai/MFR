@@ -3,17 +3,21 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import { api, loadData } from "@/util";
+import { useRewardsTick, fetchRewardBalance } from "@/hooks/useRewardsRefresh";
+import { useMember } from "@/Context";
 
 export default function SurveyPoints({ onUpdate }) {
   const router = useRouter();
   const [points, setPoints] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
+  const member = useMember();
+  const rewardsTick = useRewardsTick(); // changes when a profile is completed -> the points are read again
   const [conversionRate, setConversionRate] = React.useState(null);
   const [threshold, setThreshold] = React.useState(null);
   React.useEffect(() => {
-    setIsLoading(true);
+    if (rewardsTick === 0) setIsLoading(true); // only the first time, so a refresh does not blank the box
     loadData(
-      api.get(`/api/v1/me/points`),
+      fetchRewardBalance(member),
       (resp) => {
         // if (resp.status === "error") router.replace("/survey?name=welcome");
         let data = resp.data;
@@ -25,7 +29,7 @@ export default function SurveyPoints({ onUpdate }) {
         setIsLoading(false);
       },
     );
-  }, []);
+  }, [rewardsTick, member?._id]);
   React.useEffect(() => {
     onUpdate({
       threshold,
