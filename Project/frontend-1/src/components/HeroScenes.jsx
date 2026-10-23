@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Icon from './Icon.jsx';
 import { BRAND } from '../data/site.js';
 import { isCalm } from '../utils/calm.js';
-import { isCalm } from '../utils/calm.js';
 
 // One distinct, animated hero scene per page — no two pages share a visual idea.
 // Everything is HTML/CSS/SVG (transform/opacity animations only), decorative (aria-hidden by PageHero),
@@ -34,8 +33,6 @@ export function OriginScene() {
 
 /* Consumers — "Reward bag": survey topics pop out of a 3D shopping bag in arcs while coins drop in */
 const POPS = [['cart', '#FF8A00', 'Shopping'], ['mobile', '#8B5CF6', 'Gaming'], ['globe', '#14C9B5', 'Travel'], ['heart', '#FF3B8D', 'Food'], ['activity', '#2F6BFF', 'Cars'], ['star', '#E5A100', 'Movies']];
-/* Consumers — "Reward bag": survey topics pop out of a 3D shopping bag in arcs while coins drop in */
-const POPS = [['cart', '#FF8A00', 'Shopping'], ['mobile', '#8B5CF6', 'Gaming'], ['globe', '#14C9B5', 'Travel'], ['heart', '#FF3B8D', 'Food'], ['activity', '#2F6BFF', 'Cars'], ['star', '#E5A100', 'Movies']];
 export function PhoneScene() {
   return (
     <div className="sc sc-bag">
@@ -51,23 +48,13 @@ export function PhoneScene() {
       {[0, 1, 2].map((k) => <i key={k} className="bg-coin" style={{ '--k': k }}>$</i>)}
       <span className="bg-chip c1"><Icon name="clock" size={13} /> ~10 min surveys</span>
       <span className="bg-chip c2"><Icon name="gift" size={13} /> Vouchers · cash · UPI (India)</span>
-      {[0, 1, 2].map((k) => <i key={k} className="bg-coin" style={{ '--k': k }}>$</i>)}
-      <span className="bg-chip c1"><Icon name="clock" size={13} /> ~10 min surveys</span>
-      <span className="bg-chip c2"><Icon name="gift" size={13} /> Vouchers · cash · UPI (India)</span>
     </div>
   );
 }
 
 /* Professionals — "Verified ID": a professional ID card flips (front: role, back: verification checks) above an org chart */
 const ROLES_CYCLE = ['CIO', 'Plant Director', 'HR Manager', 'Chartered Accountant', 'Founder', 'Medical Director'];
-/* Professionals — "Verified ID": a professional ID card flips (front: role, back: verification checks) above an org chart */
-const ROLES_CYCLE = ['CIO', 'Plant Director', 'HR Manager', 'Chartered Accountant', 'Founder', 'Medical Director'];
 export function DashboardScene() {
-  const [k, setK] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => !isCalm() && setK((x) => (x + 1) % ROLES_CYCLE.length), 2600);
-    return () => clearInterval(t);
-  }, []);
   const [k, setK] = useState(0);
   useEffect(() => {
     const t = setInterval(() => !isCalm() && setK((x) => (x + 1) % ROLES_CYCLE.length), 2600);
@@ -146,8 +133,6 @@ export function JourneyScene() {
 const PAY = [
   { t: 'PayPal', icon: 'paypal', c: '#003087' },
   { t: 'UPI', icon: 'upi', c: '#097939', tag: 'India' },
-  { t: 'Bank', icon: 'bank', c: '#0E7C66' },
-  { t: 'Vouchers', icon: 'cart', c: '#E8590C' },
   { t: 'Bank', icon: 'bank', c: '#0E7C66' },
   { t: 'Vouchers', icon: 'cart', c: '#E8590C' },
 ];

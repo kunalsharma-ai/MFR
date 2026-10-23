@@ -19,10 +19,11 @@ const store = (all) => {
 };
 
 // /sign-up: remember what the member chose, keyed by the user id the backend returned.
-export function rememberSignup(userId, { memberType, firstName }) {
+export function rememberSignup(userId, { memberType, firstName, answers }) {
   if (!userId) return;
   const all = load();
-  all[userId] = { memberType, firstName, exp: Date.now() + LINK_TTL };
+  const waiting = answers && Object.keys(answers).length > 0;
+  all[userId] = { memberType, firstName, ...(waiting ? { answers } : {}), exp: Date.now() + (waiting ? PENDING_TTL : LINK_TTL) };
   store(all);
 }
 
@@ -32,7 +33,7 @@ export const recallSignup = (userId) => load()[userId] || null;
 export function savePendingProfile(userId, answers) {
   if (!userId || !answers || !Object.keys(answers).length) return;
   const all = load();
-  all[userId] = { ...(all[userId] || {}), answers, exp: Date.now() + PENDING_TTL };
+all[userId] = { ...(all[userId] || {}), answers: { ...((all[userId] || {}).answers || {}), ...answers }, exp: Date.now() + PENDING_TTL };
   store(all);
 }
 

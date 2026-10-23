@@ -14,7 +14,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 // import Question from "@/app/(memberpages)/survey/components/Question";
 import Survey from "@/app/(memberpages)/survey/components/Survey";
@@ -22,7 +22,12 @@ import { api, Page } from "@/util";
 import { useMember, useQuery as useQueryParameters } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import "./ps/ps.css";
+import PsHub from "./ps/PsHub";
+import PsFlow from "./ps/PsFlow";
+import { setRewardData } from "./ps/rules";
+import { setProfileNames } from "./ps/i18n";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -75,7 +80,7 @@ function TabLabel({ label, progress = 0, icon, selected }) {
   );
 }
 
-export default function () {
+function ClassicProfiles() {
   const [editMode, setEditMode] = React.useState(false);
   const [user, query, router] = [
     useMember(),
@@ -97,24 +102,25 @@ export default function () {
     : 1 + profiles.map((profile) => profile.slug).indexOf(query.profile);
   const selectedProfile = activeTab ? profiles.at(activeTab - 1) : profiles[0];
   const currentProfileIndex = query.profile
-  ? profiles.findIndex((profile) => profile.slug === query.profile)
-  : 0;
+    ? profiles.findIndex((profile) => profile.slug === query.profile)
+    : 0;
 
   const isFirstProfile = currentProfileIndex <= 0;
   const isLastProfile = currentProfileIndex >= profiles.length - 1;
-  const allProfiles= profiles?.filter?.((profile) => Number(profile.status) > 0) || []
+  const allProfiles =
+    profiles?.filter?.((profile) => Number(profile.status) > 0) || [];
   const handlePreviousProfile = () => {
-    if(isFirstProfile) return; 
+    if (isFirstProfile) return;
 
     const previousProfile = allProfiles[currentProfileIndex - 1];
-    router.push(`?profile=${previousProfile.slug}`, {scroll: false});
+    router.push(`?profile=${previousProfile.slug}`, { scroll: false });
   };
 
   const handleNextProfile = () => {
-    if(isLastProfile) return;
+    if (isLastProfile) return;
 
     const nextProfile = allProfiles[currentProfileIndex + 1];
-    router.push(`?profile=${nextProfile.slug}`, {scroll: false });
+    router.push(`?profile=${nextProfile.slug}`, { scroll: false });
   };
 
   // React.useEffect(()=>{
@@ -136,10 +142,10 @@ export default function () {
       <Grid container size={12} justifyContent="center" mt={2}>
         <Grid
           size={{ xs: 11, md: 10 }}
-           sx={{
-            bgcolor: (theme) => theme.palette.cardbg.main, 
-            color: (theme) => theme.palette.cardtext.main, 
-            borderRadius: 2.5, 
+          sx={{
+            bgcolor: (theme) => theme.palette.cardbg.main,
+            color: (theme) => theme.palette.cardtext.main,
+            borderRadius: 2.5,
             boxShadow: 1,
             height: "calc(90vh - 160px)",
             overflow: "hidden",
@@ -213,7 +219,7 @@ export default function () {
               }}
             />
           </Box>
-          
+
           {!editMode && (
             <Box
               sx={{
@@ -332,4 +338,124 @@ function ProfileTabs({ profiles, query, onChange }) {
       )}
     </Tabs>
   );
+}
+
+/* ---------------------------------------------------------------------------------------------------------
+   Profiles page, "Rewards Club" design. Same data and logic as ClassicProfiles above (same profile API call,
+   same status > 0 filter, same ?profile=<slug> link); only the look changed. Add ?classic=1 to the address to
+   open the previous design.
+   --------------------------------------------------------------------------------------------------------- */
+// Like the previous page, only profiles with status > 0 are shown (status = completion % from the backend).
+// Use 0 to also show profiles the member has not started ("Start a new profile", one prize capsule each).
+const MIN_STATUS = 1;
+
+function SkinProfiles() {
+  const [user, query, router, pathname, qc] = [
+    useMember(),
+    useQueryParameters(),
+    useRouter(),
+    usePathname(),
+    useQueryClient(),
+  ];
+
+  const cat = user?.category === "minor" ? "minor" : "b2c";
+  const profileKey = ["profiles", user?.category, "false"];
+
+  const fetchProfiles = React.useCallback(
+    () =>
+      api
+        .post("/api/v1/profile", { category: user.category })
+        .then((r) => r.data),
+    [user?.category],
+  );
+
+  const { data: profiles = [], isLoading } = useQuery({
+    queryKey: profileKey,
+    queryFn: fetchProfiles,
+  });
+
+  // Keep all profiles visible, regardless of status.
+  const shown = React.useMemo(() => profiles || [], [profiles]);
+
+  // Prize Machine: completed profiles = collected capsules = 100 points.
+  const applyRewards = React.useCallback(
+    (list) => {
+      setProfileNames(list);
+      setRewardData({ uid: user?._id, cat, profiles: list });
+    },
+    [user?._id, cat],
+  );
+
+  React.useEffect(() => {
+    applyRewards(shown);
+  }, [applyRewards, shown]);
+
+  // Reload profiles after saving.
+  const afterSave = React.useCallback(async () => {
+    const fresh = await qc.fetchQuery({
+      queryKey: profileKey,
+      queryFn: fetchProfiles,
+      staleTime: 0,
+    });
+
+    applyRewards(fresh || []);
+    qc.invalidateQueries({ queryKey: ["profiles"] });
+  }, [qc, fetchProfiles, applyRewards, profileKey]);
+
+  const open = (p) => router.push(`?profile=${p.slug}`, { scroll: false });
+
+  const hub = () => router.push(pathname, { scroll: false });
+
+  if (isLoading) return <></>;
+
+  const current = query.profile
+    ? shown.find((p) => p.slug === query.profile)
+    : null;
+
+  const at = current ? shown.indexOf(current) : -1;
+
+  return (
+    <div
+      className="ps"
+      style={{
+        minHeight: "calc(100vh - 70px)",
+        overflowX: "hidden",
+      }}
+    >
+      {current ? (
+        <PsFlow
+          key={current.slug}
+          survey={current}
+          user={user}
+          endpage="/api/v1/me/profile"
+          onHub={hub}
+          onSaved={afterSave}
+          hasNext={at >= 0 && at < shown.length - 1}
+          onNextProfile={() =>
+            at >= 0 && at < shown.length - 1 && open(shown[at + 1])
+          }
+        />
+      ) : (
+        <PsHub profiles={shown} onOpen={open} cat={cat} />
+      )}
+    </div>
+  );
+}
+
+export default function ProfilesPage() {
+  const query = useQueryParameters();
+  // ?classic=1 opens the previous design and stays on it (the old page changes the address itself, which would
+  // otherwise drop the flag); ?classic=0 goes back to the new design.
+  const [classic, setClassic] = React.useState(false);
+  React.useEffect(() => {
+    try {
+      if (query.classic === "1")
+        sessionStorage.setItem("profiles-classic", "1");
+      if (query.classic === "0") sessionStorage.removeItem("profiles-classic");
+      setClassic(sessionStorage.getItem("profiles-classic") === "1");
+    } catch {
+      setClassic(query.classic === "1");
+    }
+  }, [query.classic]);
+  return classic ? <ClassicProfiles /> : <SkinProfiles />;
 }

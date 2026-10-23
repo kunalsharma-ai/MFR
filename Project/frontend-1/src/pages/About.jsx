@@ -2,14 +2,11 @@ import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import FrLogo from '../components/FrLogo.jsx';
 import { IsoScene } from '../components/HeroScenes.jsx';
-import { IsoScene } from '../components/HeroScenes.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { BRAND } from '../data/site.js';
 import GlobeReach from '../sections/GlobeReach.jsx';
-import { FAQ_ABOUT } from '../data/faqs.js';
 import { FAQ_ABOUT } from '../data/faqs.js';
 
 const page = PAGES.about;
@@ -22,7 +19,6 @@ const VALUES = [
   { icon: 'globe', t: 'Inclusion', d: 'Every country, culture and career is welcome.', c: '#FF8A00' },
 ];
 
-const FAQS = FAQ_ABOUT;
 const FAQS = FAQ_ABOUT;
 
 export default function About() {
@@ -37,23 +33,7 @@ export default function About() {
         theme="navy"
         artNode={<IsoScene />}
       />
-        artNode={<IsoScene />}
-      />
 
-      <section className="section story2" aria-labelledby="story-title">
-        <div className="container story2-row">
-          <div className="mr reveal">
-            <div className="mr-ribbon" aria-label={BRAND.tagline}>
-              <span className="mr-tail l" aria-hidden="true" />
-              <p aria-hidden="true">{BRAND.tagline.split('. ').map((w, i, a) => <span key={w} style={{ '--i': i }}>{i < a.length - 1 ? `${w}.` : w}</span>)}</p>
-              <span className="mr-tail r" aria-hidden="true" />
-            </div>
-            <small className="mr-by">— The MyFrequentRewards promise</small>
-            <ul className="mr-facts">
-              <li style={{ '--c': '#FF8A00' }}><span><Icon name="user" size={20} /></span><b>Consumers</b><small>everyday opinions</small></li>
-              <li style={{ '--c': '#6D5BF7' }}><span><Icon name="briefcase" size={20} /></span><b>Professionals</b><small>expert B2B views</small></li>
-              <li style={{ '--c': '#14B8A6' }}><span><Icon name="gift" size={20} /></span><b>Rewards</b><small>for every eligible survey</small></li>
-            </ul>
       <section className="section story2" aria-labelledby="story-title">
         <div className="container story2-row">
           <div className="mr reveal">
@@ -69,7 +49,6 @@ export default function About() {
               <li style={{ '--c': '#14B8A6' }}><span><Icon name="gift" size={20} /></span><b>Rewards</b><small>for every eligible survey</small></li>
             </ul>
           </div>
-          <div className="story2-copy reveal">
           <div className="story2-copy reveal">
             <p className="eyebrow">Who we are</p>
             <h2 id="story-title">A research community with a reward at its heart</h2>

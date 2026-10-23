@@ -54,6 +54,7 @@ import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';
 import { startCalm } from './utils/calm.js';
+import './styles/rv2-flag-avatar.css';
 
 document.documentElement.classList.add('js');
 

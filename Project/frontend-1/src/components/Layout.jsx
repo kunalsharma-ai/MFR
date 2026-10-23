@@ -6,7 +6,6 @@ import LiveChat from './LiveChat.jsx';
 import ActivityToasts from './ActivityToasts.jsx';
 import ReviewPopup from './ReviewPopup.jsx';
 import VerifyEmailGate from './VerifyEmailGate.jsx';
-import VerifyEmailGate from './VerifyEmailGate.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
 import { useI18n } from '../i18n/I18nProvider.jsx';
@@ -68,19 +67,6 @@ export default function Layout({ children }) {
     setTimeout(fix, 900);
   }, []);
 
-  // Off-screen sections skip rendering (content-visibility in perf.css), so their heights are estimates until they
-  // are seen and a jump can land a little off. Scroll, then re-check a few times and settle exactly on the target.
-  const jumpTo = useCallback((el) => {
-    const target = () => Math.round(el.getBoundingClientRect().top - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0));
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    let n = 0;
-    const fix = () => {
-      if (Math.abs(target()) > 4) el.scrollIntoView({ behavior: n < 3 ? 'auto' : 'smooth', block: 'start' });
-      if (++n < 6) setTimeout(fix, 260);
-    };
-    setTimeout(fix, 900);
-  }, []);
-
   // In-page anchors (#section) must scroll, not navigate. With hash routing (preview / file://) a raw
   // "#section" link would otherwise be treated as a route and show the 404 page.
   useEffect(() => {
@@ -99,7 +85,6 @@ export default function Layout({ children }) {
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
   }, [jumpTo]);
-  }, [jumpTo]);
   useEffect(() => {
     if (!hash) {
       window.scrollTo(0, 0);
@@ -117,11 +102,8 @@ export default function Layout({ children }) {
     }, 100);
     return () => clearInterval(t);
   }, [pathname, hash, jumpTo]);
-  }, [pathname, hash, jumpTo]);
 
   const closeChat = useCallback(() => setChat(false), []);
-  // Any component can open Live Help (optionally with a question): window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }))
-  const [seed, setSeed] = useState(null);
   useEffect(() => {
     const open = (e) => { setChat(true); if (e.detail && e.detail.q) setSeed({ q: e.detail.q, at: Date.now() }); };
     window.addEventListener('mfr:open-chat', open);

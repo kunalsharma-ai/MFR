@@ -1,27 +1,55 @@
 import { useEffect, useState } from 'react';
-import { REVIEW_EVENT, mergeReviews, normalizeReview, ownReviews } from '../utils/reviews.js';
+import { REVIEW_EVENT, mergeReviews, normalizeReview, ownReviews, publicName } from '../utils/reviews.js';
 import { TESTIMONIALS } from '../data/community.js';
 import { SUPPLIED_TESTIMONIALS } from '../data/testimonialsSupplied.js';
-import { DEMO_MODE } from '../data/site.js';
+import { API_BASE, DEMO_MODE } from '../data/site.js';
 
-const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || '/api/reviews';
+
+const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || `${API_BASE}/api/v1/testimonial`;
 const FALLBACK = '/data/reviews.json';
 const POLL_MS = 30000;
-// Static testimonials: the original member set plus any supplied entry the business has verified (publish: true).
-// In the HTML preview build (DEMO_MODE) the unpublished supplied entries are shown too, flagged `preview` and
-// labelled on the wall, so the design can be judged with a full set. They never appear in the production build.
+
 const BASE = [...TESTIMONIALS, ...SUPPLIED_TESTIMONIALS.filter((t) => t.publish || DEMO_MODE).map((t) => (t.publish ? t : { ...t, preview: true }))].map(normalizeReview).filter(Boolean);
 
-async function fetchFeed(url) {
-  const res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-  if (!res.ok) throw new Error('feed');
-  const j = await res.json();
-  const arr = Array.isArray(j) ? j : Array.isArray(j.reviews) ? j.reviews : [];
-  return arr.map(normalizeReview).filter(Boolean);
+
+function fromApi(r) {
+  if (!r || typeof r !== 'object') return null;
+  if (r.status && !/^(approved|published|live)$/i.test(String(r.status))) return null; 
+  const u = r.reviewer|| r.user || r.member || {};
+  const nm = u.name || {};
+  const first = r.firstName || nm.first || u.firstName || '';
+  const last = r.lastName || nm.last || u.lastName || '';
+  let name = r.name || r.fullName || '';
+  if (!name && (first || last)) name = publicName(first, last);
+  else if (/\s/.test(String(name).trim())) { const [f, ...rest] = String(name).trim().split(/\s+/); name = publicName(f, rest.join(' ')); }
+  const code = [r.iso, r.countryCode, r.country, u.country, (u.address && u.address[0] && u.address[0].country)].find((x) => typeof x === 'string' && x.length === 2) || '';
+  const countryName = [r.countryName, r.country, u.country].find((x) => typeof x === 'string' && x.length > 2) || '';
+  const category = String(r.category || u.category || '');
+  return {
+    ...r,
+    id: r.id || r._id,
+    name,
+    iso: code,
+    country: countryName,
+    rating: r.rating ?? r.rate,
+    text: r.text ?? r.message,
+    designation: r.designation || r.jobrole || u.jobrole || '',
+    segment: r.segment || (/b2b/i.test(category) ? 'professional' : 'consumer'),
+    createdAt: r.createdAt || (r.created && r.created.At) || r.updatedAt,
+  };
 }
 
-// Live testimonials: polls the reviews feed every 30 s while the page is visible, merges new published reviews
-// on top of the supplied testimonials, and instantly shows the visitor's own just-submitted review.
+async function fetchFeed(url) {
+  const res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
+  if (!res.ok) throw new Error('feed');
+  const j = await res.json();
+  // the backend's catch-all answers 200 "Fallback route: … is not available" for a route that does not exist yet
+  if (j && /^Fallback route:/i.test(j.message || '')) throw new Error('feed');
+  const arr = Array.isArray(j) ? j : Array.isArray(j.reviews) ? j.reviews : Array.isArray(j.data) ? j.data : [];
+  return arr.map(fromApi).map(normalizeReview).filter(Boolean);
+}
+
+
 export default function useLiveReviews() {
   const [live, setLive] = useState([]);
   const [own, setOwn] = useState([]);

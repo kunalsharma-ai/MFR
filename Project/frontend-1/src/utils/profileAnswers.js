@@ -1,4 +1,9 @@
-
+const env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
+export const CONSENT_KEYS = {
+  terms: env.VITE_Q_TERMS || 'terms-consent',
+  marketing: env.VITE_Q_MARKETING || 'news-letter',
+};
+export const consentAnswers = (v) => ({ [CONSENT_KEYS.terms]: Boolean(v?.agreeTerms), [CONSENT_KEYS.marketing]: Boolean(v?.marketing) });
 export const ANSWER_KEYS = {
   empstat: 'empstat',
   hw: 'hw',
@@ -13,8 +18,7 @@ export const ANSWER_KEYS = {
   communication: 'communication-methods',
 };
 
-// Sign-up notification channel -> option `value` of the `communication-methods` question.
-// WhatsApp has no option in that question, so it is intentionally not mapped (it stays in User.notification).
+
 const COMM_VALUE = { dashboard: 'dashboard', email: 'email', sms: 'sms' };
 
 /**

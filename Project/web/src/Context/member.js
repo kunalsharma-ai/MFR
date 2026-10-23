@@ -45,6 +45,7 @@ class ValidUser {
     );
   }
   async hasCompletedWelcomeSurvey() {
+    return true;
     try {
       let temp = await api.post(`/api/v1/response`, {
         ["survey.slug"]: "welcome",

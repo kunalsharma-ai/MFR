@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { whatsappLink } from '../data/site.js';
 import { session, store } from '../utils/storage.js';
+import { useRater } from '../utils/rater.js';
 
 export function Breadcrumbs({ items }) {
   return (
@@ -20,8 +21,7 @@ export function Breadcrumbs({ items }) {
 
 export const askLiveHelp = (q) => window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }));
 
-// FAQ list — "answer cards": numbered question cards that open into a tinted answer bubble with a
-// follow-up button that hands the question to Live Help. Uses <details> so answers are in the HTML for SEO.
+
 export function FaqList({ faqs, hue, followUp = true }) {
   return (
     <div className="faq-list" style={hue ? { '--fh': hue } : undefined}>
@@ -49,8 +49,7 @@ export function FaqList({ faqs, hue, followUp = true }) {
   );
 }
 
-// FAQ section used on every page: left column = title + a floating 3D "question deck" + Live Help prompt,
-// right column = the answer cards. `hue` gives each page its own colour.
+
 export function FaqSplit({ id, title, sub, faqs, hue = '#FF8A00', hue2 = '#8B5CF6', eyebrow = 'FAQ', children }) {
   return (
     <section className="section fq" aria-labelledby={id} style={{ '--fh': hue, '--fh2': hue2 }}>
@@ -95,7 +94,7 @@ export function CtaBand({ title = 'Your opinion is worth more than you think.', 
 }
 
 export function FloatingDock({ onChat, chatOpen }) {
-  // Teaser: once per visit, ~15 s in, a small "Ask us anything" bubble + unread badge invite a question.
+  const { canRate, reviewed } = useRater(); 
   const [tease, setTease] = useState(false);
   const [badge, setBadge] = useState(false);
   useEffect(() => {
@@ -109,11 +108,13 @@ export function FloatingDock({ onChat, chatOpen }) {
   }, [chatOpen]);
   return (
     <div className="dock" aria-label="Quick help">
-      <button type="button" className="dock-rate" onClick={() => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }))} aria-label="Rate your experience" aria-haspopup="dialog">
-        <span className="dock-rate-orb" aria-hidden="true"><Icon name="star" size={24} fill="currentColor" /></span>
-        <span className="dock-rate-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
-        <span className="dock-tip">Rate &amp; review us</span>
-      </button>
+      {canRate && !reviewed ? (
+        <button type="button" className="dock-rate" onClick={() => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }))} aria-label="Rate your experience" aria-haspopup="dialog">
+          <span className="dock-rate-orb" aria-hidden="true"><Icon name="star" size={24} fill="currentColor" /></span>
+          <span className="dock-rate-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
+          <span className="dock-tip">Rate &amp; review us</span>
+        </button>
+      ) : null}
       <a className="dock-wa" href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp (+91 81782 00573)">
         <Icon name="whatsapp" size={28} stroke={1.6} />
         <span className="dock-tip">WhatsApp us</span>
