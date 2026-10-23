@@ -10,7 +10,12 @@ export default defineConfig({
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         navigateFallbackDenylist: [
-          /^\/member/,
+          /^\/member/, 
+          /^\/otel/,
+          /^\/static\/sdk.js/,
+          /^\/sitemap.xml/,
+          /^\/robots.txt/,
+          /^\/llms.txt/,
           /^\/admin/,
           /^\/api/,
           /^\/_next/,

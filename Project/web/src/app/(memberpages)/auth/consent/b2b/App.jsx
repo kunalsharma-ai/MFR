@@ -146,9 +146,9 @@ export default function App({ cfg }) {
   React.useEffect(() => {
     if (!user) return;
 
-    if (Array.isArray(user.terms) && user.terms.length > 0) {
-      window.location.assign("/member/dashboard");
-    }
+    // if (Array.isArray(user.terms) && user.terms.length > 0) {
+    //   window.location.assign("/member/dashboard");
+    // }
 
     if (user?.category === "consumer" || user?.category === "consumer-minor") {
       window.location.assign("/auth/consent/consumer");
@@ -993,7 +993,7 @@ export default function App({ cfg }) {
           }
           onDownload={download}
           hasContinue={Boolean(cfg.continueUrl)}
-          onContinue={() => window.location.assign("/member/dashboard")}
+          onContinue={() => window.location.assign("/member/profiles")}
         />
       ) : null}
     </div>
