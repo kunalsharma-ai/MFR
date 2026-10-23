@@ -1,11 +1,4 @@
-// Which profiles a member sees, in which order, and which of them can be opened yet.
-//
-// 1) THE BASICS COME FIRST. Basic, Education, Professional and Financial (the ones this member has) are listed first, under
-//    "Continue where you left off" (even at 0 %). The other profiles are listed below them, but they cannot be opened until the basics
-//    are complete: clicking one shows "complete the basics first" (see basicsDone / nextBasic, used by page.jsx).
-// 2) THE OTHER PROFILES below the basics follow the member's sign-up interests when there are some (consumers pick up to 12 at sign-up,
-//    saved as the answer "interests"): the profiles of the interests they ticked, plus every profile they have already started.
-//    A member without interests (e.g. a professional) gets all the other profiles.
+
 export const CORE_SLUGS = ['basic', 'educational', 'professional', 'financial'];
 export const isCore = (slug) => CORE_SLUGS.includes(slug);
 
@@ -39,7 +32,7 @@ export const basicsDone = (all) => coreOf(Array.isArray(all) ? all : []).every(d
 export const nextBasic = (all) => coreOf(Array.isArray(all) ? all : []).find((p) => !doneOf(p)) || null;
 
 /** all = the profile list from POST /api/v1/profile; returns the profiles to list: the basics first, then the others. */
-export function visibleProfiles(all, interests = [], minStatus = 1) {
+export function visibleProfiles(all, interests = [], minStatus = 0) {
   const list = Array.isArray(all) ? all : [];
   const wanted = new Set(normalizeInterests(interests).flatMap((i) => INTEREST_PROFILES[i] || []));
   const noInterests = wanted.size === 0; // nothing to filter by: list every other profile
