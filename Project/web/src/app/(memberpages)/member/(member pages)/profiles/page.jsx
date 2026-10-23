@@ -352,7 +352,7 @@ function ProfileTabs({ profiles, query, onChange }) {
    --------------------------------------------------------------------------------------------------------- */
 // The other profiles follow the member's sign-up interests; a profile that is already started is always listed (status > 0).
 // Use 0 to also list every profile the member has not started when they picked interests.
-const MIN_STATUS = 1;
+const MIN_STATUS = 0;
 const fetchProfileList = (category) => api.post("/api/v1/profile", { category }).then((r) => r.data);
 
 function SkinProfiles() {
