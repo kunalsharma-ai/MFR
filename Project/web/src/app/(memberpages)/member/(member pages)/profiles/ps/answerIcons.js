@@ -1,11 +1,4 @@
-// An emoji for EVERY answer option (v4.1). answerIcon(label, value, ctx) picks, in this order:
-//   1. a flag when the option is a country, nationality / ethnicity, language or currency (🇮🇳 for "INR - Indian rupee")
-//   2. answer scales that read at a glance: yes / maybe / no, frequency, interest, likelihood, time of day…
-//   3. a topic rule matched on the (English) label: 🏖️ beach, ⚖️ law degree, 🧑‍🍳 chef, 🚚 truck, 💄 lipstick… (~500 rules)
-//   4. numbers: keycaps 1️⃣–🔟 for counts, ⏱️ / ⌛ / 📅 for durations, 👶🧒🧑 for children's ages, 🌱→🚀 for audience sizes
-//   5. the question's own emoji, so even an unusual brand or name sits under a fitting picture (🚗 for a car brand)
-// Icons are Noto Color Emoji rendered to public/images/emoji/u/<codepoints>.webp by scripts/extract-option-icons.py
-// (run it after adding a rule with a new emoji). Stored answer values never change - icons are display only.
+
 import { emojiUrl, assetUrl, flagUrl } from './assets.js';
 import { COUNTRY_CC } from './countryNames.js';
 
@@ -319,8 +312,7 @@ function numberIcon(label, ctx) {
   return '🔢';
 }
 
-/* rule tables are compiled on first use (about 700 regular expressions), not when the question-flow chunk is
-   pre-fetched while the home page is idle */
+
 function compile() {
   if (R) return;
   DEMONYM = DEMONYM_SRC(); ETHNIC = ETHNIC_SRC(); SOCIAL = SOCIAL_SRC(); JOB = JOB_SRC(); R = R_SRC(); FIELD = FIELD_SRC();

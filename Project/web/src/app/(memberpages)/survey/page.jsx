@@ -15,6 +15,7 @@ import { api, Page } from "@/util";
 import SecurityCheck from "./components/SecurityCheck";
 import SurveyAlreadyTaken from "./components/SurveyAlreadyTaken";
 import Survey from "./components/Survey";
+import { syncSurveyRewards } from "@/hooks/useProfileGate";
 
 export default function page() {
   const [user, router, query, pathName] = [
@@ -235,6 +236,8 @@ export default function page() {
                   }}
                   onComplete={(status) => {
                     setSurveyCompleted(status);
+                    // the survey is saved as complete: pay its profile points (profile surveys) and raise the Quality Score
+                    if (status) syncSurveyRewards(user);
                     setTimeout(() => {
                       router.replace("/member/dashboard");
                     }, 30000);

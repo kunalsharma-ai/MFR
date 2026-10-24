@@ -8,8 +8,7 @@ export function capsuleColors(slug) {
   return { a1, a2, a3, icon: th.icon };
 }
 
-/* A prize capsule: clear dome (top half) over a coloured shell (bottom half) with the profile's 3D emoji inside.
-   `open` lifts the dome off and the emoji springs up. Pure CSS (see src/rewards/styles.js). */
+
 export default function Capsule({ slug, open = false, className = '', style, size }) {
   const c = capsuleColors(slug);
   return (

@@ -3,9 +3,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
-/* Prize Machine LED counter: every digit is a slot-machine reel that spins a full turn before it stops on its
-   new value, over a dim "ghost 8" like a real LED display. Digits are the language's own numerals
-   (Latin, Arabic-Indic, Devanagari, Bengali, Thai…), separators stay put. aria-hidden: callers label it. */
 const DIGITS = new Map();
 const digitsFor = (lang) => {
   let d = DIGITS.get(lang);

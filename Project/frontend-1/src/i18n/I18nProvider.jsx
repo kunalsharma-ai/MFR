@@ -1,14 +1,4 @@
-// Language state for the whole site: which language is active, the theme, the picker, the sounds.
-//
-// Order of choice on page load (client only — prerendered HTML is always English, so hydration is safe):
-//   1. ?lang=zh-CN in the URL (campaign links, e.g. https://www.myfrequentrewards.com/?lang=zh-CN for China)
-//   2. the visitor's saved choice (localStorage "mfr.lang"; the v2.x Google-Translate choice is migrated once)
-//   3. nothing saved and the browser speaks a supported non-English language → the picker opens once,
-//      with that language suggested at the top (visitors always choose; we never switch silently).
-//
-// Themes (v3.0):  English → "light"  (white theme with the Turn2Opinion colour grading)
-//                 every other language → "classic"  (the MyFrequentRewards look, unchanged)
-// index.html sets the theme before the first paint (inline script), so returning visitors never see a flash.
+
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BY_CODE, DEFAULT_LANG, LANGUAGES, matchLocale, resolveLang, themeFor } from './languages.js';
 // The translation engine is only downloaded when a language other than English is in use.
@@ -54,6 +44,15 @@ const store = {
     }
   },
 };
+
+/** The member area (another app on the same domain) reads the chosen language from this cookie: "mfr.lang=<code>", one year. */
+function saveLangCookie(code) {
+  try {
+    document.cookie = `mfr.lang=${encodeURIComponent(code)}; path=/; max-age=31536000; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
+  } catch {
+    /* cookies blocked: the member area falls back to localStorage */
+  }
+}
 
 /** v2.x used Google's website translator (cookie "googtrans" + localStorage "mfr_lang"). Migrate once, then clear. */
 function migrateLegacy() {
@@ -122,6 +121,7 @@ export function I18nProvider({ children }) {
     const meta = BY_CODE[code] || BY_CODE[DEFAULT_LANG];
     setLangState(meta.code);
     store.set(KEY, meta.code);
+    saveLangCookie(meta.code);
     store.set(SEEN, '1');
     if (!silent) {
       skipWelcome();
@@ -156,6 +156,7 @@ export function I18nProvider({ children }) {
       if (pick !== DEFAULT_LANG) setLang(pick, { silent: true, interactive: false });
       else applyGrade(BY_CODE[DEFAULT_LANG]);
       store.set(KEY, pick);
+      saveLangCookie(pick); // visitors who chose before the cookie existed get it on their next visit
       store.set(SEEN, '1');
     } else {
       applyGrade(BY_CODE[DEFAULT_LANG]);

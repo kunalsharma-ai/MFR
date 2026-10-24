@@ -1,10 +1,3 @@
-// Reward points ("Prize Machine"): POINTS_PER_PROFILE points for every completed profile, 1,000 points = 1 USD.
-//
-// DATA COMES FROM THE DATABASE: when a profile is completed the API pays its points once and stores the reward on the member
-// (User.profileRewards); GET /api/v1/me/points returns that list. Only if the API does not send it (not updated yet) the capsules
-// are worked out from each profile's completion % (status >= 100) instead.
-// Only the *show* state lives in this browser: which capsules were already dispensed (seen) and which +points already
-// landed on the counter (paid), so the animation plays once per profile and never replays for earlier ones.
 export let POINTS_PER_PROFILE = 50; // what the API says (pointsPerProfile in GET /api/v1/me/points) replaces this
 export const POINTS_PER_USD = 1000;
 /** Arcade ranks, at this share of a category's profiles collected. */
@@ -17,7 +10,7 @@ export const subscribeRewards = (f) => (subs.add(f), () => subs.delete(f));
 export const rewardsVersion = () => ver;
 export function emitRewards() { ver++; subs.forEach((f) => f()); }
 
-let D = { uid: 'anon', profiles: [], rewarded: new Set(), total: 0, profilePts: 0 };
+let D = { uid: 'anon', profiles: [], rewarded: new Set(), total: 0, profilePts: 0, ptsOf: {} };
 const key = (p) => p.c + ':' + p.s;
 export const pKey = key;
 const store = {
@@ -28,20 +21,17 @@ const sname = (n) => `mfr:rw:${D.uid}:${n}`;
 const list = (n) => store.get(sname(n)) || [];
 function add(n, k) { const l = list(n); if (l.includes(k)) return; store.set(sname(n), [...l, k]); emitRewards(); }
 
-/**
- * profiles: [{ slug, name, status }] from the EXISTING POST /api/v1/profile (status = completion % computed by the backend).
- * No backend change: a profile with status >= 100 is a collected capsule and is worth 100 points. First time on this
- * browser, profiles that are already complete count as collected and paid (no replay); only profiles completed from now on
- * play the capsule show.
- */
-export function setRewardData({ uid, cat, profiles, completed, points }) {
+
+// pointsOf: { slug: points } for the profiles that pay something else than POINTS_PER_PROFILE (a profile completed as a survey pays the points of its card)
+export function setRewardData({ uid, cat, profiles, completed, points, pointsOf = {} }) {
   const list = profiles || []; // the profiles listed on the page = the capsules in the machine
   if (points && Number(points.pointsPerProfile) > 0) POINTS_PER_PROFILE = Number(points.pointsPerProfile);
   // the rewards the database holds; without them: every completed profile (also one that is not listed right now)
   const fromDb = points && Array.isArray(points.profileRewards) ? points.profileRewards.map((r) => r.profile) : null;
   const rewarded = new Set(fromDb || (completed || list).filter((p) => Number(p.status) >= 100).map((p) => p.slug));
-  const pts = fromDb && Number.isFinite(Number(points.profilePoints)) ? Number(points.profilePoints) : rewarded.size * POINTS_PER_PROFILE;
-  D = { uid: uid || 'anon', profiles: list.map((p) => ({ c: cat, s: p.slug, q: 0 })), rewarded, total: pts, profilePts: pts };
+  const worth = (s) => Number(pointsOf[s]) || POINTS_PER_PROFILE;
+  const pts = fromDb && Number.isFinite(Number(points.profilePoints)) ? Number(points.profilePoints) : [...rewarded].reduce((n, s) => n + worth(s), 0);
+  D = { uid: uid || 'anon', profiles: list.map((p) => ({ c: cat, s: p.slug, q: 0 })), rewarded, total: pts, profilePts: pts, ptsOf: pointsOf };
   if (list.length) {
     const keys = [...rewarded].map((s) => cat + ':' + s);
     for (const n of ['seen', 'paid']) if (store.get(sname(n)) == null) store.set(sname(n), keys);
@@ -58,8 +48,9 @@ export const markPaid = (k) => add('paid', k);
 export const markSeen = (k) => { add('paid', k); add('seen', k); };
 /** completed profiles whose capsule has not been dispensed on the hub yet */
 export const pendingKeys = () => D.profiles.filter((p) => isDone(p) && !isSeen(key(p))).map(key);
-/** points already shown in the counter: everything that is not a profile reward + the +100s that have landed */
-export const paidPoints = () => Math.max(0, D.total - D.profiles.filter((p) => isDone(p) && !isPaid(key(p))).length * POINTS_PER_PROFILE);
+
+export const pointsFor = (slug) => Number(D.ptsOf[slug]) || POINTS_PER_PROFILE;
+export const paidPoints = () => Math.max(0, D.total - D.profiles.filter((p) => isDone(p) && !isPaid(key(p))).reduce((n, p) => n + pointsFor(p.s), 0));
 
 const usdF = new Map();
 /** 1200 -> "$1.20" */

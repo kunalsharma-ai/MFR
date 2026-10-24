@@ -1,7 +1,4 @@
-// Prize Machine styles: the board, capsules, effects and the prize ticket in the completion pop-up.
-// Injected once when the board or the completion pop-up loads (both are lazy chunks), so none of this is
-// in the first paint. The header points pill, LED counter and card chips are in src/styles/app.css.
-// Machine sizes are in units of --u (1px on desktop, smaller on phones). Language palette: --L1 --L2 --L3.
+
 const CSS = String.raw`
 .pm { position: relative; display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); grid-template-areas: 'm h' 'm s'; grid-template-rows: auto 1fr; gap: 14px 34px; margin: 30px 0 6px; padding: 26px 30px 30px; border-radius: 28px; color: #fff; isolation: isolate; overflow: clip; scroll-margin-top: 90px;
   background: radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--L1) 42%, #0a1240), #070c2a 62%), #070c2a; box-shadow: var(--shadow-l); }

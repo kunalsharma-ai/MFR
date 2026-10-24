@@ -5,22 +5,13 @@ import { reward, tap } from './sound.js';
 import { reducedMotion } from './fx.js';
 import Capsule, { capsuleColors } from './Capsule.jsx';
 import LedCount from './LedCount.jsx';
-import { catProfiles, isDone, isSeen, isPaid, markSeen, markPaid, pKey, pendingKeys, paidPoints, rankOf, fmtUsd, RANK_KEYS, POINTS_PER_PROFILE, POINTS_PER_USD, subscribeRewards, rewardsVersion } from './rules.js';
+import { catProfiles, isDone, isSeen, isPaid, markSeen, markPaid, pKey, pendingKeys, paidPoints, pointsFor, rankOf, fmtUsd, RANK_KEYS, POINTS_PER_PROFILE, POINTS_PER_USD, subscribeRewards, rewardsVersion } from './rules.js';
 import { path, sparkle, floatText, flyToPoints, bump, wait } from './rfx.js';
 import { ensureRewardStyles } from './rstyles.js';
 import { IArrow } from './Icons.jsx';
 
 ensureRewardStyles();
 
-/* "Your Prize Machine" - the reward board on the hub (lazy-loaded from Hub.jsx).
-   An arcade capsule machine: every unfinished profile is a prize capsule waiting inside the glass globe, in
-   that profile's colours with its 3D emoji. Completing a profile dispenses its capsule: the crank turns, the
-   capsule rolls down the chute into the tray, cracks open, +100 points flies to the header and the opened
-   capsule joins the member's collection. Members can also turn the crank to let the machine pick their next
-   profile. The machine body, LED and bulbs take the language palette (--L1/--L2/--L3) and every sound is
-   played on the language's own instrument, so each language has its own machine. */
-
-// machine geometry, in units (1 unit = --u px): globe centre and inner radius, chute and tray
 const G = { cx: 160, cy: 200, r: 130 }, CAP = 40, CHUTE = { x: 90, y: 446 }, TRAY = { x: 90, y: 474 };
 function pack(n) {
   const pts = [], step = 36.5, lim = G.r - CAP / 2 - 3;
@@ -76,7 +67,7 @@ export default function PrizeMachine({ cat, onOpen }) {
     path(el, [at(TRAY.x, TRAY.y, 1, 360), at(TRAY.x, TRAY.y - 18, 1.6, 360)], 380, 'cubic-bezier(.34,1.56,.64,1)');
     const c = capsuleColors(slug), mr = machine.current.getBoundingClientRect(), k = u();
     sparkle(machine.current, TRAY.x * k, (TRAY.y - 10) * k, [c.a1, c.a2, c.a3, '#ffd36a']);
-    floatText(machine.current, TRAY.x * k, (TRAY.y - 34) * k, t('rw.plus', { n: nf.format(POINTS_PER_PROFILE) }));
+    floatText(machine.current, TRAY.x * k, (TRAY.y - 34) * k, t('rw.plus', { n: nf.format(pointsFor(slug)) }));
     await wait(reducedMotion() ? 0 : 750);
     return { x: mr.left + TRAY.x * k, y: mr.top + (TRAY.y - 20) * k, c };
   }
@@ -113,7 +104,7 @@ export default function PrizeMachine({ cat, onOpen }) {
         const tray = await dispense(slug, from);
         if (!alive) return;
         if (!isPaid(key)) {
-          const landed = await flyToPoints(tray, t('rw.plus', { n: nf.format(POINTS_PER_PROFILE) }), [tray.c.a1, tray.c.a2], root.current?.querySelector('.pm-led'));
+          const landed = await flyToPoints(tray, t('rw.plus', { n: nf.format(pointsFor(slug)) }), [tray.c.a1, tray.c.a2], root.current?.querySelector('.pm-led'));
           markPaid(key);
           if (landed) { bump(landed); reward('land', lang); }
         }
@@ -150,8 +141,8 @@ export default function PrizeMachine({ cat, onOpen }) {
     return (
       <li key={p.s}>
         <button type="button" className={'pm-slot ' + (got ? 'got' : '')} data-s={p.s} onClick={() => open(p, i)} title={name}
-          aria-label={got ? t('rw.slotDone', { name, n: POINTS_PER_PROFILE }) : t('rw.slotTodo', { name, n: POINTS_PER_PROFILE })}>
-          {got ? <Capsule slug={p.s} open className="mini" /> : <span className="pm-empty" aria-hidden="true">+{POINTS_PER_PROFILE}</span>}
+          aria-label={got ? t('rw.slotDone', { name, n: pointsFor(p.s) }) : t('rw.slotTodo', { name, n: pointsFor(p.s) })}>
+          {got ? <Capsule slug={p.s} open className="mini" /> : <span className="pm-empty" aria-hidden="true">+{pointsFor(p.s)}</span>}
         </button>
       </li>
     );

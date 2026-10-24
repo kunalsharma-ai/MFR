@@ -23,7 +23,9 @@ import { useMember, useQuery as useQueryParameters } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { bumpRewards, creditProfileRewards } from "@/hooks/useRewardsRefresh";
+import { bumpRewards, creditProfileRewards, creditQualityScore } from "@/hooks/useRewardsRefresh";
+import useProfileGate from "@/hooks/useProfileGate";
+import useProfileDark from "@/hooks/useProfileDark";
 import "./ps/ps.css";
 import PsHub from "./ps/PsHub";
 import PsFlow from "./ps/PsFlow";
@@ -350,9 +352,8 @@ function ProfileTabs({ profiles, query, onChange }) {
    Points and quality score: the API pays them when a profile is completed and stores them in the database; this page only
    reads them (GET /api/v1/me/points) and tells the other screens to read them again (bumpRewards, user.Reload).
    --------------------------------------------------------------------------------------------------------- */
-// The other profiles follow the member's sign-up interests; a profile that is already started is always listed (status > 0).
-// Use 0 to also list every profile the member has not started when they picked interests.
-const MIN_STATUS = 0;
+// kept for visibleProfiles(): the hub lists only the four basics, whatever the interests are
+const MIN_STATUS = 1;
 const fetchProfileList = (category) => api.post("/api/v1/profile", { category }).then((r) => r.data);
 
 function SkinProfiles() {
@@ -372,70 +373,54 @@ function SkinProfiles() {
   const pointsKey = ["ps-points", user?._id];
   const fetchPoints = React.useCallback(() => api.get("/api/v1/me/points").then((r) => (r?.status === "error" ? null : r?.data ?? null)), []);
   const { data: points, isFetched: pointsFetched } = useQuery({ queryKey: pointsKey, queryFn: fetchPoints, enabled: Boolean(user?._id), retry: false });
-  const visible = React.useCallback((list) => visibleProfiles(Array.isArray(list) ? list : [], interests, MIN_STATUS), [interests]);
+  // the Profiles page lists only Basic, Education, Professional and Financial
+  const visible = React.useCallback((list) => visibleProfiles(Array.isArray(list) ? list : [], interests, MIN_STATUS).filter((p) => isCore(p.slug)), [interests]);
   const shown = React.useMemo(() => visible(profiles), [profiles, visible]);
+  const [dark] = useProfileDark(); // day / night button in the header
 
-  // ---- the basics first: the other profiles open only when Basic, Education, Professional and Financial are complete
-  const unlocked = React.useMemo(() => basicsDone(profiles), [profiles]);
-  const isLocked = (slug) => !unlocked && !isCore(slug);
-  const [notice, setNotice] = React.useState(null); // { text, id } - the same pill the design uses for its messages
-  const noticeTimer = React.useRef(null);
-  React.useEffect(() => () => clearTimeout(noticeTimer.current), []);
-  const askBasicsFirst = (p) => {
-    const first = nextBasic(profiles);
-    const text = first ? `Complete ${first.name} first to open ${p?.name || "this profile"}.` : "Complete your basic profiles first.";
-    setNotice({ text, id: Date.now() });
-    clearTimeout(noticeTimer.current);
-    noticeTimer.current = setTimeout(() => setNotice(null), 3400);
-  };
-  // a link such as ?profile=travel while the basics are open: back to the hub with the message
-  const blockedLink = Boolean(query.profile) && !isLoading && !interestsLoading && isLocked(query.profile);
-  React.useEffect(() => {
-    if (!blockedLink) return;
-    askBasicsFirst(profiles.find((p) => p.slug === query.profile));
-    router.replace(pathname, { scroll: false });
-  }, [blockedLink]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ---- The hub lists Basic, Education, Professional and Financial. Every other profile is listed in the Survey section and is filled with
+  // this same form (?profile=<slug>) once those four are complete; it then appears under "Completed" here.
+  const [notice] = React.useState(null);
 
-  // ---- Quality Score: +1 for every completed profile, once per profile.
-  // The profiles already counted are kept in the database as the answer "quality-credited" (PATCH /api/v1/me/answer), so a profile is never
-  // counted twice (not on another device, not after a reload). The new score is written with PUT /api/v1/me.
-  const qualityBusy = React.useRef(false);
+  // ---- Quality Score: +1 for every completed profile, once per profile (the marks are kept in the database, see creditQualityScore)
   const creditQuality = React.useCallback(async (list) => {
-    if (qualityBusy.current || !Array.isArray(list)) return;
-    qualityBusy.current = true;
-    try {
-      const done = list.filter((p) => Number(p?.status) >= 100).map((p) => p.slug);
-      if (!done.length) return;
-      const me = await api.post("/api/v1/me", { questions: ["quality-credited"] }).then((r) => r?.data);
-      if (!me) return;
-      const counted = [].concat(me["quality-credited"] ?? []).filter(Boolean);
-      const add = done.filter((s) => !counted.includes(s));
-      if (!add.length) return;
-      const score = Math.min(200, (Number(me.qualityScore) || 0) + add.length);
-      const saved = await api.put("/api/v1/me", { qualityScore: score });
-      if (saved?.status === "error") return;
-      await api.patch("/api/v1/me/answer", { "quality-credited": [...counted, ...add] });
-      user?.Reload?.(); // the header / My Account read the new Quality Score
-    } catch (e) {
-      console.log(e);
-    } finally {
-      qualityBusy.current = false;
-    }
+    if (!Array.isArray(list)) return;
+    const done = list.filter((p) => Number(p?.status) >= 100).map((p) => p.slug);
+    if (!done.length) return;
+    const added = await creditQualityScore(user, done);
+    if (added) user?.Reload?.(); // the header / My Account read the new Quality Score
   }, [user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
   // ---- Prize Machine: capsules = the profiles listed; which of them are won = the rewards the database holds
+  // The other profiles have a capsule too (worth the points of the profile). They are listed on this page only under "Completed"; the
+  // Survey section lists the ones still to do (see hooks/useProfileGate.js).
+  const gate = useProfileGate();
+  const gateRef = React.useRef(gate);
+  gateRef.current = gate;
   const [rewardsReady, setRewardsReady] = React.useState(false);
   const applyRewards = React.useCallback((all, pts) => {
     const list = Array.isArray(all) ? all : [];
+    const { extras, paid } = gateRef.current;
+    const wonExtra = new Set(extras.filter((e) => e.done).map((e) => e.slug));
+    // a profile taken as a survey is worth the points of its card (what was paid, once it is done)
+    const pointsOf = {};
+    extras.forEach((e) => { pointsOf[e.slug] = (e.done && paid?.[e.slug]) || Number(e.points) || 0; });
     setProfileNames(list);
-    setRewardData({ uid: user?._id, cat, profiles: visible(list), completed: list, points: pts });
+    setRewardData({
+      uid: user?._id,
+      cat,
+      profiles: [...visible(list), ...list.filter((p) => !isCore(p.slug))], // a capsule for EVERY profile of the member's category: the four first, then all the others
+      completed: list.map((p) => (wonExtra.has(p.slug) ? { ...p, status: 100 } : p)),
+      points: pts,
+      pointsOf,
+    });
   }, [user?._id, cat, visible]);
   React.useEffect(() => {
-    if (!Array.isArray(profiles) || isLoading || interestsLoading || !pointsFetched) return;
+    if (!Array.isArray(profiles) || isLoading || interestsLoading || !pointsFetched || gate.loading) return;
     applyRewards(profiles, points);
     creditProfileRewards(user, profiles).then((n) => { if (n) bumpRewards(); }).catch(() => {}); // completed profiles without a reward yet are paid once
     creditQuality(profiles); // profiles that were already complete are counted once
     setRewardsReady(true); // the machine is built only now, so it never starts empty
-  }, [applyRewards, creditQuality, profiles, points, isLoading, interestsLoading, pointsFetched, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [applyRewards, creditQuality, profiles, points, isLoading, interestsLoading, pointsFetched, gate.loading, gate.extras, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
   // called by the flow right after a profile was saved: the API has just paid its points and raised the quality score
   const afterSave = React.useCallback(async () => {
     const fresh = await qc.fetchQuery({ queryKey: profileKey, queryFn: fetchProfiles, staleTime: 0 });
@@ -447,27 +432,45 @@ function SkinProfiles() {
     user?.Reload?.(); // the header reads the new Quality Score
   }, [qc, fetchProfiles, fetchPoints, applyRewards, creditQuality, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const open = (p) => (isLocked(p.slug) ? askBasicsFirst(p) : router.push(`?profile=${p.slug}`, { scroll: false }));
+  const doneExtras = React.useMemo(() => gate.extras.filter((e) => e.done).map((e) => ({ ...e, status: 100 })), [gate.extras]);
+  // every profile of the category with its progress: the four and the others (a completed one counts 100%)
+  const allProfiles = React.useMemo(() => [...shown, ...gate.extras.map((e) => ({ ...e, status: e.done ? 100 : Math.max(0, Number(e.status) || 0) }))], [shown, gate.extras]);
+  const prizeProfiles = React.useMemo(() => [...shown, ...profiles.filter((p) => !isCore(p.slug))], [shown, profiles]);
+  const canOpen = (slug) => isCore(slug) || gate.coreDone; // the other profiles open after the four basics
+  const open = (p) => {
+    if (canOpen(p.slug)) return router.push(`?profile=${p.slug}`, { scroll: false });
+    router.push(`?profile=${nextBasic(profiles)?.slug || "basic"}`, { scroll: false }); // not open yet: go to the first basic that is not complete
+  };
   const hub = () => router.push(pathname, { scroll: false });
+  // a link to a profile that is not open yet goes back to the hub
+  const blockedLink = Boolean(query.profile) && !isLoading && !gate.loading && !canOpen(query.profile);
+  React.useEffect(() => {
+    if (blockedLink) router.replace(pathname, { scroll: false });
+  }, [blockedLink]); // eslint-disable-line react-hooks/exhaustive-deps
   if (isLoading || interestsLoading) return <></>;
-  const current = query.profile && !isLocked(query.profile) ? shown.find((p) => p.slug === query.profile) : null;
+  const current = query.profile && canOpen(query.profile) ? profiles.find((p) => p.slug === query.profile) : null;
   const at = current ? shown.indexOf(current) : -1;
   const next = at >= 0 ? shown[at + 1] : null;
+  // A profile filled from the Survey section (not one of the four basics) is a survey for the member: its wording says survey, "next" is the
+  // next profile still to do there, and "back" returns to the Survey section.
+  const asSurvey = Boolean(current) && !isCore(current.slug);
+  const nextExtra = asSurvey ? gate.pending.find((p) => p.slug !== current.slug) : null;
   return (
-    <div className="ps" style={{ minHeight: "calc(100vh - 70px)", overflowX: "hidden" }}>
+    <div className="ps" data-theme={dark ? "dark" : "light"} style={{ minHeight: "calc(100vh - 70px)", overflowX: "hidden" }}>
       {current ? (
         <PsFlow
           key={current.slug}
           survey={current}
           user={user}
           endpage="/api/v1/me/profile"
-          onHub={hub}
+          asSurvey={asSurvey}
+          onHub={asSurvey ? () => router.push("/member/surveys") : hub}
           onSaved={afterSave}
-          hasNext={Boolean(next) && !isLocked(next.slug)}
-          onNextProfile={() => next && open(next)}
+          hasNext={asSurvey ? Boolean(nextExtra) : Boolean(next)}
+          onNextProfile={() => { const target = asSurvey ? nextExtra : next; if (target) open(target); }}
         />
       ) : (
-        <PsHub profiles={shown} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
+        <PsHub profiles={shown} allProfiles={allProfiles} extraDone={doneExtras} prizeProfiles={prizeProfiles} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
       )}
       {notice ? (
         <div className="toasts" role="status" aria-live="polite">

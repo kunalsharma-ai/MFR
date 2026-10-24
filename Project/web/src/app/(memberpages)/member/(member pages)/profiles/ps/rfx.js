@@ -1,5 +1,4 @@
-// Prize Machine effects (Web Animations API, transform/opacity only). Every effect is skipped under
-// prefers-reduced-motion; the callers still update the values.
+
 import { reducedMotion } from './fx.js';
 
 const mk = (cls, host, css) => { const e = document.createElement('span'); e.className = cls; if (css) Object.assign(e.style, css); host.append(e); return e; };

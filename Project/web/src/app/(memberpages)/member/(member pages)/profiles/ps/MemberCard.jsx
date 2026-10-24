@@ -1,9 +1,7 @@
 "use client";
 import { assetUrl, emojiUrl } from "./assets.js";
 
-/** The MFR membership card - the visual signature of the site. Every profile world is a card in its own
- *  foil colourway (theme accents) on the MyFrequentRewards navy/amber frame. Pure CSS 3D, no images
- *  except the 3D emoji and the brand mark. */
+
 export default function MemberCard({
   theme,
   name,

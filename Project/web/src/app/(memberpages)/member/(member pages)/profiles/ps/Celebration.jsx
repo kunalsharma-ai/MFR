@@ -186,7 +186,8 @@ function run(canvas, mode, colors, icons) {
 function star(ctx, r) { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = (i * Math.PI) / 5 - Math.PI / 2, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); ctx.fill(); }
 function heart(ctx, r) { ctx.beginPath(); ctx.moveTo(0, r * 0.35); ctx.bezierCurveTo(-r, -r * 0.4, -r * 0.45, -r, 0, -r * 0.4); ctx.bezierCurveTo(r * 0.45, -r, r, -r * 0.4, 0, r * 0.35); ctx.fill(); }
 
-export default function Celebration({ meta, theme, name, icon, colors, onClose, onNext, onHub, onEdit }) {
+// survey = the profile was filled from the Survey section (it is shown there as a survey): the pop-up says survey, not profile
+export default function Celebration({ meta, theme, name, icon, colors, onClose, onNext, onHub, onEdit, survey = false }) {
   const { t } = useI18n();
   const cv = useRef(null);
   const first = useRef(null);
@@ -208,14 +209,14 @@ export default function Celebration({ meta, theme, name, icon, colors, onClose, 
           <span className="cel-100">100%</span>
         </div>
         <p className="cel-badge"><span aria-hidden="true">{cfg.badge}</span> {t('d.badge')}</p>
-        <h2 id="cel-title">{t('d.title')}</h2>
-        <p className="muted">{t('d.submitted')}</p>
+        <h2 id="cel-title">{t(survey ? 'd.title.survey' : 'd.title')}</h2>
+        <p className="muted">{t(survey ? 'd.submitted.survey' : 'd.submitted')}</p>
         <PrizeTicket meta={meta} />
         <div className="cel-actions">
-          <button ref={first} type="button" className="btn btn-full" onClick={onNext}>{t('d.next')} <IArrow /></button>
+          <button ref={first} type="button" className="btn btn-full" onClick={onNext}>{t(survey ? 'd.next.survey' : 'd.next')} <IArrow /></button>
           <button type="button" className="btn btn-ghost" onClick={onEdit}><IEdit /> {t('d.editNow')}</button>
           <button type="button" className="btn btn-ghost" onClick={onClose}>{t('d.answers')}</button>
-          <button type="button" className="btn-link cel-hub" onClick={onHub}>{t('d.hub')}</button>
+          <button type="button" className="btn-link cel-hub" onClick={onHub}>{t(survey ? 'd.hub.survey' : 'd.hub')}</button>
         </div>
       </div>
     </div>

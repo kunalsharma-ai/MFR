@@ -28,7 +28,7 @@ export default function MyAccountPoints() {
   const rewardsTick = useRewardsTick(); // changes when a profile is completed -> the points are read again
 
   React.useEffect(() => {
-    if (rewardsTick === 0) setIsLoading(true); // only the first time, so a refresh does not blank the box
+    if (rewardsTick === 0) setIsLoading(true); 
 
     loadData(
       fetchRewardBalance(member),
