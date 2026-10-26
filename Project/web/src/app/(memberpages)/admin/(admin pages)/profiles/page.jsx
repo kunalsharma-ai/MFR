@@ -1,8 +1,3 @@
-// todo: create default data,
-// todo: display survey from database
-// todo: setup welcome survey from ui based on category
-// todo: calculate survey points, and completion status by respondent.
-
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -319,6 +314,12 @@ function CreateOrEditProfile({ profileID = null, close }) {
           control={control}
           {...form.register("name")}
           label="Profile Name"
+        />
+
+        <Form.Input
+          control={ control }
+          { ...form.register("points") }
+          label="Points on Completion"
         />
         <Form.Input
           control={control}

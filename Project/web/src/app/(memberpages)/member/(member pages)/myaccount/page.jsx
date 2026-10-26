@@ -293,11 +293,11 @@ function Stats() {
 
 function UserInfo({ user }) {
   const form = useForm();
-  const [defaultCountry,setDefaultCountry]= React.useState("us")
+  const [defaultCountry, setDefaultCountry] = React.useState("us");
 
   const [visibleFields, setVisibleFields] = React.useState({});
   const [editingField, setEditingField] = React.useState(null);
-  
+
   const toggleField = (index) => {
     setVisibleFields((prev) => ({
       ...prev,
@@ -308,7 +308,6 @@ function UserInfo({ user }) {
   const maskValue = (value) => {
     return value ? "xxxxxx" : "";
   };
-
 
   const handleAlternateEdit = (field) => setEditingField(field);
 
@@ -344,7 +343,7 @@ function UserInfo({ user }) {
       profilePicture: user.profilePicture ?? "/images/logo/user.png",
       alternatePhone: user?.["alternate-phone"] || "",
       alternateEmail: user?.["alternate-email"] || "",
-  });
+    });
   }, [user]);
 
   const rating =
@@ -398,18 +397,14 @@ function UserInfo({ user }) {
     },
   ];
 
-
-  React.useEffect(()=>{
-const getCountry=async()=>{
-    const resp = await api.get("/api/v1/get-country");
+  React.useEffect(() => {
+    const getCountry = async () => {
+      const resp = await api.get("/api/v1/get-country");
       resp.country = resp.country.toLowerCase().trim();
-      setDefaultCountry(resp.country)
-      
-      }
-getCountry()
-  },[])
-
-
+      setDefaultCountry(resp.country);
+    };
+    getCountry();
+  }, []);
 
   return (
     <Grid
@@ -621,8 +616,10 @@ getCountry()
           {userData.map((item, index) => {
             const isEdit = item.type === "edit";
             const isEditing = isEdit && editingField === item.field;
-            const isEmailField = item.field === "email" || item.label === "Email";
-            const isPhoneField = item.field === "phone" || item.label === "Mobile";
+            const isEmailField =
+              item.field === "email" || item.label === "Email";
+            const isPhoneField =
+              item.field === "phone" || item.label === "Mobile";
             return (
               <Grid
                 key={index}
@@ -654,7 +651,6 @@ getCountry()
 
                 {/* Main content */}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-
                   {/* FIRST LINE */}
                   <Box
                     sx={{
@@ -685,7 +681,9 @@ getCountry()
                         minWidth: 0,
                       }}
                     >
-                      {isEmailField && (item.truncate || isEdit) && visibleFields[index] ? (
+                      {isEmailField &&
+                      (item.truncate || isEdit) &&
+                      visibleFields[index] ? (
                         <Tooltip title={item.value || ""} placement="top">
                           <Typography
                             component="span"
@@ -743,8 +741,8 @@ getCountry()
                               ? item.value || ""
                               : maskValue(item.value)
                             : visibleFields[index]
-                            ? item.value
-                            : maskValue(item.value)}
+                              ? item.value
+                              : maskValue(item.value)}
                         </Typography>
                       )}
 
@@ -795,12 +793,19 @@ getCountry()
                       }}
                     >
                       {item.field === "phone" ? (
-                        <Box sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 20 }}>
+                        <Box
+                          sx={{
+                            flex: 1,
+                            minWidth: 0,
+                            position: "relative",
+                            zIndex: 20,
+                          }}
+                        >
                           <Form.Phone
                             control={form.control}
                             name="alternatePhone"
                             onlyCountries={[defaultCountry]}
-                              disableDropdown={true}
+                            disableDropdown={true}
                             inputSX={{
                               backgroundColor: "transparent",
                               color: "#fff",
@@ -837,9 +842,10 @@ getCountry()
                                 "&:hover .MuiOutlinedInput-notchedOutline": {
                                   border: "none",
                                 },
-                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                  border: "none",
-                                },
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    border: "none",
+                                  },
                               },
                               "& .MuiInput-underline:before": {
                                 borderBottomColor: "rgba(245, 160, 0, 0.5)",
@@ -933,17 +939,31 @@ getCountry()
 const methodFieldsConfig = {
   "wire-transfer": [
     { key: "bankName", label: "Bank", placeholder: "Enter bank name" },
-    { key: "ifsc", label: "IFSC/IBAN/SWIFT", placeholder: "Enter IFSC/IBAN/SWIFT code" },
-    { key: "bankAccount", label: "Account Number", placeholder: "Enter account number" },
+    {
+      key: "ifsc",
+      label: "IFSC/IBAN/SWIFT",
+      placeholder: "Enter IFSC/IBAN/SWIFT code",
+    },
+    {
+      key: "bankAccount",
+      label: "Account Number",
+      placeholder: "Enter account number",
+    },
   ],
-  upi: [
-    { key: "upiAccount", label: "VPA", placeholder: "Enter UPI ID" },
-  ],
+  upi: [{ key: "upiAccount", label: "VPA", placeholder: "Enter UPI ID" }],
   paypal: [
-    { key: "paypalAccount", label: "PayPal Email", placeholder: "Enter PayPal email" },
+    {
+      key: "paypalAccount",
+      label: "PayPal Email",
+      placeholder: "Enter PayPal email",
+    },
   ],
   "amazon-gift-card": [
-    { key: "amazonAccount", label: "Amazon ID", placeholder: "Enter Amazon Giftcard ID" },
+    {
+      key: "amazonAccount",
+      label: "Amazon ID",
+      placeholder: "Enter Amazon Giftcard ID",
+    },
   ],
 };
 
@@ -967,34 +987,40 @@ function Payment() {
     );
   }, []);
   React.useEffect(() => {
-    api.post(`/api/v1/me`, {
-      questions: [
-        "payment-method",
-        "payment-method-bank-ifsc",
-        "payment-method-bank-account",
-        "payment-method-bank-name",
-        "payment-method-amazon",
-        "payment-method-paypal",
-        "payment-method-upi",
-        "payment-method-primary",
-      ],
-    }).then((resp) => {
-      const data = resp.data;
-      setPayment({
-        method: data["payment-method"],
-        ifsc: data["payment-method-bank-ifsc"],
-        bankAccount: data["payment-method-bank-account"],
-        bankName: data["payment-method-bank-name"],
-        amazonAccount: data["payment-method-amazon"],
-        paypalAccount: data["payment-method-paypal"],
-        upiAccount: data["payment-method-upi"],
-      });
-      setPrimaryMethod(data["payment-method-primary"] || null);
-    }).catch((err) => console.error(err));
+    api
+      .post(`/api/v1/me`, {
+        questions: [
+          "payment-method",
+          "payment-method-bank-ifsc",
+          "payment-method-bank-account",
+          "payment-method-bank-name",
+          "payment-method-amazon",
+          "payment-method-paypal",
+          "payment-method-upi",
+          "payment-method-primary",
+        ],
+      })
+      .then((resp) => {
+        const data = resp.data;
+        setPayment({
+          method: data["payment-method"],
+          ifsc: data["payment-method-bank-ifsc"],
+          bankAccount: data["payment-method-bank-account"],
+          bankName: data["payment-method-bank-name"],
+          amazonAccount: data["payment-method-amazon"],
+          paypalAccount: data["payment-method-paypal"],
+          upiAccount: data["payment-method-upi"],
+        });
+        setPrimaryMethod(data["payment-method-primary"] || null);
+      })
+      .catch((err) => console.error(err));
   }, []);
   const hasData = (methodValue) => {
     const fields = methodFieldsConfig[methodValue] || [];
-    return fields.length > 0 && fields.every((f) => payment[f.key]?.toString().trim());
+    return (
+      fields.length > 0 &&
+      fields.every((f) => payment[f.key]?.toString().trim())
+    );
   };
 
   const handleFieldChange = (key) => (e) => {
@@ -1050,7 +1076,10 @@ function Payment() {
 
   const handleSetPrimary = async (methodValue) => {
     if (!hasData(methodValue)) {
-      useToast({ status: "error", message: "Please fill in the details first." });
+      useToast({
+        status: "error",
+        message: "Please fill in the details first.",
+      });
       return;
     }
     if (primaryMethod === methodValue) return;
@@ -1162,8 +1191,8 @@ function Payment() {
                         color: isPrimary
                           ? "secondary.main"
                           : filled
-                          ? "#fff"
-                          : "rgba(255,255,255,0.3)",
+                            ? "#fff"
+                            : "rgba(255,255,255,0.3)",
                       }}
                     >
                       {isPrimary ? (
@@ -1191,51 +1220,51 @@ function Payment() {
                           py: 1,
                         }}
                       >
-                        
-
-                        <Box 
-                          sx={{ 
-                            display: "flex", 
-                            alignItems: "center", 
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
                             flex: 1,
                             minWidth: 0,
                           }}
                         >
-                          {isEditing ? ( 
-                            <TextField 
-                              fullWidth 
-                              variant="standard" 
-                              value={payment[f.key] || ""} 
-                              onChange={handleFieldChange(f.key)} 
-                              placeholder={f.placeholder} 
-                              size="small" 
-                              InputProps={{ disableUnderline: true }} 
-                              sx={{ 
+                          {isEditing ? (
+                            <TextField
+                              fullWidth
+                              variant="standard"
+                              value={payment[f.key] || ""}
+                              onChange={handleFieldChange(f.key)}
+                              placeholder={f.placeholder}
+                              size="small"
+                              InputProps={{ disableUnderline: true }}
+                              sx={{
                                 flex: 1,
                                 minWidth: 0,
-                                "& .MuiInputBase-input": { 
-                                  color: "#fff", 
-                                  fontSize: 13, 
-                                }, 
-                              }} 
-                            /> 
-                          ) : ( 
-                             <Typography 
-                              component="span" 
+                                "& .MuiInputBase-input": {
+                                  color: "#fff",
+                                  fontSize: 13,
+                                },
+                              }}
+                            />
+                          ) : (
+                            <Typography
+                              component="span"
                               noWrap
-                              sx={{ 
-                                color: payment[f.key] ? "#fff" : "rgba(255,255,255,0.55)", 
-                                fontWeight: 600, 
-                                flex: 1, 
-                                fontSize: 13, 
+                              sx={{
+                                color: payment[f.key]
+                                  ? "#fff"
+                                  : "rgba(255,255,255,0.55)",
+                                fontWeight: 600,
+                                flex: 1,
+                                fontSize: 13,
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
                                 minWidth: 0,
-                              }} 
-                            > 
+                              }}
+                            >
                               {payment[f.key] ? "xxxxxx" : f.placeholder}
-                            </Typography> 
+                            </Typography>
                           )}
 
                           <Box
@@ -1276,7 +1305,6 @@ function Payment() {
                         </Box>
                       </Grid>
                     ))}
-
                   </Grid>
                 </AccordionDetails>
               </Accordion>
@@ -1521,7 +1549,7 @@ function Summary() {
   React.useEffect(() => {
     fetchRewardBalance(user)
       .then((resp) => {
-        if (resp.status === "error") router.replace("/survey?name=welcome");
+        // if (resp.status === "error") router.replace("/survey?name=welcome");
         // if (!resp.data) return useToast(resp);
         let data = resp.data;
         setPoints(data.totalPoints);
@@ -1546,8 +1574,8 @@ function Summary() {
     },
   ];
   const [activeTab, setActiveTab] = React.useState(0);
-  const [rewardsDataRange,  setRewardsDateRange]=React.useState([])
-  const [rejectedDataRange , setRejectedDataRange]=React.useState([])
+  const [rewardsDataRange, setRewardsDateRange] = React.useState([]);
+  const [rejectedDataRange, setRejectedDataRange] = React.useState([]);
   const tabs = [
     // {
     //   label: "Rewards Summary",
@@ -1570,16 +1598,18 @@ function Summary() {
             noDataMsg="No Record Found."
             // data={tourActive ? mockRewardsProcessed.data : []}
             extra={
-            <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
-              <DateRangeSelector
-                onUpdate={(e) => {
-                  setRewardsDateRange(
-                    e.map((d) => new Date(d.toDate()).toISOString().split("T")[0]),
-                  );
-                }}
-              />
-            </Box>
-          }
+              <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
+                <DateRangeSelector
+                  onUpdate={(e) => {
+                    setRewardsDateRange(
+                      e.map(
+                        (d) => new Date(d.toDate()).toISOString().split("T")[0],
+                      ),
+                    );
+                  }}
+                />
+              </Box>
+            }
             columns={[
               {
                 id: "claimedPoints",
@@ -1618,7 +1648,9 @@ function Summary() {
                 id: "status",
                 label: "Status",
                 render: (info) => (
-                  <span style={{ textTransform: "capitalize" }}>{info.status}</span>
+                  <span style={{ textTransform: "capitalize" }}>
+                    {info.status}
+                  </span>
                 ),
               },
             ]}
@@ -1629,22 +1661,24 @@ function Summary() {
     {
       label: "Rejected Responses",
       render: (
-        <Grid size={12} container justifyContent="center" >
+        <Grid size={12} container justifyContent="center">
           <Datatable
             hideColumnSelector
             hideDownload
             data={[]}
             extra={
-            <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
-              <DateRangeSelector
-                onUpdate={(e) => {
-                  setRejectedDataRange(
-                    e.map((d) => new Date(d.toDate()).toISOString().split("T")[0]),
-                  );
-                }}
-              />
-            </Box>
-          }
+              <Box px={{ xs: 0, md: 2 }} my={{ xs: 1, md: 0 }}>
+                <DateRangeSelector
+                  onUpdate={(e) => {
+                    setRejectedDataRange(
+                      e.map(
+                        (d) => new Date(d.toDate()).toISOString().split("T")[0],
+                      ),
+                    );
+                  }}
+                />
+              </Box>
+            }
             columns={[
               {
                 id: "survey",

@@ -523,9 +523,9 @@ export default function SignUp() {
                         <div
                           className={`sx-field half sx-dob ${err("dob") ? "bad" : ""} ${ok("dob") ? "good" : ""}`}
                         >
-                          {/* <label className="sx-static-label" htmlFor="dob">
+                          <label className="sx-static-label" htmlFor="dob">
                             Date of birth
-                          </label> */}
+                          </label>
                           <DobPicker
                             id="dob"
                             value={v.dob}
@@ -541,12 +541,108 @@ export default function SignUp() {
                             </p>
                           ) : (
                             <p className="f-hint" id="dob-hint">
-                              Enter your Date of birth · {MIN_SIGNUP_AGE}+ to
+                              Type it or tap the calendar · {MIN_SIGNUP_AGE}+ to
                               join
                             </p>
                           )}
                         </div>
-                        <Field
+                        <div
+                          className={`sx-field half ${err("gender") ? "bad" : ""} ${ok("gender") ? "good" : ""}`}
+                        >
+                          <span className="sx-static-label" id="gender-lbl">
+                            What is your gender?
+                          </span>
+                          <div
+                            className="sx-genders"
+                            role="radiogroup"
+                            aria-labelledby="gender-lbl"
+                            aria-invalid={Boolean(err("gender"))}
+                            aria-describedby={
+                              err("gender") ? "gender-err" : undefined
+                            }
+                          >
+                            {GENDERS.map((g) => (
+                              <label
+                                key={g}
+                                className={`sx-gender ${v.gender === g ? "on" : ""}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="gender"
+                                  value={g}
+                                  checked={v.gender === g}
+                                  onChange={() => {
+                                    set("gender", g);
+                                    touch("gender");
+                                  }}
+                                />
+                                <span
+                                  className="sx-gender-ico"
+                                  aria-hidden="true"
+                                >
+                                  {g === "Male" && (
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      width="28"
+                                      height="28"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <circle cx="10" cy="14" r="5" />
+                                      <path d="M19 5l-5.5 5.5M15 5h4v4" />
+                                    </svg>
+                                  )}
+                                  {g === "Female" && (
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      width="28"
+                                      height="28"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <circle cx="12" cy="9" r="5" />
+                                      <path d="M12 14v7M9 18h6" />
+                                    </svg>
+                                  )}
+                                  {(g === "Other" ||
+                                    g === "Prefer not to say") && (
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      width="28"
+                                      height="28"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <circle cx="12" cy="12" r="4.5" />
+                                      <path d="M16.2 7.8L20.5 3.5" />
+                                      <path d="M17 3.5h3.5v3.5" />
+                                      <path d="M12 16.5v5" />
+                                      <path d="M9.5 19h5" />
+                                      <path d="M7.8 7.8L3.5 3.5" />
+                                      <path d="M7 3.5H3.5v3.5" />
+                                    </svg>
+                                  )}
+                                </span>
+                                {g}
+                              </label>
+                            ))}
+                          </div>
+                          {err("gender") ? (
+                            <p className="f-err" id="gender-err" role="alert">
+                              {err("gender")}
+                            </p>
+                          ) : null}
+                        </div>
+                        {/* <Field
                           id="gender"
                           label="Gender"
                           error={err("gender")}
@@ -571,7 +667,7 @@ export default function SignUp() {
                               </option>
                             ))}
                           </select>
-                        </Field>
+                        </Field> */}
                         {/* <div
                           className={`sx-field ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`}
                         >

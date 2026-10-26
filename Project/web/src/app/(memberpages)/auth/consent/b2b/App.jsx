@@ -996,7 +996,7 @@ export default function App({ cfg }) {
           }
           onDownload={download}
           hasContinue={Boolean(cfg.continueUrl)}
-          onContinue={() => window.location.assign(AFTER_CONSENT_URL)}
+          onContinue={() => window.location.assign("/member/dashboard")}
         />
       ) : null}
     </div>

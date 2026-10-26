@@ -1,60 +1,56 @@
 <!doctype html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0B1E5B" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
-    />
-    <!-- GTM-NTTDHPV -->
-     <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || []; w[l].push({
-          'gtm.start': new Date().getTime(), event: 'gtm.js'
-        });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true; j.src =
-          'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, 'script', 'dataLayer', 'GTM-NTTDHPV');
-    </script>
 
-    <!-- Fonts are self-hosted (public/fonts, OFL): Manrope 600–700 headings & numbers, Inter 400–600 body & UI.
-         No Google Fonts request → faster first paint and it also works in mainland China. -->
-    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/manrope-var.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Theme before first paint: English = white theme, every other language = classic MyFrequentRewards look.
-         Reads the visitor's saved language (or ?lang=) so a returning Chinese/Hindi/… visitor never sees a flash. -->
-    <script>
-      (function () {
-        try {
-          var d = document.documentElement, q = new URLSearchParams(location.search).get('lang'), l = q || localStorage.getItem('mfr.lang') || localStorage.getItem('mfr_lang') || 'en', en = /^(en|english)(-|$)/i.test(l);
-          d.setAttribute('data-theme', en ? 'light' : 'classic');
-          if (!en) d.classList.add('i18n-boot', 'is-translated'); // page text waits (max 1.2 s) for the dictionary: no flash of English
-        } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
-      })();
-    </script>
-    <style>html.i18n-boot #root{opacity:0;animation:i18nShow .2s 1.2s forwards}@keyframes i18nShow{to{opacity:1}}</style>
-    <!--app-head-->
-    <!-- ANALYTICS: paste the approved GTM / GA4 / Meta Pixel snippets here ONCE (see README §Analytics). -->
-  </head>
-  <body>
-    <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NTTDHPV" height="0" width="0"
-        style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <div id="root"><!--app-html--></div>
-    <noscript>MyFrequentRewards works best with JavaScript enabled. All pages, policies and blog articles remain readable without it.</noscript>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0B1E5B" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1JYZZR66E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-S1JYZZR66E');
+  </script>
+  <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/manrope-var.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    html.i18n-boot #root {
+      opacity: 0;
+      animation: i18nShow .2s 1.2s forwards
+    }
+
+    @keyframes i18nShow {
+      to {
+        opacity: 1
+      }
+    }
+  </style>
+  <!--app-head-->
+  <!-- ANALYTICS: paste the approved GTM / GA4 / Meta Pixel snippets here ONCE (see README §Analytics). -->
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NTTDHPV" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div id="root"><!--app-html--></div>
+  <noscript>MyFrequentRewards works best with JavaScript enabled. All pages, policies and blog articles remain readable
+    without it.</noscript>
+  <script type="module" src="/src/main.jsx"></script>
+  <script src="/static/sdk.js"></script>
+</body>
+
 </html>
