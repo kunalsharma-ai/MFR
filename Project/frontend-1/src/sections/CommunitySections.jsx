@@ -9,8 +9,9 @@ import useLiveReviews from '../hooks/useLiveReviews.js';
 import { ScoreChip, VibeChip } from '../components/ReviewPopup.jsx';
 import { isRecent } from '../utils/reviews.js';
 import { isCalm } from '../utils/calm.js';
+import RateButton from '../components/RateButton.jsx';
 
-/* ───────────────────────── 1) Community ledger — rolling odometers, each with its own micro-chart ───────────────────────── */
+
 
 function Odometer({ value, prefix = '', suffix = '' }) {
   const str = Number(value).toLocaleString('en-US');
@@ -95,13 +96,7 @@ export function CommunityLedger() {
   );
 }
 
-/* ───────────────────────── 2) Paid surveys — two different worlds ───────────────────────── */
-// Consumers: a prize wheel of all 16 survey topics. It spins to a topic (on its own while visible, or when the
-//   visitor presses SPIN / picks a topic chip) and the "prize ticket" shows that topic's typical reward and length.
-// Professionals: an "expertise demand map" — a treemap where tile size and colour follow the reward tier
-//   (premium / higher / standard), with a ticker of the audiences we invite. A light scan passes over the tiles.
-// Consumer rewards: the six supplied categories show their typical reward; added categories show $4–$7.
-// Professional tiles show a reward tier (see src/data/surveys.js) until amounts are supplied.
+
 function SurveyWheel({ list, visible }) {
   const n = list.length;
   const step = 360 / n;
@@ -113,13 +108,13 @@ function SurveyWheel({ list, visible }) {
   const spinTo = (k, turns = 2) => {
     const target = -k * step;
     setRot((r) => {
-      const base = r - (((r - target) % 360) + 360) % 360; // nearest equivalent angle at or below current
+      const base = r - (((r - target) % 360) + 360) % 360; 
       return base - turns * 360;
     });
     setSel(k);
     setSpinning(true);
     clearTimeout(done.current);
-    done.current = setTimeout(() => setSpinning(false), 3700); // fallback if transitionend never fires
+    done.current = setTimeout(() => setSpinning(false), 3700); 
   };
   useEffect(() => () => clearTimeout(done.current), []);
   const spin = () => {
@@ -131,7 +126,7 @@ function SurveyWheel({ list, visible }) {
     if (!visible || hold || spinning) return undefined;
     const t = setTimeout(spin, 4200);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [visible, hold, spinning, sel]);
   const c = list[sel];
   const grad = `conic-gradient(from ${-step / 2}deg, ${list.map((x, i) => `${x.tone} ${i * step}deg ${(i + 1) * step}deg`).join(', ')})`;
@@ -236,17 +231,7 @@ export function SurveyBoard() {
   );
 }
 
-/* ───────────────────────── 3) Client testimonials (v2.4) — "Voices Live" ─────────────────────────
-   Two live screens side by side, each built for its audience:
-   • Consumers — a phone with the members' group chat: reviews arrive as chat messages (typing dots first), with
-     initials, flag, country and the Vibe-meter read-out.
-   • Professionals — a laptop with an expert board: endorsements post to the top of a feed with designation,
-     company, flag and the scorecard read-out.
-   Between them, the "Ratings & Reviews" medallion opens the full wall (/about-us/reviews).
-   Only a handful of messages are in the page at any time and the feed pauses off-screen / when the page is calm,
-   so the section stays light. New reviews (live feed) and the visitor's own appear first, tagged. In the HTML
-   preview build the supplied, unpublished testimonials carry a "Preview data" label (src/data/testimonialsSupplied.js). */
-const openRate = (segment) => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: { segment } }));
+
 const isNew = (t) => t.own || isRecent(t);
 const isoList = (list) => [...new Set(list.map((t) => t.iso).filter(Boolean))];
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -313,7 +298,7 @@ function ConsumerChat({ list, active }) {
           {typing ? <li className="vl-typing" aria-hidden="true"><span><i /><i /><i /></span> someone is sharing a review…</li> : null}
         </ol>
         <footer className="vl-compose">
-          <button type="button" className="vl-compose-in" onClick={() => openRate('consumer')}><Icon name="pen" size={15} /> Share your experience…</button>
+          <RateButton className="vl-compose-in" icon="pen" iconSize={15} label="Share your experience…" outLabel="Log in to share your experience…" />
           {cycles ? <button type="button" className="vl-send" onClick={next} aria-label="Show the next consumer review"><Icon name="send" size={16} /></button> : null}
         </footer>
       </div>
@@ -355,7 +340,7 @@ function ProBoard({ list, active }) {
           <div className="vl-board-empty">
             <Icon name="briefcase" size={30} />
             <p><b>Be the first professional voice.</b> Managers, specialists, founders and decision-makers — tell other professionals what B2B studies with MyFrequentRewards are like.</p>
-            <button type="button" className="btn tv-btn-p" onClick={() => openRate('professional')}><Icon name="pen" size={15} /> Write a professional review</button>
+            <RateButton className="btn tv-btn-p" icon="pen" iconSize={15} label="Write a review" outLabel="Log in to write a review" />
           </div>
         )}
         {cycles ? <button type="button" className="vl-board-next" onClick={next}>Next endorsement <Icon name="arrow" size={14} /></button> : null}
@@ -410,8 +395,7 @@ export function MemberVoices() {
         </div>
 
         <div className="tv-foot vl-foot reveal">
-          <button type="button" className="btn tv-btn-c" onClick={() => openRate('consumer')}><Icon name="cart" size={16} /> Rate as a consumer</button>
-          <button type="button" className="btn tv-btn-p" onClick={() => openRate('professional')}><Icon name="briefcase" size={16} /> Rate as a professional</button>
+          <RateButton className="btn tv-btn-c" icon="star" label="Rate your experience" outLabel="Log in to rate us" />
           <Link to="/about-us/reviews" className="btn vl-btn-all"><Icon name="eye" size={16} /> Read all reviews</Link>
         </div>
       </div>

@@ -13,11 +13,11 @@ export function OriginScene() {
     <div className="sc sc-origin">
       <span className="og-beam"><i /></span>
       <div className="og-card c1">
-        <img src="/images/brand/frequent-research-monogram.webp" alt="" width="46" height="48" />
+        <img src="/images/brand/frequent-research-monogram.webp" alt="Frequent Research monogram" width="46" height="48" />
         <div><b>Frequent Research</b><small>ISO 20252 · 9001 · 27001</small></div>
       </div>
       <div className="og-card c2">
-        <img src={BRAND.monogram} alt="" width="46" height="46" />
+        <img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="46" height="46" />
         <div><b>MyFrequentRewards</b><small>Global opinion community</small></div>
       </div>
       <div className="og-card c3">
@@ -42,7 +42,7 @@ export function PhoneScene() {
       ))}
       <div className="bg-bag">
         <span className="bg-handle" />
-        <span className="bg-front"><img src={BRAND.monogram} alt="" width="58" height="58" /><b>Your rewards</b></span>
+        <span className="bg-front"><img src={BRAND.monogram} alt="MyFrequentRewards rewards badge" width="58" height="58" /><b>Your rewards</b></span>
         <span className="bg-side" />
       </div>
       {[0, 1, 2].map((k) => <i key={k} className="bg-coin" style={{ '--k': k }}>$</i>)}
@@ -65,7 +65,7 @@ export function DashboardScene() {
       <div className="id-card">
         <div className="id-face id-front">
           <span className="id-holo" />
-          <div className="id-top"><img src={BRAND.monogram} alt="" width="34" height="34" /><b>PROFESSIONAL</b></div>
+          <div className="id-top"><img src={BRAND.monogram} alt="MyFrequentRewards professional ID card logo" width="34" height="34" /><b>PROFESSIONAL</b></div>
           <div className="id-mid">
             <span className="id-avatar"><Icon name="user" size={34} /></span>
             <div><small>Role</small><strong key={k}>{ROLES_CYCLE[k]}</strong><small>B2B member</small></div>
@@ -78,7 +78,7 @@ export function DashboardScene() {
           <small>Identity never shared with clients</small>
         </div>
       </div>
-      <svg className="id-tree" viewBox="0 0 380 120"><path d="M190 0 V40 M60 40 H320 M60 40 V70 M190 40 V70 M320 40 V70" /></svg>
+      <svg className="id-tree" viewBox="0 0 380 120" role="img" aria-label="Organisation chart lines"><path d="M190 0 V40 M60 40 H320 M60 40 V70 M190 40 V70 M320 40 V70" /></svg>
       <div className="id-nodes">
         {[['briefcase', 'Strategy'], ['database', 'Technology'], ['coins', 'Finance']].map(([ic, t], i) => (
           <span key={t} style={{ '--i': i }}><Icon name={ic} size={18} /><small>{t}</small></span>
@@ -115,7 +115,7 @@ const STEPS = [
 export function JourneyScene() {
   return (
     <div className="sc sc-journey">
-      <svg className="jr-path" viewBox="0 0 380 380">
+      <svg className="jr-path" viewBox="0 0 380 380" role="img" aria-label="Path from survey to reward">
         <path d="M50 330 C 150 330 120 260 190 260 S 310 210 260 180 S 130 130 180 100 S 270 50 330 50" />
       </svg>
       <span className="jr-coin">★</span>
@@ -140,7 +140,7 @@ export function VaultScene() {
   return (
     <div className="sc sc-vault">
       <div className="vt-ring">
-        <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" className="vt-track" /><circle cx="60" cy="60" r="50" className="vt-fill" /></svg>
+        <svg viewBox="0 0 120 120" role="img" aria-label="Progress ring"><circle cx="60" cy="60" r="50" className="vt-track" /><circle cx="60" cy="60" r="50" className="vt-fill" /></svg>
         <div className="vt-core"><small>Balance</small><b>Ready</b><span>Redeem now</span></div>
       </div>
       {PAY.map((p, k) => (
@@ -222,7 +222,7 @@ export function CoverWall({ posts = [] }) {
       {cols.map((col, c) => (
         <div className={`cw-col c${c}`} key={c}>
           <div className="cw-track">
-            {[...col, ...col].map((b, i) => <img key={b.slug + i} src={b.cover} alt="" width="200" height="113" loading="lazy" />)}
+            {[...col, ...col].map((b, i) => <img key={b.slug + i} src={b.cover} alt={`Blog cover: ${b.title}`} width="200" height="113" loading="lazy" />)}
           </div>
         </div>
       ))}
@@ -244,7 +244,7 @@ export function CubeScene() {
         <div className="cube-f f1"><Icon name="chat" size={24} /><span><small>Share</small>Your Voice.</span></div>
         <div className="cube-f f2"><Icon name="badge" size={24} /><span><small>Matter</small>Your Value.</span></div>
         <div className="cube-f f3"><Icon name="gift" size={24} /><span><small>Earn</small>Your Rewards.</span></div>
-        <div className="cube-f f4"><img src={BRAND.monogram} alt="" width="74" height="74" /><span><small>A community of</small>Frequent Research</span></div>
+        <div className="cube-f f4"><img src={BRAND.monogram} alt="Frequent Research community logo" width="74" height="74" /><span><small>A community of</small>Frequent Research</span></div>
       </div>
       <span className="cube-shadow" />
     </div>

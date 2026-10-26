@@ -135,7 +135,6 @@ const fromServer = Array.isArray(verified.notification)
 
   // true when the current step is clean; otherwise marks its fields and focuses the first bad one
   function stepIsValid() {
-    console.log('step', step, 'fields', STEP_FIELDS[step], 'errors', errors);
     if (!stepErrors(step).length) return true;
     setTouched((t) => ({ ...t, ...Object.fromEntries(STEP_FIELDS[step].map((k) => [k, true])) }));
     setTimeout(() => cardRef.current?.querySelector('[aria-invalid="true"]')?.focus(), 30);

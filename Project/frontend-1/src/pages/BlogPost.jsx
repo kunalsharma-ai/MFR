@@ -55,7 +55,7 @@ export default function BlogPost() {
       />
       <div className="read-bar" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
       <header className="post-hero">
-        <img className="post-hero-img" src={post.cover} alt="" width="1200" height="675" fetchpriority="high" />
+        <img className="post-hero-img" src={post.cover} alt={`Cover image: ${post.title}`} width="1200" height="675" fetchpriority="high" />
         <div className="post-hero-shade" aria-hidden="true" />
         <div className="container post-hero-inner">
           <Breadcrumbs items={crumbs} />

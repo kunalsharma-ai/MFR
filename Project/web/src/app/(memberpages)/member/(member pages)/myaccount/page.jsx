@@ -45,6 +45,7 @@ import { Datatable, Form } from "@/components";
 import { DateRangeSelector } from "@/components/Form";
 import PopUp from "@/componentsMHO/PopUp";
 import { api, loadData, Page } from "@/util";
+import { useRewardsTick, fetchRewardBalance } from "@/hooks/useRewardsRefresh";
 import DataList from "@/componentsMHO/DataList";
 import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
@@ -1512,12 +1513,13 @@ function TabPanel({ children, value, index }) {
 
 function Summary() {
   const router = useRouter();
+  const user = useMember();
   const [points, setPoints] = React.useState(0); //todo: set from api call
+  const rewardsTick = useRewardsTick(); // changes when a profile is completed -> the points are read again
   const [conversionRate, setConversionRate] = React.useState(1); //todo: set conversion rate from api call
   const [threshold, setThreshold] = React.useState(1500); //todo: set from server config
   React.useEffect(() => {
-    api
-      .get(`/api/v1/me/points`)
+    fetchRewardBalance(user)
       .then((resp) => {
         if (resp.status === "error") router.replace("/survey?name=welcome");
         // if (!resp.data) return useToast(resp);
@@ -1528,7 +1530,7 @@ function Summary() {
       })
       .catch((err) => {})
       .finally(() => {});
-  }, []);
+  }, [rewardsTick, user?._id]);
   const rewardSummary = [
     {
       label: "Current Rewards",

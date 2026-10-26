@@ -1,0 +1,132 @@
+/* ==========================================================================================
+   v3.0 — ENGLISH WHITE THEME  (html[data-theme='light'])
+   English is shown on a white theme with the Turn2Opinion colour grading: royal blue #1f5bff → violet #7b5cff →
+   sky #49b6ff for navigation, buttons and accents; a warm white home hero (peach → blush → white) for consumers and
+   the deep-navy "trading floor" with teal light for professionals; navy page heroes with blue and gold glows.
+   Every other language uses html[data-theme='classic'] — the MyFrequentRewards colours exactly as before
+   (nothing in this file applies to them).
+   The home hero animation (Opinion Orbit phone, reward ring, expert globe) and every tagline are unchanged.
+   ========================================================================================== */
+
+html[data-theme='light'] {
+  --t2-ink: #0e1b4d;
+  --t2-ink-2: #24356f;
+  --t2-muted: #56618c;
+  --t2-blue: #1f5bff;
+  --t2-blue-d: #1544c9;
+  --t2-violet: #7b5cff;
+  --t2-sky: #49b6ff;
+  --t2-coral: #ff5c7a;
+  --t2-gold: #ffb020;
+  --t2-night: #0a1238;
+  --t2-line: rgba(14, 27, 77, .12);
+}
+
+/* ---------------- Header & navigation ---------------- */
+html[data-theme='light'] .site-header { background: rgba(255, 255, 255, .97); box-shadow: 0 1px 0 var(--t2-line); }
+html[data-theme='light'] .site-header.is-scrolled { box-shadow: 0 10px 30px -18px rgba(14, 27, 77, .35); }
+html[data-theme='light'] .nav-link { color: var(--t2-ink); }
+html[data-theme='light'] .nav-link:hover, html[data-theme='light'] .nav-link.is-active, html[data-theme='light'] .nav-link.is-here { color: var(--t2-blue); }
+html[data-theme='light'] .nav-link::after { background: linear-gradient(90deg, var(--t2-blue), var(--t2-violet)); }
+html[data-theme='light'] .nav-pill { background: linear-gradient(120deg, rgba(31, 91, 255, .1), rgba(123, 92, 255, .12)); border-color: rgba(31, 91, 255, .22); }
+html[data-theme='light'] .nav-hot { background: linear-gradient(90deg, var(--t2-coral), #ff8a5c); }
+html[data-theme='light'] .nav-panel-item .npi-ico { color: var(--t2-blue); }
+html[data-theme='light'] .hdr-login { color: var(--t2-ink); }
+html[data-theme='light'] .hdr-login-ico { background: #eef3ff; color: var(--t2-blue); }
+html[data-theme='light'] .hdr-login:hover .hdr-login-ico { background: var(--t2-blue); color: #fff; }
+
+/* ---------------- Buttons & accents ---------------- */
+html[data-theme='light'] .btn-primary { background: linear-gradient(135deg, var(--t2-blue), #3d7bff 55%, var(--t2-violet)); box-shadow: 0 10px 26px -10px rgba(31, 91, 255, .75); }
+html[data-theme='light'] .btn-primary:hover { box-shadow: 0 16px 32px -12px rgba(31, 91, 255, .85); }
+html[data-theme='light'] .site-header .hdr-join.btn-glow { box-shadow: 0 10px 26px -10px rgba(31, 91, 255, .75); }
+html[data-theme='light'] a:hover { color: var(--t2-blue); }
+html[data-theme='light'] ::selection { background: rgba(31, 91, 255, .18); }
+html[data-theme='light'] .scroll-progress, html[data-theme='light'] .scroll-progress i { background: linear-gradient(90deg, var(--t2-blue), var(--t2-violet), var(--t2-sky)); }
+
+/* ---------------- Home hero — consumers: warm white (Turn2Opinion grading) ---------------- */
+html[data-theme='light'] .hm-hero.seg-consumer { background: #fff; color: var(--t2-ink); }
+html[data-theme='light'] .seg-consumer .hm-tint.t-con {
+  background:
+    radial-gradient(46% 52% at 80% 40%, rgba(255, 122, 162, .3), transparent 70%),
+    radial-gradient(40% 46% at 62% 88%, rgba(255, 196, 120, .32), transparent 70%),
+    radial-gradient(42% 48% at 6% 12%, rgba(185, 160, 255, .3), transparent 70%),
+    linear-gradient(180deg, #fff3ea, #fff7fb 60%, #fff 92%);
+}
+html[data-theme='light'] .seg-consumer .hero-aurora { opacity: .14; }
+html[data-theme='light'] .seg-consumer .hero-aurora.a1 { background: radial-gradient(closest-side, rgba(255, 138, 61, .9), rgba(255, 138, 61, .3) 45%, transparent); }
+html[data-theme='light'] .seg-consumer .hero-aurora.a2 { background: radial-gradient(closest-side, rgba(123, 92, 255, .9), rgba(123, 92, 255, .3) 45%, transparent); }
+html[data-theme='light'] .seg-consumer .hero-aurora.a3 { background: radial-gradient(closest-side, rgba(255, 79, 123, .9), rgba(255, 79, 123, .3) 45%, transparent); }
+html[data-theme='light'] .seg-consumer .hero-grid { background-image: radial-gradient(rgba(14, 27, 77, .13) 1px, transparent 1px); background-size: 26px 26px; -webkit-mask-image: radial-gradient(ellipse at 30% 35%, #000, transparent 70%); mask-image: radial-gradient(ellipse at 30% 35%, #000, transparent 70%); }
+html[data-theme='light'] .seg-consumer .hero-spark { background: #ff8a3d; box-shadow: 0 0 10px rgba(255, 138, 61, .7); }
+/* brand motto chips */
+html[data-theme='light'] .seg-consumer .hm-mw { color: var(--t2-ink); background: #fff; border-color: rgba(14, 27, 77, .1); box-shadow: 0 8px 20px -14px rgba(14, 27, 77, .45); }
+html[data-theme='light'] .seg-consumer .hm-mw::before { background: color-mix(in srgb, var(--g) 16%, #fff); }
+/* headline: ink, second line in the Turn2Opinion consumer gradient */
+html[data-theme='light'] .seg-consumer .hero-title { color: var(--t2-ink); }
+html[data-theme='light'] .seg-consumer .ht-accent { background-image: linear-gradient(100deg, var(--t2-ink) 8%, #e8436d 48%, #ff8a3d 82%); }
+/* consumer / professional switch */
+html[data-theme='light'] .seg-consumer .hm-seg { background: #fff; border-color: rgba(14, 27, 77, .1); box-shadow: 0 10px 26px -18px rgba(14, 27, 77, .5); }
+html[data-theme='light'] .seg-consumer .hm-seg button { color: var(--t2-ink-2); }
+html[data-theme='light'] .seg-consumer .hm-seg button.on { color: #fff; }
+html[data-theme='light'] .seg-consumer .hm-seg-pill { background: linear-gradient(120deg, #ff4f7b, #ff9d3d); box-shadow: 0 6px 18px -6px rgba(255, 79, 123, .8); }
+/* slot-roll motto + tagline */
+html[data-theme='light'] .seg-consumer .hm-slot { background: #fff; box-shadow: inset 0 0 0 1px rgba(14, 27, 77, .1), 0 8px 18px -14px rgba(14, 27, 77, .5); }
+html[data-theme='light'] .seg-consumer .hm-slot:nth-child(1) { color: #e8436d; }
+html[data-theme='light'] .seg-consumer .hm-slot:nth-child(2) { color: var(--t2-violet); }
+html[data-theme='light'] .seg-consumer .hm-slot:nth-child(3) { color: #e07800; }
+html[data-theme='light'] .seg-consumer .hm-roll-tag { color: var(--t2-muted); }
+html[data-theme='light'] .seg-consumer .hero-who { color: var(--t2-ink-2); }
+html[data-theme='light'] .seg-consumer .who-swap span { color: #e8436d; }
+html[data-theme='light'] .seg-consumer .who-swap::after { background: linear-gradient(90deg, #ff4f7b, #ff9d3d); }
+html[data-theme='light'] .seg-consumer .hero-lead { color: var(--t2-muted); }
+html[data-theme='light'] .seg-consumer .hero-lead strong { color: var(--t2-ink); }
+/* calls to action */
+html[data-theme='light'] .seg-consumer .hero-actions .btn-primary { background: linear-gradient(120deg, #ff4f7b, #ff7a59 55%, #ff9d3d); box-shadow: 0 14px 30px -12px rgba(255, 79, 123, .75); }
+html[data-theme='light'] .seg-consumer .hero-actions .btn-glass { --bg: rgba(255, 255, 255, .85); --fg: var(--t2-ink); background: rgba(255, 255, 255, .85); color: var(--t2-ink); border-color: var(--t2-line); box-shadow: 0 10px 24px -18px rgba(14, 27, 77, .5); }
+html[data-theme='light'] .seg-consumer .hero-actions .btn-glass:hover { border-color: var(--t2-blue); color: var(--t2-blue); }
+/* community figures */
+html[data-theme='light'] .seg-consumer .hm-stats li { background: #fff; border-color: rgba(14, 27, 77, .08); box-shadow: 0 10px 24px -18px rgba(14, 27, 77, .55); }
+html[data-theme='light'] .seg-consumer .hm-stats b { background-image: linear-gradient(90deg, #ff4f7b, #ff9d3d); }
+html[data-theme='light'] .seg-consumer .hm-stats li:nth-child(2) b { background-image: linear-gradient(90deg, var(--t2-blue), var(--t2-sky)); }
+html[data-theme='light'] .seg-consumer .hm-stats li:nth-child(3) b { background-image: linear-gradient(90deg, var(--t2-violet), #b48cff); }
+html[data-theme='light'] .seg-consumer .hm-stats small { color: var(--t2-muted); }
+html[data-theme='light'] .seg-consumer .hero-scroll { border-color: rgba(14, 27, 77, .3); }
+html[data-theme='light'] .seg-consumer .hero-scroll span { background: var(--t2-ink); }
+/* the scene keeps every animation; only its glow is softened for the white background */
+html[data-theme='light'] .seg-consumer .oo-glow { background: radial-gradient(circle, rgba(255, 138, 61, .38), rgba(255, 79, 123, .14) 45%, transparent 70%); }
+html[data-theme='light'] .seg-consumer .vm-tag { box-shadow: 0 10px 22px -12px rgba(14, 27, 77, .45), inset 0 0 0 1px rgba(14, 27, 77, .06); }
+
+/* ---------------- Home hero — professionals: Turn2Opinion deep-navy "trading floor" with teal light ---------------- */
+html[data-theme='light'] .seg-pro .hm-tint.t-pro {
+  background: radial-gradient(700px 500px at 80% 35%, rgba(18, 181, 201, .35), transparent 65%), radial-gradient(600px 500px at 5% 0%, rgba(31, 91, 255, .45), transparent 60%), linear-gradient(165deg, #06153f, #0a2263 55%, #071437);
+}
+html[data-theme='light'] .seg-pro .hm-seg-pill { background: linear-gradient(120deg, #12b5c9, var(--t2-blue)); box-shadow: 0 6px 18px -6px rgba(18, 181, 201, .8); }
+html[data-theme='light'] .seg-pro .ht-accent { background-image: linear-gradient(100deg, #fff 10%, #7fe3f0 50%, var(--t2-sky) 85%); }
+html[data-theme='light'] .seg-pro .hero-actions .btn-primary { background: linear-gradient(120deg, #12b5c9, var(--t2-blue) 60%, var(--t2-violet)); box-shadow: 0 14px 30px -12px rgba(18, 181, 201, .7); }
+html[data-theme='light'] .seg-pro .hero-grid { background-image: linear-gradient(rgba(120, 190, 255, .09) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 190, 255, .09) 1px, transparent 1px); background-size: 44px 44px; }
+
+/* ---------------- Inner page heroes — Turn2Opinion navy with royal-blue, gold and teal light ---------------- */
+html[data-theme='light'] .page-hero[class*='ph-'] {
+  background:
+    radial-gradient(620px 440px at 6% 8%, rgba(31, 91, 255, .5), transparent 65%),
+    radial-gradient(560px 460px at 94% 52%, rgba(255, 176, 32, .26), transparent 65%),
+    radial-gradient(520px 300px at 55% 112%, rgba(18, 181, 201, .3), transparent 65%),
+    linear-gradient(165deg, #0b1450, #0a1238 55%, #070b26);
+}
+html[data-theme='light'] .page-hero .ph-bg::before { background: radial-gradient(closest-side at 30% 40%, rgba(73, 182, 255, .18), transparent 70%), radial-gradient(closest-side at 75% 60%, rgba(123, 92, 255, .22), transparent 70%); }
+html[data-theme='light'] .page-hero .eyebrow { color: #ffc24d; }
+html[data-theme='light'] .page-hero .btn-primary { background: linear-gradient(135deg, #ffd166, var(--t2-gold) 50%, #ff9d00); color: var(--t2-ink); box-shadow: 0 12px 28px -12px rgba(255, 160, 0, .9); }
+
+/* ---------------- Dark bands follow the same navy family (Turn2Opinion "night" #0a1238) ---------------- */
+html[data-theme='light'] .ledger { background: radial-gradient(1200px 500px at 85% -10%, rgba(73, 182, 255, .2), transparent 60%), radial-gradient(900px 500px at 0% 110%, rgba(123, 92, 255, .24), transparent 60%), #0a1238; }
+html[data-theme='light'] .journey { background: radial-gradient(120% 120% at 50% 0%, #1a2f8f, #0a1238 65%); }
+html[data-theme='light'] .globe-sec { background: #070b26; }
+html[data-theme='light'] .vault { background: linear-gradient(135deg, #0a1238, #13297a); }
+html[data-theme='light'] .gate { background: radial-gradient(60% 50% at 50% 100%, rgba(73, 182, 255, .2), transparent 70%), linear-gradient(165deg, #0b1450, #14237a 50%, #0a1238); }
+html[data-theme='light'] .radar-sec { background: radial-gradient(100% 100% at 0% 0%, #123a8c, #0a1238 70%); }
+
+/* ---------------- Footer ---------------- */
+html[data-theme='light'] .ft { background: radial-gradient(90% 60% at 50% 0%, #16237a 0%, #0a1238 38%, #070b26 100%); }
+@media (max-width: 767px) {
+  html[data-theme='light'] .site-header .main-nav .nav-link.is-active, html[data-theme='light'] .site-header .main-nav .nav-drop-btn.is-here { background: #eef3ff; color: var(--t2-blue); }
+}

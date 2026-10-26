@@ -1,36 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import CountryPicker, { Flag } from './CountryPicker.jsx';
+import { Flag } from './CountryPicker.jsx';
 import { COUNTRIES } from '../data/countries.js';
-import { postJSON } from '../utils/api.js';
+import { postJSON, putJSON } from '../utils/api.js';
+import { isKid, isPro, reviewedKey, useRater } from '../utils/rater.js';
 import { session, store } from '../utils/storage.js';
-import { EMAIL_RE } from '../utils/validate.js';
 import { publicName, rememberOwnReview } from '../utils/reviews.js';
 import { chime, fanfare, setSound, soundOn } from '../utils/sound.js';
 
-// Rate & Review (v2.4) — everything lives on the RIGHT-HAND side:
-// 1) TAB on the right edge of every page ("Rate your experience") with five stars that twinkle in sequence.
-// 2) DOCK BUTTON "Rate us" in the bottom-right stack, above WhatsApp and Live Help (rendered by Common.jsx → Dock,
-//    which dispatches the `mfr:rate` event).
-// 3) REVIEW SCREEN — a four-step wizard (You → Rate → About you → Review). It opens BY ITSELF only after the visitor
-//    has been browsing for a while (≥ 20 s on the site, ≥ 20 % of a page scrolled, at a quiet moment) — never the
-//    moment someone arrives — and asks again while they keep scrolling, paced (PACE): up to 4 times per visit, at
-//    least 2 minutes and 1.5 screen-heights of scrolling apart, then again after 12 hours, 12 times in total. Never while typing or chatting, never on /sign-up or /login, and never again after a review or
-//    "Don't ask again". The tab and the dock button open it at any time.
-//    Mandatory: consumer / professional, rating, review, full name, email, country (flag), company.
-//    Optional: designation, phone (country code + flag). Published straight into Client Testimonials:
-//    name (first name + last-name initial by default — REVIEW_NAME_FORMAT on the server), flag, country,
-//    designation, company, rating, review. Email and phone are never published.
 
-const ENDPOINT = import.meta.env.VITE_REVIEW_ENDPOINT || '/api/reviews';
+
+const ENDPOINT = import.meta.env.VITE_TESTIMONIAL_ENDPOINT || '/api/v1/testimonial';
 const BLOCKED = ['/sign-up', '/login'];
 const PACE = {
-  minSeconds: 20, // time on site before the screen may open by itself
-  minScroll: 0.2, // scroll depth on the current page before the first ask
-  rescrollScreens: 1.5, // before asking again: the visitor must have scrolled this many screen-heights since last time
-  quietMs: 1500, // visitor idle (not scrolling / typing) before we ask
-  exitAfterSeconds: 25, // exit intent counts only after this
+  minSeconds: 20,
+  minScroll: 0.2, 
+  rescrollScreens: 1.5, 
+  quietMs: 1500,
+  exitAfterSeconds: 25, 
   maxPerVisit: 4,
   gapInVisitMinutes: 2,
   gapBetweenVisitsHours: 12,
@@ -170,7 +158,7 @@ function ScoreGauge({ value, onPick }) {
   return (
     <div className={`gg l${lit}`} onMouseLeave={() => setHov(0)}>
       <div className="gg-dial">
-        <svg viewBox="0 0 240 132" className="gg-svg" aria-hidden="true">
+        <svg viewBox="0 0 240 132" className="gg-svg" role="img" aria-label="Rating gauge">
           {ZONES.map((d, i) => (
             <path key={i} d={d} className={`gg-z z${i + 1} ${i + 1 <= lit ? 'on' : ''}`} onMouseEnter={() => setHov(i + 1)} onClick={() => onPick(i + 1)} />
           ))}
@@ -214,8 +202,8 @@ function RateTab({ shown, onOpen }) {
   );
 }
 
-const STEPS = [['user', 'You'], ['star', 'Rate'], ['badge', 'About you'], ['check', 'Review']];
-const EMPTY = { text: '', full: '', email: '', iso: '', company: '', designation: '', dial: '', phone: '', consent: false, website: '' };
+const STEPS = [['star', 'Rate'], ['check', 'Review']];
+const EMPTY = { text: '', consent: false, website: '' };
 
 // Left "stage" art: changes with the step and with consumer / professional.
 function StageArt({ step, seg }) {
@@ -242,34 +230,62 @@ function StageArt({ step, seg }) {
   return null;
 }
 
+// Who is rating? Only a LOGGED-IN ADULT member (see utils/rater.js). Everything about the person comes from the account:
+//   category b2b → "professional" rating (scorecard gauge), anything else → "consumer" (vibe meter)
+//   name, country → from the account;  designation → the member's saved Job Title answer (professionals)
+const isoByAny = (x) => COUNTRIES.find((c) => c.iso.toLowerCase() === String(x || '').toLowerCase() || c.name.toLowerCase() === String(x || '').toLowerCase());
+
 export default function ReviewPopup() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [tabIn, setTabIn] = useState(false);
   const [reviewed, setReviewed] = useState(false);
   const [step, setStep] = useState(0);
-  const [seg, setSeg] = useState('');
+  const { user: member, canRate, refresh } = useRater(); // undefined = still checking · null = nobody logged in · object = the member
+  const [role, setRole] = useState(''); // the member's Job Title (from their profile answers)
   const [rating, setRating] = useState(0);
   const [f, setF] = useState(EMPTY);
   const [errs, setErrs] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | error | done
   const [msg, setMsg] = useState('');
-  const [live, setLive] = useState(true);
+  const [live, setLive] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const dlg = useRef(null);
   const body = useRef(null);
   const lastFocus = useRef(null);
   const pathRef = useRef(pathname);
   const travel = useRef(0); // pixels scrolled since the screen last opened by itself
+  const eligible = useRef(false); // logged-in adult member (may be asked / may rate)
   pathRef.current = pathname;
   const [sound, setSoundState] = useState(true);
   useEffect(() => setSoundState(soundOn()), []);
   const toggleSound = () => { const n = !sound; setSound(n); setSoundState(n); if (n) chime({ volume: 0.12 }); };
 
-  useEffect(() => setReviewed(Boolean(store.get('mfr_reviewed'))), []);
+  useEffect(() => { if (open) refresh(); }, [open]);
+
+  const adult = Boolean(member) && !isKid(member);
+  const seg = member && isPro(member) ? 'professional' : 'consumer';
+  const first = String(member?.name?.first || member?.firstname || '').trim();
+  const last = String(member?.name?.last || member?.lastname || '').trim();
+  const name = publicName(first, last);
+  const c = isoByAny(member?.address?.[0]?.country || member?.country);
+  const designation = seg === 'professional' ? role : '';
+  const rvKey = reviewedKey(member);
+  eligible.current = adult;
+
+  useEffect(() => { setReviewed(Boolean(store.get(rvKey))); }, [rvKey]);
+  // professionals: their saved Job Title is shown on the card (optional - nothing breaks when it is missing)
+  useEffect(() => {
+    setRole('');
+    if (!adult || seg !== 'professional') return undefined;
+    let alive = true;
+    postJSON('/api/v1/me', { questions: ['jobrole'] }).then((r) => alive && setRole(String(r?.data?.jobrole || '').slice(0, 60))).catch(() => {});
+    return () => { alive = false; };
+  }, [adult, seg, member?._id]);
 
   const canAsk = () => {
-    if (store.get('mfr_reviewed') || store.get('mfr_rv_never') || BLOCKED.includes(pathRef.current)) return false;
+    if (!eligible.current) return false; // visitors and young members are never asked by themselves
+    if (store.get(rvKey) || store.get('mfr_rv_never') || BLOCKED.includes(pathRef.current)) return false;
     const log = store.get('mfr_rv_log', { n: 0, last: 0 });
     const inVisit = session.get('mfr_rv_n', 0);
     const visitLast = session.get('mfr_rv_last', 0);
@@ -280,7 +296,7 @@ export default function ReviewPopup() {
     return true;
   };
 
-  const openScreen = (preset = {}, auto = false) => {
+  const openScreen = (preset = {}, auto = false) => { // eslint-disable-line no-unused-vars
     if (BLOCKED.includes(pathRef.current)) return;
     if (auto) {
       if (!canAsk() || busy()) return;
@@ -291,18 +307,14 @@ export default function ReviewPopup() {
       travel.current = 0;
     }
     chime(); // notification chime (silent until the browser allows sound, i.e. after the first click / tap)
-    if (status === 'done') { setStatus('idle'); setF(EMPTY); setRating(0); setErrs({}); setSeg(''); setStep(0); }
-    if (preset.segment) { setSeg(preset.segment); setStep((s) => (s === 0 ? 1 : s)); }
+    if (status === 'done') { setStatus('idle'); setF(EMPTY); setRating(0); setErrs({}); setStep(0); }
     lastFocus.current = document.activeElement;
     setOpen(true);
   };
 
-  // Tab, dock button and any page button: window.dispatchEvent(new CustomEvent('mfr:rate', { detail: { segment } }))
+  // Tab, dock button and any page button: window.dispatchEvent(new CustomEvent('mfr:rate'))
   useEffect(() => {
-    const onRate = (e) => {
-      const s = e.detail && e.detail.segment;
-      openScreen({ segment: s === 'professional' || s === 'consumer' ? s : '' });
-    };
+    const onRate = () => openScreen({});
     window.addEventListener('mfr:rate', onRate);
     const t = setTimeout(() => setTabIn(true), PACE.tabDelayMs);
     return () => { window.removeEventListener('mfr:rate', onRate); clearTimeout(t); };
@@ -382,33 +394,19 @@ export default function ReviewPopup() {
 
   const checkStep = (s, v = f) => {
     const e = {};
-    if (s === 0 && !seg) e.seg = 'Please choose consumer or professional.';
-    if (s === 1) {
+    if (s === 0) {
       if (!rating) e.rating = 'Please choose a rating.';
       const txt = v.text.trim();
       if (txt.length < 20) e.text = 'Please write at least 20 characters.';
       else if (/https?:|www\./i.test(txt)) e.text = 'Please remove links from your review.';
     }
-    if (s === 2) {
-      if (!/^[\p{L}][\p{L}\s.'-]{1,79}$/u.test(v.full.trim())) e.full = 'Please enter your full name.';
-      if (!EMAIL_RE.test(v.email.trim())) e.email = 'Please enter a valid email address.';
-      if (!v.iso) e.iso = 'Please choose your country.';
-      if (v.company.trim().length < 2) e.company = 'Please enter your company name.';
-      else if (/https?:|www\./i.test(v.company + v.designation)) e.company = 'Please remove links.';
-      const digits = v.phone.replace(/\D/g, '');
-      if (digits && (digits.length < 6 || digits.length > 15)) e.phone = 'Please enter 6–15 digits.';
-      if (digits && !v.dial) e.phone = 'Please choose a country code.';
-    }
-    if (s === 3 && !v.consent) e.consent = 'Please accept so we can publish your review.';
+    if (s === 1 && !v.consent) e.consent = 'Please accept so we can publish your review.';
     return e;
   };
   const set = (k, val) => {
-    const n = { ...f, [k]: val };
-    if (k === 'iso' && !f.phone) n.dial = val; // code follows the country until a number is typed
-    setF(n);
+    setF({ ...f, [k]: val });
     if (errs[k]) setErrs((x) => { const y = { ...x }; delete y[k]; return y; });
   };
-  const pickSeg = (s) => { setSeg(s); setErrs({}); setTimeout(() => setStep(1), 420); };
   const pickRating = (r) => { setRating(r); setErrs((x) => { const y = { ...x }; delete y.rating; return y; }); };
   const goStep = (to) => {
     if (to <= step) { setStep(to); setErrs({}); return; }
@@ -421,68 +419,68 @@ export default function ReviewPopup() {
   };
 
   async function submit() {
-    const all = { ...checkStep(0), ...checkStep(1), ...checkStep(2), ...checkStep(3) };
-    if (f.website) return;
+    if (!adult) return;
+    const all = { ...checkStep(0), ...checkStep(1) };
+    if (f.website) return; // bots fill the hidden field
     if (Object.keys(all).length) {
       setErrs(all);
-      if (all.seg) setStep(0); else if (all.rating || all.text) setStep(1); else if (all.full || all.email || all.iso || all.company || all.phone) setStep(2);
+      if (all.rating || all.text) setStep(0);
       return;
     }
     setStatus('sending');
     setMsg('');
-    const c = byIso(f.iso) || {};
-    const dialC = byIso(f.dial);
-    const full = f.full.trim().replace(/\s+/g, ' ');
-    const payload = {
-      segment: seg, rating, text: f.text.trim().slice(0, 600),
-      fullName: full, email: f.email.trim(), country: f.iso, countryName: c.name || '',
-      company: f.company.trim(), designation: f.designation.trim(),
-      dial: f.phone.trim() && dialC ? dialC.dial : '', phone: f.phone.replace(/\D/g, ''),
-      page: pathname, consentPublish: true,
-    };
+    // PUT /api/v1/testimonial with the member's login cookie (credentials: include). The server identifies the member by
+    // that session and takes name / country / job title from the account, so only the rating and the words are sent.
+    const payload = { rate: rating, message: f.text.trim().slice(0, 600) };
     try {
-      const res = await postJSON(ENDPOINT, payload);
-      store.set('mfr_reviewed', Date.now());
+      const res = await putJSON(ENDPOINT, payload);
+      const d = res && typeof res.data === 'object' && res.data ? res.data : res;
+      const published = ['approved', 'published', 'live'].includes(String(d?.status || '').toLowerCase()) || d?.live === true;
+      store.set(rvKey, Date.now());
       setReviewed(true);
-      const [fn, ...rest] = full.split(' ');
-      rememberOwnReview({ id: res.id, name: publicName(fn, rest.join(' ')), iso: f.iso, country: c.name, designation: payload.designation, company: payload.company, segment: seg, rating, text: payload.text, createdAt: new Date().toISOString(), pending: res.status === 'pending' });
-      setLive(res.status !== 'pending');
+      rememberOwnReview({ id: d?._id || d?.id, name, iso: c ? c.iso : '', country: c ? c.name : '', designation, company: '', segment: seg, rating, text: payload.message, createdAt: new Date().toISOString(), pending: !published });
+      setLive(published);
       setStatus('done');
       fanfare();
     } catch (err) {
+      refresh(); // the session may have ended: the log-in message appears
       setMsg((err && err.message && err.message !== 'Failed to fetch' && err.message.length < 160) ? err.message : 'We couldn’t send your review. Please try again.');
       setStatus('error');
     }
   }
-  const next = () => (step < 3 ? goStep(step + 1) : submit());
+  const next = () => (step < 1 ? goStep(1) : submit());
 
   const S = SEG[seg] || SEG.consumer;
-  const [first, ...rest] = f.full.trim().split(/\s+/);
-  const name = publicName(first || '', rest.join(' '));
-  const c = byIso(f.iso);
   const onTilt = (e) => {
     const r = e.currentTarget.getBoundingClientRect();
     setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -10, y: ((e.clientX - r.left) / r.width - 0.5) * 14 });
   };
   const showTab = !BLOCKED.includes(pathname);
   const done = status === 'done';
-  const TITLES = ['Rate your experience', seg === 'professional' ? 'Score your experience' : 'How was it for you?', 'A little about you', 'Check & publish'];
-  const SUBS = ['First, tell us who you are — consumers and professionals each rate us their own way.', 'Pick a rating, then say it in your own words.', 'Your name, flag, company and role appear on your testimonial.', 'This is exactly how your review will appear in Client Testimonials.'];
+  // anyone can open the screen, but only a logged-in adult member gets the form
+  const gate = member === undefined ? 'checking' : !member ? 'login' : !adult ? 'kid' : '';
+  const TITLES = [seg === 'professional' ? 'Score your experience' : 'How was it for you?', 'Check & publish'];
+  const SUBS = ['Pick a rating, then say it in your own words.', 'This is exactly how your review will appear in Client Testimonials.'];
+  const GATE = {
+    checking: ['clock', 'One moment…', 'Checking your account.'],
+    login: ['lock', 'Log in to rate us', 'Only MyFrequentRewards members can rate us — that keeps every review genuine. Log in and it takes about a minute.'],
+    kid: ['shield', 'Reviews are for members 18 and over', 'To protect young members, public reviews are written by adults only. Thank you for being part of MyFrequentRewards!'],
+  };
 
   return (
     <>
-      {showTab && !reviewed ? <RateTab shown={tabIn && !open} onOpen={() => openScreen()} /> : null}
+     
 
       {open ? (
         <div className="rw-veil" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-          <div className={`rw rw-${seg || 'none'} st-${done ? 'done' : step}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
+          <div className={`rw rw-${seg} st-${done ? 'done' : gate ? 'gate' : step + 1}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
             <aside className="rw-stage" onMouseMove={onTilt} onMouseLeave={() => setTilt({ x: 0, y: 0 })} aria-hidden="true">
               <span className="rw-glow g1" /><span className="rw-glow g2" /><span className="rw-grid" />
-              {!done && step < 2 ? <StageArt step={step} seg={seg} key={`${step}${seg}`} /> : (
+              {!done && (gate || step === 0) ? <StageArt step={1} seg={gate ? 'consumer' : seg} key={`${gate || step}${seg}`} /> : (
                 <div className="rw-art a2">
                   <p className="rw-art-k">{done ? (live ? 'Now live in Client Testimonials' : 'On its way to Client Testimonials') : 'Live preview'}</p>
                   <div className={`rw-tilt ${done ? 'is-sent' : ''}`} style={{ transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }}>
-                    <ReviewCard seg={seg || 'consumer'} rating={rating} text={f.text.trim()} name={name} iso={f.iso} designation={f.designation.trim()} company={f.company.trim()} />
+                    <ReviewCard seg={seg} rating={rating} text={f.text.trim()} name={name} iso={c ? c.iso : ''} designation={designation} company="" />
                   </div>
                 </div>
               )}
@@ -490,7 +488,7 @@ export default function ReviewPopup() {
 
             <div className="rw-main">
               <header className="rw-head">
-                {!done ? (
+                {!done && !gate ? (
                   <ol className="rw-steps" aria-label="Progress">
                     {STEPS.map(([ic, t], i) => (
                       <li key={t} className={i < step ? 'done' : i === step ? 'now' : ''}>
@@ -502,18 +500,30 @@ export default function ReviewPopup() {
                   </ol>
                 ) : <span />}
                 <button type="button" className={`rw-snd ${sound ? '' : 'off'}`} onClick={toggleSound} aria-pressed={!sound} aria-label={sound ? 'Mute sounds' : 'Turn sounds on'} title={sound ? 'Sound on' : 'Sound off'}>
-                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" />{sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}</svg>
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Sound icon"><path d="M11 5 6 9H3v6h3l5 4z" />{sound ? <><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" /></> : <path d="m16 9 5 6m0-6-5 6" />}</svg>
                 </button>
                 <button type="button" className="rw-x" onClick={close} aria-label="Close"><Icon name="close" size={18} /></button>
               </header>
 
               <div className="rw-body" ref={body}>
-                {done ? (
+                {gate ? (
+                  <div className="rw-done rw-gate">
+                    <span className="rw-done-ico" aria-hidden="true"><Icon name={GATE[gate][0]} size={34} stroke={3} /></span>
+                    <h2 id="rw-title">{GATE[gate][1]}</h2>
+                    <p>{GATE[gate][2]}</p>
+                    {gate === 'login' ? (
+                      <div className="rw-done-acts">
+                        <Link to="/login" className="rw-next" onClick={close}><Icon name="lock" size={16} /> Log in</Link>
+                        <Link to="/sign-up" className="rw-ghost" onClick={close}>Join free <Icon name="arrow" size={14} /></Link>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : done ? (
                   <div className="rw-done">
                     <span className="rw-burst" aria-hidden="true">{Array.from({ length: 16 }).map((_, i) => <i key={i} style={{ '--i': i }} />)}</span>
                     <span className="rw-done-ico" aria-hidden="true"><Icon name="check" size={34} stroke={3} /></span>
                     <h2 id="rw-title">Thank you, {first}!</h2>
-                    <p>{live ? `Your review is now live in the ${seg === 'professional' ? 'Professional' : 'Consumer'} testimonials, with your name, flag and rating.` : 'Your review will appear in Client Testimonials after a quick check.'}</p>
+                    <p>{live ? `Your review is now live in the ${seg === 'professional' ? 'Professional' : 'Consumer'} testimonials, with your name, flag and rating.` : 'Your review has been received and will appear in Client Testimonials after a quick check.'}</p>
                     <div className="rw-done-acts">
                       <Link to={{ pathname: '/', hash: '#voices' }} className="rw-next" onClick={close}><Icon name="chat" size={16} /> See Client Testimonials</Link>
                       <Link to="/about-us/reviews" className="rw-ghost" onClick={close}>All ratings &amp; reviews <Icon name="arrow" size={14} /></Link>
@@ -526,22 +536,6 @@ export default function ReviewPopup() {
 
                     {step === 0 ? (
                       <>
-                        <div className="rw-who" role="radiogroup" aria-label="I am a">
-                          {['consumer', 'professional'].map((k) => (
-                            <button type="button" role="radio" aria-checked={seg === k} key={k} className={`rw-door d-${k} ${seg === k ? 'on' : ''}`} onClick={() => pickSeg(k)}>
-                              <span className="rw-door-ico" aria-hidden="true"><Icon name={SEG[k].icon} size={28} /></span>
-                              <span className="rw-door-t"><b>I’m a {SEG[k].label.toLowerCase()}</b><small>{SEG[k].who}</small><em>{SEG[k].motto}</em></span>
-                              <span className="rw-door-go" aria-hidden="true"><Icon name={seg === k ? 'check' : 'arrow'} size={16} stroke={seg === k ? 3 : 1.8} /></span>
-                            </button>
-                          ))}
-                        </div>
-                        {errs.seg ? <p className="f-err" role="alert">{errs.seg}</p> : null}
-                        <p className="rw-later"><button type="button" onClick={close}>Maybe later</button><button type="button" onClick={never}>Don’t ask again</button></p>
-                      </>
-                    ) : null}
-
-                    {step === 1 ? (
-                      <>
                         <div className={errs.rating ? 'is-bad' : ''}>
                           {seg === 'professional' ? <ScoreGauge value={rating} onPick={pickRating} /> : <VibeMeter value={rating} onPick={pickRating} />}
                           {errs.rating ? <p className="f-err" role="alert">{errs.rating}</p> : null}
@@ -553,63 +547,22 @@ export default function ReviewPopup() {
                           <span className="rc-count">{f.text.trim().length < 20 ? `${20 - f.text.trim().length} more characters` : `${f.text.length}/600`}</span>
                           {errs.text ? <p className="f-err" role="alert">{errs.text}</p> : null}
                         </div>
+                        <p className="rw-later"><button type="button" onClick={close}>Maybe later</button><button type="button" onClick={never}>Don’t ask again</button></p>
                       </>
                     ) : null}
 
-                    {step === 2 ? (
-                      <div className="rc-grid">
-                        <div className={`rc-field ${errs.full ? 'is-bad' : ''}`}>
-                          <label htmlFor="rc-full">Full name <i>*</i></label>
-                          <span className="rc-in"><Icon name="user" size={16} /><input id="rc-full" autoComplete="name" maxLength={80} value={f.full} onChange={(e) => set('full', e.target.value)} aria-invalid={Boolean(errs.full)} placeholder="First and last name" /></span>
-                          {errs.full ? <p className="f-err" role="alert">{errs.full}</p> : null}
-                        </div>
-                        <div className={`rc-field ${errs.email ? 'is-bad' : ''}`}>
-                          <label htmlFor="rc-email">Email ID <i>*</i> <small>never shown</small></label>
-                          <span className="rc-in"><Icon name="mail" size={16} /><input id="rc-email" type="email" autoComplete="email" maxLength={120} value={f.email} onChange={(e) => set('email', e.target.value)} aria-invalid={Boolean(errs.email)} placeholder="you@email.com" /></span>
-                          {errs.email ? <p className="f-err" role="alert">{errs.email}</p> : null}
-                        </div>
-                        <div className={`rc-field ${errs.iso ? 'is-bad' : ''}`}>
-                          <label htmlFor="rc-country">Country <i>*</i></label>
-                          <div className="rc-country">
-                            <span className="rc-flag" key={f.iso || 'none'} aria-hidden="true">{f.iso ? <Flag iso={f.iso} size={22} /> : <Icon name="globe" size={18} />}</span>
-                            <CountryPicker id="rc-country" list={COUNTRIES} value={f.iso} onChange={(x) => set('iso', x.iso)} invalid={Boolean(errs.iso)} />
-                          </div>
-                          {errs.iso ? <p className="f-err" role="alert">{errs.iso}</p> : null}
-                        </div>
-                        <div className={`rc-field ${errs.company ? 'is-bad' : ''}`}>
-                          <label htmlFor="rc-co">Company name <i>*</i></label>
-                          <span className="rc-in"><Icon name="briefcase" size={16} /><input id="rc-co" autoComplete="organization" maxLength={60} value={f.company} onChange={(e) => set('company', e.target.value)} aria-invalid={Boolean(errs.company)} placeholder={S.company} /></span>
-                          {errs.company ? <p className="f-err" role="alert">{errs.company}</p> : null}
-                        </div>
-                        <div className="rc-field">
-                          <label htmlFor="rc-des">Designation <small>optional</small></label>
-                          <span className="rc-in"><Icon name="badge" size={16} /><input id="rc-des" autoComplete="organization-title" maxLength={60} value={f.designation} onChange={(e) => set('designation', e.target.value)} placeholder={seg === 'professional' ? 'IT Manager' : 'Student, homemaker…'} /></span>
-                        </div>
-                        <div className={`rc-field ${errs.phone ? 'is-bad' : ''}`}>
-                          <label htmlFor="rc-phone">Phone number <small>optional · never shown</small></label>
-                          <div className="rc-phone">
-                            <CountryPicker id="rc-dial" list={COUNTRIES} value={f.dial} onChange={(x) => set('dial', x.iso)} mode="dial" placeholder="Code" />
-                            <input id="rc-phone" type="tel" inputMode="tel" autoComplete="tel-national" maxLength={20} value={f.phone} onChange={(e) => set('phone', e.target.value.replace(/[^\d\s-]/g, ''))} aria-invalid={Boolean(errs.phone)} placeholder="Number" />
-                          </div>
-                          {f.dial && byIso(f.dial) ? <small className="rc-dial"><Flag iso={f.dial} size={11} /> {byIso(f.dial).name} {byIso(f.dial).dial}</small> : null}
-                          {errs.phone ? <p className="f-err" role="alert">{errs.phone}</p> : null}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {step === 3 ? (
+                    {step === 1 ? (
                       <>
-                        <div className="rw-mobile-card"><ReviewCard seg={seg || 'consumer'} rating={rating} text={f.text.trim()} name={name} iso={f.iso} designation={f.designation.trim()} company={f.company.trim()} /></div>
+                        <div className="rw-mobile-card"><ReviewCard seg={seg} rating={rating} text={f.text.trim()} name={name} iso={c ? c.iso : ''} designation={designation} company="" /></div>
                         <ul className="rw-sum">
-                          <li><Icon name={S.icon} size={15} /> <span>{S.label}</span><button type="button" onClick={() => goStep(0)}>Edit</button></li>
-                          <li><Icon name="star" size={15} /> <span>{rating}/5 · {S.levels[rating - 1]}</span><button type="button" onClick={() => goStep(1)}>Edit</button></li>
-                          <li>{c ? <Flag iso={c.iso} size={14} /> : <Icon name="globe" size={15} />} <span>{name} · {c ? c.name : ''}</span><button type="button" onClick={() => goStep(2)}>Edit</button></li>
-                          <li><Icon name="briefcase" size={15} /> <span>{[f.designation.trim(), f.company.trim()].filter(Boolean).join(' · ')}</span><button type="button" onClick={() => goStep(2)}>Edit</button></li>
+                          <li><Icon name="star" size={15} /> <span>{rating}/5 · {S.levels[rating - 1]}</span><button type="button" onClick={() => goStep(0)}>Edit</button></li>
+                          <li>{c ? <Flag iso={c.iso} size={14} /> : <Icon name="globe" size={15} />} <span>{name} · {c ? c.name : ''}</span><small className="rw-acct">from your account</small></li>
+                          {designation ? <li><Icon name="briefcase" size={15} /> <span>{designation}</span><small className="rw-acct">from your profile</small></li> : null}
                         </ul>
                         <div className="hp" aria-hidden="true"><label htmlFor="rc-web">Website</label><input id="rc-web" tabIndex={-1} autoComplete="off" value={f.website} onChange={(e) => setF({ ...f, website: e.target.value })} /></div>
                         <label className={`rc-consent ${errs.consent ? 'is-bad' : ''}`}>
                           <input type="checkbox" checked={f.consent} onChange={(e) => set('consent', e.target.checked)} />
-                          <span>Publish my review in Client Testimonials with my name (first name and last-name initial), flag, country, company and — if given — designation. MyFrequentRewards may store these details and contact me about my review (<Link to="/privacy" onClick={close}>Privacy Policy</Link>). Email and phone are never shown.</span>
+                          <span>Publish my review in Client Testimonials with my name (first name and last-name initial), flag, country and — if available — job title. MyFrequentRewards may store these details and contact me about my review (<Link to="/privacy" onClick={close}>Privacy Policy</Link>). Email and phone are never shown.</span>
                         </label>
                         {errs.consent ? <p className="f-err" role="alert">{errs.consent}</p> : null}
                         {status === 'error' ? <p className="form-error" role="alert">{msg}</p> : null}
@@ -619,12 +572,12 @@ export default function ReviewPopup() {
                 )}
               </div>
 
-              {!done ? (
+              {!done && !gate ? (
                 <footer className="rw-foot">
                   <span className="rw-private"><Icon name="lock" size={13} /> Email and phone stay private</span>
                   {step > 0 ? <button type="button" className="rw-back" onClick={() => goStep(step - 1)}><Icon name="arrow" size={15} /> Back</button> : null}
                   <button type="button" className="rw-next" onClick={next} disabled={status === 'sending'}>
-                    {step < 3 ? <>Continue <Icon name="arrow" size={16} /></> : status === 'sending' ? 'Publishing…' : <>Publish my review <Icon name="send" size={16} /></>}
+                    {step < 1 ? <>Continue <Icon name="arrow" size={16} /></> : status === 'sending' ? 'Publishing…' : <>Publish my review <Icon name="send" size={16} /></>}
                   </button>
                 </footer>
               ) : null}

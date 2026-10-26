@@ -1,0 +1,4 @@
+.rv2-av.is-flag { background: none; overflow: hidden; box-shadow: 0 0 0 2px #fff, 0 3px 10px rgba(15, 25, 60, .18); }
+.rv2.p .rv2-av.is-flag { background: none; }
+.rv2-av.is-flag .flag { display: block; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; box-shadow: none; }
+.rv2-av.is-flag .flag-fb { display: grid; place-items: center; font: 800 .8rem var(--font-b); color: #fff; background: linear-gradient(135deg, #FF5E6C, #FF8A3D); }

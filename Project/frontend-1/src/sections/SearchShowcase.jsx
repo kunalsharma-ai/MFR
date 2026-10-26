@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import useInView from '../hooks/useInView.js';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // "People search, we answer" — a typewriter search bar cycling through high-volume queries,
 // each linked to the guide that answers it honestly (natural keyword placement + internal links).
@@ -32,8 +33,11 @@ export default function SearchShowcase() {
     return () => clearTimeout(t);
   }, [i, paused, visible]);
 
+  const { lang } = useI18n();
   useEffect(() => {
     const full = QUERIES[i].q;
+    // translated pages show the whole query (letter-by-letter typing cannot be translated mid-word)
+    if (lang !== 'en') { setTyped(full); return undefined; }
     let n = 0;
     setTyped('');
     const t = setInterval(() => {
@@ -42,7 +46,7 @@ export default function SearchShowcase() {
       if (n >= full.length) clearInterval(t);
     }, 38);
     return () => clearInterval(t);
-  }, [i]);
+  }, [i, lang]);
 
   const cur = QUERIES[i];
   return (

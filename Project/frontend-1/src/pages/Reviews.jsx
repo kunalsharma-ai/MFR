@@ -8,19 +8,13 @@ import { SCORE, ScoreChip, VIBE, VibeChip } from '../components/ReviewPopup.jsx'
 import { PAGES } from '../data/pages.js';
 import useLiveReviews from '../hooks/useLiveReviews.js';
 import useInView from '../hooks/useInView.js';
+import RateButton from '../components/RateButton.jsx';
+import '../styles/rv2-flag-avatar.css';
 import { isRecent } from '../utils/reviews.js';
 
-// About us → Ratings & Reviews (v2.5 redesign).
-// • Hero: a 3D "review stack" — three cards fan out around a pulsing average badge.
-// • "Applause meter": the overall average on an animated arc gauge, plus a mood board for each audience —
-//   consumers in their own words (Love it! … Not for me), professionals on the business scale (Excellent … Poor).
-// • The wall: easy-to-read review cards (dark text on white) in columns. Filters live behind a "Filters" button
-//   so they never get in the way of reading; search, member type and sorting stay one tap away.
-// Every figure is computed from the reviews actually shown — no invented counts, no AggregateRating schema
-// (Google does not allow self-serving review markup), and nothing is hidden by rating unless the visitor filters.
+
 const page = PAGES.reviews;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'About Us', path: '/about-us' }, { name: 'Ratings & Reviews', path: page.path }];
-const openRate = (segment) => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: { segment } }));
 const PAGE_SIZE = 18;
 const ini = (n) => String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 const avgOf = (l) => { const r = l.filter((x) => x.rating); return r.length ? r.reduce((s, x) => s + x.rating, 0) / r.length : 0; };
@@ -48,7 +42,7 @@ function Applause({ avg, n }) {
   return (
     <div className={`ap ${seen ? 'go' : ''}`} ref={ref} style={{ '--p': pct }}>
       <div className="ap-dial">
-      <svg viewBox="0 0 220 124" className="ap-svg" aria-hidden="true">
+      <svg viewBox="0 0 220 124" className="ap-svg" role="img" aria-label="Applause meter showing the average rating">
         <defs><linearGradient id="apg" x1="0" x2="1"><stop offset="0" stopColor="#E5484D" /><stop offset=".35" stopColor="#F2A33A" /><stop offset=".65" stopColor="#E8C33A" /><stop offset="1" stopColor="#2FBF8F" /></linearGradient></defs>
         <path d="M20 112a90 90 0 0 1 180 0" className="ap-bg" />
         <path d="M20 112a90 90 0 0 1 180 0" className="ap-fg" pathLength="100" />
@@ -101,7 +95,7 @@ function Card({ r, i }) {
     <article className={`rv2 ${pro ? 'p' : 'c'}`} style={{ '--i': i }}>
       {r.own ? <span className="tv-tag own">Your review</span> : isRecent(r) ? <span className="tv-tag new">New</span> : r.preview ? <span className="tv-tag prev">Preview data</span> : null}
       <header>
-        <span className="rv2-av" aria-hidden="true">{ini(r.name)}{r.iso ? <i><Flag iso={r.iso} size={12} /></i> : null}</span>
+        <span className={`rv2-av${r.iso ? ' is-flag' : ''}`} aria-hidden="true">{r.iso ? <Flag iso={r.iso} size={42} /> : ini(r.name)}</span>
         <span className="rv2-id"><b>{r.name}</b><small>{r.country}{role ? ` · ${role}` : ''}</small></span>
       </header>
       <div className="rv2-score">{pro ? <ScoreChip rating={r.rating} /> : <VibeChip rating={r.rating} />}<span className="rv2-seg">{pro ? 'Professional' : 'Consumer'}</span></div>
@@ -158,7 +152,7 @@ export default function Reviews() {
         artNode={<ReviewsScene />}
       >
         <div className="rs-hero-cta">
-          <button type="button" className="btn btn-primary" onClick={() => openRate('')}><Icon name="pen" size={16} /> Rate your experience</button>
+          <RateButton className="btn btn-primary" icon="pen" label="Rate your experience" outLabel="Log in to rate us" />
           <a className="btn btn-glass" href="#rs-wall"><Icon name="chat" size={16} /> Read the reviews</a>
         </div>
       </PageHero>
@@ -241,8 +235,7 @@ export default function Reviews() {
             <p>Your review appears here and in Client Testimonials as soon as it is published, with your name, flag and role.</p>
           </div>
           <div className="rs-add-btns">
-            <button type="button" className="btn tv-btn-c" onClick={() => openRate('consumer')}><Icon name="cart" size={16} /> I’m a consumer</button>
-            <button type="button" className="btn tv-btn-p" onClick={() => openRate('professional')}><Icon name="briefcase" size={16} /> I’m a professional</button>
+            <RateButton className="btn tv-btn-c" icon="star" label="Rate your experience" outLabel="Log in to rate us" />
           </div>
         </div>
       </section>

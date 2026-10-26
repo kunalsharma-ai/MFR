@@ -5,14 +5,10 @@ import { METHOD_INFO, NON_MONEY } from '../utils/payouts.js';
 import useActivityFeed, { initials } from '../hooks/useActivityFeed.js';
 import { prefersReducedMotion, session } from '../utils/storage.js';
 
-// Compact bottom-left reward notifications.
-// • Real payouts from the activity feed (consumers and professionals, every region and reward type).
-// • When no real feed is connected: true community facts (rewards paid, surveys completed, open categories).
-// Shown in random order with a smooth coin-drop entrance, a lifetime bar, and a close button that mutes them
-// for the rest of the visit. Paused while the tab is hidden.
+
 const SHOW_MS = 5600;
 
-// Counts the number inside an amount ("₹1,150", "AED 86", "$25") up from zero
+
 function CountUp({ value }) {
   const m = /^(\D*)([\d,]+(?:\.\d+)?)(.*)$/.exec(String(value || ''));
   const target = m ? Number(m[2].replace(/,/g, '')) : 0;
@@ -28,7 +24,7 @@ function CountUp({ value }) {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [value]);
   if (!m) return value;
   return `${m[1]}${n.toLocaleString('en-US')}${m[3]}`;
@@ -61,7 +57,7 @@ export default function ActivityToasts() {
     const cycle = () => {
       if (document.hidden) { t2 = setTimeout(cycle, 4000); return; }
       k += 1;
-      // real payouts first; every 4th notification (or all, if no feed) is a community fact
+     
       const usePulse = !items.length || k % 4 === 0;
       setCur(usePulse ? pulse[(k * 3) % pulse.length] : pickReal());
       setN((x) => x + 1);

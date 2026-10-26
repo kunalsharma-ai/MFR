@@ -38,3 +38,19 @@
   .lc-steps { display: none; } .lc-hint { margin: 0; font-size: .9rem; }
 }
 @media (max-width: 420px) { .lc-card { width: 190px; } .lc-foot span:last-child { display: none; } }
+
+/* ═════════════ v1.8 — Log-in: "emerald vault" grade + vault door ═════════════ */
+.lx { background: radial-gradient(900px 600px at 0% 0%, rgba(20, 201, 181, .38), transparent 60%), radial-gradient(800px 700px at 100% 100%, rgba(255, 194, 51, .22), transparent 60%), radial-gradient(700px 600px at 70% 10%, rgba(47, 107, 255, .3), transparent 60%), #04172A !important; }
+.lx-hero span { background: linear-gradient(100deg, #FFE08A, #FFC233 40%, #2EE6CF) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+@keyframes vdCoin { 0% { opacity: 0; transform: translate(0, 0) scale(.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(calc((var(--i) - 2) * 40px), -110px) scale(1.1) rotate(360deg); } }
+@keyframes vdSpin { to { transform: rotate(calc(var(--turn) + 360deg)); } }
+.vd-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.vd-checks li { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); transition: background .4s, border-color .4s; }
+.vd-checks li span { grid-row: span 2; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: rgba(255, 255, 255, .1); color: #fff; transition: background .4s; }
+.vd-checks li b { font-size: .86rem; color: #fff; }
+.vd-checks li small { font-size: .74rem; color: #9FB3C8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vd-checks li.on { background: rgba(46, 230, 207, .12); border-color: rgba(46, 230, 207, .4); }
+.vd-checks li.on span { background: #2EE6CF; color: #062A24; }
+@media (max-width: 960px) { .vd-stage { grid-template-columns: auto 1fr; } .vd { width: 170px; height: 170px; } .vd-bolts i { transform: rotate(var(--a)) translateY(-75px); width: 10px; height: 10px; margin: -5px; } .vd-face { inset: 20px; } .vd-dial { width: 92px; height: 92px; } .vd-dial span { transform-origin: 50% 42px; } .vd-knob { inset: 20px; } .vd-knob img { width: 40px; height: 40px; } .vd-handle { width: 26px; height: 50px; margin-top: -25px; } }
+@media (max-width: 520px) { .vd-stage { grid-template-columns: 1fr; justify-items: center; } .vd-checks { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .lc-card, .lc-holo, .vd-coin, .vd-dial { animation: none !important; } .vd-door { transition: none; } }

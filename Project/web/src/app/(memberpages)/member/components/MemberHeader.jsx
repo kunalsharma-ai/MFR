@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import MemberNotification from "./MemberNotification";
+import MemberHeaderExtras from "./MemberHeaderExtras";
 import { useMember } from "@/Context";
 
 export default function MemberHeader() {
@@ -106,6 +107,7 @@ export default function MemberHeader() {
             gap={{ xs: 0, md: 2 }}
             pb={1}
           >
+            <MemberHeaderExtras />
             <QualityScore
               value={user?.qualityScore ?? 0}
               total={user?.qualityScoreTotal ?? 0}

@@ -15,8 +15,7 @@ const Respondent = mongooseModel(
         },
         category: {
             type: String,
-            required: [true, "Please select if you are medical professional, caregiver or a patient."],
-            enum: ["Professional", "Care Giver", "Patient"]
+            required: [true, "Please specify your category"]
         },
         name: {
             salutation: {

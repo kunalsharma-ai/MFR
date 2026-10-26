@@ -7,6 +7,7 @@ import { eagerPages } from './router/eagerPages.js';
 
 export { ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES } from './routes.js';
 export { SITE_URL } from './data/site.js';
+export { buildLlmsTxt } from './seo/llms.js';
 
 export function render(url) {
   const headCtx = { head: '' };
@@ -21,3 +22,4 @@ export function render(url) {
   );
   return { html, head: headCtx.head };
 }
+

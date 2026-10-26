@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import LangPicker from './LangPicker.jsx';
+import { LanguageButton } from './Language.jsx';
 import BrandLogo from './BrandLogo.jsx';
 import { BRAND } from '../data/site.js';
 import UserMenu from './UserMenu.jsx';
@@ -149,6 +149,7 @@ export default function Header() {
             </NavLink>
           ))}
           <div className="nav-cta-mobile">
+            <LanguageButton wide />
             {user ? (
               <>
                 <a href={DASHBOARD_URL} className="btn btn-primary">Dashboard</a>
@@ -164,7 +165,7 @@ export default function Header() {
         </nav>
 
         <div className="header-cta">
-          <LangPicker />
+          <LanguageButton />
           {user ? (
             <UserMenu user={user} onLogout={logout} />
           ) : (

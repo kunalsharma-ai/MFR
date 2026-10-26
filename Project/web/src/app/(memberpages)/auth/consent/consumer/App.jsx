@@ -24,6 +24,9 @@ import { useMember } from "@/Context/member.js";
 import { api } from "@/util/api.js";
 import useToast from "@/hooks/useToast.js";
 
+// Where the member goes after signing the agreement: the profiles page, to fill the first profiles (not the dashboard)
+const AFTER_CONSENT_URL = "/member/profiles";
+
 const THEME_KEY = "mfr.consent.theme"; // the member's own light/dark choice (wins over everything)
 const ls = {
   get(k) {
@@ -143,7 +146,7 @@ export default function App({ cfg }) {
     if (!user) return;
 
     if (Array.isArray(user.terms) && user.terms.length > 0) {
-      window.location.assign("/member/dashboard");
+      window.location.assign(AFTER_CONSENT_URL);
     }
 
     if (user?.category === "b2b" || user?.category === "b2b-minor") {
@@ -987,7 +990,7 @@ export default function App({ cfg }) {
           record={record}
           onDownload={download}
           hasContinue={Boolean(cfg.continueUrl)}
-          onContinue={() => window.location.assign("/member/dashboard")}
+          onContinue={() => window.location.assign(AFTER_CONSENT_URL)}
         />
       ) : null}
     </div>

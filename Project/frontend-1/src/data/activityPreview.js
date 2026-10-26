@@ -1,9 +1,3 @@
-// PREVIEW-ONLY reward activity, used ONLY when VITE_DEMO_MODE=true (the single-file HTML preview for design
-// review). These are generated sample rows — not real members — and the preview build marks them with a small
-// "Preview" chip. Production builds never import this file: they read REAL payouts from the activity feed
-// (VITE_ACTIVITY_FEED_URL, default /api/activity → server/index.mjs), recorded with each member's consent.
-// Country rules are enforced here too: UPI only for members in India; local currency per country.
-
 const PEOPLE = [
   // [name, city, country ISO, currency, segment, role]
   ['Aarav S.', 'Mumbai', 'IN', '₹', 'consumer', 'College student'],

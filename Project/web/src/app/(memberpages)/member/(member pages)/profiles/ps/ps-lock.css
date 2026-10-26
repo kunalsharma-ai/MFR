@@ -1,0 +1,11 @@
+/* Locked profile cards: the other profiles stay locked until Basic, Education, Professional and Financial are complete. */
+.ps .world.is-locked { cursor: not-allowed; }
+.ps .world.is-locked .mcard { filter: grayscale(.85) brightness(.82) saturate(.7); }
+.ps .world.is-locked:hover .mcard, .ps .world.is-locked:focus-visible .mcard { transform: none; box-shadow: none; }
+.ps .world.is-locked:hover .mc-ico { transform: none; }
+.ps .world.is-locked:hover .mc-sheen { transform: none; }
+.ps .world.is-locked .mc-ico { opacity: .55; }
+.ps .world.is-locked .mc-bar { opacity: .35; }
+.ps .mc-pill.lk { background: rgba(15, 23, 42, .78); color: #fff; }
+.ps .mc-lock { position: absolute; inset-inline-end: 14px; top: 56px; z-index: 3; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(15, 23, 42, .78); border: 2px solid rgba(255, 255, 255, .55); box-shadow: 0 8px 18px -6px rgba(0, 0, 0, .6); filter: none; }
+.ps .mc-lock svg { width: 22px; height: 22px; stroke: currentColor; }

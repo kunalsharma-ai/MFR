@@ -19,10 +19,11 @@ const store = (all) => {
 };
 
 // /sign-up: remember what the member chose, keyed by the user id the backend returned.
-export function rememberSignup(userId, { memberType, firstName }) {
+export function rememberSignup(userId, { memberType, firstName, answers }) {
   if (!userId) return;
   const all = load();
-  all[userId] = { memberType, firstName, exp: Date.now() + LINK_TTL };
+  const waiting = answers && Object.keys(answers).length > 0;
+  all[userId] = { memberType, firstName, ...(waiting ? { answers } : {}), exp: Date.now() + (waiting ? PENDING_TTL : LINK_TTL) };
   store(all);
 }
 
@@ -32,17 +33,22 @@ export const recallSignup = (userId) => load()[userId] || null;
 export function savePendingProfile(userId, answers) {
   if (!userId || !answers || !Object.keys(answers).length) return;
   const all = load();
-  all[userId] = { ...(all[userId] || {}), answers, exp: Date.now() + PENDING_TTL };
+all[userId] = { ...(all[userId] || {}), answers: { ...((all[userId] || {}).answers || {}), ...answers }, exp: Date.now() + PENDING_TTL };
   store(all);
 }
 
+// Is there a sign-up answers entry waiting for this member? (synchronous, no network)
+export function hasPendingProfile(userId) {
+  if (!userId) return false;
+  const entry = load()[userId];
+  return Boolean(entry && entry.answers && Object.keys(entry.answers).length);
+}
 
-export async function flushPendingProfile() {
+// Uploads the waiting answers. Pass the member's id when it is already known, otherwise it is asked from /api/v1/me.
+export async function flushPendingProfile(knownUserId) {
   try {
-    const me = await getData(ME_API);
-    const userId = me.data?._id;
+    const userId = knownUserId || (await getData(ME_API)).data?._id;
     const entry = userId ? load()[userId] : null;
-    console.log('[flush] me id:', userId, '| entry mila:', Boolean(entry?.answers), '| keys:', Object.keys(load()));
     if (!entry?.answers) return false;
     try {
       await patchJSON(`${ME_API}/answer`, entry.answers);
@@ -58,7 +64,6 @@ export async function flushPendingProfile() {
     const all = load();
     delete all[userId];
     store(all);
-    console.log('[flush] success');
     return true;
   } catch (e) {
     console.warn('[flush] failed:', e);

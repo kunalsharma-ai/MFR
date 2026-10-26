@@ -92,7 +92,7 @@ export default {
   yes: 'Yes',
   no: 'No',
   download: 'Download certificate',
-  continue: 'Enter your dashboard',
+  continue: 'Continue',
   err_save: 'Your approvals could not be saved. Check your connection and try again.',
   search: 'Search {0} languages',
   no_match: 'No language matches',

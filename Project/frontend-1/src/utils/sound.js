@@ -53,6 +53,8 @@ export function pop({ volume = 0.22, pitch = 1 } = {}) {
   }
 }
 
+
+// let welcomed = false;
 // A bright notification chime: three quick bell notes rising (C6 · E6 · G6) with a soft shimmer.
 // `fanfare` adds a fourth, higher note for "review published".
 function bell(c, t, freq, volume, len = 0.55) {
@@ -93,13 +95,6 @@ export function chime({ volume = 0.16, notes = [1046.5, 1318.5, 1568] } = {}) {
 }
 export const fanfare = () => chime({ volume: 0.18, notes: [784, 1046.5, 1318.5, 2093] });
 export const audioReady = () => Boolean(ctx && ctx.state === 'running');
-
-// v2.4 — "Reward unlocked" welcome sound, played every time someone opens the website (every page load).
-// A soft shimmer swell, a bright marimba-style arpeggio and a coin sparkle at the end (~1.3 s, synthesised — no
-// file to download). Each visit plays the next of four variations (different key and melody), so it never sounds
-// stale. Browsers only allow sound once the visitor has interacted with the page — so if the browser already
-// allows sound (returning visitors in Chrome often do) it plays as the page opens; otherwise on the first tap,
-// click or key press. Muted visitors hear nothing (mute is in the chat header and the review screen).
 const WELCOME = [
   { root: 523.25, steps: [0, 4, 7, 12, 16] }, // C major sparkle
   { root: 587.33, steps: [0, 2, 7, 9, 14] }, // D pentatonic
@@ -173,6 +168,7 @@ export function welcomeSound({ volume = 0.15 } = {}) {
 let welcomed = false;
 export function welcomePop() {
   if (typeof window === 'undefined' || welcomed) return () => {};
+  if (typeof window === 'undefined' || welcomed) return () => {};
   const evs = ['pointerdown', 'keydown', 'touchstart'];
   const off = () => evs.forEach((e) => window.removeEventListener(e, fire, true));
   function fire() {
@@ -194,5 +190,11 @@ export function welcomePop() {
     else c.resume().then(tryNow).catch(() => {});
   }, 700);
   return () => { off(); clearTimeout(early); };
+}
+ 
+
+/** A language sound is about to play — skip the welcome chime so the two never overlap. */
+export function skipWelcome() {
+  welcomed = true;
 }
  

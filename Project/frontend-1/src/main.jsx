@@ -24,6 +24,15 @@ import './styles/hero.css';
 import './styles/auth2.css';
 import './styles/verify-modal.css';
 import './styles/home2.css';
+import './styles/rewards.css';
+import './styles/faq.css';
+import './styles/profiles.css';
+import './styles/voices.css';
+import './styles/footer.css';
+import './styles/hero.css';
+import './styles/auth2.css';
+import './styles/verify-modal.css';
+import './styles/home2.css';
 import './styles/cursor.css';
 import './styles/chat2.css';
 import './styles/review.css';
@@ -33,10 +42,34 @@ import './styles/v20.css';
 import './styles/connect.css';
 import './styles/atlas.css';
 import './styles/v25.css';
+import './styles/chat2.css';
+import './styles/review.css';
+import './styles/sections21.css';
+import './styles/wall.css';
+import './styles/v20.css';
+import './styles/connect.css';
+import './styles/atlas.css';
+import './styles/v25.css';
 import './styles/perf.css';
+import './styles/i18n.css';
+import './styles/theme-light.css';
 import { startCalm } from './utils/calm.js';
+import './styles/rv2-flag-avatar.css';
 
 document.documentElement.classList.add('js');
+
+// "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
+// times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth
+// and stops the page from heating up / hanging on weaker devices. See perf.css → html.lite.
+try {
+  const nav = navigator;
+  const conn = nav.connection || {};
+  const lowPower = (nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) || (nav.deviceMemory && nav.deviceMemory <= 4) || conn.saveData;
+  const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if (lowPower || touch) document.documentElement.classList.add('lite');
+} catch { /* ignore */ }
+startCalm();
+
 
 // "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
 // times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth
@@ -68,6 +101,7 @@ const tree = (
 );
 
 const root = document.getElementById('root');
+
 
 const prerenderedFor = root.getAttribute('data-route');
 const matches = !useHash && root.hasChildNodes() && prerenderedFor && normalize(prerenderedFor) === normalize(window.location.pathname);

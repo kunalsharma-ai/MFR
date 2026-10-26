@@ -11,8 +11,7 @@ export const STATS = {
   membersRegistered: 26780,
 };
 
-// Optional live override: a JSON endpoint returning any of the keys above, e.g.
-// { "rewardsPaidUsd": 12010, "surveysCompletedThisMonth": 1402, "asOf": "2026-11" }
+
 export const STATS_URL = import.meta.env.VITE_STATS_URL || '';
 
 // Typical survey categories with their usual reward and length. The exact reward and length of every survey

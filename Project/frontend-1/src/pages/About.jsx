@@ -56,7 +56,7 @@ export default function About() {
               <li style={{ '--c': '#FF8A00' }}><span><Icon name="globe" size={18} /></span><p>MyFrequentRewards welcomes <b>consumers and business professionals</b> to take part in wide-ranging market research studies.</p></li>
               <li style={{ '--c': '#E8457A' }}><span><Icon name="chat" size={18} /></span><p>Members share <b>honest perspectives</b> on products, services, workplaces and ideas.</p></li>
               <li style={{ '--c': '#14B8A6' }}><span><Icon name="coins" size={18} /></span><p>They receive <b>rewards for every eligible contribution</b>.</p></li>
-              <li style={{ '--c': '#6D5BF7' }}><span><img src={BRAND.monogram} alt="" width="22" height="22" /></span><p>Behind the community stands <a href={BRAND.parent.url} target="_blank" rel="noopener noreferrer">Frequent Research</a>, a fieldwork and data collection company serving brands and agencies worldwide — which means real studies, verified respondents and reliable payouts.</p></li>
+              <li style={{ '--c': '#6D5BF7' }}><span><img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="22" height="22" /></span><p>Behind the community stands <a href={BRAND.parent.url} target="_blank" rel="noopener noreferrer">Frequent Research</a>, a fieldwork and data collection company serving brands and agencies worldwide — which means real studies, verified respondents and reliable payouts.</p></li>
             </ul>
             <p className="story2-links"><Link to="/about-us/reviews"><Icon name="star" size={14} /> Ratings &amp; reviews</Link><Link to="/how-it-works">How it works <Icon name="arrow" size={14} /></Link><Link to="/blog">Read our blogs <Icon name="arrow" size={14} /></Link></p>
           </div>
@@ -92,6 +92,7 @@ export default function About() {
         </div>
       </section>
 
+      <FaqSplit id="ab-faq" title="About the company" faqs={FAQS} hue="#14C9B5" hue2="#2F6BFF" />
       <FaqSplit id="ab-faq" title="About the company" faqs={FAQS} hue="#14C9B5" hue2="#2F6BFF" />
       <CtaBand />
     </>

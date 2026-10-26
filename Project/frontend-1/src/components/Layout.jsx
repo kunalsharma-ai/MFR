@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
@@ -8,12 +8,17 @@ import ReviewPopup from './ReviewPopup.jsx';
 import VerifyEmailGate from './VerifyEmailGate.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
-import { LangSuggest } from './LangPicker.jsx';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
 import { PagesContext, pageFor } from '../router/pages.js';
 import { welcomePop } from '../utils/sound.js';
 
+// The language picker and the translation pill are only downloaded when they are needed.
+const LanguagePicker = lazy(() => import('./LanguagePicker.jsx').then((m) => ({ default: m.LanguagePicker })));
+const TranslateStatus = lazy(() => import('./LanguagePicker.jsx').then((m) => ({ default: m.TranslateStatus })));
+
 export default function Layout({ children }) {
+  const { picker, lang } = useI18n();
   const [chat, setChat] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { pathname, hash } = useLocation();
@@ -74,6 +79,7 @@ export default function Layout({ children }) {
       if (!el) return;
       e.preventDefault();
       jumpTo(el);
+      jumpTo(el);
       if (el.tabIndex < 0 && el.id === 'main') el.focus({ preventScroll: true });
     };
     document.addEventListener('click', onClick);
@@ -91,12 +97,18 @@ export default function Layout({ children }) {
       if (el || ++tries > 20) {
         clearInterval(t);
         if (el) jumpTo(el);
+        if (el) jumpTo(el);
       }
     }, 100);
     return () => clearInterval(t);
   }, [pathname, hash, jumpTo]);
 
   const closeChat = useCallback(() => setChat(false), []);
+  useEffect(() => {
+    const open = (e) => { setChat(true); if (e.detail && e.detail.q) setSeed({ q: e.detail.q, at: Date.now() }); };
+    window.addEventListener('mfr:open-chat', open);
+    return () => window.removeEventListener('mfr:open-chat', open);
+  }, []);
   // Any component can open Live Help (optionally with a question): window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }))
   const [seed, setSeed] = useState(null);
   useEffect(() => {
@@ -111,11 +123,11 @@ export default function Layout({ children }) {
       <Header />
       <main id="main" tabIndex={-1}>{children}</main>
       <Footer />
-      <LangSuggest />
       <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />
       {mounted ? (
         <>
+          <LiveChat open={chat} onClose={closeChat} seed={seed} />
           <LiveChat open={chat} onClose={closeChat} seed={seed} />
           <ActivityToasts />
           <ReviewPopup />
@@ -123,6 +135,10 @@ export default function Layout({ children }) {
           <CustomCursor />
         </>
       ) : null}
+      <Suspense fallback={null}>
+        {picker ? <LanguagePicker /> : null}
+        {lang !== 'en' ? <TranslateStatus /> : null}
+      </Suspense>
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useReducer } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
+import { I18nProvider } from './i18n/I18nProvider.jsx';
 import { PAGE_ROUTES, PagesContext } from './router/pages.js';
 import { useGuestRedirect } from './utils/session.js';
 
@@ -38,12 +39,14 @@ function useLegacyEntryLinks() {
 export default function App() {
   useLegacyEntryLinks();
   return (
-    <Layout>
-      <Routes>
-        {PAGE_ROUTES.map((r) => (
-          <Route key={r.path} path={r.path} element={<RoutePage key={r.path} name={r.page} props={r.props} />} />
-        ))}
-      </Routes>
-    </Layout>
+    <I18nProvider>
+      <Layout>
+        <Routes>
+          {PAGE_ROUTES.map((r) => (
+            <Route key={r.path} path={r.path} element={<RoutePage key={r.path} name={r.page} props={r.props} />} />
+          ))}
+        </Routes>
+      </Layout>
+    </I18nProvider>
   );
 }
