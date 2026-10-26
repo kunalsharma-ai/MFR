@@ -22,6 +22,7 @@ import {
 import { postJSON, putJSON } from "../utils/api.js";
 import { buildRegisterPayload } from "../utils/registerPayload.js";
 import { rememberSignup } from "../utils/signupMemo.js";
+import { readReferral, clearReferral } from "../utils/referral.js";
 import { consentAnswers } from "../utils/profileAnswers.js";
 import SocialLogin from "../components/SocialLogin.jsx";
 import {
@@ -174,6 +175,12 @@ export default function SignUp() {
     }));
   }, [search]);
 
+  // referral link (?ref=<member id>): kept for the registration (read in an effect, so the prerendered page does not depend on the browser)
+  const [referredBy, setReferredBy] = useState("");
+  useEffect(() => {
+    setReferredBy(readReferral(search));
+  }, [search]);
+
   useEffect(() => {
     if (new URLSearchParams(search).get("type") === "professional")
       setV((s) => ({ ...s, memberType: "professional" }));
@@ -300,8 +307,10 @@ export default function SignUp() {
 
           categories: MEMBER_CATEGORIES,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+          referredBy,
         }),
       );
+      clearReferral(); // the referral is used: the next sign-up on this device starts clean
       rememberSignup(res.data?.user, {
         memberType: v.memberType,
         firstName: v.firstName.trim(),

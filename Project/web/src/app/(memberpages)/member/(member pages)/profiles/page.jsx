@@ -25,13 +25,14 @@ import { useToast } from "@/hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { bumpRewards, creditProfileRewards, creditQualityScore } from "@/hooks/useRewardsRefresh";
 import useProfileGate from "@/hooks/useProfileGate";
+import GateDialog from "./ps/GateDialog";
 import useProfileDark from "@/hooks/useProfileDark";
 import "./ps/ps.css";
 import PsHub from "./ps/PsHub";
 import PsFlow from "./ps/PsFlow";
 import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
-import { visibleProfiles, normalizeInterests, basicsDone, nextBasic, isCore } from "./ps/profileRules";
+import { visibleProfiles, normalizeInterests, basicsDone, isCore } from "./ps/profileRules";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -437,9 +438,10 @@ function SkinProfiles() {
   const allProfiles = React.useMemo(() => [...shown, ...gate.extras.map((e) => ({ ...e, status: e.done ? 100 : Math.max(0, Number(e.status) || 0) }))], [shown, gate.extras]);
   const prizeProfiles = React.useMemo(() => [...shown, ...profiles.filter((p) => !isCore(p.slug))], [shown, profiles]);
   const canOpen = (slug) => isCore(slug) || gate.coreDone; // the other profiles open after the four basics
+  const [gateOpen, setGateOpen] = React.useState(false); // the pop-up of a locked capsule: what to finish first
   const open = (p) => {
     if (canOpen(p.slug)) return router.push(`?profile=${p.slug}`, { scroll: false });
-    router.push(`?profile=${nextBasic(profiles)?.slug || "basic"}`, { scroll: false }); // not open yet: go to the first basic that is not complete
+    setGateOpen(true); // not open yet: the pop-up lists the four basics to start
   };
   const hub = () => router.push(pathname, { scroll: false });
   // a link to a profile that is not open yet goes back to the hub
@@ -470,8 +472,14 @@ function SkinProfiles() {
           onNextProfile={() => { const target = asSurvey ? nextExtra : next; if (target) open(target); }}
         />
       ) : (
-        <PsHub profiles={shown} allProfiles={allProfiles} extraDone={doneExtras} prizeProfiles={prizeProfiles} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
+        <PsHub isLocked={(slug) => !canOpen(slug)} profiles={shown} allProfiles={allProfiles} extraDone={doneExtras} prizeProfiles={prizeProfiles} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
       )}
+      <GateDialog
+        open={gateOpen}
+        gate={gate}
+        onClose={() => setGateOpen(false)}
+        onStart={(slug) => { setGateOpen(false); router.push(`?profile=${slug}`, { scroll: false }); }}
+      />
       {notice ? (
         <div className="toasts" role="status" aria-live="polite">
           <div className="toast" key={notice.id}>{notice.text}</div>

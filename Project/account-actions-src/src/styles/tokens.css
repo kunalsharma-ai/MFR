@@ -1,0 +1,50 @@
+/* =====================================================================
+   MFR design tokens. Dark is the default; light is set with data-theme="light".
+   Layout idea: sticky brand bar → hero with a 3D MFR coin → request tracker →
+   option deck (3 break tiles + wide hold tile) → separated danger zone → flow rail.
+   ===================================================================== */
+.mfr {
+  /* brand */
+  --navy-950: #040A26; --navy-900: #060F33; --navy-800: #0B1E5B; --navy-700: #13297A; --navy-600: #1E3A9E;
+  --orange: #FF8A00; --amber: #FFC233; --blue: #2F6BFF; --teal: #14C9B5; --violet: #8B5CF6; --pink: #FF5E7E; --green: #22C55E; --red: #FF4D5E;
+  --font-d: 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-b: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-m: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --r-sm: 12px; --r: 18px; --r-lg: 26px; --r-xl: 30px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --header-h: 68px;
+
+  /* dark theme */
+  --bg: #050B2C; --bg-2: #0A1747;
+  --text: #EEF2FF; --text-2: #BCC6EA; --text-3: #8F9BCB;
+  --surface: rgba(13, 28, 88, .62); --surface-solid: #0D1C58; --surface-2: rgba(255, 255, 255, .06); --surface-3: rgba(0, 0, 0, .24);
+  --line: rgba(150, 175, 255, .16); --line-2: rgba(150, 175, 255, .3);
+  --header-bg: rgba(5, 11, 44, .82);
+  --accent-text: #FFC233;
+  --glow-alpha: .5; --lattice: rgba(150, 175, 255, .07); --vignette: rgba(2, 6, 24, .65);
+  --scrim: rgba(2, 6, 24, .78);
+  --shadow-sm: 0 10px 30px -14px rgba(0, 0, 0, .6);
+  --shadow: 0 30px 70px -28px rgba(0, 0, 0, .75);
+  --focus: #FFC233;
+  --ok: #86EFAC; --warn-bg: rgba(255, 194, 51, .1); --warn-line: rgba(255, 194, 51, .35); --warn-fg: #FFE2A1;
+  --err-bg: rgba(255, 77, 94, .14); --err-line: rgba(255, 77, 94, .42); --err-fg: #FFC2C8;
+  --danger-bg: linear-gradient(160deg, rgba(61, 7, 22, .55), rgba(20, 8, 40, .55)); --danger-line: rgba(255, 77, 94, .5); --danger-fg: #F7C2C9; --danger-eyebrow: #FF8E99;
+  color-scheme: dark;
+}
+.mfr[data-theme="light"] {
+  --bg: #FFFFFF; --bg-2: #F5F7FD;
+  --text: #0E1530; --text-2: #3B4566; --text-3: #626C8E;
+  --surface: #FFFFFF; --surface-solid: #FFFFFF; --surface-2: #F2F5FC; --surface-3: #F6F8FD;
+  --line: #E4E8F4; --line-2: #D2D9EE;
+  --header-bg: rgba(255, 255, 255, .88);
+  --accent-text: #B45309;
+  --glow-alpha: .13; --lattice: rgba(11, 30, 91, .045); --vignette: rgba(255, 255, 255, 0);
+  --scrim: rgba(14, 21, 48, .45);
+  --shadow-sm: 0 8px 24px -12px rgba(11, 30, 91, .16);
+  --shadow: 0 30px 60px -28px rgba(11, 30, 91, .3);
+  --focus: #D97706;
+  --ok: #15803D; --warn-bg: #FFF8E6; --warn-line: #F7D58A; --warn-fg: #7A4B00;
+  --err-bg: #FFF0F2; --err-line: #F5A9B4; --err-fg: #9F1239;
+  --danger-bg: linear-gradient(160deg, #FFF4F6, #FFF0F5); --danger-line: #F3A5B0; --danger-fg: #8A1C32; --danger-eyebrow: #BE123C;
+  color-scheme: light;
+}

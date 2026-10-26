@@ -1,4 +1,7 @@
-
+// Prize Machine styles: the board, capsules, effects and the prize ticket in the completion pop-up.
+// Injected once when the board or the completion pop-up loads (both are lazy chunks), so none of this is
+// in the first paint. The header points pill, LED counter and card chips are in src/styles/app.css.
+// Machine sizes are in units of --u (1px on desktop, smaller on phones). Language palette: --L1 --L2 --L3.
 const CSS = String.raw`
 .pm { position: relative; display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); grid-template-areas: 'm h' 'm s'; grid-template-rows: auto 1fr; gap: 14px 34px; margin: 30px 0 6px; padding: 26px 30px 30px; border-radius: 28px; color: #fff; isolation: isolate; overflow: clip; scroll-margin-top: 90px;
   background: radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--L1) 42%, #0a1240), #070c2a 62%), #070c2a; box-shadow: var(--shadow-l); }
@@ -83,6 +86,9 @@ const CSS = String.raw`
 .pm-slot:focus-visible { outline: 3px solid var(--L3); outline-offset: 2px; }
 .pm-slot.got { border-style: solid; border-color: color-mix(in oklab, var(--L3) 55%, transparent); background: radial-gradient(circle at 50% 80%, color-mix(in oklab, var(--L3) 22%, transparent), rgba(255,255,255,.06)); padding-top: 10px; }
 .pm-empty { font: 800 10.5px var(--ff-b); color: rgba(255,255,255,.55); direction: ltr; }
+.pm-slot.locked { opacity: .6; }
+.pm-slot.locked:hover { transform: none; border-color: rgba(255,255,255,.24); }
+.pm-slot .pm-lock { width: 16px; height: 16px; stroke: currentColor; opacity: .8; }
 .pm-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .pm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; font: 700 13px/1.2 var(--ff-b); background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.18); }
 .pm-chip.gold { background: color-mix(in oklab, var(--L3) 30%, transparent); }

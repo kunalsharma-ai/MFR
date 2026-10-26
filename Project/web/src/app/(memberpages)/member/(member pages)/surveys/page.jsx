@@ -32,11 +32,17 @@ import { SurveyHistory } from "../dashboard/page";
 import { useQuery, useMember } from "@/Context";
 import useCompletedProfiles from "@/hooks/useCompletedProfiles";
 import useProfileGate from "@/hooks/useProfileGate";
+import { isHighReward } from "../profiles/ps/profileRules";
 import WorldTile from "../profiles/ps/WorldTile"; // the profile card of the Profiles page
+import GateDialog from "../profiles/ps/GateDialog"; // the pop-up of a locked card: what to finish first
 //import {useTourActive} from "@/hooks/useTourActive";
 //import mockSurveys from "@/mockData/surveys"
 
 const permittedStatus = ["invited", "dropout"];
+
+// "High Reward" and "Short Surveys" split every card by its points: more than 50 = High Reward, 50 or fewer = Short Surveys.
+// The points come from the database (the admin), for the profiles taken as surveys and for real surveys alike.
+const inTab = (row, tab) => (tab === "high") === isHighReward(row.points);
 export default function SurveyDashboard() {
   const [query] = [useQuery()];
   const member = useMember();
@@ -232,6 +238,7 @@ function SurveyStat({ stats, isLoading }) {
 
 function SurveyList({ surveys, query, isLoading, gate, surveysLocked }) {
   const router = useRouter();
+  const [gateOpen, setGateOpen] = React.useState(false); // a locked card was pressed
   const [activeFilter, setActiveFilter] = React.useState(
     !query.filter || query.filter === "null" || query.filter === "undefined"
       ? "All New Surveys"
@@ -245,11 +252,11 @@ function SurveyList({ surveys, query, isLoading, gate, surveysLocked }) {
     },
     {
       label: "High Reward Surveys",
-      filter: (survey) => survey.kind !== "profile" && survey.points > 1500, // the profile cards are only in "All New Surveys"
+      filter: (survey) => inTab(survey, "high"),
     },
     {
       label: "Short Surveys",
-      filter: (survey) => survey.kind !== "profile" && survey.loi < 15,
+      filter: (survey) => inTab(survey, "short"),
     },
     // {
     //   label: "New Surveys",
@@ -326,7 +333,7 @@ function SurveyList({ surveys, query, isLoading, gate, surveysLocked }) {
             })}
           </Box>
         )}
-        card={(row, index) => <SurveyTile row={row} gate={gate} surveysLocked={surveysLocked} router={router} />}
+        card={(row, index) => <SurveyTile row={row} gate={gate} surveysLocked={surveysLocked} router={router} onLocked={() => setGateOpen(true)} />}
         cardProps={{
           elevation: 0,
           sx: {
@@ -338,12 +345,20 @@ function SurveyList({ surveys, query, isLoading, gate, surveysLocked }) {
           },
         }}
       />
+      <GateDialog
+        open={gateOpen}
+        gate={gate}
+        onClose={() => setGateOpen(false)}
+        onStart={(slug) => { setGateOpen(false); router.push(`/member/profiles?profile=${slug}`); }}
+      />
     </Box>
   );
 }
 
-
-function SurveyTile({ row, gate, surveysLocked, router }) {
+// One card of the list, in the design of the Profiles page (WorldTile).
+//  - a profile: opens the profile form once the four basics are complete (until then it is locked)
+//  - a survey: opens the survey once every profile is complete (until then it is locked)
+function SurveyTile({ row, gate, surveysLocked, router, onLocked }) {
   if (row.kind === "profile") {
     const locked = !gate.coreDone;
     return (
@@ -355,7 +370,7 @@ function SurveyTile({ row, gate, surveysLocked, router }) {
         points={row.points}
         locked={locked}
         title={locked ? "Complete your Basic, Education, Professional and Financial profiles first" : undefined}
-        onClick={() => router.push(locked ? "/member/profiles" : `/member/profiles?profile=${row.slug}`)}
+        onClick={() => (locked ? onLocked() : router.push(`/member/profiles?profile=${row.slug}`))}
       />
     );
   }
@@ -370,7 +385,8 @@ function SurveyTile({ row, gate, surveysLocked, router }) {
       locked={surveysLocked}
       title={surveysLocked ? "Complete your profiles first" : undefined}
       onClick={() => {
-        if (!surveysLocked && canStart) router.push(`/survey?name=${row.slug}`);
+        if (surveysLocked) return onLocked();
+        if (canStart) router.push(`/survey?name=${row.slug}`);
       }}
     />
   );

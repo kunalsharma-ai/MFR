@@ -14,7 +14,7 @@
 const digits = (s = '') => String(s).replace(/\D/g, '');
 const DEVICE_CHANNELS = ['sms', 'whatsapp']; // identified by phone; everything else by email
 
-export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC', }) {
+export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC', referredBy = '' }) {
   const mail = v.email.trim().toLowerCase();
   const phone = digits(dial) + digits(v.phone);
 
@@ -34,5 +34,8 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
     notification,
   };
  
+  // the member who shared their referral link (User.referredBy); left out when the visitor did not come from one
+  if (referredBy) payload.referredBy = referredBy;
+
   return payload;
 }

@@ -1,0 +1,26 @@
+{
+  "name": "mfr-account-actions",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Delete / Deactivate My Account: the full page without its header, built into web/public/member/account-actions/",
+  "type": "module",
+  "main": "dist/lib/index.js",
+  "module": "dist/lib/index.js",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "build": "node scripts/build-host.mjs ../web/public/member/account-actions"
+  },
+  "peerDependencies": {
+    "react": ">=18.2",
+    "react-dom": ">=18.2"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
