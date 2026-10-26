@@ -1412,3 +1412,84 @@ textarea {
   border-color: #d46b6b;
   box-shadow: 0 0 0 3px rgba(212, 107, 107, 0.15);
 }
+
+/* Fix MUI Autocomplete sizing inside the existing floating-label fields */
+.sx-control > .MuiAutocomplete-root {
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  align-self: stretch;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiFormControl-root {
+  width: 100%;
+  height: 100%;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiInputBase-root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 0 30px 0 0 !important;
+  box-sizing: border-box;
+  align-items: center;
+  font: inherit;
+  border: 0;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiInputBase-input {
+  width: 100%;
+  min-width: 0 !important;
+  height: auto;
+  padding: 0 !important;
+  margin: 0;
+  line-height: 1.4;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiInputBase-input::placeholder {
+  opacity: 0;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiInput-root::before,
+.sx-control > .MuiAutocomplete-root .MuiInput-root::after {
+  display: none !important;
+}
+
+.sx-control > .MuiAutocomplete-root .MuiAutocomplete-endAdornment {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sx-control > .MuiAutocomplete-root .MuiAutocomplete-popupIndicator,
+.sx-control > .MuiAutocomplete-root .MuiAutocomplete-clearIndicator {
+  padding: 4px;
+}
+
+/* Keep the dropdown above the signup card */
+.MuiAutocomplete-popper {
+  z-index: 15000 !important;
+}
+
+.MuiAutocomplete-paper {
+  border-radius: 12px;
+}
+
+.MuiAutocomplete-listbox {
+  max-height: 280px;
+  padding: 5px;
+}
+
+.MuiAutocomplete-option {
+  min-height: 40px;
+  border-radius: 7px;
+}
+
+/* Prevent MUI's helper/error text from changing the field height */
+.sx-control > .MuiAutocomplete-root .MuiFormHelperText-root {
+  display: none;
+}
