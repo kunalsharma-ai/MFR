@@ -10,7 +10,12 @@ export function bumpRewards() {
   tick += 1;
   listeners.forEach((fn) => fn());
 }
-export const useRewardsTick = () => useSyncExternalStore(subscribe, () => tick, () => 0);
+export const useRewardsTick = () =>
+  useSyncExternalStore(
+    subscribe,
+    () => tick,
+    () => 0,
+  );
 const PROFILE_REWARD_CATEGORY = "profile";
 const tagOf = (slug) => `[profile:${slug}]`;
 const idOf = (v) => String(v?._id ?? v ?? "");
@@ -19,13 +24,12 @@ export const profileCategoryOf = (user) => user?.category || "b2c"; // the categ
 /** the member's rewards as a list, or null when the API cannot be read (then nothing is paid and the balance falls back) */
 async function readRewards(user) {
   try {
-    const resp = await api.get("/api/v1/rewards");
+    if (!user || !user._id) return null;
+    const resp = await api.post("/api/v1/rewards", {
+      user: user._id,
+    });
     if (!resp || resp.status === "error") return null;
-    const d = resp.data;
-    const list = Array.isArray(d) ? d : Array.isArray(d?.rewards) ? d.rewards : Array.isArray(d?.data) ? d.data : Array.isArray(d?.items) ? d.items : null;
-    if (!list) return null;
-    const me = idOf(user?._id);
-    return list.filter((r) => r && (!me || !r.user || idOf(r.user) === me)); // a reward without a user field is taken as the member's own
+    return resp.data;
   } catch (e) {
     return null;
   }
@@ -76,7 +80,10 @@ function payOnce(user, items) {
 
 export function creditProfileRewards(user, profiles) {
   if (!Array.isArray(profiles)) return Promise.resolve(0);
-  return payOnce(user, profiles.filter((p) => p?.slug && Number(p.status) >= 100));
+  return payOnce(
+    user,
+    profiles.filter((p) => p?.slug && Number(p.status) >= 100),
+  );
 }
 
 /** Pays the profile cards completed as a survey ({ slug, name, points } = the survey the member saw, with its points). Once per card. */
@@ -88,7 +95,9 @@ export function creditQualityScore(user, keys) {
     const want = [...new Set((keys || []).filter(Boolean))];
     if (!user?._id || !want.length) return 0;
     try {
-      const me = await api.post("/api/v1/me", { questions: ["quality-credited"] }).then((r) => r?.data);
+      const me = await api
+        .post("/api/v1/me", { questions: ["quality-credited"] })
+        .then((r) => r?.data);
       if (!me) return 0;
       const counted = [].concat(me["quality-credited"] ?? []).filter(Boolean);
       const add = want.filter((k) => !counted.includes(k));
@@ -96,7 +105,9 @@ export function creditQualityScore(user, keys) {
       const score = Math.min(200, (Number(me.qualityScore) || 0) + add.length);
       const saved = await api.put("/api/v1/me", { qualityScore: score });
       if (saved?.status === "error") return 0;
-      await api.patch("/api/v1/me/answer", { "quality-credited": [...counted, ...add] });
+      await api.patch("/api/v1/me/answer", {
+        "quality-credited": [...counted, ...add],
+      });
       return add.length;
     } catch (e) {
       console.log(e);
@@ -109,21 +120,53 @@ export function creditQualityScore(user, keys) {
 
 export async function fetchRewardBalance(user) {
   // the member is not loaded yet: show 0 for now, the screens ask again as soon as the member is there
-  if (!user?._id) return { status: "success", message: "", data: { totalPoints: 0, redeemPoints: 0, threshold: 15000, conversionRate: 0.001 } };
+  if (!user?._id)
+    return {
+      status: "success",
+      message: "",
+      data: {
+        totalPoints: 0,
+        redeemPoints: 0,
+        threshold: 15000,
+        conversionRate: 0.001,
+      },
+    };
   const rewards = await readRewards(user);
   let base = null; // /me/points does not exist on every backend (404): only used for threshold / conversion rate when it answers
-  try { base = await api.get("/api/v1/me/points"); } catch (e) { base = null; }
+  try {
+    base = await api.get("/api/v1/me/points");
+  } catch (e) {
+    base = null;
+  }
   const baseOk = base && base.status !== "error" && base.data;
   const threshold = Number(baseOk && base.data.threshold) || 15000;
   const conversionRate = Number(baseOk && base.data.conversionRate) || 0.001;
   if (rewards) {
-    const totalPoints = rewards.reduce((n, r) => n + (Number(r.points) || 0), 0);
-    return { status: "success", message: "", data: { totalPoints, redeemPoints: 0, threshold, conversionRate } };
+    const totalPoints = rewards.reduce(
+      (n, r) => n + (Number(r.points) || 0),
+      0,
+    );
+    return {
+      status: "success",
+      message: "",
+      data: { totalPoints, redeemPoints: 0, threshold, conversionRate },
+    };
   }
   try {
-    const list = await api.post("/api/v1/profile", { category: profileCategoryOf(user) }).then((r) => r?.data);
-    const totalPoints = (Array.isArray(list) ? list : []).filter((p) => Number(p?.status) >= 100).reduce((n, p) => n + (Number(p?.points) || 50), 0);
-    if (totalPoints) return { status: "success", message: "", data: { totalPoints, redeemPoints: 0, threshold, conversionRate } };
-  } catch (e) { /* fall through */ }
+    const list = await api
+      .post("/api/v1/profile", { category: profileCategoryOf(user) })
+      .then((r) => r?.data);
+    const totalPoints = (Array.isArray(list) ? list : [])
+      .filter((p) => Number(p?.status) >= 100)
+      .reduce((n, p) => n + (Number(p?.points) || 50), 0);
+    if (totalPoints)
+      return {
+        status: "success",
+        message: "",
+        data: { totalPoints, redeemPoints: 0, threshold, conversionRate },
+      };
+  } catch (e) {
+    /* fall through */
+  }
   return base || { status: "error", message: "", data: null };
 }
