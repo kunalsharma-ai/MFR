@@ -2,6 +2,15 @@
 export const CORE_SLUGS = ['basic', 'educational', 'professional', 'financial'];
 export const isCore = (slug) => CORE_SLUGS.includes(slug);
 
+// ---- Cards of the Survey section. The points of a card (set in the admin: Profiles / Surveys) decide its tab:
+// more than HIGH_REWARD_ABOVE_POINTS points -> "High Reward", that many or fewer -> "Short Surveys". Profiles taken as surveys and real surveys alike.
+export const HIGH_REWARD_ABOVE_POINTS = 50;
+export const isHighReward = (points) => Number(points) > HIGH_REWARD_ABOVE_POINTS;
+// what a profile pays when the admin has not set points on it
+export const DEFAULT_PROFILE_POINTS = 50;
+/** number of questions of a profile record: every page lists its title first, then its questions */
+export const questionCountOf = (p) => (p?.pages || []).reduce((n, pg) => n + Math.max(0, (pg?.length || 1) - 1), 0);
+
 // sign-up interest id (CONSUMER_INTERESTS in the sign-up site)  ->  profile slugs (Profile.slug in the database)
 export const INTEREST_PROFILES = {
   family: ['parenting'],

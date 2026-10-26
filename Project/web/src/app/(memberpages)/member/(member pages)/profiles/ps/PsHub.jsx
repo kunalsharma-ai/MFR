@@ -42,7 +42,7 @@ function WorldCard({ p, i, onOpen, viaSurvey = false }) {
         <span className="mc-meta">
           <span>{t("hub.q", { n: q })}</span>
           <span className={`mc-pill ${st.done ? "ok" : st.pct ? "go" : ""}`}>
-            {viaSurvey && !st.done ? <>{t("hub.survey")} <IArrow /></> : st.done ? <><IEdit /> {t("hub.review")}</> : st.pct ? t("hub.progress", { p: st.pct }) : <>{t("hub.start")} <IArrow /></>}
+            {viaSurvey && st.done ? t("hub.done") : viaSurvey ? <>{t("hub.survey")} <IArrow /></> : st.done ? <><IEdit /> {t("hub.review")}</> : st.pct ? t("hub.progress", { p: st.pct }) : <>{t("hub.start")} <IArrow /></>}
           </span>
         </span>
         <span className="mc-bar"><i style={{ transform: `scaleX(${st.pct / 100})` }} /></span>
@@ -65,8 +65,10 @@ function Section({ id, title, emoji, count, children, tone }) {
   );
 }
 
-
-export default function PsHub({ profiles, onOpen, cat = "b2c", rewardsReady = true, extraDone = [], prizeProfiles = profiles, allProfiles = profiles }) {
+// profiles = the four profiles listed on this page; extraDone = the other profiles the member completed (they only appear under "Completed");
+// prizeProfiles = every profile that has a capsule in the Prize Machine; allProfiles = every profile of the member's category (the four and
+// the others): the numbers in the hero and the overall progress count all of them, so 100% means every profile is complete.
+export default function PsHub({ profiles, onOpen, cat = "b2c", rewardsReady = true, extraDone = [], prizeProfiles = profiles, allProfiles = profiles, isLocked }) {
   const { t } = useI18n();
   useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion); // chips follow the points from the database
   const [q, setQ] = useState("");
@@ -115,7 +117,7 @@ export default function PsHub({ profiles, onOpen, cat = "b2c", rewardsReady = tr
         </div>
         {rewardsReady ? (
           <Suspense fallback={<div className="pm-ph" id="rewards" aria-hidden="true" />}>
-            <PrizeMachine key={cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} cat={cat} onOpen={(p) => onOpen(prizeProfiles.find((x) => x.slug === p.s) || { slug: p.s })} />
+            <PrizeMachine key={cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} cat={cat} isLocked={isLocked} onOpen={(p) => onOpen(prizeProfiles.find((x) => x.slug === p.s) || { slug: p.s })} />
           </Suspense>
         ) : <div className="pm-ph" id="rewards" aria-hidden="true" />}
         {!list.length && !doneExtra.length && <p className="empty">{t("hub.none")}</p>}

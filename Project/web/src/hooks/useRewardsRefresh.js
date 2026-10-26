@@ -1,4 +1,9 @@
 "use client";
+// Completing a profile makes the API pay its points (Reward Balance) and raise the Quality Score, both stored in the database.
+// The screens that already show those numbers (sidebar, dashboard, My Account) read them when they open; this counter tells them
+// to read them AGAIN right after a profile was completed, so they change without a reload.
+//   bumpRewards()      - call it after a profile was saved (profile page)
+//   useRewardsTick()   - add the returned number to the dependencies of the effect that loads /api/v1/me/points
 import { useSyncExternalStore } from "react";
 import { api } from "@/util";
 
@@ -11,6 +16,12 @@ export function bumpRewards() {
   listeners.forEach((fn) => fn());
 }
 export const useRewardsTick = () => useSyncExternalStore(subscribe, () => tick, () => 0);
+
+// ---- Rewards in the database (API: /api/v1/rewards, model Rewards { user, category, points, remarks }) --------------------------------
+// - a completed profile is paid with PUT /api/v1/rewards { category: "profile", points, remarks: "... [profile:<slug>]" } - once per profile
+//   (the remarks tag is how an already paid profile is recognised, so nothing is ever paid twice)
+// - Reward Balance = the sum of the points of this member's rewards (GET /api/v1/rewards)
+// - the points of a profile are the ones set in the admin (Profile.points, 50 each)
 const PROFILE_REWARD_CATEGORY = "profile";
 const tagOf = (slug) => `[profile:${slug}]`;
 const idOf = (v) => String(v?._id ?? v ?? "");
@@ -46,6 +57,10 @@ export async function readPaidProfiles(user) {
   return paid;
 }
 
+/**
+ * Pays every item { slug, name, points } that has no reward yet (once per slug, found by the [profile:<slug>] tag in the remarks).
+ * Resolves to the number of rewards paid now.
+ */
 function payOnce(user, items) {
   const run = async () => {
     if (!user?._id || !Array.isArray(items) || !items.length) return 0;
@@ -74,6 +89,10 @@ function payOnce(user, items) {
   return creditChain;
 }
 
+/**
+ * Pays every completed profile (status >= 100) that has no reward yet. profiles = the list from POST /api/v1/profile.
+ * Resolves to the number of profiles paid now.
+ */
 export function creditProfileRewards(user, profiles) {
   if (!Array.isArray(profiles)) return Promise.resolve(0);
   return payOnce(user, profiles.filter((p) => p?.slug && Number(p.status) >= 100));
@@ -82,6 +101,9 @@ export function creditProfileRewards(user, profiles) {
 /** Pays the profile cards completed as a survey ({ slug, name, points } = the survey the member saw, with its points). Once per card. */
 export const creditCardRewards = (user, cards) => payOnce(user, cards);
 
+// ---- Quality Score: +1 for every item (a completed profile, a completed survey), once per item ---------------------------------------------
+// The items already counted are kept in the database as the answer "quality-credited" (PATCH /api/v1/me/answer), so nothing is counted
+// twice (not on another device, not after a reload). The new score is written with PUT /api/v1/me. keys: "basic", "survey:<slug>", ...
 let qualityChain = Promise.resolve();
 export function creditQualityScore(user, keys) {
   const run = async () => {
@@ -107,6 +129,11 @@ export function creditQualityScore(user, keys) {
   return qualityChain;
 }
 
+/**
+ * Same shape as api.get("/api/v1/me/points"), so the screens only swap the call.
+ * user = the member (useMember()). Balance = the sum of the member's rewards. If the rewards cannot be read, the points of the
+ * completed profiles are counted from the profile list instead (so the balance never stays at 0 for a finished profile).
+ */
 export async function fetchRewardBalance(user) {
   // the member is not loaded yet: show 0 for now, the screens ask again as soon as the member is there
   if (!user?._id) return { status: "success", message: "", data: { totalPoints: 0, redeemPoints: 0, threshold: 15000, conversionRate: 0.001 } };

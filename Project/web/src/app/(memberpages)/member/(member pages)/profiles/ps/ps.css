@@ -2,7 +2,16 @@
 @font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/ps/fonts/inter-400.woff) format('woff')}
 @font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/ps/fonts/inter-500.woff) format('woff')}
 @font-face{font-family:Inter;font-style:normal;font-weight:600 700;font-display:swap;src:url(/ps/fonts/inter-600.woff) format('woff')}
-
+/* =====================================================================
+   MyFrequentRewards · Member Profile Studio · v4 "Rewards Club"
+   Brand frame: MFR midnight navy + amber/gold (from the logo).
+   Signature: every profile world is a membership card in its own foil
+   colourway (--c1/--c2/--c3 from src/themes/themes.js).
+   Per-language accent (--L1) tints the hero aurora and the language wipe.
+   Type: Manrope (headings, numbers 600-800) + Inter (body 400-500, UI 500-600)
+   Motion: one load sequence in the hero, motion that answers actions,
+   transform/opacity only, nothing loops on the profile grid.
+   ===================================================================== */
 .ps {
   --L1: #2b59ff; --L2: #ff4f6d; --L3: #ffc23d;
   --midnight: #050e2e;
@@ -686,3 +695,23 @@
 @media (prefers-reduced-motion: reduce) {
   .ps .opt-ico, .ps .opt-ico img, .ps .tile.on .opt-ico, .ps .ritem.on .opt-ico, .ps .chip.on .opt-ico { animation: none !important; transition: none !important; }
 }
+
+/* ---- Lock pop-up: a locked capsule / profile / survey card opens it; it lists the four basic profiles to finish first ---- */
+.ps .gate { position: relative; width: min(420px, 100%); padding: 26px 22px 20px; background: var(--surface); color: var(--ink); font-family: var(--ff-b); text-align: center; }
+.ps .gate-x { position: absolute; inset-inline-end: 12px; top: 12px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--bg2); color: var(--muted); border: 0; cursor: pointer; }
+.ps .gate-x:hover { color: var(--ink); }
+.ps .gate-lock { width: 74px; height: 74px; margin: 2px auto 10px; border-radius: 50%; display: grid; place-items: center; color: #5a3a00; background: radial-gradient(circle at 50% 38%, #fff3cc, var(--gold)); box-shadow: 0 10px 26px rgba(255, 170, 0, .28); }
+.ps .gate-lock svg { width: 34px; height: 34px; stroke: currentColor; }
+.ps .gate h2 { margin: 6px 0 6px; font: 800 24px/1.15 var(--ff-h); }
+.ps .gate p.gate-msg { margin: 0 auto 14px; max-width: 330px; color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+.ps .gate-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; text-align: start; }
+.ps .gate-row { display: flex; align-items: center; gap: 12px; padding: 9px 10px 9px 12px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--line); }
+.ps .gate-row.is-done { opacity: .75; }
+.ps .gate-ico { width: 38px; height: 38px; flex: none; border-radius: 12px; display: grid; place-items: center; background: var(--surface); box-shadow: var(--shadow-s); }
+.ps .gate-ico img { width: 26px; height: 26px; }
+.ps .gate-name { flex: 1; min-width: 0; font-weight: 700; font-size: 15px; text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ps .gate-row .btn { padding: 8px 16px; min-height: 0; font-size: 13.5px; }
+.ps .gate-ok { display: inline-flex; align-items: center; gap: 5px; color: var(--ok); font-weight: 700; font-size: 13.5px; }
+.ps .gate-more { margin: 0 0 6px; color: var(--muted); font-size: 13px; }
+.ps .gate-bonus { margin: 8px 0 0; color: var(--muted); font-size: 12.5px; }
+

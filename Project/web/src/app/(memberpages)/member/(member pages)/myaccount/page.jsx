@@ -51,6 +51,7 @@ import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import { useToast } from "@/hooks";
 import MyAccountPoints from "../../components/MyAccountPoints";
+import DeleteAccountSection from "./component/accountActions/DeleteAccountSection"; // Delete account: deactivate, hold or delete
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -925,6 +926,24 @@ getCountry()
         }}
       >
         <SocialAccounts user={user} />
+      </Box>
+
+      {/* Delete account Section */}
+      <Box
+        sx={{
+          width: "100%",
+
+          px: 2,
+          pb: 1,
+          borderRadius: "18px",
+          background: "rgba(255,255,255,0.08)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <DeleteAccountSection />
       </Box>
     </Grid>
   );

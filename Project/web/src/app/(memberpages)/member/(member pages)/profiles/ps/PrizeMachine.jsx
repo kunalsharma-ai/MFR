@@ -8,10 +8,19 @@ import LedCount from './LedCount.jsx';
 import { catProfiles, isDone, isSeen, isPaid, markSeen, markPaid, pKey, pendingKeys, paidPoints, pointsFor, rankOf, fmtUsd, RANK_KEYS, POINTS_PER_PROFILE, POINTS_PER_USD, subscribeRewards, rewardsVersion } from './rules.js';
 import { path, sparkle, floatText, flyToPoints, bump, wait } from './rfx.js';
 import { ensureRewardStyles } from './rstyles.js';
-import { IArrow } from './Icons.jsx';
+import { IArrow, ILock } from './Icons.jsx';
 
 ensureRewardStyles();
 
+/* "Your Prize Machine" - the reward board on the hub (lazy-loaded from Hub.jsx).
+   An arcade capsule machine: every unfinished profile is a prize capsule waiting inside the glass globe, in
+   that profile's colours with its 3D emoji. Completing a profile dispenses its capsule: the crank turns, the
+   capsule rolls down the chute into the tray, cracks open, +100 points flies to the header and the opened
+   capsule joins the member's collection. Members can also turn the crank to let the machine pick their next
+   profile. The machine body, LED and bulbs take the language palette (--L1/--L2/--L3) and every sound is
+   played on the language's own instrument, so each language has its own machine. */
+
+// machine geometry, in units (1 unit = --u px): globe centre and inner radius, chute and tray
 const G = { cx: 160, cy: 200, r: 130 }, CAP = 40, CHUTE = { x: 90, y: 446 }, TRAY = { x: 90, y: 474 };
 function pack(n) {
   const pts = [], step = 36.5, lim = G.r - CAP / 2 - 3;
@@ -27,7 +36,9 @@ function pack(n) {
 }
 const rot = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return (h % 70) - 35; };
 
-export default function PrizeMachine({ cat, onOpen }) {
+// isLocked(slug): the capsule cannot be won yet (the other profiles open after the four basics); its slot shows a lock and clicking it
+// goes to onOpen like any capsule (the page then explains what to finish first).
+export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
   const { t, lang } = useI18n();
   useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion);
   const ps = useMemo(() => catProfiles(cat), [cat]);
@@ -45,7 +56,8 @@ export default function PrizeMachine({ cat, onOpen }) {
   const n = shown.size, rk = rankOf(n, ps.length), pts = paidPoints();
   const nextUsd = (Math.floor(pts / POINTS_PER_USD) + 1) * POINTS_PER_USD;
   const todo = ps.filter((p) => !isDone(p));
-  const nextP = todo.find((p) => p.s !== 'additional') || todo[0];
+  const openTodo = todo.filter((p) => !isLocked(p.s)); // the capsules that can be won now
+  const nextP = openTodo.find((p) => p.s !== 'additional') || openTodo[0];
   const rankName = t(RANK_KEYS[rk.i]);
   const u = () => (machine.current ? parseFloat(getComputedStyle(machine.current).getPropertyValue('--u')) || 1 : 1);
   const at = (x, y, s = 1, r = 0, off) => [(x - CAP / 2) * u(), (y - CAP / 2) * u(), s, r, off];
@@ -127,9 +139,9 @@ export default function PrizeMachine({ cat, onOpen }) {
 
   /* ---------- lucky pick: the machine chooses the next profile ---------- */
   async function lucky() {
-    if (busy || !todo.length) return;
+    if (busy || !openTodo.length) return;
     setBusy(true); setPick(null);
-    const cand = todo[Math.floor(Math.random() * todo.length)];
+    const cand = openTodo[Math.floor(Math.random() * openTodo.length)];
     await dispense(cand.s, spots[inGlobeIndex(cand.s)] || [G.cx, G.cy]);
     setPick(cand); setBusy(false);
   }
@@ -137,12 +149,12 @@ export default function PrizeMachine({ cat, onOpen }) {
   const open = (p, i = 0) => { tap(lang, i, 'press'); onOpen(p); };
 
   const slot = (p, i) => {
-    const got = shown.has(p.s), name = t('p.' + p.s);
+    const got = shown.has(p.s), name = t('p.' + p.s), locked = !got && isLocked(p.s);
     return (
       <li key={p.s}>
-        <button type="button" className={'pm-slot ' + (got ? 'got' : '')} data-s={p.s} onClick={() => open(p, i)} title={name}
-          aria-label={got ? t('rw.slotDone', { name, n: pointsFor(p.s) }) : t('rw.slotTodo', { name, n: pointsFor(p.s) })}>
-          {got ? <Capsule slug={p.s} open className="mini" /> : <span className="pm-empty" aria-hidden="true">+{pointsFor(p.s)}</span>}
+        <button type="button" className={'pm-slot ' + (got ? 'got' : '') + (locked ? ' locked' : '')} data-s={p.s} onClick={() => open(p, i)} title={name}
+          aria-label={got ? t('rw.slotDone', { name, n: pointsFor(p.s) }) : locked ? t('rw.slotLocked', { name }) : t('rw.slotTodo', { name, n: pointsFor(p.s) })}>
+          {got ? <Capsule slug={p.s} open className="mini" /> : locked ? <ILock className="pm-lock" aria-hidden="true" /> : <span className="pm-empty" aria-hidden="true">+{pointsFor(p.s)}</span>}
         </button>
       </li>
     );
@@ -170,7 +182,7 @@ export default function PrizeMachine({ cat, onOpen }) {
             </div>
             <span className="pm-chute" aria-hidden="true"><i /></span>
             <span className="pm-tray" aria-hidden="true" />
-            <button type="button" className="pm-crank" onClick={lucky} disabled={busy || !todo.length} aria-label={t('rw.crank')} title={t('rw.crankHint')}>
+            <button type="button" className="pm-crank" onClick={lucky} disabled={busy || !openTodo.length} aria-label={t('rw.crank')} title={t('rw.crankHint')}>
               <span className="pm-crank-k" style={{ '--turns': crank }}><i /></span>
             </button>
           </div>
