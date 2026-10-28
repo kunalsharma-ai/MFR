@@ -21,3 +21,8 @@ GEMINI.md
 migrate
 mqtt
 Project/services/email/config*.tar.gz
+# Windows Identifier files
+*.Identifier
+*:Zone.Identifier
+**/*Identifier*
+

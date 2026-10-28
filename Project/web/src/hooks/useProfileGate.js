@@ -1,15 +1,5 @@
 "use client";
-// Which profiles the member has to finish before the surveys open, and what is still left.
-//
-//   1. Basic, Education, Professional and Financial are filled on the Profiles page.
-//   2. When those four are complete, the other profiles open. They are listed in the Survey section (as cards, like the Profiles page) and
-//      filled with the same profile form (/member/profiles?profile=<slug>); a completed one pays its points, raises the Quality Score and
-//      moves to "Completed" on the Profiles page.
-//   3. When every profile is complete, the surveys open. A survey that reaches the member before that is shown, but locked.
-//
-// Everything is read from the database: POST /api/v1/profile (the member's category decides the profiles: b2c, b2b, minor...),
-// POST /api/v1/me/survey (the member's surveys, with the participation status) and GET /api/v1/rewards (which profiles were paid,
-// found by the [profile:<slug>] tag).
+
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/util";
@@ -55,7 +45,7 @@ export default function useProfileGate() {
       core,
       extras,
       pending,
-      allDone: coreDone && pending.length === 0,
+      allDone: coreDone, // the surveys open with the four basics; the other profiles stay optional (see `pending`)
       paid, // { slug: points paid } from the rewards in the database
       profileSlugs: new Set(extras.map((p) => slugOf(p))), // a survey with one of these slugs is the profile itself, not a normal survey
     };
@@ -63,12 +53,7 @@ export default function useProfileGate() {
 }
 
 let syncing = null;
-/**
- * Pays what the member's completed surveys are worth, once each:
- *  - a completed profile survey: its points as a reward, so it is a completed profile (Reward Balance, Prize Machine, header)
- *  - any completed survey: +1 Quality Score
- * Safe to call as often as you like (a survey just finished, a page opened): the rewards and the score keep their own "already paid" marks.
- */
+
 export function syncSurveyRewards(user) {
   if (!user?._id || !user?.category) return Promise.resolve();
   if (syncing) return syncing;
