@@ -22,4 +22,8 @@ migrate
 mqtt
 otel-logs
 Project/services/email/config*.tar.gz
-uploads
+# Windows Identifier files
+*.Identifier
+*:Zone.Identifier
+**/*Identifier*
+

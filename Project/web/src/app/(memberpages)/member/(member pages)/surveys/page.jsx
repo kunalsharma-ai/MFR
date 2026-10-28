@@ -61,15 +61,15 @@ export default function SurveyDashboard() {
       },
     );
   }, [query]);
-  // Order of the member's journey: Basic, Education, Professional and Financial (Profiles page) -> the other profiles, taken here as
-  // surveys -> the surveys. A step stays locked until the one before it is complete (see hooks/useProfileGate.js).
+  // Order of the member's journey: Basic, Education, Professional and Financial (Profiles page). Once those four are complete,
+  // the other profiles and the surveys are all open together (see hooks/useProfileGate.js).
   const gate = useProfileGate();
   const visibleSurveys = (surveys || []).filter((s) => !doneProfiles.includes(String(s?.slug || "").toLowerCase()));
   const isProfileSurvey = (s) => gate.profileSlugs.has(String(s?.slug || "").toLowerCase());
   // The list: the profiles still to complete first (the same cards as the Profiles page), then the surveys. Both come from the database.
   const profileRows = gate.pending.map((p) => ({ _id: p._id, slug: p.slug, name: p.name, points: p.points, loi: p.loi, questions: p.questions, kind: "profile", participationStatus: "invited" }));
   const normalSurveys = visibleSurveys.filter((s) => !isProfileSurvey(s));
-  const surveysLocked = gate.loading || !gate.allDone;
+  const surveysLocked = gate.loading || !gate.coreDone; // surveys open as soon as the four basic profiles are complete
   const listRows = [...profileRows, ...normalSurveys.map((s) => ({ ...s, kind: "survey" }))];
   const availableSurveys = visibleSurveys.filter((s) =>
     permittedStatus.includes(s.participationStatus),
@@ -357,7 +357,7 @@ function SurveyList({ surveys, query, isLoading, gate, surveysLocked }) {
 
 // One card of the list, in the design of the Profiles page (WorldTile).
 //  - a profile: opens the profile form once the four basics are complete (until then it is locked)
-//  - a survey: opens the survey once every profile is complete (until then it is locked)
+//  - a survey: opens the survey once the four basics are complete (until then it is locked)
 function SurveyTile({ row, gate, surveysLocked, router, onLocked }) {
   if (row.kind === "profile") {
     const locked = !gate.coreDone;
@@ -383,7 +383,7 @@ function SurveyTile({ row, gate, surveysLocked, router, onLocked }) {
       pill="Start"
       points={row.points}
       locked={surveysLocked}
-      title={surveysLocked ? "Complete your profiles first" : undefined}
+      title={surveysLocked ? "Complete your Basic, Education, Professional and Financial profiles first" : undefined}
       onClick={() => {
         if (surveysLocked) return onLocked();
         if (canStart) router.push(`/survey?name=${row.slug}`);

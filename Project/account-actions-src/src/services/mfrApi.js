@@ -1,14 +1,4 @@
-// MyFrequentRewards API client for this page: ONE endpoint, POST /api/v1/auth/delete
-//
-//   body:      { id, action, password }
-//                id       the member id the page was opened with (?id=...); the server must still use the signed-in member
-//                action   30 | 60 | 90 -> deactivate for that many days; -1 -> put on hold (no end date); "Delete" -> delete the account
-//                password the member's password, typed in the Verify step; the server checks it
-//   success:   { status: "success", data?: { requestId | id } }
-//   failure:   { status: "error", message }   (a message about the password sends the member back to the Verify step)
-//
-// The page is served from the same origin as the site, so the member's session cookie goes with the request. The Verify step does not call
-// the server on its own: it keeps the password in memory (never stored) until the request is sent, so the server sees one call and decides.
+
 import { ACTIONS } from '../config/actions.js';
 import { ApiError } from './httpApi.js';
 
