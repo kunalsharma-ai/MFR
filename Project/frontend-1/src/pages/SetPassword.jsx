@@ -523,13 +523,7 @@ export default function SetPassword() {
 
                                       popper: {
                                         sx: { zIndex: 15000 },
-                                      },
-                                      listbox: {
-                                        sx: {
-                                          maxHeight: 280,
-                                          overflowY: "auto",
-                                        },
-                                      },
+                                      }
                                     }}
                                     renderInput={(params) => (
                                       <TextField
