@@ -22,7 +22,7 @@ const COLS = [
       ['/paid-surveys-for-consumers', 'For consumers'],
       ['/paid-surveys-for-professionals', 'For professionals'],
       ['/who-can-join', 'Who can join'],
-      ['/rewards-and-payouts', 'Rewards & payouts'],
+      ['/rewards', 'Rewards & payouts'],
     ],
   },
   {
@@ -46,7 +46,7 @@ const COLS = [
       ['/cookies', 'Cookies Policy'],
       ['/terms', 'Terms of Use'],
       ['/profiling', 'Profiling & Quality Score'],
-      ['/quality-and-data-security', 'Quality & security'],
+      ['/trust-and-safety', 'Quality & security'],
     ],
   },
 ];

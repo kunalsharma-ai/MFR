@@ -464,6 +464,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 35px;
+  width: min(1520px, 100% - 32px);
 }
 .brand .blogo {
   width: 184px;

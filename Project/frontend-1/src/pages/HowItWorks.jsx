@@ -54,7 +54,7 @@ export default function HowItWorks() {
       >
         <div className="ph-actions">
           <Link to="/sign-up" className="btn btn-light">Join free <Icon name="arrow" size={18} /></Link>
-          <Link to="/rewards-and-payouts" className="btn btn-outline-light">See rewards</Link>
+          <Link to="/rewards" className="btn btn-outline-light">See rewards</Link>
         </div>
       </PageHero>
 

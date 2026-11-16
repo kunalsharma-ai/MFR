@@ -149,7 +149,7 @@ function ScratchRewards({ title, sub }) {
             <li><small>Lands as</small><b>{LANDS[p.id][1]}</b></li>
             <li><small>Available</small><b>{p.only === 'IN' ? 'India only' : 'All member countries'}</b></li>
           </ul>
-          <Link to="/rewards-and-payouts" className="scw-link">How claims work <Icon name="arrow" size={16} /></Link>
+          <Link to="/rewards" className="scw-link">How claims work <Icon name="arrow" size={16} /></Link>
         </div>
       </div>
     </section>
@@ -181,7 +181,7 @@ function PayoutRoute() {
               </li>
             ))}
           </ul>
-          <Link to="/rewards-and-payouts" className="link-arrow prt-link">How claims work <Icon name="arrow" size={16} /></Link>
+          <Link to="/rewards" className="link-arrow prt-link">How claims work <Icon name="arrow" size={16} /></Link>
         </div>
         <div className="prt-console" aria-live="polite">
           <div className="prt-top"><span className="prt-dots" aria-hidden="true"><i /><i /><i /></span><b>Honorarium transfer</b><span className="prt-live"><i /> Live route</span></div>

@@ -58,7 +58,7 @@ export function QualityRadar({ withLink = true }) {
       </div>
       {withLink ? (
         <div className="container radar-foot reveal">
-          <Link to="/quality-and-data-security" className="link-arrow light">Explore quality & security <Icon name="arrow" size={16} /></Link>
+          <Link to="/trust-and-safety" className="link-arrow light">Explore quality & security <Icon name="arrow" size={16} /></Link>
           <Link to="/profiling" className="link-arrow light">Profiling & quality score <Icon name="arrow" size={16} /></Link>
         </div>
       ) : null}

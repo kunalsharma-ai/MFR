@@ -223,7 +223,7 @@ export function SurveyBoard() {
         {seg === 'pro' ? <DemandMap list={PRO_SURVEYS} visible={visible} key="pro" /> : <SurveyWheel list={ALL_CONSUMER_SURVEYS} visible={visible} key="con" />}
         <div className="sv-cta">
           <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-shine">Join free &amp; get invitations <Icon name="arrow" size={18} /></Link>
-          <Link to="/rewards-and-payouts" className="btn btn-ghost-dark">How rewards are paid</Link>
+          <Link to="/rewards" className="btn btn-ghost-dark">How rewards are paid</Link>
         </div>
         <p className="arc-note">{seg === 'pro' ? 'Professional studies are typically rewarded more than consumer surveys; the exact reward is shown in each invitation.' : 'Rewards shown are typical for each category; the exact reward is shown in each invitation.'} Earnings are not guaranteed.</p>
       </div>

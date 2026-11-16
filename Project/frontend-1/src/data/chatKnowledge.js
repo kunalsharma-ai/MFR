@@ -12,11 +12,11 @@ import { BLOG_FAQS } from './blogs/faqindex.js';
 export const SRC = {
   home: { path: '/', label: 'Home' },
   how: { path: '/how-it-works', label: 'How It Works' },
-  rewards: { path: '/rewards-and-payouts', label: 'Rewards & Payouts' },
+  rewards: { path: '/rewards', label: 'Rewards & Payouts' },
   consumers: { path: '/paid-surveys-for-consumers', label: 'For Consumers' },
   pros: { path: '/paid-surveys-for-professionals', label: 'For Professionals' },
   who: { path: '/paid-surveys-for-consumers#countries', label: 'Countries & profiles' },
-  quality: { path: '/quality-and-data-security', label: 'Quality & Data Security' },
+  quality: { path: '/trust-and-safety', label: 'Quality & Data Security' },
   about: { path: '/about-us', label: 'About Us' },
   faq: { path: '/faq', label: 'FAQ' },
   contact: { path: '/contact-us', label: 'Contact Us' },

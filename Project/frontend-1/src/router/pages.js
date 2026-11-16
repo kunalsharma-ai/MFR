@@ -7,11 +7,11 @@ import { matchPath } from 'react-router-dom';
 export const PAGE_ROUTES = [
   { path: '/', page: 'Home' },
   { path: '/how-it-works', page: 'HowItWorks' },
-  { path: '/rewards-and-payouts', page: 'Rewards' },
+  { path: '/rewards', page: 'Rewards' },
   { path: '/paid-surveys-for-consumers', page: 'Consumers' },
   { path: '/paid-surveys-for-professionals', page: 'Professionals' },
   { path: '/who-can-join', page: 'WhoCanJoin' },
-  { path: '/quality-and-data-security', page: 'Quality' },
+  { path: '/trust-and-safety', page: 'Quality' },
   { path: '/about-us', page: 'About' },
   { path: '/about-us/reviews', page: 'Reviews' },
   { path: '/scan-and-connect', page: 'Connect' },

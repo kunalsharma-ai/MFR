@@ -72,7 +72,7 @@ export default function Faq() {
                   <button type="button" className="btn btn-primary btn-sm" onClick={() => askLiveHelp(q)}><Icon name="chat" size={16} /> Ask Live Help</button>
                 </div>
               )}
-              <p className="faq-more">Need more? Read <Link to="/blog/how-to-earn-money-online-with-surveys">how to earn money online</Link>, <Link to="/rewards-and-payouts">rewards & payouts</Link>, <Link to="/quality-and-data-security">quality & security</Link> or <Link to="/contact-us">contact us</Link>. Data rights for EU members are set out in the <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj" target="_blank" rel="noopener noreferrer">GDPR</a>.</p>
+              <p className="faq-more">Need more? Read <Link to="/blog/how-to-earn-money-online-with-surveys">how to earn money online</Link>, <Link to="/rewards">rewards & payouts</Link>, <Link to="/trust-and-safety">quality & security</Link> or <Link to="/contact-us">contact us</Link>. Data rights for EU members are set out in the <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj" target="_blank" rel="noopener noreferrer">GDPR</a>.</p>
             </div>
             <aside className="fqp-aside" aria-label="More help">
               <div className="fqp-live">

@@ -4,10 +4,10 @@ import { BLOG_META as BLOGS } from './data/blogs/meta.js';
 export const STATIC_ROUTES = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/how-it-works', priority: '0.9', changefreq: 'monthly' },
-  { path: '/rewards-and-payouts', priority: '0.9', changefreq: 'monthly' },
+  { path: '/rewards', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-consumers', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-professionals', priority: '0.9', changefreq: 'monthly' },
-  { path: '/quality-and-data-security', priority: '0.8', changefreq: 'monthly' },
+  { path: '/trust-and-safety', priority: '0.8', changefreq: 'monthly' },
   { path: '/who-can-join', priority: '0.8', changefreq: 'monthly' },
   { path: '/about-us', priority: '0.7', changefreq: 'monthly' },
   { path: '/about-us/reviews', priority: '0.7', changefreq: 'weekly' },

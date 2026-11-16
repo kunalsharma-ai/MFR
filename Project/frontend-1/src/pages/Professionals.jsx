@@ -94,7 +94,7 @@ export default function Professionals() {
               </li>
             ))}
           </ol>
-          <p className="idp-note reveal">Your name, employer and contact details are never passed to research clients. See the full list of <Link to="/quality-and-data-security">quality and security checks</Link> and our <Link to="/privacy">privacy policy</Link>. Market research standards such as <a href="https://www.iso.org/standard/73671.html" target="_blank" rel="noopener noreferrer">ISO 20252</a> guide how our parent company works.</p>
+          <p className="idp-note reveal">Your name, employer and contact details are never passed to research clients. See the full list of <Link to="/trust-and-safety">quality and security checks</Link> and our <Link to="/privacy">privacy policy</Link>. Market research standards such as <a href="https://www.iso.org/standard/73671.html" target="_blank" rel="noopener noreferrer">ISO 20252</a> guide how our parent company works.</p>
         </div>
       </section>
 

@@ -87,7 +87,7 @@ export default function About() {
           <div>
             <p className="eyebrow">Credentials</p>
             <h2 id="ab-iso">Quality you can verify</h2>
-            <p className="sec-sub">Insights · Analytics · Growth. Our parent company is certified to {BRAND.iso.join(', ')}. See our <Link to="/quality-and-data-security">quality & security</Link> approach.</p>
+            <p className="sec-sub">Insights · Analytics · Growth. Our parent company is certified to {BRAND.iso.join(', ')}. See our <Link to="/trust-and-safety">quality & security</Link> approach.</p>
           </div>
         </div>
       </section>

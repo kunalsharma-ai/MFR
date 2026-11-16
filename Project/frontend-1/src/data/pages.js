@@ -22,7 +22,7 @@ export const PAGES = {
     h1: 'How to earn money online with MyFrequentRewards',
   },
   rewards: {
-    path: '/rewards-and-payouts',
+    path: '/rewards',
     name: 'Rewards & Payouts',
     primaryKeyword: 'earn money online cash',
     secondaryKeywords: ['paid surveys for cash', 'surveys for cash', 'make money online paypal', 'surveys for amazon gift cards', 'earn cash online', 'surveys that pay real money'],
@@ -58,7 +58,7 @@ export const PAGES = {
     h1: 'Every voice counts — see who can join',
   },
   quality: {
-    path: '/quality-and-data-security',
+    path: '/trust-and-safety',
     name: 'Quality & Security',
     primaryKeyword: 'survey data security',
     secondaryKeywords: ['legit survey sites', 'paid surveys legit', 'surveys for money legit', 'trusted online earning sites', 'safe ways to make money online', 'survey verification'],

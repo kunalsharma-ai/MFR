@@ -124,7 +124,7 @@ export default function Consumers() {
               </li>
             ))}
           </ol>
-          <p className="ojr-note reveal">At MyFrequentRewards you never pay to take part — keep your profile honest, answer invitations that match you and claim your balance when you are ready. Learn the basics in <Link to="/blog/earn-money-online-free-guide">earn money online free</Link>, or see the <Link to="/quality-and-data-security">security checks</Link> that keep the community fair.</p>
+          <p className="ojr-note reveal">At MyFrequentRewards you never pay to take part — keep your profile honest, answer invitations that match you and claim your balance when you are ready. Learn the basics in <Link to="/blog/earn-money-online-free-guide">earn money online free</Link>, or see the <Link to="/trust-and-safety">security checks</Link> that keep the community fair.</p>
         </div>
       </section>
 
