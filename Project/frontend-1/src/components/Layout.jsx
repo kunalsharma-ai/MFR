@@ -12,6 +12,7 @@ import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
 import { PagesContext, pageFor } from '../router/pages.js';
 import { welcomePop } from '../utils/sound.js';
+import { initMetaPixel, trackPageView } from '../utils/metaPixel.js';
 
 // The language picker and the translation pill are only downloaded when they are needed.
 const LanguagePicker = lazy(() => import('./LanguagePicker.jsx').then((m) => ({ default: m.LanguagePicker })));
@@ -27,6 +28,10 @@ export default function Layout({ children }) {
   const pages = useContext(PagesContext);
   useEffect(() => setMounted(true), []);
   useEffect(() => welcomePop(), []);
+
+  // Meta Pixel: loads only after analytics consent (cookie banner); then one PageView per route change.
+  useEffect(() => initMetaPixel(), []);
+  useEffect(() => trackPageView(pathname), [pathname]);
 
   // Prefetch a page's code the moment a visitor shows intent (hover, touch, keyboard focus) so the click is
   // instant; then, once the browser is idle, quietly fetch the most-visited pages.

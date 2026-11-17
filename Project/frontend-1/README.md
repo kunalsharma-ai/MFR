@@ -314,6 +314,8 @@ Paste the approved GTM, GA4 or Meta Pixel snippet **once**, at the marker in `in
 window.addEventListener('mfr:consent', (e) => { if (e.detail.analytics) { /* load GA4 / Pixel */ } });
 // returning visitors: JSON.parse(localStorage.getItem('mfr_cookie_choice'))?.analytics
 ```
+The **Meta Pixel** (ID 1113266537846357, override with `VITE_META_PIXEL_ID`) is already wired this way in `src/utils/metaPixel.js`: it loads only after "Accept all", tracks one `PageView` per route, and `trackEvent()` sends other events.
+
 Never send email addresses, phone numbers, passwords or answers to analytics. Suggested events: `sign_up_start`, `sign_up_complete` (after backend success), `cta_click`, `live_help_open`, `whatsapp_click`, `review_submit`.
 
 ## 10. Troubleshooting
