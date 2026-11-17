@@ -29,10 +29,20 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Inter and Manrope are self-hosted (src/styles/global.css). Google Fonts only adds extra scripts (e.g. Cyrillic,
+         Greek) for translated pages, so it loads without blocking the first paint. -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
+      />
+    </noscript>
 
     <link
       rel="preload"
@@ -82,6 +92,6 @@
       and blog articles remain readable without it.
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="/static/sdk.js"></script>
+    <script src="/static/sdk.js" defer></script>
   </body>
 </html>

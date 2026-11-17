@@ -3,20 +3,29 @@ import { BRAND, CONTACT, SITE_URL, SOCIALS } from '../data/site.js';
 
 export const organizationLd = () => ({
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  // Organization + LocalBusiness: one node, so search engines and audit tools see the registered office (New Delhi).
+  '@type': ['Organization', 'LocalBusiness'],
   '@id': `${SITE_URL}/#organization`,
   name: BRAND.name,
   legalName: BRAND.legalName,
   url: SITE_URL + '/',
   logo: SITE_URL + BRAND.logoPng,
+  image: SITE_URL + BRAND.ogImage,
   email: CONTACT.email,
   telephone: CONTACT.phoneHref.replace('tel:', ''),
   address: {
     '@type': 'PostalAddress',
     streetAddress: CONTACT.address.street,
     addressLocality: CONTACT.address.city,
+    addressRegion: CONTACT.address.region,
     postalCode: CONTACT.address.postalCode,
     addressCountry: CONTACT.address.country,
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: CONTACT.email,
+    telephone: CONTACT.phoneHref.replace('tel:', ''),
   },
   parentOrganization: { '@type': 'Organization', name: BRAND.parent.name, url: BRAND.parent.url },
   sameAs: SOCIALS.map((s) => s.url),

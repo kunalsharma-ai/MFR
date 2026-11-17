@@ -30,6 +30,12 @@ export default function useActivityFeed() {
   const [items, setItems] = useState(cache || []);
   useEffect(() => {
     if (cache) return undefined;
+    // Production builds delete the preview chunk (scripts/prerender.mjs), so importing it there 404s and logs a
+    // "Failed to fetch dynamically imported module" error on every page. Only load it when preview data is allowed.
+    if (!DEMO_MODE) {
+      cache = [];
+      return undefined;
+    }
     let alive = true;
     (async () => {
       try {

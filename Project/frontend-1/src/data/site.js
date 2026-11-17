@@ -23,7 +23,7 @@ export const CONTACT = {
   phoneHref: 'tel:+918130015743',
   whatsapp: '918178200573',
   whatsappDisplay: '+91 81782 00573',
-  address: { street: 'Mangolpur Kalan', city: 'New Delhi', postalCode: '110085', country: 'IN' },
+  address: { street: 'Mangolpur Kalan', city: 'New Delhi', region: 'Delhi', postalCode: '110085', country: 'IN' },
 };
 
 export const whatsappLink = (text = 'Hi MyFrequentRewards team, I need help with my account.') =>
