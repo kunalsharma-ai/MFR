@@ -33,7 +33,7 @@ The website is a **production business asset**, not a prototype.
 - **Brand colours:** navy `#0B1E5B`, deep navy `#060F33`, orange `#FF8A00`, amber `#FFC233`. Complementary accents, each tied to a meaning: blue `#2F6BFF` (professionals/trust), teal `#14C9B5` (security/success), violet `#8B5CF6`, pink `#FF5E7E` (consumers/lifestyle).
 - **Fonts:** Manrope 600–700 for headings, numbers and statistics; Inter 400–500 for body text and 500–600 for buttons and navigation.
 - **Contact:** Mangolpur Kalan, New Delhi – 110085 · +91 81300 15743 · WhatsApp +91 81782 00573 · support@myfrequentrewards.com
-- **Socials (footer, with animated cards and QR codes):** YouTube https://www.youtube.com/@MyFrequentRewards · Facebook https://www.facebook.com/myfrequentreswards/ · Instagram https://www.instagram.com/myfrequentrewards/ · LinkedIn https://www.linkedin.com/company/myfrequentrewards
+- **Socials (footer, with animated cards and QR codes):** YouTube https://www.youtube.com/@MyFrequentRewards · Facebook https://www.facebook.com/myfrequentreswards/ · Instagram https://www.instagram.com/myfrequentrewards/ · LinkedIn https://www.linkedin.com/company/myfrequentrewards · X https://x.com/MFR_Community
 - **Survey invitations:** Account Dashboard, SMS, WhatsApp, Email.
 - **Payouts:** PayPal, UPI, Wire Transfer, Amazon Gift Card.
 

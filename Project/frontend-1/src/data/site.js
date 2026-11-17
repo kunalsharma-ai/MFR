@@ -29,11 +29,14 @@ export const CONTACT = {
 export const whatsappLink = (text = 'Hi MyFrequentRewards team, I need help with my account.') =>
   `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`;
 
+export const X_HANDLE = '@MFR_Community'; // twitter:site on every page
+
 export const SOCIALS = [
   { id: 'youtube', name: 'YouTube', handle: '@MyFrequentRewards', url: 'https://www.youtube.com/@MyFrequentRewards', qr: '/images/qr/youtube.svg', color: '#FF0033', cta: 'Watch earning tips' },
   { id: 'facebook', name: 'Facebook', handle: '/myfrequentreswards', url: 'https://www.facebook.com/myfrequentreswards/', qr: '/images/qr/facebook.svg', color: '#1877F2', cta: 'Join the community' },
   { id: 'instagram', name: 'Instagram', handle: '@myfrequentrewards', url: 'https://www.instagram.com/myfrequentrewards/', qr: '/images/qr/instagram.svg', color: '#E1306C', cta: 'See reward drops' },
   { id: 'linkedin', name: 'LinkedIn', handle: 'MyFrequentRewards', url: 'https://www.linkedin.com/company/myfrequentrewards', qr: '/images/qr/linkedin.svg', color: '#0A66C2', cta: 'For professionals' },
+  { id: 'x', name: 'X', handle: '@MFR_Community', url: 'https://x.com/MFR_Community', qr: '/images/qr/x.svg', color: '#0F1419', cta: 'Get survey updates' },
 ];
 
 export const NOTIFY_CHANNELS = [

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from 'react';
-import { BRAND, SITE_URL } from '../data/site.js';
+import { BRAND, SITE_URL, X_HANDLE } from '../data/site.js';
 
 // Lightweight head manager (no extra dependency).
 // - During prerender (SSR) the meta is pushed into HeadContext and written into static HTML.
@@ -25,6 +25,7 @@ export function buildHead({ title, description, path = '/', image, type = 'websi
     `<meta property="og:image" content="${esc(img)}" />`,
     `<meta property="og:locale" content="en_IN" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:site" content="${X_HANDLE}" />`,
     `<meta name="twitter:title" content="${esc(title)}" />`,
     `<meta name="twitter:description" content="${esc(description)}" />`,
     `<meta name="twitter:image" content="${esc(img)}" />`,

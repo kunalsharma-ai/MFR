@@ -20,6 +20,7 @@ export const CONNECT_BRANDS = [
       { id: 'facebook', label: 'Facebook', handle: '/myfrequentreswards', url: 'https://www.facebook.com/myfrequentreswards/', qr: '/images/qr/mfr-facebook.svg' },
       { id: 'instagram', label: 'Instagram', handle: '@myfrequentrewards', url: 'https://www.instagram.com/myfrequentrewards/', qr: '/images/qr/mfr-instagram.svg' },
       { id: 'linkedin', label: 'LinkedIn', handle: 'MyFrequentRewards', url: 'https://www.linkedin.com/company/myfrequentrewards', qr: '/images/qr/mfr-linkedin.svg' },
+      { id: 'x', label: 'X', handle: '@MFR_Community', url: 'https://x.com/MFR_Community', qr: '/images/qr/mfr-x.svg' },
       { id: 'whatsapp', label: 'WhatsApp', handle: '+91 81782 00573', url: 'https://wa.me/918178200573', qr: '/images/qr/mfr-whatsapp.svg' },
     ],
   },
