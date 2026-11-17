@@ -168,7 +168,6 @@ export function welcomeSound({ volume = 0.15 } = {}) {
 let welcomed = false;
 export function welcomePop() {
   if (typeof window === 'undefined' || welcomed) return () => {};
-  if (typeof window === 'undefined' || welcomed) return () => {};
   const evs = ['pointerdown', 'keydown', 'touchstart'];
   const off = () => evs.forEach((e) => window.removeEventListener(e, fire, true));
   function fire() {
@@ -183,6 +182,9 @@ export function welcomePop() {
   // If the browser already allows sound for this site, play straight away as the page opens.
   const early = setTimeout(() => {
     if (welcomed || !soundOn()) return;
+    // Without a user gesture Chrome refuses to start an AudioContext and logs a console warning on every page load,
+    // which audit tools report as a JavaScript error. Only try early when the visitor has already interacted.
+    if (!navigator.userActivation || !navigator.userActivation.hasBeenActive) return;
     const c = getCtx();
     if (!c) return;
     const tryNow = () => { if (!welcomed && c.state === 'running') { welcomed = true; off(); welcomeSound(); } };

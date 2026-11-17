@@ -45,8 +45,16 @@ export default function Layout({ children }) {
     document.addEventListener('touchstart', want, opts);
     document.addEventListener('focusin', want);
     const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 2500));
-    const id = idle(() => ['SignUp', 'HowItWorks', 'Rewards', 'BlogList'].forEach((n) => pages.load(n).catch(() => {})), { timeout: 6000 });
+    let id;
+    // Wait for the page's own load to finish first, so these prefetches never compete with it (they were landing
+    // before the load event and pushing back "all scripts complete" in speed audits).
+    const startIdle = () => {
+      id = idle(() => ['SignUp', 'HowItWorks', 'Rewards', 'BlogList'].forEach((n) => pages.load(n).catch(() => {})), { timeout: 6000 });
+    };
+    if (document.readyState === 'complete') startIdle();
+    else window.addEventListener('load', startIdle, { once: true });
     return () => {
+      window.removeEventListener('load', startIdle);
       document.removeEventListener('pointerover', want, opts);
       document.removeEventListener('touchstart', want, opts);
       document.removeEventListener('focusin', want);
