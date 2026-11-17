@@ -6,7 +6,7 @@ import { BRAND, CONTACT, PAYOUTS, whatsappLink } from '../data/site.js';
 import { CONNECT_BRANDS } from '../data/connect.js';
 
 const MFR = CONNECT_BRANDS[0];
-const QR_TINT = { website: '#FF8A00', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', whatsapp: '#25D366' };
+const QR_TINT = { website: '#FF8A00', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', x: '#0F1419', whatsapp: '#25D366' };
 
 // Footer — "Reward launchpad":
 // 1) launch strip with a spinning 3D MFR coin and the main calls to action,

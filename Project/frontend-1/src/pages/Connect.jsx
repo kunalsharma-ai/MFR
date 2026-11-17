@@ -13,8 +13,8 @@ import { CONNECT_BRANDS, liveChannels } from '../data/connect.js';
 // scripts/generate-qr.mjs). Channels without a confirmed URL are simply not shown.
 const page = PAGES.connect;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Scan & Connect', path: page.path }];
-const ICON = { website: 'globe', youtube: 'youtube', facebook: 'facebook', instagram: 'instagram', linkedin: 'linkedin', whatsapp: 'whatsapp' };
-const TINT = { website: '#6D5BF7', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', whatsapp: '#25D366' };
+const ICON = { website: 'globe', youtube: 'youtube', facebook: 'facebook', instagram: 'instagram', linkedin: 'linkedin', x: 'x', whatsapp: 'whatsapp' };
+const TINT = { website: '#6D5BF7', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', x: '#0F1419', whatsapp: '#25D366' };
 
 function QrCube() {
   const faces = CONNECT_BRANDS.map((b) => ({ b, c: liveChannels(b)[0] })).filter((x) => x.c);
