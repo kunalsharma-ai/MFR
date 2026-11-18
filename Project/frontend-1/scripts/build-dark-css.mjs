@@ -46,24 +46,32 @@ function toHsl({ r, g, b }) {
   return { h, s, l };
 }
 const fmt = (h, s, l, a) => (a < 1 ? `hsla(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%, ${+a.toFixed(3)})` : `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`);
-// light surface → dark surface (white → #141b31-ish navy)
+// light surface → dark surface. Every light fill becomes the same deep-navy family; only a faint tint of the
+// original hue is kept, so cream/peach/pink panels never turn into muddy browns ("photo negative" look).
+function grade(h, s) {
+  if (s < 0.12) return [228, 0.36];
+  const warm = h < 75 || h > 315;
+  // warm hues lean into navy-violet, cool hues keep their own hue with low saturation
+  return warm ? [h > 315 ? 285 : 255, Math.min(0.3, 0.16 + s * 0.12)] : [h, Math.min(0.42, 0.2 + s * 0.2)];
+}
 function darkSurface(c) {
   const { h, s, l } = toHsl(c);
   if (l < 0.72 || c.a < 0.5) return null;
-  const neutral = s < 0.12;
-  return fmt(neutral ? 228 : h, neutral ? 0.38 : Math.min(0.55, s * 0.55), 0.11 + (1 - l) * 0.55, c.a);
+  const [gh, gs] = grade(h, s);
+  return fmt(gh, gs, 0.1 + (1 - l) * 0.45, c.a);
 }
 // light border → subtle dark border
 function darkLine(c) {
   const { h, s, l } = toHsl(c);
   if (l < 0.72) return null;
-  const neutral = s < 0.12;
-  return fmt(neutral ? 228 : h, neutral ? 0.3 : Math.min(0.5, s * 0.5), 0.24, Math.max(c.a, 0.6));
+  const [gh, gs] = grade(h, s);
+  return fmt(gh, gs, 0.24, Math.max(c.a, 0.6));
 }
 // dark text → light text
+let textCut = 0.38;
 function lightText(c) {
   const { h, s, l } = toHsl(c);
-  if (l > 0.38) return null;
+  if (l > textCut) return null;
   return fmt(h, Math.min(0.6, s * 0.7), 0.92 - l * 0.45, c.a);
 }
 const COLOR_RE = /#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|\b(?:white|snow|ivory|whitesmoke|ghostwhite|aliceblue)\b/gi;
@@ -146,6 +154,8 @@ function walk(css) {
     }
     // A rule that paints its own coloured fill (orange, yellow, brand gradients…) keeps its text colour too.
     let keepsFill = false;
+    // If this rule paints a light surface (which turns dark), mid-tone text on it must go light too.
+    textCut = splitTop(body, ';').some((d) => { const k = d.indexOf(':'); return k > 0 && BG.test(d.slice(0, k).trim().toLowerCase()) && darkDecl(d.slice(0, k), d.slice(k + 1).trim()); }) ? 0.56 : 0.38;
     const parts = splitTop(body, ';').map((d) => {
       const k = d.indexOf(':');
       if (k < 0) return null;

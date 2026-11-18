@@ -3,7 +3,7 @@ import { getMode, MODE_EVENT, setMode } from '../../utils/theme.js';
 
 // Dark / light switch (v3.0): a day-sky pill with a sun that rolls across and turns into a crescent moon over a
 // starry night. Switching plays a sound and reveals the new mode in a circle that grows from the switch.
-export default function ThemeToggle({ className = '' }) {
+export default function ThemeToggle({ className = '', labels = false }) {
   const [mode, setM] = useState('light');
   useEffect(() => {
     setM(getMode());
@@ -16,7 +16,12 @@ export default function ThemeToggle({ className = '' }) {
     const r = e.currentTarget.getBoundingClientRect();
     setMode(dark ? 'light' : 'dark', { x: r.left + r.width / 2, y: r.top + r.height / 2 });
   };
-  return (
+  const pick = (m) => (e) => {
+    if (m === mode) return;
+    const r = e.currentTarget.parentElement.querySelector('.thm-tg').getBoundingClientRect();
+    setMode(m, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  };
+  const sw = (
     <button type="button" className={`thm-tg${dark ? ' is-dark' : ''} ${className}`} onClick={flip} role="switch" aria-checked={dark} aria-label="Dark mode">
       <span className="thm-sky" aria-hidden="true">
         <i className="thm-cloud c1" /><i className="thm-cloud c2" />
@@ -25,5 +30,14 @@ export default function ThemeToggle({ className = '' }) {
       <span className="thm-knob" aria-hidden="true"><i className="thm-crater" /><i className="thm-crater c2" /></span>
       <span className="thm-txt">{dark ? 'Dark' : 'Light'}</span>
     </button>
+  );
+  if (!labels) return sw;
+  // Footer version: clickable "Light" and "Dark" labels on both sides so the choice is obvious.
+  return (
+    <span className="thm-pick">
+      <button type="button" className={`thm-opt${dark ? '' : ' is-on'}`} onClick={pick('light')} aria-pressed={!dark}><span aria-hidden="true">☀️</span> Light mode</button>
+      {sw}
+      <button type="button" className={`thm-opt${dark ? ' is-on' : ''}`} onClick={pick('dark')} aria-pressed={dark}>Dark mode <span aria-hidden="true">🌙</span></button>
+    </span>
   );
 }

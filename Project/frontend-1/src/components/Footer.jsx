@@ -169,8 +169,8 @@ export default function Footer() {
 
       <div className="container">
         <div className="ft-modes" role="group" aria-label="Display and sound">
-          <span className="ft-modes-lab">Display</span>
-          <ThemeToggle />
+          <span className="ft-modes-lab">Theme</span>
+          <ThemeToggle labels />
           <span className="ft-modes-lab">Sound</span>
           <SoundToggle />
         </div>

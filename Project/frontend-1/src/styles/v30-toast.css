@@ -125,3 +125,23 @@
 @keyframes rwtStar { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(90deg); } }
 @media (max-width: 560px) { .rwt { width: min(228px, calc(100vw - 24px)); padding: 5px 20px 6px 5px; } .rwt-av { width: 28px; height: 28px; } }
 @media (prefers-reduced-motion: reduce) { .rwt-stars { display: none; } .rwt.is-in .rwt-av, .rwt.is-in .rwt-amt { animation: none; } }
+
+/* Final size (Kunal, 18 Nov, third pass): a little larger than the mini card, tag back on */
+.rwt { width: min(262px, calc(100vw - 24px)); gap: 9px; padding: 7px 24px 8px 7px; border-radius: 16px; }
+.rwt-av { width: 38px; height: 38px; border-radius: 12px; font-size: .74rem; }
+.rwt-av svg { width: 17px; height: 17px; }
+.rwt-tag { display: inline-flex; font-size: .5rem; padding: 0 7px 0 5px; }
+.rwt-l1 { font-size: .74rem; }
+.rwt-amt { font-size: .92rem; }
+.rwt-l2 { font-size: .62rem; }
+.rwt-x { width: 18px; height: 18px; top: 4px; right: 4px; }
+.rwt-burst { left: 26px; }
+@keyframes rwtMorphS {
+  0% { opacity: 0; clip-path: circle(0 at 26px 50%); transform: translateY(34px) scale(.6) rotate(-14deg); }
+  28% { opacity: 1; clip-path: circle(22px at 26px 50%); transform: translateY(-10px) scale(1.08) rotate(4deg); }
+  42% { clip-path: circle(22px at 26px 50%); transform: translateY(0) scale(.96) rotate(-2deg); }
+  70% { clip-path: inset(0 round 16px); transform: scale(1.04); }
+  84% { transform: scale(.98) rotate(.6deg); }
+  100% { opacity: 1; clip-path: inset(0 round 16px); transform: none; }
+}
+@media (max-width: 560px) { .rwt { width: min(252px, calc(100vw - 24px)); padding: 6px 22px 7px 6px; } .rwt-av { width: 34px; height: 34px; } }

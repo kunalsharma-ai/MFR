@@ -74,3 +74,13 @@ html.mode-vt::view-transition-new(root) { z-index: 2; }
   .cmp-stage:not(.is-auto) .cmp-dots { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cmp-dots { display: none; } }
+
+/* Footer theme picker: labelled options either side of the switch */
+.ft-modes { gap: 16px 20px; padding: 16px 26px; background: linear-gradient(135deg, rgba(255, 194, 51, .1), rgba(139, 92, 246, .12)); border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 0 0 1px rgba(255, 194, 51, .08), 0 20px 50px -30px rgba(139, 92, 246, .9); }
+.thm-pick { display: inline-flex; align-items: center; gap: 10px; }
+.thm-opt { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: transparent; color: #b9c4e6; font: 700 .82rem var(--font-b); cursor: pointer; transition: background .3s, color .3s, border-color .3s, transform .3s; }
+.thm-opt:hover { color: #fff; transform: translateY(-1px); }
+.thm-opt.is-on { color: #0B1E5B; background: linear-gradient(135deg, #FFE08A, #FFC233); border-color: transparent; box-shadow: 0 8px 18px -8px rgba(255, 194, 51, .8); }
+.thm-pick .thm-tg.is-dark ~ .thm-opt.is-on { color: #fff; background: linear-gradient(135deg, #3b2f8f, #6d4bd8); box-shadow: 0 8px 18px -8px rgba(139, 92, 246, .9); }
+.thm-opt:focus-visible { outline: 3px solid #FFC233; outline-offset: 2px; }
+@media (max-width: 560px) { .ft-modes { border-radius: 26px; padding: 14px 16px; } .thm-pick { flex-wrap: wrap; justify-content: center; } .thm-opt { height: 32px; padding: 0 11px; font-size: .76rem; } }
