@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import BlogCover from '../components/BlogCover.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { CtaBand } from '../components/Common.jsx';
 import { CoverWall } from '../components/HeroScenes.jsx';
@@ -85,7 +86,7 @@ export default function BlogList() {
         <section className="section bx-featured" aria-labelledby="bx-feat-title">
           <div className="container bx-feat-row">
             <Link to={`/blog/${featured.slug}`} className="bx-feat-img reveal" aria-hidden="true" tabIndex={-1}>
-              <img src={featured.cover} alt={`Cover image: ${featured.title}`} width="1200" height="675" />
+              <BlogCover slug={featured.slug} title={featured.title} />
               <span className="bx-feat-badge"><Icon name="trend" size={14} /> Editor’s pick</span>
             </Link>
             <div className="bx-feat-copy reveal">
@@ -97,7 +98,7 @@ export default function BlogList() {
               <ul className="bx-also">
                 {trending.slice(1, 4).map((b) => (
                   <li key={b.slug}>
-                    <Link to={`/blog/${b.slug}`}><img src={b.cover} alt={`Cover image: ${b.title}`} width="96" height="54" loading="lazy" /><span>{b.title}</span></Link>
+                    <Link to={`/blog/${b.slug}`}><BlogCover slug={b.slug} /><span>{b.title}</span></Link>
                   </li>
                 ))}
               </ul>
@@ -138,7 +139,7 @@ export default function BlogList() {
               <li key={b.slug} className="bx-card" style={{ '--i': Math.min(i, 12), '--cc': catOf(b.category).c }}>
                 <Link to={`/blog/${b.slug}`}>
                   <div className="bx-card-img">
-                    <img src={b.cover} alt={`Cover illustration: ${b.title}`} width="1200" height="675" loading={i < 3 ? 'eager' : 'lazy'} />
+                    <BlogCover slug={b.slug} title={b.title} />
                     {b.trending ? <span className="bx-hot"><Icon name="trend" size={13} /> Trending</span> : null}
                     <span className="bx-read">{b.readMins} min</span>
                   </div>

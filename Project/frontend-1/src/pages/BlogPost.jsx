@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import BlogCover from '../components/BlogCover.jsx';
 import RichText from '../components/RichText.jsx';
 import { Breadcrumbs, CtaBand, FaqList } from '../components/Common.jsx';
 import Seo from '../seo/Seo.jsx';
@@ -55,7 +56,7 @@ export default function BlogPost() {
       />
       <div className="read-bar" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
       <header className="post-hero">
-        <img className="post-hero-img" src={post.cover} alt={`Cover image: ${post.title}`} width="1200" height="675" fetchpriority="high" />
+        <BlogCover slug={post.slug} title={post.title} className="post-hero-cover" align="xMaxYMid" />
         <div className="post-hero-shade" aria-hidden="true" />
         <div className="container post-hero-inner">
           <Breadcrumbs items={crumbs} />
@@ -129,7 +130,7 @@ export default function BlogPost() {
             {relatedBlogs(post).map((r) => (
               <li key={r.slug}>
                 <Link to={`/blog/${r.slug}`}>
-                  <img src={r.cover} alt={`Cover illustration: ${r.title}`} width="1200" height="675" loading="lazy" />
+                  <BlogCover slug={r.slug} title={r.title} className="rel-cover" />
                   <span className="bc-cat">{r.category}</span>
                   <h3>{r.title}</h3>
                 </Link>

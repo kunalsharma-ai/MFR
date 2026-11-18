@@ -11,7 +11,10 @@
           dl = l != "dataLayer" ? "&l=" + l : "";
         j.async = true;
         j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
+        // Loaded right after the page has finished loading, so the tag never competes with the first screen.
+        var go = function () { f.parentNode.insertBefore(j, f); };
+        if (d.readyState === "complete") setTimeout(go, 1500);
+        else w.addEventListener("load", function () { setTimeout(go, 1500); });
       })(window, document, "script", "dataLayer", "GTM-TFLBJTG7");
     </script>
     <!-- End Google Tag Manager -->
@@ -44,37 +47,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Inter and Manrope are self-hosted (src/styles/global.css). Google Fonts only adds extra scripts (e.g. Cyrillic,
-         Greek) for translated pages, so it loads without blocking the first paint. -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
-      />
-    </noscript>
+    <!-- Inter and Manrope are self-hosted (src/styles/global.css). The Google Fonts copy that adds other scripts
+         (Cyrillic, Greek, Vietnamese…) is added only when a visitor switches language (i18n/translate.js). -->
 
-    <link
-      rel="preload"
-      href="/fonts/inter-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/manrope-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
 
     <style>
       html.i18n-boot #root {

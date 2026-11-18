@@ -55,7 +55,8 @@ export function AboutManifesto() {
         <div className="abm-type">
           <p className="eyebrow">Who we are</p>
           <h2 id="abm-h" className="sr-only">MyFrequentRewards, the online survey community of Frequent Research</h2>
-          <p className="abm-lines" aria-label="Brands need answers. You have opinions. We make it fair.">
+          <p className="abm-lines">
+            <span className="sr-only">Brands need answers. You have opinions. We make it fair.</span>
             {LINES.map((l, li) => (
               <span key={li} className="abm-line" style={{ '--c': l.c, '--c2': l.c2 }} aria-hidden="true">
                 {l.w.map((w, wi) => <span key={wi} className="abm-word" style={{ '--d': `${li * 0.35 + wi * 0.08}s` }}>{w}</span>)}
@@ -279,7 +280,7 @@ export function BrandFamily() {
             const name = b.name.replace(' Fieldwork Solutions Pvt. Ltd.', '');
             return (
               <li key={b.id} className={`abf-card${b.id === 'fr' ? ' is-parent' : ''}`} style={{ '--c': b.color, '--c2': b.color2, '--i': i }}>
-                <div className="abf-in" tabIndex={0} aria-label={`${name}: ${b.tagline}`}>
+                <div className="abf-in" tabIndex={0} role="group" aria-label={`${name}: ${b.tagline}`}>
                   <div className="abf-front">
                     <span className="abf-mono">{b.short}</span>
                     <b>{name}</b>

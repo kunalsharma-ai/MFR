@@ -1,0 +1,25 @@
+/* ═════════════ v3.0 — text contrast (WCAG AA, 4.5:1) ═════════════
+   Small coloured labels and chips get a deeper shade of their own colour so they stay readable; the hue is kept.
+   Light mode only (dark mode has its own surfaces). Loaded last. Skipped by the dark-mode generator. */
+html:not([data-mode="dark"]) .mj-ticket small { color: #6A5470; }
+html:not([data-mode="dark"]) .sw-chips button { color: color-mix(in srgb, var(--tone) 50%, #000) !important; }
+html:not([data-mode="dark"]) .sw-chips button.on { background: color-mix(in srgb, var(--tone) 62%, #000) !important; border-color: color-mix(in srgb, var(--tone) 62%, #000) !important; color: #fff !important; }
+html:not([data-mode="dark"]) .vl-compose-in { color: #7A5468; }
+html:not([data-mode="dark"]) .idl-hub li { color: color-mix(in srgb, var(--c) 55%, #000) !important; }
+html:not([data-mode="dark"]) .pv--consumer .pv-rate { background: #D6335A; }
+html:not([data-mode="dark"]) .pv--rewards .pv-rate { background: #0B7A55; }
+html:not([data-mode="dark"]) .bf-tab { background: color-mix(in srgb, var(--c) 66%, #000); }
+html:not([data-mode="dark"]) .abv-copy .eyebrow { color: #B45309; }
+html:not([data-mode="dark"]) .abv-tabs button.is-on { background: color-mix(in srgb, var(--c) 70%, #000) !important; border-color: transparent; }
+html:not([data-mode="dark"]) .abf-back a { color: color-mix(in srgb, var(--c) 62%, #000); }
+html:not([data-mode="dark"]) .vt-card em { color: #06612D; background: #DDF3E5; }
+html:not([data-mode="dark"]) .rgx-kind { color: color-mix(in srgb, var(--kc) 50%, #000) !important; }
+html:not([data-mode="dark"]) .scw-facts small { color: #5F5B7A; }
+html:not([data-mode="dark"]) .rex-back strong { color: color-mix(in srgb, var(--h1) 60%, #000); }
+/* orange eyebrows on white / cream sections */
+html:not([data-mode="dark"]) :is(.cmp, .scanner, .bento-sec, .zigzag, .curve-sec, .compare, .claim, .rules, .layers-sec, .iso-sec, .faq-split, .abm, .qb, .bx-index) .eyebrow:not(.eyebrow-light) { color: #B45309; }
+/* blog category labels: each keeps its own colour, deeper */
+html:not([data-mode="dark"]) .bx-index .bx-cat { color: color-mix(in srgb, var(--cc) 52%, #000); }
+/* brand-blue links in small text */
+html:not([data-mode="dark"]) :is(.rs-policy a, .ct-map-copy em) { color: #2456D6; }
+html:not([data-mode="dark"]) .vt-card em { color: #05582A !important; background: #DDF3E5 !important; }

@@ -10,6 +10,11 @@ const dist = path.join(root, 'dist');
 const template = await readFile(path.join(dist, 'index.html'), 'utf8');
 const { render, ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES, SITE_URL } = await import(pathToFileURL(path.join(root, 'dist-ssr/entry-server.js')).href);
 
+// Critical CSS: each page gets the CSS its own markup uses inlined in <head>; the full stylesheet then loads without
+// blocking the first paint (media="print" swap). This is what takes phones from a blank screen to content fastest.
+const { default: Beasties } = await import('beasties');
+const beasties = new Beasties({ path: dist, publicPath: '/', preload: 'media', pruneSource: false, inlineFonts: false, preloadFonts: false, compress: true, logLevel: 'warn', reduceInlineStyles: false });
+
 let count = 0;
 for (const r of ALL_ROUTES) {
   const { html, head } = render(r.path);
@@ -21,7 +26,9 @@ for (const r of ALL_ROUTES) {
   else if (r.path === '/404') out = path.join(dist, '404.html');
   else out = path.join(dist, r.path.replace(/^\//, ''), 'index.html');
   await mkdir(path.dirname(out), { recursive: true });
-  await writeFile(out, page);
+  // Beasties re-serialises the page and writes empty attributes bare (alt=""), which some SEO crawlers read as a missing alt
+const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
+    await writeFile(out, process.env.NO_CRITICAL ? page : keepEmptyAlt(await beasties.process(page)));
   count++;
 }
 
@@ -35,7 +42,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 await writeFile(path.join(dist, 'sitemap.xml'), sitemap);
 await writeFile(path.join(root, 'public', 'sitemap.xml'), sitemap);
 
-const robots = `# robots.txt — MyFrequentRewards\nUser-agent: *\nAllow: /\nDisallow: /login\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
+const robots = `# robots.txt — MyFrequentRewards\nUser-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 await writeFile(path.join(dist, 'robots.txt'), robots);
 await writeFile(path.join(root, 'public', 'robots.txt'), robots);
 

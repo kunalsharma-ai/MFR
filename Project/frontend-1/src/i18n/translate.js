@@ -57,6 +57,12 @@ function applyDocLang(code) {
   // Layout stays left-to-right (the design is built for it); Arabic, Urdu, Persian and Hebrew text still reads
   // correctly inside each block.
   document.documentElement.classList.toggle('is-rtl-lang', Boolean(l && l.rtl));
+  if (code !== 'en' && !document.getElementById('mfr-gfonts')) {
+    const f = document.createElement('link');
+    f.id = 'mfr-gfonts'; f.rel = 'stylesheet';
+    f.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap';
+    document.head.appendChild(f);
+  }
 }
 
 function loadTranslator() {

@@ -1,0 +1,84 @@
+/* ═════════════ v3.0 — menu bar: orange capsule, animated tabs and dropdowns ═════════════
+   Skipped by the dark-mode generator; dark rules are written by hand at the end. */
+@media (min-width: 768px) {
+  html .site-header .main-nav { gap: 2px; padding: 5px; border-radius: 999px; background: linear-gradient(110deg, #FF6A00 0%, #FF8A00 38%, #FF5E7E 100%); box-shadow: 0 14px 30px -14px rgba(255, 106, 0, .75), inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -2px 0 rgba(160, 40, 0, .15); }
+  /* light sweep across the bar (transform only, stays inside the bar) */
+  html .site-header .main-nav::after { content: ''; position: absolute; top: 3px; bottom: 3px; left: 0; width: 22%; border-radius: 999px; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent); pointer-events: none; z-index: 0; animation: navSweep 5.5s ease-in-out infinite; }
+  @keyframes navSweep { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 55% { transform: translateX(355%); opacity: 1; } 65%, 100% { transform: translateX(355%); opacity: 0; } }
+  html .site-header .main-nav::before { display: none; }
+  html .site-header .main-nav .nav-pill { height: auto; top: 5px; bottom: 5px; margin-top: 0; border-radius: 999px; background: #fff; border: 0; box-shadow: 0 6px 16px -6px rgba(120, 30, 0, .55); }
+  html .site-header .main-nav .nav-link { color: #fff; font-weight: 700; padding: 8px 12px 8px 8px; border-radius: 999px; gap: 6px; transition: color .25s; }
+  html .site-header .main-nav .nav-link::after { display: none; }
+  html .site-header .main-nav .nav-link:hover, html .site-header .main-nav .nav-link.is-active, html .site-header .main-nav .nav-drop-btn.is-here { color: #fff; }
+  html .site-header .main-nav .nav-link.has-pill { color: #C2410C; }
+  .nav-ic { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none; background: rgba(255, 255, 255, .22); color: #fff; transition: background .3s, color .3s, transform .45s cubic-bezier(.3, 1.8, .5, 1); }
+  .nav-link.has-pill .nav-ic { background: linear-gradient(135deg, #FF8A00, #FF3B8D); transform: rotate(-12deg) scale(1.12); }
+  .nav-link:hover .nav-ic { animation: navIcPop .6s cubic-bezier(.3, 1.8, .5, 1); }
+  @keyframes navIcPop { 0% { transform: scale(.7) rotate(20deg); } 60% { transform: scale(1.2) rotate(-14deg); } 100% { transform: rotate(-12deg) scale(1.12); } }
+  html .site-header .main-nav .nav-drop-btn .ico { color: inherit; }
+  html .site-header .main-nav .nav-hot { background: #fff; color: #E0245E; box-shadow: 0 2px 6px rgba(160, 20, 60, .25); }
+  html .site-header .main-nav .nav-link.has-pill .nav-hot { background: linear-gradient(90deg, #FF3B5C, #FF8A00); color: #fff; }
+  html .site-header .main-nav .nav-hot::after { border-color: rgba(255, 255, 255, .8); }
+
+  /* dropdowns */
+  html .site-header .nav-panel { top: calc(100% + 16px); width: 350px; padding: 12px; border-radius: 22px; border: 0; background: #fff; box-shadow: 0 30px 60px -24px rgba(120, 40, 0, .45), 0 0 0 1px rgba(255, 138, 0, .14); transform: translateY(14px) scale(.96); transform-origin: 40px 0; transition: opacity .25s, transform .4s cubic-bezier(.3, 1.4, .5, 1), visibility 0s .25s; }
+  html .site-header .nav-drop.is-open .nav-panel { transform: none; transition: opacity .25s, transform .4s cubic-bezier(.3, 1.4, .5, 1); }
+  html .site-header .nav-panel::before { content: ''; position: absolute; top: -7px; left: 44px; width: 16px; height: 16px; border-radius: 3px; background: #fff; transform: rotate(45deg); box-shadow: -1px -1px 0 rgba(255, 138, 0, .14); }
+  html .site-header .nav-panel::after { content: ''; position: absolute; left: 0; right: 0; top: -16px; height: 16px; } /* hover bridge */
+  .nav-panel-glow { position: absolute; left: 18px; right: 18px; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: linear-gradient(90deg, #FF8A00, #FF3B8D, #8B5CF6, #14C9B5); transform-origin: left; transform: scaleX(0); }
+  .nav-drop.is-open .nav-panel-glow { animation: npGlow .7s .05s cubic-bezier(.3, 1, .4, 1) both; }
+  @keyframes npGlow { to { transform: scaleX(1); } }
+  html .site-header .nav-panel-item { position: relative; gap: 14px; padding: 12px; border-radius: 16px; transition: background .3s, transform .35s cubic-bezier(.3, 1.4, .5, 1); }
+  .nav-drop.is-open .nav-panel-item { animation: npiIn .5s calc(.06s + var(--k) * .07s) cubic-bezier(.3, 1.3, .5, 1) both; }
+  @keyframes npiIn { from { opacity: 0; transform: translateX(-18px); } }
+  html .site-header .nav-panel-item:hover { background: linear-gradient(90deg, color-mix(in srgb, var(--h1) 10%, #fff), #fff); transform: translateX(4px); }
+  html .site-header .nav-panel .nav-panel-item .npi-ico { width: 44px; height: 44px; border-radius: 14px; color: #fff; background: linear-gradient(135deg, var(--h1), var(--h2)); box-shadow: 0 10px 18px -10px var(--h1); transition: transform .45s cubic-bezier(.3, 1.8, .5, 1); }
+  html .site-header .nav-panel .nav-panel-item:hover .npi-ico { transform: rotate(-10deg) scale(1.1); }
+  html .site-header .nav-panel-item strong { color: #2a1236; }
+  html .site-header .nav-panel-item:hover strong { color: color-mix(in srgb, var(--h1) 80%, #2a1236); }
+  .npi-go { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--h1), var(--h2)); opacity: 0; transform: translateX(-8px) scale(.6); transition: opacity .3s, transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+  .nav-panel-item:hover .npi-go { opacity: 1; transform: none; }
+}
+/* Tablet two-row header: the bar sits centred on its own row */
+@media (min-width: 768px) and (max-width: 1300px) {
+  html .site-header .main-nav { flex: 0 1 auto; margin: 4px auto 8px; border-top: 0; padding: 4px; }
+  html .site-header .main-nav .nav-link { padding: 7px 10px 7px 7px; }
+}
+/* Laptops: keep everything on one row */
+@media (min-width: 1301px) {
+  html .site-header .main-nav .nav-ic { display: none; }
+  html .site-header .main-nav .nav-link { padding: 8px 11px; font-size: .9rem; }
+  html .site-header .header-row { gap: 10px; }
+}
+@media (min-width: 768px) and (max-width: 1000px) {
+  html .site-header .main-nav .nav-ic { display: none; }
+  html .site-header .main-nav .nav-link { padding: 7px 8px; }
+}
+/* Phone drawer: icons in orange bubbles */
+@media (max-width: 767px) {
+  html .site-header .main-nav .nav-link { gap: 10px; justify-content: flex-start; }
+  html .site-header .main-nav .nav-hot, html .site-header .main-nav .nav-drop-btn .ico { margin-left: auto; }
+  .nav-ic { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; flex: none; color: #fff; background: linear-gradient(135deg, #FF8A00, #FF3B8D); box-shadow: 0 8px 16px -8px rgba(255, 59, 141, .7); }
+  .main-nav.is-open .nav-in .nav-ic { animation: navIcPopM .6s calc(.1s + var(--i) * .05s) cubic-bezier(.3, 1.8, .5, 1) both; }
+  @keyframes navIcPopM { from { transform: scale(.4) rotate(-40deg); } }
+  .npi-ico { color: #fff !important; background: linear-gradient(135deg, var(--h1), var(--h2)) !important; }
+  .npi-go, .nav-panel-glow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html .site-header .main-nav::after, .nav-panel-glow, .nav-panel-item, .nav-ic { animation: none !important; }
+  .nav-panel-glow { transform: none; }
+}
+
+/* Dark mode */
+html[data-mode="dark"] .site-header .nav-panel, html[data-mode="dark"] .site-header .nav-panel::before { background: #161a22; }
+html[data-mode="dark"] .site-header .nav-panel { box-shadow: 0 30px 60px -24px #000, 0 0 0 1px rgba(255, 138, 0, .25); }
+html[data-mode="dark"] .site-header .nav-panel-item strong { color: #eceff5; }
+html[data-mode="dark"] .site-header .nav-panel-item small { color: #a9b0c0; }
+html[data-mode="dark"] .site-header .nav-panel-item:hover { background: linear-gradient(90deg, color-mix(in srgb, var(--h1) 18%, #161a22), #161a22); }
+html[data-mode="dark"] .site-header .nav-panel-item:hover strong { color: #fff; }
+@media (max-width: 767px) {
+  html[data-mode="dark"] .menu-open .site-header, html[data-mode="dark"] .site-header .main-nav { background: #0f1218; }
+  html[data-mode="dark"] .site-header .main-nav .nav-link { color: #eceff5; }
+  html[data-mode="dark"] .site-header .main-nav .nav-panel-item { background: #161a22; }
+  html[data-mode="dark"] .site-header .main-nav .nav-link.is-active, html[data-mode="dark"] .site-header .main-nav .nav-drop-btn.is-here { background: rgba(255, 138, 0, .14); color: #FFB066; }
+}

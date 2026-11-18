@@ -132,7 +132,6 @@ export const PAGES = {
   login: {
     path: '/login',
     name: 'Log In',
-    noindex: true,
     metaTitle: 'Log In | MyFrequentRewards Member Account and Dashboard',
     metaDescription: 'Log in to your MyFrequentRewards account to see survey invitations, track your reward balance, update your profile and claim via PayPal, UPI or gift card.',
     h1: 'Welcome back',

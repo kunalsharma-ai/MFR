@@ -156,7 +156,7 @@ export default function Footer() {
       </div>
 
       {/* 4) Reward ribbon + wordmark */}
-      <div className="ft-ribbon" aria-label="Reward types">
+      <div className="ft-ribbon" role="group" aria-label="Reward types">
         <ul className="ft-ribbon-track">
           {[...PAYOUTS, ...PAYOUTS].map((p, i) => (
             <li key={p.id + i} aria-hidden={i >= PAYOUTS.length} style={{ '--h1': p.hue, '--h2': p.hue2 }}>

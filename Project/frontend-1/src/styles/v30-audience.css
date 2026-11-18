@@ -1,0 +1,83 @@
+/* ═════════════ v3.0 — Consumer / Professional switch on Log in and Create account ═════════════
+   Consumer keeps each page's own colours (Log in: sapphire & cyan · Create account: sunrise).
+   Professional turns both pages emerald & gold, the same story as the home hero's professional side.
+   A second colour layer (.ax-alt) fades in over the consumer one, a soft light burst spreads from the switch,
+   and the headline / perks slide in again. Only transform and opacity animate.
+   Skipped by the dark-mode generator; dark rules are hand-written at the end. */
+
+/* ───────── the switch ───────── */
+.ax-switch { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 5px; margin: 0 0 18px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .32); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 14px 30px -18px rgba(0, 0, 0, .55); isolation: isolate; }
+.ax-thumb { position: absolute; left: 5px; top: 5px; bottom: 5px; width: calc(50% - 5px); border-radius: 999px; z-index: -1; background: linear-gradient(120deg, #2F6BFF, #22D3EE); box-shadow: 0 10px 22px -8px rgba(34, 211, 238, .8); transition: transform .5s cubic-bezier(.3, 1.4, .5, 1); }
+.ax-thumb::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(120deg, #0FB37A, #E9B949); box-shadow: 0 10px 22px -8px rgba(233, 185, 73, .85); opacity: 0; transition: opacity .45s ease; }
+.ax-switch.is-pro .ax-thumb { transform: translateX(100%); }
+.ax-switch.is-pro .ax-thumb::after { opacity: 1; }
+.ax-opt { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 0; border-radius: 999px; background: none; color: rgba(255, 255, 255, .86); font: 800 1rem var(--font-d); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .25s ease; }
+.ax-opt.on { color: #fff; }
+.ax-opt:not(.on):hover { transform: translateY(-1px); color: #fff; }
+.ax-opt:focus-visible { outline: 3px solid #FDBA74; outline-offset: 2px; }
+.ax-opt svg { transition: transform .5s cubic-bezier(.3, 1.6, .5, 1); }
+.ax-opt.on svg { transform: rotate(-10deg) scale(1.15); }
+
+/* phones: on Log in the artwork sits under the form, so the switch has its own row above the card */
+.ax-mswitch { display: none; }
+@media (max-width: 960px) {
+  .lx .ax-mswitch { display: flex; justify-content: center; order: -1; }
+  .lx .ax-dswitch { display: none; }
+  .ax-switch { margin-bottom: 0; }
+  .sx .ax-switch { margin-bottom: 16px; }
+}
+@media (max-width: 420px) { .ax-opt { padding: 8px 14px; font-size: .94rem; } }
+
+/* ───────── second colour layer + burst ───────── */
+.ax-alt { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; pointer-events: none; }
+.aud-pro .ax-alt { opacity: 1; }
+.ax-flash { position: absolute; left: var(--bx, 50%); top: var(--by, 30%); width: 180px; height: 180px; margin: -90px 0 0 -90px; border-radius: 50%; pointer-events: none; opacity: 0; transform: scale(0); background: radial-gradient(closest-side, rgba(255, 255, 255, .55), rgba(255, 255, 255, .18) 55%, transparent); }
+.aud-pro .ax-flash { background: radial-gradient(closest-side, rgba(255, 220, 140, .6), rgba(52, 211, 153, .2) 55%, transparent); }
+.ax-burst .ax-flash { animation: axFlash .9s cubic-bezier(.2, .7, .3, 1); }
+@keyframes axFlash { 0% { opacity: .95; transform: scale(.2); } 100% { opacity: 0; transform: scale(16); } }
+.ax-burst .ax-swap { animation: axSwap .6s cubic-bezier(.25, 1.2, .4, 1) both; }
+.ax-burst .lx-perks.ax-swap { animation-delay: .08s; }
+@keyframes axSwap { from { opacity: 0; transform: translateY(14px); } }
+.ax-burst .lx-card, .ax-burst .sx-card { animation: axCard .7s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes axCard { 40% { transform: scale(.985); } }
+
+/* ───────── Log in · Professional: emerald night, gold light ───────── */
+html body .lx .ax-alt { background: radial-gradient(700px 520px at 18% 30%, rgba(52, 211, 153, .32), transparent 65%), radial-gradient(620px 520px at 85% 85%, rgba(233, 185, 73, .3), transparent 65%), radial-gradient(520px 420px at 70% 5%, rgba(16, 185, 129, .22), transparent 60%), linear-gradient(150deg, #021A14 0%, #053D2F 45%, #04281F 72%, #021410 100%); }
+html body .lx.aud-pro .lx-grid2 { background-image: radial-gradient(rgba(255, 220, 140, .2) 1px, transparent 1.4px); }
+html body .lx.aud-pro .lx-bg::before { border-color: rgba(52, 211, 153, .25); }
+html body .lx.aud-pro .lx-bg::after { border-color: rgba(233, 185, 73, .2); }
+html body .lx.aud-pro .lx-eyebrow { background: rgba(233, 185, 73, .14); border-color: rgba(233, 185, 73, .45); color: #FDF0C8; }
+html body .lx.aud-pro .lx-hero span { background: linear-gradient(100deg, #6EE7B7, #fff 45%, #F5D08A 85%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+html body .lx.aud-pro .lx-perks li { border-color: rgba(233, 185, 73, .28); }
+html body .lx.aud-pro .lx-card::before { background: linear-gradient(135deg, #34D399, #0FB37A 35%, #E9B949 70%, #F5D08A); }
+html body .lx.aud-pro .lx-check input:checked + span { background: #0FB37A; border-color: #0FB37A; }
+html body .lx.aud-pro .lx-forgot { color: #0B7A5A; }
+html body .lx.aud-pro .lx-cap-title { color: #0B7A5A; }
+html body .lx.aud-pro .lx-captcha:not(.bad):not(.good) { background: linear-gradient(135deg, #ECFDF5, #FFF8E6); border-color: #BDE8D3; }
+html body .lx.aud-pro .lx-card { box-shadow: 0 40px 100px -20px rgba(0, 0, 0, .6), 0 0 80px -20px rgba(52, 211, 153, .35); }
+html body .lx.aud-pro .lx-badge { background: linear-gradient(135deg, #0FB37A, #10A37F 50%, #E9B949); box-shadow: 0 12px 24px -10px rgba(16, 163, 127, .85); }
+html body .lx.aud-pro .lx-submit.btn-primary:not(.success) { background: linear-gradient(120deg, #0FB37A, #0E8F6A 50%, #C9962B); box-shadow: 0 16px 32px -14px rgba(16, 163, 127, .9); }
+html body .lx.aud-pro .lx-field:focus-within { border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, .18); }
+html body .lx.aud-pro .mcd-front { background: linear-gradient(135deg, #032A20, #0B6B4F 55%, #1E8A66); }
+html body .lx.aud-pro .mcd-aura { filter: hue-rotate(-70deg); }
+
+/* ───────── Create account · Professional: emerald dusk with a gold sunrise ───────── */
+html body .sx .ax-alt { background: radial-gradient(900px 620px at 20% 26%, rgba(255, 209, 102, .3), transparent 62%), radial-gradient(760px 600px at 100% 100%, rgba(52, 211, 153, .3), transparent 62%), linear-gradient(160deg, #02261C 0%, #064E3B 38%, #0B6B52 66%, #9A7420 100%); }
+html body .sx.aud-pro .sx-aside h1 { text-shadow: 0 6px 30px rgba(0, 40, 30, .45); }
+html body .sx.aud-pro .sx-card::before { background: conic-gradient(from var(--ang), #34D399, #E9B949, #0FB37A, #F5D08A, #34D399); }
+html body .sx.aud-pro .sx-card { box-shadow: 0 40px 90px -24px rgba(0, 50, 35, .7); }
+html body .sx.aud-pro .sx-card .btn-primary { background: linear-gradient(120deg, #0FB37A, #0E8F6A 55%, #C9962B); box-shadow: 0 16px 30px -14px rgba(16, 163, 127, .9); }
+html body .sx.aud-pro .sx-orb.o2 { opacity: .25; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-thumb, .ax-thumb::after, .ax-alt, .ax-opt, .ax-opt svg { transition: none; }
+  .ax-burst .ax-flash, .ax-burst .ax-swap, .ax-burst .lx-card, .ax-burst .sx-card { animation: none; }
+}
+
+/* Dark mode */
+html[data-mode="dark"] body .lx .ax-alt { background: radial-gradient(700px 520px at 18% 30%, rgba(52, 211, 153, .2), transparent 65%), radial-gradient(620px 520px at 85% 85%, rgba(233, 185, 73, .18), transparent 65%), linear-gradient(150deg, #010D0A 0%, #032A20 50%, #010D0A 100%); }
+html[data-mode="dark"] body .sx .ax-alt { background: radial-gradient(900px 620px at 20% 26%, rgba(255, 209, 102, .16), transparent 62%), radial-gradient(760px 600px at 100% 100%, rgba(52, 211, 153, .18), transparent 62%), linear-gradient(160deg, #01140F 0%, #03301F 45%, #2A2008 100%); }
+html[data-mode="dark"] .ax-switch { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .16); }
+html[data-mode="dark"] body .lx.aud-pro .lx-hero span { color: transparent; }
+html[data-mode="dark"] body .lx.aud-pro .lx-forgot, html[data-mode="dark"] body .lx.aud-pro .lx-cap-title { color: #6EE7B7; }
+html[data-mode="dark"] body .lx.aud-pro .lx-captcha:not(.bad):not(.good) { background: rgba(16, 185, 129, .08); border-color: rgba(110, 231, 183, .3); }

@@ -1,5 +1,5 @@
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BY_CODE, DEFAULT_LANG, LANGUAGES, matchLocale, resolveLang, themeFor } from './languages.js';
 // The translation engine is only downloaded when a language other than English is in use.
 let enginePromise = null;
@@ -142,7 +142,7 @@ export function I18nProvider({ children }) {
   useEffect(() => {
     if (!first.current) return undefined;
     first.current = false;
-    setSound(isSoundEnabled());
+    startTransition(() => setSound(isSoundEnabled())); // a transition: no forced re-render during hydration (React #421)
     let fromUrl = null;
     try {
       fromUrl = resolveLang(new URLSearchParams(window.location.search).get('lang'));

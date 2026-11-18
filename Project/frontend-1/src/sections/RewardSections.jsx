@@ -122,7 +122,7 @@ function ScratchRewards({ title, sub }) {
             const open = opened.has(i);
             return (
               <li key={r.id} className={`scw-t ${open ? 'open' : ''} ${i === sel ? 'now' : ''}`} style={{ '--h1': r.hue, '--h2': r.hue2, '--i': i }}>
-                <button type="button" onClick={() => setSel(i)} aria-pressed={i === sel} aria-label={`Scratch to reveal: ${r.name}${r.only === 'IN' ? ' (India only)' : ''}`}>
+                <button type="button" onClick={() => setSel(i)} aria-pressed={i === sel} aria-label={`${r.short} ${r.only === 'IN' ? 'India only' : 'You win'}: scratch to reveal ${r.name}`}>
                   <span className="scw-prize">
                     <span className="scw-ico"><Icon name={r.icon} size={26} /></span>
                     <b>{r.short}</b>

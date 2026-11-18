@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
+import AudienceSwitch from "../components/AudienceSwitch.jsx";
 import Captcha from "../components/Captcha.jsx";
 import CountryPicker, { Flag } from "../components/CountryPicker.jsx";
 import DobPicker from "../components/DobPicker.jsx";
@@ -349,22 +350,38 @@ export default function SignUp() {
   return (
     <>
       <PageSeo page={page} crumbs={crumbs} />
-      <section className="sx">
+      <section
+        className={`sx ax-page ${v.memberType === "professional" ? "aud-pro" : "aud-con"}`}
+      >
         <div className="sx-bg" aria-hidden="true">
           <span className="sx-orb o1" />
           <span className="sx-orb o2" />
           <span className="sx-orb o3" />
+          <span className="ax-alt" />
+          <span className="ax-flash" />
           {Array.from({ length: 14 }).map((_, i) => (
             <i key={i} className="sx-coin" style={{ "--i": i }} />
           ))}
         </div>
         <div className="container sx-row">
           <aside className="sx-aside">
-            <p className="eyebrow eyebrow-light">Join free · about 2 minutes</p>
+            {status === "sent" ? null : (
+              <AudienceSwitch
+                value={v.memberType}
+                onChange={(k) => set("memberType", k)}
+                label="Join as"
+              />
+            )}
+            <p className="eyebrow eyebrow-light">
+              {v.memberType === "professional"
+                ? "Join free · for professionals"
+                : "Join free · about 2 minutes"}
+            </p>
             <h1>{page.h1}</h1>
-            <p className="muted-light">
-              Earn money online by sharing your opinion — no investment, no
-              fees, ever.
+            <p className="muted-light ax-swap" key={v.memberType}>
+              {v.memberType === "professional"
+                ? "Get paid for your professional insight in expert B2B surveys — no investment, no fees, ever."
+                : "Earn money online by sharing your opinion — no investment, no fees, ever."}
             </p>
             <LiveCard
               v={v}

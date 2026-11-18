@@ -4,8 +4,7 @@ import { useLocation } from 'react-router-dom';
 // 1) Reveal: adds .is-in to every .reveal element when it scrolls into view — including elements that mount
 //    later (via MutationObserver). A cheap once-per-frame scroll sweep also reveals anything the visitor has
 //    already scrolled past, so a fast flick or a busy phone can never leave a section invisible.
-// 2) Off-screen pause: sections more than a screen away get [data-off] and CSS pauses their animations,
-//    so only what the visitor can see is animating (big win for scroll smoothness and battery).
+// (Off-screen pausing lives in components/AnimationGate.jsx.)
 // Content stays visible without JS (CSS only hides .reveal when <html> has the .js class).
 export default function useReveal() {
   const { pathname } = useLocation();
@@ -27,22 +26,11 @@ export default function useReveal() {
       },
       { rootMargin: '0px 0px -6% 0px', threshold: 0.01 }
     );
-    const pauseIo = new IntersectionObserver(
-      (entries) => entries.forEach((e) => (e.isIntersecting ? e.target.removeAttribute('data-off') : e.target.setAttribute('data-off', ''))),
-      { rootMargin: '150px 0px 150px 0px' }
-    );
-    const pauseSeen = new WeakSet();
     const scan = () => {
       document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
         if (!seen.has(el)) {
           seen.add(el);
           io.observe(el);
-        }
-      });
-      document.querySelectorAll('#main section, .site-footer').forEach((el) => {
-        if (!pauseSeen.has(el)) {
-          pauseSeen.add(el);
-          pauseIo.observe(el);
         }
       });
     };
@@ -56,7 +44,15 @@ export default function useReveal() {
       const pending = document.querySelectorAll('.reveal:not(.is-in)');
       if (!pending.length) return;
       const limit = window.innerHeight * 0.96;
+      // Read the position of each top-level block once; only blocks that have reached the screen are looked into
+      // (measuring items inside blocks that are still far below would force the whole page to be laid out).
+      const near = new Map();
+      const blockOf = (el) => el.closest('#main > *, #main > div > section, .site-footer');
       pending.forEach((el) => {
+        const blk = blockOf(el);
+        let top = blk ? near.get(blk) : undefined;
+        if (blk && top === undefined) { top = blk.getBoundingClientRect().top; near.set(blk, top); }
+        if (top !== undefined && top >= limit) return;
         if (el.getBoundingClientRect().top < limit) {
           el.classList.add('is-in');
           io.unobserve(el);
@@ -77,7 +73,6 @@ export default function useReveal() {
     const safety = setTimeout(sweep, 1200);
     return () => {
       io.disconnect();
-      pauseIo.disconnect();
       mo.disconnect();
       clearTimeout(safety);
       window.removeEventListener('scroll', onScroll);

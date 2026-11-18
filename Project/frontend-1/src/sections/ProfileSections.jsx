@@ -45,7 +45,7 @@ export function JobTitleWaterfall() {
                 style={{ '--c': g.color, '--i': i }}
                 onClick={() => setT(i)}
                 aria-pressed={i === t}
-                aria-label={`Floor ${n - i}: ${g.tier}, ${g.items.length} roles`}
+                aria-label={`${n - i} ${g.tier}, floor ${n - i}, ${g.items.length} roles`}
               >
                 <span className="tw-front">
                   <em>{n - i}</em>
@@ -131,7 +131,7 @@ export function DepartmentWheel() {
           <h2 id="dept-title">Wherever you sit in the org chart.</h2>
           <p className="sec-sub">Finance to field engineering, procurement to people teams — researchers need perspectives from every function.</p>
           <ul className="dept-list">{DEPARTMENTS.map((d) => <li key={d}>{d}</li>)}</ul>
-          <div className="size-ladder" aria-label="Company sizes">
+          <div className="size-ladder" role="group" aria-label="Company sizes">
             <p className="size-title">Company sizes</p>
             <ol>{COMPANY_SIZES.map((s, i) => <li key={s} style={{ '--i': i }}><span />{s}</li>)}</ol>
           </div>

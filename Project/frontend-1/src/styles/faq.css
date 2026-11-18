@@ -8,7 +8,7 @@
 .faq-item summary { list-style: none; display: flex; align-items: center; gap: 14px; padding: 17px 18px 17px 16px; cursor: pointer; font-weight: 700; color: var(--navy); line-height: 1.35; }
 .faq-item summary::-webkit-details-marker { display: none; }
 .faq-item summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--fc) 60%, #fff); outline-offset: -3px; border-radius: 20px; }
-.faq-n { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; font: 800 .8rem var(--font-m); color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, #fff); transition: background .3s, color .3s, transform .45s cubic-bezier(.3, 1.5, .5, 1); }
+.faq-n { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; font: 800 .8rem var(--font-m); color: color-mix(in srgb, var(--fc) 60%, #000); background: color-mix(in srgb, var(--fc) 10%, #fff); transition: background .3s, color .3s, transform .45s cubic-bezier(.3, 1.5, .5, 1); }
 .faq-item[open] .faq-n { background: linear-gradient(135deg, var(--fc), var(--fc2)); color: #fff; transform: rotate(-8deg) scale(1.06); }
 .faq-q { flex: 1; font-size: .98rem; }
 .faq-plus { position: relative; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--fc) 30%, #E7EAF4); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1), background .3s, border-color .3s; }

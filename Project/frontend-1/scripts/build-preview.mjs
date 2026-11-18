@@ -41,6 +41,14 @@ for (const f of await readdir(path.join(root, 'public/images/blog'))) {
 }
 html = html.replace(/`\/images\/blog\/\$\{(\w+)\.slug\}\.webp`/g, (m, v) => `window.__MFR_COVERS[${v}.slug]`);
 html = html.replace('<script type="module">', () => `<script>window.__MFR_COVERS=${JSON.stringify(covers)}</script><script type="module">`);
+// Country flags are picked at runtime (/flags/xx.svg) → embed them all in the asset map used by utils/asset.js
+const flagMap = {};
+for (const f of await readdir(path.join(root, 'public/flags'))) {
+  if (!f.endsWith('.svg')) continue;
+  const svg = (await readFile(path.join(root, 'public/flags', f), 'utf8')).replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ');
+  flagMap[`/flags/${f}`] = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+html = html.replace('<script type="module">', () => `<script>window.__MFR_ASSETS=Object.assign(window.__MFR_ASSETS||{},${JSON.stringify(flagMap)})</script><script type="module">`);
 // Inline every /images/... and favicon reference as a data URI
 const MIME = { '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
 const cache = new Map();

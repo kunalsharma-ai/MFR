@@ -34,7 +34,7 @@ export function pop({ volume = 0.22, pitch = 1 } = {}) {
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(volume, t + 0.012);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-    g.connect(c.destination);
+    if (c.state === 'running') out(c, g, 0.35); else g.connect(c.destination); // water-drop bubble with a little room
     const o = c.createOscillator();
     o.type = 'sine';
     o.frequency.setValueAtTime(620 * pitch, t);
@@ -85,6 +85,7 @@ function bell(c, t, freq, volume, len = 0.55) {
   h.start(t);
   h.stop(t + len);
 }
+// Review screen: a harp sparkle (quick rising glissando) that ends on bell notes. `notes` are the closing bells.
 export function chime({ volume = 0.16, notes = [1046.5, 1318.5, 1568] } = {}) {
   if (!soundOn()) return;
   try {
@@ -93,12 +94,23 @@ export function chime({ volume = 0.16, notes = [1046.5, 1318.5, 1568] } = {}) {
     if (c.state === 'suspended') c.resume();
     if (c.state !== 'running') return; // browser has not allowed sound yet (no interaction) — stay silent
     const t = c.currentTime + 0.02;
-    notes.forEach((f, i) => bell(c, t + i * 0.09, f, volume * (1 - i * 0.12)));
+    [523.25, 659.25, 783.99, 987.77].forEach((f, i) => pluck(c, t + i * 0.035, f, volume * 0.35, 0.6));
+    notes.forEach((f, i) => bell(c, t + 0.16 + i * 0.09, f, volume * (1 - i * 0.12)));
   } catch {
     /* audio unavailable — stay silent */
   }
 }
-export const fanfare = () => chime({ volume: 0.18, notes: [784, 1046.5, 1318.5, 2093] });
+// Review published: a short brass fanfare (two chords) crowned with bells.
+export function fanfare() {
+  try {
+    const c = ready();
+    if (!c) return;
+    const t = c.currentTime + 0.02;
+    pad(c, t, [392, 493.88, 587.33], { vol: 0.06, len: 0.28, from: 900, to: 3000, space: 0.3 });
+    pad(c, t + 0.26, [523.25, 659.25, 783.99, 1046.5], { vol: 0.07, len: 1.1, from: 900, to: 3600, space: 0.5 });
+    [1046.5, 1318.5, 1568, 2093].forEach((f, i) => bell(c, t + 0.3 + i * 0.08, f, 0.1 * (1 - i * 0.12)));
+  } catch { /* stay silent */ }
+}
 export const audioReady = () => Boolean(ctx && ctx.state === 'running');
 const WELCOME = [
   { root: 523.25, steps: [0, 4, 7, 12, 16] }, // C major sparkle
@@ -207,7 +219,11 @@ export function skipWelcome() {
  
 
 // ── v3.0 sound effects ─────────────────────────────────────────────────────────────────────────────
-// All respect the on/off switch and stay silent until the browser allows audio (after a click / tap / key).
+// Every effect has its own character so the site never sounds samey: a water-drop chat bubble, a harp sparkle for
+// the review screen, brass for "published", a ratchet + jackpot for the spin wheel, a cash-register "ka-ching" for
+// rewards, nightfall vs sunrise for the theme switch, coins vs a gold chord for the hero switch, a film-reel "play"
+// for videos and a gem tap for the main buttons. All share one bus with a soft room reverb, respect the on/off
+// switch and stay silent until the browser allows audio (after a click / tap / key).
 const ready = () => {
   if (!soundOn()) return null;
   const c = getCtx();
@@ -215,72 +231,188 @@ const ready = () => {
   if (c.state === 'suspended') c.resume();
   return c.state === 'running' ? c : null;
 };
-function tone(c, t, { f = 440, f2 = null, type = 'sine', vol = 0.12, len = 0.2, attack = 0.008 }) {
+let bus = null;
+// dry + reverb mix with a gentle compressor so stacked notes never clip
+function getBus(c) {
+  if (bus && bus.c === c) return bus;
+  const comp = c.createDynamicsCompressor();
+  comp.threshold.value = -16; comp.ratio.value = 4;
+  comp.connect(c.destination);
+  const dry = c.createGain(); dry.gain.value = 1; dry.connect(comp);
+  const verb = c.createConvolver();
+  const len = Math.floor(c.sampleRate * 1.8);
+  const ir = c.createBuffer(2, len, c.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * (1 - k / len) ** 3; }
+  verb.buffer = ir;
+  const wet = c.createGain(); wet.gain.value = 0.32;
+  verb.connect(wet).connect(comp);
+  bus = { c, dry, verb };
+  return bus;
+}
+// route a node to the bus; `space` 0..1 sets how much reverb it gets
+function out(c, node, space = 0.3) {
+  const b = getBus(c);
+  node.connect(b.dry);
+  if (space > 0) { const s = c.createGain(); s.gain.value = space; node.connect(s).connect(b.verb); }
+}
+function tone(c, t, { f = 440, f2 = null, type = 'sine', vol = 0.12, len = 0.2, attack = 0.008, space = 0.25, glide = null }) {
   const g = c.createGain();
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(vol, t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + len);
-  g.connect(c.destination);
+  out(c, g, space);
   const o = c.createOscillator();
   o.type = type;
   o.frequency.setValueAtTime(f, t);
-  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + len);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + (glide || len));
   o.connect(g);
   o.start(t);
   o.stop(t + len + 0.03);
 }
+let noiseBuf = null;
+function noise(c, t, { len = 0.2, vol = 0.1, type = 'bandpass', f = 1000, f2 = null, q = 1, attack = 0.005, space = 0.2 }) {
+  if (!noiseBuf || noiseBuf.sampleRate !== c.sampleRate) {
+    noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let k = 0; k < d.length; k++) d[k] = Math.random() * 2 - 1;
+  }
+  const src = c.createBufferSource();
+  src.buffer = noiseBuf;
+  const fl = c.createBiquadFilter();
+  fl.type = type; fl.Q.value = q;
+  fl.frequency.setValueAtTime(f, t);
+  if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + len);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + attack);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  src.connect(fl).connect(g);
+  out(c, g, space);
+  src.start(t, Math.random() * 0.5);
+  src.stop(t + len + 0.02);
+}
+// metallic ring: inharmonic partials, like a coin or a small bell
+function ring(c, t, f, vol, len = 0.6, space = 0.35) {
+  [[1, 1], [2.76, 0.45], [5.4, 0.25], [8.93, 0.12]].forEach(([m, a]) => tone(c, t, { f: f * m, vol: vol * a, len: len / (1 + m * 0.15), attack: 0.002, space }));
+}
+// plucked harp string: a fast-decaying triangle with a sine octave
+function pluck(c, t, f, vol, len = 0.9, space = 0.5) {
+  tone(c, t, { f, type: 'triangle', vol, len, attack: 0.004, space });
+  tone(c, t, { f: f * 2, vol: vol * 0.35, len: len * 0.5, attack: 0.004, space });
+}
+// warm pad: detuned saws through a moving low-pass
+function pad(c, t, freqs, { vol = 0.05, len = 1.2, from = 500, to = 2200, space = 0.6 } = {}) {
+  const fl = c.createBiquadFilter();
+  fl.type = 'lowpass';
+  fl.frequency.setValueAtTime(from, t);
+  fl.frequency.exponentialRampToValueAtTime(to, t + len * 0.6);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + len * 0.3);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  fl.connect(g);
+  out(c, g, space);
+  freqs.forEach((f) => [-8, 8].forEach((cents) => {
+    const o = c.createOscillator();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(f, t);
+    o.detune.setValueAtTime(cents, t);
+    o.connect(fl);
+    o.start(t);
+    o.stop(t + len + 0.05);
+  }));
+}
+const play = (fn) => { try { const c = ready(); if (c) fn(c, c.currentTime + 0.02); } catch { /* stay silent */ } };
 
-// Prize-wheel spin: a whoosh, then clicks that slow down like a real wheel, then a bright "you got it" chime.
+// Prize wheel: a whoosh, a ratchet that slows like a real pointer, then a jackpot arpeggio with coins.
 export function spinSound(duration = 3.6) {
-  try {
-    const c = ready();
-    if (!c) return;
-    const t0 = c.currentTime + 0.02;
-    tone(c, t0, { f: 180, f2: 900, type: 'sawtooth', vol: 0.05, len: 0.35, attack: 0.05 });
-    let t = 0.12;
-    let gap = 0.045;
+  play((c, t0) => {
+    noise(c, t0, { len: 0.5, vol: 0.12, f: 400, f2: 3000, q: 0.8, attack: 0.08 });
+    let t = 0.1;
+    let gap = 0.042;
     while (t < duration - 0.25) {
-      tone(c, t0 + t, { f: 2200, f2: 1300, type: 'square', vol: 0.045, len: 0.03, attack: 0.002 });
+      noise(c, t0 + t, { len: 0.035, vol: 0.16, type: 'highpass', f: 2600, q: 0.7, attack: 0.001, space: 0.05 });
+      tone(c, t0 + t, { f: 1150, f2: 700, type: 'square', vol: 0.018, len: 0.025, attack: 0.001, space: 0 });
       t += gap;
       gap *= 1.075;
     }
-    [1046.5, 1318.5, 1568, 2093].forEach((f, i) => bell(c, t0 + duration + i * 0.08, f, 0.12 * (1 - i * 0.12)));
-  } catch { /* stay silent */ }
+    const w = t0 + duration;
+    [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568].forEach((f, i) => pluck(c, w + i * 0.06, f, 0.08, 0.7));
+    [0, 0.09, 0.15, 0.24].forEach((d, i) => ring(c, w + 0.4 + d, 2400 + i * 260, 0.035, 0.5));
+  });
 }
 
-// Theme switch. Dark: a soft falling "night" sweep with twinkling stars. Light: a rising sunrise arpeggio.
+// Theme switch. Dark = "nightfall": a falling pad, a breath of wind and crystal stars twinkling in.
+// Light = "sunrise": a warm swelling chord, a rising harp glissando and two bird-like chirps.
 export function themeSound(dark) {
-  try {
-    const c = ready();
-    if (!c) return;
-    const t = c.currentTime + 0.02;
+  play((c, t) => {
     if (dark) {
-      tone(c, t, { f: 880, f2: 220, type: 'sine', vol: 0.1, len: 0.6, attack: 0.02 });
-      tone(c, t, { f: 660, f2: 165, type: 'triangle', vol: 0.05, len: 0.7, attack: 0.02 });
-      [1760, 2349, 2093, 2637].forEach((f, i) => tone(c, t + 0.35 + i * 0.11, { f, type: 'sine', vol: 0.05, len: 0.35 }));
+      pad(c, t, [220, 277.18, 329.63], { vol: 0.045, len: 1.6, from: 1800, to: 300 });
+      tone(c, t, { f: 880, f2: 196, type: 'sine', vol: 0.07, len: 0.9, attack: 0.03, space: 0.5 });
+      noise(c, t, { len: 1.1, vol: 0.05, f: 1800, f2: 300, q: 0.6, attack: 0.25, space: 0.6 });
+      [2349.3, 3135.9, 2637, 3520, 2793.8].forEach((f, i) => tone(c, t + 0.45 + i * 0.13, { f, vol: 0.035, len: 0.6, attack: 0.004, space: 0.9 }));
     } else {
-      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => bell(c, t + i * 0.07, f, 0.1 * (1 - i * 0.1), 0.5));
+      pad(c, t, [261.63, 329.63, 392, 493.88], { vol: 0.04, len: 1.3, from: 300, to: 3200 });
+      [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.7, 1318.5].forEach((f, i) => pluck(c, t + 0.05 + i * 0.045, f, 0.06 * (1 - i * 0.05), 0.8));
+      [0.55, 0.68].forEach((d) => tone(c, t + d, { f: 2800, f2: 4200, vol: 0.03, len: 0.09, attack: 0.004, space: 0.3 }));
     }
-  } catch { /* stay silent */ }
+  });
 }
 
-// Reward notification: a short coin "ka-ching".
+// Reward toast: a cash-register "ka-ching" — drawer thunk, then the bell.
 export function coinSound() {
-  try {
-    const c = ready();
-    if (!c) return;
-    const t = c.currentTime + 0.02;
-    tone(c, t, { f: 1975.5, type: 'square', vol: 0.035, len: 0.09, attack: 0.002 });
-    bell(c, t + 0.07, 2637, 0.07, 0.45);
-    bell(c, t + 0.07, 3136, 0.04, 0.35);
-  } catch { /* stay silent */ }
+  play((c, t) => {
+    noise(c, t, { len: 0.08, vol: 0.12, type: 'lowpass', f: 900, attack: 0.002, space: 0.05 });
+    tone(c, t, { f: 160, f2: 70, vol: 0.08, len: 0.12, attack: 0.002, space: 0 });
+    noise(c, t + 0.06, { len: 0.05, vol: 0.06, type: 'highpass', f: 5000, attack: 0.001, space: 0 });
+    ring(c, t + 0.09, 2093, 0.06, 0.9);
+    ring(c, t + 0.15, 2637, 0.04, 0.8);
+  });
 }
 
-// Small click for toggles.
+// Sound switch turned on: a little two-step "power up".
 export function tick() {
-  try {
-    const c = ready();
-    if (!c) return;
-    tone(c, c.currentTime + 0.01, { f: 1400, f2: 900, type: 'triangle', vol: 0.06, len: 0.06, attack: 0.003 });
-  } catch { /* stay silent */ }
+  play((c, t) => {
+    tone(c, t, { f: 660, f2: 990, type: 'triangle', vol: 0.06, len: 0.08, attack: 0.003, space: 0.15 });
+    tone(c, t + 0.08, { f: 990, f2: 1480, type: 'triangle', vol: 0.06, len: 0.12, attack: 0.003, space: 0.3 });
+  });
+}
+
+// Hero audience switch. Consumer: a bright handful of coins. Professional: a deep gold chord with a single "ting".
+export function segSound(pro) {
+  play((c, t) => {
+    if (pro) {
+      pad(c, t, [130.81, 196, 246.94], { vol: 0.05, len: 0.9, from: 400, to: 1400, space: 0.5 });
+      tone(c, t, { f: 98, vol: 0.08, len: 0.5, attack: 0.01, space: 0.2 });
+      ring(c, t + 0.12, 1568, 0.05, 1.1, 0.6);
+    } else {
+      [0, 0.05, 0.11, 0.14, 0.2].forEach((d, i) => ring(c, t + d, 2600 + ((i * 337) % 900), 0.035, 0.35, 0.2));
+      pluck(c, t + 0.22, 1318.5, 0.05, 0.5);
+    }
+  });
+}
+
+// Video buttons: a film-reel flutter and a soft "ta-dum".
+export function playSound() {
+  play((c, t) => {
+    for (let k = 0; k < 6; k++) noise(c, t + k * 0.03, { len: 0.02, vol: 0.05, type: 'bandpass', f: 1800, q: 4, attack: 0.001, space: 0 });
+    tone(c, t + 0.2, { f: 392, type: 'triangle', vol: 0.08, len: 0.25, attack: 0.004, space: 0.3 });
+    tone(c, t + 0.32, { f: 587.33, type: 'triangle', vol: 0.09, len: 0.5, attack: 0.004, space: 0.5 });
+  });
+}
+
+// Main call-to-action buttons: a crisp gem tap with a sparkle.
+export function tapSound() {
+  play((c, t) => {
+    tone(c, t, { f: 1800, f2: 1200, type: 'sine', vol: 0.05, len: 0.07, attack: 0.002, space: 0.1 });
+    tone(c, t + 0.03, { f: 3520, vol: 0.025, len: 0.25, attack: 0.002, space: 0.5 });
+  });
+}
+
+// Menu dropdown opening: a short airy swish upwards.
+export function swishSound() {
+  play((c, t) => {
+    noise(c, t, { len: 0.18, vol: 0.05, f: 900, f2: 4200, q: 1.2, attack: 0.04, space: 0.2 });
+    tone(c, t + 0.06, { f: 1046.5, f2: 1568, vol: 0.025, len: 0.14, attack: 0.01, space: 0.3 });
+  });
 }

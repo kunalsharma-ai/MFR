@@ -20,19 +20,20 @@ const ABOUT = [
   { to: '/about-us/reviews', label: 'Ratings & Reviews', sub: 'What consumers and professionals say', icon: 'star' },
   { to: '/scan-and-connect', label: 'Scan & Connect', sub: 'QR codes for all our brands & socials', icon: 'mobile' },
 ];
-const DROPS = { about: { label: 'About Us', items: ABOUT }, earn: { label: 'Earn', items: EARN } };
+const DROPS = { about: { label: 'About Us', items: ABOUT, icon: 'badge' }, earn: { label: 'Earn', items: EARN, icon: 'coins' } };
+const NPI_HUES = [['#FF8A00', '#FF3B8D'], ['#2F6BFF', '#14C9B5'], ['#8B5CF6', '#FF5E7E']];
 
 // Menu order (as requested): Home · About Us ▾ · Earn ▾ · How It Works · Rewards · Trust & Safety · Blogs · FAQ · Contact
 const NAV = [
-  { to: '/', label: 'Home', end: true },
+  { to: '/', label: 'Home', end: true, icon: 'sparkle' },
   { drop: 'about' },
   { drop: 'earn' },
-  { to: '/how-it-works', label: 'How It Works' },
-  { to: '/rewards', label: 'Rewards' },
-  { to: '/trust-and-safety', label: 'Trust & Safety' },
-  { to: '/blog', label: 'Blogs', hot: true },
-  { to: '/faq', label: 'FAQ' },
-  { to: '/contact-us', label: 'Contact' },
+  { to: '/how-it-works', label: 'How It Works', icon: 'activity' },
+  { to: '/rewards', label: 'Rewards', icon: 'gift' },
+  { to: '/trust-and-safety', label: 'Trust & Safety', icon: 'shield' },
+  { to: '/blog', label: 'Blogs', hot: true, icon: 'book' },
+  { to: '/faq', label: 'FAQ', icon: 'question' },
+  { to: '/contact-us', label: 'Contact', icon: 'headset' },
 ];
 
 export default function Header() {
@@ -48,6 +49,8 @@ export default function Header() {
   const moveTo = useCallback((el) => {
     const nav = navRef.current;
     if (!nav || !el || window.matchMedia('(max-width: 767px)').matches) return setInd((v) => ({ ...v, on: false }));
+    nav.querySelectorAll('.has-pill').forEach((x) => x !== el && x.classList.remove('has-pill'));
+    el.classList.add('has-pill'); // the tab under the white pill switches to orange text
     const a = nav.getBoundingClientRect();
     const b = el.getBoundingClientRect();
     setInd({ x: b.left - a.left, w: b.width, on: true });
@@ -56,7 +59,7 @@ export default function Header() {
     const nav = navRef.current;
     const active = nav && (nav.querySelector('.nav-link.is-active') || (Object.keys(DROPS).map((k) => DROPS[k].items.some((e) => pathname.startsWith(e.to)) && nav.querySelector(`.nav-drop-btn[data-drop="${k}"]`)).find(Boolean)));
     if (active) moveTo(active);
-    else setInd((v) => ({ ...v, on: false }));
+    else { if (nav) nav.querySelectorAll('.has-pill').forEach((x) => x.classList.remove('has-pill')); setInd((v) => ({ ...v, on: false })); }
   }, [moveTo, pathname]);
   useEffect(() => {
     const t = setTimeout(settle, 60);
@@ -130,23 +133,25 @@ export default function Header() {
               onMouseLeave={() => canHover() && setDrop(null)}
             >
               <button type="button" className={`nav-link nav-drop-btn ${DROPS[n.drop].items.some((e) => pathname === e.to || pathname.startsWith(`${e.to}/`)) ? 'is-here' : ''}`} data-drop={n.drop} aria-expanded={drop === n.drop} onClick={() => setDrop((v) => (v === n.drop ? null : n.drop))}>
-                {DROPS[n.drop].label} <Icon name="chevron" size={16} />
+                <span className="nav-ic" aria-hidden="true"><Icon name={DROPS[n.drop].icon} size={15} /></span>{DROPS[n.drop].label} <Icon name="chevron" size={16} />
               </button>
               <div className="nav-panel" role="menu">
-                {DROPS[n.drop].items.map((e) => (
-                  <a key={e.to} href={e.to} className="nav-panel-item" role="menuitem">
+                <span className="nav-panel-glow" aria-hidden="true" />
+                {DROPS[n.drop].items.map((e, k) => (
+                  <a key={e.to} href={e.to} className="nav-panel-item" role="menuitem" style={{ '--k': k, '--h1': NPI_HUES[k % 3][0], '--h2': NPI_HUES[k % 3][1] }}>
                     <span className="npi-ico"><Icon name={e.icon} /></span>
                     <span>
                       <strong>{e.label}</strong>
                       <small>{e.sub}</small>
                     </span>
+                    <span className="npi-go" aria-hidden="true"><Icon name="arrow" size={14} /></span>
                   </a>
                 ))}
               </div>
             </div>
           ) : (
             <NavLink key={n.to} to={n.to} end={n.end} style={{ '--i': i }} className={({ isActive }) => `nav-link nav-in ${isActive ? 'is-active' : ''}`}>
-              {n.label}
+              <span className="nav-ic" aria-hidden="true"><Icon name={n.icon} size={15} /></span>{n.label}
               {n.hot ? <span className="nav-hot">Trending</span> : null}
             </NavLink>
           ))}

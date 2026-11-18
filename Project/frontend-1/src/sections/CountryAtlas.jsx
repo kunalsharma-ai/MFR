@@ -59,8 +59,9 @@ function Passport({ active }) {
 
 function Departures({ active }) {
   const rows = active === 'all' ? ALL : ALL.filter((x) => x.reg.id === active);
+  const [more, setMore] = useState(false);
   return (
-    <div className="dep" key={active}>
+    <div className={`dep${more ? ' is-more' : ''}`} key={active}>
       <div className="dep-head" aria-hidden="true">
         <span><Icon name="briefcase" size={16} /> B2B STUDIES · DEPARTURES</span>
         <span className="dep-clock">ALL GATES OPEN</span>
@@ -76,6 +77,10 @@ function Departures({ active }) {
           </div>
         ))}
       </div>
+      {/* phones show the first rows of a long board; the rest is one tap away */}
+      {rows.length > 12 && !more ? (
+        <button type="button" className="dep-more" onClick={() => setMore(true)}>Show all {rows.length} countries <Icon name="chevron" size={16} /></button>
+      ) : null}
     </div>
   );
 }

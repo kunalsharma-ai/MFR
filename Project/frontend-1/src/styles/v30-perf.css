@@ -1,0 +1,33 @@
+/* ═════════════ v3.0 performance pass (loaded last) — same look, much less work per frame ═════════════
+   Off-screen blocks and idle loops are paused by components/AnimationGate.jsx. This file trims what stays on screen. */
+
+/* Home hero: only the active audience's atmosphere exists; fewer particles; no large soft bubbles */
+.seg-consumer .hx-pro, .seg-pro .hx-con { display: none; }
+.hx-bubble, .hx-confetti:nth-child(n+11), .hx-dust:nth-child(n+11) { display: none; }
+.mj-drop:nth-child(n+8), .mj-spark.s3, .mj-spark.s4, .mj-bill.b2 { display: none; }
+.hero-spark:nth-child(n+5) { display: none; }
+
+/* Floating dock: no live background blur (it re-blurred everything moving behind it every frame) */
+.dk-rail { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(246, 247, 255, .86)) !important; }
+html[data-mode="dark"] .dk-rail { background: linear-gradient(180deg, rgba(29, 34, 44, .95), rgba(22, 26, 34, .9)) !important; }
+/* fixed-on-screen loops play a few attention cycles, then rest (hover replays the orb's own motion) */
+.dk-face::after { animation-iteration-count: 4 !important; }
+html .site-header .main-nav::after { animation-iteration-count: 3 !important; }
+.dk-orbit, .dk-spark { animation-duration: 14s !important; }
+
+/* Log in / Create account: no huge blurred, moving layers */
+html body .lx-mesh { filter: none !important; animation: none !important; opacity: 1 !important; }
+html body .lx-mesh.m1 { background: radial-gradient(closest-side, rgba(34, 211, 238, .38), transparent) !important; }
+html body .lx-mesh.m2 { background: radial-gradient(closest-side, rgba(139, 92, 246, .45), transparent) !important; }
+html body .lx-mesh.m3 { background: radial-gradient(closest-side, rgba(255, 194, 51, .22), transparent) !important; }
+/* the gradient border no longer turns, so it simply covers the whole card (the turning square was too short for tall phone cards) */
+html body .lx .lx-card::before { animation: none !important; inset: 0 !important; width: auto !important; height: auto !important; margin: 0 !important; aspect-ratio: auto !important; border-radius: inherit !important; background: linear-gradient(135deg, #22D3EE, #2F6BFF 35%, #8B5CF6 65%, #FFC233); }
+html body .sx-bg::before { animation: none !important; }
+html body .sx-orb { animation: none !important; }
+
+/* The custom cursor was removed (the spring-following pointer felt laggy); make sure nothing hides the real one */
+.cursor-layer { display: none !important; }
+html.has-cursor, html.has-cursor * { cursor: auto; }
+/* blocks scrolled well out of view (marked by AnimationGate.jsx) hold every animation inside them */
+[data-gate="off"] *, [data-gate="off"] *::before, [data-gate="off"] *::after { animation-play-state: paused !important; }
+html[data-mode="dark"] .faq-n { color: var(--fc); }
