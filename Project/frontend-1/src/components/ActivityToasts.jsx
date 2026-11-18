@@ -119,25 +119,30 @@ export default function ActivityToasts() {
   const info = METHOD_INFO[cur.method] || { icon: 'wallet', hue: '#0B1E5B', hue2: '#2F6BFF' };
   const biz = cur.segment === 'business';
   const nonMoney = NON_MONEY.includes(cur.method) || !cur.amount;
+  // v3.0 layout: method disc with a turning gold ring · "Reward paid" pill, time and Preview tag · "Name earned $X" ·
+  // payout-method chip with the member's flag and city.
   return (
-    <div key={n} className={`rwt ${biz ? 'is-biz' : 'is-con'} ${show ? 'is-in' : ''}`} style={{ '--h1': info.hue, '--h2': info.hue2 }} role="status" aria-live="polite">
+    <div key={n} className={`rwt rwt-v2 ${biz ? 'is-biz' : 'is-con'} ${show ? 'is-in' : ''}`} style={{ '--h1': info.hue, '--h2': info.hue2 }} role="status" aria-live="polite">
       <Fx />
       <Burst />
-      <div className="rwt-av">
-        {initials(cur.name)}
-        {nonMoney ? null : <span className="rwt-plus" aria-hidden="true">+{cur.amount}</span>}
-        <i className="rwt-coin" aria-hidden="true"><Icon name={info.icon} size={11} stroke={2.2} /></i>
+      <div className="rv2-ic" aria-hidden="true">
+        <span className="rv2-ring" />
+        <span className="rv2-disc"><Icon name={info.icon} size={20} stroke={2} /></span>
+        {nonMoney ? null : <span className="rwt-plus">+{cur.amount}</span>}
       </div>
-      <div className="rwt-body">
-        <p className="rwt-tag"><span aria-hidden="true">✦</span> Reward paid out</p>
-        <p className="rwt-l1">
-          <b>{cur.name}</b> {nonMoney ? <>received a <strong className="rwt-amt">{cur.method}</strong></> : <>earned <strong className="rwt-amt"><CountUp value={cur.amount} /></strong></>}
+      <div className="rwt-body rv2-body">
+        <p className="rv2-top">
+          <span className="rv2-paid"><i /> Reward paid</span>
+          {cur.ago ? <span className="rv2-ago">{cur.ago}</span> : null}
+          {isPreview ? <em className="rv2-prev">Preview</em> : null}
         </p>
-        <p className="rwt-l2">
-          {nonMoney ? null : <span className="rwt-m"><Icon name={info.icon} size={11} stroke={2.2} /> {cur.method}</span>}
-          <span className="rwt-place"><Flag iso={cur.iso} size={10} /> {String(cur.place || '').split(',')[0]}{cur.ago ? ` · ${cur.ago}` : ''}</span>
+        <p className="rv2-l1">
+          <b>{cur.name}</b> {nonMoney ? <>received a <strong className="rv2-amt">{cur.method}</strong></> : <>earned <strong className="rv2-amt"><CountUp value={cur.amount} /></strong></>}
         </p>
-        <p className="rwt-l3"><i /> {cur.role}{cur.role ? ' · ' : ''}{biz ? 'Professional' : 'Consumer'}{isPreview ? <em className="rwt-prev">Preview</em> : null}</p>
+        <p className="rv2-l3">
+          <span className="rv2-chip"><Icon name={info.icon} size={12} stroke={2.2} /> {cur.method}</span>
+          <span className="rv2-place"><Flag iso={cur.iso} size={14} /> {String(cur.place || '')}</span>
+        </p>
       </div>
       {close}
       <span className="rwt-bar" aria-hidden="true" />

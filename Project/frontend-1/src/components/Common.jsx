@@ -95,12 +95,11 @@ export function CtaBand({ title = 'Your opinion is worth more than you think.', 
 }
 
 // v3.0 floating dock: three round, animated buttons stacked on a glass rail — Rate & Review (locked until the
-// visitor logs in), WhatsApp, and Live Help (the round MFR logo).
+// visitor logs in: the click opens the "Log in to rate us" window), WhatsApp, and Live Help (the round MFR logo).
 export function FloatingDock({ onChat, chatOpen }) {
   const { state, reviewed } = useRater();
   const [tease, setTease] = useState(false);
   const [badge, setBadge] = useState(false);
-  const [lockTip, setLockTip] = useState(false);
   useEffect(() => {
     if (session.get('mfr_chat_seen')) return undefined;
     const t1 = setTimeout(() => { setTease(true); setBadge(true); }, 15000);
@@ -110,36 +109,16 @@ export function FloatingDock({ onChat, chatOpen }) {
   useEffect(() => {
     if (chatOpen) { setTease(false); setBadge(false); session.set('mfr_chat_seen', 1); }
   }, [chatOpen]);
-  useEffect(() => {
-    if (!lockTip) return undefined;
-    const off = (e) => { if (!e.target.closest || !e.target.closest('.dk-rate-wrap')) setLockTip(false); };
-    const t = setTimeout(() => setLockTip(false), 9000);
-    document.addEventListener('pointerdown', off);
-    return () => { clearTimeout(t); document.removeEventListener('pointerdown', off); };
-  }, [lockTip]);
   const locked = state !== 'ok';
   const rate = () => {
     if (state === 'checking') return;
-    if (locked) { setLockTip((v) => !v); return; }
     window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }));
   };
-  const next = typeof window !== 'undefined' ? encodeURIComponent(window.location.pathname) : '';
   return (
     <div className={`dock dk${chatOpen ? ' is-chat' : ''}`} aria-label="Quick help">
       <span className="dk-rail" aria-hidden="true" />
       {state !== 'kid' ? (
         <div className="dk-rate-wrap">
-          {lockTip ? (
-            <div className="dk-lock-card" role="dialog" aria-label="Log in to rate and review">
-              <span className="dk-lock-ic" aria-hidden="true"><Icon name="lock" size={18} /></span>
-              <b>Log in to rate &amp; review</b>
-              <small>Reviews come only from members, so every rating is genuine.</small>
-              <span className="dk-lock-btns">
-                <Link to={`/login?next=${next}`} className="btn btn-primary" onClick={() => setLockTip(false)}>Log in</Link>
-                <Link to="/sign-up" className="btn btn-ghost-dark" onClick={() => setLockTip(false)}>Join free</Link>
-              </span>
-            </div>
-          ) : null}
           {reviewed && !locked ? (
             <Link to="/about-us/reviews" className="dk-orb dk-rate is-done" aria-label="Thanks for your review. See all reviews">
               <span className="dk-ring" aria-hidden="true" />
@@ -147,7 +126,7 @@ export function FloatingDock({ onChat, chatOpen }) {
               <span className="dock-tip">Thanks for your review!</span>
             </Link>
           ) : (
-            <button type="button" className={`dk-orb dk-rate${locked ? ' is-locked' : ''}`} onClick={rate} aria-label={locked ? 'Rate & review (log in first)' : 'Rate your experience'} aria-haspopup="dialog" aria-expanded={locked ? lockTip : undefined}>
+            <button type="button" className={`dk-orb dk-rate${locked ? ' is-locked' : ''}`} onClick={rate} aria-label={locked ? 'Rate & review (log in first)' : 'Rate your experience'} aria-haspopup="dialog">
               <span className="dk-ring" aria-hidden="true" />
               <span className="dk-face"><span className="dk-star"><Icon name="star" size={26} fill="currentColor" /></span></span>
               <span className="dk-orbit" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>

@@ -230,6 +230,23 @@ function StageArt({ step, seg }) {
   return null;
 }
 
+// Left panel of the "Log in to rate us" window: the MFR motto as three floating icon tiles around the round logo.
+function GateArt() {
+  return (
+    <div className="rw-art rw-gart">
+      <span className="rw-gart-logo"><img src="/images/brand/mfr-mark-160.webp" alt="" width="64" height="64" /></span>
+      <div className="rw-gart-tiles">
+        {[['chat', 'Voice', 't0'], ['badge', 'Value', 't1'], ['gift', 'Rewards', 't2']].map(([ic, t, k]) => (
+          <span key={k} className={`rw-gart-tile ${k}`}><Icon name={ic} size={26} /><small>{t}</small></span>
+        ))}
+      </div>
+      <p className="rw-art-t">Your voice, <b>60 seconds</b></p>
+      <small>Your Voice. Your Value. Your Rewards.</small>
+      {[0, 1, 2, 3, 4, 5].map((k) => <i key={k} className={`rw-gart-star s${k}`}>★</i>)}
+    </div>
+  );
+}
+
 // Who is rating? Only a LOGGED-IN ADULT member (see utils/rater.js). Everything about the person comes from the account:
 //   category b2b → "professional" rating (scorecard gauge), anything else → "consumer" (vibe meter)
 //   name, country → from the account;  designation → the member's saved Job Title answer (professionals)
@@ -481,7 +498,7 @@ export default function ReviewPopup() {
           <div className={`rw rw-${seg} st-${done ? 'done' : gate ? 'gate' : step + 1}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
             <aside className="rw-stage" onMouseMove={onTilt} onMouseLeave={() => setTilt({ x: 0, y: 0 })} aria-hidden="true">
               <span className="rw-glow g1" /><span className="rw-glow g2" /><span className="rw-grid" />
-              {!done && (gate || step === 0) ? <StageArt step={1} seg={gate ? 'consumer' : seg} key={`${gate || step}${seg}`} /> : (
+              {gate && !done ? <GateArt key="gate" /> : !done && step === 0 ? <StageArt step={1} seg={gate ? 'consumer' : seg} key={`${gate || step}${seg}`} /> : (
                 <div className="rw-art a2">
                   <p className="rw-art-k">{done ? (live ? 'Now live in Client Testimonials' : 'On its way to Client Testimonials') : 'Live preview'}</p>
                   <div className={`rw-tilt ${done ? 'is-sent' : ''}`} style={{ transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }}>
@@ -512,15 +529,18 @@ export default function ReviewPopup() {
 
               <div className="rw-body" ref={body}>
                 {gate ? (
-                  <div className="rw-done rw-gate">
-                    <span className="rw-done-ico" aria-hidden="true"><Icon name={GATE[gate][0]} size={34} stroke={3} /></span>
+                  <div className={`rw-done rw-gate g-${gate}`}>
+                    <span className="rw-gate-lock" aria-hidden="true"><i /><span><Icon name={GATE[gate][0]} size={30} stroke={2.6} /></span></span>
                     <h2 id="rw-title">{GATE[gate][1]}</h2>
                     <p>{GATE[gate][2]}</p>
                     {gate === 'login' ? (
-                      <div className="rw-done-acts">
-                        <Link to="/login" className="rw-next" onClick={close}><Icon name="lock" size={16} /> Log in</Link>
-                        <Link to="/sign-up" className="rw-ghost" onClick={close}>Join free <Icon name="arrow" size={14} /></Link>
-                      </div>
+                      <>
+                        <div className="rw-done-acts">
+                          <Link to="/login" className="rw-next rw-gate-go" onClick={close}>Log in <Icon name="arrow" size={16} /></Link>
+                          <Link to="/sign-up" className="rw-ghost" onClick={close}>New here? Join free</Link>
+                        </div>
+                        <p className="rw-gate-trust"><span aria-hidden="true">★★★★★</span> Member-only · every review is genuine</p>
+                      </>
                     ) : null}
                   </div>
                 ) : done ? (
