@@ -1,6 +1,6 @@
 // Page videos (v3.0) — one entry per page. Drives two things:
 //   1. the floating "Watch our videos" YouTube button on every page (components/video/VideoFab.jsx)
-//   2. the in-page video showcase section (sections/VideoShowcase.jsx)
+//   2. the "watch this page" band at the bottom of every page (sections/WatchBand.jsx)
 // Every page has its OWN `template` (a different stage design) and colour pair, so no two pages look alike.
 //
 // VIDEO IDs — only these are confirmed (taken from the Frequent Research website):

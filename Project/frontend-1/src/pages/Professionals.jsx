@@ -8,7 +8,6 @@ import { VerificationScanner } from '../sections/TrustSections.jsx';
 import { RewardGalaxy } from '../sections/RewardSections.jsx';
 import { FAQ_PROFESSIONALS, FAQ_WHO } from '../data/faqs.js';
 import CountryAtlas from '../sections/CountryAtlas.jsx';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 import ProductVoices from '../sections/ProductVoices.jsx';
 
 const page = PAGES.professionals;
@@ -101,7 +100,6 @@ export default function Professionals() {
       </section>
 
       <ProductVoices kind="professional" />
-      <VideoShowcase />
       <FaqSplit id="pr-faq" title="Professional questions" faqs={FAQS} hue="#2F6BFF" hue2="#8B5CF6" />
       <CtaBand title="Your expertise deserves a reward." sub="Join free, verify once, and start receiving B2B invitations." variant="exec" />
     </>

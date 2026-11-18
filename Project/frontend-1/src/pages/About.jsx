@@ -4,7 +4,6 @@ import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import GlobeReach from '../sections/GlobeReach.jsx';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 import { AboutCompass, AboutJourney, AboutManifesto, AboutPrism, BrandFamily, IsoMedals, TwoWorlds, ValueLoop, ValuesDial } from '../sections/AboutStory.jsx';
 import { FAQ_ABOUT } from '../data/faqs.js';
 
@@ -42,7 +41,6 @@ export default function About() {
       <GlobeReach />
       <BrandFamily />
       <IsoMedals />
-      <VideoShowcase />
 
       <FaqSplit id="ab-faq" title="About the company" sub={<>Read <Link to="/about-us/reviews">ratings &amp; reviews</Link>, see <Link to="/how-it-works">how it works</Link> or browse <Link to="/blog">our blogs</Link>.</>} faqs={FAQS} hue="#14C9B5" hue2="#2F6BFF" />
       <CtaBand />

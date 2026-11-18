@@ -7,7 +7,7 @@ import { postJSON, putJSON } from '../utils/api.js';
 import { isKid, isPro, reviewedKey, useRater } from '../utils/rater.js';
 import { session, store } from '../utils/storage.js';
 import { publicName, rememberOwnReview } from '../utils/reviews.js';
-import { chime, fanfare, setSound, soundOn } from '../utils/sound.js';
+import { chime, fanfare, setSound, soundOn, SOUND_EVENT } from '../utils/sound.js';
 
 
 
@@ -258,7 +258,12 @@ export default function ReviewPopup() {
   const eligible = useRef(false); // logged-in adult member (may be asked / may rate)
   pathRef.current = pathname;
   const [sound, setSoundState] = useState(true);
-  useEffect(() => setSoundState(soundOn()), []);
+  useEffect(() => {
+    setSoundState(soundOn());
+    const sync = () => setSoundState(soundOn());
+    window.addEventListener(SOUND_EVENT, sync);
+    return () => window.removeEventListener(SOUND_EVENT, sync);
+  }, []);
   const toggleSound = () => { const n = !sound; setSound(n); setSoundState(n); if (n) chime({ volume: 0.12 }); };
 
   useEffect(() => { if (open) refresh(); }, [open]);

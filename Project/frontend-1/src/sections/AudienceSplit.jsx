@@ -48,50 +48,71 @@ function World({ id }) {
   );
 }
 
+const AUTO_MS = 4200;
+
 export default function AudienceSplit() {
   const [x, setX] = useState(50);
   const [ref, seen] = useInView({ threshold: 0.4 });
   const [demo, setDemo] = useState(false);
+  const [auto, setAuto] = useState(false);
+  const [side, setSide] = useState('c');
   const stage = useRef(null);
   const drag = useRef(false);
+  const idle = useRef(0);
+  const hold = useRef(false);
+  // While in view, the two worlds take turns: consumer fills the stage, then professional, every few seconds.
+  // Hover, drag or a pick pauses it; it picks up again after a short idle.
   useEffect(() => {
     if (!seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     setDemo(true);
-    const t1 = setTimeout(() => setX(68), 300);
-    const t2 = setTimeout(() => setX(32), 1300);
-    const t3 = setTimeout(() => { setX(50); }, 2300);
-    const t4 = setTimeout(() => setDemo(false), 3200);
-    return () => [t1, t2, t3, t4].forEach(clearTimeout);
+    setAuto(true);
+    let cur = 'c';
+    const go = () => {
+      if (hold.current || document.hidden || Date.now() < idle.current) return;
+      setX(cur === 'c' ? 90 : 10);
+      setSide(cur);
+      cur = cur === 'c' ? 'p' : 'c';
+    };
+    const t0 = setTimeout(go, 500);
+    const iv = setInterval(go, AUTO_MS);
+    return () => { clearTimeout(t0); clearInterval(iv); setAuto(false); };
   }, [seen]);
+  const pause = (ms = 9000) => { idle.current = Date.now() + ms; };
   const fromEvent = (e) => {
     const r = stage.current.getBoundingClientRect();
     const px = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
     setX(Math.max(6, Math.min(94, (px / r.width) * 100)));
   };
+  const pick = (s) => { pause(); setDemo(true); setSide(s); setX(s === 'c' ? 90 : 10); };
   return (
     <section className="section cmp" aria-labelledby="split-title" ref={ref}>
       <div className="container">
         <div className="cmp-head reveal">
           <p className="eyebrow">Two ways to earn</p>
           <h2 id="split-title">Who are you <em>today?</em></h2>
-          <p className="sec-sub">Drag the handle to compare the two worlds.</p>
+          <p className="sec-sub">The two worlds take turns. Drag the handle any time to compare them.</p>
         </div>
         <div
-          className={`cmp-stage ${demo ? 'is-demo' : ''}`}
+          className={`cmp-stage ${demo ? 'is-demo' : ''} ${auto ? 'is-auto' : ''} on-${side}`}
           ref={stage}
-          style={{ '--x': `${x}%` }}
-          onPointerDown={(e) => { if (e.target.closest('a, input')) return; drag.current = true; fromEvent(e); }}
+          style={{ '--x': `${x}%`, '--auto': `${AUTO_MS}ms` }}
+          onMouseEnter={() => { hold.current = true; }}
+          onMouseLeave={() => { hold.current = false; drag.current = false; pause(2500); }}
+          onPointerDown={(e) => { if (e.target.closest('a, input, button')) return; drag.current = true; setDemo(false); pause(); fromEvent(e); }}
           onPointerMove={(e) => drag.current && fromEvent(e)}
-          onPointerUp={() => { drag.current = false; }}
-          onPointerLeave={() => { drag.current = false; }}
+          onPointerUp={() => { drag.current = false; setDemo(true); }}
         >
           <div className="cmp-layer l-c"><World id="c" /></div>
           <div className="cmp-layer l-p"><World id="p" /></div>
           <div className="cmp-handle" aria-hidden="true"><span><Icon name="arrow" size={14} /><Icon name="arrow" size={14} /></span></div>
-          <button type="button" className="cmp-pick c" onClick={() => setX(88)}>Consumer</button>
-          <button type="button" className="cmp-pick p" onClick={() => setX(12)}>Professional</button>
+          <button type="button" className="cmp-pick c" onClick={() => pick('c')}>Consumer</button>
+          <button type="button" className="cmp-pick p" onClick={() => pick('p')}>Professional</button>
+          <div className="cmp-dots">
+            <button type="button" aria-label="Show consumer side" className={side === 'c' ? 'on' : ''} key={`c${side}`} onClick={() => pick('c')}><i /></button>
+            <button type="button" aria-label="Show professional side" className={side === 'p' ? 'on' : ''} key={`p${side}`} onClick={() => pick('p')}><i /></button>
+          </div>
           <label className="sr-only" htmlFor="cmp-range">Compare consumer and professional</label>
-          <input id="cmp-range" className="cmp-range" type="range" min="6" max="94" value={Math.round(x)} onChange={(e) => setX(+e.target.value)} />
+          <input id="cmp-range" className="cmp-range" type="range" min="6" max="94" value={Math.round(x)} onChange={(e) => { pause(); setX(+e.target.value); }} />
         </div>
       </div>
     </section>

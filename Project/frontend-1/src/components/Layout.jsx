@@ -8,6 +8,7 @@ import ReviewPopup from './ReviewPopup.jsx';
 import VerifyEmailGate from './VerifyEmailGate.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import VideoFab from './video/VideoFab.jsx';
+import WatchBand from '../sections/WatchBand.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
@@ -135,7 +136,7 @@ export default function Layout({ children }) {
     <>
       <ScrollProgress />
       <Header />
-      <main id="main" tabIndex={-1}>{children}</main>
+      <main id="main" tabIndex={-1}>{children}<WatchBand /></main>
       <Footer />
       <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />

@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { LanguageButton } from './Language.jsx';
 import BrandLogo from './BrandLogo.jsx';
+import ThemeToggle from './ui/ThemeToggle.jsx';
+import SoundToggle from './ui/SoundToggle.jsx';
 import { BRAND, CONTACT, PAYOUTS, whatsappLink } from '../data/site.js';
 import { CONNECT_BRANDS } from '../data/connect.js';
 
@@ -164,6 +166,15 @@ export default function Footer() {
         </ul>
       </div>
       <p className="ft-word" aria-hidden="true">MyFrequentRewards</p>
+
+      <div className="container">
+        <div className="ft-modes" role="group" aria-label="Display and sound">
+          <span className="ft-modes-lab">Display</span>
+          <ThemeToggle />
+          <span className="ft-modes-lab">Sound</span>
+          <SoundToggle />
+        </div>
+      </div>
 
       <div className="ft-bottom">
         <div className="container ft-bottom-row">

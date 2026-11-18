@@ -7,7 +7,6 @@ import { DemographicRibbons, InterestMosaic } from '../sections/ProfileSections.
 import { PayoutFan } from '../sections/RewardSections.jsx';
 import { FAQ_CONSUMERS, FAQ_WHO } from '../data/faqs.js';
 import CountryAtlas from '../sections/CountryAtlas.jsx';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 import ProductVoices from '../sections/ProductVoices.jsx';
 
 const page = PAGES.consumers;
@@ -133,7 +132,6 @@ export default function Consumers() {
       <PayoutFan />
 
       <ProductVoices kind="consumer" />
-      <VideoShowcase />
       <FaqSplit id="cs-faq" title="Consumer questions" faqs={FAQS} hue="#FF5E7E" hue2="#FF8A00" />
       <CtaBand title="Your everyday opinion has value." sub="Join free and start sharing it today." variant="berry" />
     </>

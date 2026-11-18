@@ -5,7 +5,6 @@ import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { CtaBand } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { CONNECT_BRANDS, liveChannels } from '../data/connect.js';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 // Scan & Connect (v2.4) — one page with every brand of the Frequent Research family: MyFrequentRewards,
 // Turn2Opinion, MyHealthOpinions and Frequent Research Fieldwork Solutions Pvt. Ltd. Each brand gets its own colour
@@ -88,7 +87,6 @@ export default function Connect() {
         </nav>
       </PageHero>
 
-      <VideoShowcase />
       {CONNECT_BRANDS.map((b, bi) => {
         const live = liveChannels(b);
         const more = b.channels.length > live.length;

@@ -10,7 +10,6 @@ import { validateContact } from '../utils/validate.js';
 import { postJSON } from '../utils/api.js';
 import { FAQ_CONTACT } from '../data/faqs.js';
 import { putJSON } from '../utils/api.js';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.contact;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Contact Us', path: page.path }];
@@ -201,7 +200,6 @@ export default function Contact() {
         </div>
       </section>
 
-      <VideoShowcase />
       <FaqSplit id="ct-faq" title="Support questions" sub={<>Browse the <Link to="/faq">full FAQ</Link>.</>} faqs={FAQS} hue="#8B5CF6" hue2="#FF5E7E" />
     </>
   );

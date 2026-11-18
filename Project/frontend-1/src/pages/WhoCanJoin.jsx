@@ -5,7 +5,6 @@ import { CtaBand, FaqList } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import GlobeReach from '../sections/GlobeReach.jsx';
 import { DemographicRibbons, DepartmentWheel, IndustryBento, InterestMosaic, JobTitleWaterfall } from '../sections/ProfileSections.jsx';
-import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.whoCanJoin;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Who Can Join', path: page.path }];
@@ -58,7 +57,6 @@ export default function WhoCanJoin() {
           <FaqList faqs={FAQS} />
         </div>
       </section>
-      <VideoShowcase />
       <CtaBand title="There’s a place for your voice here." variant="ocean" />
     </>
   );

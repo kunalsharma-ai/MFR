@@ -8,16 +8,17 @@
 		"node": ">=18.18"
 	},
 	"scripts": {
-		"dev": "node scripts/blog-meta.mjs && vite",
-		"build": "node scripts/blog-meta.mjs && npm run build:client && npm run build:server && node scripts/prerender.mjs",
+		"dev": "node scripts/blog-meta.mjs && node scripts/build-dark-css.mjs && vite",
+		"build": "node scripts/blog-meta.mjs && node scripts/build-dark-css.mjs && npm run build:client && npm run build:server && node scripts/prerender.mjs",
 		"build:client": "vite build --outDir dist",
 		"build:server": "vite build --ssr src/entry-server.jsx --outDir dist-ssr",
 		"preview": "node scripts/serve.mjs dist",
 		"serve": "node server/index.mjs",
 		"seo:check": "node scripts/seo-check.mjs",
 		"qr": "node scripts/generate-qr.mjs",
+		"dark": "node scripts/build-dark-css.mjs",
 		"covers": "python3 scripts/generate-blog-covers.py",
-		"build:preview": "node scripts/blog-meta.mjs && node scripts/build-preview.mjs"
+		"build:preview": "node scripts/blog-meta.mjs && node scripts/build-dark-css.mjs && node scripts/build-preview.mjs"
 	},
 	"dependencies": {
 		"jspdf": "^4.2.1",
