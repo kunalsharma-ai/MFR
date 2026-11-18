@@ -71,6 +71,7 @@ import './styles/theme-light.css';
 import { startCalm } from './utils/calm.js';
 import './styles/rv2-flag-avatar.css';
 import './styles/v30-a11y.css';
+import './styles/v30-fixes.css';
 
 document.documentElement.classList.add('js');
 

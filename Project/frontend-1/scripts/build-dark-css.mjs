@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const DIRS = ['src/styles', 'src/components'];
-const SKIP = new Set(['dark-base.css', 'v30-mode.css', 'v30-reviews.css', 'v30-nav.css', 'v30-hero.css', 'v30-dock.css', 'v30-auth.css', 'v30-rate.css', 'v30-perf.css', 'v30-audience.css', 'v30-a11y.css', 'v30-blogcover.css']);
+const SKIP = new Set(['dark-base.css', 'v30-mode.css', 'v30-reviews.css', 'v30-nav.css', 'v30-hero.css', 'v30-dock.css', 'v30-auth.css', 'v30-rate.css', 'v30-perf.css', 'v30-audience.css', 'v30-a11y.css', 'v30-blogcover.css', 'v30-fixes.css']);
 const P = 'html[data-mode="dark"]';
 
 // ---------- colour helpers ----------

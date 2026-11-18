@@ -1,0 +1,17 @@
+/* ═════════════ v3.0 — layout fixes (spacing, phones) ═════════════  Skipped by the dark-mode generator. */
+
+/* Tighter rhythm between sections: the old 120 px top + 120 px bottom left large empty bands between blocks */
+.section { padding: clamp(52px, 6.5vw, 88px) 0; }
+
+/* "Jump to section" links in page heroes (Who can join): spaced pills instead of words running together */
+.jump-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.jump-links a { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 999px; font-size: .88rem; font-weight: 600; color: #fff; text-decoration: none; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .25); transition: transform .2s ease; }
+.jump-links a:hover { transform: translateY(-2px); }
+.jump-links a:focus-visible { outline: 3px solid #FDBA74; outline-offset: 2px; }
+
+/* Departures board (professional countries): on phones the first 12 rows show, then "Show all" */
+.dep-more { display: none; }
+@media (max-width: 640px) {
+  .dep:not(.is-more) .dep-row:not(.dep-th):nth-child(n+14) { display: none; }
+  .dep:not(.is-more) .dep-more { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 46px; margin-top: 10px; border: 1px solid rgba(255, 209, 102, .4); border-radius: 14px; background: rgba(255, 209, 102, .08); color: #FFD166; font: 700 .92rem var(--font-b); cursor: pointer; }
+}
