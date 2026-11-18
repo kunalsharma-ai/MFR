@@ -877,3 +877,5 @@ html[data-mode="dark"] .site-header .blogo { background: #fff; border-radius: 10
 html[data-mode="dark"] .btn-ghost-dark { --fg: #eef2ff; border-color: rgba(255, 255, 255, .24); }
 html[data-mode="dark"] .btn-text { --fg: #c9d4ff; }
 html[data-mode="dark"] .ft-logo { background: #fff; }
+html[data-mode="dark"] .burger span { background: #eef2ff; }
+html[data-mode="dark"] .burger { border-color: rgba(255, 255, 255, .16); }
