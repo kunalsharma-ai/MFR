@@ -1,0 +1,90 @@
+/* Dark mode — hand-tuned rules, appended after the generated twins in public/css/dark.css. */
+html[data-mode="dark"] { color-scheme: dark; --font-accent-glow: 0 0 22px rgba(255, 194, 51, .25); }
+html[data-mode="dark"] body { background: #0b0d12; color: #eceff5; }
+html[data-mode="dark"] ::selection { background: #FF8A00; color: #0b0d12; }
+html[data-mode="dark"] img:not([src$=".svg"]):not(.qr):not([src*="/qr/"]) { filter: brightness(.94); }
+/* QR codes stay black-on-white so phones can scan them */
+html[data-mode="dark"] img[src*="/qr/"], html[data-mode="dark"] img[alt^="QR code"] { background: #fff; border-radius: 8px; filter: none; }
+
+/* Buttons on bright fills keep dark text for contrast */
+html[data-mode="dark"] .btn-light { color: #0B1E5B; --fg: #0B1E5B; }
+html[data-mode="dark"] .ws-c .ws-cta { background: #fff; color: #C2185B; }
+html[data-mode="dark"] .btn-light { background: #fff; }
+
+/* Header */
+html[data-mode="dark"] .site-header, html[data-mode="dark"][data-theme="light"] .site-header { background: rgba(11, 13, 18, .92); box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+
+/* Soft glow on headings for depth */
+html[data-mode="dark"] h1, html[data-mode="dark"] h2 { text-shadow: none; }
+
+/* v3.0 components */
+html[data-mode="dark"] .vs--metro { background: linear-gradient(160deg, #141822, #0f1d20); }
+html[data-mode="dark"] .vs--receipt { background: linear-gradient(135deg, #10201c, #1f1c12); }
+html[data-mode="dark"] .vs--phone { background: linear-gradient(135deg, #22141a, #201912); }
+html[data-mode="dark"] .vs--passport { background: #17151f; border-color: #2a2638; background-image: repeating-linear-gradient(0deg, transparent 0 22px, rgba(139, 92, 246, .1) 22px 23px); }
+html[data-mode="dark"] .vs--chat { background: linear-gradient(150deg, #19162a, #22141a); }
+html[data-mode="dark"] .vs--onair { background: linear-gradient(135deg, #221515, #201c12); }
+html[data-mode="dark"] .vs--magazine { background: #161a22; border-color: #2a303c; }
+html[data-mode="dark"] .vf-mast { color: #fff; }
+html[data-mode="dark"] .vs:not(.vs--vault):not(.vs--boardroom):not(.vs--shield):not(.vs--reel):not(.vs--stage):not(.vs--qr):not(.vs--spotlight) { color: #eceff5; }
+html[data-mode="dark"] .vs-receipt { background: #f4f6fb; color: #0B1E5B; }
+html[data-mode="dark"] .vs-pts--passport li, html[data-mode="dark"] .vs-pts--phone li, html[data-mode="dark"] .vs-pts--onair li, html[data-mode="dark"] .vs-pts--chat li:nth-child(odd) { background: rgba(255, 255, 255, .08); color: #eceff5; }
+html[data-mode="dark"] .vfab-tease, html[data-mode="dark"] .vfab-tease::after { background: #161a22; }
+html[data-mode="dark"] .vfab-tease-body { color: #fff; }
+html[data-mode="dark"] .vfab-tease-txt small { color: #a9b0c0; }
+html[data-mode="dark"] .vfab-tease-ic { background: rgba(255, 0, 51, .15); }
+html[data-mode="dark"] .vfab-tease-x { background: rgba(255, 255, 255, .1); color: #fff; }
+
+html[data-mode="dark"] .abm { background: #0f1218; }
+html[data-mode="dark"] .abm-facts li, html[data-mode="dark"] .abl-steps button, html[data-mode="dark"] .abl-node, html[data-mode="dark"] .abl-core, html[data-mode="dark"] .abv-tabs button, html[data-mode="dark"] .abw-col li:not(.abw-cap), html[data-mode="dark"] .abw-core, html[data-mode="dark"] .abi-medal { background: #161a22; border-color: rgba(255, 255, 255, .08); }
+html[data-mode="dark"] .abm-sub, html[data-mode="dark"] .abm-facts small, html[data-mode="dark"] .abl-steps small, html[data-mode="dark"] .abi-txt small { color: #a9b0c0; }
+html[data-mode="dark"] .abm-facts b, html[data-mode="dark"] .abl-steps b, html[data-mode="dark"] .abl-core b, html[data-mode="dark"] .abw-core b, html[data-mode="dark"] .abw-col li, html[data-mode="dark"] .abi-txt b, html[data-mode="dark"] .abv-tabs button { color: #eceff5; }
+html[data-mode="dark"] .abl, html[data-mode="dark"] .abv, html[data-mode="dark"] .abi { background: #0f1218; }
+html[data-mode="dark"] .abl-track { stroke: #2a303c; }
+html[data-mode="dark"] .abl-core { box-shadow: 0 30px 60px -30px #000, inset 0 0 0 8px #13161d; }
+html[data-mode="dark"] .abv-ring::after, html[data-mode="dark"] .abv-hub { background: #13161d; }
+html[data-mode="dark"] .abv-needle { border-top-color: #FFC233; }
+html[data-mode="dark"] .abv-panel { background: color-mix(in srgb, var(--c) 14%, #13161d); }
+html[data-mode="dark"] .abv-panel p { color: #c9cfdb; }
+html[data-mode="dark"] .abv-panel li { background: rgba(255, 255, 255, .07); color: #eceff5; }
+html[data-mode="dark"] .abw { background: linear-gradient(90deg, #1a1218, #0f1218 50%, #11151f); }
+
+html[data-mode="dark"] .pv--consumer { background: linear-gradient(135deg, #1c1318, #1c1812); }
+html[data-mode="dark"] .pvc-note { color: #1f1a33; }
+html[data-mode="dark"] .pv--rewards { background: linear-gradient(135deg, #10201b, #1e1b12); }
+html[data-mode="dark"] .pvr-ticket { background: #14201c; }
+html[data-mode="dark"] .pvr-main { color: #e2f5ee; }
+html[data-mode="dark"] .pvr-stub::before, html[data-mode="dark"] .pvr-stub::after { background: #0b0d12; }
+
+/* Watch band, toggles */
+html[data-mode="dark"] .wb { background: radial-gradient(90% 120% at 50% 0%, #1a1726, #0b0d12 70%); }
+html[data-mode="dark"] .wb::before { opacity: .5; }
+html[data-mode="dark"] .wb-kick, html[data-mode="dark"] .wb-snd { background: #161a22; color: #ff8fa6; border-color: rgba(255, 0, 51, .3); }
+html[data-mode="dark"] .wb-snd { color: #eceff5; border-color: rgba(255, 255, 255, .14); }
+html[data-mode="dark"] .wb-snd .snd-ic { background: rgba(255, 255, 255, .1); }
+html[data-mode="dark"] .wb-acts a, html[data-mode="dark"] .wb-acts button { background: #161a22; color: #eceff5; border-color: color-mix(in srgb, var(--c) 35%, #2a303c); }
+html[data-mode="dark"] .wb-acts small, html[data-mode="dark"] .wb-sub { color: #a9b0c0; }
+html[data-mode="dark"] .wb-head h2, html[data-mode="dark"] .wb-yt a { color: #fff; }
+
+/* Home switch dots, wheel sound switch, reward notification */
+html[data-mode="dark"] .cmp-dots { background: rgba(255, 255, 255, .08); }
+html[data-mode="dark"] .cmp-dots button { background: rgba(255, 255, 255, .2); }
+html[data-mode="dark"] .cmp-dots i { background: #fff; }
+html[data-mode="dark"] .sw-snd { background: #161a22; color: #eceff5; border-color: rgba(255, 255, 255, .14); }
+html[data-mode="dark"] .sw-snd .snd-ic { background: rgba(255, 255, 255, .1); }
+html[data-mode="dark"] .rwt, html[data-mode="dark"] .rwt.is-biz { background: linear-gradient(135deg, #1a1720, #161a22 50%, #161a22); box-shadow: 0 26px 50px -22px rgba(255, 106, 0, .45), 0 10px 26px -14px #000; }
+html[data-mode="dark"] .rwt-l1 { color: #c9cfdb; }
+html[data-mode="dark"] .rwt-l1 b { color: #fff; }
+html[data-mode="dark"] .rwt-l2 { color: #a9b0c0; }
+html[data-mode="dark"] .rwt-sweep::after { background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .18), transparent); }
+html[data-mode="dark"] .rwt-plus { text-shadow: none; color: #FFC233; }
+html[data-mode="dark"] .rwt-x { background: rgba(255, 255, 255, .1); color: #c9cfdb; }
+/* Logo artwork has navy lettering: give it a white plate in the header (as the footer already does) */
+html[data-mode="dark"] .site-header .blogo { background: #fff; border-radius: 10px; box-shadow: 0 0 0 6px #fff, 0 10px 26px -10px rgba(255, 138, 0, .6); }
+html[data-mode="dark"] .btn-ghost-dark { --fg: #eceff5; border-color: rgba(255, 255, 255, .24); }
+html[data-mode="dark"] .btn-text { --fg: #c9d4ff; }
+html[data-mode="dark"] .ft-logo { background: #fff; }
+html[data-mode="dark"] .burger span { background: #eceff5; }
+html[data-mode="dark"] .burger { border-color: rgba(255, 255, 255, .16); }
+/* Text ramp for the ink palette */
+:root[data-mode="dark"] { --ink: #eceff5; --ink-2: #c3c9d6; --ink-3: #9aa2b4; }

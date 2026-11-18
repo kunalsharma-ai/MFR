@@ -5,7 +5,7 @@ import { COUNTRIES } from '../data/countries.js';
 import CountryPicker, { Flag } from './CountryPicker.jsx';
 import { API_BASE, BRAND, CONTACT, DEMO_MODE, whatsappLink } from '../data/site.js';
 import { EMAIL_RE } from '../utils/validate.js';
-import { pop, setSound, soundOn } from '../utils/sound.js';
+import { pop, setSound, soundOn, SOUND_EVENT } from '../utils/sound.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 24/7 Live Help.
@@ -209,7 +209,12 @@ export default function LiveChat({ open, onClose, seed }) {
   const started = msgs.length > 0;
 
   const [sound, setSoundState] = useState(true);
-  useEffect(() => setSoundState(soundOn()), []);
+  useEffect(() => {
+    setSoundState(soundOn());
+    const sync = () => setSoundState(soundOn());
+    window.addEventListener(SOUND_EVENT, sync);
+    return () => window.removeEventListener(SOUND_EVENT, sync);
+  }, []);
   useEffect(() => {
     if (open) {
       pop(); // pop every time the chat opens

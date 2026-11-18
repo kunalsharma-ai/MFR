@@ -15,7 +15,12 @@ const getCtx = () => {
 };
 
 export const soundOn = () => store.get('mfr_sound', 'on') !== 'off';
-export const setSound = (on) => store.set('mfr_sound', on ? 'on' : 'off');
+export const SOUND_EVENT = 'mfr:sound';
+// Every on/off switch (footer, chat, review screen) shares this setting and hears about changes through SOUND_EVENT.
+export const setSound = (on) => {
+  store.set('mfr_sound', on ? 'on' : 'off');
+  try { window.dispatchEvent(new CustomEvent(SOUND_EVENT, { detail: { on } })); } catch { /* ignore */ }
+};
 
 // A soft, bubbly pop: quick pitch drop + a tiny sparkle overtone.
 export function pop({ volume = 0.22, pitch = 1 } = {}) {
@@ -200,3 +205,82 @@ export function skipWelcome() {
   welcomed = true;
 }
  
+
+// ── v3.0 sound effects ─────────────────────────────────────────────────────────────────────────────
+// All respect the on/off switch and stay silent until the browser allows audio (after a click / tap / key).
+const ready = () => {
+  if (!soundOn()) return null;
+  const c = getCtx();
+  if (!c) return null;
+  if (c.state === 'suspended') c.resume();
+  return c.state === 'running' ? c : null;
+};
+function tone(c, t, { f = 440, f2 = null, type = 'sine', vol = 0.12, len = 0.2, attack = 0.008 }) {
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + attack);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  g.connect(c.destination);
+  const o = c.createOscillator();
+  o.type = type;
+  o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + len);
+  o.connect(g);
+  o.start(t);
+  o.stop(t + len + 0.03);
+}
+
+// Prize-wheel spin: a whoosh, then clicks that slow down like a real wheel, then a bright "you got it" chime.
+export function spinSound(duration = 3.6) {
+  try {
+    const c = ready();
+    if (!c) return;
+    const t0 = c.currentTime + 0.02;
+    tone(c, t0, { f: 180, f2: 900, type: 'sawtooth', vol: 0.05, len: 0.35, attack: 0.05 });
+    let t = 0.12;
+    let gap = 0.045;
+    while (t < duration - 0.25) {
+      tone(c, t0 + t, { f: 2200, f2: 1300, type: 'square', vol: 0.045, len: 0.03, attack: 0.002 });
+      t += gap;
+      gap *= 1.075;
+    }
+    [1046.5, 1318.5, 1568, 2093].forEach((f, i) => bell(c, t0 + duration + i * 0.08, f, 0.12 * (1 - i * 0.12)));
+  } catch { /* stay silent */ }
+}
+
+// Theme switch. Dark: a soft falling "night" sweep with twinkling stars. Light: a rising sunrise arpeggio.
+export function themeSound(dark) {
+  try {
+    const c = ready();
+    if (!c) return;
+    const t = c.currentTime + 0.02;
+    if (dark) {
+      tone(c, t, { f: 880, f2: 220, type: 'sine', vol: 0.1, len: 0.6, attack: 0.02 });
+      tone(c, t, { f: 660, f2: 165, type: 'triangle', vol: 0.05, len: 0.7, attack: 0.02 });
+      [1760, 2349, 2093, 2637].forEach((f, i) => tone(c, t + 0.35 + i * 0.11, { f, type: 'sine', vol: 0.05, len: 0.35 }));
+    } else {
+      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => bell(c, t + i * 0.07, f, 0.1 * (1 - i * 0.1), 0.5));
+    }
+  } catch { /* stay silent */ }
+}
+
+// Reward notification: a short coin "ka-ching".
+export function coinSound() {
+  try {
+    const c = ready();
+    if (!c) return;
+    const t = c.currentTime + 0.02;
+    tone(c, t, { f: 1975.5, type: 'square', vol: 0.035, len: 0.09, attack: 0.002 });
+    bell(c, t + 0.07, 2637, 0.07, 0.45);
+    bell(c, t + 0.07, 3136, 0.04, 0.35);
+  } catch { /* stay silent */ }
+}
+
+// Small click for toggles.
+export function tick() {
+  try {
+    const c = ready();
+    if (!c) return;
+    tone(c, c.currentTime + 0.01, { f: 1400, f2: 900, type: 'triangle', vol: 0.06, len: 0.06, attack: 0.003 });
+  } catch { /* stay silent */ }
+}

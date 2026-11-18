@@ -22,6 +22,23 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#0B1E5B" />
+    <!-- Dark mode (v3.0): apply the visitor's saved choice before first paint; dark.css downloads only when needed. -->
+    <script>
+      (function () {
+        try {
+          if (JSON.parse(localStorage.getItem("mfr_mode")) === "dark") {
+            var r = document.documentElement;
+            r.setAttribute("data-mode", "dark");
+            r.style.colorScheme = "dark";
+            if (!document.getElementById("mfr-dark-css")) {
+              var l = document.createElement("link");
+              l.id = "mfr-dark-css"; l.rel = "stylesheet"; l.href = "/css/dark.css";
+              document.head.appendChild(l);
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

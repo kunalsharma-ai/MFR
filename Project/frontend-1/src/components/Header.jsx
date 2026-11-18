@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { LanguageButton } from './Language.jsx';
 import BrandLogo from './BrandLogo.jsx';
+import ThemeToggle from './ui/ThemeToggle.jsx';
+import SoundToggle from './ui/SoundToggle.jsx';
 import { BRAND } from '../data/site.js';
 import UserMenu from './UserMenu.jsx';
 import { DASHBOARD_URL, useSession } from '../utils/session.js';
@@ -165,6 +167,10 @@ export default function Header() {
         </nav>
 
         <div className="header-cta">
+          <div className="hdr-modes" role="group" aria-label="Theme and sound">
+            <ThemeToggle className="thm-sm" />
+            <SoundToggle className="snd-sm" label={false} />
+          </div>
           <LanguageButton />
           {user ? (
             <UserMenu user={user} onLogout={logout} />

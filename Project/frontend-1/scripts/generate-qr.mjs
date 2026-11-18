@@ -23,3 +23,12 @@ for (const s of socials) {
   await writeFile(path.join(outDir, `${s.id}.svg`), svg);
   console.log('QR', s.id, '→', s.url);
 }
+
+// Scan & Connect: every brand channel in src/data/connect.js → public/images/qr/<brand>-<channel>.svg
+const connect = await readFile(path.join(root, 'src/data/connect.js'), 'utf8');
+const ch = [...connect.matchAll(/url: '(https?:[^']+)', qr: '\/images\/qr\/([a-z0-9-]+)\.svg'/g)];
+for (const [, url, file] of ch) {
+  const svg = await QRCode.toString(url, { type: 'svg', errorCorrectionLevel: 'M', margin: 1, color: { dark: '#0B1E5B', light: '#FFFFFF' } });
+  await writeFile(path.join(outDir, `${file}.svg`), svg);
+  console.log('QR', file, '→', url);
+}

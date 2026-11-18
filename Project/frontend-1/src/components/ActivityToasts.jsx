@@ -4,6 +4,7 @@ import { Flag } from './CountryPicker.jsx';
 import { METHOD_INFO, NON_MONEY } from '../utils/payouts.js';
 import useActivityFeed, { initials } from '../hooks/useActivityFeed.js';
 import { prefersReducedMotion, session } from '../utils/storage.js';
+import { audioReady, coinSound } from '../utils/sound.js';
 
 
 const SHOW_MS = 5600;
@@ -30,6 +31,15 @@ function CountUp({ value }) {
   return `${m[1]}${n.toLocaleString('en-US')}${m[3]}`;
 }
 const Burst = () => <span className="rwt-burst" aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>;
+// v3.0 dress: a spinning glow ring, a light sweep and a short coin shower behind the card's content.
+const Fx = () => (
+  <>
+    <span className="rwt-ring" aria-hidden="true"><i /></span>
+    <span className="rwt-sweep" aria-hidden="true" />
+    <span className="rwt-rain" aria-hidden="true">{Array.from({ length: 7 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>
+    <span className="rwt-stars" aria-hidden="true">{Array.from({ length: 4 }, (_, i) => <i key={i} style={{ '--i': i }}>✦</i>)}</span>
+  </>
+);
 
 export default function ActivityToasts() {
   const { items, isPreview, pulse } = useActivityFeed();
@@ -62,6 +72,8 @@ export default function ActivityToasts() {
       setCur(usePulse ? pulse[(k * 3) % pulse.length] : pickReal());
       setN((x) => x + 1);
       setShow(true);
+      // Only after the visitor has interacted (browsers block audio before that) and only with sound on.
+      if (audioReady()) setTimeout(coinSound, 320);
       t1 = setTimeout(() => setShow(false), SHOW_MS);
       t2 = setTimeout(cycle, SHOW_MS + 7000 + Math.random() * 7000);
     };
@@ -90,9 +102,11 @@ export default function ActivityToasts() {
   if (cur.kind === 'pulse') {
     return (
       <div key={n} className={`rwt is-pulse ${show ? 'is-in' : ''}`} style={{ '--tone': cur.tone }} role="status" aria-live="polite">
+        <Fx />
         <Burst />
         <div className="rwt-av"><Icon name={cur.icon} size={18} /><span className="rwt-spark" aria-hidden="true" /></div>
         <div className="rwt-body">
+          <p className="rwt-tag"><span aria-hidden="true">✦</span> Community pulse</p>
           <p className="rwt-l1"><strong className="rwt-amt">{cur.big}</strong> {cur.line}</p>
           <p className="rwt-l3"><i /> MyFrequentRewards community</p>
         </div>
@@ -107,12 +121,15 @@ export default function ActivityToasts() {
   const nonMoney = NON_MONEY.includes(cur.method) || !cur.amount;
   return (
     <div key={n} className={`rwt ${biz ? 'is-biz' : 'is-con'} ${show ? 'is-in' : ''}`} style={{ '--h1': info.hue, '--h2': info.hue2 }} role="status" aria-live="polite">
+      <Fx />
       <Burst />
       <div className="rwt-av">
         {initials(cur.name)}
+        {nonMoney ? null : <span className="rwt-plus" aria-hidden="true">+{cur.amount}</span>}
         <i className="rwt-coin" aria-hidden="true"><Icon name={info.icon} size={11} stroke={2.2} /></i>
       </div>
       <div className="rwt-body">
+        <p className="rwt-tag"><span aria-hidden="true">✦</span> Reward paid out</p>
         <p className="rwt-l1">
           <b>{cur.name}</b> {nonMoney ? <>received a <strong className="rwt-amt">{cur.method}</strong></> : <>earned <strong className="rwt-amt"><CountUp value={cur.amount} /></strong></>}
         </p>

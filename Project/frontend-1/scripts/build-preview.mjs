@@ -53,6 +53,9 @@ html = await replaceAsync(html, /\/(images\/[a-z0-9_\-/.]+\.(?:webp|png|jpg|svg)
   }
   return cache.get(p);
 });
+// Dark mode: embed the generated dark stylesheet (it only applies under html[data-mode="dark"]).
+const darkCss = await readFile(path.join(root, 'public/css/dark.css'), 'utf8');
+html = html.replace(/<head>/, () => `<head><style id="mfr-dark-css">${darkCss}</style>`);
 html = html.replace(/<!--app-head-->/, '<title>MyFrequentRewards — Website Preview</title>').replace('<!--app-html-->', '').replace(/<link rel="manifest"[^>]*>/, '');
 const file = path.join(out, 'myfrequentrewards-preview.html');
 await writeFile(file, html);

@@ -50,6 +50,13 @@ import './styles/v20.css';
 import './styles/connect.css';
 import './styles/atlas.css';
 import './styles/v25.css';
+import './styles/v30-video.css';
+import './styles/v30-about.css';
+import './styles/v30-voices.css';
+import './styles/v30-mode.css';
+import './styles/v30-toast.css';
+import './styles/v30-watch.css';
+import './styles/v30-reviews.css';
 import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';
@@ -87,6 +94,23 @@ startCalm();
 const useHash = import.meta.env.VITE_ROUTER === 'hash' || window.location.protocol === 'file:';
 if (useHash && window.location.protocol === 'file:' && !window.location.hash) window.location.hash = '#/';
 const Router = useHash ? HashRouter : BrowserRouter;
+// Hash-routed preview (single HTML file): plain links such as the header dropdown items ("/about-us/reviews") and
+// in-page jumps ("#ab-story") would leave the file or be read as routes. Route them correctly instead.
+if (useHash) {
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self')) return;
+    const href = a.getAttribute('href');
+    if (/^#[^/]/.test(href)) {
+      const el = document.getElementById(decodeURIComponent(href.slice(1)));
+      if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    } else if (/^\/(?!\/)/.test(href)) {
+      e.preventDefault();
+      window.location.hash = `#${href}`;
+    }
+  }, true);
+}
 
 const normalize = (p) => (p.replace(/\/index\.html$/, '').replace(/\/+$/, '') || '/');
 

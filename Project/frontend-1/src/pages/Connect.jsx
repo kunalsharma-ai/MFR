@@ -13,11 +13,11 @@ import { CONNECT_BRANDS, liveChannels } from '../data/connect.js';
 // scripts/generate-qr.mjs). Channels without a confirmed URL are simply not shown.
 const page = PAGES.connect;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Scan & Connect', path: page.path }];
-const ICON = { website: 'globe', youtube: 'youtube', facebook: 'facebook', instagram: 'instagram', linkedin: 'linkedin', x: 'x', whatsapp: 'whatsapp' };
-const TINT = { website: '#6D5BF7', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', x: '#0F1419', whatsapp: '#25D366' };
+const ICON = { hub: 'hub', google: 'google', threads: 'threads', pinterest: 'pinterest', website: 'globe', youtube: 'youtube', facebook: 'facebook', instagram: 'instagram', linkedin: 'linkedin', x: 'x', whatsapp: 'whatsapp' };
+const TINT = { hub: '#7C4DFF', google: '#EA4335', threads: '#101010', pinterest: '#BD081C', website: '#6D5BF7', youtube: '#FF0033', facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2', x: '#0F1419', whatsapp: '#25D366' };
 
 function QrCube() {
-  const faces = CONNECT_BRANDS.map((b) => ({ b, c: liveChannels(b)[0] })).filter((x) => x.c);
+  const faces = CONNECT_BRANDS.filter((b) => b.id !== 'spl').map((b) => ({ b, c: liveChannels(b)[0] })).filter((x) => x.c);
   return (
     <div className="sc sc-qr">
       <span className="qx-glow" />
@@ -76,7 +76,7 @@ export default function Connect() {
         crumbs={crumbs}
         eyebrow="Scan & Connect"
         title={page.h1}
-        lead="Every brand of the Frequent Research family in one place — scan a code with your phone camera, or tap to open. Follow for survey alerts, payout tips and research news."
+        lead="Every brand of the Frequent Research family in one place: MyFrequentRewards, Turn2Opinion, MyHealthOpinions, Sampledge and Frequent Research — scan a code with your phone camera, or tap to open. Follow for survey alerts, payout tips and research news."
         tagline={[['mobile', 'Point.'], ['sparkle', 'Scan.'], ['link', 'Connected.']]}
         tone="con"
         theme="violet"

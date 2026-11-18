@@ -1,242 +1,304 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
-import PageHero, { PageSeo } from '../components/PageHero.jsx';
-import { CtaBand } from '../components/Common.jsx';
+import { PageSeo } from '../components/PageHero.jsx';
+import { Breadcrumbs, CtaBand } from '../components/Common.jsx';
 import { Flag } from '../components/CountryPicker.jsx';
-import { SCORE, ScoreChip, VIBE, VibeChip } from '../components/ReviewPopup.jsx';
+import { SCORE, ScoreChip, VIBE } from '../components/ReviewPopup.jsx';
 import { PAGES } from '../data/pages.js';
 import useLiveReviews from '../hooks/useLiveReviews.js';
 import useInView from '../hooks/useInView.js';
 import RateButton from '../components/RateButton.jsx';
-import '../styles/rv2-flag-avatar.css';
 import { isRecent } from '../utils/reviews.js';
+import '../styles/rv2-flag-avatar.css';
 
-
+// Ratings & Reviews (v3.0 redesign)
+//  1. Hero "voice galaxy": warm/cool split sky, kinetic headline, a 3D carousel of real review snippets, live stats
+//  2. Two doors — Consumers and Professionals — plus search and country filter
+//  3. Consumers: "postcard lounge" — sunny paper postcards with flag stamps and mood postmarks
+//  4. Professionals: "briefing room" — midnight glass dossiers with gold borders, a live ticker and a gauge
+// Every review shown is a real, published review (supplied testimonials appear only in the preview build,
+// labelled "Preview data"). No review schema is emitted.
 const page = PAGES.reviews;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'About Us', path: '/about-us' }, { name: 'Ratings & Reviews', path: page.path }];
-const PAGE_SIZE = 18;
+const PAGE_SIZE = 12;
+const PLACES = ['kitchen tables', 'boardrooms', 'campuses', 'clinics', 'coffee breaks', 'night shifts'];
 const ini = (n) => String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 const avgOf = (l) => { const r = l.filter((x) => x.rating); return r.length ? r.reduce((s, x) => s + x.rating, 0) / r.length : 0; };
+const clip = (t, n) => { const s = String(t || '').replace(/\s+/g, ' ').trim(); return s.length > n ? `${s.slice(0, n).replace(/\s+\S*$/, '')}…` : s; };
+const MOOD_EMOJI = ['😕', '😐', '🙂', '😊', '😍'];
+const PAPER = ['#FFF1E6', '#FFE9F0', '#FFF8D9', '#EAF8F1', '#EEF0FF', '#FFF0DB'];
 
-function ReviewsScene() {
-  return (
-    <div className="sc sc-rv">
-      <span className="rv-glow" />
-      <div className="rv-stack">
-        <span className="rv-c c1"><b>“Paid on time, every time.”</b><small><i className="con" /> Consumer · Love it!</small></span>
-        <span className="rv-c c2"><b>“Studies that respect my expertise.”</b><small><i className="pro" /> Professional · Excellent</small></span>
-        <span className="rv-c c3"><b>“Surveys that actually fit me.”</b><small><i className="con" /> Consumer · Really good</small></span>
-      </div>
-      <span className="rv-badge"><b>Real</b><small>reviews</small></span>
-      {[0, 1, 2, 3, 4].map((i) => <span key={i} className="rv-bub" style={{ '--i': i }}><Icon name={['chat', 'heart', 'briefcase', 'globe', 'sparkle'][i]} size={16} /></span>)}
-    </div>
-  );
+function CountUp({ to, dec = 0, run }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (!run) return undefined;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (t) => { const p = Math.min(1, (t - t0) / 1200); setV(to * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to, run]);
+  return <>{v.toFixed(dec)}</>;
 }
 
-// Applause meter: a half-ring gauge whose needle sweeps to the average when it scrolls into view
-function Applause({ avg, n }) {
-  const [ref, seen] = useInView({ once: true, threshold: 0.3 });
-  const word = avg ? SCORE[Math.max(0, Math.min(4, Math.round(avg) - 1))] : '—';
-  const pct = avg ? (avg - 1) / 4 : 0;
+// ── 1. Hero ──────────────────────────────────────────────────────────────────────────────────────────────
+function Galaxy({ reviews }) {
+  const cards = reviews.filter((r) => r.text).slice(0, 8);
+  const n = Math.max(cards.length, 1);
+  const flags = [...new Set(reviews.map((r) => r.iso).filter(Boolean))].slice(0, 8);
   return (
-    <div className={`ap ${seen ? 'go' : ''}`} ref={ref} style={{ '--p': pct }}>
-      <div className="ap-dial">
-      <svg viewBox="0 0 220 124" className="ap-svg" role="img" aria-label="Applause meter showing the average rating">
-        <defs><linearGradient id="apg" x1="0" x2="1"><stop offset="0" stopColor="#E5484D" /><stop offset=".35" stopColor="#F2A33A" /><stop offset=".65" stopColor="#E8C33A" /><stop offset="1" stopColor="#2FBF8F" /></linearGradient></defs>
-        <path d="M20 112a90 90 0 0 1 180 0" className="ap-bg" />
-        <path d="M20 112a90 90 0 0 1 180 0" className="ap-fg" pathLength="100" />
-        {[0, 1, 2, 3, 4].map((k) => { const a = Math.PI - (k / 4) * Math.PI; return <circle key={k} cx={110 + 90 * Math.cos(a)} cy={112 - 90 * Math.sin(a)} r="3" className="ap-tick" />; })}
-      </svg>
-      <span className="ap-needle" aria-hidden="true"><i /></span>
-      <span className="ap-hub" aria-hidden="true" />
-      </div>
-      <p className="ap-read" role="img" aria-label={avg ? `Average ${avg.toFixed(1)} out of 5 from ${n} rated reviews — ${word}` : 'No ratings yet'}>
-        <b>{avg ? avg.toFixed(1) : '–'}<small>/5</small></b>
-        <span>{word}</span>
-      </p>
-      <p className="ap-note">{n ? `from ${n} rated ${n === 1 ? 'review' : 'reviews'}` : 'Be the first to rate us'}</p>
-    </div>
-  );
-}
-
-function Mood({ list, pro, onPick }) {
-  const rated = list.filter((r) => r.rating);
-  const avg = avgOf(list);
-  const counts = [5, 4, 3, 2, 1].map((k) => rated.filter((r) => r.rating === k).length);
-  const max = Math.max(1, ...counts);
-  const label = (k) => (pro ? SCORE[k - 1] : VIBE[k - 1].w);
-  return (
-    <article className={`md ${pro ? 'md-pro' : 'md-con'}`}>
-      <header>
-        <span className="md-ico"><Icon name={pro ? 'briefcase' : 'cart'} size={20} /></span>
-        <div><h3>{pro ? 'Professionals' : 'Consumers'}</h3><small>{list.length} {list.length === 1 ? 'review' : 'reviews'}{avg ? ` · average ${avg.toFixed(1)}` : ''}</small></div>
-        {avg ? (pro ? <ScoreChip rating={Math.round(avg)} /> : <VibeChip rating={Math.round(avg)} />) : null}
-      </header>
-      <ul>
-        {[5, 4, 3, 2, 1].map((k, i) => (
-          <li key={k} style={{ '--w': counts[i] / max, '--i': i }}>
-            <button type="button" onClick={() => onPick(pro ? 'pro' : 'con', k)} disabled={!counts[i]} aria-label={`Show ${counts[i]} ${pro ? 'professional' : 'consumer'} reviews rated ${k} – ${label(k)}`}>
-              <span className="md-lab"><b>{k}</b> {label(k)}</span>
-              <span className="md-bar"><i /></span>
-              <span className="md-n">{counts[i]}</span>
-            </button>
-          </li>
+    <div className="rvg" aria-hidden="true">
+      <span className="rvg-halo" />
+      <span className="rvg-orb"><Icon name="star" size={40} stroke={1.6} /></span>
+      <div className="rvg-ring" style={{ '--n': n }}>
+        {cards.map((r, i) => (
+          <span key={r.id} className={`rvg-card ${r.segment === 'professional' ? 'p' : 'c'}`} style={{ '--k': i }}>
+            <i className="rvg-q">“</i>
+            <b>{clip(r.text, 70)}</b>
+            <small>{r.name}{r.segment === 'professional' ? ' · Professional' : ' · Consumer'}</small>
+          </span>
         ))}
-      </ul>
+      </div>
+      <span className="rvg-orbit">{flags.map((iso, i) => <i key={iso} style={{ '--k': i, '--n': flags.length }}><Flag iso={iso} size={18} /></i>)}</span>
+      {['😍', '👍', '🎉', '💬', '⭐', '🙌'].map((e, i) => <span key={e} className="rvg-emo" style={{ '--i': i }}>{e}</span>)}
+    </div>
+  );
+}
+
+function Hero({ reviews, con, pro, countries }) {
+  const [w, setW] = useState(0);
+  const [ref, seen] = useInView({ once: true, threshold: 0.1 });
+  useEffect(() => { const t = setInterval(() => setW((x) => x + 1), 2200); return () => clearInterval(t); }, []);
+  const avg = avgOf(reviews);
+  return (
+    <section className="rvh" ref={ref} aria-labelledby="rvh-title">
+      <div className="rvh-bg" aria-hidden="true"><i className="rvh-warm" /><i className="rvh-cool" /><i className="rvh-seam" /><i className="rvh-grid" /></div>
+      <div className="container rvh-row">
+        <div className="rvh-copy">
+          <Breadcrumbs items={crumbs} />
+          <p className="rvh-eyebrow"><span className="rvh-live" /> Ratings &amp; reviews · published as they arrive</p>
+          <h1 id="rvh-title" className="rvh-title">
+            <span className="rvh-l1">{page.h1.replace(/ from our members$/, '')}</span>
+            <span className="rvh-l2">from our members</span>
+          </h1>
+          <p className="rvh-kin">Heard around <span className="rvh-swap" key={w}>{PLACES[w % PLACES.length]}</span> <span className="rvh-kin-tail">in {countries || 'many'} countries.</span></p>
+          <p className="rvh-lead">Consumers on one side, business professionals on the other — every review written on this site, the glowing and the critical, in members’ own words.</p>
+          <div className="rvh-cta">
+            <RateButton className="btn btn-primary btn-lg" icon="pen" label="Rate your experience" outLabel="Log in to rate us" />
+            <a className="btn btn-glass btn-lg" href="#rv-doors"><Icon name="chat" size={18} /> Read the reviews</a>
+          </div>
+          <ul className="rvh-stats">
+            <li className="s1"><b>{avg ? <CountUp to={avg} dec={1} run={seen} /> : '–'}<small>/5</small></b><span>average score</span></li>
+            <li className="s2"><b><CountUp to={con.length} run={seen} /></b><span>consumer reviews</span></li>
+            <li className="s3"><b><CountUp to={pro.length} run={seen} /></b><span>professional reviews</span></li>
+          </ul>
+        </div>
+        <Galaxy reviews={reviews} />
+      </div>
+    </section>
+  );
+}
+
+// ── 2. Doors ─────────────────────────────────────────────────────────────────────────────────────────────
+function Doors({ con, pro, q, setQ, iso, setIso, countries }) {
+  const ca = avgOf(con);
+  const pa = avgOf(pro);
+  const go = (id) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  return (
+    <section id="rv-doors" className="rvd" aria-label="Choose reviews">
+      <div className="container">
+        <div className="rvd-row">
+          <button type="button" className="rvd-door c" onClick={() => go('rv-con')}>
+            <span className="rvd-ic"><Icon name="cart" size={26} /></span>
+            <span className="rvd-t"><small>The postcard lounge</small><b>Consumer reviews</b><em>{con.length} {con.length === 1 ? 'review' : 'reviews'}{ca ? ` · ${MOOD_EMOJI[Math.round(ca) - 1]} ${VIBE[Math.round(ca) - 1].w}` : ''}</em></span>
+            <Icon name="arrow" size={20} />
+          </button>
+          <span className="rvd-or" aria-hidden="true">or</span>
+          <button type="button" className="rvd-door p" onClick={() => go('rv-pro')}>
+            <span className="rvd-ic"><Icon name="briefcase" size={26} /></span>
+            <span className="rvd-t"><small>The briefing room</small><b>Professional reviews</b><em>{pro.length} {pro.length === 1 ? 'review' : 'reviews'}{pa ? ` · ${pa.toFixed(1)}/5 ${SCORE[Math.round(pa) - 1]}` : ''}</em></span>
+            <Icon name="arrow" size={20} />
+          </button>
+        </div>
+        <div className="rvd-tools">
+          <label className="rvd-search"><Icon name="filter" size={16} /><span className="sr-only">Search reviews</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search every review…" /></label>
+          <label className="rvd-select">
+            <span className="sr-only">Country</span>
+            {iso ? <Flag iso={iso} size={14} /> : <Icon name="globe" size={16} />}
+            <select value={iso} onChange={(e) => setIso(e.target.value)}>
+              <option value="">All countries</option>
+              {countries.map((c) => <option key={c.iso} value={c.iso}>{c.name} ({c.n})</option>)}
+            </select>
+          </label>
+          {q || iso ? <button type="button" className="rvd-clear" onClick={() => { setQ(''); setIso(''); }}><Icon name="close" size={14} /> Clear</button> : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Tag({ r }) {
+  if (r.own) return <span className="rvx-tag own">Your review</span>;
+  if (isRecent(r)) return <span className="rvx-tag new">New</span>;
+  if (r.preview) return <span className="rvx-tag prev">Preview data</span>;
+  return null;
+}
+
+// ── 3. Consumers: postcard lounge ────────────────────────────────────────────────────────────────────────
+function Postcard({ r, i }) {
+  const k = r.rating ? r.rating - 1 : 3;
+  return (
+    <article className="pc" style={{ '--i': i % PAGE_SIZE, '--paper': PAPER[i % PAPER.length], '--tilt': `${((i * 37) % 7) - 3}deg` }}>
+      <Tag r={r} />
+      <span className="pc-stamp" aria-hidden="true">{r.iso ? <Flag iso={r.iso} size={34} /> : <b>{ini(r.name)}</b>}</span>
+      {r.rating ? <span className={`pc-post l${r.rating}`} role="img" aria-label={`Rated ${r.rating} out of 5 – ${VIBE[k].w}`}><em>{MOOD_EMOJI[k]}</em><b>{VIBE[k].w}</b></span> : <span className="pc-post l0"><em aria-hidden="true">✉️</em><b>Member review</b></span>}
+      <blockquote>{r.text}</blockquote>
+      <footer><span className="pc-sig">— {r.name}</span><small>{r.country}</small></footer>
     </article>
   );
 }
 
-function Card({ r, i }) {
-  const pro = r.segment === 'professional';
+function Lounge({ list }) {
+  const [mood, setMood] = useState(0);
+  const [shown, setShown] = useState(PAGE_SIZE);
+  const counts = [5, 4, 3, 2, 1].map((k) => list.filter((r) => r.rating === k).length);
+  const total = Math.max(1, counts.reduce((a, b) => a + b, 0));
+  const view = mood ? list.filter((r) => (mood === 3 ? r.rating && r.rating <= 3 : r.rating === mood)) : list;
+  const [ref, seen] = useInView({ once: true, threshold: 0.15 });
+  return (
+    <section id="rv-con" className={`lg${seen ? ' is-in' : ''}`} ref={ref} aria-labelledby="lg-title">
+      <div className="lg-bg" aria-hidden="true">{Array.from({ length: 10 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</div>
+      <div className="container">
+        <header className="lg-head">
+          <p className="lg-kick"><Icon name="cart" size={16} /> Consumers</p>
+          <h2 id="lg-title">Postcards from <em>everyday life</em></h2>
+          <p className="lg-sub">Shoppers, parents, students, gamers and travellers — how it really feels to be rewarded for an opinion.</p>
+        </header>
+        <div className="lg-mood" role="group" aria-label="Filter consumer reviews by mood">
+          <div className="lg-bar" aria-hidden="true">{counts.map((c, i) => (c ? <i key={i} className={`l${5 - i}`} style={{ flexGrow: c / total }} /> : null))}</div>
+          {[[0, '✨', 'All', list.length], [5, MOOD_EMOJI[4], VIBE[4].w, counts[0]], [4, MOOD_EMOJI[3], VIBE[3].w, counts[1]], [3, MOOD_EMOJI[2], 'Pretty good & below', counts[2] + counts[3] + counts[4]]].map(([k, e, t, n]) => (
+            <button type="button" key={k} className={mood === k ? 'on' : ''} aria-pressed={mood === k} disabled={!n && k} onClick={() => { setMood(k); setShown(PAGE_SIZE); }}><em aria-hidden="true">{e}</em> {t} <b>{n}</b></button>
+          ))}
+        </div>
+        {view.length ? (
+          <div className="lg-grid" key={mood}>{view.slice(0, shown).map((r, i) => <Postcard key={r.id} r={r} i={i} />)}</div>
+        ) : <p className="rvx-empty">No consumer reviews match these filters yet.</p>}
+        {view.length > shown ? <p className="rvx-more"><button type="button" className="btn lg-btn" onClick={() => setShown((n) => n + PAGE_SIZE)}>More postcards ({view.length - shown}) <Icon name="arrow" size={16} /></button></p> : null}
+      </div>
+    </section>
+  );
+}
+
+// ── 4. Professionals: briefing room ──────────────────────────────────────────────────────────────────────
+function Gauge({ avg, n }) {
+  const [ref, seen] = useInView({ once: true, threshold: 0.3 });
+  const p = avg ? (avg - 1) / 4 : 0;
+  return (
+    <div className={`br-gauge${seen ? ' go' : ''}`} ref={ref} style={{ '--p': p }} role="img" aria-label={avg ? `Professionals score us ${avg.toFixed(1)} out of 5 from ${n} reviews` : 'No professional scores yet'}>
+      <svg viewBox="0 0 200 112" aria-hidden="true"><path d="M14 104a86 86 0 0 1 172 0" className="g-bg" /><path d="M14 104a86 86 0 0 1 172 0" className="g-fg" pathLength="100" /></svg>
+      <span className="g-needle" aria-hidden="true" />
+      <b>{avg ? avg.toFixed(1) : '–'}<small>/5</small></b>
+      <span>{avg ? SCORE[Math.round(avg) - 1] : 'Awaiting first score'}</span>
+    </div>
+  );
+}
+
+function Dossier({ r, i }) {
   const role = [r.designation, r.company].filter(Boolean).join(' · ');
   return (
-    <article className={`rv2 ${pro ? 'p' : 'c'}`} style={{ '--i': i }}>
-      {r.own ? <span className="tv-tag own">Your review</span> : isRecent(r) ? <span className="tv-tag new">New</span> : r.preview ? <span className="tv-tag prev">Preview data</span> : null}
+    <article className="ds" style={{ '--i': i % PAGE_SIZE }}>
+      <span className="ds-edge" aria-hidden="true"><i /></span>
+      <Tag r={r} />
       <header>
-        <span className={`rv2-av${r.iso ? ' is-flag' : ''}`} aria-hidden="true">{r.iso ? <Flag iso={r.iso} size={42} /> : ini(r.name)}</span>
-        <span className="rv2-id"><b>{r.name}</b><small>{r.country}{role ? ` · ${role}` : ''}</small></span>
+        <span className={`rv2-av ds-av${r.iso ? ' is-flag' : ''}`} aria-hidden="true">{r.iso ? <Flag iso={r.iso} size={40} /> : ini(r.name)}</span>
+        <span className="ds-id"><b>{r.name}</b><small>{role || 'Business professional'}</small><small className="ds-c">{r.country}</small></span>
+        <span className="ds-seal" title="Verified professional member"><Icon name="check" size={13} /></span>
       </header>
-      <div className="rv2-score">{pro ? <ScoreChip rating={r.rating} /> : <VibeChip rating={r.rating} />}<span className="rv2-seg">{pro ? 'Professional' : 'Consumer'}</span></div>
       <blockquote>{r.text}</blockquote>
+      <footer><ScoreChip rating={r.rating} /><span className="ds-file">B2B · {String(i + 1).padStart(3, '0')}</span></footer>
     </article>
+  );
+}
+
+function Briefing({ list }) {
+  const [band, setBand] = useState(0);
+  const [shown, setShown] = useState(PAGE_SIZE);
+  const view = band ? list.filter((r) => (band === 3 ? r.rating && r.rating <= 3 : r.rating === band)) : list;
+  const ticker = list.filter((r) => r.text).slice(0, 8);
+  const [ref, seen] = useInView({ once: true, threshold: 0.15 });
+  return (
+    <section id="rv-pro" className={`br${seen ? ' is-in' : ''}`} ref={ref} aria-labelledby="br-title">
+      <div className="br-bg" aria-hidden="true"><i className="br-scan" /></div>
+      <div className="container">
+        <div className="br-top">
+          <header className="br-head">
+            <p className="br-kick"><span /> B2B · verified professionals</p>
+            <h2 id="br-title">The <em>briefing room</em></h2>
+            <p className="br-sub">CXOs, managers, engineers, clinicians and founders on the studies that value their expertise.</p>
+            <div className="br-bands" role="group" aria-label="Filter professional reviews by score">
+              {[[0, 'All'], [5, SCORE[4]], [4, SCORE[3]], [3, `${SCORE[2]} & below`]].map(([k, t]) => (
+                <button type="button" key={k} className={band === k ? 'on' : ''} aria-pressed={band === k} onClick={() => { setBand(k); setShown(PAGE_SIZE); }}>{t}</button>
+              ))}
+            </div>
+          </header>
+          <Gauge avg={avgOf(list)} n={list.filter((r) => r.rating).length} />
+        </div>
+        {ticker.length ? (
+          <div className="br-tick" aria-hidden="true"><div>{[...ticker, ...ticker].map((r, i) => <span key={i}><b>{r.name}</b> {clip(r.text, 80)} <i>◆</i></span>)}</div></div>
+        ) : null}
+        {view.length ? (
+          <div className="br-grid" key={band}>{view.slice(0, shown).map((r, i) => <Dossier key={r.id} r={r} i={i} />)}</div>
+        ) : (
+          <div className="br-empty">
+            <span className="br-empty-seal" aria-hidden="true"><Icon name="briefcase" size={34} /></span>
+            <h3>{list.length ? 'No professional reviews match these filters' : 'Be the first professional voice'}</h3>
+            <p>Managers, specialists, founders and decision-makers — tell other professionals what B2B studies with MyFrequentRewards are like.</p>
+            <RateButton className="btn br-btn" icon="pen" label="Write a professional review" outLabel="Log in to write a review" />
+          </div>
+        )}
+        {view.length > shown ? <p className="rvx-more"><button type="button" className="btn br-btn" onClick={() => setShown((n) => n + PAGE_SIZE)}>More briefings ({view.length - shown}) <Icon name="arrow" size={16} /></button></p> : null}
+      </div>
+    </section>
   );
 }
 
 export default function Reviews() {
-  const { reviews, status } = useLiveReviews();
-  const [seg, setSeg] = useState('all');
-  const [stars, setStars] = useState(0);
-  const [iso, setIso] = useState('');
-  const [sort, setSort] = useState('new');
+  const { reviews } = useLiveReviews();
   const [q, setQ] = useState('');
-  const [shown, setShown] = useState(PAGE_SIZE);
-  const [panel, setPanel] = useState(false);
-
-  const con = reviews.filter((r) => r.segment !== 'professional');
-  const pro = reviews.filter((r) => r.segment === 'professional');
-  const rated = reviews.filter((r) => r.rating);
-  const avg = avgOf(reviews);
+  const [iso, setIso] = useState('');
   const countries = useMemo(() => {
     const m = {};
     reviews.forEach((r) => { if (r.iso) m[r.iso] = { iso: r.iso, name: r.country, n: (m[r.iso] ? m[r.iso].n : 0) + 1 }; });
     return Object.values(m).sort((a, b) => b.n - a.n);
   }, [reviews]);
-  const preview = reviews.some((r) => r.preview);
-
-  const list = useMemo(() => {
-    let l = reviews.filter((r) => (seg === 'all' ? true : seg === 'pro' ? r.segment === 'professional' : r.segment !== 'professional'));
-    if (stars) l = l.filter((r) => (stars === 3 ? r.rating && r.rating <= 3 : r.rating === stars));
+  const filtered = useMemo(() => {
+    let l = reviews;
     if (iso) l = l.filter((r) => r.iso === iso);
     if (q.trim()) { const t = q.trim().toLowerCase(); l = l.filter((r) => `${r.text} ${r.name} ${r.country} ${r.designation} ${r.company}`.toLowerCase().includes(t)); }
-    if (sort === 'top') l = [...l].sort((a, b) => (b.rating || 0) - (a.rating || 0));
     return l;
-  }, [reviews, seg, stars, iso, q, sort]);
-  const active = (stars ? 1 : 0) + (iso ? 1 : 0) + (sort !== 'new' ? 1 : 0);
-  const reset = () => { setSeg('all'); setStars(0); setIso(''); setQ(''); setSort('new'); setShown(PAGE_SIZE); };
-  const toWall = () => { const el = document.getElementById('rs-wall'); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
-  const pickMood = (s, k) => { setSeg(s); setStars(k >= 4 ? k : 3); setShown(PAGE_SIZE); toWall(); };
+  }, [reviews, q, iso]);
+  const con = reviews.filter((r) => r.segment !== 'professional');
+  const pro = reviews.filter((r) => r.segment === 'professional');
+  const preview = reviews.some((r) => r.preview);
 
   return (
     <>
       <PageSeo page={page} crumbs={crumbs} />
-      <PageHero
-        crumbs={crumbs}
-        eyebrow="About us · Ratings & reviews"
-        title={page.h1}
-        lead="Consumers and professionals from around the world, in their own words. Every review written on this site is published here as it arrives — the glowing and the critical."
-        tagline={[['chat', 'Real voices.'], ['globe', 'Every country.'], ['sparkle', 'Published live.']]}
-        tone="con"
-        theme="berry"
-        artNode={<ReviewsScene />}
-      >
-        <div className="rs-hero-cta">
-          <RateButton className="btn btn-primary" icon="pen" label="Rate your experience" outLabel="Log in to rate us" />
-          <a className="btn btn-glass" href="#rs-wall"><Icon name="chat" size={16} /> Read the reviews</a>
-        </div>
-      </PageHero>
+      <Hero reviews={reviews} con={con} pro={pro} countries={countries.length} />
+      <Doors con={con} pro={pro} q={q} setQ={setQ} iso={iso} setIso={setIso} countries={countries} />
+      {preview ? <p className="rvx-prevnote container"><Icon name="eye" size={14} /> Preview build — includes supplied testimonials marked “Preview data” that are not on the live site until confirmed.</p> : null}
+      <Lounge list={filtered.filter((r) => r.segment !== 'professional')} key={`c${q}${iso}`} />
+      <Briefing list={filtered.filter((r) => r.segment === 'professional')} key={`p${q}${iso}`} />
 
-      <section className="section apb" aria-labelledby="apb-title">
-        <div className="container">
-          <div className="sec-head sec-center reveal">
-            <p className="eyebrow">The applause meter {status === 'live' ? <span className="vx-live"><i /> Live</span> : null}</p>
-            <h2 id="apb-title">How members <span className="apb-hl">really feel</span></h2>
-            {preview ? <p className="tv-prevnote"><Icon name="eye" size={14} /> Preview build — includes supplied testimonials marked “Preview data” that are not on the live site until confirmed.</p> : null}
-          </div>
-          <div className="apb-grid">
-            <Mood list={con} onPick={pickMood} />
-            <div className="apb-mid">
-              <Applause avg={avg} n={rated.length} />
-              <p className="apb-split"><span className="c"><b>{con.length}</b> consumers</span><span className="p"><b>{pro.length}</b> professionals</span><span><b>{countries.length}</b> countries</span></p>
-            </div>
-            <Mood list={pro} pro onPick={pickMood} />
-          </div>
-          {countries.length ? (
-            <ul className="apb-flags" aria-label="Reviews by country">
-              {countries.slice(0, 12).map((c, i) => (
-                <li key={c.iso} style={{ '--i': i }}><button type="button" onClick={() => { setIso(c.iso); setPanel(true); setShown(PAGE_SIZE); toWall(); }}><Flag iso={c.iso} size={14} /> {c.name} <b>{c.n}</b></button></li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      </section>
-
-      <section id="rs-wall" className="section rvw" aria-labelledby="rs-wall-title">
-        <div className="container">
-          <div className="rvw-head">
-            <h2 id="rs-wall-title">Every review, <span className="apb-hl">every country</span></h2>
-            <p className="rvw-count" aria-live="polite">{list.length} of {reviews.length} reviews</p>
-          </div>
-
-          <div className="rvw-bar">
-            <div className="rvw-seg" role="tablist" aria-label="Member type">
-              {[['all', 'All', 'globe', reviews.length], ['con', 'Consumers', 'cart', con.length], ['pro', 'Professionals', 'briefcase', pro.length]].map(([k, t, ic, n]) => (
-                <button type="button" role="tab" key={k} aria-selected={seg === k} className={`${seg === k ? 'on' : ''} s-${k}`} onClick={() => { setSeg(k); setShown(PAGE_SIZE); }}><Icon name={ic} size={14} /> <span>{t}</span> <b>{n}</b></button>
-              ))}
-            </div>
-            <label className="rvw-search"><Icon name="filter" size={15} /><span className="sr-only">Search reviews</span><input value={q} onChange={(e) => { setQ(e.target.value); setShown(PAGE_SIZE); }} placeholder="Search reviews…" /></label>
-            <button type="button" className={`rvw-toggle ${panel ? 'on' : ''}`} onClick={() => setPanel((v) => !v)} aria-expanded={panel} aria-controls="rvw-panel">
-              <Icon name="layers" size={15} /> {panel ? 'Hide filters' : 'Filters'}{active ? <b>{active}</b> : null}
-            </button>
-          </div>
-
-          <div id="rvw-panel" className={`rvw-panel ${panel ? 'open' : ''}`} hidden={!panel}>
-            <div className="rvw-chips" role="group" aria-label="Score">
-              {[[0, 'Any score'], [5, '5 · Excellent / Love it!'], [4, '4 · Very / Really good'], [3, '3 & below']].map(([n, t]) => <button type="button" key={n} className={stars === n ? 'on' : ''} onClick={() => { setStars(n); setShown(PAGE_SIZE); }} aria-pressed={stars === n}>{t}</button>)}
-            </div>
-            <label className="rvw-select">
-              <span className="sr-only">Country</span>
-              {iso ? <Flag iso={iso} size={14} /> : <Icon name="globe" size={15} />}
-              <select value={iso} onChange={(e) => { setIso(e.target.value); setShown(PAGE_SIZE); }}>
-                <option value="">All countries</option>
-                {countries.map((c) => <option key={c.iso} value={c.iso}>{c.name} ({c.n})</option>)}
-              </select>
-            </label>
-            <label className="rvw-select"><span className="sr-only">Sort</span><Icon name="trend" size={15} /><select value={sort} onChange={(e) => setSort(e.target.value)}><option value="new">Newest first</option><option value="top">Highest rated</option></select></label>
-            {active || q || seg !== 'all' ? <button type="button" className="rvw-clear" onClick={reset}><Icon name="close" size={14} /> Clear all</button> : null}
-          </div>
-
-          {list.length ? (
-            <div className="rvw-grid" key={`${seg}${stars}${iso}${sort}`}>
-              {list.slice(0, shown).map((r, i) => <Card key={r.id} r={r} i={i % PAGE_SIZE} />)}
-            </div>
-          ) : (
-            <div className="rs-empty"><Icon name="filter" size={28} /><p>No reviews match these filters.</p><button type="button" className="btn btn-ghost-dark" onClick={reset}>Clear filters</button></div>
-          )}
-          {list.length > shown ? <p className="rs-more"><button type="button" className="btn btn-primary" onClick={() => setShown((n) => n + PAGE_SIZE)}>Show more reviews ({list.length - shown} left) <Icon name="arrow" size={16} /></button></p> : null}
-        </div>
-      </section>
-
-      <section className="section rs-add" aria-labelledby="rs-add-title">
-        <div className="container rs-add-row">
+      <section className="rvr" aria-labelledby="rvr-title">
+        <div className="container rvr-row">
+          <div className="rvr-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((i) => <span key={i} style={{ '--i': i }}><Icon name="star" size={34} /></span>)}</div>
           <div>
-            <h2 id="rs-add-title">Your turn — rate us in a minute</h2>
-            <p>Your review appears here and in Client Testimonials as soon as it is published, with your name, flag and role.</p>
+            <h2 id="rvr-title">Your turn — rate us in a minute</h2>
+            <p>Your review appears on this page as soon as it is published, with your name, flag and role.</p>
           </div>
-          <div className="rs-add-btns">
-            <RateButton className="btn tv-btn-c" icon="star" label="Rate your experience" outLabel="Log in to rate us" />
-          </div>
+          <RateButton className="btn btn-primary btn-lg" icon="star" label="Rate your experience" outLabel="Log in to rate us" />
         </div>
       </section>
 

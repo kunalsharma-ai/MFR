@@ -10,6 +10,8 @@ import { ScoreChip, VibeChip } from '../components/ReviewPopup.jsx';
 import { isRecent } from '../utils/reviews.js';
 import { isCalm } from '../utils/calm.js';
 import RateButton from '../components/RateButton.jsx';
+import { spinSound } from '../utils/sound.js';
+import SoundToggle from '../components/ui/SoundToggle.jsx';
 
 
 
@@ -140,7 +142,8 @@ function SurveyWheel({ list, visible }) {
             <span key={x.id} className="sw-lab" style={{ '--a': `${i * step}deg` }}><Icon name={x.icon} size={18} /><b>{x.tag}</b></span>
           ))}
         </div>
-        <button type="button" className="sw-hub" onClick={spin} disabled={spinning}><b>SPIN</b><small>a topic</small></button>
+        <button type="button" className="sw-hub" onClick={() => { spinSound(3.2); spin(); }} disabled={spinning}><b>SPIN</b><small>a topic</small></button>
+        <SoundToggle className="sw-snd" label={false} />
       </div>
       <div className="sw-side">
         <div className={`sw-ticket ${spinning ? 'is-wait' : ''}`} style={{ '--tone': c.tone }} aria-live="polite" key={`${c.id}-${spinning}`}>
@@ -161,7 +164,7 @@ function SurveyWheel({ list, visible }) {
         </div>
         <ul className="sw-chips" aria-label="Survey topics">
           {list.map((x, i) => (
-            <li key={x.id}><button type="button" className={i === sel ? 'on' : ''} style={{ '--tone': x.tone }} onClick={() => spinTo(i, 1)} aria-pressed={i === sel}>{x.tag}</button></li>
+            <li key={x.id}><button type="button" className={i === sel ? 'on' : ''} style={{ '--tone': x.tone }} onClick={() => { spinSound(3.2); spinTo(i, 1); }} aria-pressed={i === sel}>{x.tag}</button></li>
           ))}
         </ul>
       </div>
