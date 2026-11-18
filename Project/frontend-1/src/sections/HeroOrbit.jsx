@@ -187,50 +187,50 @@ function ConsumerWorld({ pay, cat }) {
   );
 }
 
-// ── Professional world (v3.0): "Expert Earnings Terminal" — emerald & gold. A tilted glass board draws a rising
-// earnings chart (no figures), a gold premium member card flips, gold bars glint and an invitation slides in.
-const ROLES = [['CXO', 'star'], ['IT', 'database'], ['Doctor', 'medical'], ['Finance', 'coins'], ['HR', 'user'], ['Founder', 'rocket'], ['Engineer', 'bolt'], ['Marketing', 'trend']];
-const CANDLES = [34, 42, 38, 52, 48, 60, 58, 72, 70, 86];
+// ── Professional world (v3.1): "Expert Hour" — plum, magenta, orchid and pearl. Time is money for an expert: a
+// glass dial sweeps round, every turn mints a premium fee chip that flies into the expert wallet, a live expert
+// interview runs, and the consultation-fee invoice gets stamped PAID. No gold and no warm candy colours.
+const EXPERTS = [['CXO', 'star'], ['Doctor', 'medical'], ['IT lead', 'database'], ['Finance', 'coins']];
+const WALLET = [38, 54, 46, 70, 88];
 function ProWorld({ pay }) {
   return (
-    <div className="hm-scene xt-scene">
-      <span className="xt-halo" />
-      <span className="xt-beam" />
-      <div className="xt-board">
-        <p className="xt-head"><span className="xt-live" /><b>Expert earnings</b><small>Your expertise, rewarded</small></p>
-        <div className="xt-chart">
-          {CANDLES.map((h, k) => <i key={k} className="xt-candle" style={{ '--h': h, '--k': k }} />)}
-          <svg className="xt-line" viewBox="0 0 300 120" preserveAspectRatio="none">
-            <defs><linearGradient id="xtL" x1="0" x2="1"><stop offset="0" stopColor="#34D399" /><stop offset="1" stopColor="#FFD166" /></linearGradient></defs>
-            <polyline points="0,96 33,86 66,90 100,72 133,76 166,58 200,62 233,40 266,44 300,14" />
-          </svg>
-          <span className="xt-cover" />
-          <span className="xt-tip"><Icon name="trend" size={13} /></span>
+    <div className="hm-scene eh">
+      <span className="eh-glow" />
+      <div className="eh-dial">
+        <span className="eh-ring" />
+        <span className="eh-face" />
+        <span className="eh-sweep" />
+        <span className="eh-hand" />
+        <div className="eh-core">
+          <span className="eh-core-ic"><Icon name="briefcase" size={26} /></span>
+          <b>Expert hour</b>
+          <small>Your time, rewarded</small>
         </div>
-        <div className="xt-tape"><div>{[...ROLES, ...ROLES].map(([t, ic], k) => <span key={k}><Icon name={ic} size={12} />{t}</span>)}</div></div>
+        <span className="eh-orbit"><i /></span>
       </div>
-      <div className="xt-card">
-        <div className="xt-card-in">
-          <div className="xt-side f">
-            <p className="xt-card-top"><span>MyFrequentRewards</span><b>PREMIUM</b></p>
-            <span className="xt-chip" />
-            <p className="xt-card-t">Expert member</p>
-            <i className="xt-shine" />
-          </div>
-          <div className="xt-side b">
-            <p className="xt-card-top"><span>Rewards paid via</span></p>
-            <p className="xt-card-pay" key={pay.id}><Icon name={pay.icon} size={18} /> {pay.name}</p>
-            <p className="xt-card-s">Bank · Wire · PayPal · Gift cards</p>
-          </div>
+      {[0, 1, 2].map((k) => <span key={k} className="eh-chip" style={{ '--k': k }}><Icon name="coins" size={13} /></span>)}
+      <div className="eh-call">
+        <p className="eh-call-top"><span className="eh-rec" /><b>Expert interview</b><small>Live</small></p>
+        <div className="eh-call-row">
+          <span className="eh-av a"><Icon name="user" size={16} /></span>
+          <span className="eh-wave">{[0, 1, 2, 3, 4, 5, 6].map((k) => <i key={k} style={{ '--k': k }} />)}</span>
+          <span className="eh-av b"><Icon name="briefcase" size={15} /></span>
         </div>
       </div>
-      <div className="xt-gold">{[0, 1, 2].map((k) => <span key={k} className={`xt-bar g${k}`}><i /></span>)}</div>
-      <div className="xt-note">
-        <span className="xt-note-ic"><Icon name="mail" size={15} /></span>
-        <p><b>Invitation · IT decision makers</b><small><Icon name="clock" size={11} /> 20 min · <Icon name="coins" size={11} /> Premium reward</small></p>
+      <div className="eh-wallet">
+        <p><Icon name="wallet" size={14} /><b>Expert wallet</b></p>
+        <div className="eh-bars">{WALLET.map((h, k) => <i key={k} style={{ '--h': h, '--k': k }} />)}</div>
+        <span className="eh-plus">+ premium fee</span>
       </div>
-      <span className="xt-badge"><Icon name="shield" size={15} /> Verified professional</span>
-      {['$', '€', '₹', '£'].map((c, k) => <span key={c} className={`xt-coin k${k}`}>{c}</span>)}
+      <div className="eh-bill">
+        <p className="eh-bill-top"><Icon name="clipboard" size={14} /><b>Consultation fee</b></p>
+        <span className="eh-line" /><span className="eh-line s" />
+        <p className="eh-bill-pay" key={pay.id}><Icon name={pay.icon} size={14} /> Paid via {pay.short || pay.name}</p>
+        <span className="eh-stamp">PAID</span>
+      </div>
+      {EXPERTS.map(([t, ic], k) => <span key={t} className={`eh-role r${k}`}><Icon name={ic} size={13} />{t}</span>)}
+      <span className="eh-badge"><Icon name="shield" size={14} /> Verified professional</span>
+      {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`eh-spark s${k}`} />)}
     </div>
   );
 }
