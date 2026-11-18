@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter, MemoryRouter, useNavigate } from 'react-router-dom';
 import App from './App.jsx';
 import { PagesContext, pageFor } from './router/pages.js';
 import { lazyPages } from './router/lazyPages.js';
@@ -91,12 +91,15 @@ startCalm();
 
 
 
+const urlOk = (() => { try { new URL('/', window.location.href); return true; } catch { return false; } })(); // see Router below
 const useHash = import.meta.env.VITE_ROUTER === 'hash' || window.location.protocol === 'file:';
-if (useHash && window.location.protocol === 'file:' && !window.location.hash) window.location.hash = '#/';
-const Router = useHash ? HashRouter : BrowserRouter;
+if (urlOk && useHash && window.location.protocol === 'file:' && !window.location.hash) window.location.hash = '#/';
+// A preview opened inside an app's file viewer runs at about:srcdoc or blob:null/…, where the browser cannot build URLs
+// from the address ("Failed to construct 'URL'"). Hash and browser routing both need that, so keep the route in memory.
+const Router = !urlOk ? MemoryRouter : useHash ? HashRouter : BrowserRouter;
 // Hash-routed preview (single HTML file): plain links such as the header dropdown items ("/about-us/reviews") and
 // in-page jumps ("#ab-story") would leave the file or be read as routes. Route them correctly instead.
-if (useHash) {
+if (useHash || !urlOk) {
   document.addEventListener('click', (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
     const a = e.target.closest && e.target.closest('a[href]');
@@ -107,9 +110,17 @@ if (useHash) {
       if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     } else if (/^\/(?!\/)/.test(href)) {
       e.preventDefault();
-      window.location.hash = `#${href}`;
+      if (urlOk) window.location.hash = `#${href}`;
+      else if (window.__mfrNav) { window.__mfrNav(href); window.scrollTo(0, 0); }
     }
   }, true);
+}
+
+// Memory routing has no address bar: plain links reach the router through this.
+function NavBridge() {
+  const nav = useNavigate();
+  window.__mfrNav = nav;
+  return null;
 }
 
 const normalize = (p) => (p.replace(/\/index\.html$/, '').replace(/\/+$/, '') || '/');
@@ -118,6 +129,7 @@ const tree = (
   <StrictMode>
     <PagesContext.Provider value={lazyPages}>
       <Router>
+        {!urlOk && <NavBridge />}
         <App />
       </Router>
     </PagesContext.Provider>

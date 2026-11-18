@@ -187,50 +187,46 @@ function ConsumerWorld({ pay, cat }) {
   );
 }
 
-// ── Professional world (v3.1): "Expert Hour" — plum, magenta, orchid and pearl. Time is money for an expert: a
-// glass dial sweeps round, every turn mints a premium fee chip that flies into the expert wallet, a live expert
-// interview runs, and the consultation-fee invoice gets stamped PAID. No gold and no warm candy colours.
+// ── Professional world (v3.2): "Expert Briefcase" — the site's own navy and royal blue with gold money accents.
+// A 3D executive briefcase opens and gold coins and blue notes burst out of it, an invitation to a premium study
+// slides in, expert earnings climb on a glass chart and each payout lands as a "Paid via…" notice.
 const EXPERTS = [['CXO', 'star'], ['Doctor', 'medical'], ['IT lead', 'database'], ['Finance', 'coins']];
-const WALLET = [38, 54, 46, 70, 88];
+const EARN = [30, 44, 40, 58, 66, 84];
 function ProWorld({ pay }) {
   return (
-    <div className="hm-scene eh">
-      <span className="eh-glow" />
-      <div className="eh-dial">
-        <span className="eh-ring" />
-        <span className="eh-face" />
-        <span className="eh-sweep" />
-        <span className="eh-hand" />
-        <div className="eh-core">
-          <span className="eh-core-ic"><Icon name="briefcase" size={26} /></span>
-          <b>Expert hour</b>
-          <small>Your time, rewarded</small>
+    <div className="hm-scene eb">
+      <span className="eb-glow" />
+      <span className="eb-ring" />
+      <span className="eb-ring r2" />
+      {/* coins and notes burst out of the case */}
+      {[0, 1, 2, 3, 4, 5].map((k) => <span key={k} className={`eb-coin c${k}`}><b>$</b></span>)}
+      {[0, 1, 2].map((k) => <span key={k} className={`eb-note n${k}`}><i /><b>$</b></span>)}
+      <div className="eb-case">
+        <span className="eb-handle" />
+        <div className="eb-lid"><span className="eb-lid-in" /></div>
+        <span className="eb-light" />
+        <div className="eb-body">
+          <span className="eb-clasp l" /><span className="eb-clasp r" />
+          <span className="eb-plate"><Icon name="badge" size={14} /> Expert</span>
+          <i className="eb-shine" />
         </div>
-        <span className="eh-orbit"><i /></span>
+        <span className="eb-shadow" />
       </div>
-      {[0, 1, 2].map((k) => <span key={k} className="eh-chip" style={{ '--k': k }}><Icon name="coins" size={13} /></span>)}
-      <div className="eh-call">
-        <p className="eh-call-top"><span className="eh-rec" /><b>Expert interview</b><small>Live</small></p>
-        <div className="eh-call-row">
-          <span className="eh-av a"><Icon name="user" size={16} /></span>
-          <span className="eh-wave">{[0, 1, 2, 3, 4, 5, 6].map((k) => <i key={k} style={{ '--k': k }} />)}</span>
-          <span className="eh-av b"><Icon name="briefcase" size={15} /></span>
-        </div>
+      <p className="eb-pop"><Icon name="coins" size={14} /> Premium reward</p>
+      <div className="eb-invite">
+        <span className="eb-invite-ic"><Icon name="mail" size={15} /></span>
+        <p><b>Invitation · Healthcare experts</b><small><Icon name="clock" size={11} /> 20 min · <Icon name="coins" size={11} /> Premium reward</small></p>
       </div>
-      <div className="eh-wallet">
-        <p><Icon name="wallet" size={14} /><b>Expert wallet</b></p>
-        <div className="eh-bars">{WALLET.map((h, k) => <i key={k} style={{ '--h': h, '--k': k }} />)}</div>
-        <span className="eh-plus">+ premium fee</span>
+      <div className="eb-chart">
+        <p><span className="eb-live" /><b>Expert earnings</b><Icon name="trend" size={14} /></p>
+        <div className="eb-bars">{EARN.map((h, k) => <i key={k} style={{ '--h': h, '--k': k }} />)}</div>
       </div>
-      <div className="eh-bill">
-        <p className="eh-bill-top"><Icon name="clipboard" size={14} /><b>Consultation fee</b></p>
-        <span className="eh-line" /><span className="eh-line s" />
-        <p className="eh-bill-pay" key={pay.id}><Icon name={pay.icon} size={14} /> Paid via {pay.short || pay.name}</p>
-        <span className="eh-stamp">PAID</span>
+      <div className="eb-paid" key={pay.id}>
+        <span className="eb-paid-ic"><Icon name={pay.icon} size={15} /></span>
+        <p><b>Paid via {pay.short || pay.name}</b><small><Icon name="check" size={11} /> Expert reward sent</small></p>
       </div>
-      {EXPERTS.map(([t, ic], k) => <span key={t} className={`eh-role r${k}`}><Icon name={ic} size={13} />{t}</span>)}
-      <span className="eh-badge"><Icon name="shield" size={14} /> Verified professional</span>
-      {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`eh-spark s${k}`} />)}
+      {EXPERTS.map(([t, ic], k) => <span key={t} className={`eb-role r${k}`}><Icon name={ic} size={13} />{t}</span>)}
+      {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`eb-spark s${k}`} />)}
     </div>
   );
 }
