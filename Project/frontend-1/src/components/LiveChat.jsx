@@ -152,7 +152,7 @@ function LeadForm({ question, tab, onDone }) {
       <div className="hl-head">
         <span className="hl-team" aria-hidden="true"><i><Icon name="headset" size={ 14 } /></i><i><Icon name="chat" size={ 14 } /></i><i><Icon name="mail" size={ 14 } /></i></span>
         <div><b>Talk to our team</b><small>A real person replies</small></div>
-        <span className="hl-dots" aria-label={ `Step ${s + 1} of ${LEAD_STEPS.length}` }>{ LEAD_STEPS.map((x, k) => <i key={ x.k } className={ k < s ? 'done' : k === s ? 'now' : '' } />) }</span>
+        <span className="hl-dots" role="img" aria-label={ `Step ${s + 1} of ${LEAD_STEPS.length}` }>{ LEAD_STEPS.map((x, k) => <i key={ x.k } className={ k < s ? 'done' : k === s ? 'now' : '' } />) }</span>
       </div>
       { answers.length ? (
         <ul className="hl-answers">
@@ -345,7 +345,7 @@ export default function LiveChat({ open, onClose, seed }) {
                   <button type="button" className="hc-notit" onClick={ () => patch(i, { showLead: true }) } tabIndex={ tab }>Not what I asked — contact the team</button>
                 ) : null }
                 { m.related && m.related.length ? (
-                  <div className="hc-related" aria-label="Related questions">
+                  <div className="hc-related" role="group" aria-label="Related questions">
                     <small>Related</small>
                     { m.related.map((r) => <button type="button" key={ r } onClick={ () => ask(r) } tabIndex={ tab }>{ r }</button>) }
                   </div>
@@ -360,7 +360,7 @@ export default function LiveChat({ open, onClose, seed }) {
                         <button type="button" onClick={ () => patch(i, { rated: 'down', showLead: true }) } aria-label="Not helpful" tabIndex={ tab }>👎</button>
                       </span>
                     )
-                  ) : m.from === 'me' ? <span className="hc-tick" aria-label="Sent">✓✓</span> : null }
+                  ) : m.from === 'me' ? <span className="hc-tick" role="img" aria-label="Sent">✓✓</span> : null }
                 </span>
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function LiveChat({ open, onClose, seed }) {
         { typing ? (
           <div className="hc-msg bot">
             <img className="hc-msg-av" src={ BRAND.monogram } alt="MyFrequentRewards assistant" width="28" height="28" />
-            <div className="hc-bubble hc-typing" aria-label="Support is typing"><span /><span /><span /></div>
+            <div className="hc-bubble hc-typing" role="status" aria-label="Support is typing"><span /><span /><span /></div>
           </div>
         ) : null }
       </div>
@@ -382,7 +382,7 @@ export default function LiveChat({ open, onClose, seed }) {
           { hints.map((h) => <li key={ h }><button type="button" onClick={ () => ask(h) } tabIndex={ tab }><Icon name="sparkle" size={ 13 } /> { h }</button></li>) }
         </ul>
       ) : (
-        <div className="hc-popular" aria-label="Popular questions">
+        <div className="hc-popular" role="group" aria-label="Popular questions">
           <div className="hc-popular-track">
             { [...POPULAR, ...POPULAR].map((q, i) => (
               <button type="button" key={ q + i } onClick={ () => ask(q) } tabIndex={ i < POPULAR.length ? tab : -1 } aria-hidden={ i >= POPULAR.length }>{ q }</button>

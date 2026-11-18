@@ -80,7 +80,8 @@ export default function HeroOrbit() {
 
       <div className="container hero-row">
         <div className="hero-copy">
-          <p className="hm-motto" aria-label={BRAND.motto}>
+          <p className="hm-motto">
+            <span className="sr-only">{BRAND.motto}</span>
             {words.map((x, k) => (
               <span key={x} className="hm-mw" style={{ '--k': k }} aria-hidden="true">
                 <span className="hm-mi"><Icon name={MOTTO_ICONS[k]} size={15} /></span>{x}
@@ -105,7 +106,8 @@ export default function HeroOrbit() {
           </div>
 
           <div className="hm-roll" key={`m-${seg}`}>
-            <p className="hm-roll-w" aria-label={MODE[seg].words.map((x) => x[1]).join(' ')}>
+            <p className="hm-roll-w">
+              <span className="sr-only">{MODE[seg].words.map((x) => x[1]).join(' ')}</span>
               {MODE[seg].words.map(([ic, t], k) => (
                 <span key={t} className="hm-slot" style={{ '--k': k }} aria-hidden="true"><span className="hm-slot-in"><Icon name={ic} size={18} /> {t}</span></span>
               ))}

@@ -116,7 +116,7 @@ export function FloatingDock({ onChat, chatOpen }) {
     window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }));
   };
   return (
-    <div className={`dock dk${chatOpen ? ' is-chat' : ''}`} aria-label="Quick help">
+    <div className={`dock dk${chatOpen ? ' is-chat' : ''}`} role="group" aria-label="Quick help">
       <span className="dk-rail" aria-hidden="true" />
       {state !== 'kid' ? (
         <div className="dk-rate-wrap">
@@ -159,7 +159,7 @@ export function FloatingDock({ onChat, chatOpen }) {
           <span className="dk-spark" aria-hidden="true" />
           <span className="dk-247" aria-hidden="true">24/7</span>
           <span className="dock-tip">Live Help 24/7</span>
-          {badge && !chatOpen ? <span className="dock-badge" aria-label="1 new message">1</span> : null}
+          {badge && !chatOpen ? <span className="dock-badge" role="img" aria-label="1 new message">1</span> : null}
         </button>
       </div>
     </div>

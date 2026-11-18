@@ -52,7 +52,8 @@ export default function PageHero({ eyebrow, title, lead, crumbs, theme = 'navy',
           {eyebrow ? <p className="eyebrow eyebrow-light">{eyebrow}</p> : null}
           <h1>{title}</h1>
           {tagline ? (
-            <p className={`ph-tag t-${tone}`} aria-label={tagline.map((x) => x[1]).join(' ')}>
+            <p className={`ph-tag t-${tone}`}>
+              <span className="sr-only">{tagline.map((x) => x[1]).join(' ')}</span>
               {tagline.map(([ic, t], k) => <span key={t} className="ph-slot" style={{ '--k': k }} aria-hidden="true"><span><Icon name={ic} size={16} /> {t}</span></span>)}
             </p>
           ) : null}

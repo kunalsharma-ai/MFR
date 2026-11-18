@@ -30,3 +30,4 @@ html body .sx-orb { animation: none !important; }
 html.has-cursor, html.has-cursor * { cursor: auto; }
 /* blocks scrolled well out of view (marked by AnimationGate.jsx) hold every animation inside them */
 [data-gate="off"] *, [data-gate="off"] *::before, [data-gate="off"] *::after { animation-play-state: paused !important; }
+html[data-mode="dark"] .faq-n { color: var(--fc); }

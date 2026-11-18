@@ -151,7 +151,7 @@ export default function Layout({ children }) {
       <ScrollProgress />
       <Header />
       <main id="main" tabIndex={-1}>{children}<WatchBand /></main>
-      <Footer />
+      <Suspense fallback={null}><Footer /></Suspense>
       <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />
       {mounted ? (

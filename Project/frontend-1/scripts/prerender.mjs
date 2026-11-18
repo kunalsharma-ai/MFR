@@ -42,7 +42,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 await writeFile(path.join(dist, 'sitemap.xml'), sitemap);
 await writeFile(path.join(root, 'public', 'sitemap.xml'), sitemap);
 
-const robots = `# robots.txt — MyFrequentRewards\nUser-agent: *\nAllow: /\nDisallow: /login\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
+const robots = `# robots.txt — MyFrequentRewards\nUser-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 await writeFile(path.join(dist, 'robots.txt'), robots);
 await writeFile(path.join(root, 'public', 'robots.txt'), robots);
 

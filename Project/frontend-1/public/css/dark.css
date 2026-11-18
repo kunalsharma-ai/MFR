@@ -191,7 +191,7 @@ html[data-mode="dark"] .faq-item:hover{border-color:color-mix(in srgb, var(--fc)
 html[data-mode="dark"] .faq-item[open]{border-color:color-mix(in srgb, var(--fc) 40%, hsl(224, 14%, 20%));background:linear-gradient(180deg, color-mix(in srgb, var(--fc) 5%, hsl(224, 16%, 11%)), hsl(224, 16%, 11%) 70%)}
 html[data-mode="dark"] .faq-item summary{color:#eef2ff}
 html[data-mode="dark"] .faq-item summary:focus-visible{outline:3px solid color-mix(in srgb, var(--fc) 60%, hsl(224, 14%, 20%))}
-html[data-mode="dark"] .faq-n{background:color-mix(in srgb, var(--fc) 10%, hsl(224, 16%, 11%))}
+html[data-mode="dark"] .faq-n{color:color-mix(in srgb, var(--fc) 60%, hsl(224, 22%, 94%));background:color-mix(in srgb, var(--fc) 10%, hsl(224, 16%, 11%))}
 html[data-mode="dark"] .faq-plus{border:1.5px solid color-mix(in srgb, var(--fc) 30%, hsl(224, 14%, 20%))}
 html[data-mode="dark"] .faq-item[open] .faq-plus::before, html[data-mode="dark"] .faq-item[open] .faq-plus::after{background:hsl(224, 16%, 11%)}
 html[data-mode="dark"] .faq-a-av{background:hsl(224, 16%, 11%);border:1.5px dashed color-mix(in srgb, var(--fc) 45%, hsl(224, 14%, 20%))}
@@ -605,6 +605,7 @@ html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-mw{background:hsl(2
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-mw::before{background:color-mix(in srgb, var(--g) 16%, hsl(224, 16%, 11%))}
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-seg{background:hsl(224, 16%, 11%)}
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-slot{background:hsl(224, 16%, 11%)}
+html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-slot:nth-child(3){color:hsl(28, 85%, 71%)}
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hero-actions .btn-glass{--bg:hsla(224, 16%, 11%, 0.85);background:hsla(224, 16%, 11%, 0.85)}
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-stats li{background:hsl(224, 16%, 11%)}
 html[data-mode="dark"][data-theme='light'] .seg-consumer .hm-stats li:nth-child(3) b{background-image:linear-gradient(90deg, var(--t2-violet), hsl(224, 16%, 17%))}

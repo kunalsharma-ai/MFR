@@ -63,12 +63,14 @@ import './styles/v30-dock.css';
 import './styles/v30-auth.css';
 import './styles/v30-rate.css';
 import './styles/v30-audience.css';
+import './styles/v30-blogcover.css';
 import './styles/v30-perf.css';
 import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';
 import { startCalm } from './utils/calm.js';
 import './styles/rv2-flag-avatar.css';
+import './styles/v30-a11y.css';
 
 document.documentElement.classList.add('js');
 

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import { CtaBand, FaqSplit } from '../components/Common.jsx';
@@ -14,6 +15,10 @@ import { PrivacyVault, QualityRadar, VerificationScanner } from '../sections/Tru
 import BlogBento from '../sections/BlogBento.jsx';
 import SearchShowcase from '../sections/SearchShowcase.jsx';
 import { CommunityLedger, MemberVoices, SurveyBoard } from '../sections/CommunitySections.jsx';
+
+// Each block below the first screen is its own hydration unit: React wakes them up one by one in short tasks
+// after the first screen is interactive, instead of in one long task (the HTML is already there either way).
+const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
 
 const page = PAGES.home;
 
@@ -72,26 +77,26 @@ export default function Home() {
         </div>
       </section>
 
-      <AudienceSplit />
-      <JourneyPath />
-      <SurveyBoard />
-      <GlobeReach />
-      <JobTitleWaterfall />
-      <InvitationsPhone />
-      <PayoutFan />
-      <IncentiveStories />
-      <MemberVoices />
-      <QualityRadar />
-      <VerificationScanner />
-      <PrivacyVault />
-      <SearchShowcase />
-      <BlogBento />
+      <Part><AudienceSplit /></Part>
+      <Part><JourneyPath /></Part>
+      <Part><SurveyBoard /></Part>
+      <Part><GlobeReach /></Part>
+      <Part><JobTitleWaterfall /></Part>
+      <Part><InvitationsPhone /></Part>
+      <Part><PayoutFan /></Part>
+      <Part><IncentiveStories /></Part>
+      <Part><MemberVoices /></Part>
+      <Part><QualityRadar /></Part>
+      <Part><VerificationScanner /></Part>
+      <Part><PrivacyVault /></Part>
+      <Part><SearchShowcase /></Part>
+      <Part><BlogBento /></Part>
 
       <FaqSplit id="faq-home-title" title="Quick answers before you join" sub={<>Still curious? Our <Link to="/faq">full FAQ</Link> covers surveys, rewards and privacy — or ask Live Help any time.</>} faqs={HOME_FAQS} hue="#FF8A00" hue2="#FF3B8D">
         <a className="ext-note" href="https://esomar.org/codes-and-guidelines" target="_blank" rel="noopener noreferrer"><Icon name="book" size={16} /> Market research codes of conduct (ESOMAR)</a>
       </FaqSplit>
 
-      <CtaBand />
+      <Part><CtaBand /></Part>
     </>
   );
 }

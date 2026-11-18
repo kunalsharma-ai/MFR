@@ -13,7 +13,7 @@ export default function SoundToggle({ className = '', label = true }) {
   }, []);
   const flip = () => { const n = !on; setSound(n); setOn(n); if (n) tick(); };
   return (
-    <button type="button" className={`snd-tg${on ? ' is-on' : ''} ${className}`} onClick={flip} aria-pressed={on} aria-label={on ? 'Sound is on. Turn sound off' : 'Sound is off. Turn sound on'}>
+    <button type="button" className={`snd-tg${on ? ' is-on' : ''} ${className}`} onClick={flip} aria-pressed={on} aria-label={label ? (on ? 'Sound on, turn sound off' : 'Sound off, turn sound on') : on ? 'Sound is on. Turn sound off' : 'Sound is off. Turn sound on'}>
       <span className="snd-ic" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />

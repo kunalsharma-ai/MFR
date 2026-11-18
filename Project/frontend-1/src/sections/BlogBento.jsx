@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import BlogCover from '../components/BlogCover.jsx';
 import { BLOG_META as BLOGS } from '../data/blogs/meta.js';
 
 export default function BlogBento({ title = 'Trending on the blog' }) {
@@ -18,7 +19,7 @@ export default function BlogBento({ title = 'Trending on the blog' }) {
           {posts.map((p, i) => (
             <li key={p.slug} className={`bento-card b${i}`}>
               <Link to={`/blog/${p.slug}`}>
-                <img src={p.cover} alt={`Illustration for ${p.title}`} width="1200" height="675" loading="lazy" />
+                <BlogCover slug={p.slug} title={p.title} className="bento-cover" />
                 <div className="bento-over">
                   <span className="bento-cat">{p.category}</span>
                   <h3>{p.title}</h3>
