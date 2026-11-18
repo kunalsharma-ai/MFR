@@ -177,3 +177,4 @@ html[data-mode="dark"] .rxf button { background: #23161D; border-color: #3A2430;
 .rxs-col.empty { align-content: end; padding-bottom: 30px; }
 .rxs-col.empty .rxs-card { animation: rxBob 4s ease-in-out infinite; }
 @keyframes rxBob { 50% { transform: translateY(-10px); } }
+.pv-who small.rid-c, .pv-who .rid small { opacity: 1; color: #555B78; } .pvp-quote .pv-who small.rid-c { color: #b5c0e8; }

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { asset } from '../utils/asset.js';
 import Icon from '../components/Icon.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { CtaBand, FaqList } from '../components/Common.jsx';
@@ -41,20 +42,37 @@ export default function WhoCanJoin() {
       <IndustryBento />
       <DepartmentWheel />
 
-      <section className="section prose-sec" aria-labelledby="wcj-deep">
-        <div className="container prose-cols reveal">
-          <h2 id="wcj-deep">Why diversity of profiles matters</h2>
-          <div>
+      <section className="section dvx" aria-labelledby="wcj-deep">
+        <div className="container dvx-row">
+          <div className="dvx-copy reveal">
+            <p className="eyebrow">Why it matters</p>
+            <h2 id="wcj-deep">Why diversity of profiles matters</h2>
             <p>Good research reflects the real world. A study about electric vehicles needs drivers in Oslo and Delhi; a study about hospital software needs administrators in Nairobi and New York. The broader our community, the more relevant invitations every member receives.</p>
             <p>That is why we welcome every walk of life — and why your honest profile matters. Start with <Link to="/how-it-works">how it works</Link>, explore <Link to="/paid-surveys-for-consumers">consumer</Link> and <Link to="/paid-surveys-for-professionals">professional</Link> surveys, or read <Link to="/blog/earn-dollars-online-without-investment">earning from international studies</Link>.</p>
+          </div>
+          <div className="dvx-art" aria-hidden="true">
+            {[
+              { ic: 'bolt', t: 'Electric vehicle study', who: 'Drivers', a: ['no', 'Oslo'], b: ['in', 'Delhi'], c: '#14C9B5' },
+              { ic: 'medical', t: 'Hospital software study', who: 'Administrators', a: ['ke', 'Nairobi'], b: ['us', 'New York'], c: '#8B5CF6' },
+            ].map((x, k) => (
+              <div key={x.t} className={`dvx-study k${k}`} style={{ '--c': x.c }}>
+                <span className="dvx-hub"><Icon name={x.ic} size={22} /><b>{x.t}</b><small>needs {x.who.toLowerCase()} in</small></span>
+                {[x.a, x.b].map(([iso, city], j) => (
+                  <span key={city} className={`dvx-end e${j}`}>
+                    <i className="dvx-wire"><i /></i>
+                    <span className="dvx-city"><img src={asset(`/flags/${iso}.svg`)} alt="" width="22" height="16" loading="lazy" /><b>{city}</b><small>{x.who}</small></span>
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section faq-split" aria-labelledby="wcj-faq">
+      <section className="section faq-split elx" aria-labelledby="wcj-faq">
         <div className="container faq-home-row">
           <div className="reveal"><p className="eyebrow">FAQ</p><h2 id="wcj-faq">Eligibility questions</h2><p className="sec-sub"><Link to="/sign-up">Check eligibility by signing up <Icon name="arrow" size={14} /></Link></p></div>
-          <FaqList faqs={FAQS} />
+          <FaqList faqs={FAQS} look="check" />
         </div>
       </section>
       <CtaBand title="There’s a place for your voice here." variant="ocean" />

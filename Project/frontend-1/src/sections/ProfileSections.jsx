@@ -112,29 +112,59 @@ export function IndustryBento() {
   );
 }
 
-// 3) Departments — rotating radial wheel
+// 3) Departments — "Org honeycomb" (v3.2): every department is a glowing hex; a light wave rolls out from the
+//    briefcase hub and a "Survey for you" pin hops from hex to hex. Company sizes grow as bubbles of people.
+const DEPT_IC = ['star', 'layers', 'coins', 'bank', 'trend', 'sparkle', 'volume', 'calendar', 'cart', 'basket', 'database', 'user', 'key', 'check', 'bolt', 'pen', 'refresh', 'rocket', 'gift', 'send', 'lock', 'shield', 'headset', 'book', 'chat', 'hub', 'medical', 'clipboard', 'audit'];
+const HUB_AT = 12;
 export function DepartmentWheel() {
-  const n = DEPARTMENTS.length;
+  const [vref, visible] = useInView({ once: false, threshold: 0.2 });
+  const [on, setOn] = useState(3);
+  useEffect(() => {
+    if (!visible) return undefined;
+    const t = setInterval(() => !isCalm() && setOn((x) => (x * 7 + 5) % DEPARTMENTS.length), 1900);
+    return () => clearInterval(t);
+  }, [visible]);
+  const cells = [...DEPARTMENTS];
+  cells.splice(HUB_AT, 0, null);
+  const rows = [];
+  for (let r = 0; r < cells.length; r += 5) rows.push(cells.slice(r, r + 5));
   return (
-    <section className="section dept" aria-labelledby="dept-title">
-      <div className="container dept-row">
-        <div className="dept-wheel-wrap reveal" aria-hidden="true">
-          <div className="dept-wheel">
-            {DEPARTMENTS.map((d, i) => (
-              <span key={d} className="dept-spoke" style={{ '--r': `${(360 / n) * i}deg` }}><em>{d}</em></span>
-            ))}
-            <div className="dept-hub"><Icon name="briefcase" size={34} /><b>Departments</b></div>
-          </div>
-        </div>
-        <div className="dept-copy reveal">
+    <section ref={vref} className="section dhx" aria-labelledby="dept-title">
+      <div className="container dhx-row">
+        <div className="dhx-copy reveal">
           <p className="eyebrow">Departments</p>
           <h2 id="dept-title">Wherever you sit in the org chart.</h2>
           <p className="sec-sub">Finance to field engineering, procurement to people teams — researchers need perspectives from every function.</p>
-          <ul className="dept-list">{DEPARTMENTS.map((d) => <li key={d}>{d}</li>)}</ul>
-          <div className="size-ladder" role="group" aria-label="Company sizes">
-            <p className="size-title">Company sizes</p>
-            <ol>{COMPANY_SIZES.map((s, i) => <li key={s} style={{ '--i': i }}><span />{s}</li>)}</ol>
+          <ul className="sr-only">{DEPARTMENTS.map((d) => <li key={d}>{d}</li>)}</ul>
+          <div className="dhx-sizes" role="group" aria-label="Company sizes">
+            <p className="dhx-sizes-t"><Icon name="briefcase" size={15} /> Every company size</p>
+            <ol>
+              {COMPANY_SIZES.map((s, i) => (
+                <li key={s} style={{ '--i': i }}>
+                  <span className="dhx-bub" aria-hidden="true">{Array.from({ length: 1 + i * 3 }, (_, k) => <i key={k} style={{ '--k': k }} />)}</span>
+                  <small>{s}</small>
+                </li>
+              ))}
+            </ol>
           </div>
+        </div>
+        <div className="dhx-comb" aria-hidden="true">
+          {rows.map((row, r) => (
+            <div key={r} className={`dhx-line${r % 2 ? ' odd' : ''}`}>
+              {row.map((d, c) => {
+                const idx = r * 5 + c;
+                if (d === null) return <span key="hub" className="dhx-hex hub" style={{ '--d': 0 }}><span><Icon name="briefcase" size={30} /><b>Every function</b></span></span>;
+                const di = idx > HUB_AT ? idx - 1 : idx;
+                const dist = Math.hypot(r - 2, c + (r % 2 ? 0.5 : 0) - 2);
+                return (
+                  <span key={d} className={`dhx-hex${di === on ? ' on' : ''}`} style={{ '--d': dist.toFixed(2), '--h': `${(di * 37) % 360}` }}>
+                    <span><Icon name={DEPT_IC[di % DEPT_IC.length]} size={20} /><b>{d}</b></span>
+                    {di === on ? <em className="dhx-pin"><Icon name="mail" size={12} /> Survey for you</em> : null}
+                  </span>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
     </section>

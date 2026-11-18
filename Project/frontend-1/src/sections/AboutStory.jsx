@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import { asset } from '../utils/asset.js';
 import FrLogo from '../components/FrLogo.jsx';
 import useInView from '../hooks/useInView.js';
 import { BRAND } from '../data/site.js';
@@ -11,25 +12,26 @@ import { CONNECT_BRANDS } from '../data/connect.js';
 // a flip-to-scan brand constellation and spinning ISO medals. No community numbers (content rules).
 
 /* ---------- Hero art: isometric prism of the three layers ---------- */
+// About hero art (v3.2): "Reward planet" — the MFR mark is a glowing core; three tilted orbits carry the motto
+// (Voice · Value · Rewards) as moons, member flags circle on the outer ring and coins rain into the core.
+const ORBITS = [
+  { t: 'Your voice', ic: 'chat', c: '#FF5E7E', tilt: -18, dur: 9 },
+  { t: 'Your value', ic: 'badge', c: '#14C9B5', tilt: 22, dur: 12 },
+  { t: 'Your rewards', ic: 'gift', c: '#FFC233', tilt: 70, dur: 15 },
+];
+const AB_FLAGS = ['in', 'us', 'gb', 'br', 'de', 'jp', 'ng', 'ae'];
 export function AboutPrism() {
-  const layers = [
-    { t: 'You', s: 'your voice', c: '#FF5E7E', c2: '#FF8A00', ic: 'user' },
-    { t: 'MyFrequentRewards', s: 'the community', c: '#FF8A00', c2: '#FFC233', ic: 'gift' },
-    { t: 'Frequent Research', s: 'ISO-certified research', c: '#2F6BFF', c2: '#14C9B5', ic: 'shield' },
-  ];
   return (
-    <div className="ab-prism">
-      <span className="ab-prism-glow" />
-      <div className="ab-prism-stack">
-        {layers.map((l, i) => (
-          <div key={l.t} className="ab-slab" style={{ '--i': i, '--c': l.c, '--c2': l.c2 }}>
-            <span className="ab-slab-top" />
-          </div>
-        ))}
-      </div>
-      <ul className="ab-prism-tags">
-        {layers.map((l, i) => <li key={l.t} style={{ '--i': i, '--c': l.c }}><Icon name={l.ic} size={16} /> <span><b>{l.t}</b><small>{l.s}</small></span></li>)}
-      </ul>
+    <div className="abo">
+      <span className="abo-halo" />
+      <div className="abo-flags">{AB_FLAGS.map((f, k) => <i key={f} style={{ '--k': k }}><img src={asset(`/flags/${f}.svg`)} alt="" width="26" height="26" loading="lazy" /></i>)}</div>
+      {ORBITS.map((o, k) => (
+        <div key={o.t} className={`abo-orbit o${k}`} style={{ '--tilt': `${o.tilt}deg`, '--dur': `${o.dur}s`, '--c': o.c }}>
+          <span className="abo-moon"><span className="abo-moon-in"><Icon name={o.ic} size={18} /><b>{o.t}</b></span></span>
+        </div>
+      ))}
+      <span className="abo-core"><img src={asset('/images/brand/mfr-mark-160.webp')} alt="" width="96" height="96" /></span>
+      {[0, 1, 2, 3, 4].map((k) => <em key={k} className="abo-coin" style={{ '--k': k }}>$</em>)}
       {[0, 1, 2, 3, 4, 5].map((k) => <i key={k} className="ab-spark" style={{ '--k': k }} />)}
     </div>
   );

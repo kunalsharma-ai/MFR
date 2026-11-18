@@ -23,7 +23,7 @@ export default function About() {
         lead="The worldwide consumer and business opinion community of Frequent Research, built on one belief: when you help the world make better decisions, you deserve to be rewarded."
         tagline={[['user', 'Your voice.'], ['sparkle', 'Our community.'], ['gift', 'Real rewards.']]}
         tone="con"
-        theme="navy"
+        theme="aurora"
         artNode={<AboutPrism />}
       >
         <p className="ab-hero-links">

@@ -77,6 +77,7 @@ import './styles/v31-auth.css';
 import './styles/v31-gate.css';
 import './styles/v31-reviews.css';
 import './styles/v31-hero-fx.css';
+import './styles/v31-sections.css';
 
 document.documentElement.classList.add('js');
 

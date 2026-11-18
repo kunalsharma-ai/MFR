@@ -100,7 +100,7 @@ export default function Professionals() {
       </section>
 
       <ProductVoices kind="professional" />
-      <FaqSplit id="pr-faq" title="Professional questions" faqs={FAQS} hue="#2F6BFF" hue2="#8B5CF6" />
+      <FaqSplit id="pr-faq" look="dossier" title="Professional questions" faqs={FAQS} hue="#2F6BFF" hue2="#8B5CF6" />
       <CtaBand title="Your expertise deserves a reward." sub="Join free, verify once, and start receiving B2B invitations." variant="exec" />
     </>
   );
