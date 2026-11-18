@@ -46,33 +46,44 @@ function toHsl({ r, g, b }) {
   return { h, s, l };
 }
 const fmt = (h, s, l, a) => (a < 1 ? `hsla(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%, ${+a.toFixed(3)})` : `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`);
-// light surface → dark surface. Every light fill becomes the same deep-navy family; only a faint tint of the
-// original hue is kept, so cream/peach/pink panels never turn into muddy browns ("photo negative" look).
-function grade(h, s) {
-  if (s < 0.12) return [228, 0.36];
-  const warm = h < 75 || h > 315;
-  // warm hues lean into navy-violet, cool hues keep their own hue with low saturation
-  return warm ? [h > 315 ? 285 : 255, Math.min(0.3, 0.16 + s * 0.12)] : [h, Math.min(0.42, 0.2 + s * 0.2)];
-}
+// ── "Midnight ink" palette ──────────────────────────────────────────────────────────────────────────────
+// A designed dark theme instead of an inversion: neutral charcoal surfaces with real elevation (white cards sit
+// ABOVE their section, as in light mode), brand colours left vibrant, and soft off-white text.
+//   base #0B0D12 · section #0F1218 · card #161A22 · raised #1D222C · line #2A303C · text #ECEFF5 / #A9B0C0
+const INK_H = 224;
+const NAVY = (h) => h >= 205 && h <= 265;
+// light surface → charcoal surface (lighter in light mode = more elevated in dark mode)
 function darkSurface(c) {
   const { h, s, l } = toHsl(c);
-  if (l < 0.72 || c.a < 0.5) return null;
-  const [gh, gs] = grade(h, s);
-  return fmt(gh, gs, 0.1 + (1 - l) * 0.45, c.a);
+  if (c.a < 0.5) return null;
+  if (l < 0.72) {
+    // deep navy / indigo section backgrounds → the same ink family, a touch of their own hue kept
+    if (l < 0.36 && s > 0.3 && NAVY(h)) return fmt(INK_H + (h - INK_H) * 0.4, Math.min(0.32, s * 0.4), Math.max(0.055, l * 0.5), c.a);
+    return null;
+  }
+  let L;
+  if (l >= 0.985) L = 0.11; // white cards
+  else if (l >= 0.94) L = 0.075; // tinted section backgrounds
+  else if (l >= 0.85) L = 0.135; // chips, soft panels
+  else L = 0.165;
+  // saturated pastel chips keep a muted tint of their colour; everything else is neutral ink
+  if (s > 0.55 && l < 0.94 && !NAVY(h)) return fmt(h, 0.32, L + 0.02, c.a);
+  return fmt(INK_H, 0.16, L, c.a);
 }
-// light border → subtle dark border
+// light border → subtle neutral line
 function darkLine(c) {
   const { h, s, l } = toHsl(c);
   if (l < 0.72) return null;
-  const [gh, gs] = grade(h, s);
-  return fmt(gh, gs, 0.24, Math.max(c.a, 0.6));
+  if (s > 0.55 && l < 0.92 && !NAVY(h)) return fmt(h, 0.35, 0.3, Math.max(c.a, 0.6));
+  return fmt(INK_H, 0.14, 0.2, Math.max(c.a, 0.6));
 }
-// dark text → light text
+// dark text → light text: navy/ink text becomes soft off-white, coloured text becomes a lighter tint of itself
 let textCut = 0.38;
 function lightText(c) {
   const { h, s, l } = toHsl(c);
   if (l > textCut) return null;
-  return fmt(h, Math.min(0.6, s * 0.7), 0.92 - l * 0.45, c.a);
+  if (s < 0.25 || NAVY(h)) return fmt(INK_H, 0.22, Math.min(0.94, 0.94 - l * 0.55), c.a);
+  return fmt(h, Math.min(0.85, s * 0.9), Math.max(0.7, 0.78 - l * 0.2), c.a);
 }
 const COLOR_RE = /#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|\b(?:white|snow|ivory|whitesmoke|ghostwhite|aliceblue)\b/gi;
 function mapValue(v, fn) {

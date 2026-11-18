@@ -36,7 +36,7 @@ function apply(mode) {
   else delete root.dataset.mode;
   root.style.colorScheme = mode;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', mode === 'dark' ? '#070b1f' : '#0B1E5B');
+  if (meta) meta.setAttribute('content', mode === 'dark' ? '#0b0d12' : '#0B1E5B');
   window.dispatchEvent(new CustomEvent(MODE_EVENT, { detail: { mode } }));
 }
 
