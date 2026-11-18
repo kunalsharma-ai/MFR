@@ -26,7 +26,9 @@ for (const r of ALL_ROUTES) {
   else if (r.path === '/404') out = path.join(dist, '404.html');
   else out = path.join(dist, r.path.replace(/^\//, ''), 'index.html');
   await mkdir(path.dirname(out), { recursive: true });
-  await writeFile(out, process.env.NO_CRITICAL ? page : await beasties.process(page));
+  // Beasties re-serialises the page and writes empty attributes bare (alt=""), which some SEO crawlers read as a missing alt
+const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
+    await writeFile(out, process.env.NO_CRITICAL ? page : keepEmptyAlt(await beasties.process(page)));
   count++;
 }
 
