@@ -59,6 +59,8 @@ import './styles/v30-watch.css';
 import './styles/v30-reviews.css';
 import './styles/v30-nav.css';
 import './styles/v30-hero.css';
+import './styles/v30-dock.css';
+import './styles/v30-auth.css';
 import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';

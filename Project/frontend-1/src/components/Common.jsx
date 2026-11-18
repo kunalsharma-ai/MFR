@@ -4,6 +4,7 @@ import Icon from './Icon.jsx';
 import { whatsappLink } from '../data/site.js';
 import { session, store } from '../utils/storage.js';
 import { useRater } from '../utils/rater.js';
+import { asset } from '../utils/asset.js';
 
 export function Breadcrumbs({ items }) {
   return (
@@ -93,10 +94,13 @@ export function CtaBand({ title = 'Your opinion is worth more than you think.', 
   );
 }
 
+// v3.0 floating dock: three round, animated buttons stacked on a glass rail — Rate & Review (locked until the
+// visitor logs in), WhatsApp, and Live Help (the round MFR logo).
 export function FloatingDock({ onChat, chatOpen }) {
-  const { canRate, reviewed } = useRater(); 
+  const { state, reviewed } = useRater();
   const [tease, setTease] = useState(false);
   const [badge, setBadge] = useState(false);
+  const [lockTip, setLockTip] = useState(false);
   useEffect(() => {
     if (session.get('mfr_chat_seen')) return undefined;
     const t1 = setTimeout(() => { setTease(true); setBadge(true); }, 15000);
@@ -106,17 +110,57 @@ export function FloatingDock({ onChat, chatOpen }) {
   useEffect(() => {
     if (chatOpen) { setTease(false); setBadge(false); session.set('mfr_chat_seen', 1); }
   }, [chatOpen]);
+  useEffect(() => {
+    if (!lockTip) return undefined;
+    const off = (e) => { if (!e.target.closest || !e.target.closest('.dk-rate-wrap')) setLockTip(false); };
+    const t = setTimeout(() => setLockTip(false), 9000);
+    document.addEventListener('pointerdown', off);
+    return () => { clearTimeout(t); document.removeEventListener('pointerdown', off); };
+  }, [lockTip]);
+  const locked = state !== 'ok';
+  const rate = () => {
+    if (state === 'checking') return;
+    if (locked) { setLockTip((v) => !v); return; }
+    window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }));
+  };
+  const next = typeof window !== 'undefined' ? encodeURIComponent(window.location.pathname) : '';
   return (
-    <div className="dock" aria-label="Quick help">
-      {canRate && !reviewed ? (
-        <button type="button" className="dock-rate" onClick={() => window.dispatchEvent(new CustomEvent('mfr:rate', { detail: {} }))} aria-label="Rate your experience" aria-haspopup="dialog">
-          <span className="dock-rate-orb" aria-hidden="true"><Icon name="star" size={24} fill="currentColor" /></span>
-          <span className="dock-rate-stars" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
-          <span className="dock-tip">Rate &amp; review us</span>
-        </button>
+    <div className={`dock dk${chatOpen ? ' is-chat' : ''}`} aria-label="Quick help">
+      <span className="dk-rail" aria-hidden="true" />
+      {state !== 'kid' ? (
+        <div className="dk-rate-wrap">
+          {lockTip ? (
+            <div className="dk-lock-card" role="dialog" aria-label="Log in to rate and review">
+              <span className="dk-lock-ic" aria-hidden="true"><Icon name="lock" size={18} /></span>
+              <b>Log in to rate &amp; review</b>
+              <small>Reviews come only from members, so every rating is genuine.</small>
+              <span className="dk-lock-btns">
+                <Link to={`/login?next=${next}`} className="btn btn-primary" onClick={() => setLockTip(false)}>Log in</Link>
+                <Link to="/sign-up" className="btn btn-ghost-dark" onClick={() => setLockTip(false)}>Join free</Link>
+              </span>
+            </div>
+          ) : null}
+          {reviewed && !locked ? (
+            <Link to="/about-us/reviews" className="dk-orb dk-rate is-done" aria-label="Thanks for your review. See all reviews">
+              <span className="dk-ring" aria-hidden="true" />
+              <span className="dk-face"><Icon name="check" size={24} /></span>
+              <span className="dock-tip">Thanks for your review!</span>
+            </Link>
+          ) : (
+            <button type="button" className={`dk-orb dk-rate${locked ? ' is-locked' : ''}`} onClick={rate} aria-label={locked ? 'Rate & review (log in first)' : 'Rate your experience'} aria-haspopup="dialog" aria-expanded={locked ? lockTip : undefined}>
+              <span className="dk-ring" aria-hidden="true" />
+              <span className="dk-face"><span className="dk-star"><Icon name="star" size={26} fill="currentColor" /></span></span>
+              <span className="dk-orbit" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</span>
+              {locked ? <span className="dk-lock" aria-hidden="true"><Icon name="lock" size={11} /></span> : null}
+              <span className="dock-tip">{locked ? 'Rate & review · log in first' : 'Rate & review us'}</span>
+            </button>
+          )}
+        </div>
       ) : null}
-      <a className="dock-wa" href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp (+91 81782 00573)">
-        <Icon name="whatsapp" size={28} stroke={1.6} />
+      <a className="dk-orb dk-wa" href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp (+91 81782 00573)">
+        <span className="dk-ring" aria-hidden="true" />
+        <span className="dk-face"><Icon name="whatsapp" size={28} stroke={1.6} /></span>
+        <span className="dk-wave" aria-hidden="true" />
         <span className="dock-tip">WhatsApp us</span>
       </a>
       <div className="dock-chat-wrap">
@@ -127,10 +171,14 @@ export function FloatingDock({ onChat, chatOpen }) {
             <small>Payouts, surveys, sign-up — instant answers 24/7</small>
           </button>
         ) : null}
-        <button type="button" className={`dock-chat ${chatOpen ? 'is-open' : ''}`} onPointerEnter={() => import('../utils/chatEngine.js')} onClick={onChat} aria-expanded={chatOpen} aria-label="Open Live Help 24/7">
-          <span className="dock-ring" aria-hidden="true" />
-          <span className="dock-chat-ico" aria-hidden="true"><Icon name={chatOpen ? 'close' : 'chat'} size={24} /></span>
-          <span className="dock-label">Live Help <b>24/7</b></span>
+        <button type="button" className={`dk-orb dk-chat ${chatOpen ? 'is-open' : ''}`} onPointerEnter={() => import('../utils/chatEngine.js')} onClick={onChat} aria-expanded={chatOpen} aria-label="Open Live Help 24/7">
+          <span className="dk-ring" aria-hidden="true" />
+          <span className="dk-face">
+            {chatOpen ? <Icon name="close" size={24} /> : <img src={asset('/images/brand/mfr-mark-160.webp')} alt="" width="46" height="46" />}
+          </span>
+          <span className="dk-spark" aria-hidden="true" />
+          <span className="dk-247" aria-hidden="true">24/7</span>
+          <span className="dock-tip">Live Help 24/7</span>
           {badge && !chatOpen ? <span className="dock-badge" aria-label="1 new message">1</span> : null}
         </button>
       </div>

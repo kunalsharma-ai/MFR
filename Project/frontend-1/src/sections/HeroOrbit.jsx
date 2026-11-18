@@ -66,6 +66,16 @@ export default function HeroOrbit() {
         <div className="hero-aurora a3" />
         <div className="hero-grid" />
         {Array.from({ length: 8 }).map((_, i) => <i key={i} className="hero-spark" style={{ "--i": i * 1.7 }} />)}
+        {/* v3.0 audience atmospheres: candy confetti sky (consumer) · gold-vault night with light beams (professional) */}
+        <div className="hx-fx hx-con">
+          {Array.from({ length: 16 }).map((_, i) => <i key={i} className="hx-confetti" style={{ '--i': i }} />)}
+          {Array.from({ length: 5 }).map((_, i) => <b key={i} className="hx-bubble" style={{ '--i': i }} />)}
+        </div>
+        <div className="hx-fx hx-pro">
+          {[0, 1, 2].map((i) => <span key={i} className="hx-beam" style={{ '--i': i }} />)}
+          {Array.from({ length: 16 }).map((_, i) => <i key={i} className="hx-dust" style={{ '--i': i }} />)}
+          <svg className="hx-ticker" viewBox="0 0 1200 200" preserveAspectRatio="none"><polyline points="0,170 120,150 220,160 330,120 440,130 560,90 660,100 780,60 900,70 1020,30 1200,10" /></svg>
+        </div>
       </div>
 
       <div className="container hero-row">
@@ -77,9 +87,15 @@ export default function HeroOrbit() {
               </span>
             ))}
           </p>
-          <h1 id="hero-title" className="hero-title">
-            <span className="ht-line">Earn money online</span>
-            <span className="ht-line ht-accent">by sharing your opinion</span>
+          <p className={`hx-ribbon r-${seg}`} key={`r-${seg}`}>
+            <span className="hx-ribbon-ic"><Icon name={seg === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
+            {seg === 'pro' ? 'Premium paid studies for professionals' : 'Real rewards for everyday opinions'}
+            <i className="hx-ribbon-shine" aria-hidden="true" />
+          </p>
+          <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
+            <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
+            <span className="ht-line ht-accent" style={{ '--l': 1 }}>by sharing your opinion</span>
+            <svg className="hx-swoosh" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 4, 230 2, 396 12" /></svg>
           </h1>
 
           <div className={`hm-seg${auto ? ' is-auto' : ''}`} role="tablist" aria-label="I am a" style={{ '--seg-ms': `${SEG_MS}ms` }}>

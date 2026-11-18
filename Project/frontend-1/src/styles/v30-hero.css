@@ -179,3 +179,52 @@ html[data-mode="dark"] .mj-glow { background: radial-gradient(circle, rgba(255, 
 html[data-mode="dark"] .xt-note { background: #1D222C; }
 html[data-mode="dark"] .xt-note b { color: #ECEFF5; }
 html[data-mode="dark"] .xt-note small { color: #9AA2B4; }
+
+/* ───────── v3.0 hero copy & atmosphere (per audience) ───────── */
+.hx-fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .9s ease; }
+.seg-consumer .hx-con, .seg-pro .hx-pro { opacity: 1; }
+/* consumer: candy confetti falling + soft 3D bubbles */
+.hx-confetti { position: absolute; top: -30px; left: calc(var(--i) * 6.3% + 1%); width: 10px; height: 16px; border-radius: 3px; background: hsl(calc(var(--i) * 47deg + 330deg) 95% 62%); opacity: .75; animation: hxFall calc(7s + (var(--i) % 5) * 1.3s) calc(var(--i) * -.9s) linear infinite; }
+.hx-confetti:nth-child(3n) { width: 12px; height: 12px; border-radius: 50%; }
+.hx-confetti:nth-child(4n) { width: 6px; height: 18px; }
+@keyframes hxFall { from { transform: translateY(0) rotate(0) rotateY(0); } to { transform: translateY(110vh) rotate(540deg) rotateY(720deg); } }
+.hx-bubble { position: absolute; width: calc(60px + var(--i) * 18px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 30% 28%, rgba(255, 255, 255, .95), rgba(255, 186, 120, .45) 40%, rgba(255, 94, 126, .18) 70%, transparent 72%); opacity: .55; animation: hxBob calc(6s + var(--i) * 1.2s) ease-in-out infinite alternate; }
+.hx-bubble:nth-child(17) { left: 3%; top: 62%; } .hx-bubble:nth-child(18) { left: 44%; top: 8%; } .hx-bubble:nth-child(19) { left: 52%; top: 78%; }
+.hx-bubble:nth-child(20) { left: 92%; top: 14%; } .hx-bubble:nth-child(21) { left: 30%; top: 40%; opacity: .3; }
+@keyframes hxBob { from { transform: translate(0, 0) scale(1); } to { transform: translate(18px, -26px) scale(1.08); } }
+/* professional: gold light beams sweeping, gold dust rising, a faint rising ticker line */
+.hx-beam { position: absolute; top: -20%; left: calc(10% + var(--i) * 30%); width: 120px; height: 140%; background: linear-gradient(180deg, transparent, rgba(255, 209, 102, .16) 40%, rgba(52, 211, 153, .1) 70%, transparent); transform: rotate(18deg); animation: hxBeam calc(9s + var(--i) * 2s) calc(var(--i) * -3s) ease-in-out infinite alternate; }
+@keyframes hxBeam { from { transform: translateX(-120px) rotate(18deg); opacity: .4; } to { transform: translateX(160px) rotate(24deg); opacity: 1; } }
+.hx-dust { position: absolute; bottom: -10px; left: calc(var(--i) * 6.2% + 2%); width: 5px; height: 5px; border-radius: 50%; background: #FFD166; box-shadow: 0 0 8px 2px rgba(255, 209, 102, .7); opacity: 0; animation: hxRise calc(6s + (var(--i) % 4) * 1.5s) calc(var(--i) * -.7s) linear infinite; }
+@keyframes hxRise { 0% { opacity: 0; transform: translateY(0); } 15% { opacity: .9; } 100% { opacity: 0; transform: translateY(-90vh); } }
+.hx-ticker { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40%; opacity: .25; }
+.hx-ticker polyline { fill: none; stroke: #FFD166; stroke-width: 2; stroke-dasharray: 6 8; vector-effect: non-scaling-stroke; }
+
+/* ribbon above the title */
+.hx-ribbon { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 6px 14px 6px 6px; border-radius: 999px; font: 800 .86rem var(--font-d); color: #fff; animation: hxRibbon .7s cubic-bezier(.3, 1.5, .5, 1) both; }
+.hx-ribbon.r-consumer { background: linear-gradient(90deg, #FF3B8D, #FF8A00 60%, #FFC233); box-shadow: 0 12px 26px -12px rgba(255, 59, 141, .8); }
+.hx-ribbon.r-pro { color: #2a1a00; background: linear-gradient(90deg, #FFF0B3, #F2C14E 45%, #C98F12 75%, #FFE08A); box-shadow: 0 12px 26px -12px rgba(233, 168, 0, .9); }
+.hx-ribbon-ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .28); }
+.r-pro .hx-ribbon-ic { background: #2a1a00; color: #FFD166; }
+.hx-ribbon-shine { position: absolute; top: 0; bottom: 0; left: -30%; width: 25%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .8), transparent); transform: skewX(-20deg); animation: hxShine 3.6s 1s ease-in-out infinite; }
+@keyframes hxShine { 0%, 55% { transform: translateX(0) skewX(-20deg); } 100% { transform: translateX(560%) skewX(-20deg); } }
+@keyframes hxRibbon { from { opacity: 0; transform: translateY(14px) scale(.8); } }
+
+/* title: lines flip up in 3D on every audience change; a brush swoosh draws under the accent line */
+.hx-title { position: relative; perspective: 800px; }
+.hx-title .ht-line { animation: hxLine .9s calc(var(--l) * .14s) cubic-bezier(.2, 1.2, .3, 1) both; transform-origin: 50% 100%; }
+@keyframes hxLine { from { opacity: 0; transform: translateY(40px) rotateX(-70deg); } }
+.hx-swoosh { display: block; width: min(92%, 520px); height: 22px; margin-top: 2px; overflow: visible; transform-origin: left; animation: hxDraw .9s .45s cubic-bezier(.5, 0, .2, 1) both; }
+.hx-swoosh path { fill: none; stroke-width: 7; stroke-linecap: round; }
+.t-consumer .hx-swoosh path { stroke: #FF5E7E; }
+.t-pro .hx-swoosh path { stroke: #F2C14E; }
+@keyframes hxDraw { from { transform: scaleX(0); opacity: 0; } }
+.hm-hero.seg-consumer .hm-stats li { border-color: rgba(255, 94, 126, .25); }
+html .hm-hero.hm-hero.seg-pro .hm-stats li { background: rgba(255, 209, 102, .07); border-color: rgba(255, 209, 102, .3); }
+html .hm-hero.hm-hero.seg-pro .hm-stats b { background-image: linear-gradient(90deg, #FFE08A, #F2C14E); }
+html .hm-hero.hm-hero.seg-pro .hm-stats li:nth-child(2) b { background-image: linear-gradient(90deg, #A7F3D0, #34D399); }
+html .hm-hero.hm-hero.seg-pro .hm-stats li:nth-child(3) b { background-image: linear-gradient(90deg, #fff, #FFD166); }
+@media (max-width: 600px) { .hx-confetti:nth-child(2n), .hx-dust:nth-child(2n), .hx-bubble { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hx-fx *, .hx-ribbon, .hx-ribbon-shine, .hx-title .ht-line, .hx-swoosh { animation: none !important; } .hx-confetti, .hx-dust { display: none; } }
+html[data-mode="dark"] .hx-bubble { opacity: .18; }
+html[data-mode="dark"] .hx-confetti { opacity: .55; }

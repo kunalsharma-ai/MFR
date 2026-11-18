@@ -1,0 +1,57 @@
+/* ═════════════ v3.0 — Log in ("Sapphire Vault") and Create account ("Sunrise Candy") ═════════════
+   Two different colour stories. Skipped by the dark-mode generator; dark rules are hand-written at the end.
+   Only transform / opacity animate. */
+
+/* ───────── Log in: deep sapphire, cyan & violet light, gold accents, a turning vault dial ───────── */
+html body .lx { background: linear-gradient(150deg, #030B2C 0%, #0A2577 42%, #0B1A5C 70%, #040A24 100%) !important; }
+html body .lx-mesh { filter: blur(90px); animation: axDrift 16s ease-in-out infinite alternate; }
+html body .lx-mesh.m1 { background: #22D3EE; opacity: .38; }
+html body .lx-mesh.m2 { background: #8B5CF6; opacity: .45; animation-delay: -5s; }
+html body .lx-mesh.m3 { background: #FFC233; opacity: .22; animation-delay: -10s; }
+@keyframes axDrift { from { transform: translate(0, 0) scale(1); } to { transform: translate(6%, 8%) scale(1.15); } }
+html body .lx-grid2 { position: absolute; inset: 0; background-image: radial-gradient(rgba(160, 200, 255, .22) 1px, transparent 1.4px); background-size: 28px 28px; -webkit-mask-image: radial-gradient(ellipse at 30% 50%, #000, transparent 70%); mask-image: radial-gradient(ellipse at 30% 50%, #000, transparent 70%); }
+/* vault dial behind the member pass */
+html body .lx-bg::before, html body .lx-bg::after { content: ''; position: absolute; left: 24%; top: 56%; width: 640px; height: 640px; margin: -320px; border-radius: 50%; border: 2px dashed rgba(34, 211, 238, .22); animation: axSpin 60s linear infinite; }
+html body .lx-bg::after { width: 460px; height: 460px; margin: -230px; border: 10px dotted rgba(255, 194, 51, .14); animation-duration: 40s; animation-direction: reverse; }
+@keyframes axSpin { to { transform: rotate(360deg); } }
+html body .lx-eyebrow { background: rgba(34, 211, 238, .14); border: 1px solid rgba(34, 211, 238, .4); color: #CFFAFE; }
+html body .lx-hero span { background: linear-gradient(100deg, #67E8F9, #fff 45%, #FFD166 85%) !important; -webkit-background-clip: text !important; background-clip: text !important; background-size: 200% 100% !important; }
+html body .lx-perks li { background: rgba(255, 255, 255, .06); border-color: rgba(103, 232, 249, .22); }
+
+/* card: a gradient border that turns slowly (big rotating conic layer under a white inner panel) */
+html body .lx .lx-card { isolation: isolate; overflow: hidden; background: transparent; box-shadow: 0 40px 100px -20px rgba(0, 0, 0, .6), 0 0 80px -20px rgba(34, 211, 238, .35); }
+html body .lx .lx-card::before { left: 50%; top: 50%; right: auto; width: 160%; height: auto; aspect-ratio: 1; margin: -80% 0 0 -80%; border-radius: 0; z-index: -2; background: conic-gradient(from 0deg, #22D3EE, #2F6BFF, #8B5CF6, #FFC233, #22D3EE); animation: axSpin 6s linear infinite; }
+html body .lx .lx-card::after { content: ''; position: absolute; inset: 3px; border-radius: inherit; background: #fff; z-index: -1; }
+html body .lx-badge { color: #fff; background: linear-gradient(135deg, #06B6D4, #2F6BFF 55%, #8B5CF6); box-shadow: 0 12px 24px -10px rgba(47, 107, 255, .8); animation: axBadge 4s ease-in-out infinite; }
+@keyframes axBadge { 0%, 80%, 100% { transform: rotate(0); } 86% { transform: rotate(-12deg) scale(1.08); } 93% { transform: rotate(8deg) scale(1.08); } }
+html body .lx-submit.btn-primary:not(.success) { background: linear-gradient(120deg, #06B6D4, #2F6BFF 55%, #8B5CF6); box-shadow: 0 16px 32px -14px rgba(47, 107, 255, .9); }
+html body .lx-field:focus-within { border-color: #22D3EE; box-shadow: 0 0 0 4px rgba(34, 211, 238, .18); }
+
+/* ───────── Create account: a warm sunrise of coral, orange and gold with coins rising ───────── */
+html body .sx { background: linear-gradient(160deg, #FF3F78 0%, #FF6B5A 32%, #FF9433 64%, #FFC233 100%) !important; }
+html body .sx-orb { animation: axDrift 14s ease-in-out infinite alternate; }
+html body .sx-orb.o1 { background: radial-gradient(closest-side, rgba(255, 255, 255, .55), rgba(255, 255, 255, .15) 45%, transparent); opacity: .7; }
+html body .sx-orb.o2 { background: radial-gradient(closest-side, rgba(139, 92, 246, .75), rgba(139, 92, 246, .25) 45%, transparent); opacity: .55; }
+html body .sx-orb.o3 { background: radial-gradient(closest-side, rgba(255, 236, 160, .9), rgba(255, 236, 160, .3) 45%, transparent); opacity: .6; }
+html body .sx-coin { width: 22px; height: 22px; opacity: .9; background: radial-gradient(circle at 35% 30%, #FFF6C9, #FFC233 45%, #D98A00); box-shadow: inset 0 0 0 2px rgba(255, 245, 200, .7), 0 6px 12px -6px rgba(140, 60, 0, .7); }
+/* sun rays turning behind the aside */
+html body .sx-bg::before { content: ''; position: absolute; left: 22%; top: 30%; width: 1100px; height: 1100px; margin: -550px; border-radius: 50%; background: repeating-conic-gradient(rgba(255, 255, 255, .13) 0 6deg, transparent 6deg 18deg); -webkit-mask-image: radial-gradient(circle, #000 10%, transparent 65%); mask-image: radial-gradient(circle, #000 10%, transparent 65%); animation: axSpin 80s linear infinite; }
+html body .sx-aside h1 { color: #fff; text-shadow: 0 6px 30px rgba(140, 20, 60, .35); }
+html body .sx-aside .eyebrow { color: #fff; }
+html body .sx-aside .eyebrow::before { background: #fff; }
+html body .sx-aside .muted-light, html body .sx-perks li { color: rgba(255, 255, 255, .95); }
+html body .sx-perks li svg { color: #fff; }
+html body .sx-card::before { background: conic-gradient(from var(--ang), #FF3F78, #FFC233, #8B5CF6, #FF8A00, #FF3F78); }
+html body .sx-card { box-shadow: 0 40px 90px -24px rgba(120, 20, 50, .65); }
+html body .sx-card .btn-primary { background: linear-gradient(120deg, #8B5CF6, #E8457A 55%, #FF8A00); box-shadow: 0 16px 30px -14px rgba(232, 69, 122, .9); }
+
+@media (prefers-reduced-motion: reduce) {
+  html body .lx-mesh, html body .lx-bg::before, html body .lx-bg::after, html body .lx .lx-card::before, html body .lx-badge, html body .sx-orb, html body .sx-bg::before { animation: none !important; }
+}
+
+/* Dark mode */
+html[data-mode="dark"] body .lx .lx-card::after { background: #161A22; }
+html[data-mode="dark"] body .sx { background: linear-gradient(160deg, #2A0718 0%, #3A0F1E 35%, #3A1A08 70%, #2E2205 100%) !important; }
+html[data-mode="dark"] body .sx-orb.o1 { opacity: .18; }
+html[data-mode="dark"] body .sx-bg::before { opacity: .45; }
+html[data-mode="dark"] body .lx-hero span { background: linear-gradient(100deg, #67E8F9, #fff 45%, #FFD166 85%) !important; -webkit-background-clip: text !important; background-clip: text !important; color: transparent; }
