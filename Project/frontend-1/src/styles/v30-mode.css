@@ -103,3 +103,14 @@ html[data-mode="dark"] .snd-sm { color: #eef2ff; }
 html[data-mode="dark"] .snd-sm:not(.is-on) .snd-ic { background: rgba(255, 255, 255, .1); }
 @media (max-width: 1240px) { .hdr-login { font-size: 0; gap: 0; padding-inline: 6px; } .hdr-login .hdr-login-ico { font-size: 1rem; } }
 @media (max-width: 420px) { .hdr-modes { margin-right: 0; gap: 2px; padding: 2px; } .thm-tg.thm-sm { width: 50px; height: 28px; } .thm-sm .thm-knob { width: 22px; height: 22px; } .thm-sm.is-dark .thm-knob { transform: translateX(22px) rotate(-200deg); } .snd-tg.snd-sm, .snd-sm .snd-ic { width: 28px; height: 28px; } }
+
+/* Home hero: Consumer / Professional auto-flip with a countdown bar inside the active pill */
+.hm-seg-pill { overflow: hidden; }
+.hm-seg-prog { position: absolute; left: 10px; right: 10px; bottom: 3px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .85); transform: scaleX(0); transform-origin: left; opacity: 0; }
+.hm-seg.is-auto .hm-seg-prog { opacity: 1; animation: hmProg var(--seg-ms, 5s) linear both; }
+@keyframes hmProg { to { transform: scaleX(1); } }
+.hm-seg.is-auto button.on { animation: hmOn .6s ease-out; }
+@keyframes hmOn { 0% { transform: scale(.9); } 60% { transform: scale(1.06); } 100% { transform: none; } }
+.hero-stage > * { animation: hmStageIn .8s cubic-bezier(.3, 1.2, .4, 1) both; }
+@keyframes hmStageIn { from { opacity: 0; transform: perspective(900px) rotateY(-18deg) translateX(30px) scale(.94); } }
+@media (prefers-reduced-motion: reduce) { .hm-seg-prog { display: none; } .hero-stage > * { animation: none; } }

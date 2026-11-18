@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import useInView from '../hooks/useInView.js';
@@ -23,6 +23,8 @@ const MODE = {
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
 };
 
+const SEG_MS = 5000;
+
 export default function HeroOrbit() {
   const [vref, visible] = useInView({ once: false, threshold: 0, rootMargin: '100px 0px' });
   const [seg, setSeg] = useState('consumer');
@@ -34,6 +36,20 @@ export default function HeroOrbit() {
     const t2 = setInterval(() => !isCalm() && setR((i) => (i + 1) % PAYOUTS.length), 3800);
     return () => { clearInterval(t); clearInterval(t2); };
   }, [visible]);
+  // Consumer and Professional take turns every few seconds (the whole hero swaps: tint, motto, audience, scene).
+  // A click on either tab pauses the rotation for a while; reduced-motion visitors keep the manual switch only.
+  const hold = useRef(0);
+  const [auto, setAuto] = useState(false);
+  useEffect(() => {
+    if (!visible || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) { setAuto(false); return undefined; }
+    setAuto(true);
+    const t = setInterval(() => {
+      if (document.hidden || Date.now() < hold.current) return;
+      setSeg((v) => (v === 'consumer' ? 'pro' : 'consumer'));
+    }, SEG_MS);
+    return () => clearInterval(t);
+  }, [visible]);
+  const pick = (v) => { hold.current = Date.now() + 15000; setAuto(false); setSeg(v); setTimeout(() => setAuto(true), 15000); };
   const who = WHO[seg];
   const pay = PAYOUTS[r];
   const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
@@ -65,10 +81,10 @@ export default function HeroOrbit() {
             <span className="ht-line ht-accent">by sharing your opinion</span>
           </h1>
 
-          <div className="hm-seg" role="tablist" aria-label="I am a">
-            <span className="hm-seg-pill" aria-hidden="true" />
-            <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => setSeg('consumer')}><Icon name="user" size={16} /> Consumer</button>
-            <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => setSeg('pro')}><Icon name="briefcase" size={16} /> Professional</button>
+          <div className={`hm-seg${auto ? ' is-auto' : ''}`} role="tablist" aria-label="I am a" style={{ '--seg-ms': `${SEG_MS}ms` }}>
+            <span className="hm-seg-pill" aria-hidden="true"><i key={seg} className="hm-seg-prog" /></span>
+            <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => pick('consumer')}><Icon name="user" size={16} /> Consumer</button>
+            <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => pick('pro')}><Icon name="briefcase" size={16} /> Professional</button>
           </div>
 
           <div className="hm-roll" key={`m-${seg}`}>
