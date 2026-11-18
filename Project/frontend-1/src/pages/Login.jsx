@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import Captcha from '../components/Captcha.jsx';
 import { PageSeo } from '../components/PageHero.jsx';
@@ -9,6 +9,7 @@ import { postJSON } from '../utils/api.js';
 import { EMAIL_RE } from '../utils/validate.js';
 import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
+import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
 const page = PAGES.login;
 
@@ -97,6 +98,10 @@ export default function Login() {
   const captchaRef = useRef(null);
   const formRef = useRef(null);
   const tokenRef = useRef(null);
+  const { search } = useLocation();
+  const [aud, setAud] = useState('consumer');
+  useEffect(() => { if (new URLSearchParams(search).get('type') === 'professional') setAud('professional'); }, [search]);
+  const pro = aud === 'professional';
 
   const emailOk = EMAIL_RE.test(f.email.trim());
   const pwOk = f.password.length >= 6;
@@ -165,20 +170,35 @@ export default function Login() {
   return (
     <>
       <PageSeo page={page} />
-      <section className="lx" aria-labelledby="lx-title">
+      <section className={`lx ax-page ${pro ? 'aud-pro' : 'aud-con'}`} aria-labelledby="lx-title">
         <div className="lx-bg" aria-hidden="true">
           <span className="lx-mesh m1" /><span className="lx-mesh m2" /><span className="lx-mesh m3" />
+          <span className="ax-alt" />
           <span className="lx-grid2" />
+          <span className="ax-flash" />
         </div>
         <div className="container lx-row">
+          {/* on phones the artwork sits below the form, so the switch gets its own spot above the card */}
+          <div className="ax-mswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
           <div className="lx-art">
-            <p className="lx-eyebrow"><span className="live-dot" /> Secure member area</p>
-            <h2 className="lx-hero">Your rewards are <span>one tap away</span> — welcome back.</h2>
+            <div className="ax-dswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
+            <p className="lx-eyebrow"><span className="live-dot" /> {pro ? 'Secure area for professionals' : 'Secure member area'}</p>
+            <h2 className="lx-hero ax-swap" key={aud}>{pro ? <>Your expert surveys are <span>one tap away</span> — welcome back.</> : <>Your rewards are <span>one tap away</span> — welcome back.</>}</h2>
             <MemberPass email={f.email} pwLen={Math.min(12, f.password.length)} emailOk={emailOk} pwOk={pwOk} human={f.captchaOk} phase={phase} />
-            <ul className="lx-perks">
-              <li style={{ '--c': '#FFC233' }}><Icon name="clipboard" size={20} /><span><b>New invitations</b> waiting in your dashboard</span></li>
-              <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> as PayPal, cash, bank transfer, vouchers or gift cards — UPI in India</span></li>
-              <li style={{ '--c': '#B49CFF' }}><Icon name="layers" size={20} /><span><b>Profile surveys</b> that unlock better matches</span></li>
+            <ul className="lx-perks ax-swap" key={`p-${aud}`}>
+              {pro ? (
+                <>
+                  <li style={{ '--c': '#FFD166' }}><Icon name="briefcase" size={20} /><span><b>Expert B2B surveys</b> matched to your role and industry</span></li>
+                  <li style={{ '--c': '#34D399' }}><Icon name="wallet" size={20} /><span><b>Higher rewards</b> for your professional insight, paid out the way you choose</span></li>
+                  <li style={{ '--c': '#F5D08A' }}><Icon name="layers" size={20} /><span><b>Work profile</b> that unlocks better-matched studies</span></li>
+                </>
+              ) : (
+                <>
+                  <li style={{ '--c': '#FFC233' }}><Icon name="clipboard" size={20} /><span><b>New invitations</b> waiting in your dashboard</span></li>
+                  <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> as PayPal, cash, bank transfer, vouchers or gift cards — UPI in India</span></li>
+                  <li style={{ '--c': '#B49CFF' }}><Icon name="layers" size={20} /><span><b>Profile surveys</b> that unlock better matches</span></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -187,7 +207,7 @@ export default function Login() {
               <span className="lx-badge"><Icon name="lock" size={22} /></span>
               <div>
                 <h1 id="lx-title">{page.h1}</h1>
-                <p>Log in to see invitations, your balance and rewards.</p>
+                <p>{pro ? 'Log in to see your expert invitations, balance and rewards.' : 'Log in to see invitations, your balance and rewards.'}</p>
               </div>
             </div>
 
@@ -233,7 +253,7 @@ export default function Login() {
             <div className="lx-divider"><span>New to MyFrequentRewards?</span></div>
 
             
-            <Link to="/sign-up" className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
+            <Link to={pro ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
             <p className="lx-safe"><Icon name="shield" size={14} /> We will never ask for your password by email, SMS or WhatsApp.</p>
           </div>
         </div>

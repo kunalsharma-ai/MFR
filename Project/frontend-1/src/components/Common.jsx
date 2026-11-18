@@ -5,6 +5,7 @@ import { whatsappLink } from '../data/site.js';
 import { session, store } from '../utils/storage.js';
 import { useRater } from '../utils/rater.js';
 import { asset } from '../utils/asset.js';
+import { dismiss, isDismissed } from '../utils/dismiss.js';
 
 export function Breadcrumbs({ items }) {
   return (
@@ -101,13 +102,13 @@ export function FloatingDock({ onChat, chatOpen }) {
   const [tease, setTease] = useState(false);
   const [badge, setBadge] = useState(false);
   useEffect(() => {
-    if (session.get('mfr_chat_seen')) return undefined;
+    if (isDismissed('chat-tease')) return undefined;
     const t1 = setTimeout(() => { setTease(true); setBadge(true); }, 15000);
     const t2 = setTimeout(() => setTease(false), 24000);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
   useEffect(() => {
-    if (chatOpen) { setTease(false); setBadge(false); session.set('mfr_chat_seen', 1); }
+    if (chatOpen) { setTease(false); setBadge(false); dismiss('chat-tease'); }
   }, [chatOpen]);
   const locked = state !== 'ok';
   const rate = () => {
@@ -145,7 +146,7 @@ export function FloatingDock({ onChat, chatOpen }) {
       <div className="dock-chat-wrap">
         {tease && !chatOpen ? (
           <button type="button" className="dock-tease" onClick={onChat}>
-            <span className="dock-tease-x" role="presentation" onClick={(e) => { e.stopPropagation(); setTease(false); }}>×</span>
+            <span className="dock-tease-x" role="presentation" onClick={(e) => { e.stopPropagation(); setTease(false); setBadge(false); dismiss('chat-tease'); }}>×</span>
             <b>Questions? Ask us anything 💬</b>
             <small>Payouts, surveys, sign-up — instant answers 24/7</small>
           </button>

@@ -306,6 +306,7 @@ export default function ReviewPopup() {
   }, [adult, seg, member?._id]);
 
   const canAsk = () => {
+    if (isDismissed('review-ask')) return false; // closed with × earlier in this visit
     if (!eligible.current) return false; // visitors and young members are never asked by themselves
     if (store.get(rvKey) || store.get('mfr_rv_never') || BLOCKED.includes(pathRef.current)) return false;
     const log = store.get('mfr_rv_log', { n: 0, last: 0 });
@@ -409,6 +410,7 @@ export default function ReviewPopup() {
 
   function close() {
     setOpen(false);
+    dismiss('review-ask'); // no more automatic asks this visit (the Rate & Review button still opens it)
     if (session.get('mfr_rv_n', 0) > 0) session.set('mfr_rv_last', Date.now());
     if (lastFocus.current && lastFocus.current.focus) lastFocus.current.focus();
   }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react';
+import { lazy, startTransition, Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
@@ -6,7 +6,7 @@ import LiveChat from './LiveChat.jsx';
 import ActivityToasts from './ActivityToasts.jsx';
 import ReviewPopup from './ReviewPopup.jsx';
 import VerifyEmailGate from './VerifyEmailGate.jsx';
-import CustomCursor from './CustomCursor.jsx';
+import AnimationGate from './AnimationGate.jsx';
 import VideoFab from './video/VideoFab.jsx';
 import WatchBand from '../sections/WatchBand.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
@@ -28,7 +28,8 @@ export default function Layout({ children }) {
   useReveal();
 
   const pages = useContext(PagesContext);
-  useEffect(() => setMounted(true), []);
+  // as a transition, so it never forces the not-yet-hydrated parts of the page to re-render from scratch (React #421)
+  useEffect(() => startTransition(() => setMounted(true)), []);
   useEffect(() => welcomePop(), []);
   // One delegated listener gives each kind of control its own sound: video buttons a film-reel "play",
   // menu dropdowns an airy swish, and the main call-to-action buttons a gem tap.
@@ -156,11 +157,10 @@ export default function Layout({ children }) {
       {mounted ? (
         <>
           <LiveChat open={chat} onClose={closeChat} seed={seed} />
-          <LiveChat open={chat} onClose={closeChat} seed={seed} />
           <ActivityToasts />
           <ReviewPopup />
           <CookieBanner />
-          <CustomCursor />
+          <AnimationGate />
           <VideoFab />
         </>
       ) : null}

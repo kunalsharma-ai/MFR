@@ -10,6 +10,11 @@ const dist = path.join(root, 'dist');
 const template = await readFile(path.join(dist, 'index.html'), 'utf8');
 const { render, ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES, SITE_URL } = await import(pathToFileURL(path.join(root, 'dist-ssr/entry-server.js')).href);
 
+// Critical CSS: each page gets the CSS its own markup uses inlined in <head>; the full stylesheet then loads without
+// blocking the first paint (media="print" swap). This is what takes phones from a blank screen to content fastest.
+const { default: Beasties } = await import('beasties');
+const beasties = new Beasties({ path: dist, publicPath: '/', preload: 'media', pruneSource: false, inlineFonts: false, preloadFonts: false, compress: true, logLevel: 'warn', reduceInlineStyles: false });
+
 let count = 0;
 for (const r of ALL_ROUTES) {
   const { html, head } = render(r.path);
@@ -21,7 +26,7 @@ for (const r of ALL_ROUTES) {
   else if (r.path === '/404') out = path.join(dist, '404.html');
   else out = path.join(dist, r.path.replace(/^\//, ''), 'index.html');
   await mkdir(path.dirname(out), { recursive: true });
-  await writeFile(out, page);
+  await writeFile(out, process.env.NO_CRITICAL ? page : await beasties.process(page));
   count++;
 }
 

@@ -213,7 +213,7 @@ html[data-mode="dark"] .xt-note small { color: #9AA2B4; }
 /* title: lines flip up in 3D on every audience change; a brush swoosh draws under the accent line */
 .hx-title { position: relative; perspective: 800px; }
 .hx-title .ht-line { animation: hxLine .9s calc(var(--l) * .14s) cubic-bezier(.2, 1.2, .3, 1) both; transform-origin: 50% 100%; }
-@keyframes hxLine { from { opacity: 0; transform: translateY(40px) rotateX(-70deg); } }
+@keyframes hxLine { from { transform: translateY(26px) rotateX(-35deg); } } /* no opacity: the title counts as painted at once (LCP) */
 .hx-swoosh { display: block; width: min(92%, 520px); height: 22px; margin-top: 2px; overflow: visible; transform-origin: left; animation: hxDraw .9s .45s cubic-bezier(.5, 0, .2, 1) both; }
 .hx-swoosh path { fill: none; stroke-width: 7; stroke-linecap: round; }
 .t-consumer .hx-swoosh path { stroke: #FF5E7E; }
@@ -228,3 +228,10 @@ html .hm-hero.hm-hero.seg-pro .hm-stats li:nth-child(3) b { background-image: li
 @media (prefers-reduced-motion: reduce) { .hx-fx *, .hx-ribbon, .hx-ribbon-shine, .hx-title .ht-line, .hx-swoosh { animation: none !important; } .hx-confetti, .hx-dust { display: none; } }
 html[data-mode="dark"] .hx-bubble { opacity: .18; }
 html[data-mode="dark"] .hx-confetti { opacity: .55; }
+
+/* Hero scene sits higher, level with the top of the copy, so the whole animation is in view (Kunal, 18 Nov) */
+@media (min-width: 901px) {
+  .hm-hero .hero-row { align-items: start; }
+  .hm-hero .hero-stage { align-self: start; margin-top: -24px; }
+}
+@media (min-width: 1500px) { .hm-scene { --hk: 1.1; } .hm-hero .hero-stage { margin-top: 0; } }

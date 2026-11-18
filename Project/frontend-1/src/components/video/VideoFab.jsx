@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
+import { dismiss, isDismissed } from '../../utils/dismiss.js';
 import VideoStage, { YtGlyph } from './VideoStage.jsx';
 import { videoFor } from '../../data/videos.js';
 
@@ -10,8 +11,7 @@ import { videoFor } from '../../data/videos.js';
 // A small "Show & watch this page" message pops up beside the button a few seconds after each page opens
 // (at most 3 times per visit, never on sign-up / login, and never again once the visitor closes it).
 const TEASE_KEY = 'mfr_watch_tease';
-const teaseState = () => { try { return JSON.parse(sessionStorage.getItem(TEASE_KEY)) || { n: 0, off: false }; } catch { return { n: 0, off: false }; } };
-const saveTease = (v) => { try { sessionStorage.setItem(TEASE_KEY, JSON.stringify(v)); } catch { /* ignore */ } };
+const TEASE = { n: 0 }; // shown at most 3 times per visit; × turns it off until the page is reloaded
 
 export default function VideoFab() {
   const { pathname } = useLocation();
@@ -25,9 +25,8 @@ export default function VideoFab() {
   useEffect(() => {
     setTease(false);
     if (/^\/(sign-up|login|set-password|forgot-password)/.test(pathname)) return undefined;
-    const st = teaseState();
-    if (st.off || st.n >= 3) return undefined;
-    const show = setTimeout(() => { saveTease({ ...teaseState(), n: teaseState().n + 1 }); setTease(true); }, 5000);
+    if (isDismissed('video-tease') || TEASE.n >= 3) return undefined;
+    const show = setTimeout(() => { TEASE.n += 1; setTease(true); }, 5000);
     const hide = setTimeout(() => setTease(false), 17000);
     return () => { clearTimeout(show); clearTimeout(hide); };
   }, [pathname]);
@@ -38,7 +37,7 @@ export default function VideoFab() {
     document.documentElement.classList.toggle('vfab-teasing', on);
     return () => document.documentElement.classList.remove('vfab-teasing');
   }, [tease, open]);
-  const closeTease = () => { setTease(false); saveTease({ ...teaseState(), off: true }); };
+  const closeTease = () => { setTease(false); dismiss('video-tease'); };
   useEffect(() => {
     const ext = () => setOpen(true);
     window.addEventListener('mfr:watch', ext);

@@ -3,7 +3,8 @@ import Icon from './Icon.jsx';
 import { Flag } from './CountryPicker.jsx';
 import { METHOD_INFO, NON_MONEY } from '../utils/payouts.js';
 import useActivityFeed, { initials } from '../hooks/useActivityFeed.js';
-import { prefersReducedMotion, session } from '../utils/storage.js';
+import { prefersReducedMotion } from '../utils/storage.js';
+import { dismiss, isDismissed } from '../utils/dismiss.js';
 import { audioReady, coinSound } from '../utils/sound.js';
 
 
@@ -42,7 +43,7 @@ const Fx = () => (
 );
 
 export default function ActivityToasts() {
-  const { items, isPreview, pulse } = useActivityFeed();
+  const { items, isPreview } = useActivityFeed();
   const [cur, setCur] = useState(null);
   const [show, setShow] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -50,14 +51,13 @@ export default function ActivityToasts() {
   const last = useRef(-1);
 
   useEffect(() => {
-    setMuted(Boolean(session.get('mfr_toasts_muted', false)));
+    setMuted(isDismissed('reward-toasts'));
   }, []);
 
   useEffect(() => {
     if (muted) return undefined;
     let t1;
     let t2;
-    let k = 0;
     const pickReal = () => {
       let i = Math.floor(Math.random() * items.length);
       if (i === last.current && items.length > 1) i = (i + 1) % items.length;
@@ -66,10 +66,10 @@ export default function ActivityToasts() {
     };
     const cycle = () => {
       if (document.hidden) { t2 = setTimeout(cycle, 4000); return; }
-      k += 1;
      
-      const usePulse = !items.length || k % 4 === 0;
-      setCur(usePulse ? pulse[(k * 3) % pulse.length] : pickReal());
+      // Only real "reward paid" notes are shown (the "Community pulse" survey notes were removed, Kunal 18 Nov).
+      if (!items.length) { t2 = setTimeout(cycle, 15000); return; }
+      setCur(pickReal());
       setN((x) => x + 1);
       setShow(true);
       // Only after the visitor has interacted (browsers block audio before that) and only with sound on.
@@ -82,7 +82,7 @@ export default function ActivityToasts() {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [items, pulse, muted]);
+  }, [items, muted]);
 
   if (!cur || muted) return null;
   const close = (
@@ -91,30 +91,13 @@ export default function ActivityToasts() {
       className="rwt-x"
       aria-label="Hide reward notifications"
       onClick={() => {
-        session.set('mfr_toasts_muted', true);
+        dismiss('reward-toasts');
         setMuted(true);
       }}
     >
       <Icon name="close" size={12} />
     </button>
   );
-
-  if (cur.kind === 'pulse') {
-    return (
-      <div key={n} className={`rwt is-pulse ${show ? 'is-in' : ''}`} style={{ '--tone': cur.tone }} role="status" aria-live="polite">
-        <Fx />
-        <Burst />
-        <div className="rwt-av"><Icon name={cur.icon} size={18} /><span className="rwt-spark" aria-hidden="true" /></div>
-        <div className="rwt-body">
-          <p className="rwt-tag"><span aria-hidden="true">✦</span> Community pulse</p>
-          <p className="rwt-l1"><strong className="rwt-amt">{cur.big}</strong> {cur.line}</p>
-          <p className="rwt-l3"><i /> MyFrequentRewards community</p>
-        </div>
-        {close}
-        <span className="rwt-bar" aria-hidden="true" />
-      </div>
-    );
-  }
 
   const info = METHOD_INFO[cur.method] || { icon: 'wallet', hue: '#0B1E5B', hue2: '#2F6BFF' };
   const biz = cur.segment === 'business';

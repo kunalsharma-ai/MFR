@@ -62,6 +62,8 @@ import './styles/v30-hero.css';
 import './styles/v30-dock.css';
 import './styles/v30-auth.css';
 import './styles/v30-rate.css';
+import './styles/v30-audience.css';
+import './styles/v30-perf.css';
 import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';
@@ -83,17 +85,6 @@ try {
 startCalm();
 
 
-// "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
-// times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth
-// and stops the page from heating up / hanging on weaker devices. See perf.css → html.lite.
-try {
-  const nav = navigator;
-  const conn = nav.connection || {};
-  const lowPower = (nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) || (nav.deviceMemory && nav.deviceMemory <= 4) || conn.saveData;
-  const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  if (lowPower || touch) document.documentElement.classList.add('lite');
-} catch { /* ignore */ }
-startCalm();
 
 
 const useHash = import.meta.env.VITE_ROUTER === 'hash' || window.location.protocol === 'file:';
