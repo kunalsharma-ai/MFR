@@ -1,0 +1,281 @@
+/* ==========================================================================================
+   v3.0 — Video stages + floating YouTube button
+   One shared skeleton (.vs) and a distinct visual treatment per page template (.vs--<template>).
+   Motion: transform / opacity only, paused for reduced motion and when off-screen ([data-off]).
+   ========================================================================================== */
+:root { --font-accent: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
+
+/* ---------- Floating YouTube button ---------- */
+.vfab { position: fixed; left: 18px; bottom: 18px; z-index: 72; width: 74px; height: 74px; border: 0; padding: 0; border-radius: 50%; background: none; cursor: pointer; display: grid; place-items: center; -webkit-tap-highlight-color: transparent; }
+.vfab-spin { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #2a0f1a, #0B1E5B 70%); box-shadow: 0 14px 30px -10px rgba(255, 0, 51, .55), inset 0 0 0 2px rgba(255, 255, 255, .12); }
+.vfab-spin svg { width: 100%; height: 100%; animation: vfabSpin 14s linear infinite; }
+.vfab-spin text { font: 800 9.4px/1 var(--font-d, Manrope, sans-serif); letter-spacing: .5px; fill: #FFC233; }
+.vfab-core { position: relative; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: 0 6px 14px -4px rgba(255, 0, 51, .6); animation: vfabBeat 2.4s ease-in-out infinite; }
+.vfab-wave { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 0, 51, .55); opacity: 0; animation: vfabWave 2.8s ease-out infinite; pointer-events: none; }
+.vfab-wave--2 { animation-delay: 1.4s; }
+.vfab-tip { position: absolute; left: calc(100% + 10px); top: 50%; white-space: nowrap; padding: 7px 12px; border-radius: 10px; background: #0B1E5B; color: #fff; font: 600 .8rem var(--font-b, Inter, sans-serif); opacity: 0; transform: translate(-6px, -50%); transition: opacity .2s, transform .2s; pointer-events: none; }
+.vfab:hover .vfab-tip, .vfab:focus-visible .vfab-tip { opacity: 1; transform: translate(0, -50%); }
+.vfab:hover .vfab-core { transform: scale(1.08); }
+.vfab:focus-visible { outline: 3px solid #FFC233; outline-offset: 3px; }
+.vfab.is-open { opacity: 0; pointer-events: none; }
+@keyframes vfabSpin { to { transform: rotate(360deg); } }
+@keyframes vfabBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes vfabWave { 0% { transform: scale(.9); opacity: .8; } 100% { transform: scale(1.65); opacity: 0; } }
+/* make room for the reward toasts above the button */
+.rwt { bottom: 104px; }
+@media (max-width: 560px) {
+  .vfab { left: 10px; bottom: 12px; width: 60px; height: 60px; }
+  .vfab-core { width: 36px; height: 36px; }
+  .vfab-core svg { width: 24px; }
+  .vfab-tip { display: none; }
+  .rwt { bottom: 82px; }
+}
+
+/* ---------- Pop-up ---------- */
+html.vfab-lock { overflow: hidden; }
+.vfab-ov { position: fixed; inset: 0; z-index: 400; overflow-y: auto; background: radial-gradient(120% 90% at 20% 10%, color-mix(in srgb, var(--c1) 30%, #060F33), #060F33 60%); animation: vfabIn .35s ease both; }
+.vfab-box { min-height: 100%; display: grid; place-items: center; padding: 64px 20px 40px; }
+.vfab-box > .vs { width: min(1180px, 100%); }
+.vfab-x { position: fixed; top: 16px; right: 16px; z-index: 2; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .25); background: rgba(6, 15, 51, .7); color: #fff; font: 400 1.7rem/1 sans-serif; cursor: pointer; }
+.vfab-x:hover { background: #FF0033; }
+@keyframes vfabIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Shared stage skeleton ---------- */
+.vsx { position: relative; overflow: hidden; }
+.vs { position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(22px, 4vw, 52px); border-radius: 32px; isolation: isolate; color: #0B1E5B; }
+.vs-deco { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.vs-info { position: relative; min-width: 0; }
+.vs-chip { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 6px 14px 6px 8px; border-radius: 999px; font: 700 .74rem/1 var(--font-d); letter-spacing: .14em; text-transform: uppercase; background: color-mix(in srgb, var(--c1) 14%, transparent); color: inherit; border: 1px solid color-mix(in srgb, var(--c1) 40%, transparent); }
+.vs-title { margin: 0 0 12px; font: 800 clamp(1.9rem, 3.6vw, 3rem)/1.05 var(--font-d); letter-spacing: -.02em; color: inherit; }
+.vs-title em { font-family: var(--font-accent); font-style: italic; font-weight: 700; background: linear-gradient(100deg, var(--c1), var(--c2)); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.vs-lede { margin: 0 0 18px; max-width: 46ch; font-size: 1.02rem; line-height: 1.6; opacity: .86; }
+.vs-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.vs-btn { background: linear-gradient(100deg, var(--c1), var(--c2)); color: #fff; border: 0; box-shadow: 0 12px 24px -12px var(--c1); }
+.vs-sub { background: #FF0033; color: #fff; border: 0; display: inline-flex; align-items: center; gap: 8px; }
+.vs-sub svg rect { fill: #fff; } .vs-sub svg path { fill: #FF0033; }
+.vs-sub:hover { background: #d9002b; color: #fff; }
+
+.vs-screen-wrap { position: relative; min-width: 0; }
+.vs-screen { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; background: linear-gradient(135deg, #0B1E5B, color-mix(in srgb, var(--c1) 55%, #060F33)); box-shadow: 0 30px 60px -28px rgba(6, 15, 51, .7); }
+.vs-media { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.vs--reel .vs-media, .vs--chat .vs-media, .vs--magazine .vs-media, .vs--passport .vs-media, .vs--onair .vs-media { border-radius: 4px; }
+.vs-frame, .vs-poster { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vs-poster { padding: 0; cursor: pointer; background: none; display: block; }
+.vs-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); transition: transform .6s ease; }
+.vs-poster:hover img { transform: scale(1.07); }
+.vs-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 15, 51, .05), rgba(6, 15, 51, .65)); }
+.vs-play { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; transform: translate(-50%, -50%); display: grid; place-items: center; }
+.vs-core { position: relative; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #FF0033; box-shadow: 0 12px 30px -6px rgba(255, 0, 51, .8); transition: transform .25s; }
+.vs-core svg { margin-left: 4px; }
+.vs-poster:hover .vs-core, .vs-poster:focus-visible .vs-core { transform: scale(1.1); }
+.vs-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .7); animation: vfabWave 2.6s ease-out infinite; }
+.vs-ring--2 { animation-delay: 1.3s; }
+.vs-cap { position: absolute; left: 16px; bottom: 14px; display: inline-flex; align-items: center; gap: 8px; color: #fff; font: 600 .86rem var(--font-b); text-shadow: 0 1px 6px rgba(0, 0, 0, .5); }
+.vs-poster:focus-visible { outline: 3px solid #FFC233; outline-offset: -3px; }
+.vs-frame-deco { position: absolute; inset: 0; pointer-events: none; }
+.vs--vault .vs-cap { left: 12%; bottom: 10%; }
+.vf-corners, .vf-laser { overflow: hidden; }
+.vs--shield .vs-frame-deco, .vs--qr .vs-frame-deco { overflow: hidden; border-radius: inherit; }
+
+.vs-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.vs-list button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--c1) 45%, transparent); background: transparent; color: inherit; font: 600 .82rem var(--font-b); cursor: pointer; transition: background .2s, color .2s; }
+.vs-list button.is-on, .vs-list button:hover { background: linear-gradient(100deg, var(--c1), var(--c2)); color: #fff; border-color: transparent; }
+
+/* default points: pill row */
+.vs-pts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.vs-pts li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px 7px 7px; border-radius: 12px; background: color-mix(in srgb, var(--c1) 10%, transparent); font: 600 .88rem var(--font-b); }
+.vs-pt-n { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 4px; border-radius: 8px; color: #fff; background: linear-gradient(135deg, var(--c1), var(--c2)); font: 800 .72rem var(--font-d); }
+
+/* ---------- 1. VAULT (home) — deep navy vault with a golden rim, coins orbiting ---------- */
+.vs--vault { background: radial-gradient(90% 120% at 85% 50%, #2a1a52, #060F33 70%); color: #fff; }
+.vs--vault .vs-screen { border-radius: 50% / 18%; box-shadow: 0 0 0 10px #1a2560, 0 0 0 14px #FFC233, 0 40px 80px -30px rgba(255, 138, 0, .7); }
+.vd-ring { position: absolute; right: 2%; top: 50%; width: 62%; aspect-ratio: 1; border-radius: 50%; border: 2px dashed rgba(255, 194, 51, .35); transform: translateY(-50%); animation: vfabSpin 40s linear infinite; }
+.vd-ring--2 { width: 48%; right: 9%; border-style: dotted; animation-direction: reverse; animation-duration: 26s; }
+.vd-coin { position: absolute; top: -20px; left: calc(48% + var(--k) * 6.5%); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-style: normal; color: #7a4a00; background: radial-gradient(circle at 35% 30%, #FFE08A, #FFB000); animation: vdFall calc(5s + var(--k) * .6s) linear infinite; animation-delay: calc(var(--k) * -.9s); }
+.vf-bolt { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3c4, #c98a00); }
+.vf-bolt:nth-child(1) { left: 6%; top: 12%; } .vf-bolt:nth-child(2) { right: 6%; top: 12%; } .vf-bolt:nth-child(3) { left: 6%; bottom: 12%; top: auto; } .vf-bolt:nth-child(4) { right: 6%; bottom: 12%; top: auto; }
+.vs--vault .vs-pts li { background: rgba(255, 194, 51, .12); color: #FFE7B0; }
+@keyframes vdFall { 0% { transform: translateY(0) rotateY(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(560px) rotateY(720deg); opacity: 0; } }
+
+/* ---------- 2. METRO (how it works) — transit map, stations as points ---------- */
+.vs--metro { background: linear-gradient(160deg, #EEF4FF, #E6FBF7); grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.vs--metro .vs-info { order: 2; }
+.vd-map { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34%; }
+.vd-line { fill: none; stroke: color-mix(in srgb, var(--c1) 40%, transparent); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 2 14; }
+.vd-train { fill: var(--c2); }
+.vs-pts--metro { position: relative; flex-direction: column; gap: 0; padding-left: 6px; }
+.vs-pts--metro::before { content: ''; position: absolute; left: 18px; top: 14px; bottom: 14px; width: 4px; border-radius: 4px; background: linear-gradient(var(--c1), var(--c2)); }
+.vs-pts--metro li { background: none; padding: 6px 0; }
+.vs-pts--metro .vs-pt-n { position: relative; min-width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--c1); border: 4px solid var(--c1); font-size: .62rem; }
+.vs--metro .vs-screen { border-radius: 18px; border: 6px solid #fff; transform: rotate(-1.5deg); }
+
+/* ---------- 3. RECEIPT (rewards) — mint counter with a printed reward receipt ---------- */
+.vs--receipt { background: linear-gradient(135deg, #E9FBF2, #FFF6DC); }
+.vs--receipt .vs-pts { display: none; }
+.vs-receipt { position: relative; z-index: 1; width: min(300px, 80%); margin: -26px 6% 0 auto; padding: 18px 20px 26px; background: #fff; color: #0B1E5B; font: 600 .82rem/1.2 ui-monospace, Menlo, Consolas, monospace; box-shadow: 0 18px 34px -18px rgba(11, 30, 91, .5); transform-origin: top; animation: vdPrint 1.2s cubic-bezier(.2, .9, .3, 1) both; mask: radial-gradient(8px at 50% 100%, #0000 98%, #000) 0 0 / 16px 100% repeat-x; -webkit-mask: radial-gradient(8px at 50% 100%, #0000 98%, #000) 0 0 / 16px 100% repeat-x; }
+.vs-receipt b { display: block; text-align: center; letter-spacing: .2em; margin-bottom: 10px; color: var(--c1); }
+.vs-receipt span { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #c9d2e6; }
+.vs-receipt em { font-style: normal; color: var(--c1); }
+.vs-receipt i { font-style: normal; }
+.vs-receipt small { display: block; margin-top: 10px; text-align: center; opacity: .6; }
+.vd-paper-glow { position: absolute; right: 8%; bottom: -10%; width: 40%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c2) 45%, transparent), transparent 70%); }
+@keyframes vdPrint { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+/* ---------- 4. PHONE (consumers) — candy-pink, tilted phone, floating lifestyle stickers ---------- */
+.vs--phone { background: linear-gradient(135deg, #FFF0F4, #FFF4E6); grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.vs--phone .vs-info { order: 2; }
+.vs--phone .vs-screen { border-radius: 34px; border: 12px solid #15122b; transform: rotate(-4deg); box-shadow: 0 40px 70px -30px rgba(255, 94, 126, .8); }
+.vf-notch { position: absolute; right: -2px; top: 50%; width: 10px; height: 60px; border-radius: 8px 0 0 8px; background: #15122b; transform: translateY(-50%); }
+.vd-sticker { position: absolute; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--c1), var(--c2)); box-shadow: 0 10px 20px -10px var(--c1); animation: vdBob 4s ease-in-out infinite; animation-delay: calc(var(--k) * -.7s); }
+.vd-sticker:nth-child(1) { left: 2%; top: 6%; } .vd-sticker:nth-child(2) { left: 41%; top: 4%; } .vd-sticker:nth-child(3) { left: 43%; bottom: 5%; }
+.vd-sticker:nth-child(4) { left: 2%; bottom: 7%; } .vd-sticker:nth-child(5) { left: 47%; top: 44%; } .vd-sticker:nth-child(6) { display: none; }
+.vs-pts--phone li { border-radius: 999px; background: #fff; box-shadow: 0 6px 14px -8px rgba(255, 94, 126, .6); }
+.vs-pts--phone li:nth-child(odd) { transform: rotate(-2deg); } .vs-pts--phone li:nth-child(even) { transform: rotate(2deg); }
+.vs-pts--phone .vs-pt-n { border-radius: 50%; }
+@keyframes vdBob { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-12px) rotate(6deg); } }
+
+/* ---------- 5. BOARDROOM (professionals) — slate dashboard, rising bars ---------- */
+.vs--boardroom { background: linear-gradient(140deg, #0A1230, #121f4d 60%, #1b1442); color: #E6ECFF; }
+.vd-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 34px 34px; }
+.vd-bar { position: absolute; bottom: 0; left: calc(4% + var(--k) * 5.2%); width: 3.2%; height: 70%; border-radius: 6px 6px 0 0; background: linear-gradient(var(--c2), transparent); opacity: .18; transform-origin: bottom; transform: scaleY(var(--h)); animation: vdBar 3.6s ease-in-out infinite alternate; animation-delay: calc(var(--k) * -.5s); }
+.vs--boardroom .vs-screen { border-radius: 14px; border: 1px solid rgba(255, 255, 255, .18); box-shadow: 0 0 0 8px rgba(255, 255, 255, .04), 0 40px 80px -30px #000; }
+.vs--boardroom .vs-chip { background: rgba(47, 107, 255, .18); }
+.vs-pts--boardroom { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.vs-pts--boardroom li { border-radius: 10px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); border-left: 3px solid var(--c1); }
+.vs-pts--boardroom .vs-pt-n { background: none; color: #9fb4ff; min-width: 0; }
+@keyframes vdBar { from { transform: scaleY(calc(var(--h) * .5)); } to { transform: scaleY(var(--h)); } }
+
+/* ---------- 6. PASSPORT (who can join) — cream passport page with region stamps ---------- */
+.vs--passport { background: #FBF6EA; background-image: repeating-linear-gradient(0deg, transparent 0 22px, rgba(139, 92, 246, .06) 22px 23px); border: 2px solid #eadfc4; }
+.vs--passport .vs-screen { border-radius: 8px; border: 10px solid #fff; box-shadow: 0 20px 40px -20px rgba(70, 40, 120, .5); transform: rotate(1.5deg); }
+.vd-stamp { position: absolute; width: 104px; height: 104px; border-radius: 50%; border: 3px double var(--c1); color: var(--c1); display: grid; place-content: center; text-align: center; font-style: normal; opacity: .55; transform: rotate(-14deg) scale(1); animation: vdStamp 6s ease-in-out infinite; animation-delay: calc(var(--k) * 1.5s); }
+.vd-stamp b { font: 800 .78rem var(--font-d); letter-spacing: .1em; } .vd-stamp small { font: 600 .6rem var(--font-b); text-transform: uppercase; }
+.vd-stamp:nth-child(1) { left: 40%; top: 4%; } .vd-stamp:nth-child(2) { right: 3%; bottom: 4%; border-color: var(--c2); color: var(--c2); }
+.vd-stamp:nth-child(3) { left: 44%; bottom: 2%; } .vd-stamp:nth-child(4) { right: 6%; top: 3%; border-color: #FF8A00; color: #FF8A00; }
+.vs-pts--passport li { background: #fff; border: 1px dashed var(--c1); border-radius: 6px; font-family: ui-monospace, Menlo, monospace; text-transform: uppercase; font-size: .78rem; letter-spacing: .06em; }
+@keyframes vdStamp { 0%, 70%, 100% { transform: rotate(-14deg) scale(1); } 75% { transform: rotate(-14deg) scale(1.18); } 80% { transform: rotate(-14deg) scale(.96); } }
+
+/* ---------- 7. SHIELD (trust & safety) — deep teal, scanning beam, checklist ---------- */
+.vs--shield { background: radial-gradient(80% 120% at 80% 30%, #0f4a52, #062033 70%); color: #E6FFFB; }
+.vd-hex { position: absolute; right: 18%; top: 50%; width: 46%; aspect-ratio: 1; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); background: rgba(20, 201, 181, .08); transform: translateY(-50%) rotate(0); animation: vfabSpin 50s linear infinite; }
+.vd-hex--2 { width: 34%; right: 24%; background: rgba(47, 107, 255, .08); animation-direction: reverse; }
+.vd-lock { position: absolute; right: 3%; top: 6%; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: #14C9B5; color: #062033; }
+.vf-corners i { position: absolute; width: 34px; height: 34px; border: 4px solid var(--c1); }
+.vf-corners i:nth-child(1) { left: 12px; top: 12px; border-right: 0; border-bottom: 0; } .vf-corners i:nth-child(2) { right: 12px; top: 12px; border-left: 0; border-bottom: 0; }
+.vf-corners i:nth-child(3) { left: 12px; bottom: 12px; border-right: 0; border-top: 0; } .vf-corners i:nth-child(4) { right: 12px; bottom: 12px; border-left: 0; border-top: 0; }
+.vf-laser { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0, color-mix(in srgb, var(--c1) 30%, transparent) 2%, var(--c1) 3%, transparent 3.6%); animation: vdScan 3.2s ease-in-out infinite alternate; }
+.vs-pts--shield { flex-direction: column; }
+.vs-pts--shield li { background: rgba(20, 201, 181, .1); border: 1px solid rgba(20, 201, 181, .3); }
+.vs-pts--shield .vs-pt-n { border-radius: 50%; background: #14C9B5; color: #062033; }
+@keyframes vdScan { from { transform: translateY(0); } to { transform: translateY(94%); } }
+
+/* ---------- 8. REEL (about) — cinema dark, film perforations, spinning spools, timeline ---------- */
+.vs--reel { background: linear-gradient(160deg, #1a0f24, #0b0b1a 70%); color: #FFF3E0; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.vs--reel .vs-info { order: 2; }
+.vs--reel .vs-screen { border-radius: 6px; border-top: 26px solid #111; border-bottom: 26px solid #111; aspect-ratio: auto; }
+.vs--reel .vs-screen::before { content: ''; display: block; padding-top: 56.25%; }
+.vf-perf { position: absolute; left: 0; right: 0; height: 14px; background: repeating-linear-gradient(90deg, #f3e6cf 0 12px, transparent 12px 26px); opacity: .85; animation: vdPerf 1.4s linear infinite; }
+.vf-perf.top { top: -20px; } .vf-perf.bottom { bottom: -20px; }
+.vd-spool { position: absolute; left: 4%; top: -60px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, #0b0b1a 14%, transparent 15%), conic-gradient(from 0deg, #2b2240 0 40deg, #3a2e57 40deg 80deg, #2b2240 80deg 120deg, #3a2e57 120deg 160deg, #2b2240 160deg 200deg, #3a2e57 200deg 240deg, #2b2240 240deg 280deg, #3a2e57 280deg 320deg, #2b2240 320deg 360deg); opacity: .6; animation: vfabSpin 9s linear infinite; }
+.vd-spool--2 { left: auto; right: 3%; top: auto; bottom: -70px; width: 130px; height: 130px; animation-direction: reverse; }
+.vs-pts--reel { flex-direction: column; gap: 0; border-left: 2px dashed rgba(255, 194, 51, .45); padding-left: 16px; }
+.vs-pts--reel li { background: none; padding: 7px 0; color: #FFE7B0; }
+.vs-pts--reel .vs-pt-n { display: none; }
+.vs-pts--reel li::before { content: ''; position: absolute; margin-left: -23px; width: 12px; height: 12px; border-radius: 50%; background: var(--c1); box-shadow: 0 0 0 4px rgba(255, 138, 0, .25); }
+.vs--reel .vs-list button { color: #FFF3E0; }
+@keyframes vdPerf { to { transform: translateX(-26px); } }
+
+/* ---------- 9. STAGE (reviews) — spotlight, curtains, twinkling stars; stacked centre layout ---------- */
+.vs--stage { grid-template-columns: 1fr; text-align: center; background: radial-gradient(70% 60% at 50% 0%, #4a1630, #12081f 70%); color: #FFF2F6; }
+.vs--stage .vs-info { max-width: 720px; margin: 0 auto; } .vs--stage .vs-lede { margin-inline: auto; } .vs--stage .vs-pts, .vs--stage .vs-acts { justify-content: center; }
+.vs--stage .vs-screen-wrap { width: min(820px, 100%); margin: 0 auto; }
+.vs--stage .vs-screen { border-radius: 18px; box-shadow: 0 0 0 3px #FFC233, 0 50px 90px -30px rgba(255, 194, 51, .5); }
+.vd-beam { position: absolute; left: 50%; top: -10%; width: 70%; height: 120%; transform: translateX(-50%); background: conic-gradient(from 160deg at 50% 0%, transparent 0deg, rgba(255, 220, 160, .18) 20deg, transparent 40deg); animation: vdBeam 5s ease-in-out infinite alternate; }
+.vd-curtain { position: absolute; top: 0; bottom: 0; width: 9%; background: repeating-linear-gradient(90deg, #7a1430 0 14px, #5c0f25 14px 28px); }
+.vd-curtain.l { left: 0; } .vd-curtain.r { right: 0; }
+.vd-star { position: absolute; color: #FFC233; font-style: normal; font-size: 18px; animation: vdTw 2.4s ease-in-out infinite; animation-delay: calc(var(--k) * .4s); }
+.vd-star:nth-child(4) { left: 14%; top: 18%; } .vd-star:nth-child(5) { right: 14%; top: 26%; } .vd-star:nth-child(6) { left: 18%; bottom: 20%; } .vd-star:nth-child(7) { right: 18%; bottom: 14%; } .vd-star:nth-child(8) { left: 30%; top: 8%; } .vd-star:nth-child(9) { right: 30%; top: 6%; }
+@keyframes vdTw { 0%, 100% { opacity: .2; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes vdBeam { from { opacity: .6; transform: translateX(-50%) rotate(-4deg); } to { opacity: 1; transform: translateX(-50%) rotate(4deg); } }
+
+/* ---------- 10. CHAT (faq) — lavender messenger window, points as chat bubbles ---------- */
+.vs--chat { background: linear-gradient(150deg, #F3EEFF, #FFEFF4); }
+.vs--chat .vs-screen { border-radius: 18px; border-top: 40px solid #fff; box-shadow: 0 24px 50px -24px rgba(139, 92, 246, .6); aspect-ratio: auto; }
+.vs--chat .vs-screen::before { content: ''; display: block; padding-top: 56.25%; }
+.vf-bar { position: absolute; left: 0; right: 0; top: -40px; height: 40px; display: flex; align-items: center; gap: 6px; padding: 0 14px; color: #0B1E5B; font: 700 .8rem var(--font-d); }
+.vf-bar i { width: 10px; height: 10px; border-radius: 50%; background: #FF5E7E; } .vf-bar i:nth-child(2) { background: #FFC233; } .vf-bar i:nth-child(3) { background: #14C9B5; margin-right: 8px; }
+.vs-pts--chat { flex-direction: column; align-items: flex-start; }
+.vs-pts--chat li { border-radius: 18px 18px 18px 4px; background: #fff; box-shadow: 0 6px 16px -10px rgba(139, 92, 246, .7); animation: vdPop .5s both; animation-delay: calc(var(--i) * .2s); }
+.vs-pts--chat li:nth-child(even) { align-self: flex-end; border-radius: 18px 18px 4px 18px; background: linear-gradient(100deg, var(--c1), var(--c2)); color: #fff; }
+.vs-pts--chat .vs-pt-n { display: none; }
+.vd-typing { position: absolute; right: 6%; bottom: 8%; display: flex; gap: 5px; padding: 12px 16px; border-radius: 18px; background: #fff; }
+.vd-typing i { width: 8px; height: 8px; border-radius: 50%; background: var(--c1); animation: vdDot 1.2s infinite; } .vd-typing i:nth-child(2) { animation-delay: .2s; } .vd-typing i:nth-child(3) { animation-delay: .4s; }
+@keyframes vdDot { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-5px); opacity: 1; } }
+@keyframes vdPop { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: none; } }
+
+/* ---------- 11. ON AIR (contact) — retro TV set, warm coral, blinking lamp ---------- */
+.vs--onair { background: linear-gradient(135deg, #FFE9E1, #FFF5D6); grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.vs--onair .vs-info { order: 2; }
+.vs--onair .vs-screen { border-radius: 28px; border: 18px solid #2b1d3a; box-shadow: 0 0 0 6px #FF5E7E, 0 30px 60px -24px rgba(255, 94, 126, .7); }
+.vf-lamp { position: absolute; right: 14px; top: 12px; padding: 5px 10px; border-radius: 6px; background: #FF0033; color: #fff; font: 800 .7rem var(--font-d); letter-spacing: .14em; animation: vdBlink 1.6s steps(2) infinite; }
+.vd-antenna { position: absolute; left: 22%; top: 2%; width: 4px; height: 90px; background: #2b1d3a; border-radius: 4px; transform-origin: bottom; transform: rotate(-30deg); animation: vdAnt 3s ease-in-out infinite alternate; }
+.vd-antenna.r { left: 30%; transform: rotate(30deg); animation-direction: alternate-reverse; }
+.vs-pts--onair li { background: #fff; border-radius: 999px; }
+.vs-pts--onair .vs-pt-n { border-radius: 50%; }
+@keyframes vdBlink { 50% { opacity: .35; } }
+@keyframes vdAnt { from { transform: rotate(-36deg); } to { transform: rotate(-24deg); } }
+
+/* ---------- 12. MAGAZINE (blog) — paper cover, masthead, barcode, editorial serif ---------- */
+.vs--magazine { background: #FFFDF8; border: 1px solid #eee3cf; }
+.vs--magazine .vs-title { font-family: var(--font-accent); font-weight: 700; }
+.vs--magazine .vs-screen { border-radius: 2px; border: 14px solid #fff; border-top-width: 64px; box-shadow: 0 30px 60px -30px rgba(11, 30, 91, .6); aspect-ratio: auto; transform: rotate(-1deg); }
+.vs--magazine .vs-screen::before { content: ''; display: block; padding-top: 56.25%; }
+.vf-mast { position: absolute; left: 0; top: -58px; font: 900 2.6rem/1 var(--font-d); letter-spacing: -.04em; color: #0B1E5B; }
+.vf-mast em { font-family: var(--font-accent); color: #FF8A00; }
+.vd-barcode { position: absolute; right: 5%; bottom: 6%; display: flex; gap: 2px; height: 40px; }
+.vd-barcode i { width: calc(var(--w) * 2px); background: #0B1E5B; }
+.vs-pts--magazine { flex-direction: column; gap: 4px; }
+.vs-pts--magazine li { background: none; padding: 4px 0; border-bottom: 1px solid #eadfc8; border-radius: 0; font-family: var(--font-accent); font-style: italic; font-size: 1.02rem; }
+.vs-pts--magazine .vs-pt-n { background: #0B1E5B; border-radius: 2px; font-style: normal; }
+
+/* ---------- 13. QR (scan & connect) — violet night, finder corners, orbiting socials ---------- */
+.vs--qr { background: radial-gradient(90% 120% at 70% 40%, #34186b, #120a2b 70%); color: #F3EEFF; }
+.vd-orb { position: absolute; left: 70%; top: 50%; width: 40px; height: 40px; margin: -20px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .1); color: #fff; animation: vdOrbit 18s linear infinite; animation-delay: calc(var(--k) * -3s); }
+.vs-pts--qr li { background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); }
+@keyframes vdOrbit { from { transform: rotate(0) translateX(clamp(160px, 26vw, 330px)) rotate(0); } to { transform: rotate(360deg) translateX(clamp(160px, 26vw, 330px)) rotate(-360deg); } }
+
+/* ---------- 14. SPOTLIGHT (fallback) ---------- */
+.vs--spotlight { background: radial-gradient(80% 100% at 70% 30%, #1d2b6b, #060F33 70%); color: #fff; }
+
+/* Dark templates: light text, white points */
+.vs--vault .vs-pts li, .vs--boardroom .vs-pts li, .vs--shield .vs-pts li, .vs--qr .vs-pts li, .vs--spotlight .vs-pts li, .vs--stage .vs-pts li { color: inherit; }
+.vs--stage .vs-pts li, .vs--spotlight .vs-pts li { background: rgba(255, 255, 255, .08); }
+
+/* ---------- Section wrappers ---------- */
+.vsx { padding-block: clamp(36px, 6vw, 80px); }
+.vsx--boardroom, .vsx--stage, .vsx--reel { background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--c1) 6%, transparent)); }
+
+/* ---------- Pop-up variants ---------- */
+.vs--modal { box-shadow: 0 50px 120px -40px rgba(0, 0, 0, .8); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .vs, .vs--metro, .vs--phone, .vs--reel, .vs--onair { grid-template-columns: 1fr; }
+  .vs-info, .vs--metro .vs-info, .vs--phone .vs-info, .vs--reel .vs-info, .vs--onair .vs-info { order: 0; }
+  .vs--phone .vs-screen, .vs--passport .vs-screen, .vs--magazine .vs-screen, .vs--metro .vs-screen { transform: none; }
+  .vd-stamp, .vd-sticker:nth-child(n+4), .vd-spool { display: none; }
+  .vs-pts--boardroom { grid-template-columns: 1fr; }
+  .vf-mast { font-size: 1.8rem; top: -50px; }
+  .vs--magazine .vs-screen { border-top-width: 56px; }
+}
+@media (max-width: 560px) {
+  .vs { padding: 18px; border-radius: 22px; }
+  .vs-play { width: 72px; height: 72px; } .vs-core { width: 58px; height: 58px; }
+  .vs-cap { display: none; }
+  .vd-orb { display: none; }
+}
+
+/* ---------- Motion safety ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .vfab *, .vs *, .vs-receipt { animation: none !important; }
+}

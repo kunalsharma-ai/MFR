@@ -5,6 +5,7 @@ import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { askLiveHelp, CtaBand, FaqList } from '../components/Common.jsx';
 import { ALL_FAQS, PAGES } from '../data/pages.js';
 import { CONTACT, whatsappLink } from '../data/site.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.faq;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'FAQ', path: page.path }];
@@ -94,6 +95,7 @@ export default function Faq() {
           </div>
         </div>
       </section>
+      <VideoShowcase />
       <CtaBand variant="violet" />
     </>
   );

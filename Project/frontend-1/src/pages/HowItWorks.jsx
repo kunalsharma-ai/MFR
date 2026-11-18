@@ -6,6 +6,7 @@ import { PAGES } from '../data/pages.js';
 import JourneyPath from '../sections/JourneyPath.jsx';
 import { InvitationsPhone } from '../sections/RewardSections.jsx';
 import { FAQ_HOW } from '../data/faqs.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.howItWorks;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'How It Works', path: page.path }];
@@ -144,6 +145,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
+      <VideoShowcase />
       <FaqSplit id="hiw-faq" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
       <CtaBand title="Ready for step one?" sub="It’s free, it’s quick, and your first profile survey is waiting." variant="ocean" />
     </>

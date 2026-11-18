@@ -11,6 +11,7 @@ import useInView from '../hooks/useInView.js';
 import RateButton from '../components/RateButton.jsx';
 import '../styles/rv2-flag-avatar.css';
 import { isRecent } from '../utils/reviews.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 
 const page = PAGES.reviews;
@@ -241,6 +242,7 @@ export default function Reviews() {
       </section>
 
       <p className="rs-policy container"><Icon name="shield" size={14} /> How we publish reviews: every review submitted on this site is shown, whatever its rating, after automatic spam checks (anything that looks like spam is checked by a person first). We never edit wording, and we never publish email addresses or phone numbers. <Link to="/terms">Terms</Link> · <Link to="/privacy">Privacy</Link></p>
+      <VideoShowcase />
       <CtaBand />
     </>
   );

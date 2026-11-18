@@ -14,6 +14,7 @@ import { PrivacyVault, QualityRadar, VerificationScanner } from '../sections/Tru
 import BlogBento from '../sections/BlogBento.jsx';
 import SearchShowcase from '../sections/SearchShowcase.jsx';
 import { CommunityLedger, MemberVoices, SurveyBoard } from '../sections/CommunitySections.jsx';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.home;
 
@@ -33,6 +34,7 @@ export default function Home() {
       <HeroOrbit />
       <InviteMarquee />
       <CommunityLedger />
+      <VideoShowcase />
 
       <section className="section wh" aria-labelledby="intro-title">
         <div className="container wh-row">

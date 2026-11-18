@@ -7,6 +7,7 @@ import { CoverWall } from '../components/HeroScenes.jsx';
 import { PAGES } from '../data/pages.js';
 import { BLOG_META as BLOGS, BLOG_CATEGORIES } from '../data/blogs/meta.js';
 import { SITE_URL } from '../data/site.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.blog;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blogs', path: page.path }];
@@ -158,6 +159,7 @@ export default function BlogList() {
           {!list.length ? <p className="muted center">No blogs match your search.</p> : null}
         </div>
       </section>
+      <VideoShowcase />
       <CtaBand title="Reading is great. Earning is better." sub="Put these tips to work — join free in two minutes." />
     </>
   );

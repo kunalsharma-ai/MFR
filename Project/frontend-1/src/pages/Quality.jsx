@@ -8,6 +8,7 @@ import { QUALITY_LAYERS } from '../data/quality.js';
 import { BRAND } from '../data/site.js';
 import { PrivacyVault, QualityRadar, VerificationScanner } from '../sections/TrustSections.jsx';
 import { FAQ_QUALITY } from '../data/faqs.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
 
 const page = PAGES.quality;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Quality & Security', path: page.path }];
@@ -67,6 +68,7 @@ export default function Quality() {
         </div>
       </section>
 
+      <VideoShowcase />
       <FaqSplit id="q-faq" title="Security questions" sub={<>Learn to <Link to="/blog/legit-survey-sites-spot-scams">spot fake survey sites</Link>.</>} faqs={FAQS} hue="#0EA5A0" hue2="#2F6BFF" />
       <CtaBand title="Join a community you can trust." variant="teal" />
     </>

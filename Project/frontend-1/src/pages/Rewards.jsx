@@ -6,6 +6,8 @@ import { PAGES } from '../data/pages.js';
 import { PAYOUTS } from '../data/site.js';
 import { ClaimMeter, IncentiveStories, InvitationsPhone, RewardExplorer, RewardGalaxy } from '../sections/RewardSections.jsx';
 import { FAQ_REWARDS } from '../data/faqs.js';
+import VideoShowcase from '../sections/VideoShowcase.jsx';
+import ProductVoices from '../sections/ProductVoices.jsx';
 
 const page = PAGES.rewards;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Rewards & Payouts', path: page.path }];
@@ -52,6 +54,8 @@ export default function Rewards() {
         </div>
       </section>
 
+      <ProductVoices kind="rewards" />
+      <VideoShowcase />
       <FaqSplit id="rw-faq" title="Rewards questions" sub={<>Compare methods in our blog: <Link to="/blog/survey-rewards-paypal-upi-gift-cards">PayPal vs UPI vs gift cards</Link>.</>} faqs={FAQS} hue="#E5A100" hue2="#FF5E7E" />
       <CtaBand title="Your first reward starts with a free account." variant="sunrise" />
     </>
