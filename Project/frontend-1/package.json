@@ -21,17 +21,16 @@
 		"build:preview": "node scripts/blog-meta.mjs && node scripts/build-dark-css.mjs && node scripts/build-preview.mjs"
 	},
 	"dependencies": {
-		"@emotion/styled": "^11.14.1",
-		"@mui/material": "^7.3.2",
 		"jspdf": "^4.2.1",
 		"jspdf-autotable": "^5.0.9",
 		"react": "18.3.1",
 		"react-dom": "18.3.1",
-		"react-router-dom": "7.18.4"
+		"react-router-dom": "7.18.4",
+		"@emotion/styled": "^11.14.1",
+		"@mui/material": "^7.3.2"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-react": "4.7.0",
-		"beasties": "^0.3.5",
 		"qrcode": "1.5.4",
 		"vite": "6.4.4",
 		"vite-plugin-pwa": "^2.0.0"
