@@ -7,9 +7,7 @@ import { COUNTRIES } from '../data/countries.js';
 
 // v2.5 — "Countries we cover" (#countries) on the consumer and professional pages. Every country is listed — no
 // scrolling boxes, nothing hidden — grouped by region, with a region filter.
-//  • consumer: "Passport" — a 3D passport whose stamps thump onto the page, one ink colour per region.
-//  • professional: "Departures board" — an airport split-flap board where each country flips in as a destination
-//    for B2B studies.
+//  • consumer: "Flag islands" (v3.2) · professional: "Expert radar" (v3.2).
 const ISO = Object.fromEntries(COUNTRIES.map((c) => [c.name.toLowerCase(), c.iso]));
 const isoOf = (n) => ISO[n.toLowerCase()] || '';
 const ALL = REGIONS.flatMap((r) => r.countries.map((c) => ({ name: c, iso: isoOf(c), reg: r })));
@@ -29,58 +27,56 @@ function RegionTabs({ active, setActive, tone }) {
   );
 }
 
+// consumer (v3.2): "Flag islands" — each region is a floating island of round flag bubbles that bob in a wave.
 function Passport({ active }) {
   const regs = active === 'all' ? REGIONS : REGIONS.filter((r) => r.id === active);
   return (
-    <div className="psp" key={active}>
-      <div className="psp-book" aria-hidden="true">
-        <span className="psp-page" />
-        <span className="psp-cover"><Icon name="globe" size={34} /><b>MEMBER PASSPORT</b><small>MyFrequentRewards</small></span>
-      </div>
-      <div className="psp-pages">
-        {regs.map((r, ri) => (
-          <section key={r.id} className="psp-region" style={{ '--rc': r.color }} aria-label={`${r.name}: ${r.countries.length} countries`}>
-            <h3><span>{r.name}</span><small>{r.countries.length} countries</small></h3>
-            <ul>
-              {r.countries.map((c, i) => (
-                <li key={c} className="psp-stamp" style={{ '--i': i + ri * 3, '--r': `${((i * 37) % 9) - 4}deg` }}>
-                  <span className="psp-flag"><Flag iso={isoOf(c)} size={18} /></span>
-                  <b>{c}</b>
-                  <small>CONSUMER SURVEYS</small>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
+    <div className="fis" key={active}>
+      {regs.map((r, ri) => (
+        <section key={r.id} className="fis-isle" style={{ '--rc': r.color, '--ri': ri }} aria-label={`${r.name}: ${r.countries.length} countries`}>
+          <span className="fis-blob" aria-hidden="true" />
+          <h3><i /><span>{r.name}</span><small>{r.countries.length} countries</small></h3>
+          <ul>
+            {r.countries.map((c, i) => (
+              <li key={c} className="fis-b" style={{ '--i': i }}>
+                <span className="fis-flag"><Flag iso={isoOf(c)} size={40} /></span>
+                <b>{c}</b>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }
 
+// professional (v3.2): "Expert radar" — a radar sweeps a dark globe and every country lights up as a blip,
+// then the full list sits in region columns of glass signal tiles.
 function Departures({ active }) {
   const rows = active === 'all' ? ALL : ALL.filter((x) => x.reg.id === active);
-  const [more, setMore] = useState(false);
+  const regs = active === 'all' ? REGIONS : REGIONS.filter((r) => r.id === active);
   return (
-    <div className={`dep${more ? ' is-more' : ''}`} key={active}>
-      <div className="dep-head" aria-hidden="true">
-        <span><Icon name="briefcase" size={16} /> B2B STUDIES · DEPARTURES</span>
-        <span className="dep-clock">ALL GATES OPEN</span>
+    <div className="rdr" key={active}>
+      <div className="rdr-scope" aria-hidden="true">
+        <span className="rdr-ring r1" /><span className="rdr-ring r2" /><span className="rdr-ring r3" /><span className="rdr-cross" />
+        <span className="rdr-sweep" />
+        {rows.map((x, i) => {
+          const ri = REGIONS.indexOf(x.reg);
+          const inReg = x.reg.countries.indexOf(x.name);
+          const ang = ri * 72 + 6 + (inReg / x.reg.countries.length) * 62;
+          const rad = 18 + ((inReg * 3) % 5) * 6.5;
+          return <i key={x.name} className="rdr-blip" style={{ '--a': `${ang}deg`, '--d': rad, '--t': `${(ang / 360) * 4}s`, '--rc': x.reg.color }}><Flag iso={x.iso} size={16} /></i>;
+        })}
+        <span className="rdr-core"><Icon name="briefcase" size={22} /><b>{rows.length}</b><small>countries live</small></span>
       </div>
-      <div className="dep-cols" role="table" aria-label="Countries where professional studies run">
-        <div className="dep-row dep-th" role="row"><span role="columnheader">Code</span><span role="columnheader">Destination</span><span role="columnheader">Region</span><span role="columnheader">Status</span></div>
-        {rows.map((x, i) => (
-          <div className="dep-row" role="row" key={x.name} style={{ '--i': i % 24, '--rc': x.reg.color }}>
-            <span className="dep-code" role="cell">{(x.iso || '··').split('').map((ch, k) => <i key={k} style={{ '--k': k }}>{ch}</i>)}</span>
-            <span className="dep-dest" role="cell"><Flag iso={x.iso} size={16} /> <b>{x.name}</b></span>
-            <span className="dep-reg" role="cell"><i />{x.reg.name}</span>
-            <span className="dep-st" role="cell">Boarding</span>
+      <div className="rdr-cols" role="list" aria-label="Countries where professional studies run">
+        {regs.map((r) => (
+          <div key={r.id} className="rdr-col" style={{ '--rc': r.color }} role="listitem">
+            <h3><i />{r.name}<small>{r.countries.length}</small></h3>
+            <ul>{r.countries.map((c, i) => <li key={c} style={{ '--i': i }}><Flag iso={isoOf(c)} size={16} /><b>{c}</b><em>Live</em></li>)}</ul>
           </div>
         ))}
       </div>
-      {/* phones show the first rows of a long board; the rest is one tap away */}
-      {rows.length > 12 && !more ? (
-        <button type="button" className="dep-more" onClick={() => setMore(true)}>Show all {rows.length} countries <Icon name="chevron" size={16} /></button>
-      ) : null}
     </div>
   );
 }
@@ -95,7 +91,7 @@ export default function CountryAtlas({ variant = 'consumer' }) {
       <div className="container">
         <div className="ca-head reveal">
           <p className="eyebrow">{pro ? 'Where B2B studies run' : 'Where our members live'}</p>
-          <h2 id="ca-title">{pro ? <>Your expertise travels to <span className="ca-hl">{n} countries</span></> : <>Stamped in <span className="ca-hl">{n} countries</span> and counting</>}</h2>
+          <h2 id="ca-title">{pro ? <>Your expertise travels to <span className="ca-hl">{n} countries</span></> : <>Members in <span className="ca-hl">{n} countries</span> and counting</>}</h2>
           <p className="sec-sub">
             {pro
               ? 'Professionals in every country below receive business studies matched to their role, industry and seniority — across five regions.'

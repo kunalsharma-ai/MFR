@@ -1,0 +1,114 @@
+/* ═════════════ v3.1 — Rate & review when logged out: "Create your free account to rate us"
+   Consumer = coral sunrise, Professional = navy + royal blue + gold (same palettes as the home heroes).
+   Skipped by the dark-mode generator. Only transform / opacity animate. ═════════════ */
+html .rw.st-gate .rw-stage { overflow: hidden; }
+html .rw.rw-consumer.st-gate .rw-stage { background: radial-gradient(70% 55% at 20% 12%, rgba(255, 243, 176, .55), transparent 60%), linear-gradient(155deg, #FF3F78 0%, #FF6B5A 36%, #FF9433 70%, #FFC233 100%); }
+html .rw.rw-professional.st-gate .rw-stage { background: radial-gradient(70% 55% at 22% 14%, rgba(255, 211, 107, .32), transparent 62%), radial-gradient(70% 70% at 100% 100%, rgba(47, 107, 255, .55), transparent 62%), linear-gradient(160deg, #050D2E 0%, #0B1E5B 48%, #13307F 100%); }
+
+.ug { --a: #FF3F78; --b: #FF9433; --gold: #FFC233; --ink: #7A1238; position: relative; width: 100%; height: 420px; display: block; }
+.ug-pro { --a: #2F6BFF; --b: #4F46E5; --gold: #FFD36B; --ink: #0B1E5B; }
+.ug-ring { position: absolute; left: 50%; top: 46%; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; border: 2px dashed rgba(255, 255, 255, .35); animation: ugSpin 26s linear infinite; }
+.ug-ring.r2 { width: 220px; height: 220px; margin: -110px 0 0 -110px; border-style: solid; border-color: rgba(255, 255, 255, .16); animation-duration: 14s; animation-direction: reverse; }
+@keyframes ugSpin { to { transform: rotate(360deg); } }
+
+/* lock that springs open */
+.ug-lock { position: absolute; left: 50%; top: 40px; width: 60px; height: 74px; margin-left: -30px; animation: ugLock 7s ease-in-out infinite; }
+.ug-shackle { position: absolute; left: 13px; top: 0; width: 34px; height: 40px; border: 6px solid #fff; border-bottom: 0; border-radius: 20px 20px 0 0; transform-origin: 28px 40px; animation: ugShackle 7s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+.ug-lbody { position: absolute; left: 0; bottom: 0; width: 60px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: var(--ink); background: linear-gradient(135deg, #FFF3C4, var(--gold)); box-shadow: 0 14px 26px -10px rgba(0, 0, 0, .45), inset 0 -3px 0 rgba(0, 0, 0, .12); }
+@keyframes ugShackle { 0%, 52% { transform: none; } 58%, 90% { transform: translateY(-12px) rotate(-38deg); } 100% { transform: none; } }
+@keyframes ugLock { 0%, 50% { transform: none; } 53% { transform: rotate(-8deg); } 56% { transform: rotate(8deg) scale(1.08); } 60%, 92% { transform: scale(1.04); } 100% { transform: none; } }
+
+/* five stars pop out of the open lock */
+.ug-stars { position: absolute; left: 0; right: 0; top: 4px; display: flex; justify-content: center; gap: 10px; pointer-events: none; }
+.ug-stars i { font-style: normal; font-size: 1.7rem; line-height: 1; color: #FFE58A; text-shadow: 0 0 14px rgba(255, 229, 138, .95), 0 3px 0 rgba(0, 0, 0, .15); opacity: 0; transform: translate(calc((2 - var(--k)) * 34px), 56px) scale(.2); animation: ugStar 7s cubic-bezier(.3, 1.6, .5, 1) infinite; animation-delay: calc(var(--k) * .12s); }
+.ug-stars i:nth-child(1), .ug-stars i:nth-child(5) { margin-top: 14px; } .ug-stars i:nth-child(2), .ug-stars i:nth-child(4) { margin-top: 4px; }
+@keyframes ugStar { 0%, 58% { opacity: 0; transform: translate(calc((2 - var(--k)) * 34px), 56px) scale(.2); } 66%, 90% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-10px) scale(.8); } }
+
+/* account card that fills itself in */
+.ug-card { position: absolute; left: 50%; top: 132px; width: 270px; margin-left: -135px; padding: 18px 18px 16px; border-radius: 22px; background: rgba(255, 255, 255, .96); box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .6); display: grid; grid-template-columns: 52px 1fr; column-gap: 14px; row-gap: 12px; align-items: center; animation: ugCard 7s ease-in-out infinite; }
+@keyframes ugCard { 0% { opacity: 0; transform: translateY(24px) scale(.94); } 6%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px) scale(.98); } }
+.ug-av { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--a), var(--b)); box-shadow: 0 10px 20px -10px var(--a); }
+.ug-lines { display: grid; gap: 9px; }
+.ug-lines i { display: block; height: 10px; border-radius: 6px; background: #EEF0F6; overflow: hidden; }
+.ug-lines i.l2 { width: 72%; }
+.ug-lines b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--a), var(--b)); transform-origin: left; transform: scaleX(0); }
+.ug-lines .l1 b { animation: ugL1 7s ease-out infinite; }
+.ug-lines .l2 b { animation: ugL2 7s ease-out infinite; }
+@keyframes ugL1 { 0%, 8% { transform: scaleX(0); } 22%, 94% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+@keyframes ugL2 { 0%, 22% { transform: scaleX(0); } 36%, 94% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+.ug-ok { position: absolute; right: -12px; top: -12px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #22C55E, #0E9F6E); box-shadow: 0 0 0 4px #fff, 0 10px 18px -8px rgba(14, 159, 110, .9); transform: scale(0); animation: ugOk 7s cubic-bezier(.3, 1.8, .5, 1) infinite; }
+@keyframes ugOk { 0%, 46% { transform: scale(0); } 52%, 94% { transform: scale(1); } 100% { transform: scale(0); } }
+.ug-tag { grid-column: 1 / -1; font: 800 .72rem var(--font-d); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.ug-bar { grid-column: 1 / -1; height: 8px; border-radius: 6px; background: #EEF0F6; overflow: hidden; margin-top: -4px; }
+.ug-bar b { display: block; height: 100%; background: linear-gradient(90deg, var(--a), var(--b), var(--gold)); transform-origin: left; animation: ugBar 7s ease-in-out infinite; }
+@keyframes ugBar { 0%, 6% { transform: scaleX(.04); } 48%, 94% { transform: scaleX(1); } 100% { transform: scaleX(.04); } }
+
+/* reward coins burst out of the card */
+.ug-coin { position: absolute; left: 50%; top: 200px; width: 38px; height: 38px; margin-left: -19px; border-radius: 50%; display: grid; place-items: center; font: 900 1rem var(--font-d); font-style: normal; color: #7A4A00; background: radial-gradient(circle at 32% 28%, #FFF6CC, #FFD36B 45%, #F5A70B); box-shadow: inset 0 -3px 0 rgba(150, 90, 0, .35), 0 10px 18px -8px rgba(0, 0, 0, .45); opacity: 0; animation: ugCoin 7s cubic-bezier(.2, .9, .3, 1) infinite; }
+.ug-coin.c0 { --x: -150px; --y: -70px; } .ug-coin.c1 { --x: 150px; --y: -90px; animation-delay: .1s; } .ug-coin.c2 { --x: -130px; --y: 70px; animation-delay: .2s; }
+.ug-coin.c3 { --x: 140px; --y: 60px; animation-delay: .3s; } .ug-coin.c4 { --x: 0px; --y: 120px; animation-delay: .15s; }
+@keyframes ugCoin { 0%, 62% { opacity: 0; transform: scale(.3); } 70% { opacity: 1; } 76%, 88% { opacity: 1; transform: translate(var(--x), var(--y)) rotate(360deg) scale(1); } 96%, 100% { opacity: 0; transform: translate(calc(var(--x) * 1.15), calc(var(--y) - 30px)) rotate(400deg) scale(.7); } }
+
+/* three-step track under the card */
+.ug-steps { position: absolute; left: 0; right: 0; bottom: 10px; margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 8px; }
+.ug-steps li { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px 7px 7px; border-radius: 999px; font: 800 .74rem var(--font-d); color: #fff; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .38); }
+.ug-steps li span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .22); }
+.ug-steps li::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: var(--ink); box-shadow: 0 0 0 2px var(--gold), 0 10px 22px -10px rgba(0, 0, 0, .5); opacity: 0; z-index: -1; animation: ugStep0 7s ease-in-out infinite; }
+.ug-steps li { isolation: isolate; animation: ugStepTxt0 7s ease-in-out infinite; }
+.ug-steps li:nth-child(2), .ug-steps li:nth-child(2)::after { animation-name: ugStepTxt1; } .ug-steps li:nth-child(2)::after { animation-name: ugStep1; }
+.ug-steps li:nth-child(3) { animation-name: ugStepTxt2; } .ug-steps li:nth-child(3)::after { animation-name: ugStep2; }
+@keyframes ugStep0 { 0%, 6% { opacity: 0; } 10%, 44% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes ugStep1 { 0%, 46% { opacity: 0; } 50%, 58% { opacity: 1; } 62%, 100% { opacity: 0; } }
+@keyframes ugStep2 { 0%, 60% { opacity: 0; } 64%, 92% { opacity: 1; } 98%, 100% { opacity: 0; } }
+@keyframes ugStepTxt0 { 10%, 44% { transform: translateY(-3px); } }
+@keyframes ugStepTxt1 { 50%, 58% { transform: translateY(-3px); } }
+@keyframes ugStepTxt2 { 64%, 92% { transform: translateY(-3px) scale(1.05); } }
+/* text inside an active step stays legible: white chip, coloured label (opacity swap via a second layer is overkill, so use mix) */
+.ug-steps li { mix-blend-mode: normal; }
+.ug-con .ug-steps li span { color: #fff; } .ug-pro .ug-steps li span { color: #fff; }
+
+/* ── right column ── */
+html .rw-gate.g-login { text-align: left; }
+html .rw-gate.g-login h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.12; margin: 6px 0 10px; }
+html .rw-gate.g-login > p:not(.ug-eye):not(.ug-login) { margin: 0; max-width: 470px; font-size: .98rem; }
+.ug-eye { display: inline-flex !important; align-items: center; gap: 8px; margin: 0 !important; padding: 6px 12px; border-radius: 999px; font: 800 .78rem var(--font-d) !important; letter-spacing: .02em; color: var(--ac, #F0506E) !important; background: color-mix(in srgb, var(--ac, #F0506E) 10%, #fff); }
+.rw-professional .ug-eye { color: #1E3A8A !important; background: #EAF0FF; }
+.ug-seg { display: inline-flex; gap: 4px; margin: 16px 0 4px; padding: 4px; border-radius: 999px; background: #F2F3F8; }
+.ug-seg button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 0; border-radius: 999px; background: transparent; font: 800 .85rem var(--font-d); color: #5d6380; cursor: pointer; transition: transform .2s; }
+.ug-seg button:active { transform: scale(.96); }
+.rw-consumer .ug-seg button.on { color: #fff; background: linear-gradient(120deg, #FF3F78, #FF9433); box-shadow: 0 8px 18px -10px #FF3F78; }
+.rw-professional .ug-seg button.on { color: #fff; background: linear-gradient(120deg, #2F6BFF, #4F46E5); box-shadow: 0 8px 18px -10px #2F6BFF; }
+.ug-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+.ug-list li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: #F8F9FC; border: 1px solid #ECEEF5; animation: ugIn .5s cubic-bezier(.3, 1.3, .5, 1) both; }
+.ug-list li:nth-child(2) { animation-delay: .08s; } .ug-list li:nth-child(3) { animation-delay: .16s; }
+@keyframes ugIn { from { opacity: 0; transform: translateX(18px); } }
+.ug-list b { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #fff; font: 900 .95rem var(--font-d); }
+.rw-consumer .ug-list b { background: linear-gradient(135deg, #FF3F78, #FF9433); }
+.rw-professional .ug-list b { background: linear-gradient(135deg, #2F6BFF, #4F46E5); }
+.rw-professional .ug-list li:nth-child(3) b, .rw-consumer .ug-list li:nth-child(3) b { color: #5A3A00; background: linear-gradient(135deg, #FFE7A3, #F5B21A); }
+.ug-list span { display: grid; gap: 1px; } .ug-list strong { font: 800 .95rem var(--font-d); color: #18153A; } .ug-list small { color: #6b7190; font-size: .8rem; }
+html .rw-gate.g-login .rw-done-acts { justify-content: flex-start; margin-top: 18px; }
+html .rw-gate.g-login .rw-gate-go { position: relative; overflow: hidden; gap: 8px; padding: 15px 26px; }
+html .rw-consumer .rw-gate.g-login .rw-gate-go { background: linear-gradient(110deg, #FF3F78, #FF6B5A 45%, #FF9433); box-shadow: 0 18px 30px -14px rgba(255, 63, 120, .9); }
+html .rw-professional .rw-gate.g-login .rw-gate-go { color: #0B1E5B; background: linear-gradient(110deg, #FFE7A3, #FFD36B 45%, #F5B21A); box-shadow: 0 18px 30px -14px rgba(245, 178, 26, .9); }
+html .rw-gate.g-login .rw-gate-go::after { content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .6), transparent); transform: skewX(-18deg) translateX(0); animation: ugShine 3.2s ease-in-out infinite; }
+@keyframes ugShine { 0%, 55% { transform: skewX(-18deg) translateX(0); } 100% { transform: skewX(-18deg) translateX(560%); } }
+.ug-login { margin: 14px 0 0 !important; font-size: .9rem !important; color: #6b7190 !important; }
+.ug-login a { font-weight: 800; color: var(--ac, #F0506E); text-decoration: underline; text-underline-offset: 3px; }
+.rw-professional .ug-login a { color: #2F6BFF; }
+
+@media (max-width: 720px) {
+  html .rw.st-gate .rw-stage { height: 250px; }
+  html .rw.st-gate .rw-stage { display: block; padding: 8px 0 0; }
+  .ug { height: 420px; transform: scale(.58); transform-origin: 50% 0; margin-bottom: -176px; }
+  html .rw-gate.g-login { padding-top: 0; }
+  html .rw-gate.g-login { text-align: center; }
+  html .rw-gate.g-login .rw-done-acts { justify-content: center; }
+  .ug-list li { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { .ug *, .ug-list li, .rw-gate-go::after { animation: none !important; } .ug-coin, .ug-stars i { opacity: 1; } .ug-lines b, .ug-bar b { transform: none; } .ug-ok { transform: none; } }
+
+html[data-mode="dark"] .ug-seg { background: #1B2033; }
+html[data-mode="dark"] .ug-list li { background: #161B2C; border-color: #252B40; }
+html[data-mode="dark"] .ug-list strong { color: #ECEFF5; }
+html[data-mode="dark"] .ug-eye { background: rgba(255, 255, 255, .08); }

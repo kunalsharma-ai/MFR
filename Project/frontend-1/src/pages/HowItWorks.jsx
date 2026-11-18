@@ -3,8 +3,7 @@ import Icon from '../components/Icon.jsx';
 import PageHero, { PageSeo } from '../components/PageHero.jsx';
 import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
-import JourneyPath from '../sections/JourneyPath.jsx';
-import { InvitationsPhone } from '../sections/RewardSections.jsx';
+import { FlipJourney, NotifyOrbit, ProfileMeter, StepRail, StepStairs, TwoPasses } from '../sections/HowItWorksX.jsx';
 import { FAQ_HOW } from '../data/faqs.js';
 
 const page = PAGES.howItWorks;
@@ -49,8 +48,8 @@ export default function HowItWorks() {
         eyebrow="How it works"
         title={page.h1}
         lead="Five simple steps turn your honest opinion into real rewards — no investment, no skills, no fees. Here is exactly what happens from sign-up to payout."
-        art="steps"
-        theme="sunrise"
+        artNode={<StepStairs />}
+        theme="tangerine"
       >
         <div className="ph-actions">
           <Link to="/sign-up" className="btn btn-light">Join free <Icon name="arrow" size={18} /></Link>
@@ -58,93 +57,17 @@ export default function HowItWorks() {
         </div>
       </PageHero>
 
-      <JourneyPath compact />
+      <FlipJourney />
 
-      <section className="section zigzag" aria-labelledby="zz-title">
-        <div className="container">
-          <div className="sec-head sec-center reveal">
-            <p className="eyebrow">Step by step</p>
-            <h2 id="zz-title">Every step, unpacked</h2>
-            <p className="sec-sub">If you have ever wondered how to earn money online safely, this is the whole process — nothing hidden.</p>
-          </div>
-          <ol className="zz-list">
-            {DEEP.map((s, i) => (
-              <li key={s.t} className={`zz reveal ${i % 2 ? 'flip' : ''}`} style={{ '--c': s.color }}>
-                <div className="zz-visual" aria-hidden="true">
-                  <span className="zz-num">{i + 1}</span>
-                  <span className="zz-ico"><Icon name={s.icon} size={46} stroke={1.4} /></span>
-                  <span className="zz-orbit" />
-                </div>
-                <div className="zz-copy">
-                  <h3>{s.t}</h3>
-                  <p>{s.d}</p>
-                  <ul>{s.bullets.map((b) => <li key={b}><Icon name="check" size={16} stroke={2.4} /> {b}</li>)}</ul>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <StepRail steps={DEEP} />
 
-      <section className="section curve-sec" aria-labelledby="curve-title">
-        <div className="container curve-row">
-          <div className="reveal">
-            <p className="eyebrow">Profile power</p>
-            <h2 id="curve-title">A fuller profile means better-matched surveys</h2>
-            <p className="sec-sub">Researchers look for specific people. Each profile section you complete opens doors to studies that need exactly your background — read our <Link to="/blog/survey-profile-tips-to-qualify-more">profile tips</Link>.</p>
-            <ul className="legend-list">
-              <li><i className="lg-a" /> Matching invitations</li>
-              <li><i className="lg-b" /> Screen-outs</li>
-            </ul>
-            <p className="tiny muted">Illustrative relationship, not a guarantee of survey volume.</p>
-          </div>
-          <figure className="curve-chart reveal" aria-label="Illustrative chart: as profile completeness rises, matching invitations rise and screen-outs fall">
-            <svg viewBox="0 0 520 300" role="img">
-              <title>Profile completeness versus matching invitations (illustrative)</title>
-              {[60, 120, 180, 240].map((y) => <line key={y} x1="50" x2="500" y1={y} y2={y} className="cc-grid" />)}
-              <path d="M50 250 C 160 240, 240 180, 300 120 S 430 50, 500 40" className="cc-a" />
-              <path d="M50 70 C 170 90, 250 150, 320 200 S 440 240, 500 245" className="cc-b" />
-              <circle cx="500" cy="40" r="7" className="cc-dot" />
-              <text x="50" y="285" className="cc-lbl">Basic sign-up</text>
-              <text x="500" y="285" textAnchor="end" className="cc-lbl">Complete profile</text>
-            </svg>
-          </figure>
-        </div>
-      </section>
+      <ProfileMeter />
 
-      <InvitationsPhone />
+      <NotifyOrbit />
 
-      <section className="section compare" aria-labelledby="cmp-title">
-        <div className="container">
-          <div className="sec-head sec-center reveal">
-            <p className="eyebrow">Two journeys, one platform</p>
-            <h2 id="cmp-title">Consumer or professional — or both</h2>
-          </div>
-          <div className="cmp-grid">
-            <article className="cmp-card cmp-c reveal">
-              <h3><Icon name="user" /> Consumer member</h3>
-              <ul>
-                <li>Everyday topics: shopping, food, tech, travel, media</li>
-                <li>Short, frequent studies</li>
-                <li>Perfect for students, parents, homemakers, retirees</li>
-              </ul>
-              <Link to="/paid-surveys-for-consumers" className="link-arrow">Consumer surveys <Icon name="arrow" size={16} /></Link>
-            </article>
-            <div className="cmp-vs" aria-hidden="true">&amp;</div>
-            <article className="cmp-card cmp-b reveal">
-              <h3><Icon name="briefcase" /> Professional member</h3>
-              <ul>
-                <li>B2B topics: software, purchasing, operations, healthcare</li>
-                <li>Higher-value studies for verified experts</li>
-                <li>Perfect for CXOs, managers, engineers, owners</li>
-              </ul>
-              <Link to="/paid-surveys-for-professionals" className="link-arrow">Professional surveys <Icon name="arrow" size={16} /></Link>
-            </article>
-          </div>
-        </div>
-      </section>
+      <TwoPasses />
 
-      <FaqSplit id="hiw-faq" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
+      <FaqSplit id="hiw-faq" look="path" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
       <CtaBand title="Ready for step one?" sub="It’s free, it’s quick, and your first profile survey is waiting." variant="ocean" />
     </>
   );

@@ -3,6 +3,7 @@ import Icon from '../components/Icon.jsx';
 import { Flag } from '../components/CountryPicker.jsx';
 import useInView from '../hooks/useInView.js';
 import useLiveReviews from '../hooks/useLiveReviews.js';
+import ReviewerId, { StarRow } from '../components/ReviewerId.jsx';
 
 // Product testimonials (v3.0) — every product has its own testimonial design:
 //   consumer     → "sticky wall": two drifting columns of tilted pastel notes
@@ -17,17 +18,13 @@ const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toU
 function Who({ r }) {
   return (
     <span className="pv-who">
-      <span className="pv-av">{initials(r.name)}{r.iso ? <span className="pv-flag"><Flag iso={r.iso} size={16} /></span> : null}</span>
-      <span><b>{r.name}</b><small>{[r.designation, r.country].filter(Boolean).join(' · ')}</small></span>
+      <ReviewerId r={r} tone={r.segment === 'professional' ? 'pro' : 'con'} />
       {r.preview ? <span className="pv-prev">Preview data</span> : null}
     </span>
   );
 }
 
-function Stars({ n }) {
-  if (!n) return null;
-  return <span className="pv-stars" aria-label={`${n} out of 5`}>{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= n ? 'on' : ''}>★</i>)}</span>;
-}
+const Stars = ({ n }) => <StarRow n={n} size={17} className="pv-stars" />;
 
 function Empty({ who }) {
   return (
@@ -101,7 +98,7 @@ function Briefing({ list }) {
         <ul className="pvp-list">
           {list.slice(0, 8).map((x, k) => (
             <li key={x.id}><button type="button" className={k === i ? 'is-on' : ''} onClick={() => setI(k)} aria-label={`Show testimonial from ${x.name}`}>
-              <span className="pv-av sm">{initials(x.name)}</span><span><b>{x.name}</b><small>{x.designation || x.country}</small></span>
+              <span className="pv-av sm">{initials(x.name)}{x.iso ? <span className="pv-flag"><Flag iso={x.iso} size={12} /></span> : null}</span><span><b>{x.name}</b><small>{[x.designation, x.country].filter(Boolean).join(' · ')}</small></span>
             </button></li>
           ))}
         </ul>

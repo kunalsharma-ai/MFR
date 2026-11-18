@@ -24,9 +24,9 @@ export function Breadcrumbs({ items }) {
 export const askLiveHelp = (q) => window.dispatchEvent(new CustomEvent('mfr:open-chat', { detail: { q } }));
 
 
-export function FaqList({ faqs, hue, followUp = true }) {
+export function FaqList({ faqs, hue, followUp = true, look = '' }) {
   return (
-    <div className="faq-list" style={hue ? { '--fh': hue } : undefined}>
+    <div className={`faq-list${look ? ` fl-${look}` : ''}`} style={hue ? { '--fh': hue } : undefined}>
       {faqs.map((f, i) => (
         <details key={f.q} className="faq-item" style={{ '--i': i }}>
           <summary>
@@ -52,21 +52,71 @@ export function FaqList({ faqs, hue, followUp = true }) {
 }
 
 
-export function FaqSplit({ id, title, sub, faqs, hue = '#FF8A00', hue2 = '#8B5CF6', eyebrow = 'FAQ', children }) {
+// Each page's FAQ has its own art and accordion look (v3.2): chat (Consumers), dossier (Professionals),
+// path (How it works), gift (Rewards). Without `look` the original card deck is shown.
+function FaqArt({ look }) {
+  if (look === 'chat') {
+    return (
+      <div className="fqa fqa-chat" aria-hidden="true">
+        <span className="fqa-phone">
+          <i className="b q1">Is joining really free?</i>
+          <i className="b a1">Yes, free for life 🎉</i>
+          <i className="b q2">How do I get paid?</i>
+          <i className="b a2">PayPal, gift cards, UPI…</i>
+          <i className="dots"><b /><b /><b /></i>
+        </span>
+        {[0, 1, 2, 3].map((k) => <em key={k} className={`fqa-coin k${k}`}>$</em>)}
+      </div>
+    );
+  }
+  if (look === 'dossier') {
+    return (
+      <div className="fqa fqa-dossier" aria-hidden="true">
+        {['Rewards', 'Privacy', 'Eligibility'].map((t, k) => (
+          <span key={t} className={`fqa-file k${k}`}><b>{t}</b><i /><i /><i /><em>Q&amp;A</em></span>
+        ))}
+        <span className="fqa-seal"><Icon name="badge" size={26} /></span>
+      </div>
+    );
+  }
+  if (look === 'path') {
+    return (
+      <div className="fqa fqa-path" aria-hidden="true">
+        <svg viewBox="0 0 340 170" className="fqa-road"><path d="M10 140 C 80 140, 70 40, 150 50 S 250 140, 330 30" /></svg>
+        {[['?', 'Ask'], ['!', 'Learn'], ['✓', 'Earn']].map(([g, t], k) => <span key={t} className={`fqa-stop k${k}`}><b>{g}</b><small>{t}</small></span>)}
+        <span className="fqa-token" />
+      </div>
+    );
+  }
+  if (look === 'gift') {
+    return (
+      <div className="fqa fqa-gift" aria-hidden="true">
+        <span className="fqa-box"><i className="lid" /><i className="ribbon" /><i className="body" /></span>
+        {[['card', 'Gift card'], ['paypal', 'PayPal'], ['cash', 'Cash'], ['upi', 'UPI']].map(([ic, t], k) => <span key={t} className={`fqa-chip k${k}`}><Icon name={ic} size={14} />{t}</span>)}
+        {[0, 1, 2, 3, 4].map((k) => <em key={k} className={`fqa-coin k${k}`}>$</em>)}
+      </div>
+    );
+  }
   return (
-    <section className="section fq" aria-labelledby={id} style={{ '--fh': hue, '--fh2': hue2 }}>
+    <div className="fq-deck" aria-hidden="true">
+      <span className="fq-card c1"><b>?</b><i /><i /></span>
+      <span className="fq-card c2"><b>!</b><i /><i /></span>
+      <span className="fq-card c3"><Icon name="check" size={30} stroke={3} /><i /><i /></span>
+      <span className="fq-orb" />
+    </div>
+  );
+}
+
+export function FaqSplit({ id, title, sub, faqs, hue = '#FF8A00', hue2 = '#8B5CF6', eyebrow = 'FAQ', look = '', children }) {
+  return (
+    <section className={`section fq${look ? ` fq-${look}` : ''}`} aria-labelledby={id} style={{ '--fh': hue, '--fh2': hue2 }}>
       <div className="container fq-row">
         <div className="fq-side reveal">
           <p className="eyebrow">{eyebrow}</p>
           <h2 id={id}>{title}</h2>
           {sub ? <p className="sec-sub">{sub}</p> : null}
           {children}
-          <div className="fq-deck" aria-hidden="true">
-            <span className="fq-card c1"><b>?</b><i /><i /></span>
-            <span className="fq-card c2"><b>!</b><i /><i /></span>
-            <span className="fq-card c3"><Icon name="check" size={30} stroke={3} /><i /><i /></span>
-            <span className="fq-orb" />
-          </div>
+          <FaqArt look={look} />
           <button type="button" className="fq-help" onClick={() => askLiveHelp('')}>
             <span className="fq-help-ico"><Icon name="chat" size={18} /></span>
             <span><b>Still curious?</b><small>Ask Live Help — instant answers 24/7</small></span>

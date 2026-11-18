@@ -53,14 +53,14 @@ const C = [
 ];
 
 const P = [
-  ['Rahul Mehta', 'IN', 'Marketing Manager · FMCG', 5, 'Consumer research is important for understanding brand perception and purchasing behaviour. I find the idea of contributing professional perspectives through a dedicated panel relevant.'],
+  ['Rahul Mehta', 'IN', 'Marketing Manager · FMCG', 5, 'Consumer research is important for understanding brand perception and purchasing behaviour. I find the idea of contributing professional perspectives through a dedicated research community relevant.'],
   ['Jessica Thompson', 'US', 'Senior Financial Analyst · Banking', 4, 'I would be interested in studies covering financial services, customer behaviour, and digital banking. Clear participation requirements are essential.'],
   ['Thomas Schneider', 'DE', 'IT Project Manager · Software', 5, 'Research into enterprise software and digital transformation can benefit from experienced practitioners. I value opportunities to share practical industry perspectives.'],
   ['Amélie Dubois', 'FR', 'Human Resources Business Partner', 4, 'I am interested in workplace research involving recruitment, employee experience, and organizational development.'],
   ['Chinedu Eze', 'NG', 'Supply Chain Manager · Manufacturing', 5, 'Supply chain professionals can provide useful perspectives on procurement, distribution, and operational efficiency. I would welcome relevant research opportunities.'],
   ['Olivia Chen', 'CA', 'Product Marketing Manager · Technology', 5, 'Product research is valuable when it includes perspectives from people involved in product strategy and customer understanding.'],
   ['Mohammed Al-Farsi', 'AE', 'Procurement Director · Construction', 4, 'I would be interested in research on supplier relationships, purchasing decisions, and procurement technology.'],
-  ['Sophie Weber', 'CH', 'Management Consultant', 5, 'A professional research panel can offer an interesting channel for sharing informed views on business challenges and changing market conditions.'],
+  ['Sophie Weber', 'CH', 'Management Consultant', 5, 'A professional research community can offer an interesting channel for sharing informed views on business challenges and changing market conditions.'],
   ['Carlos Mendoza', 'MX', 'Sales Director · Telecommunications', 4, 'Research covering customer acquisition, sales channels, and telecom services would be relevant to my professional experience.'],
   ['Chloe Williams', 'AU', 'HR Manager · Healthcare', 5, 'I value research that explores workforce challenges and employee experiences. Opportunities aligned with HR practice would be particularly useful.'],
   ['Adrian Tan', 'SG', 'Operations Director · Logistics', 4, 'I would be interested in studies on operational performance, service delivery, and logistics technology.'],
@@ -89,7 +89,7 @@ const P = [
   ['Aisha Bello', 'NG', 'Talent Acquisition Manager', 4, 'I am interested in research covering recruitment technology, candidate expectations, and changing workforce needs.'],
   ['Roberto Silva', 'PT', 'Hotel General Manager', 5, 'Hospitality research can help explore customer preferences and service expectations. I would be interested in sharing professional perspectives on these topics.'],
   ['Mei Lin', 'MY', 'Business Intelligence Analyst', 4, 'Research about analytics platforms, reporting tools, and business decision-making is relevant to my professional interests.'],
-  ['Valentina Fernández', 'CL', 'Consumer Insights Manager', 5, 'I value research that explores consumer motivations and brand perceptions. A panel that includes professional viewpoints is an interesting concept.'],
+  ['Valentina Fernández', 'CL', 'Consumer Insights Manager', 5, 'I value research that explores consumer motivations and brand perceptions. A research community that includes professional viewpoints is an interesting concept.'],
   ['Erik Andersson', 'SE', 'Product Development Engineer', 4, 'I would be interested in research on product design, industrial technology, and the factors influencing business purchasing decisions.'],
   ['Katarzyna Nowak', 'CZ', 'Risk and Compliance Manager · Finance', 5, 'Research on compliance technology, risk processes, and financial services can benefit from perspectives across professional functions.'],
   ['Abena Owusu', 'GH', 'Small Business Owner · Beauty Retail', 4, 'As a business owner, I am interested in studies about customer preferences, retail operations, and small business challenges.'],

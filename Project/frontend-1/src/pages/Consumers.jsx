@@ -132,7 +132,7 @@ export default function Consumers() {
       <PayoutFan />
 
       <ProductVoices kind="consumer" />
-      <FaqSplit id="cs-faq" title="Consumer questions" faqs={FAQS} hue="#FF5E7E" hue2="#FF8A00" />
+      <FaqSplit id="cs-faq" look="chat" title="Consumer questions" faqs={FAQS} hue="#FF5E7E" hue2="#FF8A00" />
       <CtaBand title="Your everyday opinion has value." sub="Join free and start sharing it today." variant="berry" />
     </>
   );

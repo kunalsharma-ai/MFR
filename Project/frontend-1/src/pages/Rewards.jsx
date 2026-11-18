@@ -37,24 +37,35 @@ export default function Rewards() {
       <InvitationsPhone />
       <IncentiveStories />
 
-      <section className="section rules" aria-labelledby="rules-title">
-        <div className="container rules-row">
-          <div className="reveal">
+      <section className="section rules vlt" aria-labelledby="rules-title">
+        <div className="container">
+          <div className="sec-head sec-center reveal">
             <p className="eyebrow">Fair play</p>
             <h2 id="rules-title">Simple rules that protect your rewards</h2>
             <p className="sec-sub">Rewards are paid for eligible, validated completions. Full details are in our <Link to="/terms">terms of use</Link> and <Link to="/profiling">profiling & quality score</Link> policy.</p>
           </div>
-          <ul className="rule-cards">
-            <li className="reveal"><Icon name="user" size={22} /><strong>One account per person</strong><span>Duplicates are detected and removed.</span></li>
-            <li className="reveal"><Icon name="pen" size={22} /><strong>Honest, attentive answers</strong><span>Quality checks protect the value of every reward.</span></li>
-            <li className="reveal"><Icon name="clock" size={22} /><strong>Balances carry forward</strong><span>Nothing is lost if you take a break.</span></li>
-            <li className="reveal"><Icon name="lock" size={22} /><strong>Secure payout details</strong><span>Used only to send your reward.</span></li>
-          </ul>
+          <div className="vlt-stage">
+            <div className="vlt-door" aria-hidden="true">
+              <span className="vlt-rim" />
+              {[0, 1, 2, 3, 4, 5, 6, 7].map((b) => <i key={b} className="vlt-bolt" style={{ '--b': b }} />)}
+              <span className="vlt-dial"><span className="vlt-spoke" /><span className="vlt-spoke s2" /><span className="vlt-hub"><Icon name="lock" size={26} /></span></span>
+              <span className="vlt-coin c1">$</span><span className="vlt-coin c2">$</span><span className="vlt-coin c3">$</span>
+            </div>
+            <ul className="vlt-rules">
+              {[['user', 'One account per person', 'Duplicates are detected and removed.'], ['pen', 'Honest, attentive answers', 'Quality checks protect the value of every reward.'], ['clock', 'Balances carry forward', 'Nothing is lost if you take a break.'], ['lock', 'Secure payout details', 'Used only to send your reward.']].map(([ic, t, d], i) => (
+                <li key={t} className={`vlt-rule reveal q${i}`} style={{ '--i': i }}>
+                  <span className="vlt-ric"><Icon name={ic} size={22} /></span>
+                  <strong>{t}</strong><span>{d}</span>
+                  <em className="vlt-ok" aria-hidden="true"><Icon name="check" size={13} stroke={3} /></em>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 
       <ProductVoices kind="rewards" />
-      <FaqSplit id="rw-faq" title="Rewards questions" sub={<>Compare methods in our blog: <Link to="/blog/survey-rewards-paypal-upi-gift-cards">PayPal vs UPI vs gift cards</Link>.</>} faqs={FAQS} hue="#E5A100" hue2="#FF5E7E" />
+      <FaqSplit id="rw-faq" look="gift" title="Rewards questions" sub={<>Compare methods in our blog: <Link to="/blog/survey-rewards-paypal-upi-gift-cards">PayPal vs UPI vs gift cards</Link>.</>} faqs={FAQS} hue="#E5A100" hue2="#FF5E7E" />
       <CtaBand title="Your first reward starts with a free account." variant="sunrise" />
     </>
   );

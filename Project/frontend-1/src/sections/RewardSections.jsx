@@ -219,12 +219,22 @@ export function RewardGalaxy({ title, sub, tone = 'con' }) {
 }
 export const PayoutFan = RewardGalaxy;
 
+// "Pick the reward that fits your life" (v3.2): a reward display case. Keys on the left pick a reward; a 3D card
+// drops into the glass window with what you need and how it lands. Cycles by itself until someone picks one.
 export function RewardExplorer() {
+  const [vref, visible] = useInView({ once: false, threshold: 0.25 });
   const [k, setK] = useState('all');
-  const [flip, setFlip] = useState(null);
+  const [sel, setSel] = useState(0);
+  const [auto, setAuto] = useState(true);
   const list = PAYOUTS.filter((p) => k === 'all' || p.kind === k);
+  const p = list[Math.min(sel, list.length - 1)];
+  useEffect(() => {
+    if (!visible || !auto) return undefined;
+    const t = setInterval(() => !isCalm() && setSel((x) => (x + 1) % list.length), 2600);
+    return () => clearInterval(t);
+  }, [visible, auto, list.length]);
   return (
-    <section className="section rex" aria-labelledby="rex-title">
+    <section ref={vref} className="section rex rvd" aria-labelledby="rex-title">
       <div className="container">
         <div className="rex-head reveal">
           <div>
@@ -234,38 +244,41 @@ export function RewardExplorer() {
           </div>
           <div className="rex-tabs" role="tablist" aria-label="Reward kinds">
             {[['all', 'All rewards', '#0B1E5B'], ...Object.entries(REWARD_KINDS).map(([id, v]) => [id, v.label, v.c])].map(([id, label, c]) => (
-              <button type="button" role="tab" key={id} aria-selected={k === id} className={k === id ? 'on' : ''} style={{ '--kc': c }} onClick={() => { setK(id); setFlip(null); }}>
-                {label} <b>{id === 'all' ? PAYOUTS.length : PAYOUTS.filter((p) => p.kind === id).length}</b>
+              <button type="button" role="tab" key={id} aria-selected={k === id} className={k === id ? 'on' : ''} style={{ '--kc': c }} onClick={() => { setK(id); setSel(0); }}>
+                {label} <b>{id === 'all' ? PAYOUTS.length : PAYOUTS.filter((x) => x.kind === id).length}</b>
               </button>
             ))}
           </div>
         </div>
-        <ul className="rex-grid" key={k}>
-          {list.map((p, i) => (
-            <li key={p.id} style={{ '--i': i, '--h1': p.hue, '--h2': p.hue2 }} className={`rex-card ${flip === p.id ? 'is-flip' : ''}`}>
-              <button type="button" onClick={() => setFlip(flip === p.id ? null : p.id)} aria-expanded={flip === p.id} aria-label={`${p.name}: show details`}>
-                <span className="rex-in">
-                  <span className="rex-front">
-                    <span className="rex-ico"><Icon name={p.icon} size={30} /></span>
-                    <strong>{p.name}</strong>
-                    <small>{REWARD_KINDS[p.kind].label}</small>
-                    {p.only === 'IN' ? <em className="rex-only">India only</em> : null}
-                    <span className="rex-turn"><Icon name="refresh" size={14} /> Details</span>
-                  </span>
-                  <span className="rex-back">
-                    <strong>{p.name}</strong>
-                    <span>{p.line}</span>
-                    <dl>
-                      <div><dt>You need</dt><dd>{LANDS[p.id][0]}</dd></div>
-                      <div><dt>Lands as</dt><dd>{LANDS[p.id][1]}</dd></div>
-                      <div><dt>Who</dt><dd>Consumers &amp; professionals</dd></div>
-                    </dl>
-                  </span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="rvd-case reveal">
+          <ul className="rvd-keys" key={k}>
+            {list.map((x, i) => (
+              <li key={x.id} style={{ '--i': i, '--h1': x.hue, '--h2': x.hue2 }}>
+                <button type="button" className={x.id === p.id ? 'on' : ''} aria-pressed={x.id === p.id} onClick={() => { setAuto(false); setSel(i); }}>
+                  <span className="rvd-kic"><Icon name={x.icon} size={20} /></span>
+                  <span><b>{x.name}</b><small>{REWARD_KINDS[x.kind].label}</small></span>
+                  {x.only === 'IN' ? <em className="rex-only">India only</em> : null}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="rvd-window" aria-live="polite">
+            <span className="rvd-glass" aria-hidden="true" />
+            <span className="rvd-spot" aria-hidden="true" />
+            <div className="rvd-card" key={p.id} style={{ '--h1': p.hue, '--h2': p.hue2 }}>
+              <span className="rvd-shine" aria-hidden="true" />
+              <span className="rvd-cic" aria-hidden="true"><Icon name={p.icon} size={34} /></span>
+              <strong>{p.name}</strong>
+              <span className="rvd-line">{p.line}</span>
+              <dl>
+                <div><dt>You need</dt><dd>{LANDS[p.id][0]}</dd></div>
+                <div><dt>Lands as</dt><dd>{LANDS[p.id][1]}</dd></div>
+                <div><dt>Who</dt><dd>Consumers &amp; professionals</dd></div>
+              </dl>
+            </div>
+            <span className="rvd-tray" aria-hidden="true">{[0, 1, 2, 3].map((c) => <i key={c} style={{ '--c': c }}>$</i>)}</span>
+          </div>
+        </div>
       </div>
     </section>
   );
