@@ -23,3 +23,12 @@ html:not([data-mode="dark"]) .bx-index .bx-cat { color: color-mix(in srgb, var(-
 /* brand-blue links in small text */
 html:not([data-mode="dark"]) :is(.rs-policy a, .ct-map-copy em) { color: #2456D6; }
 html:not([data-mode="dark"]) .vt-card em { color: #05582A !important; background: #DDF3E5 !important; }
+html:not([data-mode="dark"]) .mj-ticket .mj-done { color: #067A50; }
+/* initials on the coloured avatar bubbles (Who can join) */
+html:not([data-mode="dark"]) .pp-in b { background: color-mix(in srgb, var(--c) 66%, #000); }
+/* "Watch now" pill and links inside articles */
+.vfab-tease-go { background: #D6002B; }
+.vfab-tease-body:hover .vfab-tease-go { background: #B00024; }
+html:not([data-mode="dark"]) .post-chapter p a { color: #2456D6; }
+html:not([data-mode="dark"]) .vt-card em { color: #033D1D !important; }
+html:not([data-mode="dark"]) .rel-grid .bc-cat { color: #B45309; }
