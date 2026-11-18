@@ -58,6 +58,7 @@ import './styles/v30-toast.css';
 import './styles/v30-watch.css';
 import './styles/v30-reviews.css';
 import './styles/v30-nav.css';
+import './styles/v30-hero.css';
 import './styles/v30-dock.css';
 import './styles/v30-auth.css';
 import './styles/v30-rate.css';
@@ -71,7 +72,7 @@ import { startCalm } from './utils/calm.js';
 import './styles/rv2-flag-avatar.css';
 import './styles/v30-a11y.css';
 import './styles/v30-fixes.css';
-import './styles/v31-hero.css';
+import './styles/v31-pro.css';
 
 document.documentElement.classList.add('js');
 

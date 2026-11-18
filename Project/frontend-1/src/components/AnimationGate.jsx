@@ -9,7 +9,7 @@ import { isCalm } from '../utils/calm.js';
 //  2. Calm when idle — after a few seconds without input (utils/calm.js adds html.calm), endless decorative loops
 //     outside the hero and the open dialogs pause in place; the next touch / scroll / mouse move resumes them.
 // Only animations this gate paused are resumed, so finished one-shot entrances never replay.
-const KEEP = '.rw-veil, .hc, .rwt, .mfx, .hz, .dk-lock-card';
+const KEEP = '.rw-veil, .hc, .rwt, .mfx, .hm-hero, .dk-lock-card';
 const paused = new WeakSet();
 let held = 0; // how many animations the calm pause is holding (so nothing is scanned when there are none)
 
