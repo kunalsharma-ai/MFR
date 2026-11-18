@@ -73,6 +73,10 @@ import './styles/rv2-flag-avatar.css';
 import './styles/v30-a11y.css';
 import './styles/v30-fixes.css';
 import './styles/v31-pro.css';
+import './styles/v31-auth.css';
+import './styles/v31-gate.css';
+import './styles/v31-reviews.css';
+import './styles/v31-hero-fx.css';
 
 document.documentElement.classList.add('js');
 

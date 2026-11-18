@@ -6,7 +6,7 @@ import useInView from '../hooks/useInView.js';
 import { STATS, STATS_URL, SURVEY_CATEGORIES } from '../data/community.js';
 import { ALL_CONSUMER_SURVEYS, PRO_SURVEYS, TIER_LABEL } from '../data/surveys.js';
 import useLiveReviews from '../hooks/useLiveReviews.js';
-import { ScoreChip, VibeChip } from '../components/ReviewPopup.jsx';
+import { StarRow } from '../components/ReviewerId.jsx';
 import { isRecent } from '../utils/reviews.js';
 import { isCalm } from '../utils/calm.js';
 import RateButton from '../components/RateButton.jsx';
@@ -291,9 +291,9 @@ function ConsumerChat({ list, active }) {
                 <span className="vl-msg-av" aria-hidden="true">{ini(t.name)}<i><Flag iso={t.iso} size={12} /></i></span>
                 <div className="vl-bub">
                   <Tag t={t} />
-                  <p className="vl-bub-h"><b>{t.name}</b><small><Flag iso={t.iso} size={12} /> {t.country}</small></p>
+                  <p className="vl-bub-h"><b>{t.name}</b>{t.designation || t.company ? <small className="vl-role">{[t.designation, t.company].filter(Boolean).join(' · ')}</small> : null}<small><Flag iso={t.iso} size={12} /> {t.country}</small></p>
+                  <StarRow n={t.rating} size={14} />
                   <p className="vl-bub-q">{t.text}</p>
-                  <p className="vl-bub-f"><VibeChip rating={t.rating} />{t.designation || t.company ? <small>{[t.designation, t.company].filter(Boolean).join(' · ')}</small> : null}</p>
                 </div>
               </li>
             );
@@ -333,8 +333,8 @@ function ProBoard({ list, active }) {
                     <span className="vl-post-id"><b>{t.name}</b><small>{[t.designation, t.company].filter(Boolean).join(' · ') || 'Professional member'}</small></span>
                     <span className="vl-post-fl"><Flag iso={t.iso} size={14} /><small>{t.country}</small></span>
                   </div>
+                  <StarRow n={t.rating} size={15} />
                   <p className="vl-post-q">{t.text}</p>
-                  <ScoreChip rating={t.rating} />
                 </li>
               );
             })}

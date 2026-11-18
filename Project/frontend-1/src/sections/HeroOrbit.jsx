@@ -90,12 +90,12 @@ export default function HeroOrbit() {
           </p>
           <p className={`hx-ribbon r-${seg}`} key={`r-${seg}`}>
             <span className="hx-ribbon-ic"><Icon name={seg === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
-            {seg === 'pro' ? 'Premium paid studies for professionals' : 'Real rewards for everyday opinions'}
+            {seg === 'pro' ? 'Share expert insights · earn premium rewards' : 'Share opinions · earn multiple rewards'}
             <i className="hx-ribbon-shine" aria-hidden="true" />
           </p>
           <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
             <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
-            <span className="ht-line ht-accent" style={{ '--l': 1 }}>by sharing your opinion</span>
+            <span className="ht-line ht-accent" style={{ '--l': 1 }}>{seg === 'pro' ? 'by sharing your expertise' : 'by sharing your opinion'}</span>
             <svg className="hx-swoosh" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 4, 230 2, 396 12" /></svg>
           </h1>
 
@@ -148,7 +148,8 @@ export default function HeroOrbit() {
 
 // ── Consumer world (v3.0): "Reward Jar" — warm candy & gold. A thick 3D gold coin spins over a glass jar,
 // coins drop in and the jar fills, "+$X" pops out, a survey ticket fills up and the payout chips float around it.
-const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'cash', 'shopping', 'bank'];
+const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'cash'];
+const FAN_C = ['bank', 'shopping', 'giftcards'];
 function ConsumerWorld({ pay, cat }) {
   const chips = JAR_PAYS.map((id) => PAYOUTS.find((x) => x.id === id)).filter(Boolean);
   return (
@@ -171,11 +172,22 @@ function ConsumerWorld({ pay, cat }) {
         <span className="mj-gloss" />
       </div>
       <p className="mj-pop" key={`p-${cat.id}`}><b>+${cat.reward}</b><small>{pay.short || pay.name}</small></p>
-      <div className="mj-ticket" key={`t-${cat.id}`}>
-        <p><span style={{ background: cat.tone }}><Icon name={cat.icon} size={14} /></span><b>{cat.tag} survey</b><small>{cat.mins} min</small></p>
-        <span className="mj-prog"><i /></span>
-        <p className="mj-done"><Icon name="check" size={13} /> Completed · reward on its way</p>
+      {/* the opinion → rewards story: a quick poll gets answered, "+$X" flies into the jar, three rewards fan out */}
+      <div className="mx-poll">
+        <p className="mx-poll-h"><span><Icon name="chat" size={13} /></span><b>Quick opinion</b><small>{cat.mins} min</small></p>
+        <p className="mx-poll-q">Would you buy this {cat.tag.toLowerCase()} pick?</p>
+        <div className="mx-opts">
+          <span className="o1"><i className="mx-fill" /><em><Icon name="check" size={11} stroke={3} /></em><b className="mx-t"><span>Yes, love it</span><span>Yes, love it</span></b></span>
+          <span className="o2"><i className="mx-fill" />Not for me</span>
+        </div>
+        <svg className="mx-cursor" viewBox="0 0 24 24" width="26" height="26"><path d="M5 3l14 8-6 1.6L10 19z" /></svg>
+        <i className="mx-ripple" />
       </div>
+      <p className="mx-earn"><Icon name="coins" size={14} /> +${cat.reward} earned</p>
+      <div className="mx-fan">
+        {FAN_C.map((id, i) => { const x = PAYOUTS.find((y) => y.id === id); return x ? <span key={id} className={`mx-card k${i}`} style={{ '--h1': x.hue, '--h2': x.hue2 }}><Icon name={x.icon} size={16} /><b>{x.short || x.name}</b><small>Reward unlocked</small></span> : null; })}
+      </div>
+      <p className="mx-count"><span className="mx-roll"><i>0</i><i>1</i><i>2</i><i>3</i></span><b>rewards unlocked</b></p>
       {chips.map((x, i) => (
         <span key={x.id} className={`mj-chip c${i} ${x.id === pay.id ? 'on' : ''}`} style={{ '--h1': x.hue, '--h2': x.hue2, '--i': i }}>
           <span><Icon name={x.icon} size={15} /></span>{x.short || x.name}
@@ -192,6 +204,7 @@ function ConsumerWorld({ pay, cat }) {
 // slides in, expert earnings climb on a glass chart and each payout lands as a "Paid via…" notice.
 const EXPERTS = [['CXO', 'star'], ['Doctor', 'medical'], ['IT lead', 'database'], ['Finance', 'coins']];
 const EARN = [30, 44, 40, 58, 66, 84];
+const FAN_P = ['bank', 'paypal', 'giftcards'];
 function ProWorld({ pay }) {
   return (
     <div className="hm-scene eb">
@@ -213,10 +226,20 @@ function ProWorld({ pay }) {
         <span className="eb-shadow" />
       </div>
       <p className="eb-pop"><Icon name="coins" size={14} /> Premium reward</p>
-      <div className="eb-invite">
-        <span className="eb-invite-ic"><Icon name="mail" size={15} /></span>
-        <p><b>Invitation · Healthcare experts</b><small><Icon name="clock" size={11} /> 20 min · <Icon name="coins" size={11} /> Premium reward</small></p>
+      <div className="eb-invite ex-ins">
+        <div className="ex-ins-top">
+          <span className="eb-invite-ic"><Icon name="mail" size={15} /></span>
+          <p><b>Invitation · Healthcare experts</b><small><Icon name="clock" size={11} /> 20 min · <Icon name="coins" size={11} /> Premium reward</small></p>
+        </div>
+        <p className="ex-ins-k">Your expert insight</p>
+        <span className="ex-line l1"><i /></span><span className="ex-line l2"><i /></span><span className="ex-line l3"><i /></span>
+        <span className="ex-send"><b>Submit insight</b><em><Icon name="check" size={12} stroke={3} /> Accepted</em></span>
+        <svg className="mx-cursor ex-cursor" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3l14 8-6 1.6L10 19z" /></svg>
       </div>
+      <div className="mx-fan ex-fan">
+        {FAN_P.map((id, i) => { const x = PAYOUTS.find((y) => y.id === id); return x ? <span key={id} className={`mx-card k${i}`}><Icon name={x.icon} size={16} /><b>{x.short || x.name}</b><small>Expert reward</small></span> : null; })}
+      </div>
+      <p className="mx-count ex-count"><span className="mx-roll"><i>0</i><i>1</i><i>2</i><i>3</i></span><b>premium rewards</b></p>
       <div className="eb-chart">
         <p><span className="eb-live" /><b>Expert earnings</b><Icon name="trend" size={14} /></p>
         <div className="eb-bars">{EARN.map((h, k) => <i key={k} style={{ '--h': h, '--k': k }} />)}</div>

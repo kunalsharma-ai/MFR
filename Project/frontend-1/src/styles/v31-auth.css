@@ -1,0 +1,67 @@
+/* ═════════════ v3.1 — Log in & Create account carry the home hero palettes ═════════════
+   Consumer = the home consumer family (coral, pink, orange, sunshine). Professional = the home professional family
+   (the site's navy and royal blue with gold for money). Overrides v30-audience.css / v30-auth.css colours only.
+   Skipped by the dark-mode generator. */
+
+/* the switch */
+html body .ax-thumb { background: linear-gradient(120deg, #FF4F7B, #FF7A59 55%, #FF9D3D); box-shadow: 0 10px 22px -8px rgba(255, 79, 123, .8); }
+html body .ax-thumb::after { background: linear-gradient(120deg, #2F6BFF, #4F46E5); box-shadow: 0 10px 22px -8px rgba(47, 107, 255, .85); }
+html body .aud-con .ax-flash { background: radial-gradient(closest-side, rgba(255, 230, 160, .65), rgba(255, 79, 123, .25) 55%, transparent); }
+html body .aud-pro .ax-flash { background: radial-gradient(closest-side, rgba(255, 211, 107, .6), rgba(47, 107, 255, .3) 55%, transparent); }
+
+/* ── Log in · Consumer: coral sunrise */
+html body .lx.aud-con { background: linear-gradient(155deg, #FF3F78 0%, #FF6B5A 34%, #FF9433 68%, #FFC233 100%) !important; }
+html body .lx.aud-con .lx-grid2 { background-image: radial-gradient(rgba(255, 255, 255, .22) 1px, transparent 1.4px); }
+html body .lx.aud-con .lx-bg::before { border-color: rgba(255, 255, 255, .35); }
+html body .lx.aud-con .lx-bg::after { border-color: rgba(255, 240, 200, .3); }
+html body .lx.aud-con .lx-eyebrow { background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .5); color: #fff; }
+html body .lx.aud-con .lx-hero { text-shadow: 0 6px 30px rgba(120, 20, 40, .3); }
+html body .lx.aud-con .lx-hero span { background: linear-gradient(100deg, #FFF3B0, #FFFFFF 50%, #FFE0EC) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+html body .lx.aud-con .lx-perks li { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .4); }
+html body .lx.aud-con .lx-card::before { background: linear-gradient(135deg, #FF4F7B, #FF7A59 40%, #FF9D3D 75%, #FFC233); }
+html body .lx.aud-con .lx-badge { background: linear-gradient(135deg, #FF4F7B, #FF9D3D); box-shadow: 0 12px 24px -10px rgba(255, 79, 123, .85); }
+html body .lx.aud-con .lx-submit.btn-primary:not(.success) { background: linear-gradient(120deg, #FF4F7B, #FF7A59 55%, #FF9D3D); box-shadow: 0 16px 32px -14px rgba(255, 79, 123, .9); }
+html body .lx.aud-con .lx-field:focus-within { border-color: #FF6B5A; box-shadow: 0 0 0 4px rgba(255, 107, 90, .18); }
+html body .lx.aud-con .lx-forgot, html body .lx.aud-con .lx-cap-title { color: #C2185B; }
+html body .lx.aud-con .lx-check input:checked + span { background: #FF4F7B; border-color: #FF4F7B; }
+html body .lx.aud-con .mcd-front { background: linear-gradient(135deg, #FF3F78, #FF6B5A 50%, #FF9433); }
+
+/* ── Log in · Professional: navy and royal blue, gold light */
+html body .lx .ax-alt { background: radial-gradient(700px 520px at 18% 30%, rgba(47, 107, 255, .45), transparent 65%), radial-gradient(620px 520px at 85% 85%, rgba(255, 201, 77, .22), transparent 65%), linear-gradient(150deg, #050D2E 0%, #0B1E5B 55%, #13307F 100%); }
+html body .lx.aud-pro .lx-grid2 { background-image: radial-gradient(rgba(255, 211, 107, .2) 1px, transparent 1.4px); }
+html body .lx.aud-pro .lx-bg::before { border-color: rgba(124, 196, 255, .3); }
+html body .lx.aud-pro .lx-bg::after { border-color: rgba(255, 211, 107, .22); }
+html body .lx.aud-pro .lx-eyebrow { background: rgba(255, 211, 107, .14); border-color: rgba(255, 211, 107, .45); color: #FFF1CC; }
+html body .lx.aud-pro .lx-hero span { background: linear-gradient(100deg, #FFFFFF, #9CC3FF 45%, #FFD36B 85%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+html body .lx.aud-pro .lx-perks li { border-color: rgba(124, 196, 255, .3); }
+html body .lx.aud-pro .lx-card::before { background: linear-gradient(135deg, #2F6BFF, #4F46E5 40%, #FFD36B 80%, #F5B21A); }
+html body .lx.aud-pro .lx-badge { background: linear-gradient(135deg, #2F6BFF, #4F46E5); box-shadow: 0 12px 24px -10px rgba(47, 107, 255, .85); }
+html body .lx.aud-pro .lx-submit.btn-primary:not(.success) { color: #0B1E5B; background: linear-gradient(120deg, #FFE7A3, #FFD36B 45%, #F5B21A); box-shadow: 0 16px 32px -14px rgba(245, 178, 26, .9); }
+html body .lx.aud-pro .lx-field:focus-within { border-color: #2F6BFF; box-shadow: 0 0 0 4px rgba(47, 107, 255, .18); }
+html body .lx.aud-pro .lx-forgot, html body .lx.aud-pro .lx-cap-title { color: #1E40AF; }
+html body .lx.aud-pro .lx-check input:checked + span { background: #2F6BFF; border-color: #2F6BFF; }
+html body .lx.aud-pro .lx-captcha:not(.bad):not(.good) { background: linear-gradient(135deg, #EEF4FF, #FFF8E6); border-color: #C7D7FE; }
+html body .lx.aud-pro .lx-card { box-shadow: 0 40px 100px -20px rgba(0, 0, 0, .6), 0 0 80px -20px rgba(47, 107, 255, .4); }
+html body .lx.aud-pro .mcd-front { background: linear-gradient(135deg, #0B1E5B, #1E3A8A 55%, #2F6BFF); }
+html body .lx.aud-pro .mcd-aura { filter: none; }
+
+/* ── Create account · Professional: navy and royal blue with a gold sunrise (consumer keeps its coral sunrise) */
+html body .sx .ax-alt { background: radial-gradient(900px 620px at 20% 26%, rgba(255, 211, 107, .26), transparent 62%), radial-gradient(760px 600px at 100% 100%, rgba(47, 107, 255, .45), transparent 62%), linear-gradient(160deg, #050D2E 0%, #0B1E5B 45%, #13307F 100%); }
+html body .sx.aud-pro .sx-card::before { background: conic-gradient(from var(--ang), #2F6BFF, #FFD36B, #4F46E5, #F5B21A, #2F6BFF); }
+html body .sx.aud-pro .sx-card { box-shadow: 0 40px 90px -24px rgba(5, 13, 46, .75); }
+html body .sx.aud-pro .sx-card .btn-primary { color: #0B1E5B; background: linear-gradient(120deg, #FFE7A3, #FFD36B 45%, #F5B21A); box-shadow: 0 16px 30px -14px rgba(245, 178, 26, .9); }
+html body .sx.aud-pro .sx-aside h1 { text-shadow: 0 6px 30px rgba(5, 13, 46, .5); }
+
+/* dark mode keeps the same families, a little deeper */
+html[data-mode="dark"] body .lx .ax-alt, html[data-mode="dark"] body .sx .ax-alt { background: radial-gradient(700px 520px at 18% 30%, rgba(47, 107, 255, .3), transparent 65%), radial-gradient(620px 520px at 85% 85%, rgba(255, 201, 77, .14), transparent 65%), linear-gradient(150deg, #030820 0%, #081646 55%, #0E2462 100%); }
+/* consumer login: legibility on coral */
+html body .lx.aud-con .lx-perks li { background: rgba(120, 18, 52, .22); color: #fff; }
+html body .lx.aud-con .lx-perks li b { color: #FFF6C8 !important; }
+html body .lx.aud-con .lx-perks li svg { color: #fff; }
+html body .lx.aud-con .mcd-front { background: linear-gradient(135deg, #B0124F 0%, #E2365F 45%, #FF7A3D 100%) !important; border-color: rgba(255, 255, 255, .45) !important; }
+html body .lx.aud-con .vd-checks li { background: rgba(120, 18, 52, .2); border-color: rgba(255, 255, 255, .4); }
+html body .lx.aud-con .vd-checks li small { color: rgba(255, 255, 255, .85); }
+/* sign-up consumer: coral continue button (no purple) */
+html body .sx.aud-con .sx-card .btn-primary { background: linear-gradient(120deg, #FF3F78, #FF6B5A 45%, #FF9433); box-shadow: 0 16px 30px -14px rgba(255, 79, 123, .9); color: #fff; }
+html body .sx.aud-con .sx-type.on { border-color: #FF6B5A; }
+html body .sx.aud-pro .sx-type.on { border-color: #2F6BFF; }

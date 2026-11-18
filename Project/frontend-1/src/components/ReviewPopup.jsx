@@ -230,19 +230,31 @@ function StageArt({ step, seg }) {
   return null;
 }
 
-// Left panel of the "Log in to rate us" window: the MFR motto as three floating icon tiles around the round logo.
-function GateArt() {
+// Left panel of the "create your account first" window: an account card fills itself in, gets verified,
+// the lock springs open and five stars plus reward coins burst out. One 7s loop, transform/opacity only.
+function GateArt({ seg }) {
+  const pro = seg === 'professional';
   return (
-    <div className="rw-art rw-gart">
-      <span className="rw-gart-logo"><img src="/images/brand/mfr-mark-160.webp" alt="" width="64" height="64" /></span>
-      <div className="rw-gart-tiles">
-        {[['chat', 'Voice', 't0'], ['badge', 'Value', 't1'], ['gift', 'Rewards', 't2']].map(([ic, t, k]) => (
-          <span key={k} className={`rw-gart-tile ${k}`}><Icon name={ic} size={26} /><small>{t}</small></span>
-        ))}
+    <div className={`rw-art ug ug-${pro ? 'pro' : 'con'}`}>
+      <span className="ug-ring r1" /><span className="ug-ring r2" />
+      <div className="ug-lock"><i className="ug-shackle" /><span className="ug-lbody"><Icon name="lock" size={22} stroke={2.6} /></span></div>
+      <div className="ug-stars">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ '--k': k }}>★</i>)}</div>
+      <div className="ug-card">
+        <span className="ug-av"><Icon name={pro ? 'briefcase' : 'user'} size={22} /></span>
+        <span className="ug-lines">
+          <i className="l1"><b /></i>
+          <i className="l2"><b /></i>
+        </span>
+        <span className="ug-ok"><Icon name="check" size={16} stroke={3.2} /></span>
+        <small className="ug-tag">{pro ? 'Professional member' : 'Consumer member'}</small>
+        <span className="ug-bar"><b /></span>
       </div>
-      <p className="rw-art-t">Your voice, <b>60 seconds</b></p>
-      <small>Your Voice. Your Value. Your Rewards.</small>
-      {[0, 1, 2, 3, 4, 5].map((k) => <i key={k} className={`rw-gart-star s${k}`}>★</i>)}
+      {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`ug-coin c${k}`}>{['$', '€', '£', '₹', '$'][k]}</i>)}
+      <ol className="ug-steps">
+        {[['user', 'Create account'], ['mail', 'Confirm email'], ['star', 'Rate us']].map(([ic, t], i) => (
+          <li key={t} style={{ '--i': i }}><span><Icon name={ic} size={14} stroke={2.4} /></span>{t}</li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -482,12 +494,13 @@ export default function ReviewPopup() {
   const showTab = !BLOCKED.includes(pathname);
   const done = status === 'done';
   // anyone can open the screen, but only a logged-in adult member gets the form
+  const [gseg, setGseg] = useState('consumer');
   const gate = member === undefined ? 'checking' : !member ? 'login' : !adult ? 'kid' : '';
   const TITLES = [seg === 'professional' ? 'Score your experience' : 'How was it for you?', 'Check & publish'];
   const SUBS = ['Pick a rating, then say it in your own words.', 'This is exactly how your review will appear in Client Testimonials.'];
   const GATE = {
     checking: ['clock', 'One moment…', 'Checking your account.'],
-    login: ['lock', 'Log in to rate us', 'Only MyFrequentRewards members can rate us — that keeps every review genuine. Log in and it takes about a minute.'],
+    login: ['lock', 'Create your free account to rate us', 'Only real members can rate MyFrequentRewards, so every review stays genuine. Finish creating your free account first, then come back and rate us in about 60 seconds.'],
     kid: ['shield', 'Reviews are for members 18 and over', 'To protect young members, public reviews are written by adults only. Thank you for being part of MyFrequentRewards!'],
   };
 
@@ -497,10 +510,10 @@ export default function ReviewPopup() {
 
       {open ? (
         <div className="rw-veil" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-          <div className={`rw rw-${seg} st-${done ? 'done' : gate ? 'gate' : step + 1}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
+          <div className={`rw rw-${gate === 'login' ? gseg : seg} st-${done ? 'done' : gate ? 'gate' : step + 1}`} role="dialog" aria-modal="true" aria-labelledby="rw-title" tabIndex={-1} ref={dlg}>
             <aside className="rw-stage" onMouseMove={onTilt} onMouseLeave={() => setTilt({ x: 0, y: 0 })} aria-hidden="true">
               <span className="rw-glow g1" /><span className="rw-glow g2" /><span className="rw-grid" />
-              {gate && !done ? <GateArt key="gate" /> : !done && step === 0 ? <StageArt step={1} seg={gate ? 'consumer' : seg} key={`${gate || step}${seg}`} /> : (
+              {gate && !done ? <GateArt key={`gate${gseg}`} seg={gseg} /> : !done && step === 0 ? <StageArt step={1} seg={gate ? 'consumer' : seg} key={`${gate || step}${seg}`} /> : (
                 <div className="rw-art a2">
                   <p className="rw-art-k">{done ? (live ? 'Now live in Client Testimonials' : 'On its way to Client Testimonials') : 'Live preview'}</p>
                   <div className={`rw-tilt ${done ? 'is-sent' : ''}`} style={{ transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }}>
@@ -532,16 +545,25 @@ export default function ReviewPopup() {
               <div className="rw-body" ref={body}>
                 {gate ? (
                   <div className={`rw-done rw-gate g-${gate}`}>
-                    <span className="rw-gate-lock" aria-hidden="true"><i /><span><Icon name={GATE[gate][0]} size={30} stroke={2.6} /></span></span>
+                    {gate === 'login' ? <p className="ug-eye"><span className="live-dot" /> Members only · one quick step first</p> : <span className="rw-gate-lock" aria-hidden="true"><i /><span><Icon name={GATE[gate][0]} size={30} stroke={2.6} /></span></span>}
                     <h2 id="rw-title">{GATE[gate][1]}</h2>
                     <p>{GATE[gate][2]}</p>
                     {gate === 'login' ? (
                       <>
-                        <div className="rw-done-acts">
-                          <Link to="/login" className="rw-next rw-gate-go" onClick={close}>Log in <Icon name="arrow" size={16} /></Link>
-                          <Link to="/sign-up" className="rw-ghost" onClick={close}>New here? Join free</Link>
+                        <div className="ug-seg" role="radiogroup" aria-label="I am joining as">
+                          {[['consumer', 'user', 'Consumer'], ['professional', 'briefcase', 'Professional']].map(([k, ic, t]) => (
+                            <button key={k} type="button" role="radio" aria-checked={gseg === k} className={gseg === k ? 'on' : ''} onClick={() => setGseg(k)}><Icon name={ic} size={15} /> {t}</button>
+                          ))}
                         </div>
-                        <p className="rw-gate-trust"><span aria-hidden="true">★★★★★</span> Member-only · every review is genuine</p>
+                        <ol className="ug-list">
+                          <li><b>1</b><span><strong>Create your free account</strong><small>About 2 minutes · no fees, ever</small></span></li>
+                          <li><b>2</b><span><strong>Confirm your email</strong><small>One tap from your inbox</small></span></li>
+                          <li><b>3</b><span><strong>Rate &amp; review us</strong><small>Shown with your name, flag and rating</small></span></li>
+                        </ol>
+                        <div className="rw-done-acts">
+                          <Link to={gseg === 'professional' ? '/sign-up?type=professional' : '/sign-up'} className="rw-next rw-gate-go" onClick={close}><Icon name="gift" size={17} /> Create my free account <Icon name="arrow" size={16} /></Link>
+                        </div>
+                        <p className="ug-login">Already a member? <Link to="/login" onClick={close}>Log in to rate us</Link></p>
                       </>
                     ) : null}
                   </div>
