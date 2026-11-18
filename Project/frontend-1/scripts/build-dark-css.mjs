@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const DIRS = ['src/styles', 'src/components'];
-const SKIP = new Set(['dark-base.css', 'v30-mode.css']);
+const SKIP = new Set(['dark-base.css', 'v30-mode.css', 'v30-reviews.css']);
 const P = 'html[data-mode="dark"]';
 
 // ---------- colour helpers ----------

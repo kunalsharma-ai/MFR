@@ -56,6 +56,7 @@ import './styles/v30-voices.css';
 import './styles/v30-mode.css';
 import './styles/v30-toast.css';
 import './styles/v30-watch.css';
+import './styles/v30-reviews.css';
 import './styles/perf.css';
 import './styles/i18n.css';
 import './styles/theme-light.css';
