@@ -10,10 +10,9 @@ const dist = path.join(root, 'dist');
 const template = await readFile(path.join(dist, 'index.html'), 'utf8');
 const { render, ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES, SITE_URL } = await import(pathToFileURL(path.join(root, 'dist-ssr/entry-server.js')).href);
 
-// Critical CSS: each page gets the CSS its own markup uses inlined in <head>; the full stylesheet then loads without
-// blocking the first paint (media="print" swap). This is what takes phones from a blank screen to content fastest.
-const { default: Beasties } = await import('beasties');
-const beasties = new Beasties({ path: dist, publicPath: '/', preload: 'media', pruneSource: false, inlineFonts: false, preloadFonts: false, compress: true, logLevel: 'warn', reduceInlineStyles: false });
+// Optional critical CSS (CRITICAL=1, needs `npm i -D beasties`): inlines each page's own CSS and loads the full sheet
+// later. Off by default, see the note where pages are written.
+const beasties = process.env.CRITICAL ? new (await import('beasties')).default({ path: dist, publicPath: '/', preload: 'media', pruneSource: false, inlineFonts: false, preloadFonts: false, compress: true, logLevel: 'warn', reduceInlineStyles: false }) : null;
 
 let count = 0;
 for (const r of ALL_ROUTES) {
@@ -26,9 +25,11 @@ for (const r of ALL_ROUTES) {
   else if (r.path === '/404') out = path.join(dist, '404.html');
   else out = path.join(dist, r.path.replace(/^\//, ''), 'index.html');
   await mkdir(path.dirname(out), { recursive: true });
-  // Beasties re-serialises the page and writes empty attributes bare (alt=""), which some SEO crawlers read as a missing alt
-const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
-    await writeFile(out, process.env.NO_CRITICAL ? page : keepEmptyAlt(await beasties.process(page)));
+  // Critical-CSS inlining is off by default: measured with Lighthouse 13 it made phones style the whole page twice
+  // (inline part, then the full sheet), which cost far more blocking time than the earlier first paint saved.
+  // CRITICAL=1 turns it back on. Beasties writes empty attributes bare (alt), so they are put back as alt="".
+  const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
+  await writeFile(out, process.env.CRITICAL ? keepEmptyAlt(await beasties.process(page)) : page);
   count++;
 }
 

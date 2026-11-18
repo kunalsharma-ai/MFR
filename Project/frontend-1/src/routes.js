@@ -16,6 +16,7 @@ export const STATIC_ROUTES = [
   { path: '/contact-us', priority: '0.6', changefreq: 'yearly' },
   { path: '/blog', priority: '0.9', changefreq: 'weekly' },
   { path: '/sign-up', priority: '0.8', changefreq: 'yearly' },
+  { path: '/login', priority: '0.6', changefreq: 'yearly' },
   { path: '/privacy', priority: '0.4', changefreq: 'yearly' },
   { path: '/gdpr', priority: '0.4', changefreq: 'yearly' },
   { path: '/cookies', priority: '0.3', changefreq: 'yearly' },
@@ -25,7 +26,7 @@ export const STATIC_ROUTES = [
 
 
 // Prerendered but excluded from the sitemap (noindex)
-export const NOINDEX_ROUTES = [{ path: '/login' }, { path: '/auth/password' }, { path: '/set-password' }, { path: '/forgot-password' }, { path: '/404' }];
+export const NOINDEX_ROUTES = [{ path: '/auth/password' }, { path: '/set-password' }, { path: '/forgot-password' }, { path: '/404' }];
 
 export const BLOG_ROUTES = BLOGS.map((b) => ({ path: `/blog/${b.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: b.updated || b.date }));
 
