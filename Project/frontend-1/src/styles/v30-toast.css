@@ -83,3 +83,45 @@
 .rwt-burst { left: 24px; }
 .rwt-bar { height: 2px; }
 @media (max-width: 560px) { .rwt { width: min(260px, calc(100vw - 24px)); padding: 6px 24px 7px 7px; } .rwt-av { width: 30px; height: 30px; border-radius: 10px; } }
+
+/* Mini size + livelier motion (Kunal, 18 Nov, second pass) */
+.rwt { width: min(236px, calc(100vw - 24px)); gap: 7px; padding: 6px 22px 7px 6px; border-radius: 14px; }
+@keyframes rwtMorphS {
+  0% { opacity: 0; clip-path: circle(0 at 20px 50%); transform: translateY(34px) scale(.6) rotate(-14deg); }
+  28% { opacity: 1; clip-path: circle(17px at 20px 50%); transform: translateY(-10px) scale(1.08) rotate(4deg); }
+  42% { clip-path: circle(17px at 20px 50%); transform: translateY(0) scale(.96) rotate(-2deg); }
+  70% { clip-path: inset(0 round 14px); transform: scale(1.04); }
+  84% { transform: scale(.98) rotate(.6deg); }
+  100% { opacity: 1; clip-path: inset(0 round 14px); transform: none; }
+}
+.rwt-av { width: 30px; height: 30px; border-radius: 10px; font-size: .64rem; }
+.rwt-av::after { border-radius: 13px; }
+.rwt-av svg { width: 15px; height: 15px; }
+.rwt-tag { display: none; }
+.rwt-l1 { font-size: .68rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; }
+.rwt-amt { font-size: .84rem; }
+.rwt-l3 { display: none; }
+.rwt-l2 { font-size: .58rem; }
+.rwt-l2 .rwt-m { padding: 0 5px 0 4px; }
+.rwt-x { width: 16px; height: 16px; top: 3px; right: 3px; }
+.rwt-x svg { width: 8px; height: 8px; }
+.rwt-burst { left: 20px; }
+.rwt-ring { padding: 1.5px; }
+.rwt.is-in .rwt-ring i { animation-duration: 2s; }
+/* coin-flip avatar keeps spinning while the card is up */
+.rwt.is-in .rwt-av { animation: rwtSpinIn .55s cubic-bezier(.3, 1.4, .5, 1) both, rwtFlip 2.4s 1.2s ease-in-out infinite; }
+@keyframes rwtFlip { 0%, 60%, 100% { transform: none; } 75% { transform: rotateY(180deg) scale(1.08); } 90% { transform: rotateY(360deg); } }
+/* amount keeps a heartbeat */
+.rwt.is-in .rwt-amt { animation: rwtShine 2.4s .4s ease-in-out infinite, rwtBeat .6s 1.2s cubic-bezier(.3, 1.8, .5, 1) 3; }
+/* twinkling stars */
+.rwt-stars { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.rwt-stars i { position: absolute; font-style: normal; font-size: 9px; line-height: 1; color: #FFC233; opacity: 0; text-shadow: 0 0 6px rgba(255, 194, 51, .9); }
+.rwt.is-biz .rwt-stars i { color: #6FA0FF; text-shadow: 0 0 6px rgba(111, 160, 255, .9); }
+.rwt-stars i:nth-child(1) { left: 38%; top: 3px; }
+.rwt-stars i:nth-child(2) { right: 26px; bottom: 4px; font-size: 7px; }
+.rwt-stars i:nth-child(3) { left: 30px; bottom: 2px; font-size: 7px; }
+.rwt-stars i:nth-child(4) { right: 34%; top: 4px; font-size: 6px; }
+.rwt.is-in .rwt-stars i { animation: rwtStar 1.6s calc(.8s + var(--i) * .35s) ease-in-out infinite; }
+@keyframes rwtStar { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(90deg); } }
+@media (max-width: 560px) { .rwt { width: min(228px, calc(100vw - 24px)); padding: 5px 20px 6px 5px; } .rwt-av { width: 28px; height: 28px; } }
+@media (prefers-reduced-motion: reduce) { .rwt-stars { display: none; } .rwt.is-in .rwt-av, .rwt.is-in .rwt-amt { animation: none; } }

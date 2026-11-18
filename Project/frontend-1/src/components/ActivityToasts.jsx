@@ -37,6 +37,7 @@ const Fx = () => (
     <span className="rwt-ring" aria-hidden="true"><i /></span>
     <span className="rwt-sweep" aria-hidden="true" />
     <span className="rwt-rain" aria-hidden="true">{Array.from({ length: 7 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>
+    <span className="rwt-stars" aria-hidden="true">{Array.from({ length: 4 }, (_, i) => <i key={i} style={{ '--i': i }}>✦</i>)}</span>
   </>
 );
 
