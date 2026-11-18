@@ -93,3 +93,38 @@
 html[data-mode="dark"] .mx-poll, html[data-mode="dark"] .mj-scene .mx-card, html[data-mode="dark"] .mj-scene .mx-count { background: #1D222C; color: #F1E9EE; box-shadow: 0 20px 40px -20px #000, 0 0 0 1px rgba(255, 138, 0, .22); }
 html[data-mode="dark"] .mx-poll-h b, html[data-mode="dark"] .mx-poll-q { color: #F7EEF2; }
 html[data-mode="dark"] .mx-opts span { background: #2A2230; border-color: #4A2A3A; color: #E8C9D6; }
+
+/* ── v3.2.1 layout: nothing overlaps the coin, jar, case or chart ── */
+.mx-poll { left: -22px; top: 14px; width: 200px; padding: 11px 12px 12px; transform: rotate(-3deg); }
+.mx-poll-q { font-size: .84rem; }
+.mx-opts { flex-direction: column; gap: 6px; }
+.mx-opts > span { justify-content: flex-start; padding: 7px 10px; }
+.mx-cursor { left: 96px; top: 112px; }
+.mx-ripple { left: 82px; top: 98px; }
+.mx-earn { left: 16px; top: 214px; }
+.mj-chip.c3 { top: 262px; left: 4px; }
+.mj-bill.b0 { left: 110px; top: 300px; }
+.mx-count { top: 494px; }
+.hm-hero .eb-invite.ex-ins { width: 230px; left: -10px; }
+.ex-cursor { left: 130px; top: 136px; }
+.hm-hero .eb-chart { left: 340px; width: 176px; }
+.hm-hero .eb-role.r0, .hm-hero .eb-role.r3 { display: none; }
+.hm-hero .eb-role.r2 { top: 300px; }
+.hm-hero .eb-paid { top: 428px; }
+.hm-hero .ex-count { left: 150px; top: 496px; }
+.hm-hero .eb-coin.c0 { --x: -180px; --y: -40px; } .hm-hero .eb-coin.c1 { --x: -120px; --y: -70px; }
+.hm-hero .eb-coin.c2 { --x: 60px; --y: -48px; } .hm-hero .eb-coin.c3 { --x: 110px; --y: -50px; }
+.hm-hero .eb-coin.c4 { --x: -200px; --y: 0px; } .hm-hero .eb-coin.c5 { --x: 170px; --y: 10px; }
+.hm-hero .eb-note.n0 { --x: 8px; --y: -150px; --r: -10deg; } .hm-hero .eb-note.n1 { --x: 8px; --y: -226px; --r: 8deg; }
+.mj-bill.b0 { left: 446px; top: 452px; }
+.hm-hero .mj-pop { top: 232px; }
+.mx-card { width: 130px; padding: 7px 9px; column-gap: 7px; }
+.mx-card b { font-size: .76rem; }
+.mx-card.k0 { left: 0; top: 340px; --r: 0deg; } .mx-card.k1 { left: 8px; top: 394px; --r: 0deg; } .mx-card.k2 { left: 16px; top: 448px; --r: 0deg; }
+.ex-fan .mx-card.k0 { top: 352px; } .ex-fan .mx-card.k1 { top: 406px; } .ex-fan .mx-card.k2 { top: 460px; }
+.hm-hero .eb-pop { display: none; }
+.hm-hero .eb-coin.c0 { --x: -150px; --y: -20px; } .hm-hero .eb-coin.c4 { --x: -215px; --y: -60px; }
+.mx-card.k0 { top: 330px; } .mx-card.k1 { top: 392px; } .mx-card.k2 { top: 454px; }
+.ex-fan .mx-card.k0 { top: 344px; } .ex-fan .mx-card.k1 { top: 406px; } .ex-fan .mx-card.k2 { top: 468px; }
+.hm-hero .eb-coin.c1 { --x: -120px; --y: -80px; } .hm-hero .eb-coin.c2 { --x: 60px; --y: -90px; } .hm-hero .eb-coin.c3 { --x: 150px; --y: -60px; }
+.mx-card small, .mx-card b { white-space: nowrap; }

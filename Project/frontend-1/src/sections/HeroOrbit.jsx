@@ -185,7 +185,7 @@ function ConsumerWorld({ pay, cat }) {
       </div>
       <p className="mx-earn"><Icon name="coins" size={14} /> +${cat.reward} earned</p>
       <div className="mx-fan">
-        {FAN_C.map((id, i) => { const x = PAYOUTS.find((y) => y.id === id); return x ? <span key={id} className={`mx-card k${i}`} style={{ '--h1': x.hue, '--h2': x.hue2 }}><Icon name={x.icon} size={16} /><b>{x.short || x.name}</b><small>Reward unlocked</small></span> : null; })}
+        {FAN_C.map((id, i) => { const x = PAYOUTS.find((y) => y.id === id); return x ? <span key={id} className={`mx-card k${i}`} style={{ '--h1': x.hue, '--h2': x.hue2 }}><Icon name={x.icon} size={16} /><b>{x.short || x.name}</b><small>Unlocked</small></span> : null; })}
       </div>
       <p className="mx-count"><span className="mx-roll"><i>0</i><i>1</i><i>2</i><i>3</i></span><b>rewards unlocked</b></p>
       {chips.map((x, i) => (
@@ -213,7 +213,7 @@ function ProWorld({ pay }) {
       <span className="eb-ring r2" />
       {/* coins and notes burst out of the case */}
       {[0, 1, 2, 3, 4, 5].map((k) => <span key={k} className={`eb-coin c${k}`}><b>$</b></span>)}
-      {[0, 1, 2].map((k) => <span key={k} className={`eb-note n${k}`}><i /><b>$</b></span>)}
+      {[0, 1].map((k) => <span key={k} className={`eb-note n${k}`}><i /><b>$</b></span>)}
       <div className="eb-case">
         <span className="eb-handle" />
         <div className="eb-lid"><span className="eb-lid-in" /></div>
