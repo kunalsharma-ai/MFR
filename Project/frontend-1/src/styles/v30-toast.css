@@ -55,3 +55,31 @@
 
 @media (max-width: 560px) { .rwt-av { width: 38px; height: 38px; border-radius: 12px; } .rwt { padding: 9px 28px 11px 9px; } }
 @media (prefers-reduced-motion: reduce) { .rwt-rain, .rwt-sweep, .rwt-plus { display: none; } }
+
+/* Compact size (Kunal, 18 Nov): about a third smaller, same effects */
+.rwt { width: min(272px, calc(100vw - 24px)); gap: 8px; padding: 7px 26px 8px 8px; border-radius: 16px; }
+.rwt.is-in { animation-name: rwtMorphS; }
+@keyframes rwtMorphS {
+  0% { opacity: 0; clip-path: circle(0 at 24px 50%); transform: translateY(30px) rotate(-10deg); }
+  30% { opacity: 1; clip-path: circle(20px at 24px 50%); transform: translateY(-4px); }
+  45% { clip-path: circle(20px at 24px 50%); transform: none; }
+  100% { opacity: 1; clip-path: inset(0 round 16px); transform: none; }
+}
+.rwt-av { width: 34px; height: 34px; border-radius: 11px; font-size: .7rem; }
+.rwt-av::after { inset: -4px; border-radius: 14px; }
+.rwt-coin { width: 16px; height: 16px; right: -5px; bottom: -5px; }
+.rwt-coin svg { width: 9px; height: 9px; }
+.rwt-body { gap: 1px; }
+.rwt-tag { font-size: .5rem; padding: 0 7px 0 5px; letter-spacing: .1em; }
+.rwt-l1 { font-size: .72rem; line-height: 1.25; }
+.rwt-amt { font-size: .9rem; }
+.rwt-l2 { font-size: .62rem; gap: 4px; }
+.rwt-l3 { font-size: .6rem; }
+.rwt-l3 i { width: 5px; height: 5px; }
+.rwt-plus { font-size: .64rem; }
+.rwt-x { top: 4px; right: 4px; width: 18px; height: 18px; }
+.rwt-x svg { width: 10px; height: 10px; }
+.rwt-rain i { width: 7px; height: 7px; }
+.rwt-burst { left: 24px; }
+.rwt-bar { height: 2px; }
+@media (max-width: 560px) { .rwt { width: min(260px, calc(100vw - 24px)); padding: 6px 24px 7px 7px; } .rwt-av { width: 30px; height: 30px; border-radius: 10px; } }
