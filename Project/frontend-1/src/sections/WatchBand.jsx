@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import VideoStage, { YtGlyph } from '../components/video/VideoStage.jsx';
 import SoundToggle from '../components/ui/SoundToggle.jsx';
 import { videoFor, YT_CHANNEL } from '../data/videos.js';
-import { pop } from '../utils/sound.js';
+import { playSound } from '../utils/sound.js';
 
 // "Watch this page" band (v3.0) — the last section of every page, just above the footer. It shows the same video
 // stage as the floating YouTube button (each page keeps its own design) and asks viewers to like, subscribe,
@@ -17,7 +17,7 @@ export default function WatchBand() {
   const yt = (e.more && e.more[0] && e.more[0].yt) || e.yt;
   const videoUrl = `https://youtu.be/${yt}`;
   const share = async () => {
-    pop({ volume: 0.14 });
+    playSound();
     try {
       if (navigator.share) { await navigator.share({ title: `${e.title} ${e.em}`, url: videoUrl }); return; }
       await navigator.clipboard.writeText(videoUrl);
@@ -45,7 +45,7 @@ export default function WatchBand() {
           {acts.map((a, i) => (
             <li key={a.k} style={{ '--c': a.c, '--i': i }}>
               {a.href ? (
-                <a href={a.href} target="_blank" rel="noopener noreferrer" onClick={() => pop({ volume: 0.14 })}>
+                <a href={a.href} target="_blank" rel="noopener noreferrer" onClick={() => playSound()}>
                   <span className="wb-ic" aria-hidden="true">{a.ic}</span><b>{a.t}</b><small>{a.d}</small>
                 </a>
               ) : (

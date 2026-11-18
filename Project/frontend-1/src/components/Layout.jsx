@@ -13,7 +13,7 @@ import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
 import { PagesContext, pageFor } from '../router/pages.js';
-import { welcomePop } from '../utils/sound.js';
+import { playSound, swishSound, tapSound, welcomePop } from '../utils/sound.js';
 import { initMetaPixel, trackPageView } from '../utils/metaPixel.js';
 
 // The language picker and the translation pill are only downloaded when they are needed.
@@ -30,6 +30,19 @@ export default function Layout({ children }) {
   const pages = useContext(PagesContext);
   useEffect(() => setMounted(true), []);
   useEffect(() => welcomePop(), []);
+  // One delegated listener gives each kind of control its own sound: video buttons a film-reel "play",
+  // menu dropdowns an airy swish, and the main call-to-action buttons a gem tap.
+  useEffect(() => {
+    const onClick = (e) => {
+      const el = e.target.closest && e.target.closest('.vfab, .vfab-tease-body, .vs-poster, .nav-drop-btn, .btn-primary');
+      if (!el) return;
+      if (el.matches('.nav-drop-btn')) { if (el.getAttribute('aria-expanded') !== 'true') swishSound(); }
+      else if (el.matches('.btn-primary')) tapSound();
+      else playSound();
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, []);
 
   // Meta Pixel: loads only after analytics consent (cookie banner); then one PageView per route change.
   useEffect(() => initMetaPixel(), []);
