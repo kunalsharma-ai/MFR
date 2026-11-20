@@ -31,20 +31,16 @@ The frontend posts to `POST /api/v1/user/teen` (override this with `VITE_TEEN_EN
 }
 ```
 
-Round 12 (final): sign-up asks only for country (all 242, with flags) and state, no city and no teen phone. The order is
-teen basics → parent details → consent → parent email (onboarding + consent) → set-password link → login →
-**welcome questionnaire** → dashboard. The questionnaire is no longer part of sign-up: on the teen's first log in
-the site shows "Tell us a little about you" and saves it with the existing session through
+Round 12 (final): sign-up asks only for country (all 242, with flags) and state. The order is
+teen basics → parent details → consent → parent email (consent form) → set-password link → login →
+**welcome survey** → dashboard. The welcome survey (`src/components/WelcomeSurvey.jsx`) is the same for Consumers,
+Professionals and Teens: it opens once after the first log in and asks the questions the set-password page used to ask
+(Consumer/Teen interests → `interests`; Professional work details → `empstat`, `industry`, `sector`, `department`,
+`jobrole`, `workemail`), saved with the existing `PATCH /api/v1/me/answer`. No backend change is needed for it.
 
-```text
-PATCH /api/v1/me/answer
-{ "teen_school": "Secondary / high school", "teen_interests": ["Gaming", "Music"],
-  "teen_devices": ["Smartphone"], "teen_entertainment": ["Video platforms"] }
-```
-
-Backend need: accept these four `teen_*` keys on `/me/answer` (or map them to existing profile questions). "Skip for
-now" saves nothing and the questionnaire opens again on the next log in. Done-state is kept per browser
-(`localStorage`); a `teen_school` value on `/me` would let the site skip it on other devices too.
+**Built in PR #13:** `POST /api/v1/user/teen`, `POST /api/v1/user/teen/resend`, the parent consent form
+(`/auth/parent-consent`, `PUT /api/v1/user/parent-consent/:id`) and `registrationStatus`. The steps below describe what
+that PR implements.
 
 ```text
 Never email a password. The teen gets only the existing set-password link, after the parent has consented.
@@ -87,9 +83,9 @@ The form now has two separate required checkboxes. The backend `terms: [String]`
 | # | Issue | Where it lives |
 |---|---|---|
 | 1 | Professional sign-up: work-details dropdown empty | **Fixed in frontend-1** (`SetPassword.jsx`: the MUI 7 Autocomplete input ref was dropped) |
-| 2 | A minor joins as a normal adult | **Fixed in frontend-1** (ages 13–17 are routed to the Teen Panel). The server-side age check still needs item 3 above. |
+| 2 | A minor joins as a normal adult | **Fixed in frontend-1** (ages 13–17 are routed to the Teen Panel). The server-side age check is in PR #13. |
 | 3–4 | Home & Pet profile: options missing | `web/` member portal profiles, or option data in the API |
-| 5 | Reward points not updating | API (reward ledger) |
-| 6 | Survey participation history empty | `web/` dashboard plus the API |
-| 7 | Rewards history missing completed items | `web/` rewards page plus the API |
-| 8 | Settings: old Terms section still showing | `web/src/app/(memberpages)/member/(member pages)/settings/page.jsx` |
+| 5 | Reward points not updating | **Fixed in PR #13** (`/api/v1/rewards` added) |
+| 6 | Survey participation history empty | **Fixed in PR #13** (completed profiles listed) |
+| 7 | Rewards history missing completed items | **Fixed in PR #13** |
+| 8 | Settings: old Terms section still showing | **Fixed in PR #13** (links to current Terms and Privacy) |
