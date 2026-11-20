@@ -106,12 +106,12 @@ export const PAGE_VIDEOS = [
     points: ['Survey tips', 'Payout guides', 'Safety advice'],
     cta: { label: 'Read the blogs', to: '/blog' },
   }),
-  v('minor', '/paid-surveys-for-minors', {
+  v('minor', '/paid-surveys-for-teens', {
     template: 'arcade', c1: '#7C3AED', c2: '#FF3B8D', placeholder: true,
     eyebrow: 'The teen panel', title: 'Two yeses,', em: 'thirteen worlds.',
     lede: 'How a teen joins with a parent’s permission, explores the profile worlds and earns points for age-checked surveys.',
     points: ['Parent says yes', 'You say yes', 'Explore 13 worlds', '+100 points each'],
-    cta: { label: 'Join as a teen', to: '/sign-up?type=minor' },
+    cta: { label: 'Join as a teen', to: '/sign-up?type=teen' },
   }),
   v('connect', '/scan-and-connect', {
     template: 'qr', c1: '#6D5BF7', c2: '#FF3B8D', yt: 'euWdgxLd0pk',

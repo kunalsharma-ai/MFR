@@ -8,7 +8,7 @@ import { segSound } from '../utils/sound.js';
 const OPTS = [
   ['consumer', 'Consumer', 'user'],
   ['professional', 'Professional', 'briefcase'],
-  ['minor', 'Minor', 'rocket'], // v3.3: the teen panel (Galaxy Pop colours, v32-minor.css)
+  ['minor', 'Teen', 'rocket'], // v3.3: the teen panel (Galaxy Pop colours, v32-minor.css)
 ];
 
 export default function AudienceSwitch({ value, onChange, label = 'I am a' }) {

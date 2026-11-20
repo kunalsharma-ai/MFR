@@ -66,7 +66,7 @@ export const REWARD_KINDS = {
 // One plain-English line used in copy across the site (keep in sync with PAYOUTS).
 export const PAYOUT_LINE = 'PayPal, cash rewards, bank or wire transfer, shopping, grocery and digital gift card vouchers — plus UPI in India';
 
-export const MIN_SIGNUP_AGE = Number(import.meta.env.VITE_MIN_SIGNUP_AGE || 14);
+export const MIN_SIGNUP_AGE = Number(import.meta.env.VITE_MIN_SIGNUP_AGE || 13);
 export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
 // Existing member application login URL (dashboard, surveys, claims). MUST be set for production.
 export const MEMBER_PORTAL_URL = import.meta.env.VITE_MEMBER_PORTAL_URL || '';

@@ -12,7 +12,7 @@ import { DASHBOARD_URL, useSession } from '../utils/session.js';
 const EARN = [
   { to: '/paid-surveys-for-consumers', label: 'For Consumers', sub: 'Students, parents, shoppers, gamers', icon: 'user' },
   { to: '/paid-surveys-for-professionals', label: 'For Professionals', sub: 'CXOs, managers, engineers, doctors', icon: 'briefcase' },
-  { to: '/paid-surveys-for-minors', label: 'For Minors', sub: 'Teens, with a parent’s permission', icon: 'rocket', isNew: true, hues: ['#7C3AED', '#2EE6CF'] },
+  { to: '/paid-surveys-for-teens', label: 'For Teens', sub: 'Teens, with a parent’s permission', icon: 'rocket', isNew: true, hues: ['#7C3AED', '#2EE6CF'] },
   { to: '/who-can-join', label: 'Who Can Join', sub: 'Countries, roles & industries', icon: 'globe' },
 ];
 

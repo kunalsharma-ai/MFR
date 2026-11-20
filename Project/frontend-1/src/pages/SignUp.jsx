@@ -26,8 +26,8 @@ import { rememberSignup } from "../utils/signupMemo.js";
 import { readReferral, clearReferral } from "../utils/referral.js";
 import { consentAnswers } from "../utils/profileAnswers.js";
 import SocialLogin from "../components/SocialLogin.jsx";
-import TeenSignup from "../components/TeenSignup.jsx";
-import { isTeenAge, teenLastNameError } from "../utils/teenRegister.js";
+import TeenSignup, { TEEN_STEPS } from "../components/TeenSignup.jsx";
+import { TEEN_MAX_AGE } from "../utils/teenRegister.js";
 import {
   EMAIL_RE,
   ADULT_AGE,
@@ -124,6 +124,7 @@ export default function SignUp() {
   const [v, setV] = useState({
     memberType: "consumer",
     firstName: "",
+    middleName: "",
     lastName: "",
     gender: "",
     dob: "",
@@ -134,6 +135,7 @@ export default function SignUp() {
     notify: { dashboard: true, sms: true, whatsapp: false, email: true },
     captchaOk: false,
     agreeTerms: false,
+    agreePrivacy: false,
     marketing: false,
     website: "",
   });
@@ -166,13 +168,6 @@ export default function SignUp() {
 
   const errors = useMemo(() => {
     const e = validateSignup(v);
-    if (teen || isTeenAge(v.dob)) {
-      // teen panel (picked, or a 13–17 DOB under Consumer / Professional): last name is optional
-      const ln = teenLastNameError(v.lastName);
-      if (ln) e.lastName = ln;
-      else delete e.lastName;
-    }
-    if (teen) delete e.gender; // asked on the teen's next step instead
     const r = remote.email;
     if (
       !e.email &&
@@ -184,7 +179,7 @@ export default function SignUp() {
     )
       e.email = r.msg;
     return e;
-  }, [v, remote, teen]);
+  }, [v, remote]);
 
   useEffect(() => {
     const q = new URLSearchParams(search);
@@ -209,7 +204,7 @@ export default function SignUp() {
     const t = new URLSearchParams(search).get("type");
     if (t === "professional")
       setV((s) => ({ ...s, memberType: "professional" }));
-    if (t === "minor") setTeen(true);
+    if (t === "minor" || t === "teen") setTeen(true);
   }, [search]);
 
   useEffect(() => {
@@ -249,7 +244,12 @@ export default function SignUp() {
     onBlur: () => touch(k),
   });
 
-  const stepErrors = (n) => STEP_FIELDS[n].filter((k) => errors[k]);
+  // The teen panel asks for the email on "About you" (adults give it on step 2).
+  const teenEmailError = teen ? errors.email : "";
+  const stepErrors = (n) => [
+    ...STEP_FIELDS[n].filter((k) => errors[k]),
+    ...(n === 1 && teen && errors.email ? ["email"] : []),
+  ];
   const pct = railPct(
     step,
     STEPS.length,
@@ -278,22 +278,35 @@ export default function SignUp() {
     }
     if (step === 1) {
       const age = ageFromDob(v.dob);
-      if (age < ADULT_AGE) {
-        setSwitched(!teen);
+      if (age < ADULT_AGE && !teen) {
+        // 13–17 under Consumer / Professional: switch to the teen panel, explain why, and ask for their email here
+        setSwitched(true);
         setTeen(true);
+        setAdultNote(false);
         setV((s) => ({ ...s, memberType: "consumer" }));
-        setTeenFlow(true);
-        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => document.getElementById("email")?.focus(), 60);
+        return;
+      }
+      if (age < ADULT_AGE && teen) {
+        if (teenEmailError) {
+          touch("email");
+          setTimeout(() => document.getElementById("email")?.focus(), 30);
+          return;
+        }
+        runRemote("email", v.email).then((msg) => {
+          if (msg) {
+            touch("email");
+            return;
+          }
+          setTeenFlow(true);
+          cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
         return;
       }
       if (teen) {
         setTeen(false);
+        setSwitched(false);
         setAdultNote(true);
-        if (!GENDERS.includes(v.gender)) {
-          // gender was hidden for the teen panel: ask it here before moving on
-          touch("gender");
-          return;
-        }
       }
     }
     go(step + 1);
@@ -334,6 +347,12 @@ export default function SignUp() {
       return;
     }
     if (v.website) return; // honeypot
+    // the CAPTCHA is checked only now, when the member presses the button (never while typing)
+    if (!captchaRef.current?.verify?.()) {
+      set("captchaOk", false);
+      setTimeout(() => document.getElementById("captcha-input")?.focus(), 30);
+      return;
+    }
     setStatus("sending");
     setServerMsg("");
     const dial = (COUNTRIES.find((c) => c.iso === v.phoneIso) || {}).dial || "";
@@ -522,7 +541,7 @@ export default function SignUp() {
             ) : (
               <form onSubmit={submit} noValidate>
                 <SxRail
-                  steps={STEPS}
+                  steps={teen ? TEEN_STEPS : STEPS}
                   step={step}
                   pct={pct}
                   onGo={step < LAST_STEP ? go : undefined}
@@ -550,17 +569,28 @@ export default function SignUp() {
                             "Expert B2B surveys about your work",
                             "briefcase",
                           ],
+                          [
+                            "teen",
+                            "Teen (13–17)",
+                            "Fun surveys, with a parent’s OK",
+                            "rocket",
+                          ],
                         ].map(([k, l, d, ic]) => (
                           <label
                             key={k}
-                            className={`sx-type ${v.memberType === k ? "on" : ""} t-${k}`}
+                            className={`sx-type ${(teen ? "teen" : v.memberType) === k ? "on" : ""} t-${k}`}
                           >
                             <input
                               type="radio"
                               name="memberType"
                               value={k}
-                              checked={v.memberType === k}
-                              onChange={() => { if (k === "professional") setTeen(false); set("memberType", k); }}
+                              checked={(teen ? "teen" : v.memberType) === k}
+                              onChange={() => {
+                                setTeen(k === "teen");
+                                setSwitched(false);
+                                setAdultNote(false);
+                                set("memberType", k === "teen" ? "consumer" : k);
+                              }}
                             />
                             <span className="sx-type-ico">
                               <Icon name={ic} size={26} />
@@ -573,6 +603,20 @@ export default function SignUp() {
                           </label>
                         ))}
                       </div>
+                      {switched && teen ? (
+                        <div className="ts-switch" role="status">
+                          <span className="ts-switch-art" aria-hidden="true">
+                            <img src="/images/minor/emoji/rocket.webp" alt="" width="44" height="44" />
+                          </span>
+                          <span>
+                            <b>You’re {ageFromDob(v.dob)}, so you’re joining the teen panel</b>
+                            <small>
+                              Since you’re a teen, your registration continues through the teen panel. Add your email
+                              below, then we’ll ask for your parent or guardian’s details. Nothing starts until they say yes.
+                            </small>
+                          </span>
+                        </div>
+                      ) : null}
                       <div className="sx-grid">
                         <Field
                           id="firstName"
@@ -593,8 +637,26 @@ export default function SignUp() {
                           />
                         </Field>
                         <Field
+                          id="middleName"
+                          label="Middle name (optional)"
+                          error={err("middleName")}
+                          ok={ok("middleName") && Boolean(v.middleName.trim())}
+                          half
+                          icon="user"
+                        >
+                          <input
+                            id="middleName"
+                            placeholder=" "
+                            autoComplete="additional-name"
+                            maxLength={40}
+                            value={v.middleName}
+                            onChange={(e) => set("middleName", e.target.value)}
+                            {...aria("middleName")}
+                          />
+                        </Field>
+                        <Field
                           id="lastName"
-                          label={teen || isTeenAge(v.dob) ? "Last name (optional)" : "Last name"}
+                          label="Last name (optional)"
                           error={err("lastName")}
                           ok={ok("lastName")}
                           half
@@ -619,7 +681,9 @@ export default function SignUp() {
                           <DobPicker
                             id="dob"
                             value={v.dob}
+                            key={teen ? "dob-teen" : "dob-all"}
                             minAge={MIN_SIGNUP_AGE}
+                            maxAge={teen ? TEEN_MAX_AGE : null}
                             invalid={Boolean(err("dob"))}
                             describedBy={err("dob") ? "dob-err" : "dob-hint"}
                             onChange={(iso) => set("dob", iso)}
@@ -631,12 +695,13 @@ export default function SignUp() {
                             </p>
                           ) : (
                             <p className="f-hint" id="dob-hint">
-                              Type it or tap the calendar · {MIN_SIGNUP_AGE}+ to
-                              join
+                              {teen
+                                ? `Teen panel · ages ${MIN_SIGNUP_AGE}–${TEEN_MAX_AGE}`
+                                : `Type it or tap the calendar · ${MIN_SIGNUP_AGE}+ to join`}
                             </p>
                           )}
                         </div>
-                        {teen ? null : (<div
+                        <div
                           className={`sx-field half ${err("gender") ? "bad" : ""} ${ok("gender") ? "good" : ""}`}
                         >
                           <span className="sx-static-label" id="gender-lbl">
@@ -731,7 +796,33 @@ export default function SignUp() {
                               {err("gender")}
                             </p>
                           ) : null}
-                        </div>)}
+                        </div>
+                        {teen ? (
+                          <Field
+                            id="email"
+                            label="Your email address"
+                            error={err("email")}
+                            ok={ok("email")}
+                            hint="Your own email. Your parent’s comes on the next step."
+                            icon="mail"
+                            half
+                          >
+                            <input
+                              id="email"
+                              type="email"
+                              placeholder=" "
+                              autoComplete="email"
+                              maxLength={120}
+                              value={v.email}
+                              onChange={(e) => set("email", e.target.value)}
+                              {...aria("email")}
+                              onBlur={() => {
+                                touch("email");
+                                runRemote("email", v.email);
+                              }}
+                            />
+                          </Field>
+                        ) : null}
                         {/* <Field
                           id="gender"
                           label="Gender"
@@ -796,7 +887,7 @@ export default function SignUp() {
                           on the teen panel.
                         </p>
                       ) : null}
-                      {!v.dob ||
+                      {teen || !v.dob ||
                       !Number.isFinite(ageFromDob(v.dob)) ||
                       ageFromDob(v.dob) >= ADULT_AGE ? null : (
                         <p className="sx-note">
@@ -961,21 +1052,42 @@ export default function SignUp() {
                           aria-invalid={Boolean(err("agreeTerms"))}
                         />
                         <span>
-                          I agree to the{" "}
+                          I have read and accept the{" "}
                           <Link to="/terms" target="_blank">
-                            Terms of Use
+                            Terms and Conditions
                           </Link>{" "}
-                          and{" "}
-                          <Link to="/privacy" target="_blank">
-                            Privacy Policy
-                          </Link>{" "}
-                          and consent to receive survey invitations and take
-                          part in market research.
+                          of the {v.memberType === "professional" ? "Professional" : "Consumer"} panel, and I agree to
+                          receive survey invitations and take part in market research.
                         </span>
                       </label>
                       {err("agreeTerms") ? (
                         <p className="f-err" role="alert">
                           {err("agreeTerms")}
+                        </p>
+                      ) : null}
+                      <label
+                        className={`sx-consent ${err("agreePrivacy") ? "bad" : ""}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={v.agreePrivacy}
+                          onChange={(e) => {
+                            set("agreePrivacy", e.target.checked);
+                            touch("agreePrivacy");
+                          }}
+                          aria-invalid={Boolean(err("agreePrivacy"))}
+                        />
+                        <span>
+                          I have read and accept the{" "}
+                          <Link to="/privacy" target="_blank">
+                            Privacy Policy
+                          </Link>
+                          , including how my details and answers are stored and protected.
+                        </span>
+                      </label>
+                      {err("agreePrivacy") ? (
+                        <p className="f-err" role="alert">
+                          {err("agreePrivacy")}
                         </p>
                       ) : null}
                       <label className="sx-consent">

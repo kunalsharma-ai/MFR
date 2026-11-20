@@ -40,7 +40,7 @@ function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
   const lights = [
     { k: 'Email', on: emailOk, icon: 'mail', v: emailOk ? maskEmail(email) : 'waiting' },
     { k: 'Password', on: pwOk, icon: 'lock', v: pwLen ? '•'.repeat(Math.min(pwLen, 8)) : 'waiting' },
-    { k: 'Human check', on: human, icon: 'captcha', v: human ? 'verified' : 'waiting' },
+    { k: 'Human check', on: human, icon: 'captcha', v: human ? 'entered' : 'waiting' },
   ];
   // pointer tilt — written straight to CSS variables (no re-render), eased by a CSS transition
   const move = (e) => {
@@ -100,7 +100,7 @@ export default function Login() {
   const tokenRef = useRef(null);
   const { search } = useLocation();
   const [aud, setAud] = useState('consumer');
-  useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional' || t === 'minor') setAud(t); }, [search]);
+  useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional') setAud(t); if (t === 'minor' || t === 'teen') setAud('minor'); }, [search]);
   const pro = aud === 'professional';
   const teen = aud === 'minor';
 
@@ -129,6 +129,12 @@ export default function Login() {
       const first = errs.email ? 'login-email' : errs.password ? 'login-password' : 'captcha-input';
       const el = document.getElementById(first);
       if (el) el.focus();
+      return;
+    }
+    // the CAPTCHA is checked only now, when the member presses Log in (never while typing)
+    if (!captchaRef.current?.verify?.()) {
+      set('captchaOk', false);
+      document.getElementById('captcha-input')?.focus();
       return;
     }
     const captchaToken = captchaRef.current?.token?.() || undefined;
@@ -243,8 +249,8 @@ export default function Login() {
                 {RESET_URL ? <a href={RESET_URL} className="lx-forgot">Forgot password?</a> : <Link to="/forgot-password" className="lx-forgot">Forgot password?</Link>}
               </div>
 
-              <div className={`lx-captcha ${err('captcha') ? 'bad' : ''} ${f.captchaOk ? 'good' : ''}`}>
-                <p className="lx-cap-title"><Icon name="shield" size={16} /> Quick security check {f.captchaOk ? <b>Verified</b> : null}</p>
+              <div className={`lx-captcha ${err('captcha') ? 'bad' : ''} `}>
+                <p className="lx-cap-title"><Icon name="shield" size={16} /> Quick security check </p>
                 <Captcha ref={captchaRef} error={err('captcha')} onChange={(ok) => set('captchaOk', ok)} />
               </div>
               <input type="hidden" name="captchaToken" ref={tokenRef} defaultValue="" />
@@ -260,7 +266,13 @@ export default function Login() {
             <div className="lx-divider"><span>New to MyFrequentRewards?</span></div>
 
             
-            <Link to={pro ? '/sign-up?type=professional' : teen ? '/sign-up?type=minor' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
+            {teen ? (
+              <div className="lx-teen" role="note">
+                <img src="/images/minor/emoji/family.webp" alt="" width="40" height="40" />
+                <p><b>New to the Teen Panel?</b> Start with your details, then add your parent or guardian. Teen accounts can log in once they have completed the consent form we email them.</p>
+              </div>
+            ) : null}
+            <Link to={pro ? '/sign-up?type=professional' : teen ? '/sign-up?type=teen' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name={teen ? 'rocket' : 'gift'} size={18} /> {teen ? 'Start teen sign-up' : 'Create your free account'}</Link>
             <p className="lx-safe"><Icon name="shield" size={14} /> We will never ask for your password by email, SMS or WhatsApp.</p>
           </div>
         </div>

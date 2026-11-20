@@ -33,7 +33,7 @@ const RIBBON = {
   minor: ['rocket', 'New · teen panel · with a parent’s OK'],
 };
 const ACCENT = { consumer: 'by sharing your opinion', pro: 'by sharing your expertise', minor: 'by sharing your teen voice' };
-const JOIN = { consumer: '/sign-up', pro: '/sign-up?type=professional', minor: '/sign-up?type=minor' };
+const JOIN = { consumer: '/sign-up', pro: '/sign-up?type=professional', minor: '/sign-up?type=teen' };
 
 const SEG_MS = 5000;
 
@@ -128,7 +128,7 @@ export default function HeroOrbit() {
             <span className="hm-seg-pill" aria-hidden="true"><i key={seg} className="hm-seg-prog" /></span>
             <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => pick('consumer')}><Icon name="user" size={16} /> Consumer</button>
             <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => pick('pro')}><Icon name="briefcase" size={16} /> Professional</button>
-            <button type="button" role="tab" aria-selected={seg === 'minor'} className={seg === 'minor' ? 'on' : ''} onClick={() => pick('minor')}><Icon name="rocket" size={16} /> Minor</button>
+            <button type="button" role="tab" aria-selected={seg === 'minor'} className={seg === 'minor' ? 'on' : ''} onClick={() => pick('minor')}><Icon name="rocket" size={16} /> Teen</button>
           </div>
 
           <div className="hx-hold">

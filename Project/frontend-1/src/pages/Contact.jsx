@@ -57,6 +57,7 @@ export default function Contact() {
     setErrors(es);
     setStatus('tried');
     if (v.website || Object.keys(es).length) return;
+    if (!capRef.current?.verify?.()) { set('captchaOk', false); document.getElementById('captcha-input')?.focus(); return; }
     setStatus('sending');
     try {
       await putJSON(ENDPOINT, { name: v.name.trim(), email: v.email.trim(), topic: v.topic, message: v.message.trim().slice(0, 2000), captchaToken: capRef.current?.token?.() });
@@ -185,8 +186,8 @@ export default function Contact() {
                   </div>
                 </div>
                 <div className="hp" aria-hidden="true"><label htmlFor="c-web">Website</label><input id="c-web" tabIndex={-1} value={v.website} onChange={(e) => setV({ ...v, website: e.target.value })} autoComplete="off" /></div>
-                <div className={`cf-captcha ${errors.captcha ? 'bad' : ''} ${v.captchaOk ? 'good' : ''}`}>
-                  <p><Icon name="shield" size={15} /> Security check {v.captchaOk ? <b>Verified</b> : null}</p>
+                <div className={`cf-captcha ${errors.captcha ? 'bad' : ''} `}>
+                  <p><Icon name="shield" size={15} /> Security check </p>
                   <Captcha ref={capRef} error={errors.captcha} onChange={(ok) => set('captchaOk', ok)} />
                 </div>
                 {status === 'error' ? <p className="form-error" role="alert">We couldn’t send your message. Please try WhatsApp or email instead.</p> : null}

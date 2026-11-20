@@ -15,7 +15,7 @@ import {
 // orbit hero → double-key lock → quest map → sticker album → arcade scoreboard → calm parent notebook →
 // heartbeat care card → stamped promise sheets. Styles: src/styles/v32-minor.css (all `mn-` classes).
 const page = PAGES.minor;
-const crumbs = [{ name: 'Home', path: '/' }, { name: 'For Minors', path: page.path }];
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'For Teens', path: page.path }];
 
 const EMOJI = {
   game: '/images/minor/emoji/game.webp', pizza: '/images/minor/emoji/pizza.webp', music: '/images/minor/emoji/music.webp',
@@ -102,7 +102,7 @@ function MinorHero() {
           </p>
           <p className="mn-lead">Explore thirteen profile worlds, win points for each one and share what you really think about games, food, school, style and tech. A parent says yes first, then you do. Nothing starts until you both agree.</p>
           <div className="mn-actions">
-            <Link to="/sign-up?type=minor" className="btn btn-lg mn-btn">Join as a teen <Icon name="arrow" size={18} /></Link>
+            <Link to="/sign-up?type=teen" className="btn btn-lg mn-btn">Join as a teen <Icon name="arrow" size={18} /></Link>
             <a href="#parents" className="btn btn-lg mn-btn-ghost"><Icon name="family" size={18} /> I’m a parent</a>
           </div>
           <ul className="mn-stats" aria-label="The teen panel in numbers">
@@ -409,8 +409,8 @@ function MinorCta() {
         <h2>Your opinion counts. <span>At any age.</span></h2>
         <p>Ask to join today. We’ll invite your parent, and you can start exploring as soon as you both say yes.</p>
         <div className="mn-actions">
-          <Link to="/sign-up?type=minor" className="btn btn-lg mn-btn">Join as a teen <Icon name="arrow" size={18} /></Link>
-          <Link to="/login?type=minor" className="btn btn-lg mn-btn-ghost">Teen log in</Link>
+          <Link to="/sign-up?type=teen" className="btn btn-lg mn-btn">Join as a teen <Icon name="arrow" size={18} /></Link>
+          <Link to="/login?type=teen" className="btn btn-lg mn-btn-ghost">Teen log in</Link>
         </div>
       </div>
     </section>

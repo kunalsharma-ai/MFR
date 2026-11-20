@@ -7,7 +7,7 @@ export const STATIC_ROUTES = [
   { path: '/rewards', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-consumers', priority: '0.9', changefreq: 'monthly' },
   { path: '/paid-surveys-for-professionals', priority: '0.9', changefreq: 'monthly' },
-  { path: '/paid-surveys-for-minors', priority: '0.8', changefreq: 'monthly' },
+  { path: '/paid-surveys-for-teens', priority: '0.8', changefreq: 'monthly' },
   { path: '/trust-and-safety', priority: '0.8', changefreq: 'monthly' },
   { path: '/who-can-join', priority: '0.8', changefreq: 'monthly' },
   { path: '/about-us', priority: '0.7', changefreq: 'monthly' },

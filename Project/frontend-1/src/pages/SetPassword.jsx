@@ -534,9 +534,14 @@ export default function SetPassword() {
                                         helperText={
                                           err(f) || worldHint(f) || " "
                                         }
+                                        // MUI 7: Autocomplete still hands over legacy InputProps / inputProps; the ref to the
+                                        // <input> lives in params.inputProps, so it must be carried into htmlInput or the
+                                        // list never opens ("Unable to find the input element").
                                         slotProps={{
                                           ...params.slotProps,
+                                          inputLabel: params.InputLabelProps,
                                           input: {
+                                            ...params.InputProps,
                                             ...params.slotProps?.input,
                                             startAdornment: (
                                               <>
@@ -555,6 +560,7 @@ export default function SetPassword() {
                                             ),
                                           },
                                           htmlInput: {
+                                            ...params.inputProps,
                                             ...params.slotProps?.htmlInput,
                                             "aria-invalid": Boolean(err(f)),
                                             "aria-describedby": err(f)

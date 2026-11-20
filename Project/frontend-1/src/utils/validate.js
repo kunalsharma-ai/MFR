@@ -67,8 +67,8 @@ export function validatePhone(iso, raw = '') {
 
 // Field-level rules grouped by wizard step. Steps 1–2 are on /sign-up; steps 3–4 on /auth/password (the emailed link).
 export const STEP_FIELDS = {
-  1: ['memberType', 'firstName', 'lastName', 'gender', 'dob', 'country'],
-  2: ['email', 'phone','captcha', 'agreeTerms'],
+  1: ['memberType', 'firstName', 'middleName', 'lastName', 'gender', 'dob', 'country'],
+  2: ['email', 'phone', 'captcha', 'agreeTerms', 'agreePrivacy'],
   3: ['password', 'confirm'],
   4: ['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department', 'jobrole', 'jobTitleOther', 'companyEmail'],
   
@@ -78,7 +78,9 @@ export function validateSignup(v) {
   const e = {};
   if (!v.memberType) e.memberType = 'Choose how you are joining.';
   if (!NAME_RE.test((v.firstName || '').trim())) e.firstName = 'Enter your first name (letters only).';
-  if (!NAME_RE.test((v.lastName || '').trim())) e.lastName = 'Enter your last name (letters only).';
+  // Middle and last name are optional (Nov 2026). The backend's `name.last` must be optional too (api/app/model/User.js).
+  if ((v.middleName || '').trim() && !NAME_RE.test(v.middleName.trim())) e.middleName = 'Use letters only.';
+  if ((v.lastName || '').trim() && !NAME_RE.test(v.lastName.trim())) e.lastName = 'Use letters only.';
   if (!GENDERS.includes(v.gender)) e.gender = 'Select your gender.';
   const dobErr = validateDob(v.dob);
   if (dobErr) e.dob = dobErr;
@@ -89,8 +91,9 @@ export function validateSignup(v) {
   const ph = validatePhone(v.phoneIso, v.phone);
   if (ph) e.phone = ph;
   
-  if (!v.captchaOk) e.captcha = 'Complete the security check.';
-  if (!v.agreeTerms) e.agreeTerms = 'Accept the Terms of Use and Privacy Policy to continue.';
+  if (!v.captchaOk) e.captcha = 'Type the security code to continue.';
+  if (!v.agreeTerms) e.agreeTerms = 'Please accept the Terms and Conditions to continue.';
+  if (!v.agreePrivacy) e.agreePrivacy = 'Please accept the Privacy Policy to continue.';
   return e;
 }
 
@@ -131,6 +134,6 @@ export function validateContact(v) {
   if (!EMAIL_RE.test((v.email || '').trim())) e.email = 'Please enter a valid email address.';
   if (!v.topic) e.topic = 'Please choose a topic.';
   if ((v.message || '').trim().length < 15) e.message = 'Please write at least 15 characters.';
-  if (!v.captchaOk) e.captcha = 'Please complete the security check.';
+  if (!v.captchaOk) e.captcha = 'Type the security code to continue.';
   return e;
 }
