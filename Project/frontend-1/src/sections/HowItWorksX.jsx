@@ -64,6 +64,37 @@ export function FlipJourney() {
   );
 }
 
+
+// Teen Panel route (13–17): same journey, one extra gate: a parent or guardian approves before the account opens.
+const TEEN_PATH = [
+  ['user', 'Teen details', 'Name, email, gender and a date of birth in the 13–17 range.'],
+  ['heart', 'Parent or guardian', 'Mother, father or legal guardian: name, email, phone and date of birth.'],
+  ['check', 'Consent boxes', 'Five ticks by hand plus a security code. Nothing submits on its own.'],
+  ['mail', 'Parent approves', 'We email the Parent/Guardian Onboarding Form. The account waits until they sign.'],
+  ['rocket', 'Teen starts', 'Only then does the teen set a password and see age-appropriate surveys.'],
+];
+function TeenPath() {
+  return (
+    <div className="tpa reveal" aria-labelledby="tpa-h">
+      <div className="tpa-head">
+        <span className="tpa-badge"><Icon name="rocket" size={15} /> Teen Panel · 13–17</span>
+        <h3 id="tpa-h">Under 18? Your route has <em>one extra gate</em></h3>
+        <p>A parent or guardian approves the account before any survey opens. Login stays locked until they do.</p>
+      </div>
+      <ol className="tpa-list">
+        {TEEN_PATH.map(([ic, t, d], i) => (
+          <li key={t} style={{ '--i': i }} className={i === 3 ? 'tpa-lock' : ''}>
+            <span className="tpa-ic"><Icon name={ic} size={20} /></span>
+            <b>{t}</b>
+            <small>{d}</small>
+          </li>
+        ))}
+      </ol>
+      <Link to="/sign-up?type=teen" className="tpa-go">Start a teen sign-up <Icon name="arrow" size={16} /></Link>
+    </div>
+  );
+}
+
 /* ── "Every step, unpacked": a glowing centre rail with numbered nodes; cards slide in from alternating sides ── */
 export function StepRail({ steps }) {
   return (
@@ -88,6 +119,7 @@ export function StepRail({ steps }) {
             </li>
           ))}
         </ol>
+        <TeenPath />
       </div>
     </section>
   );
@@ -123,6 +155,7 @@ export function ProfileMeter() {
               </button>
             ))}
           </div>
+          <p className="pmx-teen"><Icon name="rocket" size={15} /> <span><b>Teen Panel?</b> Your profile is shorter and age-appropriate: school, hobbies, gaming, music and the apps you use. No work or income questions.</span></p>
           <p className="tiny muted">Illustrative relationship, not a guarantee of survey volume.</p>
         </div>
         <div className="pmx-card reveal" aria-hidden="true">
@@ -167,6 +200,7 @@ export function NotifyOrbit() {
           <p className="eyebrow">Survey invitations</p>
           <h2 id="inv-title">Never miss a survey opportunity</h2>
           <p className="sec-sub">Choose the notification method that works best for you and stay updated whenever a new survey matching your profile becomes available.</p>
+          <p className="nfo-teen"><Icon name="shield" size={15} /> Teen Panel members are only ever invited to age-appropriate studies, and only after a parent or guardian has approved the account.</p>
           <ul className="nfo-list">
             {NOTIFY_CHANNELS.map((c, k) => (
               <li key={c.id}><button type="button" className={k === i ? 'on' : ''} onClick={() => setI(k)} aria-pressed={k === i}><span className={`nfo-li-ic ic-${c.id}`}><Icon name={c.icon} size={18} /></span><span><b>{c.name}</b><small>{c.line}</small></span></button></li>
@@ -178,14 +212,14 @@ export function NotifyOrbit() {
   );
 }
 
-/* ── "Consumer or professional — or both": a coral boarding ticket and a navy-and-gold member card ── */
+/* ── "Consumer, professional or teen": a coral boarding ticket, a navy-and-gold member card and a neon arcade pass ── */
 export function TwoPasses() {
   return (
     <section className="section tps" aria-labelledby="cmp-title">
       <div className="container">
         <div className="sec-head sec-center reveal">
-          <p className="eyebrow">Two journeys, one platform</p>
-          <h2 id="cmp-title">Consumer or professional — or both</h2>
+          <p className="eyebrow">Three journeys, one platform</p>
+          <h2 id="cmp-title">Consumer, professional — or teen</h2>
         </div>
         <div className="tps-row">
           <article className="tps-pass c reveal">
@@ -210,6 +244,18 @@ export function TwoPasses() {
             </ul>
             <Link to="/paid-surveys-for-professionals" className="tps-go">Professional surveys <Icon name="arrow" size={16} /></Link>
             <span className="tps-chip" aria-hidden="true" />
+          </article>
+          <span className="tps-and" aria-hidden="true"><b>+</b></span>
+          <article className="tps-pass t reveal">
+            <span className="tps-holo" aria-hidden="true" />
+            <header><Icon name="rocket" size={20} /><b>Teen member</b><em>13–17</em></header>
+            <ul>
+              <li>Teen topics: gaming, music, snacks, style, apps, school</li>
+              <li>Age-appropriate studies, points shown up front</li>
+              <li>Opens only after a parent or guardian consents</li>
+            </ul>
+            <Link to="/paid-surveys-for-teens" className="tps-go">Teen surveys <Icon name="arrow" size={16} /></Link>
+            <span className="tps-px" aria-hidden="true">{Array.from({ length: 9 }, (_, k) => <i key={k} style={{ '--k': k }} />)}</span>
           </article>
         </div>
       </div>

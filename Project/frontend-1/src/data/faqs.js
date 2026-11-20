@@ -52,12 +52,13 @@ export const FAQ_QUALITY = [
   { q: 'Why was my VPN blocked?', a: 'GEO-IP, proxy and TOR detection require you to connect from your real location.' },
   { q: 'Who carries out manual reviews?', a: 'Our quality verification team reviews flagged accounts and validates professional credentials where applicable.' },
   { q: 'Is my data shared with anyone?', a: 'No, your personal details are never sold or shared with anyone else.' },
+  { q: 'What extra checks apply to teen accounts?', a: 'Age is checked from the date of birth, a parent or guardian must use their own email and give consent before the account opens, login stays locked until then, and teens only receive age-appropriate studies.' },
 ];
 
 export const FAQ_WHO = [
   { q: 'Which countries can join?', a: 'Members join from across Asia-Pacific, Europe, North America, South America, the Middle East and Africa; eligibility is confirmed at sign-up.' },
   { q: 'Do I need a particular job to join?', a: 'No — consumers of every background are welcome, and professionals also receive B2B studies about their work.' },
-  { q: 'Is there a minimum age?', a: 'Yes, you must meet the minimum age shown at sign-up, confirmed using your date of birth.' },
+  { q: 'Is there a minimum age?', a: 'Adults 18+ join as consumers or professionals. Teens aged 13 to 17 can join the Teen Panel with a parent or guardian’s consent. Your date of birth decides which route you take.' },
   { q: 'Can I join if I am not working?', a: 'Absolutely — students, homemakers, retirees and job seekers are all valuable consumer voices.' },
   { q: 'Why do you ask about industry and department?', a: 'It lets us invite you to business studies that match your real expertise.' },
 ];
@@ -74,7 +75,7 @@ export const FAQ_HOW = [
 export const HOME_FAQS = [
   { q: 'Is MyFrequentRewards free to join?', a: 'Yes. Joining, taking surveys and claiming rewards are completely free — we never ask for any payment.' },
   { q: 'How do I earn money online with MyFrequentRewards?', a: 'Sign up, verify your account, complete your profile and take the paid surveys you are matched with; rewards build up in your balance.' },
-  { q: 'Who can join?', a: 'Everyday consumers and business professionals who meet the minimum age in a supported country can join.' },
+  { q: 'Who can join?', a: 'Everyday consumers and business professionals aged 18+ in a supported country, plus teens aged 13 to 17 through the Teen Panel once a parent or guardian consents.' },
   { q: 'How do I get paid?', a: 'Once you reach the claim threshold, choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers. UPI is also available to members in India.' },
   { q: 'How will I know about new surveys?', a: 'Choose alerts through your Account Dashboard, SMS, WhatsApp or email.' },
   { q: 'Is my personal information safe?', a: 'Yes — your personal details are never sold or shared, and answers reach clients only in anonymised form.' },
@@ -84,7 +85,16 @@ export const ALL_FAQS = [
   { cat: 'Getting started', q: 'How do I become a member?', a: 'Complete the short sign-up form, then click the verification link in the confirmation email we send you. Once verified, log in and start taking surveys — please use a valid email address.' },
   { cat: 'Getting started', q: 'Do I have to pay to join?', a: 'No. Registration is completely free and you will never be asked to pay any fee to join or take part in surveys.' },
   { cat: 'Getting started', q: 'What can I do as a member?', a: 'Take part in surveys on many topics, share your opinions with leading brands and research organisations, and earn reward points for successful participation.' },
-  { cat: 'Getting started', q: 'Who can join?', a: 'Members must be at least 18 years old (or the legal age in their country); if you are under 18, parental acknowledgement may be required before activation. Membership availability may vary by country.' },
+  { cat: 'Getting started', q: 'Who can join?', a: 'Adults aged 18 or over (or the legal age in their country) join as consumers or professionals. Teens aged 13 to 17 join the Teen Panel, which opens only after a parent or legal guardian gives consent. Membership availability may vary by country.' },
+  { cat: 'Teen Panel', q: 'Who can join the Teen Panel?', a: 'Teens aged 13 to 17 can join once a parent or legal guardian gives consent. Choose “Teen” on the sign-up page, or simply enter your real date of birth and we switch you to the teen route automatically.' },
+  { cat: 'Teen Panel', q: 'What does my parent or guardian have to do?', a: 'You enter their name, email, phone and date of birth. We email them a Parent/Guardian Onboarding Form; they review it and give consent. Your account stays pending until they do.' },
+  { cat: 'Teen Panel', q: 'Why can’t I log in yet?', a: 'Teen accounts open only after a parent or guardian has completed consent. Once they have, you receive an email to set your password, and then you can log in.' },
+  { cat: 'Teen Panel', q: 'Who can be my parent or guardian on the form?', a: 'Your mother, your father or another adult who is legally responsible for you (a legal guardian). They must be 18 or older and use their own email address, not yours.' },
+  { cat: 'Teen Panel', q: 'What kind of surveys do teens get?', a: 'Age-appropriate studies about gaming, music, snacks, style, apps, school, sport and tech. Every teen study is checked before it is sent, and sensitive topics are never sent to teens without separate permission.' },
+  { cat: 'Teen Panel', q: 'How are teen rewards shown?', a: 'Each invitation shows the points and the time it takes before you start. How rewards are claimed for members under 18 is explained to the parent or guardian in the onboarding form.' },
+  { cat: 'Teen Panel', q: 'Is a teen’s information kept private?', a: 'Yes. Personal details are never sold or shared, answers reach clients only in combined, anonymous form, and teens appear on our reviews pages by first name and last initial only.' },
+  { cat: 'Teen Panel', q: 'Can a teen or parent stop at any time?', a: 'Yes. Taking part is never compulsory. A teen can skip or stop any survey, and a parent or guardian can withdraw consent at any time by writing to support.' },
+  { cat: 'Teen Panel', q: 'What happens when I turn 18?', a: 'Your Teen Panel membership can move to a regular consumer membership, and from then on you manage your own account and consent.' },
   { cat: 'Account', q: 'How do I change my email address or password?', a: 'For security, email changes are handled by support at support@myfrequentrewards.com. To change your password, log in and go to Settings → Change Password.' },
   { cat: 'Account', q: 'Can I update my profile information?', a: 'Yes — most details can be updated in your profile settings, though core details such as date of birth, age and gender may be locked for data integrity. Keeping your profile updated increases your chances of qualifying.' },
   { cat: 'Account', q: 'How do I delete my account?', a: 'Email support@myfrequentrewards.com and confirm the request in the email you receive within 24–48 hours. You can restore your account within 30 days, after which all data is permanently deleted.' },

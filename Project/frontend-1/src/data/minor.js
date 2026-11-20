@@ -112,6 +112,8 @@ export const PROMISE_CHAPTERS = [
 ];
 
 export const FAQ_MINOR = [
+  { q: 'How does teen sign-up work, step by step?', a: 'Choose Teen on the sign-up page (the calendar only shows teen birth years), add your details, then your parent or guardian’s details, tick the consent boxes and type the security code. We email your parent or guardian an onboarding form; once they consent, you get an email to set your password.' },
+  { q: 'Why can’t I log in straight away?', a: 'Teen accounts stay pending until a parent or guardian completes consent. Login is locked until then, so nobody under 18 can take part without permission.' },
   { q: 'Can teenagers join MyFrequentRewards?', a: `Yes. Teens aged ${MIN_SIGNUP_AGE} to 17 can join the teen panel once a parent or legal guardian gives permission and the teen agrees too. Sign up with your real date of birth and we switch you to the teen flow automatically.` },
   { q: 'What does my parent or guardian have to do?', a: 'They receive an invitation by email or SMS and answer 16 short questions in about five minutes: about themselves, the household, how to stay in touch and the teen’s health. Then they give permission, and the teen gives their own yes.' },
   { q: 'Who receives the rewards a teen earns?', a: 'In most markets a reward earned by a member under 18 is paid to the parent or guardian. The parent chooses this in the Treasury world, and every reward is explained before a survey starts.' },

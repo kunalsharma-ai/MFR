@@ -1,3 +1,4 @@
+import { TeenStandards } from '../sections/TrustSections.jsx';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
@@ -45,6 +46,7 @@ export default function Minor() {
       <ParentNotebook />
       <CareCard />
       <PromiseSheets />
+      <TeenStandards compact />
       <FaqSplit id="mn-faq" look="minor" eyebrow="Teen FAQ" title="Questions teens and parents ask" faqs={FAQ_MINOR} hue="#7C3AED" hue2="#FF3B8D" />
       <MinorCta />
     </>
