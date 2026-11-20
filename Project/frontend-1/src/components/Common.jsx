@@ -79,12 +79,12 @@ function FaqArt({ look }) {
       </div>
     );
   }
-  if (look === 'path') {
+  if (look === 'desk') {
     return (
-      <div className="fqa fqa-path" aria-hidden="true">
-        <svg viewBox="0 0 340 170" className="fqa-road"><path d="M10 140 C 80 140, 70 40, 150 50 S 250 140, 330 30" /></svg>
-        {[['?', 'Ask'], ['!', 'Learn'], ['✓', 'Earn']].map(([g, t], k) => <span key={t} className={`fqa-stop k${k}`}><b>{g}</b><small>{t}</small></span>)}
-        <span className="fqa-token" />
+      <div className="fqa fqa-desk" aria-hidden="true">
+        <span className="fqd-board"><small>Now answering</small><span className="fqd-roll"><span>{['01', '02', '03', '04', '05', '06', '01'].map((n, k) => <b key={k}>{n}</b>)}</span></span></span>
+        <span className="fqd-disp"><span className="fqd-slot" /><span className="fqd-tk"><small>Your ticket</small><b>Q</b></span><span className="fqd-face"><i /><i /></span></span>
+        <span className="fqd-lamp" />
       </div>
     );
   }

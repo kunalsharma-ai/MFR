@@ -30,40 +30,51 @@ export function StepStairs() {
   );
 }
 
-/* ── "From hello to reward received": five 3D flip cards; a progress bar fills and the active card flips ── */
+/* ── "From hello to reward received" (Round 12): a metro line. A train glides station to station; the station it
+   stops at prints a boarding ticket with the details. Tap a station to ride there. Vertical line on phones. ── */
 export function FlipJourney() {
   const [vref, visible] = useInView({ once: false, threshold: 0.25 });
   const [on, setOn] = useState(0);
   const [hold, setHold] = useState(false);
   useEffect(() => {
     if (!visible || hold) return undefined;
-    const t = setInterval(() => !isCalm() && setOn((x) => (x + 1) % STEPS.length), 2200);
+    const t = setInterval(() => !isCalm() && setOn((x) => (x + 1) % STEPS.length), 2800);
     return () => clearInterval(t);
   }, [visible, hold]);
+  const s = STEPS[on];
   return (
-    <section ref={vref} className="section fjr" aria-labelledby="journey-title">
+    <section ref={vref} className="section fjr mtr-sec" aria-labelledby="journey-title">
       <div className="container">
         <div className="fjr-head reveal">
           <p className="eyebrow">How it works</p>
           <h2 id="journey-title">From “hello” to <span>“reward received”</span></h2>
-          <p className="sec-sub">Five simple steps. Tap any card to flip it.</p>
+          <p className="sec-sub">One line, five stations. Tap a station to ride there.</p>
         </div>
-        <div className="fjr-track" aria-hidden="true"><i style={{ transform: `scaleX(${(on + 1) / STEPS.length})` }} /><span className="fjr-pos" style={{ transform: `translateX(${(on + 0.5) * 20}%)` }}><b>$</b></span></div>
-        <ol className="fjr-cards" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
-          {STEPS.map((s, i) => (
-            <li key={s.t} style={{ '--c': STEP_C[i] }}>
-              <button type="button" className={`fjr-card${i === on ? ' is-on' : ''}${i < on ? ' is-done' : ''}`} onClick={() => setOn(i)} aria-pressed={i === on}>
-                <span className="fjr-face front"><em>{String(i + 1).padStart(2, '0')}</em><span className="fjr-ico"><Icon name={s.icon} size={28} /></span><b>{s.t}</b></span>
-                <span className="fjr-face back"><b>{s.t}</b><small>{s.d}</small><Icon name="check" size={18} stroke={3} /></span>
-              </button>
-            </li>
-          ))}
-        </ol>
+        <div className="mtr" style={{ '--p': on / (STEPS.length - 1), '--c': STEP_C[on] }} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
+          <div className="mtr-line" aria-hidden="true"><i /><span className="mtr-train"><b /><b /><em /></span></div>
+          <ol className="mtr-stops">
+            {STEPS.map((x, i) => (
+              <li key={x.t} style={{ '--c': STEP_C[i] }} className={`${i === on ? 'on' : ''}${i < on ? ' done' : ''}`}>
+                <button type="button" onClick={() => setOn(i)} aria-pressed={i === on}>
+                  <span className="mtr-dot"><Icon name={i < on ? 'check' : x.icon} size={18} stroke={i < on ? 3 : 2} /></span>
+                  <span className="mtr-name"><small>Station {i + 1}</small>{x.t}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="mtr-ticket" key={on} aria-live="polite">
+            <div className="mtr-tk-main">
+              <p className="mtr-tk-k">Boarding pass · stop {on + 1} of {STEPS.length}</p>
+              <h3><span className="mtr-tk-ic"><Icon name={s.icon} size={22} /></span>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+            <div className="mtr-tk-stub" aria-hidden="true"><small>Next</small><b>{on < STEPS.length - 1 ? STEPS[on + 1].t : 'Ride again'}</b><span className="mtr-tk-bar">{Array.from({ length: 18 }, (_, k) => <i key={k} style={{ '--w': `${1 + ((k * 5 + on) % 3)}px` }} />)}</span></div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-
 
 // Teen Panel route (13–17): same journey, one extra gate: a parent or guardian approves before the account opens.
 const TEEN_PATH = [

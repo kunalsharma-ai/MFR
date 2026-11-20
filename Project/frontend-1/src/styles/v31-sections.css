@@ -99,7 +99,7 @@
 
 @media (max-width: 900px) { .fqa { transform: scale(.82); transform-origin: 0 0; margin-bottom: -20px; } }
 @media (prefers-reduced-motion: reduce) { .fqa *, .fqa *::before { animation: none !important; opacity: 1 !important; } .fqa-chip, .fqa-gift .fqa-coin { display: none; } }
-html[data-mode="dark"] .fq-chat, html[data-mode="dark"] .fq-path, html[data-mode="dark"] .fq-gift { background: #12141C; }
+html[data-mode="dark"] .fq-chat, html[data-mode="dark"] .fq-desk, html[data-mode="dark"] .fq-gift { background: #12141C; }
 html[data-mode="dark"] .fqa-phone { background: #1D222C; }
 
 /* ════ Who can join · departments honeycomb + company-size bubbles ════ */
