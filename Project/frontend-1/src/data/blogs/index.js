@@ -5,6 +5,16 @@ import { PART4A } from './part4a.js';
 import { PART4B } from './part4b.js';
 import { PART4C } from './part4c.js';
 import { PART4D } from './part4d.js';
+import { PART5A } from './part5a.js';
+import { PART5B } from './part5b.js';
+import { PART5C } from './part5c.js';
+import { PART5D } from './part5d.js';
+import { PART5E } from './part5e.js';
+import { PART5F } from './part5f.js';
+import { PART5G } from './part5g.js';
+import { PART5H } from './part5h.js';
+import { PART5I } from './part5i.js';
+import { PART5J } from './part5j.js';
 import { EXTRA_A } from './extra-a.js';
 import { EXTRA_A2 } from './extra-a2.js';
 import { EXTRA_A3 } from './extra-a3.js';
@@ -79,7 +89,7 @@ export const wordCount = (post) => {
 };
 const withReadTime = (p) => ({ ...p, readMins: Math.max(1, Math.round(wordCount(p) / 220)) });
 
-export const BLOGS = [...PART1, ...PART2, ...PART3, ...PART4A, ...PART4B, ...PART4C, ...PART4D].map(merge).map((p) => withReadTime(p)).sort((a, b) => (a.date < b.date ? 1 : -1));
+export const BLOGS = [...PART1, ...PART2, ...PART3, ...PART4A, ...PART4B, ...PART4C, ...PART4D, ...PART5A, ...PART5B, ...PART5C, ...PART5D, ...PART5E, ...PART5F, ...PART5G, ...PART5H, ...PART5I, ...PART5J].map(merge).map((p) => withReadTime(p)).sort((a, b) => (a.date < b.date ? 1 : -1));
 
 export const BLOG_CATEGORIES = ['All', ...Array.from(new Set(BLOGS.map((b) => b.category)))];
 

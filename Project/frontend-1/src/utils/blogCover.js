@@ -53,6 +53,26 @@ const PICK = {
   'how-to-earn-money-online-with-surveys': ['rocket', 1],
   'online-jobs-without-investment-guide': ['rocket', 8],
   'make-money-online-from-home': ['house', 10],
+  'paid-surveys-for-teens-guide': ['rocket', 11],
+  'parental-consent-online-surveys': ['shield', 2],
+  'teen-online-safety-checklist': ['checklist', 10],
+  'why-brands-want-gen-z-opinions': ['chat', 11],
+  'teen-money-skills-first-rewards': ['wallet', 8],
+  'gaming-surveys-for-teens': ['bolt', 5],
+  'teen-screen-time-digital-wellbeing': ['clock', 3],
+  'teen-privacy-data-rights-explained': ['shield', 7],
+  'balance-school-and-online-surveys': ['cap', 9],
+  'turning-18-teen-to-adult-account': ['gift', 10],
+  'ai-in-market-research-2026': ['bulb', 7],
+  'synthetic-data-vs-real-opinions': ['chart', 2],
+  'zero-party-data-explained': ['shield', 9],
+  'mobile-first-survey-trends': ['phone', 3],
+  'music-streaming-surveys-for-teens': ['chat', 2],
+  'sustainability-surveys-green-consumers': ['globe', 3],
+  'quick-commerce-shopping-habits': ['bolt', 6],
+  'creator-economy-consumer-opinions': ['rocket', 4],
+  'voice-and-video-surveys-future': ['chat', 0],
+  'digital-payments-upi-trends-surveys': ['wallet', 10],
 };
 const MOTIFS = ['bulb', 'wallet', 'house', 'cap', 'clock', 'phone', 'shield', 'checklist', 'chart', 'chat', 'gift', 'bolt', 'globe', 'rocket'];
 
@@ -63,7 +83,7 @@ export function coverPick(slug) {
   const p = PICK[slug];
   if (p) return { motif: p[0], pal: PALETTES[p[1]] };
   const h = hash(slug);
-  return { motif: MOTIFS[h % MOTIFS.length], pal: PALETTES[(h >> 5) % PALETTES.length] };
+  return { motif: MOTIFS[h % MOTIFS.length], pal: PALETTES[(h >>> 5) % PALETTES.length] };
 }
 
 let U = 'x'; // id suffix of the cover being drawn (unique per instance on a page)

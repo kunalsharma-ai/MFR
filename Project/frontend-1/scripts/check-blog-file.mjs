@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 const file = path.resolve(process.argv[2]);
 const mod = await import(pathToFileURL(file).href + '?t=' + Date.now());
 const posts = Object.values(mod).find(Array.isArray);
-const ROUTES = ['/', '/how-it-works', '/rewards-and-payouts', '/paid-surveys-for-consumers', '/paid-surveys-for-professionals', '/who-can-join', '/quality-and-data-security', '/about-us', '/faq', '/contact-us', '/blog', '/sign-up', '/privacy', '/gdpr', '/cookies', '/terms', '/profiling'];
+const ROUTES = ['/', '/how-it-works', '/rewards-and-payouts', '/paid-surveys-for-consumers', '/paid-surveys-for-professionals', '/who-can-join', '/quality-and-data-security', '/about-us', '/faq', '/contact-us', '/blog', '/sign-up', '/privacy', '/gdpr', '/cookies', '/terms', '/profiling', '/paid-surveys-for-teens', '/trust-and-safety', '/about-us/reviews', '/rewards'];
 const BANNED = [/\bpanel(ist)?s?\b/i, /swagbucks/i, /kashkick/i, /branded surveys/i, /paytm/i, /clinical/i, /drug trial/i, /free money instantly/i, /guarantee[ds]? (income|earnings)/i, /\bexample\b/i];
 const strip = (t) => t.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 let fail = 0;
