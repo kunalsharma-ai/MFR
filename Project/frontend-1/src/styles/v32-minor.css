@@ -640,3 +640,60 @@ html[data-mode="dark"] .sx-type.t-teen.on { background: #221a3e; }
 .lx-teen p { margin: 0; font-size: .86rem; line-height: 1.45; color: #3b2a5c; }
 html[data-mode="dark"] .lx-teen { background: #221a3e; border-color: #3a2c66; }
 html[data-mode="dark"] .lx-teen p { color: #e6dcff; }
+
+/* ════ Home "Who are you today?" · third world: Teen (portal reveal over the consumer/pro split) ════ */
+.cmp-layer.l-t { z-index: 3; clip-path: circle(0% at 50% 8%); transition: clip-path 1s cubic-bezier(.6, .05, .25, 1); pointer-events: none; }
+.cmp-stage.on-t .cmp-layer.l-t { clip-path: circle(150% at 50% 8%); pointer-events: auto; }
+.cmp-stage.on-t .cmp-handle, .cmp-stage.on-t .cmp-pick.c, .cmp-stage.on-t .cmp-pick.p { opacity: 0; pointer-events: none; }
+.cmp-handle, .cmp-pick { transition: opacity .4s; }
+.cmp-pick.t { left: 50%; transform: translateX(-50%); display: inline-flex; gap: 5px; align-items: center; color: #fff; background: linear-gradient(120deg, #7C3AED, #FF3B8D); box-shadow: 0 8px 20px -8px rgba(124, 58, 237, .8); z-index: 6; }
+.ws-t { color: #F5EEFF; background:
+  radial-gradient(60% 80% at 85% 20%, rgba(34, 211, 238, .35), transparent 60%),
+  radial-gradient(50% 70% at 100% 100%, rgba(255, 59, 141, .5), transparent 62%),
+  linear-gradient(140deg, #1A0B3A 0%, #4C1D95 45%, #9D174D 100%); }
+.ws-t::before { content: ''; position: absolute; left: -10%; right: -10%; bottom: -12%; height: 55%; pointer-events: none;
+  background-image: linear-gradient(rgba(34, 211, 238, .45) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 59, 141, .4) 1px, transparent 1px);
+  background-size: 48px 30px; transform: perspective(420px) rotateX(60deg); transform-origin: 50% 100%; mask-image: linear-gradient(180deg, transparent, #000 70%);
+  animation: wsGrid 3s linear infinite; }
+@keyframes wsGrid { to { background-position: 0 30px, 0 0; } }
+.ws-t .ws-tag { background: rgba(255, 255, 255, .14); color: #FDE68A; }
+.ws-t .ws-chips li { background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); color: #fff; }
+.ws-t .ws-stats b { color: #67E8F9; text-shadow: 0 0 16px rgba(34, 211, 238, .6); }
+.ws-t .ws-cta { background: linear-gradient(120deg, #FDE68A, #FF8A3D); color: #3B0A45; box-shadow: 0 14px 26px -14px rgba(255, 138, 61, .9); }
+.ws-t .ws-art { right: 8%; }
+.ws-t .ws-icon { color: #fff; background: linear-gradient(135deg, rgba(124, 58, 237, .9), rgba(255, 59, 141, .9)); box-shadow: 0 0 0 6px rgba(255, 255, 255, .08), 0 0 50px rgba(255, 59, 141, .6); animation: wsBob 3.2s ease-in-out infinite; }
+.ws-t .ws-sat { color: #fff; background: linear-gradient(135deg, #22D3EE, #7C3AED); box-shadow: 0 0 18px rgba(34, 211, 238, .6); animation: wsSat 5s ease-in-out infinite; }
+@keyframes wsBob { 50% { transform: translateY(-8px) rotate(-4deg); } }
+.ws-t .ws-orb.o1 { width: 300px; height: 300px; right: -80px; bottom: -120px; background: radial-gradient(closest-side, rgba(253, 230, 138, .45), transparent); }
+@media (max-width: 860px) {
+  .cmp-layer.l-t { clip-path: none !important; position: relative; }
+  .cmp-pick.t { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ws-t::before, .ws-t .ws-icon, .ws-t .ws-sat { animation: none !important; } }
+
+/* Spin machine: Teens tab (round 11) */
+.sv-switch:has(button:nth-of-type(3)) { grid-template-columns: repeat(3, 1fr); }
+.sv-switch:has(button:nth-of-type(3)) .sv-pill { width: calc(33.333% - 3.4px); }
+.sv-pro .sv-switch:has(button:nth-of-type(3)) .sv-pill { transform: translateX(100%); }
+.sv-teen .sv-pill { transform: translateX(200%); background: linear-gradient(135deg, #8B5CF6, #FF3B8D 60%, #FFB020); }
+.sv.sv-teen { background: radial-gradient(55% 60% at 90% 0%, rgba(255, 59, 141, .28), transparent 60%), radial-gradient(60% 60% at 0% 100%, rgba(20, 201, 181, .22), transparent 60%), linear-gradient(180deg, #1A0B3D, #2B0F57); color: #F1E9FF; }
+.sv-teen .sv-head h2 { color: #fff; }
+.sv-teen .sv-head .sec-sub, .sv-teen .arc-note { color: #CDBBF5; }
+.sv-teen .sv-switch { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .18); }
+.sv-teen .sv-switch button { color: #E3D6FF; }
+.sv-teen .sv-switch button.on { color: #fff; }
+.sv-teen .btn-ghost-dark { color: #fff; border-color: rgba(255, 255, 255, .4); }
+.sv-teen .sv-deco i { background: radial-gradient(circle, rgba(255, 59, 141, .16), transparent 65%); }
+.sv-neon { background: linear-gradient(90deg, #7CF7FF, #FF7AD9, #FFD36B); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 24px rgba(255, 122, 217, .35); }
+.sw-teen .sw-wheel { box-shadow: 0 0 0 6px rgba(255, 255, 255, .12), 0 0 40px rgba(255, 59, 141, .45), 0 0 80px rgba(124, 247, 255, .2); }
+.sw-teen .sw-rim i { background: #7CF7FF; box-shadow: 0 0 10px #7CF7FF, 0 0 18px #FF7AD9; animation-duration: .7s; }
+.sw-teen .sw-rim i:nth-child(odd) { background: #FF7AD9; animation-delay: .35s; }
+.sw-teen .sw-hub { border-color: #2B0F57; background: radial-gradient(circle at 35% 30%, #FFF1A8, #FFB020 50%, #FF3B8D); color: #2B0F57; box-shadow: 0 0 0 4px rgba(255, 211, 107, .4), 0 0 30px rgba(255, 176, 32, .7); }
+.sw-teen .sw-ticket { background: rgba(255, 255, 255, .1); color: #fff; border: 1px solid rgba(255, 255, 255, .2); backdrop-filter: blur(10px); box-shadow: 0 24px 50px -28px rgba(0, 0, 0, .7), inset 6px 0 0 var(--tone); }
+.sw-teen .sw-ticket h3 { color: #fff; }
+.sw-teen .sw-t-desc, .sw-teen .sw-t-tag, .sw-teen .sw-t-stats small { color: #D9CCFF; }
+.sw-teen .sw-t-stats b { color: #FFD36B; }
+.sw-teen .sw-chips button { background: rgba(255, 255, 255, .08); color: #EDE4FF; border-color: rgba(255, 255, 255, .2); }
+.sw-teen .sw-chips button.on { background: var(--tone); color: #fff; }
+@media (max-width: 560px) { .sv-switch:has(button:nth-of-type(3)) button { padding: 10px 4px; font-size: .78rem; gap: 4px; } .sv-switch:has(button:nth-of-type(3)) button b { display: none; } }
+html .sw-teen .sw-chips button:not(.on) { color: #EDE4FF !important; border-color: color-mix(in srgb, var(--tone) 55%, transparent) !important; }

@@ -25,7 +25,7 @@ export function normalizeReview(r) {
     country: clean(r.country && r.country.length > 2 ? r.country : BY_ISO[iso] || r.place || '', 60),
     company: clean(r.company, 60),
     designation: clean(r.designation, 60),
-    segment: r.segment === 'professional' || (!r.segment && clean(r.company, 60)) ? 'professional' : 'consumer',
+    segment: r.segment === 'teen' ? 'teen' : r.segment === 'professional' || (!r.segment && clean(r.company, 60)) ? 'professional' : 'consumer',
     rating: rating >= 1 && rating <= 5 ? Math.round(rating) : null,
     text,
     createdAt: r.createdAt || null,
@@ -42,7 +42,7 @@ export function rememberOwnReview(r) {
   window.dispatchEvent(new CustomEvent(REVIEW_EVENT, { detail: r }));
 }
 
-const key = (r) => `${r.segment === 'professional' ? 'p' : 'c'}|${r.name.toLowerCase()}|${r.text.slice(0, 40).toLowerCase()}`; // same person + same words + same member type = one review
+const key = (r) => `${r.segment === 'professional' ? 'p' : r.segment === 'teen' ? 't' : 'c'}|${r.name.toLowerCase()}|${r.text.slice(0, 40).toLowerCase()}`; // same person + same words + same member type = one review
 // Newest live reviews first, then the reviewer's own (if not yet live), then the static set — de-duplicated.
 export function mergeReviews(live, own, base) {
   const seen = new Set();

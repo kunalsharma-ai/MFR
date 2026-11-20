@@ -105,8 +105,24 @@ const P = [
   ['Leila Haddad', 'MA', 'Export Sales Manager · Industrial Products', 4, 'International sales research is relevant to my work, particularly topics involving buyer expectations, distribution channels, and cross-border business.'],
 ];
 
+
+// Teen Panel (13–17): dummy testimonials for the preview build only. Minors are shown by first name and last initial,
+// with age band and country only (no school, city or photo). Replace with real, parent-consented reviews before publishing.
+const T = [
+  ['Aanya K.', 'IN', 'Teen Panel · Age 15', 5, 'The gaming survey actually asked what I think about in-game purchases. My mum set up the consent in five minutes and I got my first points the same week.'],
+  ['Jayden M.', 'US', 'Teen Panel · Age 16', 5, 'Short surveys about music apps and snacks, which is stuff I actually know about. I like that the points are shown before I start.'],
+  ['Chloe B.', 'GB', 'Teen Panel · Age 14', 4, 'My dad read the parent form first and then said yes. The questions are about normal things like school and apps, nothing weird.'],
+  ['Lucas F.', 'BR', 'Teen Panel · Age 17', 5, 'I did a study about sports shoes and another about streaming. It feels good that brands want to hear from people our age.'],
+  ['Mei L.', 'SG', 'Teen Panel · Age 15', 4, 'Surveys are quick and the topics change a lot: tech, AI helpers, fashion. I save my points for gift cards.'],
+  ['Omar H.', 'AE', 'Teen Panel · Age 16', 5, 'My guardian gets updates too, so my family is fine with it. The security code at sign-up was easy and it never logged me in by accident.'],
+  ['Sofia R.', 'ES', 'Teen Panel · Age 14', 4, 'I liked that I could stop any survey if I did not want to answer. The design is fun and the spin wheel is cool.'],
+  ['Ethan W.', 'AU', 'Teen Panel · Age 17', 5, 'Studies about learning apps and exam stress felt useful. It is nice to give feedback that might change the apps we use every day.'],
+  ['Zara N.', 'NG', 'Teen Panel · Age 15', 4, 'I asked my mum to help with sign-up and she filled in the parent form on her phone. Now I take a survey most weekends.'],
+  ['Noah S.', 'CA', 'Teen Panel · Age 16', 5, 'The snack and drink tests are my favourite. The site explains everything clearly and my points add up fast.'],
+];
+
 export const ALL_CONFIRMED_REAL_AND_CONSENTED = false;
 
 const row = (segment) => ([name, iso, designation, rating, text, publish = false], i) => ({ id: `sup-${segment}-${i + 1}`, name, iso, designation, rating, text, segment, publish: ALL_CONFIRMED_REAL_AND_CONSENTED || publish });
 
-export const SUPPLIED_TESTIMONIALS = [...C.map(row('consumer')), ...P.map(row('professional'))];
+export const SUPPLIED_TESTIMONIALS = [...C.map(row('consumer')), ...P.map(row('professional')), ...T.map(row('teen'))];

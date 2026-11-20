@@ -14,7 +14,7 @@ import '../styles/rv2-flag-avatar.css';
 
 // Ratings & Reviews (v3.1 redesign)
 //  1. Hero: coral (Consumers) and navy + gold (Professionals) halves; two review streams flow past a spinning gold score medal
-//  2. Switch: Consumer reviews or Professional reviews, plus search and country filter
+//  2. Switch: Consumer, Professional or Teen reviews, plus search and country filter
 //  3. Consumers: white cards with a coral edge · 4. Professionals: navy glass cards with gold stars
 //  Every card shows name, title, country name + flag and the star rating (only when the member gave one).
 // Every review shown is a real, published review (supplied testimonials appear only in the preview build,
@@ -82,7 +82,7 @@ function ReviewStage({ con, pro, avg }) {
   );
 }
 
-function Hero({ reviews, con, pro, countries }) {
+function Hero({ reviews, con, pro, teen, countries }) {
   const [w, setW] = useState(0);
   const [ref, seen] = useInView({ once: true, threshold: 0.1 });
   useEffect(() => { const t = setInterval(() => setW((x) => x + 1), 2200); return () => clearInterval(t); }, []);
@@ -93,13 +93,13 @@ function Hero({ reviews, con, pro, countries }) {
       <div className="container rxh-row">
         <div className="rxh-copy">
           <Breadcrumbs items={crumbs} />
-          <p className="rxh-eyebrow"><span className="rxh-live" /> Consumers &amp; Professionals · real member reviews</p>
+          <p className="rxh-eyebrow"><span className="rxh-live" /> Consumers, Professionals &amp; Teens · real member reviews</p>
           <h1 id="rvh-title" className="rxh-title">
             <span>{page.h1.replace(/ from our members$/, '')}</span>
             <span className="rxh-l2">from our members</span>
           </h1>
           <p className="rxh-kin">Written at <span className="rxh-swap" key={w}>{PLACES[w % PLACES.length]}</span> in {countries || 'many'} {countries === 1 ? 'country' : 'countries'}.</p>
-          <p className="rxh-lead">Every review comes from a real member and shows their name, title, country and star rating. Consumers talk about everyday surveys; business professionals rate our expert B2B studies.</p>
+          <p className="rxh-lead">Every review comes from a real member and shows their name, title, country and star rating. Consumers talk about everyday surveys; business professionals rate our expert B2B studies; Teen Panel members (13–17, with parental consent) share what age-appropriate research is like.</p>
           <div className="rxh-cta">
             <RateButton className="btn rxh-go btn-lg" icon="star" label="Rate your experience" outLabel="Rate us" />
             <a className="btn rxh-ghost btn-lg" href="#rv-doors"><Icon name="chat" size={18} /> Read the reviews</a>
@@ -108,6 +108,7 @@ function Hero({ reviews, con, pro, countries }) {
             <li><b>{avg ? <CountUp to={avg} dec={1} run={seen} /> : '–'}<small>/5</small></b><span>average rating</span></li>
             <li className="c"><b><CountUp to={con.length} run={seen} /></b><span>consumer reviews</span></li>
             <li className="p"><b><CountUp to={pro.length} run={seen} /></b><span>professional reviews</span></li>
+            <li className="t"><b><CountUp to={teen.length} run={seen} /></b><span>teen reviews</span></li>
           </ul>
         </div>
         <ReviewStage con={con} pro={pro} avg={avg} />
@@ -117,9 +118,10 @@ function Hero({ reviews, con, pro, countries }) {
 }
 
 // ── 2. Switch: Consumers or Professionals, plus search and country filter ──────────────────────────────────
-function Doors({ con, pro, q, setQ, iso, setIso, countries }) {
+function Doors({ con, pro, teen, q, setQ, iso, setIso, countries }) {
   const ca = avgOf(con);
   const pa = avgOf(pro);
+  const ta = avgOf(teen);
   const go = (id) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   return (
     <section id="rv-doors" className="rxd" aria-label="Choose reviews">
@@ -133,6 +135,11 @@ function Doors({ con, pro, q, setQ, iso, setIso, countries }) {
           <button type="button" className="rxd-door p" onClick={() => go('rv-pro')}>
             <span className="rxd-ic"><Icon name="briefcase" size={26} /></span>
             <span className="rxd-t"><small>For business professionals</small><b>Professional reviews</b><em>{pro.length} {pro.length === 1 ? 'review' : 'reviews'}{pa ? ` · ${pa.toFixed(1)} ★` : ''}</em></span>
+            <Icon name="arrow" size={20} />
+          </button>
+          <button type="button" className="rxd-door t" onClick={() => go('rv-teen')}>
+            <span className="rxd-ic"><Icon name="rocket" size={26} /></span>
+            <span className="rxd-t"><small>Teen Panel · ages 13–17</small><b>Teen reviews</b><em>{teen.length} {teen.length === 1 ? 'review' : 'reviews'}{ta ? ` · ${ta.toFixed(1)} ★` : ''}</em></span>
             <Icon name="arrow" size={20} />
           </button>
         </div>
@@ -171,9 +178,9 @@ function StarFilter({ list, v, set, label }) {
   );
 }
 
-function ReviewCardX({ r, i, pro }) {
+function ReviewCardX({ r, i, pro, teen }) {
   return (
-    <article className={`rxc ${pro ? 'p' : 'c'}`} style={{ '--i': i % PAGE_SIZE }}>
+    <article className={`rxc ${pro ? 'p' : teen ? 't' : 'c'}`} style={{ '--i': i % PAGE_SIZE }}>
       <Tag r={r} />
       <span className="rxc-q" aria-hidden="true">“</span>
       <StarRow n={r.rating} size={18} />
@@ -181,12 +188,21 @@ function ReviewCardX({ r, i, pro }) {
       <footer>
         <ReviewerId r={r} tone={pro ? 'pro' : 'con'} />
         {pro ? <span className="rxc-seal" title="Professional member"><Icon name="check" size={12} stroke={3} /></span> : null}
+        {teen ? <span className="rxc-seal t" title="Parent or guardian consent on file"><Icon name="shield" size={12} stroke={3} /></span> : null}
       </footer>
     </article>
   );
 }
 
-function ReviewSection({ list, pro }) {
+const KIND = {
+  c: { id: 'rv-con', h: 'rxc-title', kick: 'Consumers', ic: 'user', bg: '★', title: <>Everyday people, <em>real rewards</em></>, sub: 'Shoppers, parents, students and travellers on what it is like to get rewarded for their opinions.', empty: 'Be the first to review us', emptyP: 'Tell other members what sharing your opinions with MyFrequentRewards is like.', eic: 'star', lab: 'consumer' },
+  p: { id: 'rv-pro', h: 'rxp-title', kick: 'Business professionals', ic: 'briefcase', bg: '◆', title: <>Experts rate <em>our B2B studies</em></>, sub: 'Managers, specialists, founders and decision-makers on paid expert research that values their time.', empty: 'Be the first professional voice', emptyP: 'Managers, specialists, founders and decision-makers: tell other professionals what B2B studies with MyFrequentRewards are like.', eic: 'briefcase', lab: 'professional' },
+  t: { id: 'rv-teen', h: 'rxt-title', kick: 'Teen Panel · 13–17', ic: 'rocket', bg: '✦', title: <>Teens say it <em>out loud</em></>, sub: 'Gamers, music lovers, students and creators on age-appropriate surveys, joined with a parent or guardian’s consent. Teens are shown by first name and last initial only.', empty: 'Be the first teen voice', emptyP: 'Teen Panel members can rate us once a parent or guardian has approved their account.', eic: 'rocket', lab: 'teen' },
+};
+
+function ReviewSection({ list, pro, teen }) {
+  const k = pro ? 'p' : teen ? 't' : 'c';
+  const K = KIND[k];
   const [band, setBand] = useState(0);
   const [shown, setShown] = useState(PAGE_SIZE);
   const view = band ? list.filter((r) => (band === 3 ? r.rating && r.rating <= 3 : r.rating === band)) : list;
@@ -194,15 +210,15 @@ function ReviewSection({ list, pro }) {
   const rated = list.filter((r) => r.rating).length;
   const [ref, seen] = useInView({ once: true, threshold: 0.12 });
   return (
-    <section id={pro ? 'rv-pro' : 'rv-con'} className={`rxs2 ${pro ? 'p' : 'c'}${seen ? ' is-in' : ''}`} ref={ref} aria-labelledby={pro ? 'rxp-title' : 'rxc-title'}>
-      <div className="rxs2-bg" aria-hidden="true">{Array.from({ length: 8 }, (_, k) => <i key={k} style={{ '--k': k }}>{pro ? '◆' : '★'}</i>)}</div>
+    <section id={K.id} className={`rxs2 ${k}${seen ? ' is-in' : ''}`} ref={ref} aria-labelledby={K.h}>
+      <div className="rxs2-bg" aria-hidden="true">{Array.from({ length: 8 }, (_, j) => <i key={j} style={{ '--k': j }}>{K.bg}</i>)}</div>
       <div className="container">
         <div className="rxs2-top">
           <header className="rxs2-head">
-            <p className="rxs2-kick"><Icon name={pro ? 'briefcase' : 'user'} size={15} /> {pro ? 'Business professionals' : 'Consumers'}</p>
-            <h2 id={pro ? 'rxp-title' : 'rxc-title'}>{pro ? <>Experts rate <em>our B2B studies</em></> : <>Everyday people, <em>real rewards</em></>}</h2>
-            <p className="rxs2-sub">{pro ? 'Managers, specialists, founders and decision-makers on paid expert research that values their time.' : 'Shoppers, parents, students and travellers on what it is like to get rewarded for their opinions.'}</p>
-            <StarFilter list={list} v={band} set={(k) => { setBand(k); setShown(PAGE_SIZE); }} label={pro ? 'Filter professional reviews by rating' : 'Filter consumer reviews by rating'} />
+            <p className="rxs2-kick"><Icon name={K.ic} size={15} /> {K.kick}</p>
+            <h2 id={K.h}>{K.title}</h2>
+            <p className="rxs2-sub">{K.sub}</p>
+            <StarFilter list={list} v={band} set={(x) => { setBand(x); setShown(PAGE_SIZE); }} label={`Filter ${K.lab} reviews by rating`} />
           </header>
           <div className="rxs2-score" role="img" aria-label={avg ? `${avg.toFixed(1)} out of 5 from ${rated} rated reviews` : 'No ratings yet'}>
             <b>{avg ? avg.toFixed(1) : '–'}</b>
@@ -211,13 +227,13 @@ function ReviewSection({ list, pro }) {
           </div>
         </div>
         {view.length ? (
-          <div className="rxs2-grid" key={band}>{view.slice(0, shown).map((r, i) => <ReviewCardX key={r.id} r={r} i={i} pro={pro} />)}</div>
+          <div className="rxs2-grid" key={band}>{view.slice(0, shown).map((r, i) => <ReviewCardX key={r.id} r={r} i={i} pro={pro} teen={teen} />)}</div>
         ) : (
           <div className="rxs2-empty">
-            <span aria-hidden="true"><Icon name={pro ? 'briefcase' : 'star'} size={32} /></span>
-            <h3>{list.length ? 'No reviews match these filters' : pro ? 'Be the first professional voice' : 'Be the first to review us'}</h3>
-            <p>{pro ? 'Managers, specialists, founders and decision-makers: tell other professionals what B2B studies with MyFrequentRewards are like.' : 'Tell other members what sharing your opinions with MyFrequentRewards is like.'}</p>
-            <RateButton className="btn rxh-go" icon="pen" label="Write a review" outLabel="Rate us" />
+            <span aria-hidden="true"><Icon name={K.eic} size={32} /></span>
+            <h3>{list.length ? 'No reviews match these filters' : K.empty}</h3>
+            <p>{K.emptyP}</p>
+            {teen ? <Link to="/sign-up?type=teen" className="btn rxh-go">Join the Teen Panel</Link> : <RateButton className="btn rxh-go" icon="pen" label="Write a review" outLabel="Rate us" />}
           </div>
         )}
         {view.length > shown ? <p className="rvx-more"><button type="button" className="btn rxh-go" onClick={() => setShown((n) => n + PAGE_SIZE)}>More reviews ({view.length - shown}) <Icon name="arrow" size={16} /></button></p> : null}
@@ -241,18 +257,20 @@ export default function Reviews() {
     if (q.trim()) { const t = q.trim().toLowerCase(); l = l.filter((r) => `${r.text} ${r.name} ${r.country} ${r.designation} ${r.company}`.toLowerCase().includes(t)); }
     return l;
   }, [reviews, q, iso]);
-  const con = reviews.filter((r) => r.segment !== 'professional');
+  const con = reviews.filter((r) => r.segment === 'consumer');
   const pro = reviews.filter((r) => r.segment === 'professional');
+  const teen = reviews.filter((r) => r.segment === 'teen');
   const preview = reviews.some((r) => r.preview);
 
   return (
     <>
       <PageSeo page={page} crumbs={crumbs} />
-      <Hero reviews={reviews} con={con} pro={pro} countries={countries.length} />
-      <Doors con={con} pro={pro} q={q} setQ={setQ} iso={iso} setIso={setIso} countries={countries} />
+      <Hero reviews={reviews} con={con} pro={pro} teen={teen} countries={countries.length} />
+      <Doors con={con} pro={pro} teen={teen} q={q} setQ={setQ} iso={iso} setIso={setIso} countries={countries} />
       {preview ? <p className="rvx-prevnote container"><Icon name="eye" size={14} /> Preview build — includes supplied testimonials marked “Preview data” that are not on the live site until confirmed.</p> : null}
-      <ReviewSection list={filtered.filter((r) => r.segment !== 'professional')} key={`c${q}${iso}`} />
+      <ReviewSection list={filtered.filter((r) => r.segment === 'consumer')} key={`c${q}${iso}`} />
       <ReviewSection pro list={filtered.filter((r) => r.segment === 'professional')} key={`p${q}${iso}`} />
+      <ReviewSection teen list={filtered.filter((r) => r.segment === 'teen')} key={`t${q}${iso}`} />
 
       <section className="rvr" aria-labelledby="rvr-title">
         <div className="container rvr-row">

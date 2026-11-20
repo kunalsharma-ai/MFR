@@ -31,4 +31,16 @@ export const PRO_SURVEYS = [
 
 // All consumer surveys: the six supplied categories first, then the additional ones
 export const ALL_CONSUMER_SURVEYS = [...SURVEY_CATEGORIES.map((s) => ({ ...s, seg: 'consumer' })), ...CONSUMER_SURVEYS];
+// Teen Panel (13–17, with a parent's or guardian's permission). Rewards are in points; every study is reviewed for teens.
+export const TEEN_SURVEYS = [
+  { id: 't-games', seg: 'teen', tag: 'Gaming', title: 'Games & Esports', desc: 'The games you play, the streamers you watch and what makes a game worth it.', range: '400–900 pts', mins: 10, icon: 'game', tone: '#7C3AED' },
+  { id: 't-music', seg: 'teen', tag: 'Music', title: 'Music & Playlists', desc: 'Artists, playlists, concerts and the apps you listen on.', range: '300–700 pts', mins: 8, icon: 'music', tone: '#FF3B8D' },
+  { id: 't-snacks', seg: 'teen', tag: 'Snacks', title: 'Snacks & Drinks', desc: 'New flavours, school-break snacks and what you would actually buy again.', range: '300–600 pts', mins: 8, icon: 'heart', tone: '#F59E0B' },
+  { id: 't-style', seg: 'teen', tag: 'Style', title: 'Fashion & Sneakers', desc: 'What you wear, where you find it and who you take cues from.', range: '400–800 pts', mins: 10, icon: 'sparkle', tone: '#D946EF' },
+  { id: 't-apps', seg: 'teen', tag: 'Apps', title: 'Apps & Social', desc: 'The apps you keep open, what you post and what you would change.', range: '400–900 pts', mins: 9, icon: 'mobile', tone: '#22D3EE' },
+  { id: 't-school', seg: 'teen', tag: 'School', title: 'School & Learning', desc: 'Study tools, online classes and how you like to learn.', range: '300–700 pts', mins: 10, icon: 'book', tone: '#2F6BFF' },
+  { id: 't-sport', seg: 'teen', tag: 'Sport', title: 'Sport & Hobbies', desc: 'Teams, training, gear and what you do when you are not online.', range: '300–700 pts', mins: 9, icon: 'trophy', tone: '#22C55E' },
+  { id: 't-ai', seg: 'teen', tag: 'Tech & AI', title: 'Tech & AI', desc: 'Gadgets, AI helpers and the tech you find exciting or worrying.', range: '400–900 pts', mins: 10, icon: 'bot', tone: '#6366F1' },
+];
+
 export const TIER_LABEL = { 1: 'Standard B2B reward', 2: 'Higher reward', 3: 'Premium reward' };

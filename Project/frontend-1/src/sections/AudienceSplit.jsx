@@ -25,7 +25,19 @@ const SIDES = {
     icon: 'briefcase',
     stats: [['Higher', 'B2B rewards'], ['Verified', 'members only']],
   },
+  t: {
+    tag: 'For teens · 13–17',
+    title: 'Play it. Rate it. Level up.',
+    line: 'Games, music, snacks, style and the apps you live on: your take shapes them, with a parent’s OK.',
+    chips: [['game', 'Gaming'], ['music', 'Music'], ['heart', 'Snacks'], ['sparkle', 'Style'], ['mobile', 'Apps'], ['trophy', 'Sport']],
+    to: '/paid-surveys-for-teens',
+    cta: 'Explore the Teen Panel',
+    icon: 'rocket',
+    stats: [['13', 'profile worlds'], ['2 yeses', 'parent + you']],
+  },
 };
+const ORDER = ['c', 'p', 't'];
+const NAME = { c: 'Consumer', p: 'Professional', t: 'Teen' };
 
 function World({ id }) {
   const s = SIDES[id];
@@ -66,12 +78,13 @@ export default function AudienceSplit() {
     if (!seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     setDemo(true);
     setAuto(true);
-    let cur = 'c';
+    let n = 0;
     const go = () => {
       if (hold.current || document.hidden || Date.now() < idle.current) return;
-      setX(cur === 'c' ? 90 : 10);
+      const cur = ORDER[n % ORDER.length];
+      if (cur !== 't') setX(cur === 'c' ? 90 : 10);
       setSide(cur);
-      cur = cur === 'c' ? 'p' : 'c';
+      n += 1;
     };
     const t0 = setTimeout(go, 500);
     const iv = setInterval(go, AUTO_MS);
@@ -83,14 +96,14 @@ export default function AudienceSplit() {
     const px = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
     setX(Math.max(6, Math.min(94, (px / r.width) * 100)));
   };
-  const pick = (s) => { pause(); setDemo(true); setSide(s); setX(s === 'c' ? 90 : 10); };
+  const pick = (s) => { pause(); setDemo(true); setSide(s); if (s !== 't') setX(s === 'c' ? 90 : 10); };
   return (
     <section className="section cmp" aria-labelledby="split-title" ref={ref}>
       <div className="container">
         <div className="cmp-head reveal">
-          <p className="eyebrow">Two ways to earn</p>
+          <p className="eyebrow">Three ways to earn</p>
           <h2 id="split-title">Who are you <em>today?</em></h2>
-          <p className="sec-sub">The two worlds take turns. Drag the handle any time to compare them.</p>
+          <p className="sec-sub">Three worlds take turns: consumer, professional and teen. Drag the handle any time to compare.</p>
         </div>
         <div
           className={`cmp-stage ${demo ? 'is-demo' : ''} ${auto ? 'is-auto' : ''} on-${side}`}
@@ -98,18 +111,21 @@ export default function AudienceSplit() {
           style={{ '--x': `${x}%`, '--auto': `${AUTO_MS}ms` }}
           onMouseEnter={() => { hold.current = true; }}
           onMouseLeave={() => { hold.current = false; drag.current = false; pause(2500); }}
-          onPointerDown={(e) => { if (e.target.closest('a, input, button')) return; drag.current = true; setDemo(false); pause(); fromEvent(e); }}
+          onPointerDown={(e) => { if (e.target.closest('a, input, button')) return; drag.current = true; setDemo(false); if (side === 't') setSide('c'); pause(); fromEvent(e); }}
           onPointerMove={(e) => drag.current && fromEvent(e)}
           onPointerUp={() => { drag.current = false; setDemo(true); }}
         >
           <div className="cmp-layer l-c"><World id="c" /></div>
           <div className="cmp-layer l-p"><World id="p" /></div>
+          <div className="cmp-layer l-t" aria-hidden={side !== 't'}><World id="t" /></div>
           <div className="cmp-handle" aria-hidden="true"><span><Icon name="arrow" size={14} /><Icon name="arrow" size={14} /></span></div>
           <button type="button" className="cmp-pick c" onClick={() => pick('c')}>Consumer</button>
           <button type="button" className="cmp-pick p" onClick={() => pick('p')}>Professional</button>
+          <button type="button" className="cmp-pick t" onClick={() => pick('t')}><Icon name="rocket" size={13} /> Teen</button>
           <div className="cmp-dots">
-            <button type="button" aria-label="Show consumer side" className={side === 'c' ? 'on' : ''} key={`c${side}`} onClick={() => pick('c')}><i /></button>
-            <button type="button" aria-label="Show professional side" className={side === 'p' ? 'on' : ''} key={`p${side}`} onClick={() => pick('p')}><i /></button>
+            {ORDER.map((k) => (
+              <button type="button" key={`${k}${side}`} aria-label={`Show the ${NAME[k].toLowerCase()} side`} className={side === k ? 'on' : ''} onClick={() => pick(k)}><i /></button>
+            ))}
           </div>
           <label className="sr-only" htmlFor="cmp-range">Compare consumer and professional</label>
           <input id="cmp-range" className="cmp-range" type="range" min="6" max="94" value={Math.round(x)} onChange={(e) => { pause(); setX(+e.target.value); }} />

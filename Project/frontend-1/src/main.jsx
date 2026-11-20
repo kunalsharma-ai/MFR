@@ -80,6 +80,7 @@ import './styles/v31-hero-fx.css';
 import './styles/v31-sections.css';
 import './styles/v32-minor.css';
 import './styles/v32-pages.css';
+import './styles/v33-teen.css';
 
 document.documentElement.classList.add('js');
 
