@@ -9,4 +9,4 @@ export { default as Answer } from "./Answer.js"
 export { default as Response } from "./Response.js"
 export { default as Profile } from "./Profile.js"
 export { default as Support } from "./Support.js";
-export { default as ProjectLaunch } from "./ProjectLaunch.js";
+export { default as ProjectLaunch } from "./ProjectLaunch.js";export { default as Reward } from "./Reward.js";

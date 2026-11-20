@@ -44,9 +44,8 @@ class Response extends CrudController {
                 }
             }
         ]))
-        console.log(temp);
-        if (temp.length === 1) return temp[0].totalPoints;
-        throw new Error("Invalid request")
+        // a member with no completed survey yet has 0 points (this used to fail with "Invalid request")
+        return temp.length === 1 ? Number(temp[0].totalPoints) || 0 : 0;
     }
     async surveySummary() {
 

@@ -4,7 +4,8 @@ import {
     User as userController,
     OTP as otpController,
     Answer as answerController,
-    Response as responseController
+    Response as responseController,
+    Reward as rewardController
 } from "../../controller/index.js";
 import {
     Mutate,
@@ -120,11 +121,15 @@ router
                 let message = "";
                 let data = []
                 responseController.request = req;
+                rewardController.request = req;
                 let respPoints = await responseController.getPoints();
+                // completed surveys + paid profiles (a profile completed as a survey is counted once)
+                let earned = await rewardController.total();
                 data = {
                     respPoints,
+                    rewardPoints: earned - respPoints,
                     redeemPoints: 0,
-                    totalPoints: (respPoints - 0),
+                    totalPoints: earned,
                     threshold: 15000,
                     conversionRate: 0.001
                 }
@@ -151,10 +156,12 @@ router
         expressRoute(
             async req => {
                 let message = "";
+                rewardController.request = req;
+                const earned = await rewardController.total();
                 const data = {
-                    total: 0,
+                    total: earned,
                     claimed: 0,
-                    earned: 0,
+                    earned,
                 }
                 return { message, data }
             },

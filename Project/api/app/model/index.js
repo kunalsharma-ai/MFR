@@ -17,4 +17,4 @@ export { default as Batch } from "./Batch.js";
 export { default as ProfileQuestions } from "./ProfileQuestions.js";
 export { default as ProfileOptions } from "./ProfileOptions.js";
 
-//*/
+//*/export { default as Reward } from "./Reward.js";
