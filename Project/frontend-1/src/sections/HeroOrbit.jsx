@@ -52,6 +52,7 @@ export default function HeroOrbit() {
   }, [visible]);
   const pick = (v) => { if (v !== seg) segSound(v === 'pro'); hold.current = Date.now() + 15000; setAuto(false); setSeg(v); setTimeout(() => setAuto(true), 15000); };
   const who = WHO[seg];
+  const other = seg === 'pro' ? 'consumer' : 'pro';
   const pay = PAYOUTS[r];
   const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
   const words = BRAND.motto.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
@@ -88,11 +89,17 @@ export default function HeroOrbit() {
               </span>
             ))}
           </p>
-          <p className={`hx-ribbon r-${seg}`} key={`r-${seg}`}>
-            <span className="hx-ribbon-ic"><Icon name={seg === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
-            {seg === 'pro' ? 'Share expert insights · earn premium rewards' : 'Share opinions · earn multiple rewards'}
-            <i className="hx-ribbon-shine" aria-hidden="true" />
-          </p>
+          {/* Both audience variants share one grid cell (the other one is an invisible copy), so the hero keeps the
+              height of the taller variant and nothing below jumps when Consumer and Professional take turns (CLS). */}
+          <div className="hx-hold">
+            {[seg, other].map((v, n) => (
+              <p className={`hx-ribbon r-${v}${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `r-${v}`} aria-hidden={n ? 'true' : undefined}>
+                <span className="hx-ribbon-ic"><Icon name={v === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
+                {v === 'pro' ? 'Share expert insights · earn premium rewards' : 'Share opinions · earn multiple rewards'}
+                {!n && <i className="hx-ribbon-shine" aria-hidden="true" />}
+              </p>
+            ))}
+          </div>
           <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
             <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
             <span className="ht-line ht-accent" style={{ '--l': 1 }}>{seg === 'pro' ? 'by sharing your expertise' : 'by sharing your opinion'}</span>
@@ -105,14 +112,18 @@ export default function HeroOrbit() {
             <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => pick('pro')}><Icon name="briefcase" size={16} /> Professional</button>
           </div>
 
-          <div className="hm-roll" key={`m-${seg}`}>
-            <p className="hm-roll-w">
-              <span className="sr-only">{MODE[seg].words.map((x) => x[1]).join(' ')}</span>
-              {MODE[seg].words.map(([ic, t], k) => (
-                <span key={t} className="hm-slot" style={{ '--k': k }} aria-hidden="true"><span className="hm-slot-in"><Icon name={ic} size={18} /> {t}</span></span>
-              ))}
-            </p>
-            <p className="hm-roll-tag">{MODE[seg].tag}</p>
+          <div className="hx-hold">
+            {[seg, other].map((v, n) => (
+              <div className={`hm-roll${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `m-${v}`} aria-hidden={n ? 'true' : undefined}>
+                <p className="hm-roll-w">
+                  {!n && <span className="sr-only">{MODE[v].words.map((x) => x[1]).join(' ')}</span>}
+                  {MODE[v].words.map(([ic, t], k) => (
+                    <span key={t} className="hm-slot" style={{ '--k': k }} aria-hidden="true"><span className="hm-slot-in"><Icon name={ic} size={18} /> {t}</span></span>
+                  ))}
+                </p>
+                <p className="hm-roll-tag">{MODE[v].tag}</p>
+              </div>
+            ))}
           </div>
           <p className="hero-who" aria-live="off">
             Paid surveys built for{' '}

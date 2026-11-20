@@ -63,7 +63,7 @@ function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
       <div className={`mcd ${ready ? 'is-ready' : ''} ${phase === 'success' ? 'is-open' : ''} ${phase === 'sending' ? 'is-busy' : ''}`}>
         <div className="mcd-front">
           <span className="mcd-holo" />
-          <p className="mcd-top"><img src={BRAND.monogram} alt="" width="38" height="38" /><b>MEMBER PASS</b><em className={ready ? 'ok' : ''}>{ready ? 'UNLOCKED' : 'LOCKED'}</em></p>
+          <p className="mcd-top"><img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="38" height="38" /><b>MEMBER PASS</b><em className={ready ? 'ok' : ''}>{ready ? 'UNLOCKED' : 'LOCKED'}</em></p>
           <span className="mcd-chip" />
           <p className="mcd-num">{emailOk ? maskEmail(email) : email ? email.slice(0, 22) : 'your@email.com'}</p>
           <p className="mcd-row">

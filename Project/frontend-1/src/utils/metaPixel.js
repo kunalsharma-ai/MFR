@@ -14,6 +14,12 @@ let lastPath = '';
 function inject() {
   if (loaded || !META_PIXEL_ID || typeof window === 'undefined') return;
   loaded = true;
+  // index.html carries Meta's standard base code as window.mfrMetaPixel (so the pixel is visible in the page source);
+  // it loads fbevents.js and runs fbq('init'). The copy below is the fallback for builds without that snippet.
+  if (typeof window.mfrMetaPixel === 'function') {
+    window.mfrMetaPixel(META_PIXEL_ID);
+    return;
+  }
   // Meta's standard base code (fbevents.js), written out readably. Queues calls until the library arrives.
   if (!window.fbq) {
     const fbq = function fbqStub(...args) {

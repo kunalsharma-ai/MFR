@@ -247,8 +247,10 @@
 .hex { position: relative; padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .1); transition: .4s var(--ease); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); outline: none; }
 .hex-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--lc); background: color-mix(in srgb, var(--lc) 15%, transparent); margin-bottom: 10px; transition: .4s; }
 .hex strong { display: block; font-size: .92rem; line-height: 1.25; }
-.hex small { display: block; font-size: .78rem; color: rgba(220, 240, 245, .7); margin-top: 6px; max-height: 0; overflow: hidden; transition: max-height .4s var(--ease); }
-.hex:hover small, .hex:focus small, .hex.is-lit small { max-height: 80px; }
+/* The detail line is always laid out (dimmed until the tile lights up). It used to open with max-height every 650 ms,
+   which re-sized the grid and moved the whole page below it: a layout shift on every tick (field CLS 0.20). */
+.hex small { display: block; font-size: .78rem; color: rgba(220, 240, 245, .7); margin-top: 6px; opacity: .55; transition: opacity .4s var(--ease); }
+.hex:hover small, .hex:focus small, .hex.is-lit small { opacity: 1; }
 .hex.is-lit, .hex:hover, .hex:focus { background: color-mix(in srgb, var(--lc) 18%, transparent); border-color: var(--lc); transform: translateY(-3px); }
 .hex.is-lit .hex-ico { background: var(--lc); color: #04141F; }
 .hex.is-dim { opacity: .25; }

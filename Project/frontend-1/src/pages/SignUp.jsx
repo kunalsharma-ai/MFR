@@ -59,7 +59,7 @@ function LiveCard({ v, step, progress, sent }) {
       >
         <span className="lc-holo" />
         <div className="lc-top">
-          <img src={BRAND.monogram} alt="" width="40" height="40" />
+          <img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="40" height="40" />
           <span className="lc-type">
             {pro ? "PROFESSIONAL" : "CONSUMER"} MEMBER
           </span>

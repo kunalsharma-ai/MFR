@@ -6,7 +6,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      injectRegister: 'script-defer', // the service-worker registration never blocks the first paint
+      // Inline registration: no extra /registerSW.js request (it was served no-cache and flagged by cache audits).
+      // It still waits for the load event, so it never blocks the first paint.
+      injectRegister: 'inline',
       registerType: 'autoUpdate',
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,

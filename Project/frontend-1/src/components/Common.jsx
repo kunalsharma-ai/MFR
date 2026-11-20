@@ -204,7 +204,7 @@ export function FloatingDock({ onChat, chatOpen }) {
         <button type="button" className={`dk-orb dk-chat ${chatOpen ? 'is-open' : ''}`} onPointerEnter={() => import('../utils/chatEngine.js')} onClick={onChat} aria-expanded={chatOpen} aria-label="Open Live Help 24/7">
           <span className="dk-ring" aria-hidden="true" />
           <span className="dk-face">
-            {chatOpen ? <Icon name="close" size={24} /> : <img src={asset('/images/brand/mfr-mark-160.webp')} alt="" width="46" height="46" />}
+            {chatOpen ? <Icon name="close" size={24} /> : <img src={asset('/images/brand/mfr-mark-160.webp')} alt="MyFrequentRewards live help" width="46" height="46" />}
           </span>
           <span className="dk-spark" aria-hidden="true" />
           <span className="dk-247" aria-hidden="true">24/7</span>

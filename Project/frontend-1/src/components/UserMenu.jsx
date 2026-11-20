@@ -47,7 +47,7 @@ export default function UserMenu({ user, onLogout }) {
       <button type="button" className="um-btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
         <span className="um-avatar">
           {user && user.profilePicture && imgOk
-            ? <img src={user.profilePicture} alt="" onError={() => setImgOk(false)} />
+            ? <img src={user.profilePicture} alt="Your profile photo" onError={() => setImgOk(false)} />
             : first.charAt(0)}
         </span>
         <span className="um-name">{first}</span>

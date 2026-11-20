@@ -60,7 +60,7 @@ export default function WhoCanJoin() {
                 {[x.a, x.b].map(([iso, city], j) => (
                   <span key={city} className={`dvx-end e${j}`}>
                     <i className="dvx-wire"><i /></i>
-                    <span className="dvx-city"><img src={asset(`/flags/${iso}.svg`)} alt="" width="22" height="16" loading="lazy" /><b>{city}</b><small>{x.who}</small></span>
+                    <span className="dvx-city"><img src={asset(`/flags/${iso}.svg`)} alt={`${city} flag`} width="22" height="16" loading="lazy" /><b>{city}</b><small>{x.who}</small></span>
                   </span>
                 ))}
               </div>
