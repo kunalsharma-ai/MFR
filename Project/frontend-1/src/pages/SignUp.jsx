@@ -26,6 +26,8 @@ import { rememberSignup } from "../utils/signupMemo.js";
 import { readReferral, clearReferral } from "../utils/referral.js";
 import { consentAnswers } from "../utils/profileAnswers.js";
 import SocialLogin from "../components/SocialLogin.jsx";
+import TeenSignup from "../components/TeenSignup.jsx";
+import { isTeenAge, teenLastNameError } from "../utils/teenRegister.js";
 import {
   EMAIL_RE,
   ADULT_AGE,
@@ -150,6 +152,12 @@ export default function SignUp() {
   // v3.3: "Minor" on the Join-as switch is the teen panel. It is a presentation choice only: teens register as
   // consumers (the backend sees the same memberType) and the under-18 parent step follows email verification.
   const [teen, setTeen] = useState(false);
+  // Teen registration: after "About you", anyone aged MIN_SIGNUP_AGE–17 continues in <TeenSignup> (their own steps + guardian),
+  // even if they picked Consumer or Professional by mistake (`switched` explains why).
+  const [teenFlow, setTeenFlow] = useState(false);
+  const [switched, setSwitched] = useState(false);
+  const [adultNote, setAdultNote] = useState(false);
+  const [teenProg, setTeenProg] = useState({ step: 2, pct: 0 });
   const pickAudience = (k) => {
     setTeen(k === "minor");
     set("memberType", k === "minor" ? "consumer" : k);
@@ -157,6 +165,13 @@ export default function SignUp() {
 
   const errors = useMemo(() => {
     const e = validateSignup(v);
+    if (teen || isTeenAge(v.dob)) {
+      // teen panel (picked, or a 13–17 DOB under Consumer / Professional): last name is optional
+      const ln = teenLastNameError(v.lastName);
+      if (ln) e.lastName = ln;
+      else delete e.lastName;
+    }
+    if (teen) delete e.gender; // asked on the teen's next step instead
     const r = remote.email;
     if (
       !e.email &&
@@ -168,7 +183,7 @@ export default function SignUp() {
     )
       e.email = r.msg;
     return e;
-  }, [v, remote]);
+  }, [v, remote, teen]);
 
   useEffect(() => {
     const q = new URLSearchParams(search);
@@ -256,6 +271,26 @@ export default function SignUp() {
         if (el) el.focus();
       }, 30);
       return;
+    }
+    if (step === 1) {
+      const age = ageFromDob(v.dob);
+      if (age < ADULT_AGE) {
+        setSwitched(!teen);
+        setTeen(true);
+        setV((s) => ({ ...s, memberType: "consumer" }));
+        setTeenFlow(true);
+        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (teen) {
+        setTeen(false);
+        setAdultNote(true);
+        if (!GENDERS.includes(v.gender)) {
+          // gender was hidden for the teen panel: ask it here before moving on
+          touch("gender");
+          return;
+        }
+      }
     }
     go(step + 1);
   }
@@ -374,7 +409,7 @@ export default function SignUp() {
         </div>
         <div className="container sx-row">
           <aside className="sx-aside">
-            {status === "sent" ? null : (
+            {status === "sent" || teenFlow ? null : (
               <AudienceSwitch
                 value={teen ? "minor" : v.memberType}
                 onChange={pickAudience}
@@ -399,12 +434,12 @@ export default function SignUp() {
             <LiveCard
               teen={teen}
               v={v}
-              step={step}
+              step={teenFlow ? teenProg.step : step}
               progress={Math.max(
                 0,
-                Math.min(100, status === "sent" ? 100 : pct),
+                Math.min(100, status === "sent" ? 100 : teenFlow ? teenProg.pct : pct),
               )}
-              sent={status === "sent"}
+              sent={status === "sent" || (teenFlow && teenProg.step === 4)}
             />
             <ul className="sx-perks">
               <li>
@@ -469,6 +504,17 @@ export default function SignUp() {
                   and we’ll fix it.
                 </p>
               </div>
+            ) : teenFlow ? (
+              <TeenSignup
+                seed={v}
+                switched={switched}
+                referredBy={referredBy}
+                onBack={() => {
+                  setTeenFlow(false);
+                  setStep(1);
+                }}
+                onProgress={(n, p) => setTeenProg({ step: n, pct: p })}
+              />
             ) : (
               <form onSubmit={submit} noValidate>
                 <SxRail
@@ -544,7 +590,7 @@ export default function SignUp() {
                         </Field>
                         <Field
                           id="lastName"
-                          label="Last name"
+                          label={teen || isTeenAge(v.dob) ? "Last name (optional)" : "Last name"}
                           error={err("lastName")}
                           ok={ok("lastName")}
                           half
@@ -586,7 +632,7 @@ export default function SignUp() {
                             </p>
                           )}
                         </div>
-                        <div
+                        {teen ? null : (<div
                           className={`sx-field half ${err("gender") ? "bad" : ""} ${ok("gender") ? "good" : ""}`}
                         >
                           <span className="sx-static-label" id="gender-lbl">
@@ -681,7 +727,7 @@ export default function SignUp() {
                               {err("gender")}
                             </p>
                           ) : null}
-                        </div>
+                        </div>)}
                         {/* <Field
                           id="gender"
                           label="Gender"
@@ -738,13 +784,20 @@ export default function SignUp() {
                           ) : null}
                         </div> */}
                       </div>
+                      {adultNote ? (
+                        <p className="sx-note" role="status">
+                          <Icon name="user" size={16} />
+                          You’re 18 or over, so you’re joining as a consumer, not
+                          on the teen panel.
+                        </p>
+                      ) : null}
                       {!v.dob ||
                       !Number.isFinite(ageFromDob(v.dob)) ||
                       ageFromDob(v.dob) >= ADULT_AGE ? null : (
                         <p className="sx-note">
                           <Icon name="shield" size={16} />
-                          Under 18: after you verify your email, we’ll ask for
-                          your parent/guardian’s details.
+                          Under 18? You’ll continue on the teen panel, and we’ll
+                          invite your parent or guardian to say yes first.
                         </p>
                       )}
                     </>
@@ -755,6 +808,13 @@ export default function SignUp() {
                       <h2 className="sx-h">
                         Where should your invitations land?
                       </h2>
+                      {adultNote ? (
+                        <p className="sx-note" role="status">
+                          <Icon name="user" size={16} />
+                          You’re 18 or over, so you’re joining as a consumer, not
+                          on the teen panel.
+                        </p>
+                      ) : null}
                       <p className="sx-sub">
                         When you continue, we’ll email you a link to verify your
                         address.
