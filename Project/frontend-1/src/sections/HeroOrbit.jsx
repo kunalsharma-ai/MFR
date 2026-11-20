@@ -23,16 +23,16 @@ const MOTTO_ICONS = ['chat', 'badge', 'gift'];
 const MODE = {
   consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
-  minor: { words: [['game', 'Play.'], ['chat', 'Speak up.'], ['rocket', 'Level up.']], tag: 'Teens get a voice too — and a reward, with a parent’s yes.' },
+  minor: { words: [['game', 'Play.'], ['chat', 'Speak up.'], ['trophy', 'Level up.']], tag: 'Ages 13–17 · age-appropriate surveys · opens with a parent or guardian’s yes.' },
 };
 // v3.3: three audiences take turns — Consumer → Professional → Minor (the teen panel, "Galaxy Pop" colours).
 const SEGS = ['consumer', 'pro', 'minor'];
 const RIBBON = {
   consumer: ['gift', 'Share opinions · earn multiple rewards'],
   pro: ['briefcase', 'Share expert insights · earn premium rewards'],
-  minor: ['rocket', 'New · teen panel · with a parent’s OK'],
+  minor: ['rocket', 'New · Teen Panel 13–17 · parent-approved'],
 };
-const ACCENT = { consumer: 'by sharing your opinion', pro: 'by sharing your expertise', minor: 'by sharing your teen voice' };
+const ACCENT = { consumer: 'by sharing your opinion', pro: 'by sharing your expertise', minor: 'by levelling up your voice' };
 const JOIN = { consumer: '/sign-up', pro: '/sign-up?type=professional', minor: '/sign-up?type=teen' };
 
 const SEG_MS = 5000;
@@ -90,6 +90,11 @@ export default function HeroOrbit() {
           <svg className="hx-ticker" viewBox="0 0 1200 200" preserveAspectRatio="none"><polyline points="0,170 120,150 220,160 330,120 440,130 560,90 660,100 780,60 900,70 1020,30 1200,10" /></svg>
         </div>
         {/* v3.3 teen atmosphere: synthwave sun over a moving neon grid, with bubbles rising */}
+        {/* v3.4 teen atmosphere "Neon Lagoon": aurora curtains, drifting shapes and rising light dots */}
+        <div className="hx-fx hx-teen">
+          <span className="hxt-aur a1" /><span className="hxt-aur a2" /><span className="hxt-aur a3" />
+          {Array.from({ length: 9 }).map((_, i) => <i key={i} className={`hxt-shape s${i % 3}`} style={{ '--i': i }} />)}
+        </div>
         <div className="hx-fx hx-min">
           <span className="hx-sun" />
           <span className="hx-floor" />
@@ -119,7 +124,7 @@ export default function HeroOrbit() {
             ))}
           </div>
           <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
-            <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
+            <span className="ht-line" style={{ '--l': 0 }}>{seg === 'minor' ? 'Earn rewards online' : 'Earn money online'}</span>
             <span className="ht-line ht-accent" style={{ '--l': 1 }}>{ACCENT[seg]}</span>
             <svg className="hx-swoosh" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 4, 230 2, 396 12" /></svg>
           </h1>
@@ -156,7 +161,7 @@ export default function HeroOrbit() {
             No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
           </p>
           <div className="hero-actions">
-            <Link to={JOIN[seg]} className="btn btn-primary btn-lg btn-shine">{seg === 'minor' ? 'Join the teen panel' : 'Start earning free'} <Icon name="arrow" size={20} /></Link>
+            <Link to={JOIN[seg]} className="btn btn-primary btn-lg btn-shine">{seg === 'minor' ? 'Join the Teen Panel' : 'Start earning free'} <Icon name="arrow" size={20} /></Link>
             <Link to="/how-it-works" className="btn btn-glass btn-lg"><span className="play-dot" /> How it works</Link>
           </div>
           <ul className="hm-stats" aria-label="Community figures">
@@ -167,7 +172,7 @@ export default function HeroOrbit() {
         </div>
 
         <div className="hero-stage" aria-hidden="true">
-          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : seg === 'minor' ? <MinorWorld key="min" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
+          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : seg === 'minor' ? <TeenWorld key="teen" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
         </div>
       </div>
 
@@ -284,51 +289,38 @@ function ProWorld({ pay }) {
   );
 }
 
-// ── Minor world (v3.3): "Swipe Party" — a tilted 3D phone runs a teen poll feed. A this-or-that card swipes away
-// with a stamp, the next slides up, "+100" pops and the points counter rolls, emoji reactions float up the side,
-// a streak flame burns and world polaroids swing on a string. Behind: a synthwave sun over a moving neon grid.
-// Art from the Minor onboarding files (/images/minor). Only transform / opacity animate.
-const TP_CARDS = [
-  ['/images/minor/art/bistro.webp', 'Pizza or tacos?', 'Pizza', 'Tacos', '#FF8A00'],
-  ['/images/minor/art/arcade.webp', 'Console or PC?', 'Console', 'PC', '#7C3AED'],
-  ['/images/minor/art/runway.webp', 'Sneakers or slides?', 'Sneakers', 'Slides', '#FF3B8D'],
-];
-const TP_POLAROIDS = [['/images/minor/art/arena.webp', 'Arena'], ['/images/minor/art/future.webp', 'Future'], ['/images/minor/art/campus.webp', 'Campus']];
-function MinorWorld() {
+// ── Teen world (v3.4): "Level-Up Portal" — Neon Lagoon colours (deep ocean, aqua, electric lime, coral).
+// A holographic portal ring spins with six topic badges riding it; at its centre a player card levels up
+// (XP bar fills, "+150 XP" pops, the level number flips). A live poll races below, a parent shield pins on,
+// and an equaliser pulses. Only transform / opacity animate.
+const TW_TOPICS = [['game', 'Gaming', '#B8FF3C'], ['music', 'Music', '#2EE6CF'], ['cart', 'Snacks', '#FF6B4A'], ['sparkle', 'Style', '#FFD23F'], ['mobile', 'Apps', '#7CC8FF'], ['trophy', 'Sport', '#FF8FD0']];
+const TW_POLL = [['Gaming night', 46, '#B8FF3C'], ['Movie marathon', 31, '#2EE6CF'], ['Group chat', 23, '#FF6B4A']];
+function TeenWorld() {
   return (
-    <div className="hm-scene tp">
-      <div className="tp-string">
-        <svg viewBox="0 0 520 60" preserveAspectRatio="none"><path d="M0 8 Q 260 60 520 8" /></svg>
-        {TP_POLAROIDS.map(([src, t], i) => (
-          <span key={t} className={`tp-pol k${i}`}><i className="tp-pin" /><img src={src} alt="" width="70" height="70" decoding="async" /><b>{t}</b></span>
-        ))}
-      </div>
-      <div className="tp-phone">
-        <span className="tp-notch" />
-        <div className="tp-screen">
-          <p className="tp-top"><b>For you</b><span className="tp-pts"><img src="/images/minor/emoji/coin.webp" alt="" width="16" height="16" decoding="async" /><span className="tp-roll"><i>1,200</i><i>1,300</i><i>1,400</i></span></span></p>
-          <div className="tp-deck">
-            {TP_CARDS.map(([src, q, a, b, c], i) => (
-              <div key={q} className={`tp-card k${i}`} style={{ '--c': c }}>
-                <img src={src} alt="" width="120" height="120" decoding="async" />
-                <p>{q}</p>
-                <span className="tp-opts"><em>{a}</em><em>{b}</em></span>
-                <span className="tp-stamp">Voted!</span>
-              </div>
-            ))}
-          </div>
-          <p className="tp-plus">+100</p>
-          <span className="tp-bar"><i /></span>
+    <div className="hm-scene hxw">
+      <div className="tw-portal">
+        <span className="tw-ring r1" /><span className="tw-ring r2" /><span className="tw-ring r3" />
+        <div className="tw-orbit">
+          {TW_TOPICS.map(([ic, t, c], i) => (
+            <span key={t} className="tw-topic" style={{ '--a': `${i * 60}deg`, '--c': c }}><span className="tw-topic-in"><Icon name={ic} size={18} /><b>{t}</b></span></span>
+          ))}
+        </div>
+        <div className="tw-card">
+          <p className="tw-card-top"><span className="tw-av">AK</span><span><b>Aanya · 15</b><small>Teen Panel</small></span><em className="tw-lvl"><small>LVL</small><span className="tw-flip"><i>6</i><i>7</i></span></em></p>
+          <p className="tw-xp"><span>XP</span><i><b /></i><small>850 / 1,000</small></p>
+          <p className="tw-plus">+150 XP</p>
+          <p className="tw-quest"><Icon name="check" size={13} stroke={3} /> Quest done: <b>Snack taste test</b></p>
         </div>
       </div>
-      <div className="tp-react">
-        {['/images/minor/emoji/sparkle_heart.webp', '/images/minor/emoji/fire.webp', '/images/minor/emoji/party.webp', '/images/minor/emoji/star.webp', '/images/minor/emoji/sparkle_heart.webp'].map((src, i) => (
-          <img key={i} className={`r${i}`} src={src} alt="" width="34" height="34" decoding="async" />
+      <div className="tw-poll">
+        <p className="tw-poll-q"><span className="tw-live" /> Live poll · <b>Best Friday plan?</b></p>
+        {TW_POLL.map(([t, v, c], i) => (
+          <p key={t} className="tw-bar" style={{ '--v': v / 100, '--c': c, '--i': i }}><span>{t}</span><i><b /></i><em>{v}%</em></p>
         ))}
       </div>
-      <p className="tp-streak"><img src="/images/minor/emoji/fire.webp" alt="" width="26" height="26" decoding="async" /><b>5-day streak</b></p>
-      <p className="tp-ok"><span className="a"><Icon name="user" size={12} /> Parent</span><span className="b"><Icon name="check" size={12} stroke={3} /> You</span><em><Icon name="lock" size={12} /> Unlocked</em></p>
-      <p className="tp-rank"><img src="/images/minor/emoji/trophy.webp" alt="" width="24" height="24" decoding="async" /> Rookie → <b>Player</b></p>
+      <p className="tw-shield"><Icon name="shield" size={16} /><span><b>Parent OK</b><small>consent on file</small></span></p>
+      <p className="tw-eq">{Array.from({ length: 7 }).map((_, i) => <i key={i} style={{ '--i': i }} />)}</p>
+      <p className="tw-streak"><Icon name="bolt" size={15} /> <b>7-day streak</b></p>
     </div>
   );
 }

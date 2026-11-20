@@ -99,6 +99,13 @@ export default function Connect() {
                 <h2 id={`qb-${b.id}`}>{b.name}</h2>
                 <p className="qb-tag">{b.tagline}</p>
                 <p className="qb-note">{b.note}</p>
+                {b.id === 'mfr' ? (
+                  <p className="qb-panels">
+                    <Link to="/paid-surveys-for-consumers" className="c"><Icon name="user" size={14} /> Consumers</Link>
+                    <Link to="/paid-surveys-for-professionals" className="p"><Icon name="briefcase" size={14} /> Professionals</Link>
+                    <Link to="/paid-surveys-for-teens" className="t"><Icon name="rocket" size={14} /> Teens 13–17 <em>New</em></Link>
+                  </p>
+                ) : null}
                 <p className="qb-count"><b>{live.length}</b> {live.length === 1 ? 'channel' : 'channels'} to scan{more ? ' · more channels coming soon' : ''}</p>
               </header>
               <ul className="qc-grid">
