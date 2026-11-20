@@ -8,6 +8,7 @@ const FREE_MAIL = ['gmail.', 'yahoo.', 'hotmail.', 'outlook.', 'live.', 'icloud.
 const DISPOSABLE = ['mailinator.', 'tempmail', '10minutemail', 'guerrillamail', 'yopmail.', 'trashmail', 'sharklasers.', 'getnada.', 'dispostable.', 'throwaway'];
 
 export const ADULT_AGE = 18;
+export const TEEN_DOB_MSG = 'Under 18? Teens join through the Teen sign-up, with a parent’s OK.';
 export const GENDERS = ['Male', 'Female', 'Other']; // values the backend accepts
 export const isFreeMail = (e = '') => FREE_MAIL.some((d) => e.toLowerCase().split('@')[1]?.includes(d));
 export const isDisposable = (e = '') => DISPOSABLE.some((d) => e.toLowerCase().split('@')[1]?.includes(d));
@@ -82,6 +83,8 @@ export function validateSignup(v) {
   if (!GENDERS.includes(v.gender)) e.gender = 'Select your gender.';
   const dobErr = validateDob(v.dob);
   if (dobErr) e.dob = dobErr;
+  // Consumers and professionals are adults. Under-18s join through the Teen sign-up (a parent or guardian must agree).
+  else if (ageFromDob(v.dob) < ADULT_AGE) e.dob = TEEN_DOB_MSG;
   if (!v.country) e.country = 'Select your country of residence.';
   const em = (v.email || '').trim();
   if (!EMAIL_RE.test(em)) e.email = 'Enter a valid email address.';

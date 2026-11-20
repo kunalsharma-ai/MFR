@@ -35,6 +35,7 @@ import {
   ageFromDob,
   isDisposable,
   validateSignup,
+  TEEN_DOB_MSG,
 } from "../utils/validate.js";
 import { checkEmailDomain, checkEmailTaken } from "../utils/emailChecks.js";
 import { detectCountry } from "../utils/geo.js";
@@ -572,6 +573,14 @@ function SignUp() {
                           {err("dob") ? (
                             <p className="f-err" id="dob-err" role="alert">
                               {err("dob")}
+                              {err("dob") === TEEN_DOB_MSG ? (
+                                <>
+                                  {" "}
+                                  <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                                    Join as a Teen
+                                  </button>
+                                </>
+                              ) : null}
                             </p>
                           ) : (
                             <p className="f-hint" id="dob-hint">
@@ -737,8 +746,11 @@ function SignUp() {
                       ageFromDob(v.dob) >= ADULT_AGE ? null : (
                         <p className="sx-note">
                           <Icon name="shield" size={16} />
-                          Under 18: after you verify your email, we’ll ask for
-                          your parent/guardian’s details.
+                          Under 18: you join through the Teen sign-up, with
+                          your parent or guardian’s OK.{" "}
+                          <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                            Join as a Teen
+                          </button>
                         </p>
                       )}
                     </>

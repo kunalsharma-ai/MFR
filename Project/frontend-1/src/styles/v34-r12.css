@@ -535,3 +535,4 @@ html[data-mode="dark"] .tw-h, html[data-mode="dark"] html[data-mode="dark"] .tw-
   .tj-grid.sx-grid { grid-template-columns: minmax(0, 1fr); }
   .tj-grid.sx-grid > *, .tj-grid.sx-grid > :nth-child(-n+3) { grid-column: 1 / -1; }
 }
+.sx-link { background: none; border: 0; padding: 0; color: #2F6BFF; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
