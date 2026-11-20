@@ -6,7 +6,7 @@ import useLiveReviews from '../hooks/useLiveReviews.js';
 import ReviewerId, { StarRow } from '../components/ReviewerId.jsx';
 
 // Product testimonials (v3.0) — every product has its own testimonial design:
-//   consumer     → "sticky wall": two drifting columns of tilted pastel notes
+//   consumer     → "clothesline": two washing lines of postcards drifting in opposite directions
 //   professional → "executive briefing": one big quote on a dark stage, auto-advancing with a progress bar
 //   rewards      → "payout tickets": perforated ticket stubs on a scrolling rail
 // Reviews come only from the approved feed (useLiveReviews): no ratings are invented, no Review schema is emitted,
@@ -46,17 +46,22 @@ function Head({ id, eyebrow, title, em, sub }) {
   );
 }
 
-/* ---------- consumer: sticky wall ---------- */
-function StickyWall({ list }) {
-  const cols = [list.filter((_, i) => i % 2 === 0), list.filter((_, i) => i % 2 === 1)];
+/* ---------- consumer: clothesline postcards ---------- */
+// Two washing lines drift in opposite directions; every review is a full postcard pinned with a peg, so no card is
+// ever cut off. Hover or focus pauses the line. Only transform animates.
+function ClothesLine({ list }) {
+  const rows = [list.filter((_, i) => i % 2 === 0), list.filter((_, i) => i % 2 === 1)].filter((r) => r.length);
+  const TINTS = ['#FF5E7E', '#FF8A00', '#8B5CF6', '#14C9B5', '#2F6BFF'];
   return (
-    <div className="pvc-wall">
-      {cols.map((col, ci) => (
-        <div key={ci} className={`pvc-col${ci ? ' rev' : ''}`}>
-          <ul className="pvc-track" style={{ '--n': col.length }}>
-            {[...col, ...col].map((r, i) => (
-              <li key={`${r.id}-${i}`} className="pvc-note" aria-hidden={i >= col.length ? 'true' : undefined} style={{ '--t': ['#FFE3EA', '#FFF1D6', '#EAF0FF', '#E3FBF5'][i % 4], '--r': `${((i * 7) % 5) - 2}deg` }}>
-                <span className="pvc-pin" />
+    <div className="pvl">
+      {rows.map((row, ri) => (
+        <div key={ri} className={`pvl-row${ri ? ' rev' : ''}`}>
+          <svg className="pvl-string" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 8 Q300 34 600 8 T1200 8" /></svg>
+          <ul className="pvl-track" style={{ '--n': row.length }}>
+            {[...row, ...row].map((r, i) => (
+              <li key={`${r.id}-${i}`} className="pvl-card" aria-hidden={i >= row.length ? 'true' : undefined} style={{ '--t': TINTS[(i + ri * 2) % TINTS.length], '--r': `${((i * 7) % 5) - 2}deg`, '--d': `${(i % 4) * -0.7}s` }}>
+                <span className="pvl-peg" aria-hidden="true" />
+                <span className="pvl-stamp" aria-hidden="true"><Icon name="star" size={14} /></span>
                 <Stars n={r.rating} />
                 <p>{r.text}</p>
                 <Who r={r} />
@@ -146,7 +151,7 @@ export default function ProductVoices({ kind = 'consumer' }) {
           <Head id={`pv-${kind}`} eyebrow={c.eyebrow} title={c.title} em={c.em} sub={c.sub} />
           <button type="button" className="btn pv-rate" onClick={rate}><Icon name="star" size={16} /> Add your review</button>
         </div>
-        {!list.length ? <Empty who={c.who} /> : kind === 'consumer' ? <StickyWall list={list} /> : kind === 'professional' ? <Briefing list={list} /> : <Tickets list={list} />}
+        {!list.length ? <Empty who={c.who} /> : kind === 'consumer' ? <ClothesLine list={list} /> : kind === 'professional' ? <Briefing list={list} /> : <Tickets list={list} />}
         {preview ? <p className="pv-note"><Icon name="eye" size={14} /> Preview build: cards marked &ldquo;Preview data&rdquo; are supplied testimonials that are not published on the live site until confirmed.</p> : null}
       </div>
     </section>

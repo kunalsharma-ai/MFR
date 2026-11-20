@@ -1,3 +1,4 @@
+import TeenLogin from './TeenLogin.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
@@ -40,7 +41,7 @@ function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
   const lights = [
     { k: 'Email', on: emailOk, icon: 'mail', v: emailOk ? maskEmail(email) : 'waiting' },
     { k: 'Password', on: pwOk, icon: 'lock', v: pwLen ? '•'.repeat(Math.min(pwLen, 8)) : 'waiting' },
-    { k: 'Human check', on: human, icon: 'captcha', v: human ? 'entered' : 'waiting' },
+    { k: 'Human check', on: human, icon: 'captcha', v: human ? 'verified' : 'waiting' },
   ];
   // pointer tilt — written straight to CSS variables (no re-render), eased by a CSS transition
   const move = (e) => {
@@ -87,7 +88,7 @@ function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
   );
 }
 
-export default function Login() {
+function Login() {
   const [f, setF] = useState({ email: '', password: '', remember: true, captchaOk: false });
   const [touched, setTouched] = useState({});
   const [show, setShow] = useState(false);
@@ -100,9 +101,8 @@ export default function Login() {
   const tokenRef = useRef(null);
   const { search } = useLocation();
   const [aud, setAud] = useState('consumer');
-  useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional') setAud(t); if (t === 'minor' || t === 'teen') setAud('minor'); }, [search]);
+  useEffect(() => { if (new URLSearchParams(search).get('type') === 'professional') setAud('professional'); }, [search]);
   const pro = aud === 'professional';
-  const teen = aud === 'minor';
 
   const emailOk = EMAIL_RE.test(f.email.trim());
   const pwOk = f.password.length >= 6;
@@ -129,12 +129,6 @@ export default function Login() {
       const first = errs.email ? 'login-email' : errs.password ? 'login-password' : 'captcha-input';
       const el = document.getElementById(first);
       if (el) el.focus();
-      return;
-    }
-    // the CAPTCHA is checked only now, when the member presses Log in (never while typing)
-    if (!captchaRef.current?.verify?.()) {
-      set('captchaOk', false);
-      document.getElementById('captcha-input')?.focus();
       return;
     }
     const captchaToken = captchaRef.current?.token?.() || undefined;
@@ -177,7 +171,7 @@ export default function Login() {
   return (
     <>
       <PageSeo page={page} />
-      <section className={`lx ax-page ${pro ? 'aud-pro' : teen ? 'aud-min' : 'aud-con'}`} aria-labelledby="lx-title">
+      <section className={`lx ax-page ${pro ? 'aud-pro' : 'aud-con'}`} aria-labelledby="lx-title">
         <div className="lx-bg" aria-hidden="true">
           <span className="lx-mesh m1" /><span className="lx-mesh m2" /><span className="lx-mesh m3" />
           <span className="ax-alt" />
@@ -189,17 +183,11 @@ export default function Login() {
           <div className="ax-mswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
           <div className="lx-art">
             <div className="ax-dswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
-            <p className="lx-eyebrow"><span className="live-dot" /> {pro ? 'Secure area for professionals' : teen ? 'Teen panel · parent approved' : 'Secure member area'}</p>
-            <h2 className="lx-hero ax-swap" key={aud}>{pro ? <>Your expert surveys are <span>one tap away</span> — welcome back.</> : teen ? <>Your worlds are <span>waiting for you</span> — welcome back.</> : <>Your rewards are <span>one tap away</span> — welcome back.</>}</h2>
+            <p className="lx-eyebrow"><span className="live-dot" /> {pro ? 'Secure area for professionals' : 'Secure member area'}</p>
+            <h2 className="lx-hero ax-swap" key={aud}>{pro ? <>Your expert surveys are <span>one tap away</span> — welcome back.</> : <>Your rewards are <span>one tap away</span> — welcome back.</>}</h2>
             <MemberPass email={f.email} pwLen={Math.min(12, f.password.length)} emailOk={emailOk} pwOk={pwOk} human={f.captchaOk} phase={phase} />
             <ul className="lx-perks ax-swap" key={`p-${aud}`}>
-              {teen ? (
-                <>
-                  <li style={{ '--c': '#2EE6CF' }}><Icon name="game" size={20} /><span><b>13 profile worlds</b> to explore, each worth 100 points</span></li>
-                  <li style={{ '--c': '#FFC233' }}><Icon name="trophy" size={20} /><span><b>Climb the ranks</b> from Rookie to Legend as you finish worlds</span></li>
-                  <li style={{ '--c': '#FF9BCB' }}><Icon name="shield" size={20} /><span><b>Age-checked surveys</b> your parent said yes to, and you can always say no</span></li>
-                </>
-              ) : pro ? (
+              {pro ? (
                 <>
                   <li style={{ '--c': '#FFD166' }}><Icon name="briefcase" size={20} /><span><b>Expert B2B surveys</b> matched to your role and industry</span></li>
                   <li style={{ '--c': '#34D399' }}><Icon name="wallet" size={20} /><span><b>Higher rewards</b> for your professional insight, paid out the way you choose</span></li>
@@ -220,7 +208,7 @@ export default function Login() {
               <span className="lx-badge"><Icon name="lock" size={22} /></span>
               <div>
                 <h1 id="lx-title">{page.h1}</h1>
-                <p>{pro ? 'Log in to see your expert invitations, balance and rewards.' : teen ? 'Log in to open your worlds, points and teen invitations.' : 'Log in to see invitations, your balance and rewards.'}</p>
+                <p>{pro ? 'Log in to see your expert invitations, balance and rewards.' : 'Log in to see invitations, your balance and rewards.'}</p>
               </div>
             </div>
 
@@ -249,8 +237,8 @@ export default function Login() {
                 {RESET_URL ? <a href={RESET_URL} className="lx-forgot">Forgot password?</a> : <Link to="/forgot-password" className="lx-forgot">Forgot password?</Link>}
               </div>
 
-              <div className={`lx-captcha ${err('captcha') ? 'bad' : ''} `}>
-                <p className="lx-cap-title"><Icon name="shield" size={16} /> Quick security check </p>
+              <div className={`lx-captcha ${err('captcha') ? 'bad' : ''} ${f.captchaOk ? 'good' : ''}`}>
+                <p className="lx-cap-title"><Icon name="shield" size={16} /> Quick security check {f.captchaOk ? <b>Verified</b> : null}</p>
                 <Captcha ref={captchaRef} error={err('captcha')} onChange={(ok) => set('captchaOk', ok)} />
               </div>
               <input type="hidden" name="captchaToken" ref={tokenRef} defaultValue="" />
@@ -266,17 +254,18 @@ export default function Login() {
             <div className="lx-divider"><span>New to MyFrequentRewards?</span></div>
 
             
-            {teen ? (
-              <div className="lx-teen" role="note">
-                <img src="/images/minor/emoji/family.webp" alt="" width="40" height="40" />
-                <p><b>New to the Teen Panel?</b> Start with your details, then add your parent or guardian. Teen accounts can log in once they have completed the consent form we email them.</p>
-              </div>
-            ) : null}
-            <Link to={pro ? '/sign-up?type=professional' : teen ? '/sign-up?type=teen' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name={teen ? 'rocket' : 'gift'} size={18} /> {teen ? 'Start teen sign-up' : 'Create your free account'}</Link>
+            <Link to={pro ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
             <p className="lx-safe"><Icon name="shield" size={14} /> We will never ask for your password by email, SMS or WhatsApp.</p>
           </div>
         </div>
       </section>
     </>
   );
+}
+
+// Teens (?type=teen) get their own page; Consumers and Professionals keep this original page unchanged.
+const TEEN_TYPES = new Set(['teen', 'minor']);
+export default function LoginRoute() {
+  const { search } = useLocation();
+  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenLogin /> : <Login />;
 }

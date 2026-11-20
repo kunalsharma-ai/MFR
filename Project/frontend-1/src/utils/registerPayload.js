@@ -24,11 +24,7 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
 
   const payload = {
     category: v.memberType === 'professional' ? categories.professional : categories.consumer,
-    name: {
-      first: v.firstName.trim(),
-      ...(String(v.middleName || '').trim() ? { middle: v.middleName.trim() } : {}),
-      last: String(v.lastName || '').trim(),
-    },
+    name: { first: v.firstName.trim(), last: v.lastName.trim() },
     gender: v.gender,
     dob: v.dob, // ISO YYYY-MM-DD
     mail,

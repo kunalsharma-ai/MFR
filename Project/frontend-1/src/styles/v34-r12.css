@@ -174,3 +174,80 @@ html[data-mode="dark"] .fq-minor .faq-a p { background: #261A45; color: #E6DDFF;
 .fq-minor .faq-n::before { content: 'LV'; }
 .nx-screen img { margin-top: -18%; }
 .nx-ecg { bottom: 7%; }
+
+/* ───────────── Consumer page redesigns ───────────── */
+
+/* Consumer voices: "Clothesline postcards" — whole review cards pegged to two drifting washing lines. */
+.pv--consumer { background: radial-gradient(900px 400px at 10% 0%, #FFE6EE, transparent 60%), radial-gradient(800px 380px at 100% 100%, #FFF0DA, transparent 60%), #FFF9F6; overflow: hidden; }
+.pvl { display: grid; gap: 26px; margin-top: 18px; }
+.pvl-row { position: relative; overflow: hidden; padding: 18px 0 26px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.pvl-string { position: absolute; left: 0; right: 0; top: 4px; width: 100%; height: 40px; }
+.pvl-string path { fill: none; stroke: #C9A27A; stroke-width: 2; stroke-dasharray: 2 3; }
+.pvl-track { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; width: max-content; animation: pvlDrift calc(var(--n) * 9s) linear infinite; }
+.pvl-row.rev .pvl-track { animation-direction: reverse; }
+.pvl-row:hover .pvl-track, .pvl-row:focus-within .pvl-track { animation-play-state: paused; }
+@keyframes pvlDrift { to { transform: translateX(-50%); } }
+.pvl-card { position: relative; flex: none; width: 300px; padding: 22px 18px 16px; border-radius: 6px; background: #fff; border-top: 6px solid var(--t); box-shadow: 0 18px 34px -22px rgba(80, 30, 20, .45), 0 2px 0 rgba(0, 0, 0, .03); transform-origin: 50% -14px; transform: rotate(var(--r)); animation: pvlSway 5s ease-in-out infinite; animation-delay: var(--d); }
+.pvl-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: repeating-linear-gradient(0deg, transparent 0 27px, rgba(0, 0, 0, .035) 27px 28px); }
+@keyframes pvlSway { 50% { transform: rotate(calc(var(--r) * -1)); } }
+.pvl-peg { position: absolute; top: -16px; left: 50%; width: 12px; height: 26px; margin-left: -6px; border-radius: 3px; background: linear-gradient(90deg, #D8B48C, #F2D7B5 50%, #C49A6C); box-shadow: 0 2px 3px rgba(0, 0, 0, .2); }
+.pvl-stamp { position: absolute; top: 10px; right: 10px; width: 30px; height: 34px; display: grid; place-items: center; color: #fff; background: var(--t); clip-path: polygon(0 4%, 8% 0, 16% 4%, 25% 0, 33% 4%, 41% 0, 50% 4%, 58% 0, 66% 4%, 75% 0, 83% 4%, 91% 0, 100% 4%, 100% 96%, 91% 100%, 83% 96%, 75% 100%, 66% 96%, 58% 100%, 50% 96%, 41% 100%, 33% 96%, 25% 100%, 16% 96%, 8% 100%, 0 96%); }
+.pvl-card p { margin: 8px 0 12px; font-size: .92rem; line-height: 1.55; color: #3B2F2F; }
+@media (max-width: 640px) { .pvl-card { width: 250px; } }
+html[data-mode="dark"] .pv--consumer { background: #160F14; }
+html[data-mode="dark"] .pvl-card { background: #221A20; }
+html[data-mode="dark"] .pvl-card p { color: #EBDDE2; }
+@media (prefers-reduced-motion: reduce) { .pvl-track, .pvl-card { animation: none !important; } .pvl-row { overflow-x: auto; } }
+
+/* "Why consumer opinions are worth rewarding": an idea-to-reward conveyor. A parcel rides a glowing belt
+   through four machine stations; each station's ring lights up as the parcel passes. */
+.ojx-sec { background: linear-gradient(180deg, #FBF8FF, #FFF7F2); }
+.ojx { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin: 10px 0 26px; }
+.ojx-belt { position: absolute; left: 12.5%; right: 12.5%; top: 52px; height: 14px; border-radius: 14px; background: linear-gradient(90deg, #8B5CF6, #FF8A00, #14C9B5, #FF3B8D); box-shadow: 0 10px 24px -10px rgba(139, 92, 246, .6); }
+.ojx-belt i { position: absolute; inset: 3px 6px; border-radius: 8px; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .55) 0 10px, transparent 10px 22px); background-size: 44px 100%; animation: ojxBelt .8s linear infinite; }
+@keyframes ojxBelt { to { background-position: 44px 0; } }
+.ojx-box { position: absolute; top: -34px; left: 0; width: 40px; height: 34px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: linear-gradient(135deg, #FFB547, #FF7A1A); box-shadow: 0 8px 16px -6px rgba(255, 122, 26, .7); animation: ojxRide 8s cubic-bezier(.6, 0, .4, 1) infinite; }
+@keyframes ojxRide { 0% { left: 0; transform: translateX(-50%) rotate(0); } 30% { left: 33.3%; transform: translateX(-50%) rotate(0); } 33% { transform: translateX(-50%) translateY(-6px) rotate(-6deg); } 63% { left: 66.6%; transform: translateX(-50%); } 66% { transform: translateX(-50%) translateY(-6px) rotate(6deg); } 96%, 100% { left: 100%; transform: translateX(-50%) scale(1.15); } }
+.ojx-st { position: relative; text-align: center; padding: 0 6px; }
+.ojx-orb { position: relative; z-index: 1; width: 118px; height: 118px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 55%, #fff), var(--c) 70%); box-shadow: 0 0 0 10px #fff, 0 22px 40px -16px var(--c); transition: transform .4s cubic-bezier(.2, .9, .3, 1.4); }
+.ojx-st:hover .ojx-orb { transform: translateY(-6px) rotate(-6deg); }
+.ojx-ring { position: absolute; inset: -18px; border-radius: 50%; border: 2px dashed color-mix(in srgb, var(--c) 60%, transparent); animation: nxSpin 14s linear infinite; }
+.ojx-st:nth-child(odd) .ojx-ring { animation-direction: reverse; }
+.ojx-orb em { position: absolute; top: -6px; right: -6px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 .78rem var(--font-d); font-style: normal; color: var(--c); background: #fff; box-shadow: 0 6px 14px -6px rgba(0, 0, 0, .35); }
+.ojx-st::after { content: ''; position: absolute; left: 50%; top: 40px; width: 140px; height: 140px; margin-left: -70px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c) 35%, transparent), transparent 70%); opacity: 0; animation: ojxPulse 8s ease-in-out infinite; animation-delay: calc(var(--i) * 2.4s); pointer-events: none; }
+@keyframes ojxPulse { 0%, 100% { opacity: 0; transform: scale(.7); } 8% { opacity: 1; transform: scale(1.1); } 22% { opacity: 0; } }
+.ojx-st h3 { margin: 0 0 6px; font-size: 1.08rem; color: var(--ink); }
+.ojx-st p { margin: 0 auto; max-width: 220px; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
+@media (max-width: 860px) { .ojx { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 30px; } .ojx-belt { display: none; } .ojx-orb { width: 96px; height: 96px; } }
+html[data-mode="dark"] .ojx-sec { background: linear-gradient(180deg, #120E1E, #160F12); }
+html[data-mode="dark"] .ojx-orb { box-shadow: 0 0 0 10px #120E1E, 0 22px 40px -16px var(--c); }
+@media (prefers-reduced-motion: reduce) { .ojx *, .ojx-st::after { animation: none !important; } }
+
+/* Consumer FAQ: "Messenger" — the list becomes a chat window. Each question is a sent bubble, the answer arrives
+   as a reply after a typing indicator. */
+.fq-chat { background: radial-gradient(700px 400px at 90% 10%, #FFE1EA, transparent 60%), linear-gradient(180deg, #FFF8F5, #FFF1F4); }
+.fq-chat .faq-list { position: relative; padding: 64px 16px 18px; border-radius: 30px; background: #fff; box-shadow: 0 40px 80px -40px rgba(194, 24, 91, .45), 0 0 0 1px #FFD9E3; gap: 10px; }
+.fq-chat .faq-list::before { content: 'MFR Live Help'; position: absolute; top: 0; left: 0; right: 0; height: 50px; padding: 0 20px 0 62px; display: flex; align-items: center; border-radius: 30px 30px 0 0; font: 800 .95rem var(--font-d); color: #fff; background: linear-gradient(110deg, #FF3F78, #FF7A59 60%, #FF9433); }
+.fq-chat .faq-list::after { content: ''; position: absolute; top: 12px; left: 20px; width: 28px; height: 28px; border-radius: 50%; background: #fff url('/images/brand/mfr-monogram.webp') center / 70% no-repeat; box-shadow: 0 0 0 2px rgba(255, 255, 255, .5), 10px 10px 0 -6px #2BD98B; }
+.fq-chat .faq-item { margin-left: 15%; border: 0; border-radius: 20px 20px 6px 20px; background: #FFF0F4; box-shadow: none; transform: none !important; }
+.fq-chat .faq-item::before { display: none; }
+.fq-chat .faq-item summary { padding: 12px 14px; color: #5A1030; }
+.fq-chat .faq-item:hover { background: #FFE3EB; }
+.fq-chat .faq-item[open] { margin-left: 0; background: transparent; box-shadow: none; }
+.fq-chat .faq-item[open] summary { margin-left: 15%; border-radius: 20px 20px 6px 20px; color: #fff; background: linear-gradient(110deg, #FF3F78, #FF7A59); }
+.fq-chat .faq-item[open] .faq-n { background: rgba(255, 255, 255, .25); color: #fff; }
+.fq-chat .faq-item[open] .faq-plus { background: rgba(255, 255, 255, .25); border-color: transparent; }
+.fq-chat .faq-a { padding: 10px 0 4px; }
+.fq-chat .faq-a > div { max-width: 88%; border-radius: 20px 20px 20px 6px; color: #3B1D2A; background: #F4F5FA; animation: fqcReply .5s cubic-bezier(.2, .9, .3, 1.2) .55s both; }
+.fq-chat .faq-a > div p { color: #3B1D2A; }
+.fq-chat .faq-a .faq-ask { color: #C2185B; border-color: #FFC2D3; background: #fff; }
+.fq-chat .faq-a-av { position: relative; }
+.fq-chat .faq-item[open] .faq-a-av::after { content: '• • •'; position: absolute; left: 44px; top: 4px; padding: 6px 12px; border-radius: 14px; white-space: nowrap; font-size: .8rem; letter-spacing: 2px; color: #9AA0B8; background: #F4F5FA; animation: fqcTyping .55s steps(1) both; }
+@keyframes fqcTyping { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fqcReply { from { opacity: 0; transform: translateY(8px) scale(.96); transform-origin: left bottom; } }
+html[data-mode="dark"] .fq-chat { background: #170F14; }
+html[data-mode="dark"] .fq-chat .faq-list { background: #201820; box-shadow: 0 0 0 1px #3A2230; }
+html[data-mode="dark"] .fq-chat .faq-item:not([open]) { background: #2C1E26; }
+html[data-mode="dark"] .fq-chat .faq-item summary { color: #FFDDE8; }
+html[data-mode="dark"] .fq-chat .faq-a > div { background: #2A2433; }
+html[data-mode="dark"] .fq-chat .faq-a > div p { color: #EDE6F3; }

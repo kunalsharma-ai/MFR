@@ -10,7 +10,7 @@
 // Until that exists the live site answers "This service is not available right now", and the preview
 // build (DEMO_MODE) simulates success so the flow can be reviewed.
 import { MIN_SIGNUP_AGE, USER_API } from '../data/site.js';
-import { ADULT_AGE, EMAIL_RE, GENDERS, ageFromDob, isDisposable, validateDob, validatePhone } from './validate.js';
+import { ADULT_AGE, EMAIL_RE, GENDERS, ageFromDob, isDisposable, validateDob, validatePhone } from './teenValidate.js';
 import { postJSON } from './api.js';
 
 export const TEEN_MAX_AGE = ADULT_AGE - 1;

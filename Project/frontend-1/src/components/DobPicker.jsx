@@ -21,24 +21,21 @@ const mask = (raw) => {
 };
 const daysIn = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
 
-export default function DobPicker({ id, value, onChange, onDone, minAge = 18, maxAge = null, invalid, describedBy }) {
+export default function DobPicker({ id, value, onChange, onDone, minAge = 18, invalid, describedBy }) {
   const now = new Date();
   const cutoff = toIso(now.getFullYear() - minAge, now.getMonth() + 1, now.getDate()); // latest allowed birth date
   const maxY = now.getFullYear() - minAge;
-  // maxAge (e.g. 17 for the teen panel): birth dates of anyone older are disabled too.
-  const floor = maxAge ? toIso(now.getFullYear() - maxAge - 1, now.getMonth() + 1, now.getDate()) : ''; // must be later than this
-  const minY = maxAge ? now.getFullYear() - maxAge - 1 : now.getFullYear() - 110;
-  const tooOld = (iso) => Boolean(floor) && iso <= floor;
+  const minY = now.getFullYear() - 110;
   const sel = parseDob(value);
 
   const [text, setText] = useState(fmt(value));
   const [open, setOpen] = useState(false);
   const [view, setView] = useState('year');
-  const [y, setY] = useState(sel ? sel.y : maxAge ? maxY - 2 : maxY - 7);
+  const [y, setY] = useState(sel ? sel.y : maxY - 7);
   const [m, setM] = useState(sel ? sel.m : 1);
   // Year pages hold 20 years and are anchored to the youngest allowed year, so the first page a visitor sees
   // covers the most common adult birth years (e.g. 1989–2008).
-  const pageFor = (yr) => (maxAge ? minY : maxY - 19 - Math.floor((maxY - yr) / 20) * 20);
+  const pageFor = (yr) => maxY - 19 - Math.floor((maxY - yr) / 20) * 20;
   const [pageStart, setPageStart] = useState(() => pageFor(sel ? sel.y : maxY));
   const wrap = useRef(null);
   const pop = useRef(null);
@@ -112,7 +109,7 @@ export default function DobPicker({ id, value, onChange, onDone, minAge = 18, ma
   };
 
   const age = sel ? ageFromDob(value) : NaN;
-  const years = Array.from({ length: 20 }, (_, i) => pageStart + i).filter((yy) => !maxAge || (yy >= minY && yy <= maxY));
+  const years = Array.from({ length: 20 }, (_, i) => pageStart + i);
   const first = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7; // Monday-first offset
   const dim = daysIn(y, m);
 
@@ -145,7 +142,7 @@ export default function DobPicker({ id, value, onChange, onDone, minAge = 18, ma
         <div className="dp-pop" role="dialog" aria-label="Choose your date of birth" ref={pop}>
           <div className="dp-head">
             <div className="dp-crumbs">
-              <button type="button" className={view === 'year' ? 'on' : ''} onClick={() => setView('year')}>{view === 'year' ? `${Math.max(pageStart, minY)} – ${maxAge ? maxY : pageStart + 19}` : y}</button>
+              <button type="button" className={view === 'year' ? 'on' : ''} onClick={() => setView('year')}>{view === 'year' ? `${Math.max(pageStart, minY)} – ${pageStart + 19}` : y}</button>
               {view !== 'year' ? <><i aria-hidden="true">›</i><button type="button" className={view === 'month' ? 'on' : ''} onClick={() => setView('month')}>{view === 'day' ? MONTHS[m - 1] : 'Month'}</button></> : null}
               {view === 'day' ? <><i aria-hidden="true">›</i><span>Day</span></> : null}
             </div>
@@ -186,7 +183,7 @@ export default function DobPicker({ id, value, onChange, onDone, minAge = 18, ma
             {view === 'month' ? (
               <div className="dp-grid dp-months" role="grid" aria-label={`Month in ${y}`} onKeyDown={gridKeys(3)}>
                 {MONTHS.map((mn, i) => {
-                  const off = toIso(y, i + 1, 1) > cutoff || tooOld(toIso(y, i + 1, 31)); // whole month out of range
+                  const off = toIso(y, i + 1, 1) > cutoff; // whole month too recent
                   return (
                     <button type="button" key={mn} className={`dp-cell ${sel && sel.y === y && sel.m === i + 1 ? 'is-sel' : ''}`} disabled={off} onClick={() => { setM(i + 1); setView('day'); }}>
                       <b>{mn.slice(0, 3)}</b><small>{pad(i + 1)}</small>
@@ -203,14 +200,14 @@ export default function DobPicker({ id, value, onChange, onDone, minAge = 18, ma
                   {Array.from({ length: dim }, (_, i) => {
                     const d = i + 1;
                     const iso = toIso(y, m, d);
-                    const off = iso > cutoff || tooOld(iso);
+                    const off = iso > cutoff;
                     return (
                       <button
                         type="button"
                         key={d}
                         className={`dp-cell ${sel && iso === value ? 'is-sel' : ''}`}
                         disabled={off}
-                        title={off ? (maxAge ? `Teen panel: ages ${minAge}–${maxAge}` : `Members must be ${minAge}+`) : undefined}
+                        title={off ? `Members must be ${minAge}+` : undefined}
                         aria-label={`${d} ${MONTHS[m - 1]} ${y}`}
                         onClick={() => pickDay(d)}
                       >
@@ -222,7 +219,7 @@ export default function DobPicker({ id, value, onChange, onDone, minAge = 18, ma
               </>
             ) : null}
           </div>
-          <p className="dp-foot"><Icon name="lock" size={13} /> {maxAge ? <>Teen panel: only ages {minAge}–{maxAge} can be picked. Never shared.</> : <>Used only to confirm you’re {minAge}+ and to match age-relevant surveys. Never shared.</>}</p>
+          <p className="dp-foot"><Icon name="lock" size={13} /> Used only to confirm you’re {minAge}+ and to match age-relevant surveys. Never shared.</p>
         </div>
       ) : null}
     </div>

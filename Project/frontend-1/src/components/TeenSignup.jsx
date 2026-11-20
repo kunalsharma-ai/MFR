@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import Captcha from './Captcha.jsx';
+import Captcha from './TeenCaptcha.jsx';
 import CountryPicker from './CountryPicker.jsx';
-import DobPicker from './DobPicker.jsx';
+import DobPicker from './TeenDobPicker.jsx';
 import Field from './SxField.jsx';
 import SxRail, { railPct } from './SxRail.jsx';
 import { COUNTRIES } from '../data/countries.js';
 import { MEMBER_CATEGORIES } from '../data/site.js';
-import { GENDERS } from '../utils/validate.js';
+import { GENDERS } from '../utils/teenValidate.js';
 import { checkEmailDomain } from '../utils/emailChecks.js';
 import {
   CONSENT_BOXES, GUARDIANS, buildTeenPayload, maskEmail, resendGuardianInvite, submitTeenRegistration, validateConsent, validateGuardian,
