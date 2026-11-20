@@ -89,11 +89,11 @@ export default function HeroOrbit() {
           {Array.from({ length: 16 }).map((_, i) => <i key={i} className="hx-dust" style={{ '--i': i }} />)}
           <svg className="hx-ticker" viewBox="0 0 1200 200" preserveAspectRatio="none"><polyline points="0,170 120,150 220,160 330,120 440,130 560,90 660,100 780,60 900,70 1020,30 1200,10" /></svg>
         </div>
-        {/* v3.3 teen atmosphere: a starfield with drifting planets and comets */}
+        {/* v3.3 teen atmosphere: synthwave sun over a moving neon grid, with bubbles rising */}
         <div className="hx-fx hx-min">
-          {Array.from({ length: 14 }).map((_, i) => <i key={i} className="hx-star" style={{ '--i': i }} />)}
-          {[0, 1, 2].map((i) => <b key={i} className="hx-planet" style={{ '--i': i }} />)}
-          {[0, 1].map((i) => <span key={i} className="hx-comet" style={{ '--i': i }} />)}
+          <span className="hx-sun" />
+          <span className="hx-floor" />
+          {Array.from({ length: 10 }).map((_, i) => <i key={i} className="hx-bub" style={{ '--i': i }} />)}
         </div>
       </div>
 
@@ -284,47 +284,51 @@ function ProWorld({ pay }) {
   );
 }
 
-// ── Minor world (v3.3): "Galaxy Pop" — the teen panel. A 3D planet floats inside a tilted ring of interest stickers,
-// world stickers pop out and fill an XP bar, "+100 points" flies up, and the parent + teen keys unlock a badge.
-// Art comes from the Minor onboarding files (/images/minor). Only transform / opacity animate.
-const MW_SATS = [
-  ['/images/minor/emoji/game.webp', 'Gaming'], ['/images/minor/emoji/pizza.webp', 'Food'], ['/images/minor/emoji/music.webp', 'Music'],
-  ['/images/minor/emoji/football.webp', 'Sport'], ['/images/minor/emoji/graduation.webp', 'School'], ['/images/minor/emoji/paint.webp', 'Creating'],
+// ── Minor world (v3.3): "Swipe Party" — a tilted 3D phone runs a teen poll feed. A this-or-that card swipes away
+// with a stamp, the next slides up, "+100" pops and the points counter rolls, emoji reactions float up the side,
+// a streak flame burns and world polaroids swing on a string. Behind: a synthwave sun over a moving neon grid.
+// Art from the Minor onboarding files (/images/minor). Only transform / opacity animate.
+const TP_CARDS = [
+  ['/images/minor/art/bistro.webp', 'Pizza or tacos?', 'Pizza', 'Tacos', '#FF8A00'],
+  ['/images/minor/art/arcade.webp', 'Console or PC?', 'Console', 'PC', '#7C3AED'],
+  ['/images/minor/art/runway.webp', 'Sneakers or slides?', 'Sneakers', 'Slides', '#FF3B8D'],
 ];
-const MW_WORLDS = [
-  ['/images/minor/art/arcade.webp', 'Arcade', '#7C3AED'], ['/images/minor/art/bistro.webp', 'Bistro', '#F59E0B'], ['/images/minor/art/runway.webp', 'Runway', '#D946EF'],
-];
+const TP_POLAROIDS = [['/images/minor/art/arena.webp', 'Arena'], ['/images/minor/art/future.webp', 'Future'], ['/images/minor/art/campus.webp', 'Campus']];
 function MinorWorld() {
   return (
-    <div className="hm-scene mw">
-      <span className="mw-glow" />
-      <div className="mw-3d">
-        <img className="mw-planet" src="/images/minor/art/celebrate.webp" alt="" width="400" height="400" decoding="async" />
-        <div className="mw-ring">
-          <span className="mw-ring-line" />
-          {MW_SATS.map(([src, t], i) => (
-            <span key={t} className="mw-sat" style={{ '--a': `${i * 60}deg` }}>
-              <span className="mw-sat-in"><img src={src} alt="" width="46" height="46" decoding="async" /><b>{t}</b></span>
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="mw-worlds">
-        {MW_WORLDS.map(([src, t, c], i) => (
-          <span key={t} className={`mw-world k${i}`} style={{ '--c': c }}><img src={src} alt="" width="64" height="64" decoding="async" /><b>{t}</b><em>+100</em></span>
+    <div className="hm-scene tp">
+      <div className="tp-string">
+        <svg viewBox="0 0 520 60" preserveAspectRatio="none"><path d="M0 8 Q 260 60 520 8" /></svg>
+        {TP_POLAROIDS.map(([src, t], i) => (
+          <span key={t} className={`tp-pol k${i}`}><i className="tp-pin" /><img src={src} alt="" width="70" height="70" decoding="async" /><b>{t}</b></span>
         ))}
       </div>
-      <div className="mw-xp">
-        <p><img src="/images/minor/emoji/wave.webp" alt="" width="26" height="26" decoding="async" /><b>Level up!</b><small><span className="mw-roll"><i>3</i><i>4</i><i>5</i><i>6</i></span>/13 worlds</small></p>
-        <span className="mw-bar"><i /></span>
+      <div className="tp-phone">
+        <span className="tp-notch" />
+        <div className="tp-screen">
+          <p className="tp-top"><b>For you</b><span className="tp-pts"><img src="/images/minor/emoji/coin.webp" alt="" width="16" height="16" decoding="async" /><span className="tp-roll"><i>1,200</i><i>1,300</i><i>1,400</i></span></span></p>
+          <div className="tp-deck">
+            {TP_CARDS.map(([src, q, a, b, c], i) => (
+              <div key={q} className={`tp-card k${i}`} style={{ '--c': c }}>
+                <img src={src} alt="" width="120" height="120" decoding="async" />
+                <p>{q}</p>
+                <span className="tp-opts"><em>{a}</em><em>{b}</em></span>
+                <span className="tp-stamp">Voted!</span>
+              </div>
+            ))}
+          </div>
+          <p className="tp-plus">+100</p>
+          <span className="tp-bar"><i /></span>
+        </div>
       </div>
-      <div className="mw-keys">
-        <span className="mw-key a"><Icon name="user" size={13} /> Parent ✓</span>
-        <span className="mw-key b"><Icon name="check" size={13} stroke={3} /> You ✓</span>
-        <span className="mw-unlock"><Icon name="lock" size={13} /> Unlocked</span>
+      <div className="tp-react">
+        {['/images/minor/emoji/sparkle_heart.webp', '/images/minor/emoji/fire.webp', '/images/minor/emoji/party.webp', '/images/minor/emoji/star.webp', '/images/minor/emoji/sparkle_heart.webp'].map((src, i) => (
+          <img key={i} className={`r${i}`} src={src} alt="" width="34" height="34" decoding="async" />
+        ))}
       </div>
-      <p className="mw-pts"><img src="/images/minor/emoji/coin.webp" alt="" width="22" height="22" decoding="async" /> +100 points</p>
-      {[0, 1, 2, 3].map((k) => <i key={k} className={`mw-spark s${k}`} />)}
+      <p className="tp-streak"><img src="/images/minor/emoji/fire.webp" alt="" width="26" height="26" decoding="async" /><b>5-day streak</b></p>
+      <p className="tp-ok"><span className="a"><Icon name="user" size={12} /> Parent</span><span className="b"><Icon name="check" size={12} stroke={3} /> You</span><em><Icon name="lock" size={12} /> Unlocked</em></p>
+      <p className="tp-rank"><img src="/images/minor/emoji/trophy.webp" alt="" width="24" height="24" decoding="async" /> Rookie → <b>Player</b></p>
     </div>
   );
 }

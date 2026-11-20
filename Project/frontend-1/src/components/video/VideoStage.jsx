@@ -76,6 +76,8 @@ function Deco({ t, e }) {
       return <span className="vd-typing"><i /><i /><i /></span>;
     case 'receipt':
       return <i className="vd-paper-glow" />;
+    case 'arcade': // For Minors: neon arcade cabinet, falling pixel coins and 3D world stickers
+      return <>{['/images/minor/emoji/game.webp', '/images/minor/emoji/pizza.webp', '/images/minor/emoji/music.webp', '/images/minor/emoji/trophy.webp', '/images/minor/emoji/rocket.webp', '/images/minor/emoji/crown.webp'].map((k, i) => <img key={k} className="vd-pix" style={{ '--k': i }} src={k} alt="" width="44" height="44" loading="lazy" decoding="async" />)}<i className="vd-scan" /></>;
     default:
       return pts.length ? null : null;
   }
@@ -97,6 +99,8 @@ function Frame({ t }) {
       return <span className="vf-mast">MFR <em>weekly</em></span>;
     case 'phone':
       return <span className="vf-notch" />;
+    case 'arcade':
+      return <><span className="vf-marquee">★ PLAYER 1 · READY ★</span><span className="vf-score">HI 1300</span></>;
     case 'vault':
       return <>{[0, 1, 2, 3].map((k) => <i key={k} className="vf-bolt" style={{ '--k': k }} />)}</>;
     default:

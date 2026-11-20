@@ -8,7 +8,7 @@ import { playSound } from '../utils/sound.js';
 // "Watch this page" band (v3.0) — the last section of every page, just above the footer. It shows the same video
 // stage as the floating YouTube button (each page keeps its own design) and asks viewers to like, subscribe,
 // share and comment on YouTube.
-const NAMES = { home: 'MyFrequentRewards', how: 'How it works', rewards: 'Rewards & payouts', consumers: 'Surveys for consumers', pros: 'Surveys for professionals', who: 'Who can join', trust: 'Trust & safety', about: 'About us', reviews: 'Ratings & reviews', faq: 'The FAQ', contact: 'Contact & support', blog: 'Our blogs', connect: 'Scan & Connect', default: 'This page' };
+const NAMES = { home: 'MyFrequentRewards', how: 'How it works', rewards: 'Rewards & payouts', consumers: 'Surveys for consumers', pros: 'Surveys for professionals', who: 'Who can join', trust: 'Trust & safety', about: 'About us', reviews: 'Ratings & reviews', faq: 'The FAQ', contact: 'Contact & support', blog: 'Our blogs', connect: 'Scan & Connect', minor: 'The teen panel', default: 'This page' };
 
 export default function WatchBand() {
   const { pathname } = useLocation();
