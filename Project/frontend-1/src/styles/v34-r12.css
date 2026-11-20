@@ -451,3 +451,25 @@ html[data-mode="dark"] .fq-desk .faq-item summary { color: #EEF1FA; }
   .rxs .rxs-col.p { padding: 0 8px; border-radius: 22px; background: linear-gradient(160deg, #050D2E, #0B1E5B 55%, #13307F); }
 }
 @media (max-width: 960px) { .rxs .rxs-medal { display: none; } .rxs .rxs-col.empty { display: grid; align-content: center; } }
+
+/* ---- Round 12: Teen sign-up step 3 "Your profile" (welcome questionnaire) ---- */
+.tq { margin: 18px 0 0; padding: 0; border: 0; min-width: 0; }
+.tq legend { padding: 0; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.tq legend b { font: 800 1rem var(--font-d); color: var(--navy, #0B1E5B); }
+.tq legend small { font-size: .82rem; color: #6B7194; }
+.tq-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.tq-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid #E2DAF5; background: #fff; font: 700 .88rem var(--font-b); color: #3B3561; cursor: pointer; transition: transform .2s cubic-bezier(.3, 1.6, .5, 1), background .2s, border-color .2s, color .2s; }
+.tq-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.tq-chip:hover { border-color: #B79CFF; transform: translateY(-1px); }
+.tq-chip:has(input:focus-visible) { outline: 3px solid #8B5CF6; outline-offset: 2px; }
+.tq-chip.on { color: #fff; border-color: transparent; background: linear-gradient(120deg, #7C3AED, #FF3B8D); box-shadow: 0 8px 18px -10px rgba(124, 58, 237, .8); animation: tqPop .3s cubic-bezier(.3, 1.6, .5, 1); }
+.tq.bad .tq-chip:not(.on) { border-color: #F3A3B5; }
+@keyframes tqPop { 50% { transform: scale(1.08); } }
+html[data-mode="dark"] .tq legend b { color: #F1ECFF; }
+html[data-mode="dark"] .tq legend small { color: #B7B0D6; }
+html[data-mode="dark"] .tq-chip:not(.on) { background: #1D1A2B; border-color: #3A3352; color: #E4DEF7; }
+@media (prefers-reduced-motion: reduce) { .tq-chip, .tq-chip.on { animation: none; transition: none; } }
+/* the teen rail has five steps (consumer / professional rails keep their four) */
+.sx-rail ol:has(> li:nth-child(5)) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.sx-rail ol:has(> li:nth-child(5)) em { font-size: .74rem; line-height: 1.15; }
+@media (max-width: 560px) { .sx-rail ol:has(> li:nth-child(5)) em { display: none; } .sx-rail ol:has(> li:nth-child(5)) button { justify-content: center; } }

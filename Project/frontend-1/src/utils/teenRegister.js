@@ -51,6 +51,26 @@ export function validateGuardian(g, teenEmail = '') {
   return e;
 }
 
+// Step "Your profile" (Round 12): the teen welcome questionnaire. Age-appropriate questions only: where they live
+// (state / region and city), their own phone if they have one, school stage, interests, devices and what they watch
+// or play. The answers travel with the registration (payload.welcome) so the first invitations can match them.
+export const TEEN_SCHOOL = ['Middle school', 'Secondary / high school', 'Pre-university / junior college', 'Not in school right now'];
+export const TEEN_PROFILE_Q = [
+  { k: 'interests', t: 'What are you into?', d: 'Pick all that fit.', opts: ['Gaming', 'Music', 'Sport & fitness', 'Fashion & style', 'Movies & series', 'Snacks & food', 'Tech & gadgets', 'Reading & comics', 'Art & design', 'Travel'] },
+  { k: 'devices', t: 'Which devices do you use?', d: 'Your own or shared at home.', opts: ['Smartphone', 'Tablet', 'Laptop or PC', 'Games console', 'Smart speaker', 'Smartwatch'] },
+  { k: 'entertainment', t: 'Where do you watch, listen and play?', d: 'Pick all that fit.', opts: ['Video platforms', 'Streaming services', 'Music streaming', 'Short-video apps', 'Mobile games', 'Console or PC games', 'Podcasts'] },
+];
+const PLACE_RE = /^[\p{L}][\p{L}\s.'’-]{1,59}$/u;
+export function validateTeenProfile(t) {
+  const e = {};
+  if (!PLACE_RE.test((t.region || '').trim())) e.region = 'Enter your state, province or region.';
+  if (!PLACE_RE.test((t.city || '').trim())) e.city = 'Enter your city or town.';
+  if (digits(t.phone)) { const ph = validatePhone(t.phoneIso, t.phone); if (ph) e.phone = ph; }
+  if (!TEEN_SCHOOL.includes(t.school)) e.school = 'Choose your school stage.';
+  TEEN_PROFILE_Q.forEach((q) => { if (!(t[q.k] || []).length) e[q.k] = 'Pick at least one.'; });
+  return e;
+}
+
 // Step "Consent": every box must be ticked by hand, plus the CAPTCHA.
 export const CONSENT_BOXES = [
   { k: 'parentConsent', t: 'My parent or guardian knows I’m joining and agrees to review and sign the Parent Consent Form we email them.' },
@@ -66,7 +86,7 @@ export function validateConsent(c) {
   return e;
 }
 
-export function buildTeenPayload(teen, guardian, consent, { categories, dial = '', timezone = 'UTC', referredBy = '' }) {
+export function buildTeenPayload(teen, guardian, consent, { categories, dial = '', timezone = 'UTC', referredBy = '', profile = null, teenDial = '' }) {
   const rel = GUARDIANS.find((x) => x.k === guardian.relation);
   const name = (o) => ({
     first: o.first.trim(),
@@ -86,7 +106,12 @@ export function buildTeenPayload(teen, guardian, consent, { categories, dial = '
     dob: teen.dob,
     mail: teen.email.trim().toLowerCase(),
     timezone,
-    address: [{ tag: 'home', country: String(teen.country || '').toLowerCase() }],
+    address: [{
+      tag: 'home',
+      country: String(teen.country || '').toLowerCase(),
+      ...(profile ? { state: profile.region.trim(), city: profile.city.trim() } : {}),
+    }],
+    ...(profile && digits(profile.phone) ? { phone: digits(teenDial) + digits(profile.phone) } : {}),
     parent: {
       email: guardian.email.trim().toLowerCase(),
       name: name(guardian),
@@ -102,6 +127,13 @@ export function buildTeenPayload(teen, guardian, consent, { categories, dial = '
       ...Object.fromEntries(CONSENT_BOXES.map((b) => [b.k, Boolean(consent[b.k])])),
     },
   };
+  if (profile) {
+    payload.welcome = {
+      version: 'teen-welcome-v1',
+      at: new Date().toISOString(),
+      answers: { school: profile.school, ...Object.fromEntries(TEEN_PROFILE_Q.map((q) => [q.k, [...(profile[q.k] || [])]])) },
+    };
+  }
   if (referredBy) payload.referredBy = referredBy;
   return payload;
 }

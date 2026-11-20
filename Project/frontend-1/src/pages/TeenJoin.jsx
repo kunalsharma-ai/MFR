@@ -111,7 +111,7 @@ function LiveCard({ v, step, progress, sent, teen = false }) {
         ))}
       </ol>
       <p className="lc-hint">
-        {sent ? "Check your inbox" : STEPS[step - 1].art}
+        {sent ? "Check your inbox" : (STEPS[step - 1] || STEPS[STEPS.length - 1]).art}
       </p>
     </div>
   );
@@ -463,7 +463,7 @@ export default function TeenJoin() {
                 0,
                 Math.min(100, status === "sent" ? 100 : teenFlow ? teenProg.pct : pct),
               )}
-              sent={status === "sent" || (teenFlow && teenProg.step === 4)}
+              sent={status === "sent" || (teenFlow && teenProg.step === TEEN_STEPS.length)}
             />
             <ul className="sx-perks">
               <li>

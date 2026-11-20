@@ -11,23 +11,30 @@ import { MEMBER_CATEGORIES } from '../data/site.js';
 import { GENDERS } from '../utils/teenValidate.js';
 import { checkEmailDomain } from '../utils/emailChecks.js';
 import {
-  CONSENT_BOXES, GUARDIANS, buildTeenPayload, maskEmail, resendGuardianInvite, submitTeenRegistration, validateConsent, validateGuardian,
+  CONSENT_BOXES, GUARDIANS, TEEN_PROFILE_Q, TEEN_SCHOOL, buildTeenPayload, maskEmail, resendGuardianInvite, submitTeenRegistration,
+  validateConsent, validateGuardian, validateTeenProfile,
 } from '../utils/teenRegister.js';
 
 // The teen panel's own registration. Step 1 ("About you": first / middle / last name, email, DOB limited to teen ages,
 // gender) lives on /sign-up; this component takes over after it:
 //   2 · Parent / guardian → Mother, Father or Legal guardian: first*, middle, last, email*, phone*, DOB* (+ gender* for a legal guardian)
-//   3 · Consent           → five boxes ticked by hand (parent consent, participation, Terms, Privacy, accuracy) + CAPTCHA
-//   4 · Parent invite     → a pending registration is created and the Parent/Guardian Onboarding Form is emailed
+//   3 · Your profile      → teen welcome questionnaire: state / region*, city*, own phone (optional), school stage*,
+//                           interests*, devices*, where they watch / listen / play* (Round 12)
+//   4 · Consent           → five boxes ticked by hand (parent consent, participation, Terms, Privacy, accuracy) + CAPTCHA
+//   5 · Parent invite     → a pending registration is created and the Parent/Guardian Onboarding Form is emailed.
+//       After the parent signs, the teen gets a secure link to set their own password (no password is ever emailed),
+//       logs in, and lands on the dashboard.
 export const TEEN_STEPS = [
   { n: 1, t: 'About you', icon: 'user' },
   { n: 2, t: 'Parent / guardian', icon: 'family' },
-  { n: 3, t: 'Consent', icon: 'shield' },
-  { n: 4, t: 'Parent invite', icon: 'send' },
+  { n: 3, t: 'Your profile', icon: 'sparkle' },
+  { n: 4, t: 'Consent', icon: 'shield' },
+  { n: 5, t: 'Parent invite', icon: 'send' },
 ];
 const FIELDS = {
   2: ['relation', 'first', 'middle', 'last', 'dob', 'email', 'phone', 'gender'],
-  3: [...CONSENT_BOXES.map((b) => b.k), 'captcha'],
+  3: ['region', 'city', 'phone', 'school', ...TEEN_PROFILE_Q.map((q) => q.k)],
+  4: [...CONSENT_BOXES.map((b) => b.k), 'captcha'],
 };
 const RESEND_WAIT = 30;
 const E = (n) => `/images/minor/emoji/${n}.webp`;
@@ -54,6 +61,7 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
   const [dir, setDir] = useState(1);
   const [g, setG] = useState({ relation: '', first: '', middle: '', last: '', dob: '', email: '', gender: '', phoneIso: seed.phoneIso || seed.country || '', phone: '' });
   const [c, setC] = useState({ captchaOk: false });
+  const [t, setT] = useState({ region: '', city: '', phoneIso: seed.country || '', phone: '', school: '', interests: [], devices: [], entertainment: [] });
   const [touched, setTouched] = useState({});
   const [domainMsg, setDomainMsg] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
@@ -67,16 +75,17 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
   const teenMail = seed.email.trim().toLowerCase();
 
   const errors = useMemo(() => {
-    if (step === 3) return validateConsent(c);
+    if (step === 4) return validateConsent(c);
+    if (step === 3) return validateTeenProfile(t);
     const e = validateGuardian(g, teenMail);
     const val = g.email.trim().toLowerCase();
     if (!e.email && domainMsg?.msg && domainMsg.value === val) e.email = domainMsg.msg;
     return e;
-  }, [step, g, c, teenMail, domainMsg]);
+  }, [step, g, c, t, teenMail, domainMsg]);
   const err = (k) => (touched[`${step}.${k}`] ? errors[k] : undefined);
   const ok = (k) => touched[`${step}.${k}`] && !errors[k];
   const touch = (k) => setTouched((s) => ({ ...s, [`${step}.${k}`]: true }));
-  const shownStep = status === 'sent' ? 4 : step;
+  const shownStep = status === 'sent' ? 5 : step;
   const pct = status === 'sent' ? 100 : railPct(step, TEEN_STEPS.length, FIELDS[step].length, Object.keys(errors).length);
 
   useEffect(() => { onProgress?.(shownStep, pct); }, [shownStep, pct]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -110,15 +119,17 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
       if (await checkDomain(g.email)) return showAll();
       return go(3);
     }
+    if (step === 3) return go(4);
     if (status === 'sending') return;
     // the CAPTCHA is checked only now, when the button is pressed (never while typing)
     if (!captchaRef.current?.verify?.()) { setC((s) => ({ ...s, captchaOk: false })); focusBad(); return; }
     setStatus('sending');
     setServerMsg('');
     const dial = (COUNTRIES.find((x) => x.iso === g.phoneIso) || {}).dial || '';
+    const teenDial = (COUNTRIES.find((x) => x.iso === t.phoneIso) || {}).dial || '';
     try {
       await submitTeenRegistration(buildTeenPayload(seed, g, c, {
-        categories: MEMBER_CATEGORIES, dial, referredBy,
+        categories: MEMBER_CATEGORIES, dial, referredBy, profile: t, teenDial,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       }));
       setStatus('sent');
@@ -152,12 +163,14 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
   const who = rel ? (legal ? 'your guardian' : `your ${rel.t.toLowerCase()}`) : 'your parent';
   const whoT = rel ? (legal ? 'Guardian' : rel.t) : 'Parent';
   const setGF = (k) => (e) => setG((s) => ({ ...s, [k]: e.target.value }));
+  const setTF = (k) => (e) => setT((s) => ({ ...s, [k]: e.target.value }));
+  const tAria = (k) => ({ 'aria-invalid': Boolean(err(k)), 'aria-describedby': err(k) ? `t-${k}-err` : undefined, onBlur: () => touch(k) });
   const gAria = (k) => ({ 'aria-invalid': Boolean(err(k)), 'aria-describedby': err(k) ? `g-${k}-err` : undefined, onBlur: () => touch(k) });
 
   if (status === 'sent') {
     return (
       <div className="sx-done ts-done" role="status" ref={cardRef}>
-        <SxRail steps={TEEN_STEPS} step={4} pct={100} />
+        <SxRail steps={TEEN_STEPS} step={5} pct={100} />
         <div className="ts-flight" aria-hidden="true">
           <img className="ts-env" src="/images/minor/emoji/mail.webp" alt="" width="84" height="84" />
           <span className="ts-trail" />
@@ -174,7 +187,8 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
           <li><img src={E('mail')} alt="" width="28" height="28" /><span><b>{whoT} opens the secure link</b><small>Subject: “{first} wants to join the MyFrequentRewards Teen Panel”</small></span></li>
           <li><img src={E('parenting')} alt="" width="28" height="28" /><span><b>They complete the onboarding form</b><small>16 short questions about them, the household, staying in touch and your health</small></span></li>
           <li><img src={E('handshake')} alt="" width="28" height="28" /><span><b>They sign the Parent Consent Form</b><small>Your account stays pending until their consent is verified</small></span></li>
-          <li><img src={E('rocket')} alt="" width="28" height="28" /><span><b>You create your password and log in</b><small>We’ll email your activation link to {maskEmail(teenMail)}</small></span></li>
+          <li><img src={E('rocket')} alt="" width="28" height="28" /><span><b>You set your own password</b><small>We email a secure set-password link to {maskEmail(teenMail)}. We never send a password by email.</small></span></li>
+          <li><img src={E('sparkles')} alt="" width="28" height="28" /><span><b>Log in and open your dashboard</b><small>Your profile answers are already saved, so matching age-appropriate surveys can find you.</small></span></li>
         </ol>
         <p className="ts-tip"><Icon name="bell" size={16} /> Tell {who} to look out for it now. Nothing starts until they say yes.</p>
         <div className="done-actions">
@@ -255,6 +269,61 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
 
         {step === 3 ? (
           <>
+            <h2 className="sx-h">Tell us a little about you, {first}</h2>
+            <p className="sx-sub">A quick welcome questionnaire. It helps us invite you to surveys that fit your age and interests. You can change it later in your profile.</p>
+            <div className="sx-grid">
+              <Field id="t-region" label="State, province or region" error={err('region')} ok={ok('region')} icon="pin" half>
+                <input id="t-region" placeholder=" " autoComplete="address-level1" maxLength={60} value={t.region} onChange={setTF('region')} {...tAria('region')} />
+              </Field>
+              <Field id="t-city" label="City or town" error={err('city')} ok={ok('city')} icon="home" half>
+                <input id="t-city" placeholder=" " autoComplete="address-level2" maxLength={60} value={t.city} onChange={setTF('city')} {...tAria('city')} />
+              </Field>
+              <div className={`sx-field ${err('phone') ? 'bad' : ''} ${ok('phone') && t.phone ? 'good' : ''}`}>
+                <span className="sx-static-label">Your phone number (if you have one)</span>
+                <div className="sx-phone">
+                  <CountryPicker id="t-phoneIso" mode="dial" list={COUNTRIES} value={t.phoneIso} placeholder="Code"
+                    onChange={(x) => { setT((s) => ({ ...s, phoneIso: x.iso })); touch('phone'); }} invalid={Boolean(err('phone') && !t.phoneIso)} />
+                  <input id="t-phone" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="Phone number" maxLength={18} value={t.phone}
+                    onChange={(e) => setT((s) => ({ ...s, phone: e.target.value.replace(/[^\d\s-]/g, '') }))} {...tAria('phone')} aria-label="Your phone number" />
+                </div>
+                {err('phone') ? <p className="f-err" id="t-phone-err" role="alert">{err('phone')}</p> : <p className="f-hint">Leave it empty if you don’t have your own phone.</p>}
+              </div>
+            </div>
+            <fieldset className={`tq ${err('school') ? 'bad' : ''}`}>
+              <legend><b>Where are you at school?</b></legend>
+              <div className="tq-opts" role="radiogroup" aria-invalid={Boolean(err('school'))}>
+                {TEEN_SCHOOL.map((x) => (
+                  <label key={x} className={`tq-chip ${t.school === x ? 'on' : ''}`}>
+                    <input type="radio" name="t-school" value={x} checked={t.school === x} onChange={() => { setT((s) => ({ ...s, school: x })); touch('school'); }} />
+                    {x}
+                  </label>
+                ))}
+              </div>
+              {err('school') ? <p className="f-err" role="alert">{err('school')}</p> : null}
+            </fieldset>
+            {TEEN_PROFILE_Q.map((q) => (
+              <fieldset key={q.k} className={`tq ${err(q.k) ? 'bad' : ''}`}>
+                <legend><b>{q.t}</b> <small>{q.d}</small></legend>
+                <div className="tq-opts">
+                  {q.opts.map((x) => {
+                    const on = t[q.k].includes(x);
+                    return (
+                      <label key={x} className={`tq-chip ${on ? 'on' : ''}`}>
+                        <input type="checkbox" checked={on} aria-invalid={Boolean(err(q.k))}
+                          onChange={() => { setT((s) => ({ ...s, [q.k]: on ? s[q.k].filter((y) => y !== x) : [...s[q.k], x] })); touch(q.k); }} />
+                        {on ? <Icon name="check" size={14} stroke={3} /> : null}{x}
+                      </label>
+                    );
+                  })}
+                </div>
+                {err(q.k) ? <p className="f-err" role="alert">{err(q.k)}</p> : null}
+              </fieldset>
+            ))}
+          </>
+        ) : null}
+
+        {step === 4 ? (
+          <>
             <h2 className="sx-h">Consent and confirmation</h2>
             <p className="sx-sub">Tick each box yourself. {rel ? `Your ${legal ? 'guardian' : rel.t.toLowerCase()}` : 'Your parent'} gives the real permission in the Parent Consent Form we email them. Your account stays pending until they do.</p>
             <div className="ts-consent">
@@ -279,11 +348,11 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
       </div>
 
       <div className="sx-nav">
-        <button type="button" className="btn btn-ghost-dark" onClick={() => (step === 2 ? onBack() : go(2))}>
+        <button type="button" className="btn btn-ghost-dark" onClick={() => (step === 2 ? onBack() : go(step - 1))}>
           <Icon name="arrow" size={16} className="flip" /> Back
         </button>
         <button type="submit" className="btn btn-primary btn-lg btn-shine" disabled={status === 'sending'}>
-          {status === 'sending' ? <><span className="spinner" /> Submitting…</> : step === 2 ? <>Continue <Icon name="arrow" size={18} /></> : <><span>Submit<span className="ts-who"> & invite {who}</span></span> <Icon name="send" size={18} /></>}
+          {status === 'sending' ? <><span className="spinner" /> Submitting…</> : step < 4 ? <>Continue <Icon name="arrow" size={18} /></> : <><span>Submit<span className="ts-who"> & invite {who}</span></span> <Icon name="send" size={18} /></>}
         </button>
       </div>
     </form>
