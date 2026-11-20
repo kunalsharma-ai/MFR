@@ -51,25 +51,25 @@ export function validateGuardian(g, teenEmail = '') {
   return e;
 }
 
-// Step "Your profile" (Round 12): the teen welcome questionnaire. Age-appropriate questions only: where they live
-// (state / region and city), their own phone if they have one, school stage, interests, devices and what they watch
-// or play. The answers travel with the registration (payload.welcome) so the first invitations can match them.
+// Teen welcome questionnaire (Round 12): shown once, after the teen has set a password and logged in (TeenWelcome).
+// Age-appropriate questions only; the answers are saved to the member's profile (PATCH /api/v1/me/answer).
 export const TEEN_SCHOOL = ['Middle school', 'Secondary / high school', 'Pre-university / junior college', 'Not in school right now'];
 export const TEEN_PROFILE_Q = [
   { k: 'interests', t: 'What are you into?', d: 'Pick all that fit.', opts: ['Gaming', 'Music', 'Sport & fitness', 'Fashion & style', 'Movies & series', 'Snacks & food', 'Tech & gadgets', 'Reading & comics', 'Art & design', 'Travel'] },
   { k: 'devices', t: 'Which devices do you use?', d: 'Your own or shared at home.', opts: ['Smartphone', 'Tablet', 'Laptop or PC', 'Games console', 'Smart speaker', 'Smartwatch'] },
   { k: 'entertainment', t: 'Where do you watch, listen and play?', d: 'Pick all that fit.', opts: ['Video platforms', 'Streaming services', 'Music streaming', 'Short-video apps', 'Mobile games', 'Console or PC games', 'Podcasts'] },
 ];
-const PLACE_RE = /^[\p{L}][\p{L}\s.'’-]{1,59}$/u;
-export function validateTeenProfile(t) {
+export function validateTeenWelcome(t) {
   const e = {};
-  if (!PLACE_RE.test((t.region || '').trim())) e.region = 'Enter your state, province or region.';
-  if (!PLACE_RE.test((t.city || '').trim())) e.city = 'Enter your city or town.';
-  if (digits(t.phone)) { const ph = validatePhone(t.phoneIso, t.phone); if (ph) e.phone = ph; }
   if (!TEEN_SCHOOL.includes(t.school)) e.school = 'Choose your school stage.';
   TEEN_PROFILE_Q.forEach((q) => { if (!(t[q.k] || []).length) e[q.k] = 'Pick at least one.'; });
   return e;
 }
+// Answer keys sent to PATCH /api/v1/me/answer.
+export const teenWelcomeAnswers = (t) => ({
+  teen_school: t.school,
+  ...Object.fromEntries(TEEN_PROFILE_Q.map((q) => [`teen_${q.k}`, [...(t[q.k] || [])]])),
+});
 
 // Step "Consent": every box must be ticked by hand, plus the CAPTCHA.
 export const CONSENT_BOXES = [
@@ -86,7 +86,7 @@ export function validateConsent(c) {
   return e;
 }
 
-export function buildTeenPayload(teen, guardian, consent, { categories, dial = '', timezone = 'UTC', referredBy = '', profile = null, teenDial = '' }) {
+export function buildTeenPayload(teen, guardian, consent, { categories, dial = '', timezone = 'UTC', referredBy = '' }) {
   const rel = GUARDIANS.find((x) => x.k === guardian.relation);
   const name = (o) => ({
     first: o.first.trim(),
@@ -109,9 +109,8 @@ export function buildTeenPayload(teen, guardian, consent, { categories, dial = '
     address: [{
       tag: 'home',
       country: String(teen.country || '').toLowerCase(),
-      ...(profile ? { state: profile.region.trim(), city: profile.city.trim() } : {}),
+      ...(String(teen.state || '').trim() ? { state: teen.state.trim() } : {}),
     }],
-    ...(profile && digits(profile.phone) ? { phone: digits(teenDial) + digits(profile.phone) } : {}),
     parent: {
       email: guardian.email.trim().toLowerCase(),
       name: name(guardian),
@@ -127,13 +126,6 @@ export function buildTeenPayload(teen, guardian, consent, { categories, dial = '
       ...Object.fromEntries(CONSENT_BOXES.map((b) => [b.k, Boolean(consent[b.k])])),
     },
   };
-  if (profile) {
-    payload.welcome = {
-      version: 'teen-welcome-v1',
-      at: new Date().toISOString(),
-      answers: { school: profile.school, ...Object.fromEntries(TEEN_PROFILE_Q.map((q) => [q.k, [...(profile[q.k] || [])]])) },
-    };
-  }
   if (referredBy) payload.referredBy = referredBy;
   return payload;
 }

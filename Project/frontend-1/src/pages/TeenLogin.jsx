@@ -4,13 +4,14 @@ import Icon from '../components/Icon.jsx';
 import Captcha from '../components/TeenCaptcha.jsx';
 import { PageSeo } from '../components/PageHero.jsx';
 import { PAGES } from '../data/pages.js';
-import { BRAND, DEMO_MODE, MEMBER_PORTAL_URL } from '../data/site.js';
+import { BRAND, DEMO_MODE } from '../data/site.js';
 import { postJSON } from '../utils/api.js';
 import { EMAIL_RE } from '../utils/teenValidate.js';
 import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
+import TeenWelcome, { teenWelcomeDone } from '../components/TeenWelcome.jsx';
 const page = PAGES.login;
 
 // Member log-in ("Member Pass").
@@ -91,7 +92,8 @@ export default function TeenLogin() {
   const [f, setF] = useState({ email: '', password: '', remember: true, captchaOk: false });
   const [touched, setTouched] = useState({});
   const [show, setShow] = useState(false);
-  const [phase, setPhase] = useState('idle'); // idle | sending | success
+  const [phase, setPhase] = useState('idle'); // idle | sending | welcome | success
+  const [welcome, setWelcome] = useState(null); // { name, mail, demo } while the first-login questionnaire is open
   const [msg, setMsg] = useState('');
   const [tries, setTries] = useState(0);
   const [lockLeft, setLockLeft] = useState(0);
@@ -119,6 +121,13 @@ export default function TeenLogin() {
     const t = setTimeout(() => setLockLeft((n) => n - 1), 1000);
     return () => clearTimeout(t);
   }, [lockLeft]);
+
+  function openDashboard(demo) {
+    setWelcome(null);
+    setPhase('success');
+    if (!demo) setTimeout(() => { window.location.href = '/member/dashboard'; }, 1400);
+    else setMsg('Preview mode: login simulated — no real account was accessed.');
+  }
 
   async function submit(e) {
     e.preventDefault();
@@ -153,10 +162,14 @@ export default function TeenLogin() {
 });
     // login ke baad signup ke pending answers backend ko bhejo (kabhi throw nahi karta; 4s se zyada nahi rukega)
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
-    setPhase('success');
-    const to = res.redirect || MEMBER_PORTAL_URL || '/member/dashboard';
-      if (!res.demo && to) setTimeout(() => window.location.href="/member/dashboard", 1400);
-      if (res.demo) setMsg('Preview mode: login simulated — no real account was accessed.');
+    const mail = f.email.trim().toLowerCase();
+    // First log in after the parent's consent and the password: the welcome questionnaire comes before the dashboard.
+    if (!teenWelcomeDone(mail)) {
+      setWelcome({ name: res.user?.name?.first || res.data?.name?.first || '', mail, demo: Boolean(res.demo) });
+      setPhase('welcome');
+      return;
+    }
+    openDashboard(Boolean(res.demo));
     } catch (ex) {
       setPhase('idle');
       const n = tries + 1;
@@ -215,7 +228,7 @@ export default function TeenLogin() {
             </ul>
           </div>
 
-          <div className="lx-card">
+          <div className={`lx-card ${welcome ? 'is-welcome' : ''}`}>
             <div className="lx-card-head">
               <span className="lx-badge"><Icon name="lock" size={22} /></span>
               <div>
@@ -224,7 +237,8 @@ export default function TeenLogin() {
               </div>
             </div>
 
-            <form ref={formRef} className="lx-form" onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
+            {welcome ? <TeenWelcome name={welcome.name} mail={welcome.mail} demo={welcome.demo} onDone={() => openDashboard(welcome.demo)} /> : null}
+            <form ref={formRef} className="lx-form" hidden={Boolean(welcome)} onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
               <div className={`lx-field ${err('email') ? 'bad' : ''} ${emailOk ? 'good' : ''}`}>
                 <Icon name="mail" size={18} />
                 <input id="login-email" name="email" type="email" placeholder=" " autoComplete="username" inputMode="email" value={f.email} onChange={(e) => set('email', e.target.value)} onBlur={() => setTouched((t) => ({ ...t, email: true }))} {...aria('email', 'login-email')} />

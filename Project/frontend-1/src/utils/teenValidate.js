@@ -67,7 +67,7 @@ export function validatePhone(iso, raw = '') {
 
 // Field-level rules grouped by wizard step. Steps 1–2 are on /sign-up; steps 3–4 on /auth/password (the emailed link).
 export const STEP_FIELDS = {
-  1: ['memberType', 'firstName', 'middleName', 'lastName', 'gender', 'dob', 'country'],
+  1: ['memberType', 'firstName', 'middleName', 'lastName', 'gender', 'dob', 'country', 'state'],
   2: ['email', 'phone', 'captcha', 'agreeTerms', 'agreePrivacy'],
   3: ['password', 'confirm'],
   4: ['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department', 'jobrole', 'jobTitleOther', 'companyEmail'],
@@ -85,6 +85,7 @@ export function validateSignup(v) {
   const dobErr = validateDob(v.dob);
   if (dobErr) e.dob = dobErr;
   if (!v.country) e.country = 'Select your country of residence.';
+  if (!/^[\p{L}][\p{L}\s.'’-]{1,59}$/u.test(String(v.state || '').trim())) e.state = 'Enter your state, province or region.';
   const em = (v.email || '').trim();
   if (!EMAIL_RE.test(em)) e.email = 'Enter a valid email address.';
   else if (isDisposable(em)) e.email = 'Temporary email addresses are not accepted.';

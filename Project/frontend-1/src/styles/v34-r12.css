@@ -500,3 +500,44 @@ html[data-mode="dark"] .tq-chip:not(.on) { background: #1D1A2B; border-color: #3
 @media (prefers-reduced-motion: reduce) { .nx-care .nx-ecg, .nx-live { animation: none !important; } }
 .nx-care .nx-ecgbox .nx-ecg { width: 200% !important; max-width: none !important; right: auto; }
 @media (max-width: 860px) { .nx-care .nx-monitor { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Round 12: teen welcome questionnaire, shown after the first log in (not during sign-up) ---- */
+.lx-card.is-welcome > :not(.tw) { display: none !important; }
+.tw { display: grid; gap: 4px; }
+.tw-k { margin: 0; display: inline-flex; align-items: center; gap: 6px; font: 800 .72rem var(--font-b); letter-spacing: .12em; text-transform: uppercase; color: #7C3AED; }
+.tw-h { margin: 4px 0 2px; font: 800 clamp(1.3rem, 2.4vw, 1.7rem)/1.2 var(--font-d); color: var(--navy, #0B1E5B); }
+.tw-sub { margin: 0 0 6px; color: #5A6080; font-size: .92rem; line-height: 1.5; }
+.tw-q { margin: 14px 0 0; padding: 0; border: 0; min-width: 0; }
+.tw-q legend { padding: 0; margin-bottom: 8px; font: 800 .98rem var(--font-d); color: var(--navy, #0B1E5B); }
+.tw-q legend small { font: 500 .8rem var(--font-b); color: #6B7194; margin-left: 6px; }
+.tw-q.bad .tq-chip:not(.on) { border-color: #F3A3B5; }
+.tw-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 20px; }
+@media (max-width: 480px) { .tw-nav { flex-direction: column-reverse; } .tw-nav .btn { width: 100%; justify-content: center; } }
+html[data-mode="dark"] .tw-h, html[data-mode="dark"] .tw-q legend { color: #F1ECFF; }
+html[data-mode="dark"] .tw-sub, html[data-mode="dark"] .tw-q legend small { color: #B7B0D6; }
+
+/* ---- Round 12: parent / guardian details laid out on a clean grid (no empty half-rows, no cramped buttons)
+   row 1: first · middle · last   row 2: date of birth · email   row 3: phone · gender (legal guardian only) ---- */
+.ts-gfields.sx-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 14px; align-items: start; }
+.ts-gfields.sx-grid > * { grid-column: span 3; margin: 0; min-width: 0; }
+.ts-gfields.sx-grid > :nth-child(-n+3) { grid-column: span 2; }
+.ts-gfields.sx-grid > :last-child:nth-child(6) { grid-column: 1 / -1; }
+.ts-gfields .sx-genders { display: flex; flex-wrap: wrap; gap: 8px; }
+.ts-gfields .sx-gender { flex: 1 1 0; min-width: 84px; min-height: 48px; justify-content: center; padding: 10px 14px; }
+@media (max-width: 760px) {
+  .ts-gfields.sx-grid { grid-template-columns: minmax(0, 1fr); }
+  .ts-gfields.sx-grid > *, .ts-gfields.sx-grid > :nth-child(-n+3) { grid-column: 1 / -1; }
+}
+/* teen "About you": names on one row · date of birth + gender · email · country + state */
+.tj-grid.sx-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 14px; align-items: start; }
+.tj-grid.sx-grid > * { grid-column: span 3; margin: 0; min-width: 0; }
+.tj-grid.sx-grid > :nth-child(-n+3) { grid-column: span 2; }
+.tj-grid.sx-grid > :has(#email) { grid-column: 1 / -1; }
+/* a floating-label box next to a box with a label above it: line the two boxes up */
+@media (min-width: 761px) {
+  .tj-grid.sx-grid > :has(#state), .ts-gfields.sx-grid > :has(#g-email) { margin-top: 27px; }
+}
+@media (max-width: 760px) {
+  .tj-grid.sx-grid { grid-template-columns: minmax(0, 1fr); }
+  .tj-grid.sx-grid > *, .tj-grid.sx-grid > :nth-child(-n+3) { grid-column: 1 / -1; }
+}

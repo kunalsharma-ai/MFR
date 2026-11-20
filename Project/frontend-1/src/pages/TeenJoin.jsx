@@ -129,6 +129,7 @@ export default function TeenJoin() {
     gender: "",
     dob: "",
     country: "",
+    state: "",
     email: "",
     phoneIso: "",
     phone: "",
@@ -619,7 +620,7 @@ export default function TeenJoin() {
                           </span>
                         </div>
                       ) : null}
-                      <div className="sx-grid">
+                      <div className="sx-grid tj-grid">
                         <Field
                           id="firstName"
                           label="First name"
@@ -852,15 +853,16 @@ export default function TeenJoin() {
                           </select>
                         </Field> */}
                         {/* Country is detected from the IP; the picker only shows when that failed, so step 1 never blocks on a hidden field. */}
-                        {!geoFailed ? null : (<div
-                          className={`sx-field ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`}
+                        {/* Teen panel (Round 12): country and state are always asked; the country list has every country with its flag. */}
+                        <div
+                          className={`sx-field half ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`}
                         >
                           <span className="sx-static-label" id="country-lbl">
                             Country of residence
                           </span>
                           <CountryPicker
                             id="country"
-                            list={SUPPORTED_COUNTRIES}
+                            list={COUNTRIES}
                             value={v.country}
                             invalid={Boolean(err("country"))}
                             describedBy={
@@ -880,7 +882,11 @@ export default function TeenJoin() {
                               {err("country")}
                             </p>
                           ) : null}
-                        </div>)}
+                        </div>
+                        <Field id="state" label="State, province or region" error={err("state")} ok={ok("state")} icon="pin" half>
+                          <input id="state" placeholder=" " autoComplete="address-level1" maxLength={60} value={v.state}
+                            onChange={(e) => set("state", e.target.value)} {...aria("state")} />
+                        </Field>
                       </div>
                       {adultNote ? (
                         <p className="sx-note" role="status">

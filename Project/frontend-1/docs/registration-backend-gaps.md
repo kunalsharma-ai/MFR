@@ -20,25 +20,31 @@ The frontend posts to `POST /api/v1/user/teen` (override this with `VITE_TEEN_EN
 {
   "panel": "teen", "status": "parent_details_submitted", "category": "b2c",
   "name": { "first": "Aarav", "middle": "", "last": "" }, "gender": "Male", "dob": "2011-04-12",
-  "mail": "teen@example.com", "timezone": "Asia/Kolkata", "address": [{ "tag": "home", "country": "in", "state": "Maharashtra", "city": "Pune" }],
-  "phone": "919812345678", // only when the teen has their own phone (optional)
+  "mail": "teen@example.com", "timezone": "Asia/Kolkata", "address": [{ "tag": "home", "country": "in", "state": "Maharashtra" }],
   "parent": {
-    "email": "parent@example.com", "name": { "first": "Meera", "last": "Sharma" },
+    "email": "parent@example.com", "name": { "first": "Meera", "middle": "", "last": "Sharma" },
     "relation": "mother | father | legal_guardian", "dob": "1984-09-05",
     "gender": "Female", "phone": "919876543210", "consent": null
   },
   "teenConsent": { "version": "teen-panel-v1", "at": "ISO date", "parentConsent": true, "participation": true,
-                   "terms": true, "privacy": true, "accurate": true },
-  "welcome": { "version": "teen-welcome-v1", "at": "ISO date",
-               "answers": { "school": "Secondary / high school", "interests": ["Gaming", "Music"],
-                            "devices": ["Smartphone"], "entertainment": ["Video platforms"] } }
+                   "terms": true, "privacy": true, "accurate": true }
 }
 ```
 
-Round 12: the teen now answers a short welcome questionnaire (step 3 "Your profile") before consent, so the order is
-teen basics → parent details → profile questions → consent → parent email (onboarding + consent) → set-password link → login → dashboard.
-The answers arrive in `welcome.answers`; store them as the teen's first profile answers (the same store the portal's
-welcome survey writes to), and save `address[0].state` / `address[0].city` on the address the model already has.
+Round 12 (final): sign-up asks only for country (all 242, with flags) and state, no city and no teen phone. The order is
+teen basics → parent details → consent → parent email (onboarding + consent) → set-password link → login →
+**welcome questionnaire** → dashboard. The questionnaire is no longer part of sign-up: on the teen's first log in
+the site shows "Tell us a little about you" and saves it with the existing session through
+
+```text
+PATCH /api/v1/me/answer
+{ "teen_school": "Secondary / high school", "teen_interests": ["Gaming", "Music"],
+  "teen_devices": ["Smartphone"], "teen_entertainment": ["Video platforms"] }
+```
+
+Backend need: accept these four `teen_*` keys on `/me/answer` (or map them to existing profile questions). "Skip for
+now" saves nothing and the questionnaire opens again on the next log in. Done-state is kept per browser
+(`localStorage`); a `teen_school` value on `/me` would let the site skip it on other devices too.
 
 ```text
 Never email a password. The teen gets only the existing set-password link, after the parent has consented.
