@@ -439,3 +439,15 @@ html[data-mode="dark"] .fq-desk .faq-item summary { color: #EEF1FA; }
   .vs .vs-deco { opacity: .45; }
   .vs .vd-sticker:nth-child(2) { display: none; }
 }
+
+/* ---- Round 12: home "Why MyFrequentRewards" hexes collapsed to a dot below 1000px (auto margins shrank the grid) ---- */
+@media (max-width: 1000px) { .wh-hive { width: 100%; } }
+
+/* ---- Round 12: Reviews hero on tablets/phones — the fixed diagonal cut through the stats and the medal covered
+   review text. The page stays warm, the professional column carries its own navy panel, the medal steps aside. ---- */
+@media (max-width: 960px) {
+  .rxh .rxh-warm { clip-path: none; }
+  .rxh .rxh-cool { display: none; }
+  .rxs .rxs-col.p { padding: 0 8px; border-radius: 22px; background: linear-gradient(160deg, #050D2E, #0B1E5B 55%, #13307F); }
+}
+@media (max-width: 960px) { .rxs .rxs-medal { display: none; } .rxs .rxs-col.empty { display: grid; align-content: center; } }
