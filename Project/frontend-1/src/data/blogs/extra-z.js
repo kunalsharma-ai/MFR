@@ -8,8 +8,8 @@ export const EXTRA_Z = {
     sections: [{ h2: 'Key takeaways', list: ['Surveys are the simplest home side hustle — no setup, no fees.', 'Each adult needs their own account, email and device.', 'Combine surveys with a skill-based side job for more income.', 'Never pay for “work from home” kits or registrations.'] }],
     faqs: [],
   },
-  'earn-money-online-cash-payouts': {
-    sections: [{ h2: 'Key takeaways', list: ['Points become cash or gift cards once you reach the threshold.', 'PayPal, UPI, bank transfer and Amazon gift vouchers are available.', 'Accurate payout details are the key to fast processing.'] }],
+  'earn-money-online-survey-payouts': {
+    sections: [{ h2: 'Key takeaways', list: ['Points become transfers or gift cards once you reach the threshold.', 'PayPal, UPI, bank transfer and Amazon gift vouchers are available.', 'Accurate payout details are the key to fast processing.'] }],
     faqs: [],
   },
   'earn-dollars-online-without-investment': {

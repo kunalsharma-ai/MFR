@@ -237,7 +237,7 @@ export const PART2 = [
       { h2: 'Short surveys vs long surveys', p: ['Short surveys suit gaps on the go; longer studies — often with higher incentives — are better at home. The estimated time is always shown before you start, so you can choose.'] },
       { h2: 'Keep momentum with small goals', p: ['Set a monthly goal of reaching your claim threshold rather than chasing daily targets. Steady participation is more sustainable and keeps your quality high.'] },
       { h2: 'Do not sacrifice quality for speed', p: ['Spare-time earning still needs focus. If you cannot concentrate, save the invitation for later. Quality checks such as red-herring questions protect the value of every response.'] },
-      { h2: 'Celebrate each claim', p: ['Treat claims as small wins — a gift card for something you wanted, or UPI cash towards a bill. See [payout options](/rewards-and-payouts).'] },
+      { h2: 'Celebrate each claim', p: ['Treat claims as small wins — a gift card for something you wanted, or a UPI transfer towards a bill. See [payout options](/rewards-and-payouts).'] },
       { h2: 'Start now', p: ['[Create your free account](/sign-up) and finish your profile — the more complete it is, the more spare-time matches you receive.'] },
     ],
     faqs: [

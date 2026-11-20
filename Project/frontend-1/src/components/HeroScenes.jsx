@@ -47,7 +47,7 @@ export function PhoneScene() {
       </div>
       {[0, 1, 2].map((k) => <i key={k} className="bg-coin" style={{ '--k': k }}>$</i>)}
       <span className="bg-chip c1"><Icon name="clock" size={13} /> ~10 min surveys</span>
-      <span className="bg-chip c2"><Icon name="gift" size={13} /> Vouchers · cash · UPI (India)</span>
+      <span className="bg-chip c2"><Icon name="gift" size={13} /> Vouchers · PayPal · UPI (India)</span>
     </div>
   );
 }

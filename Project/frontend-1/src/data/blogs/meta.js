@@ -211,14 +211,14 @@ const RAW = [
   "primaryKeyword": "easy ways to make money online"
  },
  {
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout",
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout",
   "excerpt": "Points, thresholds, screeners, PayPal or UPI — here is the plain-English path from your first survey to real money in your account, plus the mistakes that quietly cost people their rewards.",
   "category": "Getting Started",
   "date": "2026-10-09",
   "readMins": 8,
   "trending": true,
-  "primaryKeyword": "paid surveys for cash"
+  "primaryKeyword": "paid surveys for rewards"
  },
  {
   "slug": "side-hustle-from-home-ideas",
@@ -282,8 +282,8 @@ const RAW = [
  },
  {
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers",
-  "excerpt": "Most “fast cash” offers are built to take money, not give it. Here is how the common scams work, what genuinely starts today, how long payment really takes and a checklist to stay safe.",
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers",
+  "excerpt": "Most “fast money” offers are built to take money, not give it. Here is how the common scams work, what genuinely starts today, how long payment really takes and a checklist to stay safe.",
   "category": "Safety",
   "date": "2026-10-06",
   "readMins": 8,
@@ -371,14 +371,14 @@ const RAW = [
   "primaryKeyword": "make money online"
  },
  {
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money",
-  "excerpt": "Points are only useful if they become money you can spend. Follow the journey from survey complete to cash in your account.",
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money",
+  "excerpt": "Points are only useful if they become money you can spend. Follow the journey from survey complete to money in your account.",
   "category": "Rewards",
   "date": "2026-09-18",
   "readMins": 7,
   "trending": true,
-  "primaryKeyword": "earn money online cash"
+  "primaryKeyword": "earn money online with surveys"
  },
  {
   "slug": "earn-dollars-online-without-investment",

@@ -220,27 +220,46 @@ function QuestMap() {
 
 // ── 4. Sticker album: thirteen holographic world stickers, each with its own colours and 3D art.
 function StickerAlbum() {
+  const [ref, inView] = useInView({ threshold: 0.2 });
+  const [got, setGot] = useState(0);
+  useEffect(() => {
+    if (!inView) return undefined;
+    let n = 0;
+    const t = setInterval(() => { n += 1; setGot(n); if (n >= TEEN_WORLDS.length) clearInterval(t); }, 140);
+    return () => clearInterval(t);
+  }, [inView]);
+  const tilt = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--rx', `${((e.clientY - r.top) / r.height - 0.5) * -14}deg`);
+    e.currentTarget.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - 0.5) * 16}deg`);
+  };
+  const untilt = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
   return (
-    <section className="section mn-album" aria-labelledby="mn-album-title">
+    <section className="section mn-album nx-album" aria-labelledby="mn-album-title" ref={ref}>
+      <span className="nx-stars" aria-hidden="true" />
       <div className="container">
-        <div className="mn-album-head reveal">
+        <div className="nx-album-head reveal">
           <div>
             <p className="eyebrow">Your profile worlds</p>
-            <h2 id="mn-album-title">Thirteen worlds. <span className="mn-hl">Collect them all.</span></h2>
+            <h2 id="mn-album-title">Thirteen worlds. <span className="nx-holo-t">Collect them all.</span></h2>
+            <p className="sec-sub">Each world is a few quick questions about something you love. Finish one, win {POINTS_PER_WORLD} points, and surveys start fitting you better. Start anywhere.</p>
           </div>
-          <p className="sec-sub">Each world is a few quick questions about something you love. Finish one, win {POINTS_PER_WORLD} points, and surveys start fitting you better. Start anywhere.</p>
+          <div className="nx-meter" role="img" aria-label={`${TEEN_WORLDS.length} worlds, ${TEEN_WORLDS.length * POINTS_PER_WORLD} points to collect`}>
+            <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" /><circle cx="60" cy="60" r="52" style={{ strokeDashoffset: 327 - (327 * got) / TEEN_WORLDS.length }} /></svg>
+            <b>{got}<small>/{TEEN_WORLDS.length}</small></b>
+            <span>{(got * POINTS_PER_WORLD).toLocaleString('en-US')} pts</span>
+          </div>
         </div>
-        <ul className="mn-stickers">
+        <ul className="nx-cards">
           {TEEN_WORLDS.map((w, i) => (
-            <li key={w.id} className="mn-sticker reveal" style={{ '--i': i, '--c': w.c, '--c2': w.c2 }} tabIndex={0}>
-              <span className="mn-holo" aria-hidden="true" />
-              <span className="mn-peel" aria-hidden="true" />
+            <li key={w.id} className={`nx-card${i < got ? ' got' : ''}`} style={{ '--i': i, '--c': w.c, '--c2': w.c2 || w.c }} tabIndex={0} onPointerMove={tilt} onPointerLeave={untilt}>
+              <span className="nx-foil" aria-hidden="true" />
+              <span className="nx-no" aria-hidden="true">#{String(i + 1).padStart(2, '0')}</span>
               <img src={w.art} alt={`${w.name} world illustration`} width="200" height="200" loading="lazy" decoding="async" />
-              <p className="mn-st-name">{w.name}</p>
-              <p className="mn-st-t">{w.t}</p>
-              <p className="mn-st-d">{w.d}</p>
-              <p className="mn-st-meta"><span><Icon name="question" size={13} /> {w.q} questions</span><span><Icon name="clock" size={13} /> {w.m} min</span></p>
-              <span className="mn-st-pts">+{POINTS_PER_WORLD}</span>
+              <p className="nx-name">{w.name}</p>
+              <p className="nx-t">{w.t}</p>
+              <p className="nx-d">{w.d}</p>
+              <p className="nx-meta"><span><Icon name="question" size={13} /> {w.q} questions</span><span><Icon name="clock" size={13} /> {w.m} min</span><em>+{POINTS_PER_WORLD}</em></p>
             </li>
           ))}
         </ul>
@@ -293,47 +312,56 @@ function Scoreboard() {
 // ── 6. Parent notebook: calm paper, the three parent worlds and the controls a parent holds.
 function ParentNotebook() {
   return (
-    <section id="parents" className="section mn-parents" aria-labelledby="mn-parents-title">
+    <section id="parents" className="section mn-parents nx-par" aria-labelledby="mn-parents-title">
       <div className="container">
         <div className="mn-parents-head reveal">
           <p className="eyebrow">For parents &amp; guardians</p>
           <h2 id="mn-parents-title">Two steps, and your teen is in</h2>
           <p className="sec-sub">Your teen asks to join, you get an invitation, and you answer 16 short questions in about five minutes. Then you give permission, and your teen gives theirs. Nothing is switched on until you say yes.</p>
         </div>
-        <div className="mn-note">
-          <span className="mn-rings" aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} />)}</span>
-          <div className="mn-note-l">
-            <p className="mn-note-h"><Icon name="clipboard" size={18} /> Parent registration <em>16 questions · about 5 min</em></p>
-            <ol className="mn-parts">
+        <div className="nx-par-flow">
+          <article className="nx-step nx-step-1 reveal">
+            <span className="nx-step-n" aria-hidden="true">1</span>
+            <header>
+              <span className="nx-env" aria-hidden="true"><i /><i /></span>
+              <div><p className="nx-k">Step one · your invitation</p><h3>Parent registration</h3></div>
+              <em>16 questions · about 5 min</em>
+            </header>
+            <ol className="nx-parts">
               {PARENT_PARTS.map((p, i) => (
-                <li key={p.t} className="reveal" style={{ '--i': i }}>
-                  <span className="mn-part-ic"><Icon name={p.ic} size={18} /></span>
-                  <div><b>{p.t} <small>{p.n} questions</small></b><p>{p.d}</p></div>
+                <li key={p.t} style={{ '--i': i, '--n': p.n }}>
+                  <span className="nx-part-ic"><Icon name={p.ic} size={18} /></span>
+                  <div><b>{p.t}</b><p>{p.d}</p></div>
+                  <span className="nx-part-n">{p.n}<small>q</small></span>
                 </li>
               ))}
             </ol>
-          </div>
-          <div className="mn-note-r">
-            <p className="mn-note-h"><Icon name="shield" size={18} /> What you control</p>
-            <ul className="mn-controls">
+          </article>
+          <span className="nx-link" aria-hidden="true"><i /><Icon name="arrow" size={20} /></span>
+          <article className="nx-step nx-step-2 reveal">
+            <span className="nx-step-n" aria-hidden="true">2</span>
+            <header>
+              <span className="nx-dial" aria-hidden="true"><i /></span>
+              <div><p className="nx-k">Step two · your permission</p><h3>What you control</h3></div>
+            </header>
+            <ul className="nx-ctrls">
               {PARENT_CONTROLS.map((c, i) => (
-                <li key={c.t} className="reveal" style={{ '--i': i }}>
-                  <span className="mn-toggle" aria-hidden="true"><i /></span>
+                <li key={c.t} style={{ '--i': i }}>
                   <div><b>{c.t}</b><p>{c.d}</p></div>
+                  <span className="nx-sw" aria-hidden="true"><i /></span>
                 </li>
               ))}
             </ul>
-          </div>
+          </article>
         </div>
-        <ul className="mn-pworlds">
+        <ul className="nx-pworlds">
           {PARENT_WORLDS.map((w, i) => (
             <li key={w.id} className="reveal" style={{ '--i': i, '--c': w.c }}>
-              <img src={w.art} alt={`${w.name}: ${w.t}`} width="150" height="150" loading="lazy" decoding="async" />
-              <div>
-                <p className="mn-pw-k">Parent world · {w.q} questions</p>
-                <h3>{w.name} <small>{w.t}</small></h3>
-                <p>{w.d}</p>
-              </div>
+              <span className="nx-pw-art"><img src={w.art} alt={`${w.name}: ${w.t}`} width="150" height="150" loading="lazy" decoding="async" /></span>
+              <p className="nx-k">Parent world · {w.q} questions</p>
+              <h3>{w.name}</h3>
+              <p className="nx-pw-t">{w.t}</p>
+              <p>{w.d}</p>
             </li>
           ))}
         </ul>
@@ -345,21 +373,29 @@ function ParentNotebook() {
 
 // ── 7. Care card: why a parent is asked about their teen's health, with a live heartbeat line.
 function CareCard() {
+  const VITALS = [
+    ['shield', 'Screened out', 'Unsuitable studies never reach your teen.'],
+    ['heart', 'Caregiver studies, paid to you', 'If you look after your teen’s health, you can join caregiver research answered and rewarded by you.'],
+    ['star', 'Rarer, better rewarded', 'Studies for teens with a particular condition are longer and pay more, and only ever with permission.'],
+  ];
   return (
-    <section className="section mn-care" aria-labelledby="mn-care-title">
-      <div className="container mn-care-card reveal">
-        <img className="mn-care-art" src="/images/minor/art/care.webp" alt="A heart with a medical cross, for teen health safeguards" width="260" height="260" loading="lazy" decoding="async" />
-        <div className="mn-care-copy">
+    <section className="section mn-care nx-care" aria-labelledby="mn-care-title">
+      <div className="container nx-monitor reveal">
+        <div className="nx-screen" aria-hidden="true">
+          <span className="nx-bpm"><b>72</b> bpm · safe</span>
+          <svg className="nx-ecg" viewBox="0 0 600 90" preserveAspectRatio="none"><path d="M0 45 H150 L168 45 L182 14 L198 78 L214 26 L226 45 H330 L346 45 L360 18 L376 72 L388 45 H600" /></svg>
+          <img src="/images/minor/art/care.webp" alt="" width="200" height="200" loading="lazy" decoding="async" />
+        </div>
+        <div className="nx-care-copy">
           <p className="eyebrow">Health safeguards</p>
           <h2 id="mn-care-title">Two health questions that keep your teen safe</h2>
           <p>They matter more than anything else on the parent form. They are the only way we can keep studies about medicines, food, allergies or conditions away from a teen they could upset or harm. “Prefer not to disclose” is always an option.</p>
-          <ul className="mn-care-pts">
-            <li><Icon name="shield" size={18} /><span><b>Screened out</b> Unsuitable studies never reach your teen.</span></li>
-            <li><Icon name="heart" size={18} /><span><b>Caregiver studies, paid to you</b> If you look after your teen’s health, you can join caregiver research answered and rewarded by you.</span></li>
-            <li><Icon name="star" size={18} /><span><b>Rarer, better rewarded</b> Studies for teens with a particular condition are longer and pay more, and only ever with permission.</span></li>
+          <ul className="nx-vitals">
+            {VITALS.map(([ic, t, d], i) => (
+              <li key={t} style={{ '--i': i }}><span><Icon name={ic} size={18} /></span><b>{t}</b><small>{d}</small></li>
+            ))}
           </ul>
         </div>
-        <svg className="mn-ecg" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 H170 L190 40 L205 12 L222 70 L238 24 L250 40 H380 L398 40 L412 18 L428 64 L440 40 H600" /></svg>
       </div>
     </section>
   );
@@ -372,29 +408,31 @@ function PromiseSheets() {
   useEffect(() => { setStamp((s) => s + 1); }, [tab]);
   const ch = PROMISE_CHAPTERS[tab];
   return (
-    <section className="section mn-promise" aria-labelledby="mn-promise-title" style={{ '--c': ch.c }}>
+    <section className="section mn-promise nx-prom" aria-labelledby="mn-promise-title" style={{ '--c': ch.c }}>
       <div className="container">
         <div className="sec-head sec-center reveal">
           <p className="eyebrow">Our promises</p>
           <h2 id="mn-promise-title">Safe by design, <span className="mn-hl">promise by promise</span></h2>
           <p className="sec-sub">The teen panel follows the MRS Code of Conduct and your country’s rules come first. Pick a chapter.</p>
         </div>
-        <div className="mn-tabs" role="tablist" aria-label="Promise chapters">
-          {PROMISE_CHAPTERS.map((c, i) => (
-            <button key={c.id} type="button" role="tab" id={`mn-tab-${c.id}`} aria-controls="mn-sheet" aria-selected={i === tab} className={i === tab ? 'on' : ''} style={{ '--c': c.c }} onClick={() => setTab(i)}>
-              <Icon name={c.ic} size={16} /> {c.t}
-            </button>
-          ))}
-        </div>
-        <div className="mn-sheet" id="mn-sheet" role="tabpanel" aria-labelledby={`mn-tab-${ch.id}`} key={stamp}>
-          <span className="mn-stamp" aria-hidden="true"><Icon name="check" size={22} stroke={3} /> Promised</span>
-          {ch.items.map(([ic, t, d], i) => (
-            <article key={t} className="mn-prom" style={{ '--i': i }}>
-              <span className="mn-prom-ic"><Icon name={ic} size={22} /></span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </article>
-          ))}
+        <div className="nx-book">
+          <div className="nx-marks" role="tablist" aria-label="Promise chapters" aria-orientation="vertical">
+            {PROMISE_CHAPTERS.map((c, i) => (
+              <button key={c.id} type="button" role="tab" id={`mn-tab-${c.id}`} aria-controls="mn-sheet" aria-selected={i === tab} className={i === tab ? 'on' : ''} style={{ '--c': c.c }} onClick={() => setTab(i)}>
+                <span><Icon name={c.ic} size={16} /></span> {c.t} <small>{String(i + 1).padStart(2, '0')}</small>
+              </button>
+            ))}
+          </div>
+          <div className="nx-page" id="mn-sheet" role="tabpanel" aria-labelledby={`mn-tab-${ch.id}`} key={stamp}>
+            <p className="nx-page-h"><span>Chapter {tab + 1} of {PROMISE_CHAPTERS.length}</span> {ch.t}</p>
+            <span className="nx-seal" aria-hidden="true"><Icon name="check" size={20} stroke={3} /><i>Promised</i></span>
+            {ch.items.map(([ic, t, d], i) => (
+              <article key={t} className="nx-pr" style={{ '--i': i }}>
+                <span className="nx-pr-ic"><Icon name={ic} size={20} /></span>
+                <div><h3>{t}</h3><p>{d}</p></div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

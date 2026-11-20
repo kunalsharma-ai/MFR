@@ -218,10 +218,10 @@ export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }
                 <Field id="g-first" label={`${whoT}’s first name`} error={err('first')} ok={ok('first')} icon="user" half>
                   <input id="g-first" placeholder=" " autoComplete="off" maxLength={40} value={g.first} onChange={setGF('first')} {...gAria('first')} />
                 </Field>
-                <Field id="g-middle" label={`${whoT}’s middle name (optional)`} error={err('middle')} ok={ok('middle') && Boolean(g.middle.trim())} icon="user" half>
+                <Field id="g-middle" label={`${whoT}’s middle name`} error={err('middle')} ok={ok('middle') && Boolean(g.middle.trim())} icon="user" half>
                   <input id="g-middle" placeholder=" " autoComplete="off" maxLength={40} value={g.middle} onChange={setGF('middle')} {...gAria('middle')} />
                 </Field>
-                <Field id="g-last" label={`${whoT}’s last name (optional)`} error={err('last')} ok={ok('last') && Boolean(g.last.trim())} icon="user" half>
+                <Field id="g-last" label={`${whoT}’s last name`} error={err('last')} ok={ok('last') && Boolean(g.last.trim())} icon="user" half>
                   <input id="g-last" placeholder=" " autoComplete="off" maxLength={40} value={g.last} onChange={setGF('last')} {...gAria('last')} />
                 </Field>
                 <div className={`sx-field half sx-dob ${err('dob') ? 'bad' : ''} ${ok('dob') ? 'good' : ''}`}>

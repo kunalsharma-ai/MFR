@@ -38,9 +38,9 @@ export const FAQ_PROFESSIONALS = [
 ];
 
 export const FAQ_REWARDS = [
-  { q: 'How do I earn money online cash rewards with MyFrequentRewards?', a: 'Complete eligible surveys and profile sections to build your balance, then claim it as PayPal, cash rewards, a bank or wire transfer, shopping, grocery or digital gift card vouchers — plus UPI for members in India.' },
+  { q: 'How do I earn money online with MyFrequentRewards?', a: 'Complete eligible surveys and profile sections to build your balance, then claim it as PayPal, a bank or wire transfer, shopping, grocery or digital gift card vouchers — plus UPI for members in India.' },
   { q: 'Is there a minimum amount to claim?', a: 'Yes, a claim threshold applies and is shown in your dashboard; balances below it carry forward.' },
-  { q: 'Which payout should I choose?', a: 'UPI suits members in India, PayPal and cash rewards suit most members, bank or wire transfer suits bank-first members, shopping, grocery and digital gift card vouchers suit everyday spending.' },
+  { q: 'Which payout should I choose?', a: 'UPI suits members in India, PayPal suits most members, bank or wire transfer suits bank-first members, shopping, grocery and digital gift card vouchers suit everyday spending.' },
   { q: 'Why might a reward stay pending?', a: 'Rewards may stay pending while quality checks confirm a completion with the research client.' },
   { q: 'How do survey invitations reach me?', a: 'Through your Account Dashboard, SMS, WhatsApp or email — you choose.' },
   { q: 'Are there any fees?', a: 'MyFrequentRewards charges no fees; your payment provider’s own terms may apply.' },
@@ -76,7 +76,7 @@ export const HOME_FAQS = [
   { q: 'Is MyFrequentRewards free to join?', a: 'Yes. Joining, taking surveys and claiming rewards are completely free — we never ask for any payment.' },
   { q: 'How do I earn money online with MyFrequentRewards?', a: 'Sign up, verify your account, complete your profile and take the paid surveys you are matched with; rewards build up in your balance.' },
   { q: 'Who can join?', a: 'Everyday consumers and business professionals aged 18+ in a supported country, plus teens aged 13 to 17 through the Teen Panel once a parent or guardian consents.' },
-  { q: 'How do I get paid?', a: 'Once you reach the claim threshold, choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers. UPI is also available to members in India.' },
+  { q: 'How do I get paid?', a: 'Once you reach the claim threshold, choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers. UPI is also available to members in India.' },
   { q: 'How will I know about new surveys?', a: 'Choose alerts through your Account Dashboard, SMS, WhatsApp or email.' },
   { q: 'Is my personal information safe?', a: 'Yes — your personal details are never sold or shared, and answers reach clients only in anonymised form.' },
 ];
@@ -104,8 +104,8 @@ export const ALL_FAQS = [
   { cat: 'Surveys', q: 'Why does it say “Survey Closed”?', a: 'Surveys close once the required number of participants is reached, so the quota has already been filled. Check your dashboard regularly for new opportunities.' },
   { cat: 'Surveys', q: 'Why am I asked the same questions repeatedly?', a: 'Questions such as age, location and household details are repeated to verify accuracy, confirm eligibility, maintain quality control and meet client targeting requirements.' },
   { cat: 'Surveys', q: 'A survey is not loading — what should I do?', a: 'Wait a few minutes, clear your browser cache or try another browser or device. If it continues, email support@myfrequentrewards.com with a screenshot of the error.' },
-  { cat: 'Rewards', q: 'How do I redeem my rewards?', a: 'Once you reach the minimum redemption threshold, use the “Redeem Now” section in your dashboard. Reward types include PayPal, cash rewards, bank or wire transfer, shopping, grocery and digital gift card vouchers — plus UPI for members in India.' },
-  { cat: 'Rewards', q: 'Which reward types can I choose?', a: 'Consumers and professionals can choose PayPal, cash rewards, bank transfer, wire transfer, shopping vouchers, grocery vouchers, or digital gift cards. UPI is available to members in India only. Availability of a reward type can vary by study and country.' },
+  { cat: 'Rewards', q: 'How do I redeem my rewards?', a: 'Once you reach the minimum redemption threshold, use the “Redeem Now” section in your dashboard. Reward types include PayPal, bank or wire transfer, shopping, grocery and digital gift card vouchers — plus UPI for members in India.' },
+  { cat: 'Rewards', q: 'Which reward types can I choose?', a: 'Consumers and professionals can choose PayPal, bank transfer, wire transfer, shopping vouchers, grocery vouchers, or digital gift cards. UPI is available to members in India only. Availability of a reward type can vary by study and country.' },
   { cat: 'Rewards', q: 'How long does redemption take?', a: 'Our team verifies your account and participation, then the accounts department processes the request. This may take 2–3 weeks depending on queue volume and verification.' },
   { cat: 'Privacy & security', q: 'Is my personal information safe?', a: 'Your data is stored securely, personal information is not sold to third parties and survey responses are aggregated and anonymised. Your data is used only for research matching purposes.' },
   { cat: 'Privacy & security', q: 'Why do you need my demographic details?', a: 'Some surveys need specific groups, so accurate details help match you with relevant surveys and improve your qualification rate. All personal data is handled securely and confidentially.' },

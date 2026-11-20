@@ -32,8 +32,8 @@ const DEEP = [
   },
   {
     icon: 'gift', color: '#FF5E7E', t: 'Track, claim and receive rewards',
-    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers — or UPI if you live in India. Unclaimed balances carry forward.',
-    bullets: ['Transparent balance history', 'Eight reward types', 'Support on WhatsApp and Live Help'],
+    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers — or UPI if you live in India. Unclaimed balances carry forward.',
+    bullets: ['Transparent balance history', 'Seven reward types', 'Support on WhatsApp and Live Help'],
   },
 ];
 

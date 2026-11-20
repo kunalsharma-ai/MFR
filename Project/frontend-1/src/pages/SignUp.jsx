@@ -469,7 +469,7 @@ export default function SignUp() {
                 <Icon name="heart" size={18} /> 100% free membership
               </li>
               <li>
-                <Icon name="wallet" size={18} /> PayPal · Cash · Bank · Vouchers
+                <Icon name="wallet" size={18} /> PayPal · Bank · Vouchers
                 · UPI (India)
               </li>
               <li>
@@ -638,7 +638,7 @@ export default function SignUp() {
                         </Field>
                         <Field
                           id="middleName"
-                          label="Middle name (optional)"
+                          label="Middle name"
                           error={err("middleName")}
                           ok={ok("middleName") && Boolean(v.middleName.trim())}
                           half
@@ -656,7 +656,7 @@ export default function SignUp() {
                         </Field>
                         <Field
                           id="lastName"
-                          label="Last name (optional)"
+                          label="Last name"
                           error={err("lastName")}
                           ok={ok("lastName")}
                           half

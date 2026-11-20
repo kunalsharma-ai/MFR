@@ -24,10 +24,10 @@ export const PAGES = {
   rewards: {
     path: '/rewards',
     name: 'Rewards & Payouts',
-    primaryKeyword: 'earn money online cash',
-    secondaryKeywords: ['paid surveys for cash', 'surveys for cash', 'make money online paypal', 'surveys for amazon gift cards', 'earn cash online', 'surveys that pay real money'],
+    primaryKeyword: 'earn money online rewards',
+    secondaryKeywords: ['paid survey rewards', 'survey reward options', 'make money online paypal', 'surveys for amazon gift cards', 'survey payouts', 'surveys that pay real money'],
     metaTitle: 'Survey Rewards & Payouts: PayPal, UPI, Gift Cards | MFR',
-    metaDescription: 'Turn opinions into rewards: claim via PayPal, cash, bank or wire transfer, shopping, grocery or digital gift card vouchers, or UPI in India.',
+    metaDescription: 'Turn opinions into rewards: claim via PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers, or UPI in India.',
     h1: 'Get rewarded your way',
   },
   consumers: {

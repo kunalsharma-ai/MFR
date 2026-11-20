@@ -1,12 +1,12 @@
 // Blog posts (part 4b). Inline links use [label](/path) or [label](https://…).
 export const PART4B = [
   {
-    slug: 'paid-surveys-for-cash-guide',
-    title: 'Paid Surveys for Cash: A Practical Guide from Points to Payout',
-    metaTitle: 'Paid Surveys for Cash: From Points to Real Payouts | MFR',
-    metaDescription: 'Paid surveys for cash, explained: how points work, typical rewards, PayPal vs UPI vs bank transfer, a 30-day plan and mistakes to avoid. Start free today.',
-    primaryKeyword: 'paid surveys for cash',
-    secondaryKeywords: ['surveys for money', 'online surveys for money', 'surveys for cash', 'earn cash for surveys', 'take surveys for money', 'paid online surveys', 'get paid to take surveys', 'surveys that pay real money'],
+    slug: 'paid-surveys-for-rewards-guide',
+    title: 'Paid Surveys for Rewards: A Practical Guide from Points to Payout',
+    metaTitle: 'Paid Surveys for Rewards: From Points to Real Payouts | MFR',
+    metaDescription: 'Paid surveys for rewards, explained: how points work, typical rewards, PayPal vs UPI vs bank transfer, a 30-day plan and mistakes to avoid. Start free today.',
+    primaryKeyword: 'paid surveys for rewards',
+    secondaryKeywords: ['surveys for money', 'online surveys for money', 'surveys for rewards', 'earn rewards for surveys', 'take surveys for money', 'paid online surveys', 'get paid to take surveys', 'surveys that pay real money'],
     category: 'Getting Started',
     date: '2026-10-09',
     trending: true,
@@ -15,13 +15,13 @@ export const PART4B = [
       {
         ch: 0,
         p: [
-          'Most people searching for paid surveys for cash want one thing answered first: does the money actually arrive? With a genuine research community, yes — but it arrives through a process. You answer questions, earn points, reach a redemption threshold, request a payout and wait while the reward is verified. Understanding each step is what separates frustrated sign-ups from members who earn steadily.',
+          'Most people searching for paid surveys for rewards want one thing answered first: does the money actually arrive? With a genuine research community, yes — but it arrives through a process. You answer questions, earn points, reach a redemption threshold, request a payout and wait while the reward is verified. Understanding each step is what separates frustrated sign-ups from members who earn steadily.',
           'This guide walks through that whole journey — how points convert, what a typical survey looks like, which payout method suits you, and a simple first-30-days plan. No hype, no fees, just how surveys for money really work in 2026.',
         ],
       },
       {
         ch: 0,
-        h2: 'How paid surveys for cash actually work',
+        h2: 'How paid surveys for rewards actually work',
         p: [
           'Companies need reliable opinions before they launch a product, change a price or run an advert. Research agencies find the right people, and those people are rewarded for their time. On MyFrequentRewards, every completed survey earns points. The number of points depends on length, complexity and the sponsor’s target audience, and it is shown to you before you start — so you always decide with full information.',
           'Points sit in your balance until you reach the minimum redemption threshold. Then you press “Redeem Now” in your dashboard and pick a payout method. You can read the full mechanics on our [how it works](/how-it-works) page.',
@@ -31,7 +31,7 @@ export const PART4B = [
           'Short screener checks whether you fit the study',
           'You complete the survey and points are credited',
           'Profile surveys also earn points once validated',
-          'Balance reaches the threshold → you redeem for cash or a gift card',
+          'Balance reaches the threshold → you redeem for a transfer or a gift card',
         ],
       },
       {
@@ -71,9 +71,9 @@ export const PART4B = [
       },
       {
         ch: 1,
-        h2: 'Cash vs gift card: which payout makes sense?',
+        h2: 'Transfer vs gift card: which payout makes sense?',
         p: [
-          'If you want to earn cash for surveys, PayPal, UPI or a bank transfer move money you can spend anywhere. An Amazon gift card is ideal if you already shop there and would spend that amount anyway. Availability depends on your country, and every payout is verified before release, which can take 2–3 weeks. That verification is exactly what protects honest members from fraud.',
+          'If you want money from surveys, PayPal, UPI or a bank transfer move money you can spend anywhere. An Amazon gift card is ideal if you already shop there and would spend that amount anyway. Availability depends on your country, and every payout is verified before release, which can take 2–3 weeks. That verification is exactly what protects honest members from fraud.',
         ],
         list: [
           'PayPal — convenient for international members and USD-based rewards',
@@ -134,7 +134,7 @@ export const PART4B = [
       },
       {
         ch: 3,
-        h2: 'Keep simple records of every cash reward',
+        h2: 'Keep simple records of every reward',
         p: [
           'A two-minute monthly note saves confusion later. Record the date you redeemed, the method, the amount and the date it arrived. If a payout ever needs checking, support can help far faster with those details in hand. Records also show you honestly what surveys add to your month, which keeps expectations grounded. Wondering why rewards are never immediate? Our article on [surveys that pay instantly](/blog/surveys-that-pay-instantly-truth) explains the verification step.',
           'Survey rewards are income, so if you are unsure how they should be treated in your tax return, check the official guidance on the [Income Tax Department portal](https://www.incometax.gov.in/) or ask a qualified adviser in your country.',
@@ -142,7 +142,7 @@ export const PART4B = [
       },
       {
         ch: 4,
-        h2: 'Paid surveys for cash: the short version',
+        h2: 'Paid surveys for rewards: the short version',
         p: [
           'Surveys are a flexible way to earn extra income from your opinions — not a salary, and not instant. With realistic expectations they add up nicely alongside study, work or home life.',
         ],
@@ -157,12 +157,12 @@ export const PART4B = [
       },
     ],
     faqs: [
-      { q: 'Are paid surveys for cash legit?', a: 'Yes, when the platform is run by a real research company, is free to join and is transparent about rewards. MyFrequentRewards is operated by Frequent Research Fieldwork Solutions Pvt. Ltd., an ISO 20252-certified research firm. Rewards are verified before release, and you are never asked for a fee or deposit.' },
+      { q: 'Are paid surveys for rewards legit?', a: 'Yes, when the platform is run by a real research company, is free to join and is transparent about rewards. MyFrequentRewards is operated by Frequent Research Fieldwork Solutions Pvt. Ltd., an ISO 20252-certified research firm. Rewards are verified before release, and you are never asked for a fee or deposit.' },
       { q: 'How much can I earn with online surveys for money?', a: 'It depends on your profile, how often you respond and how many studies match you. Typical surveys range from around $4 for ten minutes to around $7 for longer studies, with the exact reward shown in each invitation. Treat it as extra income rather than a replacement for a salary.' },
       { q: 'How do I get paid to take surveys in India?', a: 'Complete surveys to build points, reach the minimum threshold, then choose “Redeem Now” in your dashboard. Indian members can usually redeem via UPI, bank transfer, PayPal or an Amazon gift card. Enter your UPI ID carefully, then allow 2–3 weeks for verification and processing.' },
-      { q: 'Do surveys that pay real money pay instantly?', a: 'Genuine research rewards are not instant, because each completion is checked for quality and fraud before payment. On MyFrequentRewards, verification and processing may take 2–3 weeks. Be cautious of any site promising instant cash, especially if it asks you to pay or share banking passwords.' },
+      { q: 'Do surveys that pay real money pay instantly?', a: 'Genuine research rewards are not instant, because each completion is checked for quality and fraud before payment. On MyFrequentRewards, verification and processing may take 2–3 weeks. Be cautious of any site promising instant money, especially if it asks you to pay or share banking passwords.' },
       { q: 'Why was I screened out of a survey?', a: 'Studies target specific audiences — certain ages, jobs, purchases or regions. If your answers don’t match, or the quota has filled, you are screened out. It is normal and doesn’t harm your account. Keeping your profile accurate helps you receive invitations that fit you better.' },
-      { q: 'Is cash or a gift card better for survey rewards?', a: 'Cash via PayPal, UPI or bank transfer gives maximum flexibility. An Amazon gift card can be just as useful if you were going to shop there anyway. Choose based on how you plan to spend it; available options depend on your country.' },
+      { q: 'Is a transfer or a gift card better for survey rewards?', a: 'A PayPal, UPI or bank transfer gives maximum flexibility. An Amazon gift card can be just as useful if you were going to shop there anyway. Choose based on how you plan to spend it; available options depend on your country.' },
       { q: 'Can I take surveys for money on my phone?', a: 'Yes. MyFrequentRewards works in any modern browser on a phone, tablet or laptop, with no app download needed. Invitations can reach you via WhatsApp, SMS, email or your dashboard, so you can answer short studies whenever you have a free moment.' },
     ],
   },
@@ -420,7 +420,7 @@ export const PART4B = [
           'Countdown timers and “only today” bonuses pushing quick decisions',
           'Policy pages with another company’s name or broken contact links',
           'Support that only replies through a personal messaging number',
-          'Rewards shown in a private “coin” with no clear cash value',
+          'Rewards shown in a private “coin” with no clear money value',
         ],
       },
       {

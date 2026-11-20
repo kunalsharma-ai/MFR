@@ -44,7 +44,7 @@ export default function Consumers() {
         title={page.h1}
         tagline={[['cart', 'Shop it.'], ['star', 'Rate it.'], ['coins', 'Get paid for it.']]}
         tone="con"
-        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal, cash, vouchers or gift cards — plus UPI in India."
+        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal, bank transfer, vouchers or gift cards — plus UPI in India."
         art="bubbles"
         theme="berry"
       >

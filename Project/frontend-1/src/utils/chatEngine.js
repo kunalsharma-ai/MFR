@@ -108,9 +108,9 @@ function entityAnswer(q) {
   if (country) {
     const listed = ENTITIES.countries.find((c) => c.name.toLowerCase() === country.name.toLowerCase() || (country.iso === 'GB' && c.name === 'United Kingdom') || (country.iso === 'US' && c.name === 'United States') || (country.iso === 'AE' && c.name === 'United Arab Emirates'));
     const india = country.iso === 'IN';
-    if (/\bupi\b/.test(t) && !india) return { a: `UPI is available to members in India only. Members in ${country.name} can choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers.`, src: 'rewards' };
+    if (/\bupi\b/.test(t) && !india) return { a: `UPI is available to members in India only. Members in ${country.name} can choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers.`, src: 'rewards' };
     if (/\b(pay|paid|payout|reward|rewards|payment|redeem|claim|withdraw|method)/.test(t)) {
-      return { a: india ? `Members in India can choose ${PAYOUT_LINE.replace(' — plus UPI in India', '')} — and UPI.` : `Members in ${country.name} can choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers. (UPI is India-only.)`, src: 'rewards' };
+      return { a: india ? `Members in India can choose ${PAYOUT_LINE.replace(' — plus UPI in India', '')} — and UPI.` : `Members in ${country.name} can choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers. (UPI is India-only.)`, src: 'rewards' };
     }
     if (JOINISH.test(t) || t.split(/\s+/).length <= 4) {
       if (listed) return { a: `Yes — ${country.name} is one of the countries we welcome (${listed.region}). Joining is free: sign up, verify your email and start receiving surveys matched to your profile.${india ? ' Members in India can also claim rewards by UPI.' : ''}`, src: 'who', more: 'signup' };

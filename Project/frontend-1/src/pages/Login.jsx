@@ -33,7 +33,7 @@ const maskEmail = (e) => {
   return `${vis}${u.length > 3 ? '•'.repeat(Math.min(6, u.length - 3)) : ''}${e.includes('@') ? '@' + d : ''}`;
 };
 
-const ORBIT = [['paypal', '#1E6FD9'], ['cash', '#1FAF7A'], ['upi', '#7B3FE4'], ['card', '#FF8A00'], ['bank', '#14B8A6'], ['cart', '#E8457A']];
+const ORBIT = [['paypal', '#1E6FD9'], ['gift', '#1FAF7A'], ['upi', '#7B3FE4'], ['card', '#FF8A00'], ['bank', '#14B8A6'], ['cart', '#E8457A']];
 function MemberPass({ email, pwLen, emailOk, pwOk, human, phase }) {
   const ref = useRef(null);
   const ready = emailOk && pwOk && human;
@@ -208,7 +208,7 @@ export default function Login() {
               ) : (
                 <>
                   <li style={{ '--c': '#FFC233' }}><Icon name="clipboard" size={20} /><span><b>New invitations</b> waiting in your dashboard</span></li>
-                  <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> as PayPal, cash, bank transfer, vouchers or gift cards — UPI in India</span></li>
+                  <li style={{ '--c': '#2EE6CF' }}><Icon name="wallet" size={20} /><span><b>Track & redeem</b> as PayPal, bank transfer, vouchers or gift cards — UPI in India</span></li>
                   <li style={{ '--c': '#B49CFF' }}><Icon name="layers" size={20} /><span><b>Profile surveys</b> that unlock better matches</span></li>
                 </>
               )}

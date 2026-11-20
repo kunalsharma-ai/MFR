@@ -1,11 +1,11 @@
 // Second expansion layer for posts 6–10.
 export const EXTRA_B2 = {
-  'earn-money-online-cash-payouts': {
+  'earn-money-online-survey-payouts': {
     sections: [
       {
-        h2: 'Cash vs gift card: which gives you more value?',
+        h2: 'Transfer vs gift card: which gives you more value?',
         p: [
-          'If you would spend the money online anyway, a gift card delivers the same value with no bank steps. If you want flexibility — paying a bill, saving or sending money to family — cash through UPI, PayPal or bank transfer is better. There is no wrong answer; many members switch depending on the month.',
+          'If you would spend the money online anyway, a gift card delivers the same value with no bank steps. If you want flexibility — paying a bill, saving or sending money to family — a UPI, PayPal or bank transfer is better. There is no wrong answer; many members switch depending on the month.',
           'One practical tip: decide your method before you reach the threshold, and keep the account details ready. That way redemption takes seconds and nothing is delayed by a missing detail.',
         ],
       },
@@ -17,12 +17,12 @@ export const EXTRA_B2 = {
         list: ['Screenshot or note each redemption confirmation', 'Track which months bring the most invitations', 'Review your profile whenever earnings dip'],
       },
       {
-        h2: 'Earn cash online responsibly',
-        p: ['Survey rewards are a supplement, not a safety net. Avoid any platform that pressures you to “cash out now before it expires” or to invite friends to unlock your own withdrawal. Calm, transparent processes are a sign of a legitimate business. Explore our [quality standards](/profiling) to see how we protect honest members.'],
+        h2: 'Earn money online responsibly',
+        p: ['Survey rewards are a supplement, not a safety net. Avoid any platform that pressures you to “claim now before it expires” or to invite friends to unlock your own withdrawal. Calm, transparent processes are a sign of a legitimate business. Explore our [quality standards](/profiling) to see how we protect honest members.'],
       },
     ],
     faqs: [
-      { q: 'Should I choose cash or a gift card?', a: 'Choose gift cards if you already shop online; choose UPI, PayPal or bank transfer for flexibility.' },
+      { q: 'Should I choose a transfer or a gift card?', a: 'Choose gift cards if you already shop online; choose UPI, PayPal or bank transfer for flexibility.' },
       { q: 'Can I see my redemption history?', a: 'Yes, your dashboard shows earned and redeemed points.' },
     ],
   },

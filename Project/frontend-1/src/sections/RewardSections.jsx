@@ -73,7 +73,7 @@ export function InvitationsPhone() {
 
 // Rewards page — "Reward explorer": filter by kind, 3D flip cards (front: the reward, back: how it lands)
 const LANDS = {
-  paypal: ['PayPal email', 'Wallet balance'], cash: ['Your account details', 'Cash reward'], bank: ['Verified bank account', 'Bank credit'],
+  paypal: ['PayPal email', 'Wallet balance'], bank: ['Verified bank account', 'Bank credit'],
   wire: ['Bank / SWIFT details', 'International transfer'], upi: ['UPI ID (India only)', 'Instant bank credit'], shopping: ['Email for delivery', 'Store voucher'],
   grocery: ['Email for delivery', 'Grocery voucher'], giftcards: ['Email for delivery', 'Digital gift code'],
 };
@@ -82,7 +82,7 @@ const LANDS = {
 //    the next ticket and a reward pops out with confetti; tap any ticket to scratch it yourself.
 //  • Professionals: "Payout Route" — a fintech console. The honorarium travels as a glowing packet through
 //    Study completed → Quality verified → Approved → the payout rail you choose, then shows a "Settled" receipt.
-// Both cycle through the eight real reward types, pause off-screen / on hover / when the page is calm.
+// Both cycle through the seven real reward types, pause off-screen / on hover / when the page is calm.
 function useCycle(n, ms, visible, hold) {
   const [sel, setSel] = useState(0);
   useEffect(() => {
@@ -115,7 +115,7 @@ function ScratchRewards({ title, sub }) {
         <div className="scw-head reveal">
           <p className="eyebrow">Rewards · scratch &amp; win</p>
           <h2 id="scw-title">{title || <>Get rewarded <span className="scw-hl">your way</span></>}</h2>
-          <p className="sec-sub">{sub || 'Every completed survey adds to your balance — then you choose how it pays out. Scratch a ticket to reveal each of the eight rewards.'}</p>
+          <p className="sec-sub">{sub || 'Every completed survey adds to your balance — then you choose how it pays out. Scratch a ticket to reveal each of the seven rewards.'}</p>
         </div>
         <ul className="scw-strip" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
           {PAYOUTS.map((r, i) => {

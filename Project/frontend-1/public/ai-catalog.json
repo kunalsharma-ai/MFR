@@ -119,10 +119,6 @@
         "availability": "All member countries; can vary by study"
       },
       {
-        "method": "Cash rewards",
-        "availability": "All member countries; can vary by study"
-      },
-      {
         "method": "Bank transfer",
         "availability": "All member countries; can vary by study"
       },
@@ -310,10 +306,10 @@
       "id": "rewards",
       "url": "https://www.myfrequentrewards.com/rewards",
       "name": "Rewards",
-      "description": "Eight reward options paid from one balance, how to claim, and the rules that protect rewards.",
+      "description": "Seven reward options paid from one balance, how to claim, and the rules that protect rewards.",
       "sections": [
         "Get rewarded your way",
-        "Eight rewards, one balance",
+        "Seven rewards, one balance",
         "Pick the reward that fits your life",
         "Never miss a survey opportunity",
         "Simple rules that protect your rewards",
@@ -436,8 +432,8 @@
       "datePublished": "2026-10-09"
     },
     {
-      "url": "https://www.myfrequentrewards.com/blog/paid-surveys-for-cash-guide",
-      "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout",
+      "url": "https://www.myfrequentrewards.com/blog/paid-surveys-for-rewards-guide",
+      "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout",
       "summary": "Walks from a first survey to a payout and the mistakes that lose rewards.",
       "category": "Getting Started",
       "datePublished": "2026-10-09"
@@ -486,8 +482,8 @@
     },
     {
       "url": "https://www.myfrequentrewards.com/blog/make-quick-money-online-truth",
-      "title": "Make Quick Money Online? The Honest Truth About \"Fast Cash\" Offers",
-      "summary": "Common fast-cash scams, realistic alternatives and a safety checklist.",
+      "title": "Make Quick Money Online? The Honest Truth About \"Fast Money\" Offers",
+      "summary": "Common fast-money scams, realistic alternatives and a safety checklist.",
       "category": "Safety",
       "datePublished": "2026-10-06"
     },
@@ -548,8 +544,8 @@
       "datePublished": "2026-09-22"
     },
     {
-      "url": "https://www.myfrequentrewards.com/blog/earn-money-online-cash-payouts",
-      "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money",
+      "url": "https://www.myfrequentrewards.com/blog/earn-money-online-survey-payouts",
+      "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money",
       "summary": "How survey points become money in a member's account.",
       "category": "Rewards",
       "datePublished": "2026-09-18"

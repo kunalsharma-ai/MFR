@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { BrowserRouter, HashRouter, MemoryRouter, useNavigate } from 'react-router-dom';
 import App from './App.jsx';
+import { startContentGuard } from './utils/contentGuard.js';
 import { PagesContext, pageFor } from './router/pages.js';
 import { lazyPages } from './router/lazyPages.js';
 import './styles/global.css';
@@ -81,8 +82,10 @@ import './styles/v31-sections.css';
 import './styles/v32-minor.css';
 import './styles/v32-pages.css';
 import './styles/v33-teen.css';
+import './styles/v34-r12.css';
 
 document.documentElement.classList.add('js');
+startContentGuard();
 
 // "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
 // times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth

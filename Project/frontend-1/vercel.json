@@ -8,6 +8,16 @@
       "source": "/paid-surveys-for-minors",
       "destination": "/paid-surveys-for-teens",
       "permanent": true
+    },
+    {
+      "source": "/blog/paid-surveys-for-cash-guide",
+      "destination": "/blog/paid-surveys-for-rewards-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/earn-money-online-cash-payouts",
+      "destination": "/blog/earn-money-online-survey-payouts",
+      "permanent": true
     }
   ]
 }

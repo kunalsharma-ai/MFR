@@ -32,7 +32,6 @@ export const normalizeMethod = (m = '') => {
   if (t.includes('grocery')) return 'Grocery Vouchers';
   if (t.includes('shopping') || t.includes('voucher')) return 'Shopping Vouchers';
   if (t.includes('gift') || t.includes('amazon')) return 'Digital Gift Cards';
-  if (t.includes('cash')) return 'Cash Rewards';
   return m;
 };
 

@@ -6,7 +6,7 @@ export const EXTRA_D = {
       {
         h2: 'Make money from your phone: what actually works',
         p: [
-          'Searches like “make money from your phone” return hundreds of apps, from games that promise cash to “task” apps that require deposits. What actually works on a phone without risk is simple: legitimate surveys, user tests and a few micro-task platforms. Surveys are the easiest because they are designed for touchscreens and need no special skills.',
+          'Searches like “make money from your phone” return hundreds of apps, from games that promise easy money to “task” apps that require deposits. What actually works on a phone without risk is simple: legitimate surveys, user tests and a few micro-task platforms. Surveys are the easiest because they are designed for touchscreens and need no special skills.',
           'MyFrequentRewards runs entirely in your mobile browser, so there is nothing to install and no sensitive app permissions to grant. Invitations reach you by WhatsApp, SMS or email; you tap, answer and return to your day.',
         ],
       },

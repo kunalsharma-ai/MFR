@@ -21,7 +21,7 @@ const WHO = {
 const MOTTO_ICONS = ['chat', 'badge', 'gift'];
 // Audience mottos — each word rolls into its own slot window; a tagline follows.
 const MODE = {
-  consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
+  consumer: { words: [['chat', 'Speak up.'], ['coins', 'Get rewarded.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
   minor: { words: [['game', 'Play.'], ['chat', 'Speak up.'], ['trophy', 'Level up.']], tag: 'Ages 13–17 · age-appropriate surveys · opens with a parent or guardian’s yes.' },
 };
@@ -158,7 +158,7 @@ export default function HeroOrbit() {
             </span>
           </p>
           <p className="hero-lead">
-            No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
+            No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
           </p>
           <div className="hero-actions">
             <Link to={JOIN[seg]} className="btn btn-primary btn-lg btn-shine">{seg === 'minor' ? 'Join the Teen Panel' : 'Start earning free'} <Icon name="arrow" size={20} /></Link>
@@ -183,7 +183,7 @@ export default function HeroOrbit() {
 
 // ── Consumer world (v3.0): "Reward Jar" — warm candy & gold. A thick 3D gold coin spins over a glass jar,
 // coins drop in and the jar fills, "+$X" pops out, a survey ticket fills up and the payout chips float around it.
-const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'cash'];
+const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'grocery'];
 const FAN_C = ['bank', 'shopping', 'giftcards'];
 function ConsumerWorld({ pay, cat }) {
   const chips = JAR_PAYS.map((id) => PAYOUTS.find((x) => x.id === id)).filter(Boolean);

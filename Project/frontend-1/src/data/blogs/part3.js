@@ -126,7 +126,7 @@ export const PART3 = [
     metaTitle: 'Survey Rewards: PayPal vs UPI vs Wire Transfer vs Gift Card',
     metaDescription: 'Compare survey reward payouts — PayPal, UPI, wire transfer and Amazon gift cards. See which is fastest, simplest and best for your country and spending habits.',
     primaryKeyword: 'survey rewards payout',
-    secondaryKeywords: ['paypal surveys', 'upi earning', 'earn money online cash', 'gift card rewards'],
+    secondaryKeywords: ['paypal surveys', 'upi earning', 'earn money online rewards', 'gift card rewards'],
     category: 'Rewards',
     date: '2026-08-09',
     readMins: 6,
@@ -140,7 +140,7 @@ export const PART3 = [
       { h2: 'Amazon Gift Card', p: ['Perfect if you shop online anyway. Gift cards are delivered digitally and can be used for everyday purchases.'] },
       { h2: 'How to choose', list: ['Want speed in India? Choose UPI', 'Living abroad or want USD value? Choose PayPal', 'Prefer bank-only? Choose wire transfer', 'Planning to shop? Choose an Amazon gift card'] },
       { h2: 'Avoid payout delays', p: ['Verify your email and phone, keep your name consistent across accounts, and enter payout details carefully. Our [Live Help](/contact-us) can check any claim.'] },
-      { h2: 'Learn more', p: ['See the complete [rewards and payouts guide](/rewards-and-payouts) or the [cash payout journey](/blog/earn-money-online-cash-payouts).'] },
+      { h2: 'Learn more', p: ['See the complete [rewards and payouts guide](/rewards-and-payouts) or the [payout journey](/blog/earn-money-online-survey-payouts).'] },
     ],
     faqs: [
       { q: 'Which payout is fastest?', a: 'UPI is typically the quickest for members in India once a claim is approved.' },

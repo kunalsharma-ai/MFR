@@ -51,7 +51,6 @@ export const NOTIFY_CHANNELS = [
 // `kind` groups them on the Rewards page: money (paid to an account), voucher (spend in store), care (health).
 export const PAYOUTS = [
   { id: 'paypal', name: 'PayPal', short: 'PayPal', line: 'Rewards sent straight to your PayPal wallet — used worldwide.', best: 'Worldwide', kind: 'money', icon: 'paypal', hue: '#003087', hue2: '#009CDE' },
-  { id: 'cash', name: 'Cash Rewards', short: 'Cash', line: 'Turn your balance into cash rewards you can spend on anything.', best: 'Most flexible', kind: 'money', icon: 'cash', hue: '#0F9D58', hue2: '#7BE495' },
   { id: 'bank', name: 'Bank Transfer', short: 'Bank', line: 'Paid directly into your verified bank account.', best: 'Bank-first members', kind: 'money', icon: 'bank', hue: '#0E7C66', hue2: '#3DDBB4' },
   { id: 'wire', name: 'Wire Transfer', short: 'Wire', line: 'Secure international transfer to your verified account.', best: 'International', kind: 'money', icon: 'globe', hue: '#0B1E5B', hue2: '#2F6BFF' },
   { id: 'upi', name: 'UPI (India)', short: 'UPI', line: 'Instant transfer to your UPI ID — available to members in India only.', best: 'India only', only: 'IN', kind: 'money', icon: 'upi', hue: '#5B2EA6', hue2: '#ED752E' },
@@ -64,7 +63,7 @@ export const REWARD_KINDS = {
   voucher: { label: 'Vouchers & gift cards', c: '#FF8A00' },
 };
 // One plain-English line used in copy across the site (keep in sync with PAYOUTS).
-export const PAYOUT_LINE = 'PayPal, cash rewards, bank or wire transfer, shopping, grocery and digital gift card vouchers — plus UPI in India';
+export const PAYOUT_LINE = 'PayPal, bank or wire transfer, shopping, grocery and digital gift card vouchers — plus UPI in India';
 
 export const MIN_SIGNUP_AGE = Number(import.meta.env.VITE_MIN_SIGNUP_AGE || 13);
 export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';

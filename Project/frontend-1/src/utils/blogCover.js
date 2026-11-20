@@ -22,7 +22,7 @@ const PALETTES = [
 // slug → [motif, palette]. Posts on the same theme share a motif but never the same colours.
 const PICK = {
   'easy-ways-to-make-money-online': ['bulb', 0],
-  'paid-surveys-for-cash-guide': ['wallet', 1],
+  'paid-surveys-for-rewards-guide': ['wallet', 1],
   'side-hustle-from-home-ideas': ['house', 2],
   'side-income-ideas-without-investment': ['bulb', 3],
   'extra-income-from-home-ideas': ['house', 4],
@@ -41,7 +41,7 @@ const PICK = {
   'highest-paying-survey-sites-guide': ['chart', 11],
   'paid-online-focus-groups-research': ['chat', 5],
   'why-companies-pay-for-your-opinion': ['chat', 9],
-  'earn-money-online-cash-payouts': ['wallet', 3],
+  'earn-money-online-survey-payouts': ['wallet', 3],
   'survey-rewards-paypal-upi-gift-cards': ['gift', 2],
   'earn-rupees-online-without-investment': ['wallet', 9],
   'earn-dollars-online-without-investment': ['wallet', 7],

@@ -14,7 +14,7 @@ const QR_TINT = { website: '#FF8A00', youtube: '#FF0033', facebook: '#1877F2', i
 // 1) launch strip with a spinning 3D MFR coin and the main calls to action,
 // 2) Scan & Connect strip: every MyFrequentRewards channel with its QR code on show + a link to all brands,
 // 3) brand block (animated logo, shimmering motto, ISO seals), link columns, contact chips,
-// 4) a drifting ribbon of all eight reward types and a giant gradient wordmark.
+// 4) a drifting ribbon of all seven reward types and a giant gradient wordmark.
 const COLS = [
   {
     title: 'Earn',

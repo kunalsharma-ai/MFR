@@ -103,7 +103,7 @@ function FaqArt({ look }) {
     return (
       <div className="fqa fqa-gift" aria-hidden="true">
         <span className="fqa-box"><i className="lid" /><i className="ribbon" /><i className="body" /></span>
-        {[['card', 'Gift card'], ['paypal', 'PayPal'], ['cash', 'Cash'], ['upi', 'UPI']].map(([ic, t], k) => <span key={t} className={`fqa-chip k${k}`}><Icon name={ic} size={14} />{t}</span>)}
+        {[['card', 'Gift card'], ['paypal', 'PayPal'], ['bank', 'Bank'], ['upi', 'UPI']].map(([ic, t], k) => <span key={t} className={`fqa-chip k${k}`}><Icon name={ic} size={14} />{t}</span>)}
         {[0, 1, 2, 3, 4].map((k) => <em key={k} className={`fqa-coin k${k}`}>$</em>)}
       </div>
     );

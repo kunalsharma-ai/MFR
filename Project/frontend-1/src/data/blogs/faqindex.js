@@ -43,46 +43,46 @@ export const BLOG_FAQS = [
   "title": "10 Easy Ways to Make Money Online for Beginners (Honestly Rated)"
  },
  {
-  "q": "Are paid surveys for cash legit?",
+  "q": "Are paid surveys for rewards legit?",
   "a": "Yes, when the platform is run by a real research company, is free to join and is transparent about rewards. MyFrequentRewards is operated by Frequent Research Fieldwork Solutions Pvt. Ltd., an ISO 20252-certified research firm. Rewards are verified before release, and you are never asked for a fee or deposit.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "How much can I earn with online surveys for money?",
   "a": "It depends on your profile, how often you respond and how many studies match you. Typical surveys range from around $4 for ten minutes to around $7 for longer studies, with the exact reward shown in each invitation. Treat it as extra income rather than a replacement for a salary.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "How do I get paid to take surveys in India?",
   "a": "Complete surveys to build points, reach the minimum threshold, then choose “Redeem Now” in your dashboard. Indian members can usually redeem via UPI, bank transfer, PayPal or an Amazon gift card. Enter your UPI ID carefully, then allow 2–3 weeks for verification and processing.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "Do surveys that pay real money pay instantly?",
-  "a": "Genuine research rewards are not instant, because each completion is checked for quality and fraud before payment. On MyFrequentRewards, verification and processing may take 2–3 weeks. Be cautious of any site promising instant cash, especially if it asks you to pay or share banking passwords.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "a": "Genuine research rewards are not instant, because each completion is checked for quality and fraud before payment. On MyFrequentRewards, verification and processing may take 2–3 weeks. Be cautious of any site promising instant money, especially if it asks you to pay or share banking passwords.",
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "Why was I screened out of a survey?",
   "a": "Studies target specific audiences — certain ages, jobs, purchases or regions. If your answers don’t match, or the quota has filled, you are screened out. It is normal and doesn’t harm your account. Keeping your profile accurate helps you receive invitations that fit you better.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
-  "q": "Is cash or a gift card better for survey rewards?",
+  "q": "Is a transfer or a gift card better for survey rewards?",
   "a": "Cash via PayPal, UPI or bank transfer gives maximum flexibility. An Amazon gift card can be just as useful if you were going to shop there anyway. Choose based on how you plan to spend it; available options depend on your country.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "Can I take surveys for money on my phone?",
   "a": "Yes. MyFrequentRewards works in any modern browser on a phone, tablet or laptop, with no app download needed. Invitations can reach you via WhatsApp, SMS, email or your dashboard, so you can answer short studies whenever you have a free moment.",
-  "slug": "paid-surveys-for-cash-guide",
-  "title": "Paid Surveys for Cash: A Practical Guide from Points to Payout"
+  "slug": "paid-surveys-for-rewards-guide",
+  "title": "Paid Surveys for Rewards: A Practical Guide from Points to Payout"
  },
  {
   "q": "What is the best side hustle from home for beginners?",
@@ -146,7 +146,7 @@ export const BLOG_FAQS = [
  },
  {
   "q": "How long does it take to get paid for surveys?",
-  "a": "Points are credited once a completed response passes quality review. After you redeem, verification and processing may take two to three weeks before the money or gift card reaches you. Genuine research platforms verify responses first, so be wary of any site promising instant cash for every survey.",
+  "a": "Points are credited once a completed response passes quality review. After you redeem, verification and processing may take two to three weeks before the money or gift card reaches you. Genuine research platforms verify responses first, so be wary of any site promising instant money for every survey.",
   "slug": "survey-and-earn-money-process",
   "title": "Survey and Earn Money: The Full Journey of One Survey, Step by Step"
  },
@@ -212,13 +212,13 @@ export const BLOG_FAQS = [
  },
  {
   "q": "Are there surveys that pay instantly to PayPal?",
-  "a": "Some sites show points instantly, but genuine platforms validate responses before sending money to PayPal. At MyFrequentRewards, verification and processing may take 2–3 weeks after you request redemption. Sites promising truly instant PayPal cash with no checks are often unreliable or scams, so check who runs them first.",
+  "a": "Some sites show points instantly, but genuine platforms validate responses before sending money to PayPal. At MyFrequentRewards, verification and processing may take 2–3 weeks after you request redemption. Sites promising truly instant PayPal payouts with no checks are often unreliable or scams, so check who runs them first.",
   "slug": "surveys-that-pay-instantly-truth",
   "title": "Surveys That Pay Instantly: The Truth About Fast Payouts and Scams"
  },
  {
   "q": "Why do genuine surveys that pay instantly not exist?",
-  "a": "Research sponsors pay for real, attentive answers. Platforms must check for bots, duplicate accounts, speeding and low-quality responses, and sponsors validate completes. These checks protect honest members and keep the data trustworthy, but they take time, so a truly instant cash payout would mean skipping essential quality control.",
+  "a": "Research sponsors pay for real, attentive answers. Platforms must check for bots, duplicate accounts, speeding and low-quality responses, and sponsors validate completes. These checks protect honest members and keep the data trustworthy, but they take time, so a truly instant payout would mean skipping essential quality control.",
   "slug": "surveys-that-pay-instantly-truth",
   "title": "Surveys That Pay Instantly: The Truth About Fast Payouts and Scams"
  },
@@ -277,13 +277,13 @@ export const BLOG_FAQS = [
   "title": "How to Earn Extra Money Online from Home: Build a Routine That Lasts"
  },
  {
-  "q": "How do I earn cash from home through surveys?",
+  "q": "How do I earn money from home through surveys?",
   "a": "Join a free research community, complete your profile surveys and respond to matching invitations. Points are credited after quality checks. On MyFrequentRewards, once you reach the minimum threshold you can redeem through PayPal, UPI, bank transfer or an Amazon gift card, with verification and processing taking around two to three weeks.",
   "slug": "extra-income-from-home-ideas",
   "title": "How to Earn Extra Money Online from Home: Build a Routine That Lasts"
  },
  {
-  "q": "What is the safest way to make extra cash online?",
+  "q": "What is the safest way to make extra money online?",
   "a": "Stick to platforms run by named companies with a clear privacy policy and no joining fee. Never share OTPs, UPI PINs or passwords, and ignore offers of fixed daily pay for simple tasks. If something feels wrong, stop, and in India report it on the national cybercrime portal.",
   "slug": "extra-income-from-home-ideas",
   "title": "How to Earn Extra Money Online from Home: Build a Routine That Lasts"
@@ -314,7 +314,7 @@ export const BLOG_FAQS = [
  },
  {
   "q": "How can I tell if high paying survey sites are legit?",
-  "a": "Check who runs the site, whether it holds recognised certifications, whether it shows rewards before you start, and whether its payout process and timeline are clear. Genuine sites never charge fees. Be cautious of sites promising instant cash or unrealistic earnings, and read their privacy policy carefully.",
+  "a": "Check who runs the site, whether it holds recognised certifications, whether it shows rewards before you start, and whether its payout process and timeline are clear. Genuine sites never charge fees. Be cautious of sites promising instant money or unrealistic earnings, and read their privacy policy carefully.",
   "slug": "highest-paying-survey-sites-guide",
   "title": "Highest Paying Survey Sites: What Really Makes a Survey Pay More"
  },
@@ -340,43 +340,43 @@ export const BLOG_FAQS = [
   "q": "How can I make quick money online safely?",
   "a": "Choose options that start quickly but never ask you to pay upfront — selling unused items, short freelance gigs or paid surveys. Expect payment after the work is verified rather than instantly. Never share OTPs or your UPI PIN, and walk away from anyone who promises fixed daily income.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
-  "q": "Are apps that promise to make fast cash online real?",
-  "a": "Most apps promising fast cash with doubled returns, prepaid tasks or trading profits are scams. Genuine platforms do not charge fees to unlock earnings or withdrawals. If an app shows growing profits but demands another deposit before you can withdraw, stop immediately and report it.",
+  "q": "Are apps that promise to make fast money online real?",
+  "a": "Most apps promising fast money with doubled returns, prepaid tasks or trading profits are scams. Genuine platforms do not charge fees to unlock earnings or withdrawals. If an app shows growing profits but demands another deposit before you can withdraw, stop immediately and report it.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
-  "q": "What is the fastest legit way to earn cash online?",
+  "q": "What is the fastest legit way to earn money online?",
   "a": "Selling items you already own is usually the quickest, because a local buyer can pay within days. Freelance gigs and paid surveys start the same day you sign up, but payment follows approval or verification. There is no honest method that pays large amounts instantly without work.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
   "q": "Can I make money online fast with paid surveys?",
   "a": "You can start fast — sign-up takes minutes and invitations can arrive the same day. Payment is not instant, though. Responses are quality-checked, and redemptions to PayPal, UPI, bank transfer or gift cards may take two to three weeks. Surveys are best treated as steady extra income.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
   "q": "What should I do if I paid a fee for an online job?",
   "a": "Stop making any further payments, contact your bank to block cards or UPI, and change your passwords. In India, report it at cybercrime.gov.in or call 1930. In the US, report it to the FTC. Keep screenshots, phone numbers and transaction IDs as evidence.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
   "q": "Is it safe to share my UPI ID to receive money?",
   "a": "Sharing a UPI ID to receive payment is normal, but you should never share your UPI PIN or an OTP. Entering a PIN always authorises money leaving your account. If someone sends a “collect request” and asks you to enter your PIN to receive funds, it is a scam.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
   "q": "Why do quick ways to make money online often turn out to be scams?",
   "a": "Real work is paid after it is completed and checked, so genuine income always has a delay. Scams promise money first because urgency stops people thinking clearly. The more instant and effortless an offer sounds, the more carefully you should verify who is behind it.",
   "slug": "make-quick-money-online-truth",
-  "title": "Make Quick Money Online? The Honest Truth About “Fast Cash” Offers"
+  "title": "Make Quick Money Online? The Honest Truth About “Fast Money” Offers"
  },
  {
   "q": "How do I know if an online earning platform is genuine?",
@@ -595,7 +595,7 @@ export const BLOG_FAQS = [
   "title": "Earn Money Online Without Investment: Honest Ways That Actually Work"
  },
  {
-  "q": "Can I earn cash online without investment in India?",
+  "q": "Can I earn money online without investment in India?",
   "a": "Yes, members in India can redeem rewards via UPI, bank transfer, PayPal or Amazon gift vouchers.",
   "slug": "earn-money-online-without-investment",
   "title": "Earn Money Online Without Investment: Honest Ways That Actually Work"
@@ -685,7 +685,7 @@ export const BLOG_FAQS = [
   "title": "Earn Money Online Free: Zero-Cost Ways to Start Today"
  },
  {
-  "q": "Do free cash surveys pay in real money?",
+  "q": "Do free paid surveys pay in real money?",
   "a": "Rewards can be redeemed via PayPal, UPI, bank transfer or gift cards, subject to verification and the redemption threshold.",
   "slug": "earn-money-online-free-guide",
   "title": "Earn Money Online Free: Zero-Cost Ways to Start Today"
@@ -747,50 +747,50 @@ export const BLOG_FAQS = [
  {
   "q": "Are survey rewards paid in real money?",
   "a": "Yes — rewards can be claimed as PayPal, UPI or wire transfer payments, or as Amazon gift cards.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Do my points expire if I take a break?",
   "a": "Unclaimed balances carry forward to the next cycle, as described in the programme terms.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Can I change my payout method?",
   "a": "Yes, you can choose a different eligible method when you submit each claim.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Why is my reward pending?",
   "a": "Rewards may stay pending while quality checks confirm the completion with the research client.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Is there a fee to withdraw?",
   "a": "MyFrequentRewards does not charge a claim fee; your payment provider’s own terms may apply.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
-  "q": "Do paid surveys for cash pay instantly?",
+  "q": "Do paid surveys for rewards pay instantly?",
   "a": "No — redemptions are verified first and typically take 2–3 weeks to process.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Can I redeem rewards as Amazon gift cards?",
   "a": "Yes, Amazon gift vouchers are one of the available redemption options.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "What do I need to receive money through PayPal?",
   "a": "A verified PayPal account that can receive funds, using the same email you enter when redeeming.",
-  "slug": "earn-money-online-cash-payouts",
-  "title": "Earn Money Online Cash: How Survey Rewards Turn into Real Money"
+  "slug": "earn-money-online-survey-payouts",
+  "title": "Earn Money Online With Surveys: How Rewards Turn into Real Money"
  },
  {
   "q": "Can Indians earn dollars from surveys?",

@@ -1,3 +1,5 @@
 # Netlify / Cloudflare Pages: prerendered folders are served automatically; unknown paths get 404.html
 /paid-surveys-for-minors  /paid-surveys-for-teens  301
+/blog/paid-surveys-for-cash-guide  /blog/paid-surveys-for-rewards-guide  301
+/blog/earn-money-online-cash-payouts  /blog/earn-money-online-survey-payouts  301
 /*  /404.html  404

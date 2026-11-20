@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import BlogCover from '../components/BlogCover.jsx';
 import RichText from '../components/RichText.jsx';
@@ -9,6 +9,9 @@ import { articleLd, breadcrumbLd, faqLd } from '../seo/schema.js';
 import { getBlog, relatedBlogs } from '../data/blogs/index.js';
 import { SITE_URL } from '../data/site.js';
 import NotFound from './NotFound.jsx';
+
+// Posts renamed in Nov 2026 (the server also answers these with a 301).
+const MOVED = { 'paid-surveys-for-cash-guide': 'paid-surveys-for-rewards-guide', 'earn-money-online-cash-payouts': 'earn-money-online-survey-payouts' };
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const fmt = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -32,6 +35,7 @@ export default function BlogPost() {
     return () => window.removeEventListener('scroll', on);
   }, [slug]);
 
+  if (!post && MOVED[slug]) return <Navigate to={`/blog/${MOVED[slug]}`} replace />;
   if (!post) return <NotFound />;
   const path = `/blog/${post.slug}`;
   const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blogs', path: '/blog' }, { name: post.title, path }];
