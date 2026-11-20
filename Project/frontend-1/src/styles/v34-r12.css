@@ -304,3 +304,17 @@ html[data-mode="dark"] .bt { box-shadow: 0 30px 70px -30px #000, 0 0 0 1px rgba(
   .bt-bar b::before, .bt-caret, .bt-chart i, .bt-desks button.on > svg { animation: none; }
   .bt-desks button { transition: none; }
 }
+
+/* ---- Round 12: "Who are you today?" slider — no half-cut text ----
+   Each world's copy fades out before the divider can slice through it, so neither side ever shows clipped words.
+   Phones: only the active world is shown and every world fills the same card height. */
+.cmp-stage .l-c .ws-copy { opacity: clamp(0, calc((var(--xn, 50) - 30) / 16), 1); transition: opacity .5s; }
+.cmp-stage .l-p .ws-copy { opacity: clamp(0, calc((70 - var(--xn, 50)) / 16), 1); transition: opacity .5s; }
+.cmp-stage .l-c .ws-art { opacity: clamp(0, calc((var(--xn, 50) - 55) / 14), 1); transition: opacity .5s; }
+.cmp-stage .l-p .ws-art { opacity: clamp(0, calc((45 - var(--xn, 50)) / 14), 1); transition: opacity .5s; }
+@media (max-width: 860px) {
+  .cmp-stage .l-c .ws-copy, .cmp-stage .l-p .ws-copy, .cmp-stage .l-c .ws-art, .cmp-stage .l-p .ws-art { opacity: 1; }
+  .cmp-stage .cmp-layer { align-self: stretch; }
+  .cmp-stage .cmp-layer > .ws { height: 100%; }
+  .cmp-stage:not(.on-t) .l-t, .cmp-stage.on-t .l-c, .cmp-stage.on-t .l-p { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .8s, visibility 0s .8s; }
+}

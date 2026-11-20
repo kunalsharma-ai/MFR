@@ -108,7 +108,7 @@ export default function AudienceSplit() {
         <div
           className={`cmp-stage ${demo ? 'is-demo' : ''} ${auto ? 'is-auto' : ''} on-${side}`}
           ref={stage}
-          style={{ '--x': `${x}%`, '--auto': `${AUTO_MS}ms` }}
+          style={{ '--x': `${x}%`, '--xn': x, '--auto': `${AUTO_MS}ms` }}
           onMouseEnter={() => { hold.current = true; }}
           onMouseLeave={() => { hold.current = false; drag.current = false; pause(2500); }}
           onPointerDown={(e) => { if (e.target.closest('a, input, button')) return; drag.current = true; setDemo(false); if (side === 't') setSide('c'); pause(); fromEvent(e); }}
