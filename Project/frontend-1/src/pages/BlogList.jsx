@@ -25,6 +25,8 @@ const CAT = {
   Safety: { icon: 'shield', c: '#0EA5A0' },
   Tips: { icon: 'star', c: '#FF5E7E' },
   'Behind the Scenes': { icon: 'eye', c: '#1E3A9E' },
+  Teens: { icon: 'rocket', c: '#D946EF' },
+  Trends: { icon: 'bolt', c: '#0891B2' },
 };
 const catOf = (c) => CAT[c] || CAT.All;
 

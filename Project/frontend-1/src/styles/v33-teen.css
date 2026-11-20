@@ -165,7 +165,7 @@ html[data-mode="dark"] .pmx-teen, html[data-mode="dark"] .nfo-teen { color: #E9D
 
 /* ── Scan & Connect: MyFrequentRewards panels ── */
 .qb-panels { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
-.qb-panels a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; font: 800 .82rem var(--font-d); color: #fff; transition: transform .2s; }
+.qb-panels a { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; font: 800 .82rem var(--font-d); color: #fff; transition: transform .2s; }
 .qb-panels a:hover { transform: translateY(-2px); }
 .qb-panels a.c { background: linear-gradient(120deg, #FF3F78, #FF9433); }
 .qb-panels a.p { background: linear-gradient(120deg, #0B1E5B, #2F6BFF); }
