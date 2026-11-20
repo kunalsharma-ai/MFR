@@ -158,6 +158,7 @@ export default function SignUp() {
   const [switched, setSwitched] = useState(false);
   const [adultNote, setAdultNote] = useState(false);
   const [teenProg, setTeenProg] = useState({ step: 2, pct: 0 });
+  const [geoFailed, setGeoFailed] = useState(false);
   const pickAudience = (k) => {
     setTeen(k === "minor");
     set("memberType", k === "minor" ? "consumer" : k);
@@ -214,11 +215,14 @@ export default function SignUp() {
   useEffect(() => {
     const ctrl = new AbortController();
     detectCountry({ signal: ctrl.signal }).then((iso) => {
-      if (!iso || ctrl.signal.aborted) return;
-      const match = SUPPORTED_COUNTRIES.find(
+      if (ctrl.signal.aborted) return;
+      const match = iso && SUPPORTED_COUNTRIES.find(
         (c) => String(c.iso).toLowerCase() === iso,
       );
-      if (!match) return;
+      if (!match) {
+        setGeoFailed(true); // ask for the country instead of blocking on a hidden field
+        return;
+      }
       setV((s) =>
         s.country
           ? s
@@ -754,7 +758,8 @@ export default function SignUp() {
                             ))}
                           </select>
                         </Field> */}
-                        {/* <div
+                        {/* Country is detected from the IP; the picker only shows when that failed, so step 1 never blocks on a hidden field. */}
+                        {!geoFailed ? null : (<div
                           className={`sx-field ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`}
                         >
                           <span className="sx-static-label" id="country-lbl">
@@ -782,7 +787,7 @@ export default function SignUp() {
                               {err("country")}
                             </p>
                           ) : null}
-                        </div> */}
+                        </div>)}
                       </div>
                       {adultNote ? (
                         <p className="sx-note" role="status">
