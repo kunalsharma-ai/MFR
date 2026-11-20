@@ -502,20 +502,14 @@ html[data-mode="dark"] .tq-chip:not(.on) { background: #1D1A2B; border-color: #3
 @media (max-width: 860px) { .nx-care .nx-monitor { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---- Round 12: teen welcome questionnaire, shown after the first log in (not during sign-up) ---- */
-.lx-card.is-welcome > :not(.tw) { display: none !important; }
-.tw { display: grid; gap: 4px; }
+.lx-card.is-welcome > :not(.wsv) { display: none !important; }
+.wsv { display: grid; gap: 4px; }
+.wsv .sx-h { margin-top: 6px; }
+.wsv .ws-grid { grid-template-columns: 1fr; }
 .tw-k { margin: 0; display: inline-flex; align-items: center; gap: 6px; font: 800 .72rem var(--font-b); letter-spacing: .12em; text-transform: uppercase; color: #7C3AED; }
-.tw-h { margin: 4px 0 2px; font: 800 clamp(1.3rem, 2.4vw, 1.7rem)/1.2 var(--font-d); color: var(--navy, #0B1E5B); }
-.tw-sub { margin: 0 0 6px; color: #5A6080; font-size: .92rem; line-height: 1.5; }
-.tw-q { margin: 14px 0 0; padding: 0; border: 0; min-width: 0; }
-.tw-q legend { padding: 0; margin-bottom: 8px; font: 800 .98rem var(--font-d); color: var(--navy, #0B1E5B); }
-.tw-q legend small { font: 500 .8rem var(--font-b); color: #6B7194; margin-left: 6px; }
-.tw-q.bad .tq-chip:not(.on) { border-color: #F3A3B5; }
 .tw-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 20px; }
 @media (max-width: 480px) { .tw-nav { flex-direction: column-reverse; } .tw-nav .btn { width: 100%; justify-content: center; } }
-html[data-mode="dark"] .tw-h, html[data-mode="dark"] .tw-q legend { color: #F1ECFF; }
-html[data-mode="dark"] .tw-sub, html[data-mode="dark"] .tw-q legend small { color: #B7B0D6; }
-
+html[data-mode="dark"] .tw-h, html[data-mode="dark"] html[data-mode="dark"] .tw-sub, html[data-mode="dark"] 
 /* ---- Round 12: parent / guardian details laid out on a clean grid (no empty half-rows, no cramped buttons)
    row 1: first · middle · last   row 2: date of birth · email   row 3: phone · gender (legal guardian only) ---- */
 .ts-gfields.sx-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 14px; align-items: start; }

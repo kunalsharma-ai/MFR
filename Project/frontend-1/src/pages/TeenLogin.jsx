@@ -11,7 +11,7 @@ import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
-import TeenWelcome, { teenWelcomeDone } from '../components/TeenWelcome.jsx';
+import WelcomeSurvey, { welcomeNeeded } from '../components/WelcomeSurvey.jsx';
 const page = PAGES.login;
 
 // Member log-in ("Member Pass").
@@ -164,8 +164,9 @@ export default function TeenLogin() {
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
     const mail = f.email.trim().toLowerCase();
     // First log in after the parent's consent and the password: the welcome questionnaire comes before the dashboard.
-    if (!teenWelcomeDone(mail)) {
-      setWelcome({ name: res.user?.name?.first || res.data?.name?.first || '', mail, demo: Boolean(res.demo) });
+    const need = await welcomeNeeded({ mail, fallback: 'teen', demo: Boolean(res.demo) });
+    if (need) {
+      setWelcome({ type: need.type, name: need.name || res.user?.name?.first || res.data?.name?.first || '', mail, demo: Boolean(res.demo) });
       setPhase('welcome');
       return;
     }
@@ -237,7 +238,7 @@ export default function TeenLogin() {
               </div>
             </div>
 
-            {welcome ? <TeenWelcome name={welcome.name} mail={welcome.mail} demo={welcome.demo} onDone={() => openDashboard(welcome.demo)} /> : null}
+            {welcome ? <WelcomeSurvey type={welcome.type} name={welcome.name} mail={welcome.mail} demo={welcome.demo} onDone={() => openDashboard(welcome.demo)} /> : null}
             <form ref={formRef} className="lx-form" hidden={Boolean(welcome)} onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
               <div className={`lx-field ${err('email') ? 'bad' : ''} ${emailOk ? 'good' : ''}`}>
                 <Icon name="mail" size={18} />

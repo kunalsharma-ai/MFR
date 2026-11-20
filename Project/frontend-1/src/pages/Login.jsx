@@ -12,6 +12,7 @@ import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
+import WelcomeSurvey, { welcomeNeeded } from '../components/WelcomeSurvey.jsx';
 const page = PAGES.login;
 
 // Member log-in ("Member Pass").
@@ -92,7 +93,8 @@ function Login() {
   const [f, setF] = useState({ email: '', password: '', remember: true, captchaOk: false });
   const [touched, setTouched] = useState({});
   const [show, setShow] = useState(false);
-  const [phase, setPhase] = useState('idle'); // idle | sending | success
+  const [phase, setPhase] = useState('idle'); // idle | sending | welcome | success
+  const [welcome, setWelcome] = useState(null); // { type, name, mail, demo } while the first-login welcome survey is open
   const [msg, setMsg] = useState('');
   const [tries, setTries] = useState(0);
   const [lockLeft, setLockLeft] = useState(0);
@@ -119,6 +121,14 @@ function Login() {
     const t = setTimeout(() => setLockLeft((n) => n - 1), 1000);
     return () => clearTimeout(t);
   }, [lockLeft]);
+
+  function openDashboard(res) {
+    setWelcome(null);
+    setPhase('success');
+    const to = res.redirect || MEMBER_PORTAL_URL || '/member/dashboard';
+    if (!res.demo && to) setTimeout(() => window.location.href="/member/dashboard", 1400);
+    if (res.demo) setMsg('Preview mode: login simulated — no real account was accessed.');
+  }
 
   async function submit(e) {
     e.preventDefault();
@@ -147,10 +157,15 @@ function Login() {
 });
     // login ke baad signup ke pending answers backend ko bhejo (kabhi throw nahi karta; 4s se zyada nahi rukega)
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
-    setPhase('success');
-    const to = res.redirect || MEMBER_PORTAL_URL || '/member/dashboard';
-      if (!res.demo && to) setTimeout(() => window.location.href="/member/dashboard", 1400);
-      if (res.demo) setMsg('Preview mode: login simulated — no real account was accessed.');
+    // First log in: a short welcome survey comes before the dashboard (the questions set-password used to ask).
+    const mail = f.email.trim().toLowerCase();
+    const need = await welcomeNeeded({ mail, fallback: pro ? 'professional' : 'consumer', demo: Boolean(res.demo) });
+    if (need) {
+      setWelcome({ ...need, mail, demo: Boolean(res.demo), redirect: res.redirect });
+      setPhase('welcome');
+      return;
+    }
+    openDashboard(res);
     } catch (ex) {
       setPhase('idle');
       const n = tries + 1;
@@ -203,7 +218,7 @@ function Login() {
             </ul>
           </div>
 
-          <div className="lx-card">
+          <div className={`lx-card ${welcome ? 'is-welcome' : ''}`}>
             <div className="lx-card-head">
               <span className="lx-badge"><Icon name="lock" size={22} /></span>
               <div>
@@ -212,7 +227,8 @@ function Login() {
               </div>
             </div>
 
-            <form ref={formRef} className="lx-form" onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
+            {welcome ? <WelcomeSurvey type={welcome.type} name={welcome.name} mail={welcome.mail} demo={welcome.demo} onDone={() => openDashboard(welcome)} /> : null}
+            <form ref={formRef} className="lx-form" hidden={Boolean(welcome)} onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
               <div className={`lx-field ${err('email') ? 'bad' : ''} ${emailOk ? 'good' : ''}`}>
                 <Icon name="mail" size={18} />
                 <input id="login-email" name="email" type="email" placeholder=" " autoComplete="username" inputMode="email" value={f.email} onChange={(e) => set('email', e.target.value)} onBlur={() => setTouched((t) => ({ ...t, email: true }))} {...aria('email', 'login-email')} />

@@ -20,7 +20,7 @@ import {
 //   3 · Consent           → five boxes ticked by hand (parent consent, participation, Terms, Privacy, accuracy) + CAPTCHA
 //   4 · Parent invite     → a pending registration is created and the Parent/Guardian Onboarding Form is emailed.
 //       After the parent signs, the teen gets a secure link to set their own password (no password is ever emailed),
-//       logs in, answers the welcome questionnaire (TeenWelcome, shown once after the first log in) and lands on the dashboard.
+//       logs in, answers the short welcome survey (WelcomeSurvey, shown once after the first log in) and lands on the dashboard.
 export const TEEN_STEPS = [
   { n: 1, t: 'About you', icon: 'user' },
   { n: 2, t: 'Parent / guardian', icon: 'family' },

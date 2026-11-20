@@ -51,26 +51,6 @@ export function validateGuardian(g, teenEmail = '') {
   return e;
 }
 
-// Teen welcome questionnaire (Round 12): shown once, after the teen has set a password and logged in (TeenWelcome).
-// Age-appropriate questions only; the answers are saved to the member's profile (PATCH /api/v1/me/answer).
-export const TEEN_SCHOOL = ['Middle school', 'Secondary / high school', 'Pre-university / junior college', 'Not in school right now'];
-export const TEEN_PROFILE_Q = [
-  { k: 'interests', t: 'What are you into?', d: 'Pick all that fit.', opts: ['Gaming', 'Music', 'Sport & fitness', 'Fashion & style', 'Movies & series', 'Snacks & food', 'Tech & gadgets', 'Reading & comics', 'Art & design', 'Travel'] },
-  { k: 'devices', t: 'Which devices do you use?', d: 'Your own or shared at home.', opts: ['Smartphone', 'Tablet', 'Laptop or PC', 'Games console', 'Smart speaker', 'Smartwatch'] },
-  { k: 'entertainment', t: 'Where do you watch, listen and play?', d: 'Pick all that fit.', opts: ['Video platforms', 'Streaming services', 'Music streaming', 'Short-video apps', 'Mobile games', 'Console or PC games', 'Podcasts'] },
-];
-export function validateTeenWelcome(t) {
-  const e = {};
-  if (!TEEN_SCHOOL.includes(t.school)) e.school = 'Choose your school stage.';
-  TEEN_PROFILE_Q.forEach((q) => { if (!(t[q.k] || []).length) e[q.k] = 'Pick at least one.'; });
-  return e;
-}
-// Answer keys sent to PATCH /api/v1/me/answer.
-export const teenWelcomeAnswers = (t) => ({
-  teen_school: t.school,
-  ...Object.fromEntries(TEEN_PROFILE_Q.map((q) => [`teen_${q.k}`, [...(t[q.k] || [])]])),
-});
-
 // Step "Consent": every box must be ticked by hand, plus the CAPTCHA.
 export const CONSENT_BOXES = [
   { k: 'parentConsent', t: 'My parent or guardian knows I’m joining and agrees to review and sign the Parent Consent Form we email them.' },
