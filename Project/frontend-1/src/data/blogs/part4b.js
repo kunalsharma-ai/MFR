@@ -73,7 +73,7 @@ export const PART4B = [
         ch: 1,
         h2: 'Transfer vs gift card: which payout makes sense?',
         p: [
-          'If you want money from surveys, PayPal, UPI or a bank transfer move money you can spend anywhere. An Amazon gift card is ideal if you already shop there and would spend that amount anyway. Availability depends on your country, and every payout is verified before release, which can take 2–3 weeks. That verification is exactly what protects honest members from fraud.',
+          'If you want money from surveys, PayPal, UPI or a bank transfer send the reward straight to your own account. An Amazon gift card is ideal if you already shop there and would spend that amount anyway. Availability depends on your country, and every payout is verified before release, which can take 2–3 weeks. That verification is exactly what protects honest members from fraud.',
         ],
         list: [
           'PayPal — convenient for international members and USD-based rewards',
