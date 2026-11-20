@@ -422,3 +422,20 @@ html[data-mode="dark"] .fq-desk .faq-item summary { color: #EEF1FA; }
 .fq-desk .faq-item[open] .faq-n { transform: none; border-radius: 0; background: linear-gradient(160deg, var(--fh, #FF8A00), var(--fh2, #8B5CF6)); color: #fff; }
 .fq-desk .faq-item[open] summary::after { order: 2; }
 .fq-desk .faq-plus { order: 3; }
+
+/* ---- Round 12: Professional FAQ dossier — files lift 34px when they animate; give them room under the title ---- */
+.fq-dossier .fqa-dossier { margin-top: 56px; }
+@media (max-width: 560px) { .fq-dossier .fqa-dossier { margin-top: 44px; transform: scale(.88); transform-origin: left top; } }
+
+/* ---- Round 12: video band on tablets/phones — the phone sits under the copy, so the floating stickers move down
+   beside the phone instead of covering the "For everyday people" badge ---- */
+@media (max-width: 900px) {
+  .vs .vd-sticker:nth-child(1) { left: auto; right: 3%; top: auto; bottom: 30%; }
+  .vs .vd-sticker:nth-child(2) { left: 3%; top: auto; bottom: 34%; }
+  .vs .vd-sticker:nth-child(3) { left: auto; right: 8%; bottom: 3%; }
+  .vs .vd-sticker { z-index: 3; width: 38px; height: 38px; border-radius: 12px; }
+}
+@media (max-width: 900px) {
+  .vs .vs-deco { opacity: .45; }
+  .vs .vd-sticker:nth-child(2) { display: none; }
+}
