@@ -8,6 +8,7 @@ import { segSound } from '../utils/sound.js';
 const OPTS = [
   ['consumer', 'Consumer', 'user'],
   ['professional', 'Professional', 'briefcase'],
+  ['minor', 'Minor', 'rocket'], // v3.3: the teen panel (Galaxy Pop colours, v32-minor.css)
 ];
 
 export default function AudienceSwitch({ value, onChange, label = 'I am a' }) {
@@ -30,7 +31,7 @@ export default function AudienceSwitch({ value, onChange, label = 'I am a' }) {
     onChange(k);
   };
   return (
-    <div className={`ax-switch ${value === 'professional' ? 'is-pro' : ''}`} role="radiogroup" aria-label={label} ref={ref}>
+    <div className={`ax-switch ax-3 ${value === 'professional' ? 'is-pro' : value === 'minor' ? 'is-min' : ''}`} role="radiogroup" aria-label={label} ref={ref}>
       <span className="ax-thumb" aria-hidden="true" />
       {OPTS.map(([k, l, ic]) => (
         <button key={k} type="button" role="radio" aria-checked={value === k} className={`ax-opt ${value === k ? 'on' : ''}`} onClick={(e) => pick(k, e)}>

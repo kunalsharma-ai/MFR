@@ -78,6 +78,7 @@ import './styles/v31-gate.css';
 import './styles/v31-reviews.css';
 import './styles/v31-hero-fx.css';
 import './styles/v31-sections.css';
+import './styles/v32-minor.css';
 
 document.documentElement.classList.add('js');
 

@@ -48,20 +48,20 @@ const crumbs = [
 const LAST_STEP = 2;
 const RESEND_WAIT = 30;
 
-function LiveCard({ v, step, progress, sent }) {
-  const pro = v.memberType === "professional";
+function LiveCard({ v, step, progress, sent, teen = false }) {
+  const pro = v.memberType === "professional" && !teen;
   const c = COUNTRIES.find((x) => x.iso === v.country);
   const name = `${v.firstName || ""} ${v.lastName || ""}`.trim();
   return (
     <div className="lc-stage" aria-hidden="true">
       <div
-        className={`lc-card ${pro ? "is-pro" : ""} ${name ? "has-name" : ""}`}
+        className={`lc-card ${pro ? "is-pro" : teen ? "is-min" : ""} ${name ? "has-name" : ""}`}
       >
         <span className="lc-holo" />
         <div className="lc-top">
           <img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="40" height="40" />
           <span className="lc-type">
-            {pro ? "PROFESSIONAL" : "CONSUMER"} MEMBER
+            {pro ? "PROFESSIONAL" : teen ? "TEEN" : "CONSUMER"} MEMBER
           </span>
         </div>
         <div className="lc-mid">
@@ -147,6 +147,13 @@ export default function SignUp() {
   const cardRef = useRef(null);
   const [remote, setRemote] = useState({}); // { email: {value,msg}, guardianEmail: {value,msg} }
   //const minor = isMinor(v.dob);
+  // v3.3: "Minor" on the Join-as switch is the teen panel. It is a presentation choice only: teens register as
+  // consumers (the backend sees the same memberType) and the under-18 parent step follows email verification.
+  const [teen, setTeen] = useState(false);
+  const pickAudience = (k) => {
+    setTeen(k === "minor");
+    set("memberType", k === "minor" ? "consumer" : k);
+  };
 
   const errors = useMemo(() => {
     const e = validateSignup(v);
@@ -183,8 +190,10 @@ export default function SignUp() {
   }, [search]);
 
   useEffect(() => {
-    if (new URLSearchParams(search).get("type") === "professional")
+    const t = new URLSearchParams(search).get("type");
+    if (t === "professional")
       setV((s) => ({ ...s, memberType: "professional" }));
+    if (t === "minor") setTeen(true);
   }, [search]);
 
   useEffect(() => {
@@ -351,7 +360,7 @@ export default function SignUp() {
     <>
       <PageSeo page={page} crumbs={crumbs} />
       <section
-        className={`sx ax-page ${v.memberType === "professional" ? "aud-pro" : "aud-con"}`}
+        className={`sx ax-page ${teen ? "aud-min" : v.memberType === "professional" ? "aud-pro" : "aud-con"}`}
       >
         <div className="sx-bg" aria-hidden="true">
           <span className="sx-orb o1" />
@@ -367,23 +376,28 @@ export default function SignUp() {
           <aside className="sx-aside">
             {status === "sent" ? null : (
               <AudienceSwitch
-                value={v.memberType}
-                onChange={(k) => set("memberType", k)}
+                value={teen ? "minor" : v.memberType}
+                onChange={pickAudience}
                 label="Join as"
               />
             )}
             <p className="eyebrow eyebrow-light">
-              {v.memberType === "professional"
-                ? "Join free · for professionals"
-                : "Join free · about 2 minutes"}
+              {teen
+                ? "Join free · the teen panel"
+                : v.memberType === "professional"
+                  ? "Join free · for professionals"
+                  : "Join free · about 2 minutes"}
             </p>
             <h1>{page.h1}</h1>
-            <p className="muted-light ax-swap" key={v.memberType}>
-              {v.memberType === "professional"
+            <p className="muted-light ax-swap" key={teen ? "minor" : v.memberType}>
+              {teen
+                ? "Explore 13 profile worlds and win points. Sign up with your real date of birth and we’ll invite your parent or guardian to say yes first."
+                : v.memberType === "professional"
                 ? "Get paid for your professional insight in expert B2B surveys — no investment, no fees, ever."
                 : "Earn money online by sharing your opinion — no investment, no fees, ever."}
             </p>
             <LiveCard
+              teen={teen}
               v={v}
               step={step}
               progress={Math.max(
@@ -496,7 +510,7 @@ export default function SignUp() {
                               name="memberType"
                               value={k}
                               checked={v.memberType === k}
-                              onChange={() => set("memberType", k)}
+                              onChange={() => { if (k === "professional") setTeen(false); set("memberType", k); }}
                             />
                             <span className="sx-type-ico">
                               <Icon name={ic} size={26} />

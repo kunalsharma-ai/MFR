@@ -88,6 +88,17 @@ function FaqArt({ look }) {
       </div>
     );
   }
+  if (look === 'minor') {
+    return (
+      <div className="fqa fqa-minor" aria-hidden="true">
+        <span className="fqa-bub b1">Can I join?</span>
+        <span className="fqa-bub b2">Yes, with a parent’s OK ✨</span>
+        <span className="fqa-bub b3">Who gets the points?</span>
+        <img className="fqa-q" src="/images/minor/emoji/sparkles.webp" alt="" width="64" height="64" loading="lazy" decoding="async" />
+        <img className="fqa-r" src="/images/minor/emoji/rocket.webp" alt="" width="72" height="72" loading="lazy" decoding="async" />
+      </div>
+    );
+  }
   if (look === 'gift') {
     return (
       <div className="fqa fqa-gift" aria-hidden="true">

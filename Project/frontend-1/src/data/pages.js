@@ -48,6 +48,15 @@ export const PAGES = {
     metaDescription: 'Turn your expertise into rewards. Paid B2B surveys for CXOs, managers, engineers, doctors and founders across industries — verified, private and free to join.',
     h1: 'Paid surveys for business professionals',
   },
+  minor: {
+    path: '/paid-surveys-for-minors',
+    name: 'For Minors',
+    primaryKeyword: 'paid surveys for teens',
+    secondaryKeywords: ['surveys for teens', 'surveys for minors', 'teen survey panel', 'parental consent surveys', 'earn rewards as a teenager', 'online surveys for students under 18'],
+    metaTitle: 'Paid Surveys for Teens with Parental Consent | MFR Minors',
+    metaDescription: 'Teens explore 13 profile worlds, earn points and share opinions safely. A parent says yes first, then you do. Age-checked surveys, rewards paid to parents.',
+    h1: 'Paid surveys for teens, with a parent’s yes',
+  },
   whoCanJoin: {
     path: '/who-can-join',
     name: 'Who Can Join',

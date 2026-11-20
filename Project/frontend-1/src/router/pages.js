@@ -10,6 +10,7 @@ export const PAGE_ROUTES = [
   { path: '/rewards', page: 'Rewards' },
   { path: '/paid-surveys-for-consumers', page: 'Consumers' },
   { path: '/paid-surveys-for-professionals', page: 'Professionals' },
+  { path: '/paid-surveys-for-minors', page: 'Minor' },
   { path: '/who-can-join', page: 'WhoCanJoin' },
   { path: '/trust-and-safety', page: 'Quality' },
   { path: '/about-us', page: 'About' },

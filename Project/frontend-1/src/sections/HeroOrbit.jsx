@@ -16,13 +16,24 @@ import { segSound } from '../utils/sound.js';
 const WHO = {
   consumer: ['students', 'homemakers', 'gamers', 'parents', 'retirees', 'shoppers', 'travellers', 'drivers'],
   pro: ['IT managers', 'doctors', 'founders', 'engineers', 'CXOs', 'HR leaders', 'marketers', 'consultants'],
+  minor: ['gamers', 'creators', 'athletes', 'foodies', 'music fans', 'coders', 'artists', 'bookworms'],
 };
 const MOTTO_ICONS = ['chat', 'badge', 'gift'];
 // Audience mottos — each word rolls into its own slot window; a tagline follows.
 const MODE = {
   consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
+  minor: { words: [['game', 'Play.'], ['chat', 'Speak up.'], ['rocket', 'Level up.']], tag: 'Teens get a voice too — and a reward, with a parent’s yes.' },
 };
+// v3.3: three audiences take turns — Consumer → Professional → Minor (the teen panel, "Galaxy Pop" colours).
+const SEGS = ['consumer', 'pro', 'minor'];
+const RIBBON = {
+  consumer: ['gift', 'Share opinions · earn multiple rewards'],
+  pro: ['briefcase', 'Share expert insights · earn premium rewards'],
+  minor: ['rocket', 'New · teen panel · with a parent’s OK'],
+};
+const ACCENT = { consumer: 'by sharing your opinion', pro: 'by sharing your expertise', minor: 'by sharing your teen voice' };
+const JOIN = { consumer: '/sign-up', pro: '/sign-up?type=professional', minor: '/sign-up?type=minor' };
 
 const SEG_MS = 5000;
 
@@ -46,13 +57,13 @@ export default function HeroOrbit() {
     setAuto(true);
     const t = setInterval(() => {
       if (document.hidden || Date.now() < hold.current) return;
-      setSeg((v) => (v === 'consumer' ? 'pro' : 'consumer'));
+      setSeg((v) => SEGS[(SEGS.indexOf(v) + 1) % SEGS.length]);
     }, SEG_MS);
     return () => clearInterval(t);
   }, [visible]);
   const pick = (v) => { if (v !== seg) segSound(v === 'pro'); hold.current = Date.now() + 15000; setAuto(false); setSeg(v); setTimeout(() => setAuto(true), 15000); };
   const who = WHO[seg];
-  const other = seg === 'pro' ? 'consumer' : 'pro';
+  const others = SEGS.filter((x) => x !== seg);
   const pay = PAYOUTS[r];
   const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
   const words = BRAND.motto.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
@@ -62,6 +73,7 @@ export default function HeroOrbit() {
       <div className="hero-bg" aria-hidden="true">
         <div className="hm-tint t-con" />
         <div className="hm-tint t-pro" />
+        <div className="hm-tint t-min" />
         <div className="hero-aurora a1" />
         <div className="hero-aurora a2" />
         <div className="hero-aurora a3" />
@@ -76,6 +88,12 @@ export default function HeroOrbit() {
           {[0, 1, 2].map((i) => <span key={i} className="hx-beam" style={{ '--i': i }} />)}
           {Array.from({ length: 16 }).map((_, i) => <i key={i} className="hx-dust" style={{ '--i': i }} />)}
           <svg className="hx-ticker" viewBox="0 0 1200 200" preserveAspectRatio="none"><polyline points="0,170 120,150 220,160 330,120 440,130 560,90 660,100 780,60 900,70 1020,30 1200,10" /></svg>
+        </div>
+        {/* v3.3 teen atmosphere: a starfield with drifting planets and comets */}
+        <div className="hx-fx hx-min">
+          {Array.from({ length: 14 }).map((_, i) => <i key={i} className="hx-star" style={{ '--i': i }} />)}
+          {[0, 1, 2].map((i) => <b key={i} className="hx-planet" style={{ '--i': i }} />)}
+          {[0, 1].map((i) => <span key={i} className="hx-comet" style={{ '--i': i }} />)}
         </div>
       </div>
 
@@ -92,17 +110,17 @@ export default function HeroOrbit() {
           {/* Both audience variants share one grid cell (the other one is an invisible copy), so the hero keeps the
               height of the taller variant and nothing below jumps when Consumer and Professional take turns (CLS). */}
           <div className="hx-hold">
-            {[seg, other].map((v, n) => (
-              <p className={`hx-ribbon r-${v}${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `r-${v}`} aria-hidden={n ? 'true' : undefined}>
-                <span className="hx-ribbon-ic"><Icon name={v === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
-                {v === 'pro' ? 'Share expert insights · earn premium rewards' : 'Share opinions · earn multiple rewards'}
+            {[seg, ...others].map((v, n) => (
+              <p className={`hx-ribbon r-${v}${n ? ' hx-ghost' : ''}`} key={n ? `ghost-${n}` : `r-${v}`} aria-hidden={n ? 'true' : undefined}>
+                <span className="hx-ribbon-ic"><Icon name={RIBBON[v][0]} size={14} /></span>
+                {RIBBON[v][1]}
                 {!n && <i className="hx-ribbon-shine" aria-hidden="true" />}
               </p>
             ))}
           </div>
           <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
             <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
-            <span className="ht-line ht-accent" style={{ '--l': 1 }}>{seg === 'pro' ? 'by sharing your expertise' : 'by sharing your opinion'}</span>
+            <span className="ht-line ht-accent" style={{ '--l': 1 }}>{ACCENT[seg]}</span>
             <svg className="hx-swoosh" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 4, 230 2, 396 12" /></svg>
           </h1>
 
@@ -110,11 +128,12 @@ export default function HeroOrbit() {
             <span className="hm-seg-pill" aria-hidden="true"><i key={seg} className="hm-seg-prog" /></span>
             <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => pick('consumer')}><Icon name="user" size={16} /> Consumer</button>
             <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => pick('pro')}><Icon name="briefcase" size={16} /> Professional</button>
+            <button type="button" role="tab" aria-selected={seg === 'minor'} className={seg === 'minor' ? 'on' : ''} onClick={() => pick('minor')}><Icon name="rocket" size={16} /> Minor</button>
           </div>
 
           <div className="hx-hold">
-            {[seg, other].map((v, n) => (
-              <div className={`hm-roll${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `m-${v}`} aria-hidden={n ? 'true' : undefined}>
+            {[seg, ...others].map((v, n) => (
+              <div className={`hm-roll${n ? ' hx-ghost' : ''}`} key={n ? `ghost-${n}` : `m-${v}`} aria-hidden={n ? 'true' : undefined}>
                 <p className="hm-roll-w">
                   {!n && <span className="sr-only">{MODE[v].words.map((x) => x[1]).join(' ')}</span>}
                   {MODE[v].words.map(([ic, t], k) => (
@@ -137,7 +156,7 @@ export default function HeroOrbit() {
             No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
           </p>
           <div className="hero-actions">
-            <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-lg btn-shine">Start earning free <Icon name="arrow" size={20} /></Link>
+            <Link to={JOIN[seg]} className="btn btn-primary btn-lg btn-shine">{seg === 'minor' ? 'Join the teen panel' : 'Start earning free'} <Icon name="arrow" size={20} /></Link>
             <Link to="/how-it-works" className="btn btn-glass btn-lg"><span className="play-dot" /> How it works</Link>
           </div>
           <ul className="hm-stats" aria-label="Community figures">
@@ -148,7 +167,7 @@ export default function HeroOrbit() {
         </div>
 
         <div className="hero-stage" aria-hidden="true">
-          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
+          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : seg === 'minor' ? <MinorWorld key="min" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
         </div>
       </div>
 
@@ -261,6 +280,51 @@ function ProWorld({ pay }) {
       </div>
       {EXPERTS.map(([t, ic], k) => <span key={t} className={`eb-role r${k}`}><Icon name={ic} size={13} />{t}</span>)}
       {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`eb-spark s${k}`} />)}
+    </div>
+  );
+}
+
+// ── Minor world (v3.3): "Galaxy Pop" — the teen panel. A 3D planet floats inside a tilted ring of interest stickers,
+// world stickers pop out and fill an XP bar, "+100 points" flies up, and the parent + teen keys unlock a badge.
+// Art comes from the Minor onboarding files (/images/minor). Only transform / opacity animate.
+const MW_SATS = [
+  ['/images/minor/emoji/game.webp', 'Gaming'], ['/images/minor/emoji/pizza.webp', 'Food'], ['/images/minor/emoji/music.webp', 'Music'],
+  ['/images/minor/emoji/football.webp', 'Sport'], ['/images/minor/emoji/graduation.webp', 'School'], ['/images/minor/emoji/paint.webp', 'Creating'],
+];
+const MW_WORLDS = [
+  ['/images/minor/art/arcade.webp', 'Arcade', '#7C3AED'], ['/images/minor/art/bistro.webp', 'Bistro', '#F59E0B'], ['/images/minor/art/runway.webp', 'Runway', '#D946EF'],
+];
+function MinorWorld() {
+  return (
+    <div className="hm-scene mw">
+      <span className="mw-glow" />
+      <div className="mw-3d">
+        <img className="mw-planet" src="/images/minor/art/celebrate.webp" alt="" width="400" height="400" decoding="async" />
+        <div className="mw-ring">
+          <span className="mw-ring-line" />
+          {MW_SATS.map(([src, t], i) => (
+            <span key={t} className="mw-sat" style={{ '--a': `${i * 60}deg` }}>
+              <span className="mw-sat-in"><img src={src} alt="" width="46" height="46" decoding="async" /><b>{t}</b></span>
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="mw-worlds">
+        {MW_WORLDS.map(([src, t, c], i) => (
+          <span key={t} className={`mw-world k${i}`} style={{ '--c': c }}><img src={src} alt="" width="64" height="64" decoding="async" /><b>{t}</b><em>+100</em></span>
+        ))}
+      </div>
+      <div className="mw-xp">
+        <p><img src="/images/minor/emoji/wave.webp" alt="" width="26" height="26" decoding="async" /><b>Level up!</b><small><span className="mw-roll"><i>3</i><i>4</i><i>5</i><i>6</i></span>/13 worlds</small></p>
+        <span className="mw-bar"><i /></span>
+      </div>
+      <div className="mw-keys">
+        <span className="mw-key a"><Icon name="user" size={13} /> Parent ✓</span>
+        <span className="mw-key b"><Icon name="check" size={13} stroke={3} /> You ✓</span>
+        <span className="mw-unlock"><Icon name="lock" size={13} /> Unlocked</span>
+      </div>
+      <p className="mw-pts"><img src="/images/minor/emoji/coin.webp" alt="" width="22" height="22" decoding="async" /> +100 points</p>
+      {[0, 1, 2, 3].map((k) => <i key={k} className={`mw-spark s${k}`} />)}
     </div>
   );
 }

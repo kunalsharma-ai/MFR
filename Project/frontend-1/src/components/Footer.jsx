@@ -23,6 +23,7 @@ const COLS = [
       ['/how-it-works', 'How it works'],
       ['/paid-surveys-for-consumers', 'For consumers'],
       ['/paid-surveys-for-professionals', 'For professionals'],
+      ['/paid-surveys-for-minors', 'For minors'],
       ['/who-can-join', 'Who can join'],
       ['/rewards', 'Rewards & payouts'],
     ],
