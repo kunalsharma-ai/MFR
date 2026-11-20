@@ -83,6 +83,7 @@ import './styles/v32-minor.css';
 import './styles/v32-pages.css';
 import './styles/v33-teen.css';
 import './styles/v34-r12.css';
+import './styles/v35-worlds.css';
 
 document.documentElement.classList.add('js');
 startContentGuard();
