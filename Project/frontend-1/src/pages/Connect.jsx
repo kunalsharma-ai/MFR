@@ -79,7 +79,7 @@ export default function Connect() {
         lead="Every brand of the Frequent Research family in one place: MyFrequentRewards, Turn2Opinion, MyHealthOpinions, Sampledge and Frequent Research — scan a code with your phone camera, or tap to open. Follow for survey alerts, payout tips and research news."
         tagline={[['mobile', 'Point.'], ['sparkle', 'Scan.'], ['link', 'Connected.']]}
         tone="con"
-        theme="violet"
+        theme="cyber"
         artNode={<QrCube />}
       >
         <nav className="qx-jump" aria-label="Jump to a brand">

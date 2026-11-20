@@ -52,7 +52,7 @@ export default function BlogList() {
         eyebrow="Blogs"
         title={page.h1}
         lead="Trending guides on how to earn money online without investment — honest tips on paid surveys, payouts, safety and side income for consumers and professionals."
-        theme="berry"
+        theme="ink"
         artNode={<CoverWall posts={BLOGS.slice(0, 12)} />}
       >
         <div className="faq-search bx-search">

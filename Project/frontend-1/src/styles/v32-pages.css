@@ -1,0 +1,206 @@
+/* ════ v32 · every inner page hero gets its own palette and atmosphere ════
+   Each theme sets: the hero gradient, the ::before glow blobs, an animated ::after
+   "atmosphere" layer (transform/opacity only, so it stays on the compositor) and an
+   eyebrow accent. The copy sits on the left, so every gradient keeps that side dark
+   enough for white text. Triple class bumps specificity over the generated dark.css
+   rule (html[data-mode][data-theme] .page-hero[class*='ph-']). Dark mode is hand
+   written at the bottom: this file is in build-dark-css SKIP. */
+
+.page-hero .ph-bg { overflow: hidden; }
+.page-hero .ph-bg::after { will-change: transform; }
+
+/* ── Rewards · "Vault": emerald night with falling gold sparks ── */
+html .page-hero.ph-gold.ph-gold.ph-gold {
+  background:
+    radial-gradient(50% 70% at 82% 40%, rgba(255, 196, 61, .42), transparent 62%),
+    radial-gradient(40% 50% at 100% 100%, rgba(255, 138, 0, .35), transparent 65%),
+    linear-gradient(150deg, #03251C 0%, #064E3B 46%, #0B6B4F 72%, #8A5A00 118%);
+}
+.page-hero.ph-gold .ph-bg::before { background: radial-gradient(closest-side at 70% 30%, rgba(255, 214, 102, .28), transparent 70%), radial-gradient(closest-side at 20% 80%, rgba(16, 185, 129, .3), transparent 70%); }
+.page-hero.ph-gold .ph-bg::after {
+  inset: -100% 0 0; mask-image: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 221, 120, .95) 1.4px, transparent 2.2px),
+    radial-gradient(circle, rgba(255, 190, 60, .6) 1px, transparent 1.8px);
+  background-size: 120px 140px, 76px 96px; background-position: 0 0, 38px 50px;
+  animation: v32-fall 14s linear infinite; opacity: .8;
+}
+.page-hero.ph-gold .eyebrow { color: #FFD166; }
+
+/* ── For consumers · "Pop": magenta to coral with rising bubbles ── */
+html .page-hero.ph-berry.ph-berry.ph-berry {
+  background:
+    radial-gradient(45% 60% at 88% 26%, rgba(255, 200, 87, .5), transparent 62%),
+    radial-gradient(55% 70% at 75% 100%, rgba(255, 90, 120, .55), transparent 64%),
+    linear-gradient(120deg, #2A0838 0%, #6B0F5C 38%, #C0266D 70%, #FF6A3D 112%);
+}
+.page-hero.ph-berry .ph-bg::before { background: radial-gradient(closest-side at 80% 30%, rgba(255, 170, 60, .3), transparent 70%), radial-gradient(closest-side at 30% 70%, rgba(255, 59, 141, .3), transparent 70%); }
+.page-hero.ph-berry .ph-bg::after {
+  inset: 0 0 -100%; mask-image: linear-gradient(90deg, transparent 25%, #000 70%);
+  background-image:
+    radial-gradient(circle, transparent 9px, rgba(255, 255, 255, .35) 10px, transparent 11.5px),
+    radial-gradient(circle, rgba(255, 255, 255, .22) 3px, transparent 4px);
+  background-size: 150px 170px, 90px 110px; background-position: 20px 0, 60px 40px;
+  animation: v32-rise 18s linear infinite;
+}
+.page-hero.ph-berry .eyebrow { color: #FFD08A; }
+
+/* ── For professionals · "Boardroom": graphite with a blueprint grid and a scan beam ── */
+html .page-hero.ph-exec.ph-exec.ph-exec {
+  background:
+    radial-gradient(45% 60% at 85% 35%, rgba(96, 165, 250, .32), transparent 62%),
+    radial-gradient(40% 50% at 100% 100%, rgba(212, 175, 55, .22), transparent 65%),
+    linear-gradient(160deg, #05070D 0%, #0F172A 45%, #1E293B 80%, #334155 115%);
+}
+.page-hero.ph-exec .ph-bg::before { background: linear-gradient(90deg, transparent 0 45%, rgba(147, 197, 253, .16) 50%, transparent 55%); animation: v32-beam 7s ease-in-out infinite; inset: 0 -60%; }
+.page-hero.ph-exec .ph-bg::after {
+  mask-image: linear-gradient(100deg, transparent 30%, #000 85%);
+  background-image:
+    linear-gradient(rgba(148, 163, 184, .14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, .14) 1px, transparent 1px),
+    linear-gradient(rgba(212, 175, 55, .18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, .18) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+}
+.page-hero.ph-exec .eyebrow { color: #E9C46A; }
+.page-hero.ph-exec h1 { letter-spacing: -.01em; }
+
+/* ── Trust & safety · "Radar": deep teal with a sweeping scanner ── */
+html .page-hero.ph-teal.ph-teal.ph-teal {
+  background:
+    radial-gradient(45% 65% at 80% 45%, rgba(45, 212, 191, .38), transparent 62%),
+    radial-gradient(30% 40% at 100% 0, rgba(163, 230, 53, .22), transparent 65%),
+    linear-gradient(155deg, #011716 0%, #032F2E 45%, #065F5B 80%, #0F766E 115%);
+}
+.page-hero.ph-teal .ph-bg::before {
+  inset: auto; width: 900px; height: 900px; left: calc(78% - 450px); top: calc(50% - 450px); border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(94, 234, 212, .32), transparent 22%, transparent);
+  mask-image: radial-gradient(closest-side, #000 60%, transparent);
+  animation: v32-spin 9s linear infinite;
+}
+.page-hero.ph-teal .ph-bg::after {
+  mask-image: none;
+  background-image: repeating-radial-gradient(circle at 78% 50%, transparent 0 58px, rgba(94, 234, 212, .16) 59px 60px);
+  background-size: auto;
+}
+.page-hero.ph-teal .eyebrow { color: #7CF5DA; }
+
+/* ── Who can join · "Tide": ocean blue with rolling wave lines ── */
+html .page-hero.ph-ocean.ph-ocean.ph-ocean {
+  background:
+    radial-gradient(50% 65% at 82% 40%, rgba(56, 189, 248, .5), transparent 62%),
+    radial-gradient(45% 50% at 50% 115%, rgba(34, 211, 238, .4), transparent 65%),
+    linear-gradient(170deg, #020B2A 0%, #04205E 45%, #0757A8 82%, #0EA5E9 120%);
+}
+.page-hero.ph-ocean .ph-bg::before { background: radial-gradient(closest-side at 75% 45%, rgba(125, 211, 252, .25), transparent 70%); }
+.page-hero.ph-ocean .ph-bg::after {
+  inset: 40% -50% 0 0; mask-image: linear-gradient(180deg, transparent, #000 60%);
+  background-image:
+    radial-gradient(60px 18px at 50% 100%, transparent 15px, rgba(186, 230, 253, .28) 16px 17.5px, transparent 18.5px),
+    radial-gradient(60px 18px at 50% 100%, transparent 15px, rgba(186, 230, 253, .16) 16px 17.5px, transparent 18.5px);
+  background-size: 120px 34px, 90px 46px; background-position: 0 0, 30px 14px;
+  animation: v32-drift 12s linear infinite;
+}
+.page-hero.ph-ocean .eyebrow { color: #7DD3FC; }
+
+/* ── About · "Aurora": add slow drifting light curtains to the existing aurora palette ── */
+.page-hero.ph-aurora .ph-bg::after {
+  inset: -30% -60% -30% 0; mask-image: linear-gradient(90deg, transparent 20%, #000 60%);
+  background-image: repeating-linear-gradient(100deg, transparent 0 60px, rgba(110, 231, 183, .14) 80px, rgba(167, 139, 250, .14) 110px, transparent 140px);
+  background-size: auto; filter: blur(6px);
+  animation: v32-drift 22s linear infinite;
+}
+.page-hero.ph-aurora .eyebrow { color: #86EFAC; }
+
+/* ── Contact · "Dusk": plum to peach with a slow sunburst ── */
+html .page-hero.ph-sunrise.ph-sunrise.ph-sunrise {
+  background:
+    radial-gradient(40% 55% at 82% 40%, rgba(255, 183, 77, .6), transparent 62%),
+    radial-gradient(50% 50% at 100% 100%, rgba(255, 99, 132, .45), transparent 65%),
+    linear-gradient(135deg, #1B0B2E 0%, #4A1252 40%, #A12A5E 74%, #F2774A 112%);
+}
+.page-hero.ph-sunrise .ph-bg::before {
+  inset: auto; width: 1100px; height: 1100px; left: calc(80% - 550px); top: calc(45% - 550px);
+  background: repeating-conic-gradient(rgba(255, 220, 160, .12) 0 6deg, transparent 6deg 18deg);
+  mask-image: radial-gradient(closest-side, #000 20%, transparent 75%);
+  animation: v32-spin 60s linear infinite;
+}
+.page-hero.ph-sunrise .eyebrow { color: #FFC58A; }
+
+/* ── FAQ · "Indigo study": violet with diagonal light streaks ── */
+html .page-hero.ph-violet.ph-violet.ph-violet {
+  background:
+    radial-gradient(45% 60% at 84% 38%, rgba(167, 139, 250, .55), transparent 62%),
+    radial-gradient(40% 50% at 60% 110%, rgba(56, 189, 248, .3), transparent 65%),
+    linear-gradient(150deg, #0E0828 0%, #241466 45%, #4C1D95 80%, #7C3AED 118%);
+}
+.page-hero.ph-violet .ph-bg::before { background: radial-gradient(closest-side at 78% 40%, rgba(196, 181, 253, .25), transparent 70%); }
+.page-hero.ph-violet .ph-bg::after {
+  inset: 0 -100% 0 0; mask-image: linear-gradient(90deg, transparent 20%, #000 65%);
+  background-image: repeating-linear-gradient(115deg, transparent 0 90px, rgba(221, 214, 254, .1) 92px 96px, transparent 98px 170px, rgba(221, 214, 254, .06) 172px 200px, transparent 202px 260px);
+  background-size: auto;
+  animation: v32-drift 16s linear infinite;
+}
+.page-hero.ph-violet .eyebrow { color: #C4B5FD; }
+
+/* ── Scan & connect · "Neon": near black, cyan and magenta with a perspective grid floor ── */
+html .page-hero.ph-cyber.ph-cyber.ph-cyber {
+  background:
+    radial-gradient(45% 60% at 80% 30%, rgba(34, 211, 238, .55), transparent 62%),
+    radial-gradient(50% 60% at 100% 95%, rgba(236, 72, 153, .6), transparent 65%),
+    radial-gradient(40% 40% at 45% 100%, rgba(139, 92, 246, .45), transparent 70%),
+    linear-gradient(170deg, #03030C 0%, #0D0B2E 45%, #2A0B4E 100%);
+}
+.page-hero.ph-cyber .ph-bg::before {
+  inset: auto -30% 0 -30%; height: 70%;
+  background-image: linear-gradient(rgba(34, 211, 238, .75) 2px, transparent 2px), linear-gradient(90deg, rgba(236, 72, 153, .65) 2px, transparent 2px);
+  background-size: 60px 40px;
+  transform: perspective(600px) rotateX(58deg); transform-origin: 50% 100%;
+  mask-image: linear-gradient(180deg, transparent, #000 55%);
+  animation: v32-floor 3.5s linear infinite;
+}
+.page-hero.ph-cyber .ph-bg::after { opacity: .5; }
+.page-hero.ph-cyber .eyebrow { color: #67E8F9; }
+
+/* ── Blog · "Ink": midnight plum with soft ruled paper lines and a warm reading lamp ── */
+html .page-hero.ph-ink.ph-ink.ph-ink {
+  background:
+    radial-gradient(40% 60% at 80% 30%, rgba(255, 196, 120, .38), transparent 62%),
+    radial-gradient(50% 50% at 100% 100%, rgba(244, 114, 182, .3), transparent 65%),
+    linear-gradient(160deg, #0D0A1F 0%, #231544 50%, #3E1F5C 85%, #6B2E5F 120%);
+}
+.page-hero.ph-ink .ph-bg::before { background: radial-gradient(closest-side at 78% 32%, rgba(255, 220, 160, .22), transparent 70%); animation: v32-lamp 6s ease-in-out infinite; }
+.page-hero.ph-ink .ph-bg::after {
+  inset: -60px 0 0; mask-image: linear-gradient(95deg, transparent 35%, #000 80%);
+  background-image: linear-gradient(transparent 31px, rgba(255, 236, 210, .12) 31px 32px), linear-gradient(90deg, transparent 0 calc(100% - 1px));
+  background-size: 100% 32px;
+  animation: v32-lines 9s linear infinite;
+}
+.page-hero.ph-ink .eyebrow { color: #FFC98B; }
+
+/* ── How it works · tangerine keeps its palette; add drifting confetti ── */
+.page-hero.ph-tangerine .ph-bg::after {
+  inset: -100% 0 0; mask-image: linear-gradient(90deg, transparent 30%, #000 75%);
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, .5) 0 4px, transparent 4px),
+    radial-gradient(circle, rgba(255, 233, 160, .7) 2px, transparent 3px),
+    linear-gradient(-30deg, rgba(167, 243, 208, .5) 0 3px, transparent 3px);
+  background-size: 130px 150px, 90px 120px, 160px 110px; background-position: 0 0, 40px 60px, 80px 20px;
+  animation: v32-fall 20s linear infinite;
+}
+
+@keyframes v32-fall { to { transform: translateY(50%); } }
+@keyframes v32-rise { to { transform: translateY(-50%); } }
+@keyframes v32-drift { to { transform: translateX(-50%); } }
+@keyframes v32-spin { to { transform: rotate(360deg); } }
+@keyframes v32-beam { 0%, 100% { transform: translateX(-30%); } 50% { transform: translateX(30%); } }
+@keyframes v32-floor { to { background-position: 0 40px, 0 0; } }
+@keyframes v32-lamp { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+@keyframes v32-lines { to { transform: translateY(32px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero .ph-bg::before, .page-hero .ph-bg::after { animation: none !important; }
+}
+
+/* ── Dark mode: same identity, a touch deeper ── */
+html[data-mode="dark"] .page-hero[class*='ph-'] .ph-bg { background: rgba(2, 4, 12, .28); }
