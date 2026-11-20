@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { openHydrationGate } from './components/HydrateLater.jsx';
 import { BrowserRouter, HashRouter, MemoryRouter, useNavigate } from 'react-router-dom';
 import App from './App.jsx';
 import { startContentGuard } from './utils/contentGuard.js';
@@ -84,8 +85,10 @@ import './styles/v32-pages.css';
 import './styles/v33-teen.css';
 import './styles/v34-r12.css';
 import './styles/v35-worlds.css';
+import './styles/v36-a11y.css';
 
-document.documentElement.classList.add('js');
+window.__mfrApp = true; // tells the fail-safe in index.html that the app started
+document.documentElement.classList.add('js'); // normally already set in index.html (no extra restyle)
 startContentGuard();
 
 // "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
@@ -158,6 +161,7 @@ const currentPath = useHash ? (window.location.hash.slice(1) || '/') : window.lo
 const start = () => {
   if (matches) hydrateRoot(root, tree);
   else {
+    openHydrationGate(); // nothing prerendered to keep: render every block right away
     root.innerHTML = '';
     createRoot(root).render(tree);
   }

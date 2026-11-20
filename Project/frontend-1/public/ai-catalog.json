@@ -17,10 +17,10 @@
     "intendedUrl": "https://www.myfrequentrewards.com/.well-known/ai-catalog.json",
     "format": "application/json; charset=utf-8",
     "companionFile": "https://www.myfrequentrewards.com/llms.txt",
-    "deploymentStatus": "not-deployed"
+    "deploymentStatus": "published-at-/ai-catalog.json"
   },
   "maintenance": {
-    "lastUpdated": "2026-11-16",
+    "lastUpdated": "2026-11-20",
     "lastVerified": "2026-11-16",
     "verificationStatus": "verified-with-exclusions",
     "method": "automated-fetch",
@@ -50,7 +50,8 @@
   "membership": {
     "audiences": [
       "Consumers",
-      "Business professionals"
+      "Business professionals",
+      "Teens aged 13 to 17 (only after a parent or guardian consents)"
     ],
     "cost": "Free to join; no fees or purchases required.",
     "countries": {
@@ -268,6 +269,14 @@
         "Professional questions"
       ],
       "canonicalUrl": "https://www.myfrequentrewards.com/paid-surveys-for-professionals"
+    },
+    {
+      "id": "teens",
+      "url": "https://www.myfrequentrewards.com/paid-surveys-for-teens",
+      "name": "Paid Surveys for Teens",
+      "description": "Age-appropriate surveys for teenagers aged 13 to 17. A parent or guardian consents first; teens explore profile topics, earn points, and rewards are paid to the parent.",
+      "sections": [],
+      "canonicalUrl": "https://www.myfrequentrewards.com/paid-surveys-for-teens"
     },
     {
       "id": "who-can-join",

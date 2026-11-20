@@ -1,5 +1,5 @@
-// Post-processing for every prerendered page (used by scripts/prerender.mjs). Two clean-ups that SEO auditors
-// (SEOptimer "Inline Styles" and "Email Privacy") check in the raw HTML. Neither changes what visitors see.
+// Post-processing for every prerendered page (used by scripts/prerender.mjs). Clean-ups that SEO auditors
+// (SEOptimer "Inline Styles", "Email Privacy", "Image Alt Attributes") check in the raw HTML. None changes the look.
 //
 // 1. moveInlineStyles: React writes style props (mostly animation custom properties such as --i / --k) as style=""
 //    attributes. Each distinct value becomes one rule in a single <style> block in <head>, and the element gets
@@ -41,4 +41,21 @@ export function protectEmails(html) {
       return part; // other scripts and styles are left alone
     })
     .join('');
+}
+
+// 3. fillEmptyAlts: decorative images (emoji stickers, flags, art) are written with alt="" in the components. SEO
+//    auditors (SEOptimer "Image Alt Attributes") count an empty alt as missing, so the served HTML names each one
+//    after its file: /images/minor/emoji/gift.webp → alt="gift emoji". React keeps the attribute when it hydrates.
+export function fillEmptyAlts(html) {
+  return html.replace(/<img\b[^>]*>/g, (tag) => {
+    if (!/\salt=""/.test(tag)) return tag;
+    const src = (tag.match(/\ssrc="([^"]+)"/) || [])[1];
+    if (!src) return tag;
+    const file = decodeURIComponent(src.split(/[?#]/)[0].split('/').pop() || '').replace(/\.[a-z0-9]+$/i, '');
+    let name = file.replace(/[-_]+/g, ' ').trim();
+    if (!name) return tag;
+    if (/\/flags\//.test(src)) name = `${name.toUpperCase()} flag`;
+    else if (/\/emoji\//.test(src)) name = `${name} emoji`;
+    return tag.replace(/\salt=""/, ` alt="${name.replace(/"/g, '')}"`);
+  });
 }

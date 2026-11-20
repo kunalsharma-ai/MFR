@@ -15,3 +15,7 @@
   .dep:not(.is-more) .dep-row:not(.dep-th):nth-child(n+14) { display: none; }
   .dep:not(.is-more) .dep-more { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 46px; margin-top: 10px; border: 1px solid rgba(255, 209, 102, .4); border-radius: 14px; background: rgba(255, 209, 102, .08); color: #FFD166; font: 700 .92rem var(--font-b); cursor: pointer; }
 }
+
+/* Emoji stickers are not exactly square (e.g. 113×122): keep their shape inside the square box instead of
+   stretching them (PageSpeed best-practices "image aspect ratio"). */
+img[src*="/images/minor/emoji/"] { object-fit: contain; }

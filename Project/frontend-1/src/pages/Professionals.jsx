@@ -123,7 +123,7 @@ function BriefTerminal() {
       <div className="bt-body">
         <ul className="bt-desks" role="tablist" aria-label="Research topics">
           {TOPICS.map((x, k) => (
-            <li key={x.t}>
+            <li key={x.t} role="presentation">
               <button type="button" role="tab" aria-selected={k === i} className={k === i ? 'on' : ''} style={{ '--c': HUES[k] }} onClick={() => setI(k)}>
                 <span className="bt-ic"><Icon name={x.icon} size={18} /></span>
                 <span className="bt-tx"><b>{x.t}</b><small>{x.d}</small></span>
