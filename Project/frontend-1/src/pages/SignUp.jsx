@@ -1,6 +1,6 @@
 import TeenJoin from './TeenJoin.jsx';
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import AudienceSwitch from "../components/AudienceSwitch.jsx";
 import Captcha from "../components/Captcha.jsx";
@@ -118,6 +118,7 @@ function LiveCard({ v, step, progress, sent }) {
 
 function SignUp() {
   const { search } = useLocation();
+  const goTeen = useNavigate(); // the Teen card opens the separate teen sign-up; consumer / pro steps are unchanged
   const [step, setStep] = useState(1);
   const [dir, setDir] = useState(1);
   const [v, setV] = useState({
@@ -487,6 +488,12 @@ function SignUp() {
                             "Expert B2B surveys about your work",
                             "briefcase",
                           ],
+                          [
+                            "teen",
+                            "Teen (13–17)",
+                            "Fun surveys, with a parent’s OK",
+                            "rocket",
+                          ],
                         ].map(([k, l, d, ic]) => (
                           <label
                             key={k}
@@ -497,7 +504,7 @@ function SignUp() {
                               name="memberType"
                               value={k}
                               checked={v.memberType === k}
-                              onChange={() => set("memberType", k)}
+                              onChange={() => (k === "teen" ? goTeen("/sign-up?type=teen") : set("memberType", k))}
                             />
                             <span className="sx-type-ico">
                               <Icon name={ic} size={26} />

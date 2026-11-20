@@ -382,9 +382,18 @@ function CareCard() {
     <section className="section mn-care nx-care" aria-labelledby="mn-care-title">
       <div className="container nx-monitor reveal">
         <div className="nx-screen" aria-hidden="true">
-          <span className="nx-bpm"><b>72</b> bpm · safe</span>
-          <svg className="nx-ecg" viewBox="0 0 600 90" preserveAspectRatio="none"><path d="M0 45 H150 L168 45 L182 14 L198 78 L214 26 L226 45 H330 L346 45 L360 18 L376 72 L388 45 H600" /></svg>
-          <img src="/images/minor/art/care.webp" alt="" width="200" height="200" loading="lazy" decoding="async" />
+          <div className="nx-mhead"><span className="nx-live" /> Teen safety monitor <em>Live</em></div>
+          <div className="nx-mbody">
+            <span className="nx-heart"><img src="/images/minor/art/care.webp" alt="" width="200" height="200" loading="lazy" decoding="async" /></span>
+            <div className="nx-reads">
+              <p className="r1"><small>Heart rate</small><b>72<em>bpm</em></b></p>
+              <p className="r2"><small>Unsuitable studies sent</small><b>0</b></p>
+              <p className="r3"><small>Parent consent</small><b>Required</b></p>
+            </div>
+          </div>
+          <div className="nx-ecgbox">
+            <svg className="nx-ecg" viewBox="0 0 1200 90" preserveAspectRatio="none"><path d="M0 45 H150 L182 14 L198 78 L214 26 L226 45 H346 L360 18 L376 72 L388 45 H600 H750 L782 14 L798 78 L814 26 L826 45 H946 L960 18 L976 72 L988 45 H1200" /></svg>
+          </div>
         </div>
         <div className="nx-care-copy">
           <p className="eyebrow">Health safeguards</p>
