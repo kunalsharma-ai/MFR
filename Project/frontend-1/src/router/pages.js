@@ -10,6 +10,8 @@ export const PAGE_ROUTES = [
   { path: '/rewards', page: 'Rewards' },
   { path: '/paid-surveys-for-consumers', page: 'Consumers' },
   { path: '/paid-surveys-for-professionals', page: 'Professionals' },
+  { path: '/paid-surveys-for-teens', page: 'Minor' },
+  { path: '/paid-surveys-for-minors', page: 'Moved', props: { to: '/paid-surveys-for-teens' } },
   { path: '/who-can-join', page: 'WhoCanJoin' },
   { path: '/trust-and-safety', page: 'Quality' },
   { path: '/about-us', page: 'About' },

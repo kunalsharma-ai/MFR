@@ -12,6 +12,7 @@ import { DASHBOARD_URL, useSession } from '../utils/session.js';
 const EARN = [
   { to: '/paid-surveys-for-consumers', label: 'For Consumers', sub: 'Students, parents, shoppers, gamers', icon: 'user' },
   { to: '/paid-surveys-for-professionals', label: 'For Professionals', sub: 'CXOs, managers, engineers, doctors', icon: 'briefcase' },
+  { to: '/paid-surveys-for-teens', label: 'For Teens', sub: 'Teens, with a parent’s permission', icon: 'rocket', isNew: true, hues: ['#7C3AED', '#2EE6CF'] },
   { to: '/who-can-join', label: 'Who Can Join', sub: 'Countries, roles & industries', icon: 'globe' },
 ];
 
@@ -138,10 +139,10 @@ export default function Header() {
               <div className="nav-panel" role="menu">
                 <span className="nav-panel-glow" aria-hidden="true" />
                 {DROPS[n.drop].items.map((e, k) => (
-                  <a key={e.to} href={e.to} className="nav-panel-item" role="menuitem" style={{ '--k': k, '--h1': NPI_HUES[k % 3][0], '--h2': NPI_HUES[k % 3][1] }}>
+                  <a key={e.to} href={e.to} className="nav-panel-item" role="menuitem" style={{ '--k': k, '--h1': (e.hues || NPI_HUES[k % 3])[0], '--h2': (e.hues || NPI_HUES[k % 3])[1] }}>
                     <span className="npi-ico"><Icon name={e.icon} /></span>
                     <span>
-                      <strong>{e.label}</strong>
+                      <strong>{e.label}{e.isNew ? <em className="npi-new">New</em> : null}</strong>
                       <small>{e.sub}</small>
                     </span>
                     <span className="npi-go" aria-hidden="true"><Icon name="arrow" size={14} /></span>

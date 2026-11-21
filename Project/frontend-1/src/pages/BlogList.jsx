@@ -25,6 +25,8 @@ const CAT = {
   Safety: { icon: 'shield', c: '#0EA5A0' },
   Tips: { icon: 'star', c: '#FF5E7E' },
   'Behind the Scenes': { icon: 'eye', c: '#1E3A9E' },
+  Teens: { icon: 'rocket', c: '#D946EF' },
+  Trends: { icon: 'bolt', c: '#0891B2' },
 };
 const catOf = (c) => CAT[c] || CAT.All;
 
@@ -52,7 +54,7 @@ export default function BlogList() {
         eyebrow="Blogs"
         title={page.h1}
         lead="Trending guides on how to earn money online without investment — honest tips on paid surveys, payouts, safety and side income for consumers and professionals."
-        theme="berry"
+        theme="ink"
         artNode={<CoverWall posts={BLOGS.slice(0, 12)} />}
       >
         <div className="faq-search bx-search">

@@ -4,12 +4,12 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { moveInlineStyles, protectEmails } from './html-hygiene.mjs';
+import { fillEmptyAlts, moveInlineStyles, protectEmails } from './html-hygiene.mjs';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dist = path.join(root, 'dist');
 const template = await readFile(path.join(dist, 'index.html'), 'utf8');
-const { render, ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES, SITE_URL } = await import(pathToFileURL(path.join(root, 'dist-ssr/entry-server.js')).href);
+const { render, ALL_ROUTES, STATIC_ROUTES, BLOG_ROUTES, SITE_URL, buildLlmsTxt } = await import(pathToFileURL(path.join(root, 'dist-ssr/entry-server.js')).href);
 
 // Optional critical CSS (CRITICAL=1, needs `npm i -D beasties`): inlines each page's own CSS and loads the full sheet
 // later. Off by default, see the note where pages are written.
@@ -32,7 +32,7 @@ for (const r of ALL_ROUTES) {
   const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
   const built = process.env.CRITICAL ? keepEmptyAlt(await beasties.process(page)) : page;
   // No style="" attributes and no plain-text e-mail addresses in the served HTML (see scripts/html-hygiene.mjs).
-  await writeFile(out, protectEmails(moveInlineStyles(built)));
+  await writeFile(out, fillEmptyAlts(protectEmails(moveInlineStyles(built))));
   count++;
 }
 
@@ -49,6 +49,14 @@ await writeFile(path.join(root, 'public', 'sitemap.xml'), sitemap);
 const robots = `# robots.txt — MyFrequentRewards\nUser-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 await writeFile(path.join(dist, 'robots.txt'), robots);
 await writeFile(path.join(root, 'public', 'robots.txt'), robots);
+
+// AI discoverability: /llms.txt is generated from src/seo/llms.js, so its links always match the real routes.
+// public/ai-catalog.json stays at /ai-catalog.json. Do not copy it to /.well-known/ai-catalog.json: Lighthouse 13
+// reads that address as an Agentic Resource Discovery (ARD) manifest, which needs an "entries" list of agent
+// resources (MCP servers, agent cards), and scores the page's AI readiness 75 instead of 100 when it is not one.
+const llms = buildLlmsTxt();
+await writeFile(path.join(dist, 'llms.txt'), llms);
+await writeFile(path.join(root, 'public', 'llms.txt'), llms);
 
 await rm(path.join(root, 'dist-ssr'), { recursive: true, force: true });
 

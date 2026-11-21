@@ -36,7 +36,7 @@ const PEOPLE = [
 const COUNTRY = { IN: 'India', US: 'USA', CA: 'Canada', GB: 'UK', DE: 'Germany', FR: 'France', IT: 'Italy', ES: 'Spain', NL: 'Netherlands', PL: 'Poland', BR: 'Brazil', CO: 'Colombia', MX: 'Mexico', AE: 'UAE', SA: 'Saudi Arabia', NG: 'Nigeria', KE: 'Kenya', ZA: 'South Africa', JP: 'Japan', SG: 'Singapore', VN: 'Vietnam', TH: 'Thailand', PH: 'Philippines', AU: 'Australia' };
 // Rough local equivalents of small survey rewards (consumer) and larger B2B rewards (business)
 const SCALE = { '₹': [350, 1800], $: [5, 40], 'CA$': [6, 45], '£': [4, 30], '€': [5, 35], zł: [20, 140], R$: [25, 180], 'MX$': [90, 600], 'AED ': [20, 150], 'SAR ': [20, 150], '₦': [4000, 30000], 'KSh ': [600, 4500], R: [80, 600], '¥': [700, 5000], S$: [6, 45], '₫': [120000, 900000], '฿': [150, 1100], '₱': [250, 1800], 'A$': [7, 55] };
-const METHODS_ALL = ['PayPal', 'Cash Rewards', 'Bank Transfer', 'Wire Transfer', 'Shopping Vouchers', 'Grocery Vouchers', 'Digital Gift Cards'];
+const METHODS_ALL = ['PayPal', 'Bank Transfer', 'Wire Transfer', 'Shopping Vouchers', 'Grocery Vouchers', 'Digital Gift Cards'];
 const fmt = (cur, n) => {
   const rounded = n >= 10000 ? Math.round(n / 1000) * 1000 : n >= 1000 ? Math.round(n / 50) * 50 : n >= 100 ? Math.round(n / 10) * 10 : Math.round(n);
   return `${cur}${rounded.toLocaleString('en-US')}`;

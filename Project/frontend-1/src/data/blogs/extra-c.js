@@ -156,7 +156,7 @@ export const EXTRA_C = {
         h2: 'Surveys that actually pay — and how they pay',
         p: [
           'Surveys that actually pay explain exactly how rewards are credited and redeemed. On MyFrequentRewards: rewards are credited for eligible, validated completions; you redeem once you reach the threshold; our team verifies your account; and the accounts department processes payment via PayPal, UPI, bank transfer or gift card, typically within 2–3 weeks.',
-          'Be wary of sites claiming every survey pays instantly in cash. Real research needs validation, and validation takes time.',
+          'Be wary of sites claiming every survey pays out instantly. Real research needs validation, and validation takes time.',
         ],
       },
       {

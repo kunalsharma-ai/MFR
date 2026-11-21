@@ -8,6 +8,11 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteCond %{HTTP_HOST} ^myfrequentrewards\.com$ [NC]
 RewriteRule ^ https://www.myfrequentrewards.com%{REQUEST_URI} [L,R=301]
 
+# Nov 2026: the teen panel page was renamed
+RewriteRule ^paid-surveys-for-minors/?$ /paid-surveys-for-teens [L,R=301]
+RewriteRule ^blog/paid-surveys-for-cash-guide/?$ /blog/paid-surveys-for-rewards-guide [L,R=301]
+RewriteRule ^blog/earn-money-online-cash-payouts/?$ /blog/earn-money-online-survey-payouts [L,R=301]
+
 # /how-it-works  ->  /how-it-works/index.html (prerendered page)
 DirectorySlash Off
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -8,8 +8,8 @@ export const CONNECT_BRANDS = [
     id: 'mfr',
     name: 'MyFrequentRewards',
     short: 'MFR',
-    tagline: 'Paid surveys for consumers and professionals',
-    note: 'This website — survey alerts, payout tips and member stories.',
+    tagline: 'Paid surveys for consumers, professionals and teens',
+    note: 'This website — survey alerts, payout tips, member stories and the Teen Panel for 13–17s (opens with a parent or guardian’s consent).',
     color: '#FF8A00',
     color2: '#FF3B8D',
     channels: [

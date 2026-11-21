@@ -32,8 +32,8 @@ const DEEP = [
   },
   {
     icon: 'gift', color: '#FF5E7E', t: 'Track, claim and receive rewards',
-    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers — or UPI if you live in India. Unclaimed balances carry forward.',
-    bullets: ['Transparent balance history', 'Eight reward types', 'Support on WhatsApp and Live Help'],
+    d: 'Watch your balance grow in the dashboard. Once you reach the claim threshold, choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers — or UPI if you live in India. Unclaimed balances carry forward.',
+    bullets: ['Transparent balance history', 'Seven reward types', 'Support on WhatsApp and Live Help'],
   },
 ];
 
@@ -67,7 +67,7 @@ export default function HowItWorks() {
 
       <TwoPasses />
 
-      <FaqSplit id="hiw-faq" look="path" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
+      <FaqSplit id="hiw-faq" look="desk" title="How it works — answered" sub={<>More in the <Link to="/faq">FAQ</Link> or our guide to <Link to="/blog/earn-money-online-without-investment">earning without investment</Link>.</>} faqs={FAQS} hue="#FF8A00" hue2="#8B5CF6" />
       <CtaBand title="Ready for step one?" sub="It’s free, it’s quick, and your first profile survey is waiting." variant="ocean" />
     </>
   );

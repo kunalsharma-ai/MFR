@@ -1,5 +1,6 @@
+import TeenJoin from './TeenJoin.jsx';
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import AudienceSwitch from "../components/AudienceSwitch.jsx";
 import Captcha from "../components/Captcha.jsx";
@@ -34,6 +35,7 @@ import {
   ageFromDob,
   isDisposable,
   validateSignup,
+  TEEN_DOB_MSG,
 } from "../utils/validate.js";
 import { checkEmailDomain, checkEmailTaken } from "../utils/emailChecks.js";
 import { detectCountry } from "../utils/geo.js";
@@ -115,8 +117,9 @@ function LiveCard({ v, step, progress, sent }) {
   );
 }
 
-export default function SignUp() {
+function SignUp() {
   const { search } = useLocation();
+  const goTeen = useNavigate(); // the Teen card opens the separate teen sign-up; consumer / pro steps are unchanged
   const [step, setStep] = useState(1);
   const [dir, setDir] = useState(1);
   const [v, setV] = useState({
@@ -397,7 +400,7 @@ export default function SignUp() {
                 <Icon name="heart" size={18} /> 100% free membership
               </li>
               <li>
-                <Icon name="wallet" size={18} /> PayPal · Cash · Bank · Vouchers
+                <Icon name="wallet" size={18} /> PayPal · Bank · Vouchers
                 · UPI (India)
               </li>
               <li>
@@ -486,6 +489,12 @@ export default function SignUp() {
                             "Expert B2B surveys about your work",
                             "briefcase",
                           ],
+                          [
+                            "teen",
+                            "Teen (13–17)",
+                            "Fun surveys, with a parent’s OK",
+                            "rocket",
+                          ],
                         ].map(([k, l, d, ic]) => (
                           <label
                             key={k}
@@ -496,7 +505,7 @@ export default function SignUp() {
                               name="memberType"
                               value={k}
                               checked={v.memberType === k}
-                              onChange={() => set("memberType", k)}
+                              onChange={() => (k === "teen" ? goTeen("/sign-up?type=teen") : set("memberType", k))}
                             />
                             <span className="sx-type-ico">
                               <Icon name={ic} size={26} />
@@ -564,6 +573,14 @@ export default function SignUp() {
                           {err("dob") ? (
                             <p className="f-err" id="dob-err" role="alert">
                               {err("dob")}
+                              {err("dob") === TEEN_DOB_MSG ? (
+                                <>
+                                  {" "}
+                                  <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                                    Join as a Teen
+                                  </button>
+                                </>
+                              ) : null}
                             </p>
                           ) : (
                             <p className="f-hint" id="dob-hint">
@@ -729,8 +746,11 @@ export default function SignUp() {
                       ageFromDob(v.dob) >= ADULT_AGE ? null : (
                         <p className="sx-note">
                           <Icon name="shield" size={16} />
-                          Under 18: after you verify your email, we’ll ask for
-                          your parent/guardian’s details.
+                          Under 18: you join through the Teen sign-up, with
+                          your parent or guardian’s OK.{" "}
+                          <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                            Join as a Teen
+                          </button>
                         </p>
                       )}
                     </>
@@ -971,4 +991,11 @@ export default function SignUp() {
       ) : null}
     </>
   );
+}
+
+// Teens (?type=teen) get their own page; Consumers and Professionals keep this original page unchanged.
+const TEEN_TYPES = new Set(['teen', 'minor']);
+export default function SignUpRoute() {
+  const { search } = useLocation();
+  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenJoin /> : <SignUp />;
 }

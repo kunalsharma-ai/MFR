@@ -44,7 +44,7 @@ export default function Consumers() {
         title={page.h1}
         tagline={[['cart', 'Shop it.'], ['star', 'Rate it.'], ['coins', 'Get paid for it.']]}
         tone="con"
-        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal, cash, vouchers or gift cards — plus UPI in India."
+        lead="Earn money online from home by telling brands what you really think about the things you buy, use, watch and love. Free to join, flexible, and rewarded via PayPal, bank transfer, vouchers or gift cards — plus UPI in India."
         art="bubbles"
         theme="berry"
       >
@@ -104,27 +104,27 @@ export default function Consumers() {
       <DemographicRibbons />
       <CountryAtlas variant="consumer" />
 
-      <section className="section ojr" aria-labelledby="cs-deep">
+      <section className="section ojr ojx-sec" aria-labelledby="cs-deep">
         <div className="container">
           <div className="sec-head sec-center reveal">
             <p className="eyebrow">The bigger picture</p>
             <h2 id="cs-deep">Why consumer opinions are worth rewarding</h2>
           </div>
-          <ol className="ojr-flow">
+          <div className="ojx" role="list">
+            <div className="ojx-belt" aria-hidden="true"><i /><span className="ojx-box"><Icon name="gift" size={18} /></span></div>
             {[
               ['sparkle', 'A brand has an idea', 'A new recipe, price, package or app feature.', '#8B5CF6'],
               ['chat', 'You share your opinion', 'Before it launches, they ask people like you.', '#FF8A00'],
               ['trend', 'The product gets better', 'Your answers cut the risk of costly mistakes.', '#14C9B5'],
               ['gift', 'You’re rewarded', 'Eligible answers add to your balance.', '#FF3B8D'],
             ].map(([ic, t, d, c], i) => (
-              <li key={t} className="reveal" style={{ '--c': c, '--i': i }}>
-                <span className="ojr-n">0{i + 1}</span>
-                <span className="ojr-ico"><Icon name={ic} size={26} /></span>
+              <div key={t} role="listitem" className="ojx-st reveal" style={{ '--c': c, '--i': i }}>
+                <span className="ojx-orb"><span className="ojx-ring" aria-hidden="true" /><Icon name={ic} size={30} /><em>0{i + 1}</em></span>
                 <h3>{t}</h3>
                 <p>{d}</p>
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
           <p className="ojr-note reveal">At MyFrequentRewards you never pay to take part — keep your profile honest, answer invitations that match you and claim your balance when you are ready. Learn the basics in <Link to="/blog/earn-money-online-free-guide">earn money online free</Link>, or see the <Link to="/trust-and-safety">security checks</Link> that keep the community fair.</p>
         </div>
       </section>

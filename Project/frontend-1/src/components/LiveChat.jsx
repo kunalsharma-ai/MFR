@@ -22,7 +22,7 @@ const LEAD_ENDPOINT = import.meta.env.VITE_CHAT_LEAD_ENDPOINT || '/api/chat-lead
 
 const TOPICS = [
   { q: 'How do I join?', t: 'Joining', d: 'Free · 2 minutes', icon: 'user', c: '#FF8A00' },
-  { q: 'What rewards can I get?', t: 'Rewards', d: '8 reward types', icon: 'gift', c: '#14C9B5' },
+  { q: 'What rewards can I get?', t: 'Rewards', d: '7 reward types', icon: 'gift', c: '#14C9B5' },
   { q: 'How much can I earn per survey?', t: 'Earnings', d: 'Rates & times', icon: 'coins', c: '#FFC233' },
   { q: 'When will I get paid?', t: 'Payouts', d: 'Claims & timing', icon: 'wallet', c: '#2F6BFF' },
   { q: 'Is my data safe?', t: 'Privacy', d: 'Never sold or shared', icon: 'shield', c: '#8B5CF6' },

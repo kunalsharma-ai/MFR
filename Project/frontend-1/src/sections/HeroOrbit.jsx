@@ -16,13 +16,24 @@ import { segSound } from '../utils/sound.js';
 const WHO = {
   consumer: ['students', 'homemakers', 'gamers', 'parents', 'retirees', 'shoppers', 'travellers', 'drivers'],
   pro: ['IT managers', 'doctors', 'founders', 'engineers', 'CXOs', 'HR leaders', 'marketers', 'consultants'],
+  minor: ['gamers', 'creators', 'athletes', 'foodies', 'music fans', 'coders', 'artists', 'bookworms'],
 };
 const MOTTO_ICONS = ['chat', 'badge', 'gift'];
 // Audience mottos — each word rolls into its own slot window; a tagline follows.
 const MODE = {
-  consumer: { words: [['chat', 'Speak up.'], ['coins', 'Cash in.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
+  consumer: { words: [['chat', 'Speak up.'], ['coins', 'Get rewarded.'], ['refresh', 'Repeat.']], tag: 'Your opinion has a price tag — and it pays you.' },
   pro: { words: [['badge', 'Advise.'], ['trend', 'Influence.'], ['briefcase', 'Get paid like an expert.']], tag: 'Your expertise is the currency here.' },
+  minor: { words: [['game', 'Play.'], ['chat', 'Speak up.'], ['trophy', 'Level up.']], tag: 'Ages 13–17 · age-appropriate surveys · opens with a parent or guardian’s yes.' },
 };
+// v3.3: three audiences take turns — Consumer → Professional → Minor (the teen panel, "Galaxy Pop" colours).
+const SEGS = ['consumer', 'pro', 'minor'];
+const RIBBON = {
+  consumer: ['gift', 'Share opinions · earn multiple rewards'],
+  pro: ['briefcase', 'Share expert insights · earn premium rewards'],
+  minor: ['rocket', 'New · Teen Panel 13–17 · parent-approved'],
+};
+const ACCENT = { consumer: 'by sharing your opinion', pro: 'by sharing your expertise', minor: 'by levelling up your voice' };
+const JOIN = { consumer: '/sign-up', pro: '/sign-up?type=professional', minor: '/sign-up?type=teen' };
 
 const SEG_MS = 5000;
 
@@ -46,13 +57,13 @@ export default function HeroOrbit() {
     setAuto(true);
     const t = setInterval(() => {
       if (document.hidden || Date.now() < hold.current) return;
-      setSeg((v) => (v === 'consumer' ? 'pro' : 'consumer'));
+      setSeg((v) => SEGS[(SEGS.indexOf(v) + 1) % SEGS.length]);
     }, SEG_MS);
     return () => clearInterval(t);
   }, [visible]);
   const pick = (v) => { if (v !== seg) segSound(v === 'pro'); hold.current = Date.now() + 15000; setAuto(false); setSeg(v); setTimeout(() => setAuto(true), 15000); };
   const who = WHO[seg];
-  const other = seg === 'pro' ? 'consumer' : 'pro';
+  const others = SEGS.filter((x) => x !== seg);
   const pay = PAYOUTS[r];
   const cat = SURVEY_CATEGORIES[r % SURVEY_CATEGORIES.length];
   const words = BRAND.motto.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
@@ -62,6 +73,7 @@ export default function HeroOrbit() {
       <div className="hero-bg" aria-hidden="true">
         <div className="hm-tint t-con" />
         <div className="hm-tint t-pro" />
+        <div className="hm-tint t-min" />
         <div className="hero-aurora a1" />
         <div className="hero-aurora a2" />
         <div className="hero-aurora a3" />
@@ -76,6 +88,17 @@ export default function HeroOrbit() {
           {[0, 1, 2].map((i) => <span key={i} className="hx-beam" style={{ '--i': i }} />)}
           {Array.from({ length: 16 }).map((_, i) => <i key={i} className="hx-dust" style={{ '--i': i }} />)}
           <svg className="hx-ticker" viewBox="0 0 1200 200" preserveAspectRatio="none"><polyline points="0,170 120,150 220,160 330,120 440,130 560,90 660,100 780,60 900,70 1020,30 1200,10" /></svg>
+        </div>
+        {/* v3.3 teen atmosphere: synthwave sun over a moving neon grid, with bubbles rising */}
+        {/* v3.4 teen atmosphere "Neon Lagoon": aurora curtains, drifting shapes and rising light dots */}
+        <div className="hx-fx hx-teen">
+          <span className="hxt-aur a1" /><span className="hxt-aur a2" /><span className="hxt-aur a3" />
+          {Array.from({ length: 9 }).map((_, i) => <i key={i} className={`hxt-shape s${i % 3}`} style={{ '--i': i }} />)}
+        </div>
+        <div className="hx-fx hx-min">
+          <span className="hx-sun" />
+          <span className="hx-floor" />
+          {Array.from({ length: 10 }).map((_, i) => <i key={i} className="hx-bub" style={{ '--i': i }} />)}
         </div>
       </div>
 
@@ -92,17 +115,17 @@ export default function HeroOrbit() {
           {/* Both audience variants share one grid cell (the other one is an invisible copy), so the hero keeps the
               height of the taller variant and nothing below jumps when Consumer and Professional take turns (CLS). */}
           <div className="hx-hold">
-            {[seg, other].map((v, n) => (
-              <p className={`hx-ribbon r-${v}${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `r-${v}`} aria-hidden={n ? 'true' : undefined}>
-                <span className="hx-ribbon-ic"><Icon name={v === 'pro' ? 'briefcase' : 'gift'} size={14} /></span>
-                {v === 'pro' ? 'Share expert insights · earn premium rewards' : 'Share opinions · earn multiple rewards'}
+            {[seg, ...others].map((v, n) => (
+              <p className={`hx-ribbon r-${v}${n ? ' hx-ghost' : ''}`} key={n ? `ghost-${n}` : `r-${v}`} aria-hidden={n ? 'true' : undefined}>
+                <span className="hx-ribbon-ic"><Icon name={RIBBON[v][0]} size={14} /></span>
+                {RIBBON[v][1]}
                 {!n && <i className="hx-ribbon-shine" aria-hidden="true" />}
               </p>
             ))}
           </div>
           <h1 id="hero-title" className={`hero-title hx-title t-${seg}`} key={`h-${seg}`}>
-            <span className="ht-line" style={{ '--l': 0 }}>Earn money online</span>
-            <span className="ht-line ht-accent" style={{ '--l': 1 }}>{seg === 'pro' ? 'by sharing your expertise' : 'by sharing your opinion'}</span>
+            <span className="ht-line" style={{ '--l': 0 }}>{seg === 'minor' ? 'Earn rewards online' : 'Earn money online'}</span>
+            <span className="ht-line ht-accent" style={{ '--l': 1 }}>{ACCENT[seg]}</span>
             <svg className="hx-swoosh" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 4, 230 2, 396 12" /></svg>
           </h1>
 
@@ -110,11 +133,12 @@ export default function HeroOrbit() {
             <span className="hm-seg-pill" aria-hidden="true"><i key={seg} className="hm-seg-prog" /></span>
             <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => pick('consumer')}><Icon name="user" size={16} /> Consumer</button>
             <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => pick('pro')}><Icon name="briefcase" size={16} /> Professional</button>
+            <button type="button" role="tab" aria-selected={seg === 'minor'} className={seg === 'minor' ? 'on' : ''} onClick={() => pick('minor')}><Icon name="rocket" size={16} /> Teen</button>
           </div>
 
           <div className="hx-hold">
-            {[seg, other].map((v, n) => (
-              <div className={`hm-roll${n ? ' hx-ghost' : ''}`} key={n ? 'ghost' : `m-${v}`} aria-hidden={n ? 'true' : undefined}>
+            {[seg, ...others].map((v, n) => (
+              <div className={`hm-roll${n ? ' hx-ghost' : ''}`} key={n ? `ghost-${n}` : `m-${v}`} aria-hidden={n ? 'true' : undefined}>
                 <p className="hm-roll-w">
                   {!n && <span className="sr-only">{MODE[v].words.map((x) => x[1]).join(' ')}</span>}
                   {MODE[v].words.map(([ic, t], k) => (
@@ -134,10 +158,10 @@ export default function HeroOrbit() {
             </span>
           </p>
           <p className="hero-lead">
-            No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>cash</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
+            No investment. No fees. Just your honest voice — rewarded through <strong>PayPal</strong>, <strong>bank or wire transfer</strong>, <strong>vouchers</strong> and <strong>gift cards</strong> — plus <strong>UPI</strong> in India.
           </p>
           <div className="hero-actions">
-            <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-lg btn-shine">Start earning free <Icon name="arrow" size={20} /></Link>
+            <Link to={JOIN[seg]} className="btn btn-primary btn-lg btn-shine">{seg === 'minor' ? 'Join the Teen Panel' : 'Start earning free'} <Icon name="arrow" size={20} /></Link>
             <Link to="/how-it-works" className="btn btn-glass btn-lg"><span className="play-dot" /> How it works</Link>
           </div>
           <ul className="hm-stats" aria-label="Community figures">
@@ -148,7 +172,7 @@ export default function HeroOrbit() {
         </div>
 
         <div className="hero-stage" aria-hidden="true">
-          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
+          {seg === 'pro' ? <ProWorld pay={pay} key="pro" /> : seg === 'minor' ? <TeenWorld key="teen" /> : <ConsumerWorld pay={pay} cat={cat} key="con" />}
         </div>
       </div>
 
@@ -159,7 +183,7 @@ export default function HeroOrbit() {
 
 // ── Consumer world (v3.0): "Reward Jar" — warm candy & gold. A thick 3D gold coin spins over a glass jar,
 // coins drop in and the jar fills, "+$X" pops out, a survey ticket fills up and the payout chips float around it.
-const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'cash'];
+const JAR_PAYS = ['paypal', 'giftcards', 'upi', 'grocery'];
 const FAN_C = ['bank', 'shopping', 'giftcards'];
 function ConsumerWorld({ pay, cat }) {
   const chips = JAR_PAYS.map((id) => PAYOUTS.find((x) => x.id === id)).filter(Boolean);
@@ -261,6 +285,42 @@ function ProWorld({ pay }) {
       </div>
       {EXPERTS.map(([t, ic], k) => <span key={t} className={`eb-role r${k}`}><Icon name={ic} size={13} />{t}</span>)}
       {[0, 1, 2, 3, 4].map((k) => <i key={k} className={`eb-spark s${k}`} />)}
+    </div>
+  );
+}
+
+// ── Teen world (v3.4): "Level-Up Portal" — Neon Lagoon colours (deep ocean, aqua, electric lime, coral).
+// A holographic portal ring spins with six topic badges riding it; at its centre a player card levels up
+// (XP bar fills, "+150 XP" pops, the level number flips). A live poll races below, a parent shield pins on,
+// and an equaliser pulses. Only transform / opacity animate.
+const TW_TOPICS = [['game', 'Gaming', '#B8FF3C'], ['music', 'Music', '#2EE6CF'], ['cart', 'Snacks', '#FF6B4A'], ['sparkle', 'Style', '#FFD23F'], ['mobile', 'Apps', '#7CC8FF'], ['trophy', 'Sport', '#FF8FD0']];
+const TW_POLL = [['Gaming night', 46, '#B8FF3C'], ['Movie marathon', 31, '#2EE6CF'], ['Group chat', 23, '#FF6B4A']];
+function TeenWorld() {
+  return (
+    <div className="hm-scene hxw">
+      <div className="tw-portal">
+        <span className="tw-ring r1" /><span className="tw-ring r2" /><span className="tw-ring r3" />
+        <div className="tw-orbit">
+          {TW_TOPICS.map(([ic, t, c], i) => (
+            <span key={t} className="tw-topic" style={{ '--a': `${i * 60}deg`, '--c': c }}><span className="tw-topic-in"><Icon name={ic} size={18} /><b>{t}</b></span></span>
+          ))}
+        </div>
+        <div className="tw-card">
+          <p className="tw-card-top"><span className="tw-av">AK</span><span><b>Aanya · 15</b><small>Teen Panel</small></span><em className="tw-lvl"><small>LVL</small><span className="tw-flip"><i>6</i><i>7</i></span></em></p>
+          <p className="tw-xp"><span>XP</span><i><b /></i><small>850 / 1,000</small></p>
+          <p className="tw-plus">+150 XP</p>
+          <p className="tw-quest"><Icon name="check" size={13} stroke={3} /> Quest done: <b>Snack taste test</b></p>
+        </div>
+      </div>
+      <div className="tw-poll">
+        <p className="tw-poll-q"><span className="tw-live" /> Live poll · <b>Best Friday plan?</b></p>
+        {TW_POLL.map(([t, v, c], i) => (
+          <p key={t} className="tw-bar" style={{ '--v': v / 100, '--c': c, '--i': i }}><span>{t}</span><i><b /></i><em>{v}%</em></p>
+        ))}
+      </div>
+      <p className="tw-shield"><Icon name="shield" size={16} /><span><b>Parent OK</b><small>consent on file</small></span></p>
+      <p className="tw-eq">{Array.from({ length: 7 }).map((_, i) => <i key={i} style={{ '--i': i }} />)}</p>
+      <p className="tw-streak"><Icon name="bolt" size={15} /> <b>7-day streak</b></p>
     </div>
   );
 }

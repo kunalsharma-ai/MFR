@@ -4,7 +4,7 @@ import Icon from '../components/Icon.jsx';
 import { Flag } from '../components/CountryPicker.jsx';
 import useInView from '../hooks/useInView.js';
 import { STATS, STATS_URL, SURVEY_CATEGORIES } from '../data/community.js';
-import { ALL_CONSUMER_SURVEYS, PRO_SURVEYS, TIER_LABEL } from '../data/surveys.js';
+import { ALL_CONSUMER_SURVEYS, PRO_SURVEYS, TEEN_SURVEYS, TIER_LABEL } from '../data/surveys.js';
 import useLiveReviews from '../hooks/useLiveReviews.js';
 import { StarRow } from '../components/ReviewerId.jsx';
 import { isRecent } from '../utils/reviews.js';
@@ -99,7 +99,7 @@ export function CommunityLedger() {
 }
 
 
-function SurveyWheel({ list, visible }) {
+function SurveyWheel({ list, visible, teen = false }) {
   const n = list.length;
   const step = 360 / n;
   const [sel, setSel] = useState(0);
@@ -133,7 +133,7 @@ function SurveyWheel({ list, visible }) {
   const c = list[sel];
   const grad = `conic-gradient(from ${-step / 2}deg, ${list.map((x, i) => `${x.tone} ${i * step}deg ${(i + 1) * step}deg`).join(', ')})`;
   return (
-    <div className="sw" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
+    <div className={teen ? 'sw sw-teen' : 'sw'} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
       <div className="sw-stage">
         <span className="sw-pointer" aria-hidden="true" />
         <div className="sw-rim" aria-hidden="true">{list.map((x, i) => <i key={x.id} style={{ '--a': `${i * step + step / 2}deg` }} />)}</div>
@@ -152,11 +152,11 @@ function SurveyWheel({ list, visible }) {
           ) : (
             <>
               <span className="sw-t-ico"><Icon name={c.icon} size={28} /></span>
-              <p className="sw-t-tag"><i /> {c.tag} · Open now</p>
+              <p className="sw-t-tag"><i /> {c.tag} · {teen ? 'Teen-safe' : 'Open now'}</p>
               <h3>{c.title}</h3>
               <p className="sw-t-desc">{c.desc}</p>
               <div className="sw-t-stats">
-                <span><small>Typical reward</small><b>{c.reward ? `$${c.reward}` : c.range}</b></span>
+                <span><small>{teen ? 'Typical points' : 'Typical reward'}</small><b>{c.reward ? `$${c.reward}` : c.range}</b></span>
                 <span><small>About</small><b>{c.mins} min</b></span>
               </div>
             </>
@@ -214,21 +214,22 @@ export function SurveyBoard() {
         <div className="sv-head reveal">
           <div>
             <p className="eyebrow">Paid surveys</p>
-            <h2 id="sboard-title">{seg === 'pro' ? <>Your expertise, <span className="sv-gold">in high demand.</span></> : <>Spin a topic you love. <span className="hl-orange">Get rewarded for it.</span></>}</h2>
+            <h2 id="sboard-title">{seg === 'teen' ? <>Spin your vibe. <span className="sv-neon">Earn points for it.</span></> : seg === 'pro' ? <>Your expertise, <span className="sv-gold">in high demand.</span></> : <>Spin a topic you love. <span className="hl-orange">Get rewarded for it.</span></>}</h2>
             <p className="sec-sub">Typical rewards and lengths by survey category. Every invitation shows its exact reward and time before you start — no surprises.</p>
           </div>
           <div className="sv-switch" role="tablist" aria-label="Survey audience">
             <span className="sv-pill" aria-hidden="true" />
             <button type="button" role="tab" aria-selected={seg === 'consumer'} className={seg === 'consumer' ? 'on' : ''} onClick={() => setSeg('consumer')}><Icon name="cart" size={16} /> Consumers <b>{ALL_CONSUMER_SURVEYS.length}</b></button>
             <button type="button" role="tab" aria-selected={seg === 'pro'} className={seg === 'pro' ? 'on' : ''} onClick={() => setSeg('pro')}><Icon name="briefcase" size={16} /> Professionals <b>{PRO_SURVEYS.length}</b></button>
+            <button type="button" role="tab" aria-selected={seg === 'teen'} className={seg === 'teen' ? 'on' : ''} onClick={() => setSeg('teen')}><Icon name="rocket" size={16} /> Teens <b>{TEEN_SURVEYS.length}</b></button>
           </div>
         </div>
-        {seg === 'pro' ? <DemandMap list={PRO_SURVEYS} visible={visible} key="pro" /> : <SurveyWheel list={ALL_CONSUMER_SURVEYS} visible={visible} key="con" />}
+        {seg === 'teen' ? <SurveyWheel list={TEEN_SURVEYS} visible={visible} key="teen" teen /> : seg === 'pro' ? <DemandMap list={PRO_SURVEYS} visible={visible} key="pro" /> : <SurveyWheel list={ALL_CONSUMER_SURVEYS} visible={visible} key="con" />}
         <div className="sv-cta">
-          <Link to={seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-shine">Join free &amp; get invitations <Icon name="arrow" size={18} /></Link>
+          <Link to={seg === 'teen' ? '/sign-up?type=teen' : seg === 'pro' ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-primary btn-shine">{seg === 'teen' ? 'Join the Teen Panel' : <>Join free &amp; get invitations</>} <Icon name="arrow" size={18} /></Link>
           <Link to="/rewards" className="btn btn-ghost-dark">How rewards are paid</Link>
         </div>
-        <p className="arc-note">{seg === 'pro' ? 'Professional studies are typically rewarded more than consumer surveys; the exact reward is shown in each invitation.' : 'Rewards shown are typical for each category; the exact reward is shown in each invitation.'} Earnings are not guaranteed.</p>
+        <p className="arc-note">{seg === 'teen' ? 'Teen surveys (ages 13–17) are age-appropriate and open only after a parent or guardian gives consent; points are shown in each invitation.' : seg === 'pro' ? 'Professional studies are typically rewarded more than consumer surveys; the exact reward is shown in each invitation.' : 'Rewards shown are typical for each category; the exact reward is shown in each invitation.'} Earnings are not guaranteed.</p>
       </div>
     </section>
   );
@@ -353,11 +354,47 @@ function ProBoard({ list, active }) {
   );
 }
 
+// Teen Panel wall: neon "story" stickers that pop in one after another (first name + last initial only).
+function TeenWall({ list, active }) {
+  const n = list.length;
+  const { items, typing, holdProps, next, cycles } = useFeed(n, 3, active, 4200, 800);
+  return (
+    <div className="vl-teen reveal" {...holdProps}>
+      <header className="vl-teen-h">
+        <span className="vl-teen-badge"><Icon name="rocket" size={15} /> Teen zone</span>
+        <b>Teen Panel voices</b>
+        <small>{n ? `${plural(n, 'teen review', 'teen reviews')} · ages 13–17 · parent-approved accounts` : 'Ages 13–17 · parent-approved accounts'}</small>
+        {cycles ? <button type="button" className="vl-teen-next" onClick={next} aria-label="Show the next teen review"><Icon name="arrow" size={15} /></button> : null}
+      </header>
+      {n ? (
+        <ol className="vl-teen-row" aria-live="polite" aria-label="Teen reviews">
+          {items.map(({ seq, j }) => {
+            const t = list[seq % n];
+            return (
+              <li key={seq} className={`vl-sticker s${seq % 3}`} style={{ '--j': j }}>
+                <Tag t={t} />
+                <span className="vl-st-av" aria-hidden="true">{ini(t.name)}<i><Flag iso={t.iso} size={12} /></i></span>
+                <StarRow n={t.rating} size={14} />
+                <p className="vl-st-q">{t.text}</p>
+                <p className="vl-st-who"><b>{t.name}</b><small>{t.designation}{t.country ? ` · ${t.country}` : ''}</small></p>
+              </li>
+            );
+          })}
+          {typing ? <li className="vl-st-typing" aria-hidden="true"><span><i /><i /><i /></span></li> : null}
+        </ol>
+      ) : (
+        <p className="vl-teen-empty">Teen reviews appear here once Teen Panel members, with their parent or guardian’s approval, share their experience. <Link to="/sign-up?type=teen">Join the Teen Panel</Link></p>
+      )}
+    </div>
+  );
+}
+
 export function MemberVoices() {
   const [ref, inView] = useInView({ once: false, threshold: 0.12 });
   const { reviews, status } = useLiveReviews();
-  const con = reviews.filter((r) => r.segment !== 'professional');
+  const con = reviews.filter((r) => r.segment === 'consumer');
   const pro = reviews.filter((r) => r.segment === 'professional');
+  const teen = reviews.filter((r) => r.segment === 'teen');
   const isos = isoList(reviews);
   const rated = reviews.filter((r) => r.rating);
   const avg = rated.length >= 3 ? rated.reduce((a, r) => a + r.rating, 0) / rated.length : 0;
@@ -369,7 +406,7 @@ export function MemberVoices() {
         <div className="vl-head reveal">
           <p className="eyebrow">Client testimonials {status === 'live' ? <span className="vx-live"><i /> Live</span> : null}</p>
           <h2 id="voices-title">Real members. Real rewards. <span className="vl-hl">In their own words.</span></h2>
-          <p className="sec-sub">Reviews written on this site appear here as soon as they are published — consumers in the members’ lounge, professionals on the expert board.</p>
+          <p className="sec-sub">Reviews written on this site appear here as soon as they are published — consumers in the members’ lounge, professionals on the expert board and teens in the Teen zone.</p>
           {preview ? <p className="tv-prevnote"><Icon name="eye" size={14} /> Preview build: cards marked “Preview data” are supplied testimonials that are not published on the live site until confirmed.</p> : null}
         </div>
 
@@ -391,11 +428,14 @@ export function MemberVoices() {
               {avg ? <li><b>{avg.toFixed(1)}<i>/5</i></b><small>average score</small></li> : null}
               <li><b className="c">{con.length}</b><small>consumers</small></li>
               <li><b className="p">{pro.length}</b><small>professionals</small></li>
+              <li><b className="t">{teen.length}</b><small>teens</small></li>
             </ul>
           </div>
 
           <ProBoard list={pro} active={inView} />
         </div>
+
+        <TeenWall list={teen} active={inView} />
 
         <div className="tv-foot vl-foot reveal">
           <RateButton className="btn tv-btn-c" icon="star" label="Rate your experience" outLabel="Log in to rate us" />

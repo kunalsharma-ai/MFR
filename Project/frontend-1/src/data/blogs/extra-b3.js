@@ -1,6 +1,6 @@
 // Third expansion layer for posts 6–10.
 export const EXTRA_B3 = {
-  'earn-money-online-cash-payouts': {
+  'earn-money-online-survey-payouts': {
     sections: [
       {
         h2: 'Before you redeem: a 30-second checklist',

@@ -42,12 +42,14 @@ const LINES = [
   { w: ['Brands', 'need', 'answers.'], c: '#2F6BFF', c2: '#8B5CF6' },
   { w: ['You', 'have', 'opinions.'], c: '#FF8A00', c2: '#FF5E7E' },
   { w: ['We', 'make', 'it', 'fair.'], c: '#14C9B5', c2: '#2F6BFF' },
+  { w: ['Teens', 'get', 'heard', 'too.'], c: '#8B5CF6', c2: '#FF3B8D', teen: true },
 ];
 const FACTS = [
-  { ic: 'globe', t: 'A worldwide community', d: 'Consumers and business professionals in one place', c: '#FF8A00' },
+  { ic: 'globe', t: 'A worldwide community', d: 'Consumers, business professionals and teens (13–17) in one place', c: '#FF8A00' },
   { ic: 'shield', t: 'Run by Frequent Research', d: 'An ISO-certified market research company', c: '#2F6BFF' },
   { ic: 'heart', t: 'Free, always', d: 'No fees, no deposits, no investment', c: '#FF5E7E' },
   { ic: 'coins', t: 'Rewarded', d: 'For every eligible survey you complete', c: '#14C9B5' },
+  { ic: 'rocket', t: 'A Teen Panel with parental consent', d: 'Age-appropriate surveys for 13–17s, opened only after a parent or guardian agrees', c: '#8B5CF6' },
 ];
 export function AboutManifesto() {
   const [ref, on] = useInView();
@@ -58,9 +60,9 @@ export function AboutManifesto() {
           <p className="eyebrow">Who we are</p>
           <h2 id="abm-h" className="sr-only">MyFrequentRewards, the online survey community of Frequent Research</h2>
           <p className="abm-lines">
-            <span className="sr-only">Brands need answers. You have opinions. We make it fair.</span>
+            <span className="sr-only">Brands need answers. You have opinions. We make it fair. Teens get heard too.</span>
             {LINES.map((l, li) => (
-              <span key={li} className="abm-line" style={{ '--c': l.c, '--c2': l.c2 }} aria-hidden="true">
+              <span key={li} className={l.teen ? 'abm-line abm-teen' : 'abm-line'} style={{ '--c': l.c, '--c2': l.c2 }} aria-hidden="true">
                 {l.w.map((w, wi) => <span key={wi} className="abm-word" style={{ '--d': `${li * 0.35 + wi * 0.08}s` }}>{w}</span>)}
               </span>
             ))}
@@ -84,7 +86,7 @@ export function AboutManifesto() {
 /* ---------- 2. The value loop: circular flow diagram ---------- */
 const LOOP = [
   { ic: 'briefcase', t: 'Brands ask', d: 'Companies and researchers need real people’s views.', c: '#2F6BFF' },
-  { ic: 'sparkle', t: 'We match', d: 'MyFrequentRewards invites members whose profile fits.', c: '#FF8A00' },
+  { ic: 'sparkle', t: 'We match', d: 'MyFrequentRewards invites consumers, professionals and parent-approved teens whose profile fits.', c: '#FF8A00' },
   { ic: 'chat', t: 'You answer', d: 'You share honest opinions on any device.', c: '#FF5E7E' },
   { ic: 'gift', t: 'You’re rewarded', d: 'Eligible surveys add to your balance; claim it your way.', c: '#14C9B5' },
 ];
@@ -142,6 +144,7 @@ const MILESTONES = [
   { y: '2017', t: 'MyFrequentRewards launches', d: 'A rewards community for consumers and professionals, alongside Turn2Opinion.', ic: 'gift', c: '#FF8A00' },
   { y: '2018', t: 'MyHealthOpinions joins', d: 'A dedicated community for healthcare voices.', ic: 'medical', c: '#E5484D' },
   { y: '2020', t: 'Sampledge arrives', d: 'A DIY marketplace for research projects and samples.', ic: 'layers', c: '#7B4DFF' },
+  { y: '2026', t: 'The Teen Panel opens', d: 'Age-appropriate research for 13–17s, with a parent or guardian’s consent first.', ic: 'rocket', c: '#8B5CF6' },
   { y: 'Today', t: 'ISO-certified research', d: 'ISO 20252, ISO 9001 and ISO 27001 standards behind every study.', ic: 'badge', c: '#14C9B5' },
 ];
 export function AboutJourney() {
@@ -171,7 +174,7 @@ export function AboutJourney() {
 /* ---------- 4. Mission · Vision · Promise: 3D card fan over a compass ---------- */
 const MVP = [
   { k: 'Mission', ic: 'heart', t: 'A fair reward for every honest opinion.', d: 'We connect real people with real research and make sure their time is valued.', c: '#FF8A00', c2: '#FF5E7E' },
-  { k: 'Vision', ic: 'eye', t: 'Products shaped by the people who use them.', d: 'Every voice, from a student to a CEO, counted in the decisions that affect them.', c: '#8B5CF6', c2: '#2F6BFF' },
+  { k: 'Vision', ic: 'eye', t: 'Products shaped by the people who use them.', d: 'Every voice, from a teen to a CEO, counted in the decisions that affect them.', c: '#8B5CF6', c2: '#2F6BFF' },
   { k: 'Promise', ic: 'lock', t: 'Your details stay with us.', d: 'Your details are secured with us. We never sell or share your personal details with anyone else.', c: '#14C9B5', c2: '#2F6BFF' },
 ];
 export function AboutCompass() {
@@ -202,7 +205,7 @@ const VALUES = [
   { icon: 'heart', t: 'Respect', d: 'Your time and opinion deserve a fair reward.', c: '#FF5E7E', ex: ['Clear survey length', 'Reward shown up front'] },
   { icon: 'eye', t: 'Transparency', d: 'Clear rules, clear rewards, clear policies.', c: '#2F6BFF', ex: ['Plain-language policies', 'Exact figures in every invite'] },
   { icon: 'shield', t: 'Integrity', d: 'Verified people, honest data, no shortcuts.', c: '#14C9B5', ex: ['Verified members', 'Quality checks on answers'] },
-  { icon: 'globe', t: 'Inclusion', d: 'Every country, culture and career is welcome.', c: '#FF8A00', ex: ['Consumers and professionals', 'Members worldwide'] },
+  { icon: 'globe', t: 'Inclusion', d: 'Every country, culture and career is welcome.', c: '#FF8A00', ex: ['Consumers, professionals and teens', 'Members worldwide'] },
 ];
 export function ValuesDial() {
   const [i, setI] = useState(0);
@@ -238,15 +241,16 @@ export function ValuesDial() {
   );
 }
 
-/* ---------- 6. Two worlds, one community: connector map ---------- */
+/* ---------- 6. Three worlds, one community: connector map (consumers ← core → professionals, teens below) ---------- */
 const CON = ['Students', 'Homemakers', 'Gamers', 'Shoppers', 'Travellers', 'Parents'];
 const PRO = ['CXOs & founders', 'IT managers', 'Doctors', 'Engineers', 'HR leaders', 'Finance heads'];
+const TEEN = [['Gamers', 'game'], ['Music fans', 'music'], ['Creators', 'sparkle'], ['Sport stars', 'trophy'], ['Tech & AI fans', 'bot'], ['Students', 'book']];
 export function TwoWorlds() {
   const [ref, on] = useInView();
   return (
     <section ref={ref} className={`section abw${on ? ' is-on' : ''}`} aria-labelledby="abw-h">
       <div className="container">
-        <div className="sec-head sec-center"><p className="eyebrow">Who we bring together</p><h2 id="abw-h">Two worlds, <em className="ab-accent">one community</em></h2></div>
+        <div className="sec-head sec-center"><p className="eyebrow">Who we bring together</p><h2 id="abw-h">Three worlds, <em className="ab-accent">one community</em></h2></div>
         <div className="abw-map">
           <ul className="abw-col abw-con" aria-label="Consumers">
             <li className="abw-cap"><Icon name="user" size={18} /> Consumers</li>
@@ -255,6 +259,7 @@ export function TwoWorlds() {
           <svg className="abw-wires" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
             {[0, 1, 2, 3, 4, 5].map((k) => <path key={`l${k}`} className="abw-w l" style={{ '--k': k }} d={`M0 ${40 + k * 44} C120 ${40 + k * 44} 120 150 200 150`} />)}
             {[0, 1, 2, 3, 4, 5].map((k) => <path key={`r${k}`} className="abw-w r" style={{ '--k': k }} d={`M400 ${40 + k * 44} C280 ${40 + k * 44} 280 150 200 150`} />)}
+            {[0, 1, 2].map((k) => <path key={`t${k}`} className="abw-w t" style={{ '--k': k }} d={`M${170 + k * 30} 300 C${170 + k * 30} 220 200 210 200 150`} />)}
           </svg>
           <div className="abw-core"><img src={BRAND.monogram} alt="MyFrequentRewards" width="60" height="60" /><b>MyFrequentRewards</b></div>
           <ul className="abw-col abw-pro" aria-label="Professionals">
@@ -262,7 +267,11 @@ export function TwoWorlds() {
             {PRO.map((c, i) => <li key={c} style={{ '--i': i }}>{c}</li>)}
           </ul>
         </div>
-        <p className="abw-links"><Link to="/paid-surveys-for-consumers">Surveys for consumers <Icon name="arrow" size={14} /></Link><Link to="/paid-surveys-for-professionals">Surveys for professionals <Icon name="arrow" size={14} /></Link><Link to="/who-can-join">Who can join <Icon name="arrow" size={14} /></Link></p>
+        <div className="abw-teen">
+          <p className="abw-teen-cap"><Icon name="rocket" size={18} /> Teens <small>13–17 · with a parent or guardian’s consent</small></p>
+          <ul aria-label="Teens">{TEEN.map(([t, ic], i) => <li key={t} style={{ '--i': i }}><Icon name={ic} size={16} /> {t}</li>)}</ul>
+        </div>
+        <p className="abw-links"><Link to="/paid-surveys-for-consumers">Surveys for consumers <Icon name="arrow" size={14} /></Link><Link to="/paid-surveys-for-professionals">Surveys for professionals <Icon name="arrow" size={14} /></Link><Link to="/paid-surveys-for-teens">Surveys for teens <Icon name="arrow" size={14} /></Link><Link to="/who-can-join">Who can join <Icon name="arrow" size={14} /></Link></p>
       </div>
     </section>
   );

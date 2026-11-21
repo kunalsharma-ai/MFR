@@ -12,6 +12,7 @@ import WatchBand from '../sections/WatchBand.jsx';
 import { CookieBanner, FloatingDock, ScrollProgress } from './Common.jsx';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 import useReveal from '../hooks/useReveal.js';
+import HydrateLater, { openHydrationGate } from './HydrateLater.jsx';
 import { PagesContext, pageFor } from '../router/pages.js';
 import { playSound, swishSound, tapSound, welcomePop } from '../utils/sound.js';
 import { initMetaPixel, trackPageView } from '../utils/metaPixel.js';
@@ -48,6 +49,9 @@ export default function Layout({ children }) {
   // Meta Pixel: loads only after analytics consent (cookie banner); then one PageView per route change.
   useEffect(() => initMetaPixel(), []);
   useEffect(() => trackPageView(pathname), [pathname]);
+  // Any in-app navigation wakes every sleeping block (see HydrateLater.jsx).
+  const [firstPath] = useState(pathname);
+  useEffect(() => { if (pathname !== firstPath) openHydrationGate(); }, [pathname, firstPath]);
 
   // Prefetch a page's code the moment a visitor shows intent (hover, touch, keyboard focus) so the click is
   // instant; then, once the browser is idle, quietly fetch the most-visited pages.
@@ -150,8 +154,8 @@ export default function Layout({ children }) {
     <>
       <ScrollProgress />
       <Header />
-      <main id="main" tabIndex={-1}>{children}<WatchBand /></main>
-      <Suspense fallback={null}><Footer /></Suspense>
+      <main id="main" tabIndex={-1}>{children}<HydrateLater><WatchBand /></HydrateLater></main>
+      <HydrateLater><Footer /></HydrateLater>
       <VerifyEmailGate />
       <FloatingDock onChat={() => setChat((v) => !v)} chatOpen={chat} />
       {mounted ? (

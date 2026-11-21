@@ -22,14 +22,14 @@ export default function Rewards() {
         crumbs={crumbs}
         eyebrow="Rewards & payouts"
         title={page.h1}
-        lead="Earn money online in cash, transfers or vouchers: track your balance, claim when you are ready and choose PayPal, cash rewards, bank or wire transfer, shopping, grocery or digital gift card vouchers — plus UPI for members in India."
+        lead="Earn money online through transfers or vouchers: track your balance, claim when you are ready and choose PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers — plus UPI for members in India."
         art="coins"
         theme="gold"
       >
         <ul className="ph-pills">{PAYOUTS.map((p) => <li key={p.id}><Icon name={p.icon} size={16} /> {p.name}{p.only === 'IN' ? <small className="ph-only">India only</small> : null}</li>)}</ul>
       </PageHero>
 
-      <RewardGalaxy title={<>Eight rewards, <span className="hl-orange">one balance</span></>} />
+      <RewardGalaxy title={<>Seven rewards, <span className="hl-orange">one balance</span></>} />
 
       <RewardExplorer />
 

@@ -30,37 +30,79 @@ export function StepStairs() {
   );
 }
 
-/* ── "From hello to reward received": five 3D flip cards; a progress bar fills and the active card flips ── */
+/* ── "From hello to reward received" (Round 12): a metro line. A train glides station to station; the station it
+   stops at prints a boarding ticket with the details. Tap a station to ride there. Vertical line on phones. ── */
 export function FlipJourney() {
   const [vref, visible] = useInView({ once: false, threshold: 0.25 });
   const [on, setOn] = useState(0);
   const [hold, setHold] = useState(false);
   useEffect(() => {
     if (!visible || hold) return undefined;
-    const t = setInterval(() => !isCalm() && setOn((x) => (x + 1) % STEPS.length), 2200);
+    const t = setInterval(() => !isCalm() && setOn((x) => (x + 1) % STEPS.length), 2800);
     return () => clearInterval(t);
   }, [visible, hold]);
+  const s = STEPS[on];
   return (
-    <section ref={vref} className="section fjr" aria-labelledby="journey-title">
+    <section ref={vref} className="section fjr mtr-sec" aria-labelledby="journey-title">
       <div className="container">
         <div className="fjr-head reveal">
           <p className="eyebrow">How it works</p>
           <h2 id="journey-title">From “hello” to <span>“reward received”</span></h2>
-          <p className="sec-sub">Five simple steps. Tap any card to flip it.</p>
+          <p className="sec-sub">One line, five stations. Tap a station to ride there.</p>
         </div>
-        <div className="fjr-track" aria-hidden="true"><i style={{ transform: `scaleX(${(on + 1) / STEPS.length})` }} /><span className="fjr-pos" style={{ transform: `translateX(${(on + 0.5) * 20}%)` }}><b>$</b></span></div>
-        <ol className="fjr-cards" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
-          {STEPS.map((s, i) => (
-            <li key={s.t} style={{ '--c': STEP_C[i] }}>
-              <button type="button" className={`fjr-card${i === on ? ' is-on' : ''}${i < on ? ' is-done' : ''}`} onClick={() => setOn(i)} aria-pressed={i === on}>
-                <span className="fjr-face front"><em>{String(i + 1).padStart(2, '0')}</em><span className="fjr-ico"><Icon name={s.icon} size={28} /></span><b>{s.t}</b></span>
-                <span className="fjr-face back"><b>{s.t}</b><small>{s.d}</small><Icon name="check" size={18} stroke={3} /></span>
-              </button>
-            </li>
-          ))}
-        </ol>
+        <div className="mtr" style={{ '--p': on / (STEPS.length - 1), '--c': STEP_C[on] }} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
+          <div className="mtr-line" aria-hidden="true"><i /><span className="mtr-train"><b /><b /><em /></span></div>
+          <ol className="mtr-stops">
+            {STEPS.map((x, i) => (
+              <li key={x.t} style={{ '--c': STEP_C[i] }} className={`${i === on ? 'on' : ''}${i < on ? ' done' : ''}`}>
+                <button type="button" onClick={() => setOn(i)} aria-pressed={i === on}>
+                  <span className="mtr-dot"><Icon name={i < on ? 'check' : x.icon} size={18} stroke={i < on ? 3 : 2} /></span>
+                  <span className="mtr-name"><small>Station {i + 1}</small>{x.t}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="mtr-ticket" key={on} aria-live="polite">
+            <div className="mtr-tk-main">
+              <p className="mtr-tk-k">Boarding pass · stop {on + 1} of {STEPS.length}</p>
+              <h3><span className="mtr-tk-ic"><Icon name={s.icon} size={22} /></span>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+            <div className="mtr-tk-stub" aria-hidden="true"><small>Next</small><b>{on < STEPS.length - 1 ? STEPS[on + 1].t : 'Ride again'}</b><span className="mtr-tk-bar">{Array.from({ length: 18 }, (_, k) => <i key={k} style={{ '--w': `${1 + ((k * 5 + on) % 3)}px` }} />)}</span></div>
+          </div>
+        </div>
       </div>
     </section>
+  );
+}
+
+// Teen Panel route (13–17): same journey, one extra gate: a parent or guardian approves before the account opens.
+const TEEN_PATH = [
+  ['user', 'Teen details', 'Name, email, gender and a date of birth in the 13–17 range.'],
+  ['heart', 'Parent or guardian', 'Mother, father or legal guardian: name, email, phone and date of birth.'],
+  ['check', 'Consent boxes', 'Five ticks by hand plus a security code. Nothing submits on its own.'],
+  ['mail', 'Parent approves', 'We email the Parent/Guardian Onboarding Form. The account waits until they sign.'],
+  ['rocket', 'Teen starts', 'Only then does the teen set a password and see age-appropriate surveys.'],
+];
+function TeenPath() {
+  return (
+    <div className="tpa reveal" aria-labelledby="tpa-h">
+      <div className="tpa-head">
+        <span className="tpa-badge"><Icon name="rocket" size={15} /> Teen Panel · 13–17</span>
+        <h3 id="tpa-h">Under 18? Your route has <em>one extra gate</em></h3>
+        <p>A parent or guardian approves the account before any survey opens. Login stays locked until they do.</p>
+      </div>
+      <ol className="tpa-list">
+        {TEEN_PATH.map(([ic, t, d], i) => (
+          <li key={t} style={{ '--i': i }} className={i === 3 ? 'tpa-lock' : ''}>
+            <span className="tpa-ic"><Icon name={ic} size={20} /></span>
+            <b>{t}</b>
+            <small>{d}</small>
+          </li>
+        ))}
+      </ol>
+      <Link to="/sign-up?type=teen" className="tpa-go">Start a teen sign-up <Icon name="arrow" size={16} /></Link>
+    </div>
   );
 }
 
@@ -88,6 +130,7 @@ export function StepRail({ steps }) {
             </li>
           ))}
         </ol>
+        <TeenPath />
       </div>
     </section>
   );
@@ -123,6 +166,7 @@ export function ProfileMeter() {
               </button>
             ))}
           </div>
+          <p className="pmx-teen"><Icon name="rocket" size={15} /> <span><b>Teen Panel?</b> Your profile is shorter and age-appropriate: school, hobbies, gaming, music and the apps you use. No work or income questions.</span></p>
           <p className="tiny muted">Illustrative relationship, not a guarantee of survey volume.</p>
         </div>
         <div className="pmx-card reveal" aria-hidden="true">
@@ -167,6 +211,7 @@ export function NotifyOrbit() {
           <p className="eyebrow">Survey invitations</p>
           <h2 id="inv-title">Never miss a survey opportunity</h2>
           <p className="sec-sub">Choose the notification method that works best for you and stay updated whenever a new survey matching your profile becomes available.</p>
+          <p className="nfo-teen"><Icon name="shield" size={15} /> Teen Panel members are only ever invited to age-appropriate studies, and only after a parent or guardian has approved the account.</p>
           <ul className="nfo-list">
             {NOTIFY_CHANNELS.map((c, k) => (
               <li key={c.id}><button type="button" className={k === i ? 'on' : ''} onClick={() => setI(k)} aria-pressed={k === i}><span className={`nfo-li-ic ic-${c.id}`}><Icon name={c.icon} size={18} /></span><span><b>{c.name}</b><small>{c.line}</small></span></button></li>
@@ -178,14 +223,14 @@ export function NotifyOrbit() {
   );
 }
 
-/* ── "Consumer or professional — or both": a coral boarding ticket and a navy-and-gold member card ── */
+/* ── "Consumer, professional or teen": a coral boarding ticket, a navy-and-gold member card and a neon arcade pass ── */
 export function TwoPasses() {
   return (
     <section className="section tps" aria-labelledby="cmp-title">
       <div className="container">
         <div className="sec-head sec-center reveal">
-          <p className="eyebrow">Two journeys, one platform</p>
-          <h2 id="cmp-title">Consumer or professional — or both</h2>
+          <p className="eyebrow">Three journeys, one platform</p>
+          <h2 id="cmp-title">Consumer, professional — or teen</h2>
         </div>
         <div className="tps-row">
           <article className="tps-pass c reveal">
@@ -210,6 +255,18 @@ export function TwoPasses() {
             </ul>
             <Link to="/paid-surveys-for-professionals" className="tps-go">Professional surveys <Icon name="arrow" size={16} /></Link>
             <span className="tps-chip" aria-hidden="true" />
+          </article>
+          <span className="tps-and" aria-hidden="true"><b>+</b></span>
+          <article className="tps-pass t reveal">
+            <span className="tps-holo" aria-hidden="true" />
+            <header><Icon name="rocket" size={20} /><b>Teen member</b><em>13–17</em></header>
+            <ul>
+              <li>Teen topics: gaming, music, snacks, style, apps, school</li>
+              <li>Age-appropriate studies, points shown up front</li>
+              <li>Opens only after a parent or guardian consents</li>
+            </ul>
+            <Link to="/paid-surveys-for-teens" className="tps-go">Teen surveys <Icon name="arrow" size={16} /></Link>
+            <span className="tps-px" aria-hidden="true">{Array.from({ length: 9 }, (_, k) => <i key={k} style={{ '--k': k }} />)}</span>
           </article>
         </div>
       </div>

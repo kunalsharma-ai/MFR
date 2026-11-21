@@ -12,6 +12,7 @@ const CATS = ['All', ...Array.from(new Set(ALL_FAQS.map((f) => f.cat)))];
 const META = {
   All: { icon: 'sparkle', c: '#7048E8' },
   'Getting started': { icon: 'rocket', c: '#FF8A00' },
+  'Teen Panel': { icon: 'sparkle', c: '#8B5CF6' },
   Account: { icon: 'key', c: '#2F6BFF' },
   Surveys: { icon: 'clipboard', c: '#14C9B5' },
   Rewards: { icon: 'gift', c: '#E5A100' },

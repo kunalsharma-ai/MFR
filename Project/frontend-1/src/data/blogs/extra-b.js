@@ -1,18 +1,18 @@
 // Long-form expansions for posts 6–10.
 export const EXTRA_B = {
-  'earn-money-online-cash-payouts': {
-    keywords: ['earn cash online', 'surveys for cash', 'paid surveys for cash', 'make money online paypal', 'surveys for amazon gift cards', 'earn cash for surveys'],
+  'earn-money-online-survey-payouts': {
+    keywords: ['earn money online', 'surveys for rewards', 'paid surveys for rewards', 'make money online paypal', 'surveys for amazon gift cards', 'earn rewards for surveys'],
     sections: [
       {
-        h2: 'Points, balances and cash: the vocabulary explained',
+        h2: 'Points, balances and payouts: the vocabulary explained',
         p: [
-          'Survey platforms use slightly different words, which can confuse new members. On MyFrequentRewards, every eligible survey or profile section adds reward points to your balance. Some points may be marked pending while quality checks run. Once your available balance reaches the minimum redemption threshold, you can redeem — that is, convert points into cash or a gift card through your chosen method.',
+          'Survey platforms use slightly different words, which can confuse new members. On MyFrequentRewards, every eligible survey or profile section adds reward points to your balance. Some points may be marked pending while quality checks run. Once your available balance reaches the minimum redemption threshold, you can redeem — that is, convert points into a transfer or a gift card through your chosen method.',
           'Understanding these terms makes your dashboard much easier to read and helps you plan when to redeem. The amount for each survey is always shown before you start, so you can decide whether a study is worth your time.',
         ],
-        list: ['Earned — points credited for a completed activity', 'Pending — points waiting for quality validation', 'Available — points you can redeem', 'Redeemed — points converted to cash or a gift card'],
+        list: ['Earned — points credited for a completed activity', 'Pending — points waiting for quality validation', 'Available — points you can redeem', 'Redeemed — points converted to a transfer or a gift card'],
       },
       {
-        h2: 'Why surveys for cash pay different amounts',
+        h2: 'Why surveys for rewards pay different amounts',
         p: [
           'Reward values vary because studies vary. A five-minute poll about breakfast cereal needs a broad audience that is easy to find; a twenty-minute study with hospital procurement managers needs a narrow, verified group that is hard to reach. Length, complexity and the sponsor’s requirements all shape the incentive.',
           'That is why business professionals often see higher-value invitations, and why a complete, accurate profile matters. The more precisely we know your situation, the more often you are matched to studies where your opinion is genuinely scarce. Learn about [paid surveys for professionals](/paid-surveys-for-professionals).',
@@ -26,7 +26,7 @@ export const EXTRA_B = {
         ],
       },
       {
-        h2: 'Cash to UPI and bank transfer',
+        h2: 'Payouts by UPI and bank transfer',
         p: [
           'For members in India, UPI is the most familiar option: you simply provide a UPI ID linked to your bank account. Bank transfer works for members who prefer funds sent straight to a verified bank account. In both cases, double-check every character — a single wrong digit is the most common cause of delayed payments.',
           'The [NPCI UPI overview](https://www.npci.org.in/what-we-do/upi/product-overview) explains how UPI transfers work if you are new to it.',
@@ -35,14 +35,14 @@ export const EXTRA_B = {
       {
         h2: 'Surveys for Amazon gift cards',
         p: [
-          'Gift cards are a great option if you already shop online. Instead of cash, you receive a digital Amazon gift voucher you can use for books, electronics, household essentials or gifts. Many members alternate: gift cards for planned purchases, cash for flexibility.',
+          'Gift cards are a great option if you already shop online. Instead of a transfer, you receive a digital Amazon gift voucher you can use for books, electronics, household essentials or gifts. Many members alternate: gift cards for planned purchases, transfers for flexibility.',
           'Remember that gift cards follow the issuer’s own validity rules, so redeem them in good time.',
         ],
       },
       {
         h2: 'The redemption timeline, step by step',
         list: ['You request redemption from the “Redeem Now” section', 'Our team verifies your account and survey participation', 'The accounts department processes the payment', 'Funds or the gift card are sent to your chosen method'],
-        p: ['Processing typically takes 2–3 weeks depending on queue volume and verification requirements. Be cautious of any website promising “surveys that pay cash instantly” — real verification takes time, because it protects honest members from fraud.'],
+        p: ['Processing typically takes 2–3 weeks depending on queue volume and verification requirements. Be cautious of any website promising “surveys that pay instantly” — real verification takes time, because it protects honest members from fraud.'],
       },
       {
         h2: 'How to avoid payout problems',
@@ -57,7 +57,7 @@ export const EXTRA_B = {
       },
     ],
     faqs: [
-      { q: 'Do paid surveys for cash pay instantly?', a: 'No — redemptions are verified first and typically take 2–3 weeks to process.' },
+      { q: 'Do paid surveys for rewards pay instantly?', a: 'No — redemptions are verified first and typically take 2–3 weeks to process.' },
       { q: 'Can I redeem rewards as Amazon gift cards?', a: 'Yes, Amazon gift vouchers are one of the available redemption options.' },
       { q: 'What do I need to receive money through PayPal?', a: 'A verified PayPal account that can receive funds, using the same email you enter when redeeming.' },
     ],

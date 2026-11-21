@@ -6,7 +6,7 @@ import { CtaBand, FaqSplit } from '../components/Common.jsx';
 import { PAGES } from '../data/pages.js';
 import { QUALITY_LAYERS } from '../data/quality.js';
 import { BRAND } from '../data/site.js';
-import { PrivacyVault, QualityRadar, VerificationScanner } from '../sections/TrustSections.jsx';
+import { PrivacyVault, QualityRadar, TeenStandards, VerificationScanner } from '../sections/TrustSections.jsx';
 import { FAQ_QUALITY } from '../data/faqs.js';
 
 const page = PAGES.quality;
@@ -49,6 +49,7 @@ export default function Quality() {
 
       <QualityRadar withLink={false} />
       <VerificationScanner />
+      <TeenStandards />
       <PrivacyVault />
 
       <section className="section iso-sec" aria-labelledby="iso-title">

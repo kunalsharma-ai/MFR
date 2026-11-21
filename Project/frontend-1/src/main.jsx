@@ -1,7 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { openHydrationGate } from './components/HydrateLater.jsx';
 import { BrowserRouter, HashRouter, MemoryRouter, useNavigate } from 'react-router-dom';
 import App from './App.jsx';
+import { startContentGuard } from './utils/contentGuard.js';
 import { PagesContext, pageFor } from './router/pages.js';
 import { lazyPages } from './router/lazyPages.js';
 import './styles/global.css';
@@ -78,8 +80,16 @@ import './styles/v31-gate.css';
 import './styles/v31-reviews.css';
 import './styles/v31-hero-fx.css';
 import './styles/v31-sections.css';
+import './styles/v32-minor.css';
+import './styles/v32-pages.css';
+import './styles/v33-teen.css';
+import './styles/v34-r12.css';
+import './styles/v35-worlds.css';
+import './styles/v36-a11y.css';
 
-document.documentElement.classList.add('js');
+window.__mfrApp = true; // tells the fail-safe in index.html that the app started
+document.documentElement.classList.add('js'); // normally already set in index.html (no extra restyle)
+startContentGuard();
 
 // "Lite" motion profile for phones, tablets and low-power computers: decorative looping animations play a few
 // times and then rest (entrance animations, the hero and the review screen keep full motion). Keeps scrolling smooth
@@ -151,6 +161,7 @@ const currentPath = useHash ? (window.location.hash.slice(1) || '/') : window.lo
 const start = () => {
   if (matches) hydrateRoot(root, tree);
   else {
+    openHydrationGate(); // nothing prerendered to keep: render every block right away
     root.innerHTML = '';
     createRoot(root).render(tree);
   }

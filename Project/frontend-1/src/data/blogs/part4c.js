@@ -152,7 +152,7 @@ export const PART4C = [
     metaTitle: 'Earn Extra Money Online: A Home Routine That Works | MFR',
     metaDescription: 'Earn extra money online from home around a job, studies or family: set a budget goal, use 10–20 minute slots, track rewards and stay safe. Start free today.',
     primaryKeyword: 'earn extra money online',
-    secondaryKeywords: ['extra income from home', 'make extra money from home', 'earn extra income online', 'make extra cash online', 'extra income online', 'ways to make extra money from home', 'earn cash from home', 'ways to make income from home'],
+    secondaryKeywords: ['extra income from home', 'make extra money from home', 'earn extra income online', 'make extra money online', 'extra income online', 'ways to make extra money from home', 'earn money from home', 'ways to make income from home'],
     category: 'Earning Ideas',
     date: '2026-10-07',
     trending: false,
@@ -259,7 +259,7 @@ export const PART4C = [
       },
       {
         ch: 2,
-        h2: 'Staying safe while you make extra cash online',
+        h2: 'Staying safe while you make extra money online',
         p: [
           'Routines attract routines — including scammers who copy real platforms. A few fixed rules protect you. Our guide to [legit survey sites and how to spot scams](/blog/legit-survey-sites-spot-scams) goes deeper, and you can report fraud on India’s [cybercrime portal](https://cybercrime.gov.in/).',
         ],
@@ -323,8 +323,8 @@ export const PART4C = [
       { q: 'What are realistic ways to make extra money from home?', a: 'Paid surveys, tutoring, proofreading, short translations, selling unused items and writing for small businesses are all realistic and free to start. None replaces a salary, but together they can cover a bill or a savings goal. Avoid anything that asks for a fee or promises fixed daily income.' },
       { q: 'How much time do I need to earn extra income online?', a: 'Many people start with two or three 15-minute slots a day. Typical surveys run around 10 to 18 minutes depending on topic, and the exact length is shown in each invitation. You can scale up or down any week, which is what makes this kind of extra income from home flexible.' },
       { q: 'Do I have to pay tax on online earnings in India?', a: 'Online income may be relevant to your tax return depending on your total income and situation. This is general information only, not tax advice. Keep clear records of rewards and payouts and check the official Income Tax Department portal or consult a qualified professional for your specific case.' },
-      { q: 'How do I earn cash from home through surveys?', a: 'Join a free research community, complete your profile surveys and respond to matching invitations. Points are credited after quality checks. On MyFrequentRewards, once you reach the minimum threshold you can redeem through PayPal, UPI, bank transfer or an Amazon gift card, with verification and processing taking around two to three weeks.' },
-      { q: 'What is the safest way to make extra cash online?', a: 'Stick to platforms run by named companies with a clear privacy policy and no joining fee. Never share OTPs, UPI PINs or passwords, and ignore offers of fixed daily pay for simple tasks. If something feels wrong, stop, and in India report it on the national cybercrime portal.' },
+      { q: 'How do I earn money from home through surveys?', a: 'Join a free research community, complete your profile surveys and respond to matching invitations. Points are credited after quality checks. On MyFrequentRewards, once you reach the minimum threshold you can redeem through PayPal, UPI, bank transfer or an Amazon gift card, with verification and processing taking around two to three weeks.' },
+      { q: 'What is the safest way to make extra money online?', a: 'Stick to platforms run by named companies with a clear privacy policy and no joining fee. Never share OTPs, UPI PINs or passwords, and ignore offers of fixed daily pay for simple tasks. If something feels wrong, stop, and in India report it on the national cybercrime portal.' },
       { q: 'Can students and homemakers earn extra income online?', a: 'Yes. Anyone aged 18 or over can join MyFrequentRewards free. Students can use gaps between lectures and homemakers can use quieter moments in the day. Pairing surveys with one skill, such as tutoring or writing, gives a steadier mix of rewards across the month.' },
     ],
   },

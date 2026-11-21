@@ -60,7 +60,7 @@ export const EXTRA_A = {
   },
 
   'earn-money-online-without-investment': {
-    keywords: ['online jobs without investment', 'online work without investment', 'earning website without investment', 'money earning sites without investment', 'online earning platform without investment', 'earn cash online'],
+    keywords: ['online jobs without investment', 'online work without investment', 'earning website without investment', 'money earning sites without investment', 'online earning platform without investment', 'earn money online'],
     sections: [
       {
         h2: 'Why “without investment” matters more than ever',
@@ -104,7 +104,7 @@ export const EXTRA_A = {
     faqs: [
       { q: 'Are there real online jobs without investment?', a: 'Yes — paid surveys, freelancing, tutoring and micro-tasks can all be started without spending money.' },
       { q: 'Which earning website without investment is best for beginners?', a: 'A transparent survey community such as MyFrequentRewards is a good start because it needs no skills and publishes its policies.' },
-      { q: 'Can I earn cash online without investment in India?', a: 'Yes, members in India can redeem rewards via UPI, bank transfer, PayPal or Amazon gift vouchers.' },
+      { q: 'Can I earn money online without investment in India?', a: 'Yes, members in India can redeem rewards via UPI, bank transfer, PayPal or Amazon gift vouchers.' },
     ],
   },
 
@@ -134,7 +134,7 @@ export const EXTRA_A = {
         h2: 'Budgeting your survey rewards',
         p: [
           'Treat survey rewards as a mini-fund for specific goals: a new pair of earphones, an online course or your monthly data recharge. Redeeming to UPI or PayPal keeps the money flexible, while Amazon gift cards are useful for books and supplies. Compare options in our article on [PayPal vs UPI vs gift cards](/blog/survey-rewards-paypal-upi-gift-cards).',
-          'Remember that redemption requests are verified before payment and may take a couple of weeks, so plan ahead rather than counting on instant cash.',
+          'Remember that redemption requests are verified before payment and may take a couple of weeks, so plan ahead rather than counting on instant money.',
         ],
       },
       {
@@ -162,7 +162,7 @@ export const EXTRA_A = {
   },
 
   'earn-money-online-free-guide': {
-    keywords: ['make money online free', 'free ways to make money online', 'free online earning', 'free earning website', 'websites to make money online for free', 'free cash surveys'],
+    keywords: ['make money online free', 'free ways to make money online', 'free online earning', 'free earning website', 'websites to make money online for free', 'free paid surveys'],
     sections: [
       {
         h2: 'What “free” really means when you make money online',
@@ -177,7 +177,7 @@ export const EXTRA_A = {
         p: ['The lower the effort, the lower the earning per hour — but also the lower the barrier to start. Most people begin at the top of the list and work downwards as they gain confidence and skills.'],
       },
       {
-        h2: 'Are free cash surveys really free?',
+        h2: 'Are free paid surveys really free?',
         p: [
           'Yes — on a legitimate platform. You will never be asked to buy a product to qualify for a survey, and you will never pay to redeem. What you do “spend” is a few minutes of attention. Treat that time as valuable: answer carefully, avoid rushing and keep your profile accurate so you get matched with surveys that fit.',
           'Rewards are paid for eligible, validated completions. You can see the full redemption process — verification, processing and payout methods — on our [rewards and payouts](/rewards-and-payouts) page.',
@@ -206,7 +206,7 @@ export const EXTRA_A = {
     ],
     faqs: [
       { q: 'Can I really make money online for free?', a: 'Yes — free survey communities reward your time without asking for any payment.' },
-      { q: 'Do free cash surveys pay in real money?', a: 'Rewards can be redeemed via PayPal, UPI, bank transfer or gift cards, subject to verification and the redemption threshold.' },
+      { q: 'Do free paid surveys pay in real money?', a: 'Rewards can be redeemed via PayPal, UPI, bank transfer or gift cards, subject to verification and the redemption threshold.' },
       { q: 'Why do some free sites ask me to upgrade?', a: 'Paid upgrades to unlock earnings are a common scam pattern; genuine survey communities never require them.' },
     ],
   },

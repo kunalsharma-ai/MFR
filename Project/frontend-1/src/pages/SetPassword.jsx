@@ -50,7 +50,7 @@ const WORLD_HINT = {
 };
 const STRENGTH = ["Too weak", "Weak", "Fair", "Strong", "Excellent"];
 const FIRST_STEP = 3; // steps 1–2 were done on /sign-up
-const LAST_STEP = 4;
+const LAST_STEP = 3; // "Your world" (step 4) is now the welcome survey after the first log in (WelcomeSurvey.jsx)
 
 // Opened from the link in the verification / forgot-password email:
 //   /auth/password?user=<id>&code=<otp>
@@ -280,17 +280,8 @@ export default function SetPassword() {
         password: v.password,
         confirmPassword: v.confirm,
       });
-      savePendingProfile(
-        userId,
-        buildProfileAnswers(
-          memberType,
-          {
-            ...v,
-            jobrole: v.jobrole === OTHER ? v.jobTitleOther.trim() : v.jobrole,
-          },
-          channels,
-        ),
-      );
+      // only the notification channels chosen at sign-up wait for the first log in; the profile questions are asked then
+      savePendingProfile(userId, buildProfileAnswers(memberType, {}, channels));
       forgetNotify(userId);
       setPhase("done");
     } catch (ex) {
@@ -330,8 +321,8 @@ export default function SetPassword() {
             </p>
             <h1>{page.h1}</h1>
             <p className="muted-light">
-              Two quick steps left. Choose a password, then tell us what you
-              like. Your account is ready right after.
+              One quick step left. Choose a password, then log in: a few
+              welcome questions come first, then your dashboard.
             </p>
             <div className="sx-stage" aria-hidden="true">
               <div className={`sx-badge s${inWizard ? step : 4}`}>
@@ -537,6 +528,7 @@ export default function SetPassword() {
                                         slotProps={{
                                           ...params.slotProps,
                                           input: {
+                                            ...params.InputProps,
                                             ...params.slotProps?.input,
                                             startAdornment: (
                                               <>
@@ -555,6 +547,7 @@ export default function SetPassword() {
                                             ),
                                           },
                                           htmlInput: {
+                                            ...params.inputProps,
                                             ...params.slotProps?.htmlInput,
                                             "aria-invalid": Boolean(err(f)),
                                             "aria-describedby": err(f)
@@ -845,9 +838,12 @@ export default function SetPassword() {
                 <h2>You’re in{firstName ? `, ${firstName}` : ""}! 🎉</h2>
                 <p>
                   Your password is saved and your email is verified. Log in to
-                  complete your profile surveys and start earning.
+                  answer a few welcome questions and start earning.
                 </p>
                 <ol className="sx-next">
+                  <li>
+                    <Icon name="sparkle" size={18} /> A few welcome questions
+                  </li>
                   <li>
                     <Icon name="layers" size={18} /> Complete profile surveys
                   </li>

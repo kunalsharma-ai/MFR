@@ -24,10 +24,10 @@ export const PAGES = {
   rewards: {
     path: '/rewards',
     name: 'Rewards & Payouts',
-    primaryKeyword: 'earn money online cash',
-    secondaryKeywords: ['paid surveys for cash', 'surveys for cash', 'make money online paypal', 'surveys for amazon gift cards', 'earn cash online', 'surveys that pay real money'],
+    primaryKeyword: 'earn money online rewards',
+    secondaryKeywords: ['paid survey rewards', 'survey reward options', 'make money online paypal', 'surveys for amazon gift cards', 'survey payouts', 'surveys that pay real money'],
     metaTitle: 'Survey Rewards & Payouts: PayPal, UPI, Gift Cards | MFR',
-    metaDescription: 'Turn opinions into rewards: claim via PayPal, cash, bank or wire transfer, shopping, grocery or digital gift card vouchers, or UPI in India.',
+    metaDescription: 'Turn your opinions into rewards: claim via PayPal, bank or wire transfer, shopping, grocery or digital gift card vouchers, or UPI for members in India.',
     h1: 'Get rewarded your way',
   },
   consumers: {
@@ -47,6 +47,15 @@ export const PAGES = {
     metaTitle: 'Paid Surveys for Professionals & Decision-Makers | MFR',
     metaDescription: 'Turn your expertise into rewards. Paid B2B surveys for CXOs, managers, engineers, doctors and founders across industries — verified, private and free to join.',
     h1: 'Paid surveys for business professionals',
+  },
+  minor: {
+    path: '/paid-surveys-for-teens',
+    name: 'For Teens',
+    primaryKeyword: 'paid surveys for teens',
+    secondaryKeywords: ['surveys for teens', 'surveys for minors', 'teen survey panel', 'parental consent surveys', 'earn rewards as a teenager', 'online surveys for students under 18'],
+    metaTitle: 'Paid Surveys for Teens with Parental Consent | MFR Teens',
+    metaDescription: 'Teens explore 13 profile worlds, earn points and share opinions safely. A parent says yes first, then you do. Age-checked surveys, rewards paid to parents.',
+    h1: 'Paid surveys for teens, with a parent’s yes',
   },
   whoCanJoin: {
     path: '/who-can-join',

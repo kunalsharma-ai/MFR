@@ -79,12 +79,23 @@ function FaqArt({ look }) {
       </div>
     );
   }
-  if (look === 'path') {
+  if (look === 'desk') {
     return (
-      <div className="fqa fqa-path" aria-hidden="true">
-        <svg viewBox="0 0 340 170" className="fqa-road"><path d="M10 140 C 80 140, 70 40, 150 50 S 250 140, 330 30" /></svg>
-        {[['?', 'Ask'], ['!', 'Learn'], ['✓', 'Earn']].map(([g, t], k) => <span key={t} className={`fqa-stop k${k}`}><b>{g}</b><small>{t}</small></span>)}
-        <span className="fqa-token" />
+      <div className="fqa fqa-desk" aria-hidden="true">
+        <span className="fqd-board"><small>Now answering</small><span className="fqd-roll"><span>{['01', '02', '03', '04', '05', '06', '01'].map((n, k) => <b key={k}>{n}</b>)}</span></span></span>
+        <span className="fqd-disp"><span className="fqd-slot" /><span className="fqd-tk"><small>Your ticket</small><b>Q</b></span><span className="fqd-face"><i /><i /></span></span>
+        <span className="fqd-lamp" />
+      </div>
+    );
+  }
+  if (look === 'minor') {
+    return (
+      <div className="fqa fqa-minor" aria-hidden="true">
+        <span className="fqa-bub b1">Can I join?</span>
+        <span className="fqa-bub b2">Yes, with a parent’s OK ✨</span>
+        <span className="fqa-bub b3">Who gets the points?</span>
+        <img className="fqa-q" src="/images/minor/emoji/sparkles.webp" alt="" width="64" height="64" loading="lazy" decoding="async" />
+        <img className="fqa-r" src="/images/minor/emoji/rocket.webp" alt="" width="72" height="72" loading="lazy" decoding="async" />
       </div>
     );
   }
@@ -92,7 +103,7 @@ function FaqArt({ look }) {
     return (
       <div className="fqa fqa-gift" aria-hidden="true">
         <span className="fqa-box"><i className="lid" /><i className="ribbon" /><i className="body" /></span>
-        {[['card', 'Gift card'], ['paypal', 'PayPal'], ['cash', 'Cash'], ['upi', 'UPI']].map(([ic, t], k) => <span key={t} className={`fqa-chip k${k}`}><Icon name={ic} size={14} />{t}</span>)}
+        {[['card', 'Gift card'], ['paypal', 'PayPal'], ['bank', 'Bank'], ['upi', 'UPI']].map(([ic, t], k) => <span key={t} className={`fqa-chip k${k}`}><Icon name={ic} size={14} />{t}</span>)}
         {[0, 1, 2, 3, 4].map((k) => <em key={k} className={`fqa-coin k${k}`}>$</em>)}
       </div>
     );

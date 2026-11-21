@@ -49,6 +49,13 @@ for (const f of await readdir(path.join(root, 'public/flags'))) {
   flagMap[`/flags/${f}`] = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 html = html.replace('<script type="module">', () => `<script>window.__MFR_ASSETS=Object.assign(window.__MFR_ASSETS||{},${JSON.stringify(flagMap)})</script><script type="module">`);
+// Emoji paths are also built at runtime (`/images/minor/emoji/${name}.webp`) → map them to inlined data URIs
+const emoji = {};
+for (const f of await readdir(path.join(root, 'public/images/minor/emoji'))) {
+  if (f.endsWith('.webp')) emoji[f.replace('.webp', '')] = 'data:image/webp;base64,' + (await readFile(path.join(root, 'public/images/minor/emoji', f))).toString('base64');
+}
+html = html.replace(/`\/images\/minor\/emoji\/\$\{(\w+)\}\.webp`/g, (m, v) => `window.__MFR_EMOJI[${v}]`);
+html = html.replace('<script type="module">', () => `<script>window.__MFR_EMOJI=${JSON.stringify(emoji)}</script><script type="module">`);
 // Inline every /images/... and favicon reference as a data URI
 const MIME = { '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
 const cache = new Map();

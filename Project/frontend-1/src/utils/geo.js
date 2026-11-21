@@ -2,7 +2,7 @@
 // Best-effort IP -> country (ISO-2, lowercase). Never throws, never blocks signup.
 // Uses the same backend endpoint as the MHO app's telemetry.ip(): GET /api/v1/get-country -> { country }.
 // Override with VITE_GEO_ENDPOINT if needed.
-import { API_BASE } from '../data/site.js';
+import { API_BASE, DEMO_MODE } from '../data/site.js';
 
 const GEO_ENDPOINT = import.meta.env.VITE_GEO_ENDPOINT || `${API_BASE}/api/v1/get-country`;
 const CACHE_KEY = 'mfr.geo.country';
@@ -16,6 +16,7 @@ function writeCache(iso) {
 }
 
 export async function detectCountry({ signal } = {}) {
+  if (DEMO_MODE) return 'in'; // preview build: there is no backend to ask
   const cached = readCache();
   if (cached) return cached;
   if (!GEO_ENDPOINT) return '';

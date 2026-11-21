@@ -9,7 +9,7 @@ import { useI18n } from '../i18n/I18nProvider.jsx';
 const QUERIES = [
   { q: 'how to earn money online', a: 'A step-by-step beginner’s guide to paid surveys.', to: '/blog/how-to-earn-money-online-with-surveys', icon: 'book' },
   { q: 'online earning without investment', a: 'Zero-cost options compared — and the scams to avoid.', to: '/blog/earn-money-online-without-investment', icon: 'shield' },
-  { q: 'paid surveys for cash', a: 'How survey points become PayPal, UPI or bank cash.', to: '/blog/earn-money-online-cash-payouts', icon: 'coins' },
+  { q: 'paid survey payouts', a: 'How survey points become PayPal, UPI or bank transfers.', to: '/blog/earn-money-online-survey-payouts', icon: 'coins' },
   { q: 'online surveys for money', a: 'What makes the best paid online surveys worth your time.', to: '/how-it-works', icon: 'clipboard' },
   { q: 'ways to make money from home', a: 'Side hustles from home that need no setup or fees.', to: '/blog/make-money-online-from-home', icon: 'heart' },
   { q: 'make money from your phone', a: 'Earn on mobile — no app download, no risky permissions.', to: '/blog/earn-money-online-on-mobile', icon: 'mobile' },
