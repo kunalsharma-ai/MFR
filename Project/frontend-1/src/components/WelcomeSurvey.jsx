@@ -10,13 +10,18 @@ import { getData, patchJSON, postJSON } from '../utils/api.js';
 import { buildProfileAnswers } from '../utils/profileAnswers.js';
 import { validateProfile } from '../utils/validate.js';
 import { WORLD_FIELDS, clearBelow, loadWorldOptions, worldModel } from '../utils/worldForm.js';
+import { teenApi } from '../teen/api.js';
+import { WELCOME_QUESTIONS } from '../teen/data/welcome.js';
+import { LANGUAGES } from '../teen/data/surveyLanguages.js';
+import { answered, checkQuestion, useTimezones } from '../teen/ProfileQuestion.jsx';
 
 // Welcome survey, shown once after the member's first log in (Consumers, Professionals and Teens alike), before the
 // dashboard. It asks the same questions the set-password page used to ask in its "Your world" step:
 //   • Consumer: "What are you into?" (CONSUMER_INTERESTS, optional)
 //   • Professional: "Tell us about your work" (employment status → industry → specialization → department → job title,
 //     plus the optional company email), with the choices loaded from /api/v1/option
-//   • Teen: the consumer interests, without the adult-only groups (parenting, automotive, banking)
+//   • Teen: the short Teen welcome questions, word for word from the Teen Profile Survey (teen/data/welcome.js),
+//     only those not already known from the registration, saved with PUT /api/v1/teen/me/answers
 // Answers are saved with PATCH /api/v1/me/answer under the same keys as before (profileAnswers.js).
 const TEEN_HIDDEN = new Set(['family', 'auto', 'finance']);
 const interestsFor = (type) => (type === 'teen' ? CONSUMER_INTERESTS.filter((c) => !TEEN_HIDDEN.has(c.id)) : CONSUMER_INTERESTS);
@@ -61,7 +66,11 @@ const WORLD_HINT = {
 };
 const muiField = { width: '100%', '& .MuiOutlinedInput-root': { borderRadius: '12px', backgroundColor: 'background.paper' } };
 
-export default function WelcomeSurvey({ type = 'consumer', name = '', mail = '', demo = false, onDone }) {
+export default function WelcomeSurvey(props) {
+  return props.type === 'teen' ? <TeenWelcome {...props} /> : <AdultWelcome {...props} />;
+}
+
+function AdultWelcome({ type = 'consumer', name = '', mail = '', demo = false, onDone }) {
   const pro = type === 'professional';
   const [v, setV] = useState({ empstat: '', hw: [], freelancer: '', jobseeker: '', industry: '', sector: '', department: '', jobrole: '', jobTitleOther: '', companyEmail: '', interests: [] });
   const [touched, setTouched] = useState({});
@@ -252,6 +261,114 @@ export default function WelcomeSurvey({ type = 'consumer', name = '', mail = '',
         </>
       )}
 
+      {msg ? <p className="form-error" role="alert">{msg}</p> : null}
+      <div className="tw-nav">
+        <button type="button" className="btn btn-ghost-dark" onClick={() => onDone?.()} disabled={busy}>Skip for now</button>
+        <button type="submit" className="btn btn-primary btn-lg" disabled={busy}>
+          {busy ? <><span className="spinner" /> Saving…</> : <>Save and open my dashboard <Icon name="arrow" size={18} /></>}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ── Teens: the same welcome step, with the Teen Profile Survey's own first questions ──────────────────────────────────
+function TeenWelcome({ name = '', mail = '', onDone }) {
+  const [me, setMe] = useState(null);
+  const [a, setA] = useState({});
+  const [errs, setErrs] = useState({});
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  useEffect(() => {
+    teenApi.me().then((m) => { setMe(m); setA(m.answers || {}); }).catch(() => setMe({ answers: {} }));
+  }, []);
+  const tz = useTimezones(me?.teen?.location?.country);
+  const qs = useMemo(() => (me ? WELCOME_QUESTIONS.filter((q) => !answered(me.answers?.[q.n])) : []), [me]);
+  useEffect(() => { if (me && !qs.length) { markDone(mail); onDone?.(); } }, [me, qs.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // the device's own time zone is the likely answer: start with it filled in
+    if (!a.D10 && qs.some((q) => q.n === 'D10')) { try { setA((x) => ({ ...x, D10: x.D10 || Intl.DateTimeFormat().resolvedOptions().timeZone })); } catch { /* */ } }
+  }, [qs]); // eslint-disable-line react-hooks/exhaustive-deps
+  const set = (k, v) => { setA((x) => ({ ...x, [k]: v })); setErrs((x) => ({ ...x, [k.replace(/__other$/, '')]: '' })); };
+
+  async function save(e) {
+    e.preventDefault();
+    const bad = Object.fromEntries(qs.map((q) => [q.n, checkQuestion(q, a)]).filter(([, x]) => x));
+    if (Object.keys(bad).length) {
+      setErrs(bad);
+      setTimeout(() => document.querySelector('.wsv [aria-invalid="true"]')?.focus(), 30);
+      return;
+    }
+    setBusy(true);
+    setMsg('');
+    const out = {};
+    qs.forEach((q) => { if (answered(a[q.n])) out[q.n] = a[q.n]; if (answered(a[`${q.n}__other`])) out[`${q.n}__other`] = a[`${q.n}__other`]; });
+    try {
+      await teenApi.saveAnswers(out, true);
+      markDone(mail);
+      onDone?.();
+    } catch {
+      setMsg('We couldn’t save your answers. Please try again, or skip for now.');
+      setBusy(false);
+    }
+  }
+  if (!me) return <div className="wsv wsv-teen" aria-busy="true"><p className="sx-sub">One moment…</p></div>;
+  if (!qs.length) return null;
+  return (
+    <form className="wsv wsv-teen" onSubmit={save} noValidate>
+      <p className="tw-k"><Icon name="sparkle" size={15} /> Welcome survey · {qs.length} quick questions</p>
+      <h2 className="sx-h">A few quick questions{name ? `, ${name}` : ''}</h2>
+      <p className="sx-sub">So we can match you with surveys you’ll actually like. Your age, country, region and gender are already saved from your registration.</p>
+      {qs.map((q) => {
+        const v = a[q.n];
+        const list = Array.isArray(v) ? v : v ? [v] : [];
+        const label = <p className="sx-sub ws-q" id={`${q.n}-label`}><b>{q.q}</b>{q.req ? '' : ' (optional)'}{q.multi ? <small> · choose all that apply</small> : null}</p>;
+        const error = errs[q.n] ? <p className="f-err" id={`${q.n}-err`} role="alert">{errs[q.n]}</p> : null;
+        if (q.kind === 'language' || q.kind === 'timezone') {
+          const opts = q.kind === 'language' ? LANGUAGES.map((l) => ({ value: l.code, label: l.native === l.name ? l.name : `${l.native} · ${l.name}` })) : tz;
+          return (
+            <div key={q.n} className={`sx-field ${errs[q.n] ? 'bad' : ''}`}>
+              {label}
+              <div className="sx-control">
+                <select id={`ws-${q.n}`} className={v ? 'has-val' : ''} value={v || ''} onChange={(e) => set(q.n, e.target.value)} aria-labelledby={`${q.n}-label`} aria-invalid={Boolean(errs[q.n])}>
+                  <option value="">Choose…</option>
+                  {opts.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+              {error}
+            </div>
+          );
+        }
+        const hasOther = q.other && list.includes(q.other);
+        return (
+          <div key={q.n} className={`sx-field ${errs[q.n] ? 'bad' : ''}`}>
+            {label}
+            <div className="sx-interests" role="group" aria-labelledby={`${q.n}-label`} aria-invalid={Boolean(errs[q.n])}>
+              {(q.o || []).map(([l, val, emoji]) => {
+                const on = list.includes(val);
+                const pick = () => {
+                  if (!q.multi) return set(q.n, val);
+                  const ex = q.exclusive || [];
+                  if (ex.includes(val)) return set(q.n, on ? [] : [val]);
+                  const base = list.filter((x) => !ex.includes(x));
+                  return set(q.n, on ? base.filter((x) => x !== val) : [...base, val]);
+                };
+                return (
+                  <button type="button" key={val} aria-pressed={on} className={on ? 'on' : ''} onClick={pick}>
+                    {on ? <Icon name="check" size={16} stroke={2.6} /> : <span aria-hidden="true">{emoji}</span>} {l}
+                  </button>
+                );
+              })}
+            </div>
+            {hasOther ? (
+              <Field id={`ws-${q.n}-other`} label="Tell us more" icon="pen">
+                <input id={`ws-${q.n}-other`} placeholder=" " maxLength={120} value={a[`${q.n}__other`] || ''} onChange={(e) => set(`${q.n}__other`, e.target.value)} />
+              </Field>
+            ) : null}
+            {error}
+          </div>
+        );
+      })}
       {msg ? <p className="form-error" role="alert">{msg}</p> : null}
       <div className="tw-nav">
         <button type="button" className="btn btn-ghost-dark" onClick={() => onDone?.()} disabled={busy}>Skip for now</button>

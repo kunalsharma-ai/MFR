@@ -1,4 +1,3 @@
-import TeenLogin from './TeenLogin.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
@@ -102,9 +101,19 @@ function Login() {
   const formRef = useRef(null);
   const tokenRef = useRef(null);
   const { search } = useLocation();
-  const [aud, setAud] = useState('consumer');
-  useEffect(() => { if (new URLSearchParams(search).get('type') === 'professional') setAud('professional'); }, [search]);
+  // Consumers, Professionals and Teens log in here alike; ?type= keeps the choice across a refresh
+  const [aud, setAudState] = useState('consumer');
+  useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional') setAudState('professional'); if (t === 'teen' || t === 'minor') setAudState('minor'); }, [search]);
+  const setAud = (k) => {
+    setAudState(k);
+    try {
+      const u = new URL(window.location.href);
+      if (k === 'consumer') u.searchParams.delete('type'); else u.searchParams.set('type', k === 'minor' ? 'teen' : k);
+      window.history.replaceState(window.history.state, '', `${u.pathname}${u.search}${u.hash}`);
+    } catch { /* not in a browser */ }
+  };
   const pro = aud === 'professional';
+  const teen = aud === 'minor';
 
   const emailOk = EMAIL_RE.test(f.email.trim());
   const pwOk = f.password.length >= 6;
@@ -159,7 +168,7 @@ function Login() {
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
     // First log in: a short welcome survey comes before the dashboard (the questions set-password used to ask).
     const mail = f.email.trim().toLowerCase();
-    const need = await welcomeNeeded({ mail, fallback: pro ? 'professional' : 'consumer', demo: Boolean(res.demo) });
+    const need = await welcomeNeeded({ mail, fallback: pro ? 'professional' : teen ? 'teen' : 'consumer', demo: Boolean(res.demo) });
     if (need) {
       setWelcome({ ...need, mail, demo: Boolean(res.demo), redirect: res.redirect });
       setPhase('welcome');
@@ -186,7 +195,7 @@ function Login() {
   return (
     <>
       <PageSeo page={page} />
-      <section className={`lx ax-page ${pro ? 'aud-pro' : 'aud-con'}`} aria-labelledby="lx-title">
+      <section className={`lx ax-page ${pro ? 'aud-pro' : teen ? 'aud-min' : 'aud-con'}`} aria-labelledby="lx-title">
         <div className="lx-bg" aria-hidden="true">
           <span className="lx-mesh m1" /><span className="lx-mesh m2" /><span className="lx-mesh m3" />
           <span className="ax-alt" />
@@ -198,11 +207,17 @@ function Login() {
           <div className="ax-mswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
           <div className="lx-art">
             <div className="ax-dswitch"><AudienceSwitch value={aud} onChange={setAud} label="Log in as" /></div>
-            <p className="lx-eyebrow"><span className="live-dot" /> {pro ? 'Secure area for professionals' : 'Secure member area'}</p>
-            <h2 className="lx-hero ax-swap" key={aud}>{pro ? <>Your expert surveys are <span>one tap away</span> — welcome back.</> : <>Your rewards are <span>one tap away</span> — welcome back.</>}</h2>
+            <p className="lx-eyebrow"><span className="live-dot" /> {pro ? 'Secure area for professionals' : teen ? 'Teen members · parent approved' : 'Secure member area'}</p>
+            <h2 className="lx-hero ax-swap" key={aud}>{pro ? <>Your expert surveys are <span>one tap away</span> — welcome back.</> : teen ? <>Your surveys and points are <span>one tap away</span> — welcome back.</> : <>Your rewards are <span>one tap away</span> — welcome back.</>}</h2>
             <MemberPass email={f.email} pwLen={Math.min(12, f.password.length)} emailOk={emailOk} pwOk={pwOk} human={f.captchaOk} phase={phase} />
             <ul className="lx-perks ax-swap" key={`p-${aud}`}>
-              {pro ? (
+              {teen ? (
+                <>
+                  <li style={{ '--c': '#2EE6CF' }}><Icon name="rocket" size={20} /><span><b>Surveys for your age</b> about games, apps, school and more</span></li>
+                  <li style={{ '--c': '#FFC233' }}><Icon name="star" size={20} /><span><b>Reward points</b> for every survey you finish</span></li>
+                  <li style={{ '--c': '#FF9BCB' }}><Icon name="shield" size={20} /><span><b>Parent approved</b>, and you can always skip a question or stop</span></li>
+                </>
+              ) : pro ? (
                 <>
                   <li style={{ '--c': '#FFD166' }}><Icon name="briefcase" size={20} /><span><b>Expert B2B surveys</b> matched to your role and industry</span></li>
                   <li style={{ '--c': '#34D399' }}><Icon name="wallet" size={20} /><span><b>Higher rewards</b> for your professional insight, paid out the way you choose</span></li>
@@ -223,7 +238,7 @@ function Login() {
               <span className="lx-badge"><Icon name="lock" size={22} /></span>
               <div>
                 <h1 id="lx-title">{page.h1}</h1>
-                <p>{pro ? 'Log in to see your expert invitations, balance and rewards.' : 'Log in to see invitations, your balance and rewards.'}</p>
+                <p>{pro ? 'Log in to see your expert invitations, balance and rewards.' : teen ? 'Log in with the email you registered with. Your parent or guardian must have said yes first.' : 'Log in to see invitations, your balance and rewards.'}</p>
               </div>
             </div>
 
@@ -270,7 +285,8 @@ function Login() {
             <div className="lx-divider"><span>New to MyFrequentRewards?</span></div>
 
             
-            <Link to={pro ? '/sign-up?type=professional' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
+            <Link to={pro ? '/sign-up?type=professional' : teen ? '/sign-up?type=teen' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name="gift" size={18} /> Create your free account</Link>
+            {teen ? <p className="lx-safe"><Icon name="clock" size={14} /> Still waiting for your parent, or need a new password link? <Link to="/forgot-password?type=teen">Get a new link</Link></p> : null}
             <p className="lx-safe"><Icon name="shield" size={14} /> We will never ask for your password by email, SMS or WhatsApp.</p>
           </div>
         </div>
@@ -279,9 +295,4 @@ function Login() {
   );
 }
 
-// Teens (?type=teen) get their own page; Consumers and Professionals keep this original page unchanged.
-const TEEN_TYPES = new Set(['teen', 'minor']);
-export default function LoginRoute() {
-  const { search } = useLocation();
-  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenLogin /> : <Login />;
-}
+export default Login;

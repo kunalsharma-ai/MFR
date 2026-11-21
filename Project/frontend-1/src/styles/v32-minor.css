@@ -697,3 +697,33 @@ html[data-mode="dark"] .lx-teen p { color: #e6dcff; }
 .sw-teen .sw-chips button.on { background: var(--tone); color: #fff; }
 @media (max-width: 560px) { .sv-switch:has(button:nth-of-type(3)) button { padding: 10px 4px; font-size: .78rem; gap: 4px; } .sv-switch:has(button:nth-of-type(3)) button b { display: none; } }
 html .sw-teen .sw-chips button:not(.on) { color: #EDE4FF !important; border-color: color-mix(in srgb, var(--tone) 55%, transparent) !important; }
+
+/* Teen form on the shared Sign up card (TeenSignup.jsx) */
+.sx-types.sx-types-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sx.aud-min .sx-type.on .sx-tick, .sx.aud-min .sx-type.on .sx-type-ico { background: linear-gradient(140deg, #7C3AED, #FF3B8D); color: #fff; }
+.sx-genders.sx-genders-5 { flex-wrap: wrap; }
+.sx-nozip { align-self: center; margin: 0; }
+.sx-teen-info { margin: 4px 0 14px; border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; background: var(--paper-2); }
+.sx-teen-info > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 12px 0; font-weight: 700; }
+.sx-teen-info > summary::-webkit-details-marker { display: none; }
+.sx-teen-info > summary::after { content: '+'; margin-left: auto; font-size: 1.2rem; color: #7C3AED; }
+.sx-teen-info[open] > summary::after { content: '–'; }
+.sx-teen-info ul { margin: 0 0 10px; padding-left: 20px; display: grid; gap: 6px; font-size: .9rem; }
+.sx-teen-sent .sx-teen-track { max-width: 380px; }
+.sx-teen-track li { font-weight: 600; color: var(--ink-2, #5b6378); }
+.sx-teen-track li.done { color: #15803D; }
+.sx-teen-track li.now { background: color-mix(in srgb, #7C3AED 12%, var(--paper-2)); color: #5B21B6; box-shadow: inset 0 0 0 1.5px #7C3AED; }
+.sx-receipt { max-width: 380px; margin: 14px auto; display: grid; gap: 6px; text-align: left; }
+.sx-receipt > div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 10px; border: 1px dashed var(--line); font-size: .88rem; }
+.sx-receipt dt { color: var(--ink-2, #5b6378); margin: 0; }
+.sx-receipt dd { margin: 0; font-weight: 700; text-align: right; word-break: break-all; }
+.sx-teen-sent .sx-note { max-width: 380px; margin: 12px auto; }
+.done-check.is-stop { background: #D97706; }
+html[data-mode="dark"] .sx-teen-track li.now { color: #DDD6FE; }
+html[data-mode="dark"] .sx-teen-track li.done { color: #86EFAC; }
+@media (max-width: 560px) { .sx-types.sx-types-3 { grid-template-columns: minmax(0, 1fr); } }
+/* Teen welcome questions on the shared Log in page (WelcomeSurvey.jsx → TeenWelcome) */
+.wsv-teen > .sx-field { display: block; margin: 0 0 18px; }
+.wsv-teen .ws-q { margin: 0 0 8px; color: inherit; }
+.wsv-teen .sx-control select { padding-top: 12px; padding-bottom: 12px; min-height: 48px; }
+.wsv-teen .sx-interests { margin: 0; }

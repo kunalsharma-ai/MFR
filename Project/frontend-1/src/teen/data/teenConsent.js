@@ -47,7 +47,7 @@ export const TEEN_CONSENT = {
       icon: 'doc',
       title: 'Terms',
       text: 'I have read and accept the Terms and Conditions.',
-      links: [['/terms', 'Terms and Conditions'], ['/teen/terms', 'Teen research terms (MINOR-2026.10)']],
+      links: [['/terms', 'Terms and Conditions'], ['/teen-terms', 'Teen research terms (MINOR-2026.10)']],
       source: 'Teen sign-up (site)',
     },
     {
@@ -56,7 +56,7 @@ export const TEEN_CONSENT = {
       icon: 'lock',
       title: 'Privacy',
       text: 'I have read and accept the Privacy Policy.',
-      links: [['/privacy', 'Privacy Policy'], ['/teen/terms#ch-data', 'Teen privacy information']],
+      links: [['/privacy', 'Privacy Policy'], ['/teen-terms#information-we-may-collect', 'Teen privacy information']],
       source: 'Teen sign-up (site)',
     },
   ],

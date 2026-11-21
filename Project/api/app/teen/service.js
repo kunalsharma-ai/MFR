@@ -99,8 +99,8 @@ export async function register(req) {
     if (!/^[A-Za-z0-9_-]{16,80}$/.test(key)) fail("bad_request");
 
     // the same submit arriving twice (double click, retry after a timeout) returns the first result
-    const again = await TeenRegistration.findOne({ idempotencyKey: key, origin });
-    if (again) return summary(again, null, { repeat: true });
+    const again = await settled(key, origin);
+    if (again) return summary(again, await TeenGuardian.findById(again.guardian).lean(), { repeat: true });
 
     const teen = b.teen || {};
     const guardian = b.guardian || {};
@@ -172,8 +172,8 @@ export async function register(req) {
         if (e && e.code === 11000) {
             // the same submit, arriving twice at the same moment: wait for the first one and return its result
             for (let i = 0; i < 20; i += 1) {
-                const first = await TeenRegistration.findOne({ idempotencyKey: key, origin });
-                if (first) return summary(first, null, { repeat: true });
+                const first = await settled(key, origin);
+                if (first) return summary(first, await TeenGuardian.findById(first.guardian).lean(), { repeat: true });
                 await new Promise((r) => setTimeout(r, 150));
             }
             fail("email_taken", { status: 409, fields: { email: "email_taken" } });
@@ -209,8 +209,8 @@ export async function register(req) {
     } catch (e) {
         await Promise.all([User.deleteOne({ _id: user._id }), TeenGuardian.deleteOne({ _id: g._id })]);
         if (e && e.code === 11000) {
-            const first = await TeenRegistration.findOne({ idempotencyKey: key, origin });
-            if (first) return summary(first, null, { repeat: true });
+            const first = await settled(key, origin);
+            if (first) return summary(first, await TeenGuardian.findById(first.guardian).lean(), { repeat: true });
         }
         throw e;
     }
@@ -243,11 +243,22 @@ export async function register(req) {
     await M.send(reg, "teen-registered", "teen", mail, {
         teen: { firstName: user.name.first },
         guardian: { relation: guardian.relation, relationLabel: relationLabel(guardian.relation), emailMasked: R.maskEmail(gMail) },
-        links: { status: M.linkTo(origin, "/teen/status", status.token), help: M.linkTo(origin, "/contact-us") },
+        links: { status: M.linkTo(origin, "/sign-up?type=teen", status.token), help: M.linkTo(origin, "/contact-us") },
         expires: invite.expiresAt.toISOString(),
     }, origin);
     await reg.save();
     return summary(reg, g, { statusToken: status.token });
+}
+
+// A repeat of a submit that is still being processed: wait (up to ~3 s) until the first one has sent the invite,
+// so both answers show the same status.
+async function settled(key, origin) {
+    let reg = await TeenRegistration.findOne({ idempotencyKey: key, origin });
+    for (let i = 0; reg && reg.status === STATUS.INITIAL && i < 20; i += 1) {
+        await new Promise((r) => setTimeout(r, 150));
+        reg = await TeenRegistration.findOne({ idempotencyKey: key, origin });
+    }
+    return reg;
 }
 
 function inviteData(reg, user, g, invite, origin, extra = {}) {
@@ -510,7 +521,7 @@ export async function guardianConsent(req) {
     await M.send(reg, "teen-password", "teen", teen.mail, {
         teen: { firstName: teen.name.first, email: teen.mail },
         guardian: { relationLabel: relationLabel(guardian.relation) },
-        links: { password: M.linkTo(req.origin, "/teen/set-password", pw.token) },
+        links: { password: M.linkTo(req.origin, "/set-password?type=teen", pw.token) },
         expires: pw.expiresAt.toISOString(),
     }, req.origin);
     await reg.save();
@@ -594,7 +605,7 @@ export async function renew(req) {
         const pw = await T.issue(reg._id, "password", origin);
         await M.send(reg, "link-renewed", "teen", u.mail, {
             who: "teen", teen: { firstName: u.name.first },
-            links: { action: M.linkTo(origin, "/teen/set-password", pw.token) }, expires: pw.expiresAt.toISOString(),
+            links: { action: M.linkTo(origin, "/set-password?type=teen", pw.token) }, expires: pw.expiresAt.toISOString(),
         }, origin);
         await reg.save();
     }
@@ -679,7 +690,7 @@ export async function sweep({ now = new Date(), dryRun = false } = {}) {
         if (!M.sentBefore(reg, "link-expired", "teen")) {
             await M.send(reg, "link-expired", "teen", teen.mail, {
                 who: "teen", teen: { firstName: teen.name.first }, guardian: { relationLabel: relationLabel(guardian.relation) },
-                links: { action: M.linkTo(reg.origin, "/teen/renew") },
+                links: { action: M.linkTo(reg.origin, "/forgot-password?type=teen") },
             }, reg.origin);
         }
         await reg.save();
@@ -705,7 +716,7 @@ export async function sweep({ now = new Date(), dryRun = false } = {}) {
         if (reg.status === STATUS.PENDING_APPROVAL) {
             await M.send(reg, "teen-reminder", "teen", teen.mail, {
                 teen: { firstName: teen.name.first }, guardian: { relationLabel: relationLabel(guardian.relation), emailMasked: R.maskEmail(guardian.email) },
-                links: { status: M.linkTo(reg.origin, "/teen/renew") },
+                links: { status: M.linkTo(reg.origin, "/forgot-password?type=teen") },
             }, reg.origin);
             report.teenReminders += 1;
         }

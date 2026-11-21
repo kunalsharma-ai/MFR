@@ -134,7 +134,7 @@ function Landing({ view, titleRef, onYes, onNo }) {
           <section className="tz-gd-box">
             <h2 className="tz-h4"><Emo name="key" size={24} /> {t('gd_after_h')}</h2>
             <p>{t('gd_after_p', name)}</p>
-            <p className="tz-links"><Link to="/teen/terms" target="_blank" rel="noopener">{t('link_teen_terms')}</Link><Link to="/privacy" target="_blank" rel="noopener">{t('link_privacy')}</Link></p>
+            <p className="tz-links"><Link to="/teen-terms" target="_blank" rel="noopener">{t('link_teen_terms')}</Link><Link to="/privacy" target="_blank" rel="noopener">{t('link_privacy')}</Link></p>
           </section>
         </div>
         <h2 className="tz-h3 tz-serif tz-q">{t('gd_q', name)}</h2>

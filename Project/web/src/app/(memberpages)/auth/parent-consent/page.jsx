@@ -26,10 +26,10 @@ export default function ParentConsentMoved() {
             teen gave us.
           </Typography>
           <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-            <Button variant="contained" href={`${SITE}/teen/renew`} sx={{ borderRadius: 99, textTransform: "none", fontWeight: 700 }}>
+            <Button variant="contained" href={`${SITE}/forgot-password?type=teen`} sx={{ borderRadius: 99, textTransform: "none", fontWeight: 700 }}>
               Send me a new link
             </Button>
-            <Button variant="outlined" href={`${SITE}/teen/terms`} sx={{ borderRadius: 99, textTransform: "none", fontWeight: 700 }}>
+            <Button variant="outlined" href={`${SITE}/teen-terms`} sx={{ borderRadius: 99, textTransform: "none", fontWeight: 700 }}>
               Read the Teen research terms
             </Button>
           </Box>

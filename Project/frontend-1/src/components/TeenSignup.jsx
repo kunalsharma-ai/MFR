@@ -1,294 +1,521 @@
+// Teen (13–17) sign-up, inside the same Sign up page, card and look as Consumer and Professional (SignUp.jsx).
+// Steps: 1 About you → 2 Stay in touch (email, phone, where you live) → 3 Your parent → 4 Agree → "invite sent".
+// After that the parent says yes or no from their email (/teen/parent), the teen creates a password on the same
+// Set password page as everyone (/set-password?type=teen), logs in on the same Log in page, and answers the same
+// welcome survey. Everything typed stays in this tab (sessionStorage) until the invite is sent; an under-13 birthday
+// is never stored. The server re-checks every rule (api/app/teen/rules.js).
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import Captcha from './TeenCaptcha.jsx';
+import Captcha from './Captcha.jsx';
 import CountryPicker from './CountryPicker.jsx';
-import DobPicker from './TeenDobPicker.jsx';
+import DobPicker from './DobPicker.jsx';
 import Field from './SxField.jsx';
 import SxRail, { railPct } from './SxRail.jsx';
 import { COUNTRIES } from '../data/countries.js';
-import { MEMBER_CATEGORIES } from '../data/site.js';
-import { GENDERS } from '../utils/teenValidate.js';
-import { checkEmailDomain } from '../utils/emailChecks.js';
-import {
-  CONSENT_BOXES, GUARDIANS, buildTeenPayload, maskEmail, resendGuardianInvite, submitTeenRegistration, validateConsent, validateGuardian,
-} from '../utils/teenRegister.js';
+import { err, fmtDate } from '../teen/i18n.js';
+import * as R from '../teen/rules.js';
+import { teenApi, relationLabel } from '../teen/api.js';
+import { country as loadCountry, zipHint } from '../teen/geo.js';
+import { TEEN_CONSENT } from '../teen/data/teenConsent.js';
+import { ASSENT } from '../teen/data/consent.js';
+import { useDraft, newKey } from '../teen/ui.jsx';
+import { useLinkToken } from '../teen/link.js';
 
-// The teen panel's own registration. Step 1 ("About you": first / middle / last name, email, DOB limited to teen ages,
-// gender) lives on /sign-up; this component takes over after it:
-//   2 · Parent / guardian → Mother, Father or Legal guardian: first*, middle, last, email*, phone*, DOB* (+ gender* for a legal guardian)
-//   3 · Consent           → five boxes ticked by hand (parent consent, participation, Terms, Privacy, accuracy) + CAPTCHA
-//   4 · Parent invite     → a pending registration is created and the Parent/Guardian Onboarding Form is emailed.
-//       After the parent signs, the teen gets a secure link to set their own password (no password is ever emailed),
-//       logs in, answers the short welcome survey (WelcomeSurvey, shown once after the first log in) and lands on the dashboard.
 export const TEEN_STEPS = [
-  { n: 1, t: 'About you', icon: 'user' },
-  { n: 2, t: 'Parent / guardian', icon: 'family' },
-  { n: 3, t: 'Consent', icon: 'shield' },
-  { n: 4, t: 'Parent invite', icon: 'send' },
+  { n: 1, t: 'About you', icon: 'user', art: 'Tell us who you are' },
+  { n: 2, t: 'Stay in touch', icon: 'mail', art: 'Where you live and how we reach you' },
+  { n: 3, t: 'Your parent', icon: 'family', art: 'Who will say yes for you?' },
+  { n: 4, t: 'Agree', icon: 'shield', art: 'Tick what you agree to' },
 ];
-const FIELDS = {
-  2: ['relation', 'first', 'middle', 'last', 'dob', 'email', 'phone', 'gender'],
-  3: [...CONSENT_BOXES.map((b) => b.k), 'captcha'],
+const DRAFT = 'mfr.teen.reg.v3';
+const EMPTY = {
+  step: 1,
+  teen: { firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: { country: '', number: '' }, gender: '', genderSelf: '', location: { country: '', countryName: '', stateCode: '', state: '', stateManual: false, city: '', zip: '', noZip: false } },
+  guardian: { relation: '', firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: { country: '', number: '' }, gender: '' },
+  accepted: {},
+  key: '',
+  result: null,
 };
-const RESEND_WAIT = 30;
-const E = (n) => `/images/minor/emoji/${n}.webp`;
+const RELATIONS = [
+  ['mother', 'Mother', 'My mum gives permission', 'heart'],
+  ['father', 'Father', 'My dad gives permission', 'user'],
+  ['legal_guardian', 'Legal guardian', 'Another adult legally responsible for me', 'shield'],
+];
+const GENDER_LABEL = { Female: 'Female', Male: 'Male', 'Non-binary': 'Non-binary', 'Self-describe': 'Self-describe', 'Prefer not to say': 'Prefer not to say' };
+// which fields each step checks
+const STEP_KEYS = {
+  1: ['firstName', 'middleName', 'lastName', 'dob', 'gender', 'genderSelf'],
+  2: ['email', 'phone', 'country', 'state', 'city', 'zip'],
+  3: ['relation', 'g.firstName', 'g.middleName', 'g.lastName', 'g.dob', 'g.email', 'g.phone', 'g.gender'],
+  4: ['consent', 'captcha'],
+};
+const STAGES = [
+  ['pending_guardian_approval', 'mail', (rel) => `Your ${rel} chooses YES or NO`],
+  ['guardian_approved', 'check', () => 'They fill in a short form'],
+  ['pending_consent', 'shield', () => 'They give their consent'],
+  ['pending_password', 'key', () => 'You create your password'],
+  ['active', 'rocket', () => 'Your account is active'],
+];
+const ORDER = { initial_registration: 0, pending_guardian_approval: 0, guardian_approved: 1, pending_onboarding: 1, manual_review: 2, pending_consent: 2, pending_password: 3, active: 4 };
+const ENDED = { rejected: 'Your parent or guardian said no, so this registration is closed and no account was created.', cancelled: 'This registration was cancelled. No account was created.', expired: 'The link ran out before your parent or guardian answered. You can register again at any time.' };
 
-function GenderPick({ id, value, onChange, error, label }) {
-  return (
-    <div className={`sx-field half ${error ? 'bad' : ''}`}>
-      <span className="sx-static-label" id={`${id}-lbl`}>{label}</span>
-      <div className="sx-genders" role="radiogroup" aria-labelledby={`${id}-lbl`} aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-err` : undefined}>
-        {GENDERS.map((x) => (
-          <label key={x} className={`sx-gender ${value === x ? 'on' : ''}`}>
-            <input type="radio" name={id} value={x} checked={value === x} onChange={() => onChange(x)} />
-            {x}
-          </label>
-        ))}
-      </div>
-      {error ? <p className="f-err" id={`${id}-err`} role="alert">{error}</p> : null}
-    </div>
-  );
+function useCountryData(iso) {
+  const [c, setC] = useState(null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!iso) { setC(null); return undefined; }
+    let live = true;
+    setLoading(true);
+    loadCountry(iso).then((x) => { if (live) setC(x); }).catch(() => { if (live) setC({ i: iso, z: '', s: [] }); }).finally(() => { if (live) setLoading(false); });
+    return () => { live = false; };
+  }, [iso]);
+  return [c, loading];
 }
+// rules.validateTeen expects the dataBank shape: { IN: { states: { DL: { name } }, zipFormat } }
+const worldFor = (iso, data) => (iso && data ? { [iso]: { zipFormat: data.z || '', states: Object.fromEntries((data.s || []).map((s) => [s.c, { name: s.n }])) } } : {});
+const dialOf = (iso) => (COUNTRIES.find((c) => c.iso === iso)?.dial || '').replace(/\D/g, '');
 
-export default function TeenSignup({ seed, referredBy = '', onBack, onProgress }) {
-  const [step, setStep] = useState(2);
-  const [dir, setDir] = useState(1);
-  const [g, setG] = useState({ relation: '', first: '', middle: '', last: '', dob: '', email: '', gender: '', phoneIso: seed.phoneIso || seed.country || '', phone: '' });
-  const [c, setC] = useState({ captchaOk: false });
+// ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+export default function TeenSignup({ seed, onSwitch, onView }) {
+  const [d, setD, clearDraft] = useDraft(DRAFT, EMPTY);
+  const statusToken = useLinkToken('status'); // ?t= from the "track my registration" email
+  const [status, setStatus] = useState(null); // live status from the server
   const [touched, setTouched] = useState({});
-  const [domainMsg, setDomainMsg] = useState(null);
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
-  const [serverMsg, setServerMsg] = useState('');
-  const [cooldown, setCooldown] = useState(0);
-  const [resendMsg, setResendMsg] = useState('');
-  const [resendBusy, setResendBusy] = useState(false);
-  const cardRef = useRef(null);
+  const [tried, setTried] = useState({});
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [captchaOk, setCaptchaOk] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+  const sent = useRef(false);
   const captchaRef = useRef(null);
-  const first = seed.firstName.trim();
-  const teenMail = seed.email.trim().toLowerCase();
+  const cardRef = useRef(null);
+  const tn = d.teen;
+  const g = d.guardian;
+  const loc = tn.location;
+  const [cdata, cLoading] = useCountryData(loc.country);
+
+  // what was typed on the Consumer / Professional form before switching to Teen comes along
+  useEffect(() => {
+    if (!seed) return;
+    setD((s) => ({
+      ...s,
+      teen: {
+        ...s.teen,
+        firstName: s.teen.firstName || seed.firstName || '',
+        lastName: s.teen.lastName || seed.lastName || '',
+        email: s.teen.email || seed.email || '',
+        dob: s.teen.dob || (R.classifyDob(seed.dob) === 'teen' ? seed.dob : ''),
+        gender: s.teen.gender || (['Female', 'Male'].includes(seed.gender) ? seed.gender : ''),
+        location: s.teen.location.country ? s.teen.location : { ...s.teen.location, country: seed.country || '', countryName: COUNTRIES.find((c) => c.iso === seed.country)?.name || '' },
+        phone: s.teen.phone.country ? s.teen.phone : { country: seed.phoneIso || seed.country || '', number: s.teen.phone.number },
+      },
+    }));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // opened from the status link: show where the registration is
+  useEffect(() => {
+    if (!statusToken) return;
+    teenApi.status(statusToken).then((v) => { setStatus(v); setD((s) => ({ ...s, step: 5, result: s.result || { reference: v.reference, firstName: v.teenFirstName, guardianEmail: v.guardian?.emailMasked, relation: v.guardian?.relation, expiresAt: v.expiresAt, statusToken } })); }).catch(() => {});
+  }, [statusToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const errors = useMemo(() => {
-    if (step === 3) return validateConsent(c);
-    const e = validateGuardian(g, teenMail);
-    const val = g.email.trim().toLowerCase();
-    if (!e.email && domainMsg?.msg && domainMsg.value === val) e.email = domainMsg.msg;
+    const e = R.validateTeen(tn, { world: worldFor(loc.country, cdata) });
+    if (loc.country && !cdata) delete e.country; // still loading the country file
+    Object.entries(R.validateGuardian(g, tn)).forEach(([k, v]) => { e[`g.${k}`] = v; });
+    if (TEEN_CONSENT.items.some((i) => i.required && d.accepted[i.id] !== true)) e.consent = 'consent_required';
+    if (!captchaOk) e.captcha = 'captcha';
     return e;
-  }, [step, g, c, teenMail, domainMsg]);
-  const err = (k) => (touched[`${step}.${k}`] ? errors[k] : undefined);
-  const ok = (k) => touched[`${step}.${k}`] && !errors[k];
-  const touch = (k) => setTouched((s) => ({ ...s, [`${step}.${k}`]: true }));
-  const shownStep = status === 'sent' ? 4 : step;
-  const pct = status === 'sent' ? 100 : railPct(step, TEEN_STEPS.length, FIELDS[step].length, Object.keys(errors).length);
+  }, [tn, g, loc.country, cdata, d.accepted, captchaOk]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { onProgress?.(shownStep, pct); }, [shownStep, pct]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (cooldown <= 0) return undefined;
-    const id = setTimeout(() => setCooldown((n) => n - 1), 1000);
-    return () => clearTimeout(id);
-  }, [cooldown]);
+  const step = d.step;
+  const stepErrors = (n) => (STEP_KEYS[n] || []).filter((k) => errors[k]);
+  const pct = step > 4 ? 100 : railPct(step, TEEN_STEPS.length, STEP_KEYS[step].length, stepErrors(step).length);
+  useEffect(() => { onView?.({ step: Math.min(step, 4), pct, sent: step > 4, firstName: d.result?.firstName || tn.firstName, lastName: step > 4 ? '' : tn.lastName, country: loc.country }); }, [step, pct, tn.firstName, tn.lastName, loc.country]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function checkDomain(raw) {
-    const val = String(raw || '').trim().toLowerCase();
-    if (!val.includes('@')) return '';
-    if (domainMsg?.value === val) return domainMsg.msg;
-    const msg = await checkEmailDomain(val).catch(() => '');
-    setDomainMsg({ value: val, msg });
-    return msg;
-  }
+  const show = (k) => ((tried[step] || touched[k]) && errors[k] ? errorText(k, errors[k]) : '');
+  const touch = (k) => setTouched((x) => ({ ...x, [k]: true }));
+  const setT = (k, v) => setD((s) => ({ ...s, teen: { ...s.teen, [k]: v } }));
+  const setLoc = (patch) => setD((s) => ({ ...s, teen: { ...s.teen, location: { ...s.teen.location, ...patch } } }));
+  const setG = (k, v) => setD((s) => ({ ...s, guardian: { ...s.guardian, [k]: v } }));
+  const go = (n) => { setD((s) => ({ ...s, step: n })); setMsg(''); cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const focusFirstBad = () => setTimeout(() => cardRef.current?.querySelector('[aria-invalid="true"]')?.focus(), 40);
 
-  const scrollTop = () => cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  const focusBad = () => setTimeout(() => cardRef.current?.querySelector('[aria-invalid="true"]')?.focus(), 40);
-  function go(n) { setDir(n > step ? 1 : -1); setStep(n); scrollTop(); }
-  function showAll() {
-    setTouched((s) => ({ ...s, ...Object.fromEntries(FIELDS[step].map((k) => [`${step}.${k}`, true])) }));
-    focusBad();
-  }
+  const age = R.ageOn(tn.dob);
+  const route = tn.dob ? R.classifyDob(tn.dob) : '';
+  const next = () => {
+    setTried((x) => ({ ...x, [step]: true }));
+    if (step === 1 && route === 'blocked') { clearDraft(); setD(EMPTY); setBlocked(true); return; }
+    if (stepErrors(step).length) { focusFirstBad(); return; }
+    go(step + 1);
+  };
 
-  async function submit(e) {
-    e.preventDefault();
-    if (Object.keys(errors).length) return showAll();
-    if (step === 2) {
-      if (await checkDomain(g.email)) return showAll();
-      return go(3);
-    }
-    if (status === 'sending') return;
-    // the CAPTCHA is checked only now, when the button is pressed (never while typing)
-    if (!captchaRef.current?.verify?.()) { setC((s) => ({ ...s, captchaOk: false })); focusBad(); return; }
-    setStatus('sending');
-    setServerMsg('');
-    const dial = (COUNTRIES.find((x) => x.iso === g.phoneIso) || {}).dial || '';
+  const submit = async () => {
+    setTried((x) => ({ ...x, 4: true }));
+    setMsg('');
+    if (stepErrors(4).length) { focusFirstBad(); return; }
+    if (sent.current) return; // one request at a time: a double click can never send two
+    sent.current = true;
+    setBusy(true);
+    const key = d.key || newKey();
+    if (!d.key) setD((s) => ({ ...s, key }));
+    const { phone, ...teen } = tn;
+    const ph = (p) => (p?.number ? { country: p.country, number: p.number } : undefined);
     try {
-      await submitTeenRegistration(buildTeenPayload(seed, g, c, {
-        categories: MEMBER_CATEGORIES, dial, referredBy,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      }));
-      setStatus('sent');
-      setCooldown(RESEND_WAIT);
-      scrollTop();
-    } catch (ex) {
-      setServerMsg(ex.message || 'We couldn’t send the invitation. Please try again.');
-      setStatus('error');
-      captchaRef.current?.refresh();
-      setC((s) => ({ ...s, captchaOk: false }));
+      const res = await teenApi.register({
+        idempotencyKey: key,
+        teen: { ...teen, email: R.normEmail(teen.email), ...(ph(phone) ? { phone: ph(phone) } : {}), language: document.documentElement.lang || 'en' },
+        guardian: { ...g, email: R.normEmail(g.email), phone: ph(g.phone) },
+        consent: { version: TEEN_CONSENT.version, accepted: Object.fromEntries(TEEN_CONSENT.items.map((i) => [i.id, d.accepted[i.id] === true])) },
+      });
+      // the invite is out: forget everything typed, keep only the receipt for this tab
+      const result = { ...res, firstName: tn.firstName, email: R.normEmail(tn.email), relation: g.relation, guardianEmail: res.guardianEmail || R.maskEmail(g.email) };
+      setD({ ...EMPTY, step: 5, result });
+      try { if (res.statusToken) sessionStorage.setItem('mfr.teen.status', res.statusToken); } catch { /* */ }
+    } catch (e) {
+      sent.current = false;
+      setBusy(false);
+      captchaRef.current?.refresh?.();
+      const f = e.fields || {};
+      if (e.code === 'under_13') { clearDraft(); setD(EMPTY); setBlocked(true); return; }
+      if (e.code === 'adult') { setTried((x) => ({ ...x, 1: true })); go(1); return; }
+      if (['email_taken', 'pending_exists'].includes(e.code) || ['email_taken', 'pending_exists'].includes(f.email)) {
+        setD((s) => ({ ...s, key: '', emailErr: { value: R.normEmail(s.teen.email), code: f.email || e.code } }));
+        go(2);
+        return;
+      }
+      if (e.code === 'validation') {
+        const keys = Object.keys(f);
+        setD((s) => ({ ...s, key: '' }));
+        if (keys.some((k) => k.startsWith('guardian.'))) { setTried((x) => ({ ...x, 3: true })); go(3); return; }
+        if (keys.length) { setTried((x) => ({ ...x, 1: true, 2: true })); go(keys.some((k) => ['firstName', 'lastName', 'dob', 'gender'].includes(k)) ? 1 : 2); return; }
+      }
+      setMsg(err(e.code) || err('server')); // a network error keeps the same key, so trying again can never create two
     }
-  }
+  };
 
-  async function resend() {
-    if (resendBusy || cooldown > 0) return;
-    setResendBusy(true);
-    setResendMsg('');
-    try {
-      await resendGuardianInvite(g.email.trim().toLowerCase());
-      setResendMsg('Sent again. Ask them to check spam or promotions too.');
-      setCooldown(RESEND_WAIT);
-    } catch (ex) {
-      setResendMsg(ex.message || 'Could not resend the email. Please try again.');
-    } finally {
-      setResendBusy(false);
-    }
-  }
-
-  const rel = GUARDIANS.find((x) => x.k === g.relation);
-  const legal = g.relation === 'legal_guardian';
-  const who = rel ? (legal ? 'your guardian' : `your ${rel.t.toLowerCase()}`) : 'your parent';
-  const whoT = rel ? (legal ? 'Guardian' : rel.t) : 'Parent';
-  const setGF = (k) => (e) => setG((s) => ({ ...s, [k]: e.target.value }));
-  const gAria = (k) => ({ 'aria-invalid': Boolean(err(k)), 'aria-describedby': err(k) ? `g-${k}-err` : undefined, onBlur: () => touch(k) });
-
-  if (status === 'sent') {
+  if (blocked) {
     return (
-      <div className="sx-done ts-done" role="status" ref={cardRef}>
-        <SxRail steps={TEEN_STEPS} step={4} pct={100} />
-        <div className="ts-flight" aria-hidden="true">
-          <img className="ts-env" src="/images/minor/emoji/mail.webp" alt="" width="84" height="84" />
-          <span className="ts-trail" />
-          <img className="ts-home" src="/images/minor/emoji/family.webp" alt="" width="72" height="72" />
-          <img className="ts-spark s1" src="/images/minor/emoji/sparkles.webp" alt="" width="28" height="28" />
-          <img className="ts-spark s2" src="/images/minor/emoji/star.webp" alt="" width="24" height="24" />
-        </div>
-        <h2>Registration request submitted!</h2>
-        <p>
-          Your registration request has been submitted successfully. We have sent a Parent/Guardian Onboarding Form to{' '}
-          <strong>{maskEmail(g.email.trim().toLowerCase())}</strong>. Please ask {who} to check their inbox and complete the onboarding process to continue.
-        </p>
-        <ol className="ts-next">
-          <li><img src={E('mail')} alt="" width="28" height="28" /><span><b>{whoT} opens the secure link</b><small>Subject: “{first} wants to join the MyFrequentRewards Teen Panel”</small></span></li>
-          <li><img src={E('parenting')} alt="" width="28" height="28" /><span><b>They complete the onboarding form</b><small>16 short questions about them, the household, staying in touch and your health</small></span></li>
-          <li><img src={E('handshake')} alt="" width="28" height="28" /><span><b>They sign the Parent Consent Form</b><small>Your account stays pending until their consent is verified</small></span></li>
-          <li><img src={E('rocket')} alt="" width="28" height="28" /><span><b>You set your own password</b><small>We email a secure set-password link to {maskEmail(teenMail)}. We never send a password by email.</small></span></li>
-          <li><img src={E('sparkles')} alt="" width="28" height="28" /><span><b>Log in and open your dashboard</b><small>A short welcome questionnaire about your interests comes first, so age-appropriate surveys can find you.</small></span></li>
-        </ol>
-        <p className="ts-tip"><Icon name="bell" size={16} /> Tell {who} to look out for it now. Nothing starts until they say yes.</p>
+      <div className="sx-done" role="status" ref={cardRef}>
+        <div className="done-check is-stop"><Icon name="clock" size={40} stroke={2.2} /></div>
+        <h2>Not quite yet!</h2>
+        <p>Teen membership starts when you turn 13. We can’t create an account or keep any details before then, so come back on your 13th birthday!</p>
+        <p className="tiny muted"><Icon name="lock" size={13} /> Nothing you typed has been saved.</p>
         <div className="done-actions">
-          <button type="button" className="btn btn-dark" onClick={resend} disabled={resendBusy || cooldown > 0}>
-            {resendBusy ? 'Sending…' : cooldown > 0 ? `Resend in ${cooldown}s` : `Resend to ${rel ? rel.t.toLowerCase() : 'parent'}`}
-          </button>
-          <button type="button" className="btn btn-ghost-dark" onClick={() => { setStatus('idle'); setStep(2); }}>
-            Fix their email
-          </button>
+          <Link to="/" className="btn btn-primary"><Icon name="home" size={18} /> Back to the home page</Link>
+          <button type="button" className="btn btn-ghost-dark" onClick={() => setBlocked(false)}>I typed my birthday wrong</button>
         </div>
-        <p className="tiny muted" role="status" aria-live="polite">{resendMsg}</p>
-        <p className="tiny muted">Questions? <Link to="/paid-surveys-for-teens">How the Teen Panel works</Link> · <Link to="/contact-us">Contact us</Link></p>
       </div>
     );
   }
+  if (step > 4) return <Sent r={d.result || {}} status={status} onRestart={() => { clearDraft(); setD(EMPTY); setStatus(null); }} cardRef={cardRef} />;
+
+  const relLabel = relationLabel(g.relation || '').toLowerCase() || 'parent';
+  const sOpts = cdata?.s || [];
+  const hasStates = sOpts.length > 0;
+  const cities = (sOpts.find((s) => s.c === loc.stateCode)?.ci) || [];
+  const zipFormat = cdata?.z || '';
+  const emailSrvErr = d.emailErr && R.normEmail(tn.email) === d.emailErr.value ? err(d.emailErr.code) : '';
 
   return (
-    <form onSubmit={submit} noValidate ref={cardRef}>
-      <SxRail steps={TEEN_STEPS} step={step} pct={pct} onGo={(n) => (n === 1 ? onBack() : go(n))} />
-      <div className={`sx-pane d${dir}`} key={step}>
+    <form onSubmit={(e) => { e.preventDefault(); if (step < 4) next(); else submit(); }} noValidate ref={cardRef}>
+      <SxRail steps={TEEN_STEPS} step={step} pct={pct} onGo={(n) => go(n)} />
+      <div className="sx-pane d1" key={step}>
+        {step === 1 ? (
+          <>
+            <h2 className="sx-h">Hi there! Who’s joining?</h2>
+            <TypeCards value="teen" onSwitch={onSwitch} />
+            <div className="sx-grid">
+              <Text id="t-firstName" label="First name" icon="user" half value={tn.firstName} onChange={(v) => setT('firstName', v)} onBlur={() => touch('firstName')} error={show('firstName')} ok={touched.firstName && !errors.firstName} autoComplete="given-name" />
+              <Text id="t-middleName" label="Middle name (optional)" icon="user" half value={tn.middleName} onChange={(v) => setT('middleName', v)} onBlur={() => touch('middleName')} error={show('middleName')} autoComplete="additional-name" />
+              <Text id="t-lastName" label="Last name" icon="user" half value={tn.lastName} onChange={(v) => setT('lastName', v)} onBlur={() => touch('lastName')} error={show('lastName')} ok={touched.lastName && !errors.lastName} autoComplete="family-name" />
+              <div className={`sx-field half sx-dob ${show('dob') ? 'bad' : ''} ${touched.dob && !errors.dob ? 'good' : ''}`}>
+                <label className="sx-static-label" htmlFor="t-dob">Date of birth</label>
+                <DobPicker id="t-dob" value={tn.dob} minAge={13} invalid={Boolean(show('dob'))} describedBy={show('dob') ? 't-dob-err' : 't-dob-hint'}
+                  onChange={(iso) => setT('dob', iso)} onDone={() => touch('dob')} />
+                {show('dob') ? (
+                  <p className="f-err" id="t-dob-err" role="alert">
+                    {show('dob')}
+                    {route === 'adult' ? <> <button type="button" className="sx-link" onClick={() => onSwitch('consumer')}>Join as a Consumer</button></> : null}
+                  </p>
+                ) : (
+                  <p className="f-hint" id="t-dob-hint">{Number.isFinite(age) && age >= 13 && age <= 17 ? `You’re ${age}: perfect for Teen membership.` : 'Teen membership is for ages 13 to 17.'}</p>
+                )}
+              </div>
+              <div className={`sx-field ${show('gender') ? 'bad' : ''}`} style={{ gridColumn: '1 / -1' }}>
+                <span className="sx-static-label" id="t-gender-lbl">What is your gender?</span>
+                <div className="sx-genders sx-genders-5" role="radiogroup" aria-labelledby="t-gender-lbl" aria-invalid={Boolean(show('gender'))}>
+                  {R.TEEN_GENDERS.map((x) => (
+                    <label key={x} className={`sx-gender ${tn.gender === x ? 'on' : ''}`}>
+                      <input type="radio" name="t-gender" value={x} checked={tn.gender === x} onChange={() => { setT('gender', x); touch('gender'); }} />
+                      {GENDER_LABEL[x]}
+                    </label>
+                  ))}
+                </div>
+                {show('gender') ? <p className="f-err" role="alert">{show('gender')}</p> : null}
+              </div>
+              {tn.gender === 'Self-describe' ? (
+                <Text id="t-genderSelf" label="In your own words (optional)" icon="pen" value={tn.genderSelf} onChange={(v) => setT('genderSelf', v)} maxLength={40} />
+              ) : null}
+            </div>
+            <p className="sx-note"><Icon name="shield" size={16} /> Under 18 you join with a parent or guardian’s OK. We’ll email them after the last step.</p>
+          </>
+        ) : null}
+
         {step === 2 ? (
           <>
-            <h2 className="sx-h">Who’s your parent or guardian, {first}?</h2>
-            <p className="sx-sub">We’ll send them the Parent/Guardian Onboarding Form. They fill it in and give permission first.</p>
-            <div className="ts-guard" role="radiogroup" aria-label="My parent or guardian is" aria-invalid={Boolean(err('relation'))}>
-              {GUARDIANS.map((x) => (
-                <label key={x.k} className={`ts-g ${g.relation === x.k ? 'on' : ''}`} style={{ '--gc': x.c }}>
-                  <input type="radio" name="relation" value={x.k} checked={g.relation === x.k}
-                    onChange={() => { setG((s) => ({ ...s, relation: x.k, gender: x.k === 'legal_guardian' ? s.gender : '' })); touch('relation'); }} />
-                  <span className="ts-g-ico"><Icon name={x.ic} size={26} /></span>
-                  <strong>{x.t}</strong>
-                  <small>{x.d}</small>
+            <h2 className="sx-h">Where should your invitations land?</h2>
+            <p className="sx-sub">Your email becomes your username. You’ll get a link to create your password once your parent or guardian says yes.</p>
+            <div className="sx-grid">
+              <Text id="t-email" type="email" label="Email address" icon="mail" value={tn.email} onChange={(v) => setT('email', v.trim())} onBlur={() => touch('email')}
+                error={show('email') || emailSrvErr} ok={touched.email && !errors.email && !emailSrvErr} hint="This becomes your username." autoComplete="email" maxLength={254} />
+              <Phone id="t-phone" label="Mobile number (optional)" value={tn.phone} onChange={(v) => setT('phone', v)} error={show('phone')} hint="Only if you have one. We never call without asking." />
+              <div className={`sx-field ${show('country') ? 'bad' : ''}`} style={{ gridColumn: '1 / -1' }}>
+                <span className="sx-static-label" id="t-country-lbl">Country you live in</span>
+                <CountryPicker id="t-country" list={COUNTRIES} value={loc.country} invalid={Boolean(show('country'))} describedBy="t-country-lbl"
+                  onChange={(c) => { setLoc({ country: c.iso, countryName: c.name, stateCode: '', state: '', stateManual: false, city: '', zip: '', noZip: false }); touch('country'); if (!tn.phone.country) setT('phone', { ...tn.phone, country: c.iso }); }} />
+                {show('country') ? <p className="f-err" role="alert">{show('country')}</p> : null}
+              </div>
+              {loc.country ? (
+                <>
+                  <Field id="t-state" label={hasStates ? 'State / province / region' : 'State / region (optional)'} icon="pin" half error={show('state')} hint={cLoading ? 'Loading…' : hasStates ? '' : 'This country has no states on our list. Type yours if you like.'}>
+                    {hasStates && !loc.stateManual ? (
+                      <select id="t-state" className={loc.stateCode ? 'has-val' : ''} value={loc.stateCode} aria-invalid={Boolean(show('state'))}
+                        onChange={(e) => { if (e.target.value === '__type') setLoc({ stateCode: '', state: '', stateManual: true, city: '' }); else setLoc({ stateCode: e.target.value, state: sOpts.find((s) => s.c === e.target.value)?.n || '', stateManual: false, city: '' }); touch('state'); }}>
+                        <option value="" disabled hidden />
+                        {sOpts.map((s) => <option key={s.c} value={s.c}>{s.n}</option>)}
+                        <option value="__type">Not listed: I’ll type it</option>
+                      </select>
+                    ) : (
+                      <input id="t-state" placeholder=" " maxLength={80} value={loc.state} aria-invalid={Boolean(show('state'))}
+                        onChange={(e) => setLoc({ state: e.target.value, stateCode: '', stateManual: true })} onBlur={() => touch('state')} />
+                    )}
+                  </Field>
+                  <Field id="t-city" label="Town / city" icon="home" half error={show('city')} hint={cities.length ? 'Pick from the list or type it.' : ''}>
+                    <input id="t-city" placeholder=" " maxLength={80} list={cities.length ? 't-city-list' : undefined} value={loc.city} aria-invalid={Boolean(show('city'))}
+                      onChange={(e) => setLoc({ city: e.target.value })} onBlur={() => touch('city')} autoComplete="address-level2" />
+                    {cities.length ? <datalist id="t-city-list">{cities.map((c) => <option key={c} value={c} />)}</datalist> : null}
+                  </Field>
+                  <Field id="t-zip" label={zipFormat ? 'ZIP / postal code' : 'ZIP / postal code (optional)'} icon="mail" half error={loc.noZip ? '' : show('zip')}
+                    hint={zipHint(zipFormat) ? `For example ${zipHint(zipFormat)}` : ''}>
+                    <input id="t-zip" placeholder=" " maxLength={12} value={loc.zip} disabled={loc.noZip} aria-invalid={Boolean(!loc.noZip && show('zip'))}
+                      onChange={(e) => setLoc({ zip: e.target.value.toUpperCase(), noZip: false })} onBlur={() => touch('zip')} autoComplete="postal-code" />
+                  </Field>
+                  <label className="sx-consent half sx-nozip">
+                    <input type="checkbox" checked={Boolean(loc.noZip)} onChange={(e) => setLoc({ noZip: e.target.checked, zip: e.target.checked ? '' : loc.zip })} />
+                    <span>I don’t have a postal code</span>
+                  </label>
+                </>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+
+        {step === 3 ? (
+          <>
+            <h2 className="sx-h">Who will say yes for you?</h2>
+            <p className="sx-sub">Pick one adult. We’ll email them a secure link to approve or decline. Nothing switches on until they say yes.</p>
+            <div className="sx-types sx-types-3" role="radiogroup" aria-label="Your parent or guardian">
+              {RELATIONS.map(([k, l, dd, ic]) => (
+                <label key={k} className={`sx-type ${g.relation === k ? 'on' : ''}`}>
+                  <input type="radio" name="relation" value={k} checked={g.relation === k}
+                    onChange={() => setD((s) => ({ ...s, guardian: { ...s.guardian, relation: k, gender: k === 'legal_guardian' ? s.guardian.gender : '' } }))} />
+                  <span className="sx-type-ico"><Icon name={ic} size={26} /></span>
+                  <strong>{l}</strong>
+                  <small>{dd}</small>
                   <span className="sx-tick"><Icon name="check" size={14} stroke={3} /></span>
                 </label>
               ))}
             </div>
-            {err('relation') ? <p className="f-err" role="alert">{err('relation')}</p> : null}
-
+            {show('g.relation') ? <p className="f-err" role="alert" aria-invalid="true" tabIndex={-1}>{show('g.relation')}</p> : null}
             {g.relation ? (
-              <div className="sx-grid ts-gfields" key={g.relation}>
-                <Field id="g-first" label="First name" error={err('first')} ok={ok('first')} icon="user" half>
-                  <input id="g-first" placeholder=" " autoComplete="off" maxLength={40} value={g.first} onChange={setGF('first')} {...gAria('first')} />
-                </Field>
-                <Field id="g-middle" label="Middle name" error={err('middle')} ok={ok('middle') && Boolean(g.middle.trim())} icon="user" half>
-                  <input id="g-middle" placeholder=" " autoComplete="off" maxLength={40} value={g.middle} onChange={setGF('middle')} {...gAria('middle')} />
-                </Field>
-                <Field id="g-last" label="Last name" error={err('last')} ok={ok('last') && Boolean(g.last.trim())} icon="user" half>
-                  <input id="g-last" placeholder=" " autoComplete="off" maxLength={40} value={g.last} onChange={setGF('last')} {...gAria('last')} />
-                </Field>
-                <div className={`sx-field half sx-dob ${err('dob') ? 'bad' : ''} ${ok('dob') ? 'good' : ''}`}>
-                  <label className="sx-static-label" htmlFor="g-dob">{whoT}’s date of birth</label>
-                  <DobPicker id="g-dob" value={g.dob} minAge={18} invalid={Boolean(err('dob'))} describedBy={err('dob') ? 'g-dob-err' : undefined}
-                    onChange={(iso) => setG((s) => ({ ...s, dob: iso }))} onDone={() => touch('dob')} />
-                  {err('dob') ? <p className="f-err" id="g-dob-err" role="alert">{err('dob')}</p> : null}
+              <div className="sx-grid">
+                <Text id="g-firstName" label="Their first name" icon="user" half value={g.firstName} onChange={(v) => setG('firstName', v)} onBlur={() => touch('g.firstName')} error={show('g.firstName')} ok={touched['g.firstName'] && !errors['g.firstName']} />
+                <Text id="g-middleName" label="Middle name (optional)" icon="user" half value={g.middleName} onChange={(v) => setG('middleName', v)} onBlur={() => touch('g.middleName')} error={show('g.middleName')} />
+                <Text id="g-lastName" label="Their last name" icon="user" half value={g.lastName} onChange={(v) => setG('lastName', v)} onBlur={() => touch('g.lastName')} error={show('g.lastName')} ok={touched['g.lastName'] && !errors['g.lastName']} />
+                <div className={`sx-field half sx-dob ${show('g.dob') ? 'bad' : ''}`}>
+                  <label className="sx-static-label" htmlFor="g-dob">Their date of birth</label>
+                  <DobPicker id="g-dob" value={g.dob} minAge={18} invalid={Boolean(show('g.dob'))} describedBy={show('g.dob') ? 'g-dob-err' : undefined} onChange={(iso) => setG('dob', iso)} onDone={() => touch('g.dob')} />
+                  {show('g.dob') ? <p className="f-err" id="g-dob-err" role="alert">{show('g.dob')}</p> : null}
                 </div>
-                <Field id="g-email" label={`${whoT}’s email address`} error={err('email')} ok={ok('email')} hint="The onboarding form is sent here." icon="mail" half>
-                  <input id="g-email" type="email" placeholder=" " autoComplete="off" maxLength={120} value={g.email} onChange={setGF('email')}
-                    {...gAria('email')} onBlur={() => { touch('email'); checkDomain(g.email); }} />
-                </Field>
-                <div className={`sx-field half ${err('phone') ? 'bad' : ''} ${ok('phone') ? 'good' : ''}`}>
-                  <span className="sx-static-label">{whoT}’s phone number</span>
-                  <div className="sx-phone">
-                    <CountryPicker id="g-phoneIso" mode="dial" list={COUNTRIES} value={g.phoneIso} placeholder="Code"
-                      onChange={(x) => { setG((s) => ({ ...s, phoneIso: x.iso })); touch('phone'); }} invalid={Boolean(err('phone') && !g.phoneIso)} />
-                    <input id="g-phone" type="tel" inputMode="numeric" autoComplete="off" placeholder="Phone number" maxLength={18} value={g.phone}
-                      onChange={(e) => setG((s) => ({ ...s, phone: e.target.value.replace(/[^\d\s-]/g, '') }))} {...gAria('phone')} aria-label={`${whoT}’s phone number`} />
+                <Text id="g-email" type="email" label="Their email address" icon="mail" value={g.email} onChange={(v) => setG('email', v.trim())} onBlur={() => touch('g.email')}
+                  error={show('g.email')} ok={touched['g.email'] && !errors['g.email']} hint="We email them a secure link to approve or decline. It must be their own inbox." maxLength={254} />
+                <Phone id="g-phone" label="Their mobile number (optional)" value={g.phone} onChange={(v) => setG('phone', v)} error={show('g.phone')} />
+                {g.relation === 'legal_guardian' ? (
+                  <div className={`sx-field ${show('g.gender') ? 'bad' : ''}`} style={{ gridColumn: '1 / -1' }}>
+                    <span className="sx-static-label" id="g-gender-lbl">Their gender</span>
+                    <div className="sx-genders" role="radiogroup" aria-labelledby="g-gender-lbl" aria-invalid={Boolean(show('g.gender'))}>
+                      {R.GUARDIAN_GENDERS.map((x) => (
+                        <label key={x} className={`sx-gender ${g.gender === x ? 'on' : ''}`}>
+                          <input type="radio" name="g-gender" value={x} checked={g.gender === x} onChange={() => { setG('gender', x); touch('g.gender'); }} />
+                          {GENDER_LABEL[x]}
+                        </label>
+                      ))}
+                    </div>
+                    {show('g.gender') ? <p className="f-err" role="alert">{show('g.gender')}</p> : null}
                   </div>
-                  {err('phone') ? <p className="f-err" id="g-phone-err" role="alert">{err('phone')}</p> : <p className="f-hint">Only used to confirm who they are.</p>}
-                </div>
-                {legal ? (
-                  <GenderPick id="g-gender" label="Guardian’s gender" value={g.gender} error={err('gender')}
-                    onChange={(val) => { setG((s) => ({ ...s, gender: val })); touch('gender'); }} />
                 ) : null}
               </div>
             ) : null}
           </>
         ) : null}
 
-        {step === 3 ? (
+        {step === 4 ? (
           <>
-            <h2 className="sx-h">Consent and confirmation</h2>
-            <p className="sx-sub">Tick each box yourself. {rel ? `Your ${legal ? 'guardian' : rel.t.toLowerCase()}` : 'Your parent'} gives the real permission in the Parent Consent Form we email them. Your account stays pending until they do.</p>
-            <div className="ts-consent">
-              {CONSENT_BOXES.map((b) => (
-                <label key={b.k} className={`sx-consent ${err(b.k) ? 'bad' : ''}`}>
-                  <input type="checkbox" checked={Boolean(c[b.k])} aria-invalid={Boolean(err(b.k))}
-                    onChange={(e) => { setC((s) => ({ ...s, [b.k]: e.target.checked })); touch(b.k); }} />
-                  <span>
-                    {b.link ? <>I have read and accept the <Link to={b.link[0]} target="_blank">{b.link[1]}</Link>.</> : b.t}
-                  </span>
-                </label>
-              ))}
-            </div>
-            {CONSENT_BOXES.some((b) => err(b.k)) ? <p className="f-err" role="alert">Please tick every box to continue.</p> : null}
+            <h2 className="sx-h">Read it, then tick it</h2>
+            <p className="sx-sub">Each box is separate and nothing is ticked for you. Your tick is your own decision. It doesn’t replace your {relLabel}’s permission: they give that separately.</p>
+            <details className="sx-teen-info">
+              <summary><Icon name="book" size={16} /> What joining as a teen means</summary>
+              <ul>{ASSENT.map((a) => <li key={a}>{a}</li>)}</ul>
+              <p className="tiny muted">
+                <Link to="/terms" target="_blank" rel="noopener">Terms of Use</Link> · <Link to="/privacy" target="_blank" rel="noopener">Privacy Policy</Link> · <Link to="/teen-terms" target="_blank" rel="noopener">Teen research terms</Link>
+              </p>
+            </details>
+            {TEEN_CONSENT.items.map((it) => {
+              const bad = tried[4] && it.required && d.accepted[it.id] !== true;
+              return (
+                <div key={it.id}>
+                  <label className={`sx-consent ${bad ? 'bad' : ''}`}>
+                    <input type="checkbox" id={`tc-${it.id}`} checked={d.accepted[it.id] === true} aria-invalid={bad}
+                      onChange={(e) => setD((s) => ({ ...s, accepted: { ...s.accepted, [it.id]: e.target.checked } }))} />
+                    <span>
+                      {it.text}{it.required ? '' : ' (optional)'}
+                      {it.links ? <> {it.links.map(([href, label], i) => <span key={href}>{i ? ' · ' : ''}<Link to={href} target="_blank" rel="noopener">{label}</Link></span>)}</> : null}
+                    </span>
+                  </label>
+                  {bad ? <p className="f-err" role="alert">{err('consent_required')}</p> : null}
+                </div>
+              );
+            })}
             <div className="sx-captcha">
               <p className="sx-mini-h"><Icon name="bot" size={18} /> Quick human check</p>
-              <Captcha ref={captchaRef} error={err('captcha')} onChange={(filled) => setC((s) => ({ ...s, captchaOk: filled }))} />
+              <Captcha ref={captchaRef} error={tried[4] && !captchaOk ? 'Complete the security check.' : undefined} onChange={setCaptchaOk} />
             </div>
-            {status === 'error' ? <p className="form-error" role="alert">{serverMsg}</p> : null}
+            <p className="tiny muted">These confirmations are saved with version {TEEN_CONSENT.version}, the date and time, and your registration reference.</p>
+            {msg ? <p className="form-error" role="alert">{msg}</p> : null}
           </>
         ) : null}
       </div>
 
       <div className="sx-nav">
-        <button type="button" className="btn btn-ghost-dark" onClick={() => (step === 2 ? onBack() : go(step - 1))}>
-          <Icon name="arrow" size={16} className="flip" /> Back
-        </button>
-        <button type="submit" className="btn btn-primary btn-lg btn-shine" disabled={status === 'sending'}>
-          {status === 'sending' ? <><span className="spinner" /> Submitting…</> : step < 3 ? <>Continue <Icon name="arrow" size={18} /></> : <><span>Submit<span className="ts-who"> & invite {who}</span></span> <Icon name="send" size={18} /></>}
-        </button>
+        {step > 1 ? <button type="button" className="btn btn-ghost-dark" onClick={() => go(step - 1)} disabled={busy}><Icon name="arrow" size={16} className="flip" /> Back</button> : <span />}
+        {step < 4 ? (
+          <button key="next" type="submit" className="btn btn-primary btn-lg">Continue <Icon name="arrow" size={18} /></button>
+        ) : (
+          <button key="submit" type="submit" className="btn btn-primary btn-lg btn-shine" disabled={busy}>
+            {busy ? <><span className="spinner" /> Sending…</> : <>Complete registration <Icon name="send" size={18} /></>}
+          </button>
+        )}
       </div>
+      <p className="tiny muted center">Already approved? <Link to="/login?type=teen">Log in</Link></p>
     </form>
+  );
+}
+
+// the same "Who's joining?" cards as the Consumer / Professional form
+export function TypeCards({ value, onSwitch }) {
+  return (
+    <div className="sx-types" role="radiogroup" aria-label="I’m joining as">
+      {[['consumer', 'Consumer', 'Everyday opinions on products & services', 'user'], ['professional', 'Business professional', 'Expert B2B surveys about your work', 'briefcase'], ['teen', 'Teen (13–17)', 'Fun surveys, with a parent’s OK', 'rocket']].map(([k, l, dd, ic]) => (
+        <label key={k} className={`sx-type ${value === k ? 'on' : ''} t-${k}`}>
+          <input type="radio" name="memberType" value={k} checked={value === k} onChange={() => onSwitch(k)} />
+          <span className="sx-type-ico"><Icon name={ic} size={26} /></span>
+          <strong>{l}</strong>
+          <small>{dd}</small>
+          <span className="sx-tick"><Icon name="check" size={14} stroke={3} /></span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function Text({ id, label, icon, half, value, onChange, onBlur, error, ok, hint, type = 'text', autoComplete, maxLength = 40 }) {
+  return (
+    <Field id={id} label={label} error={error} ok={ok} half={half} icon={icon} hint={hint}>
+      <input id={id} type={type} placeholder=" " autoComplete={autoComplete} maxLength={maxLength} value={value} inputMode={type === 'email' ? 'email' : undefined}
+        onChange={(e) => onChange(e.target.value)} onBlur={onBlur} aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-err` : hint ? `${id}-hint` : undefined} />
+    </Field>
+  );
+}
+function Phone({ id, label, value = {}, onChange, error, hint }) {
+  return (
+    <div className={`sx-field ${error ? 'bad' : ''}`}>
+      <span className="sx-static-label">{label}</span>
+      <div className="sx-phone">
+        <CountryPicker id={`${id}-cc`} mode="dial" list={COUNTRIES} value={value.country} placeholder="Code" onChange={(c) => onChange({ ...value, country: c.iso, dial: dialOf(c.iso) })} />
+        <input id={id} type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="Mobile number" maxLength={18} value={value.number || ''} aria-label={label} aria-invalid={Boolean(error)}
+          onChange={(e) => onChange({ ...value, number: e.target.value.replace(/[^\d\s-]/g, '') })} />
+      </div>
+      {error ? <p className="f-err" role="alert">{error}</p> : hint ? <p className="f-hint">{hint}</p> : null}
+    </div>
+  );
+}
+const errorText = (k, code) => {
+  if (k === 'dob' && code === 'adult') return 'You’re 18 or over, so you can join as a Consumer or Professional instead.';
+  if (k === 'dob' && code === 'under_13') return 'Teen membership starts at 13.';
+  if (k === 'captcha') return 'Complete the security check.';
+  return err(code) || 'Please check this.';
+};
+
+// ─────────────────────────────────────────────── invite sent / where things are ──────────────────────────────────────
+function Sent({ r, status, onRestart, cardRef }) {
+  const [rs, setRs] = useState({ state: 'idle', msg: '' });
+  const [cool, setCool] = useState(0);
+  useEffect(() => { if (cool <= 0) return undefined; const id = setTimeout(() => setCool((c) => c - 1), 1000); return () => clearTimeout(id); }, [cool]);
+  const st = status?.status || 'pending_guardian_approval';
+  const at = ORDER[st] ?? 0;
+  const ended = ENDED[st];
+  const rel = relationLabel(r.relation || status?.guardian?.relation || '').toLowerCase() || 'parent or guardian';
+  const resend = async () => {
+    setRs({ state: 'busy', msg: '' });
+    try { await teenApi.resend({ statusToken: r.statusToken }); setRs({ state: 'done', msg: `We’ve sent the email to your ${rel} again.` }); setCool(30); }
+    catch (e) { setRs({ state: 'error', msg: err(e.code) || err('server') }); }
+  };
+  if (!r.reference) {
+    return (
+      <div className="sx-done" role="status" ref={cardRef}>
+        <h2>Your registration was sent</h2>
+        <p>Open the “Track my registration” link in your email to see where things are, or start a new registration.</p>
+        <div className="done-actions"><button type="button" className="btn btn-dark" onClick={onRestart}>Start again</button></div>
+      </div>
+    );
+  }
+  return (
+    <div className="sx-done sx-teen-sent" role="status" ref={cardRef}>
+      <div className="done-check"><Icon name={st === 'active' ? 'check' : ended ? 'close' : 'send'} size={40} stroke={2.4} /></div>
+      <h2>{status ? `Hi ${r.firstName || ''}, here’s where things are` : `Invite sent, ${r.firstName || 'friend'}!`}</h2>
+      {ended ? <p>{ended}</p> : (
+        <p>{st === 'active' ? 'Your account is active. Log in with your email address.' : <>We’ve emailed your {rel} at <strong>{r.guardianEmail}</strong>. Your account switches on after they say yes and you create your password.</>}</p>
+      )}
+      {!ended ? (
+        <ol className="sx-next sx-teen-track">
+          {STAGES.map(([s, ic, label], i) => (
+            <li key={s} className={i < at || st === 'active' ? 'done' : i === at ? 'now' : ''}>
+              <Icon name={i < at || st === 'active' ? 'check' : ic} size={18} /> {label(rel)}
+            </li>
+          ))}
+        </ol>
+      ) : null}
+      <dl className="sx-receipt">
+        {r.email ? <div><dt>Your username</dt><dd>{r.email}</dd></div> : null}
+        <div><dt>Reference</dt><dd>{r.reference}</dd></div>
+        <div><dt>Status</dt><dd>{st === 'active' ? 'Active' : ended ? 'Closed' : st === 'pending_password' ? 'Waiting for your password' : `Waiting for your ${rel}`}</dd></div>
+        {r.expiresAt && !ended && st === 'pending_guardian_approval' ? <div><dt>Their link works until</dt><dd>{fmtDate(r.expiresAt)}</dd></div> : null}
+      </dl>
+      {st !== 'active' && !ended ? <p className="sx-note"><Icon name="lock" size={16} /> Your account is not active yet.</p> : null}
+      <div className="done-actions">
+        {st === 'active' ? <Link to="/login?type=teen" className="btn btn-primary">Log in</Link> : null}
+        {st === 'pending_password' ? <Link to="/forgot-password?type=teen" className="btn btn-primary">Get my password link again</Link> : null}
+        {r.statusToken && st === 'pending_guardian_approval' ? (
+          <button type="button" className="btn btn-dark" onClick={resend} disabled={rs.state === 'busy' || cool > 0}>
+            {rs.state === 'busy' ? 'Sending…' : cool > 0 ? `Resend email in ${cool}s` : `Resend the email to my ${rel}`}
+          </button>
+        ) : null}
+        <Link to="/" className="btn btn-ghost-dark">Back to home</Link>
+      </div>
+      <p className="tiny muted" role="status" aria-live="polite">{rs.msg}</p>
+      <p className="tiny muted">Tip: let them know the email comes from MyFrequentRewards. Wrong email? <Link to="/contact-us">Contact us</Link>.</p>
+      {ended ? <p className="tiny muted"><button type="button" className="sx-link" onClick={onRestart}>Start a new registration</button></p> : null}
+    </div>
   );
 }

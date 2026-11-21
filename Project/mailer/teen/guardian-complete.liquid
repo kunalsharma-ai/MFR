@@ -15,7 +15,7 @@
   <tr><td colspan="2" style="padding:0 0 10px;font-size:0;line-height:0;">&nbsp;</td></tr>
 </table>
 <p style="margin:0 0 16px;">You can change your mind at any time. Email {{ support.email }} with the reference below to withdraw permission or change your selections.</p>
-{%- assign btn_url = site | append: "/teen/terms" -%}{%- assign btn_label = "Read the Teen research terms" -%}{%- assign btn_color = "#0b5bd3" -%}{%- assign btn_note = "" -%}
+{%- assign btn_url = site | append: "/teen-terms" -%}{%- assign btn_label = "Read the Teen research terms" -%}{%- assign btn_color = "#0b5bd3" -%}{%- assign btn_note = "" -%}
 {% include "mailer/teen/_button.liquid" %}
 {%- capture why -%}You received this because you gave consent for {{ teen.firstName }} to join the Teen Panel.{%- endcapture -%}
 {% include "mailer/teen/_foot.liquid" %}

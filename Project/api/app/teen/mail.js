@@ -24,7 +24,7 @@ export const SUBJECTS = {
 };
 
 const siteUrl = (origin) => (process.env.PUBLIC_SITE_URL || `https://${origin}`).replace(/\/$/, "");
-export const linkTo = (origin, p, token) => `${siteUrl(origin)}${p}${token ? `?t=${encodeURIComponent(token)}` : ""}`;
+export const linkTo = (origin, p, token) => `${siteUrl(origin)}${p}${token ? `${p.includes("?") ? "&" : "?"}t=${encodeURIComponent(token)}` : ""}`;
 
 export async function send(reg, template, to, address, data, origin) {
     const subject = SUBJECTS[template] || "MyFrequentRewards";

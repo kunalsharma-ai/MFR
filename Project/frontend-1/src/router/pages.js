@@ -33,12 +33,7 @@ export const PAGE_ROUTES = [
   { path: '/profiling', page: 'LegalPage', props: { id: 'profiling' } },
   // Teen Panel registration journey (private pages: noindex, not in the sitemap)
   { path: '/teen/parent', page: 'TeenParent' },
-  { path: '/teen/set-password', page: 'TeenSetPassword' },
-  { path: '/teen/status', page: 'TeenStatus' },
-  { path: '/teen/renew', page: 'TeenStatus' },
-  { path: '/teen/terms', page: 'TeenTerms' },
-  { path: '/teen/welcome', page: 'TeenWelcome' },
-  { path: '/teen/profile', page: 'TeenProfile' },
+  { path: '/teen-terms', page: 'LegalPage', props: { id: 'teen' } },
   { path: '*', page: 'NotFound' },
 ];
 

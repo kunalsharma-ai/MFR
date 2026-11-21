@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { segSound } from '../utils/sound.js';
 
@@ -12,13 +11,10 @@ const OPTS = [
   ['minor', 'Teen', 'rocket'], // v3.3: the teen panel (Galaxy Pop colours, v32-minor.css)
 ];
 
-// Teens have their own Log in and Create account pages (?type=teen); Consumers and Professionals keep the original
-// pages. On those pages (`teenPage` false) picking Teen opens the teen page, and on the teen page (`teenPage`)
-// picking Consumer or Professional goes back to the original page.
-export default function AudienceSwitch({ value, onChange, label = 'I am a', teenPage = false }) {
+// Consumers, Professionals and Teens all use the same Log in and Create account pages: picking an option only
+// switches the page in place (the page keeps ?type= in the address so a refresh stays on the same option).
+export default function AudienceSwitch({ value, onChange, label = 'I am a' }) {
   const ref = useRef(null);
-  const nav = useNavigate();
-  const { pathname } = useLocation();
   const pick = (k, e) => {
     if (k === value) return;
     // where the burst starts: the middle of the option that was picked, relative to the page section
@@ -34,8 +30,6 @@ export default function AudienceSwitch({ value, onChange, label = 'I am a', teen
       sec.classList.add('ax-burst');
     }
     try { segSound(k === 'professional'); } catch { /* sound is optional */ }
-    if (k === 'minor' && !teenPage) { nav(`${pathname}?type=teen`); return; }
-    if (k !== 'minor' && teenPage) { nav(k === 'professional' ? `${pathname}?type=professional` : pathname); return; }
     onChange(k);
   };
   return (

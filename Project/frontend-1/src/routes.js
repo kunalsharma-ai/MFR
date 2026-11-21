@@ -23,12 +23,13 @@ export const STATIC_ROUTES = [
   { path: '/cookies', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.4', changefreq: 'yearly' },
   { path: '/profiling', priority: '0.5', changefreq: 'yearly' },
+  { path: '/teen-terms', priority: '0.4', changefreq: 'yearly' },
 ];
 
 
 // Prerendered but excluded from the sitemap (noindex)
 export const NOINDEX_ROUTES = [{ path: '/auth/password' }, { path: '/set-password' }, { path: '/forgot-password' }, { path: '/404' },
-  { path: '/teen/parent' }, { path: '/teen/set-password' }, { path: '/teen/status' }, { path: '/teen/renew' }, { path: '/teen/terms' }, { path: '/teen/welcome' }, { path: '/teen/profile' }];
+  { path: '/teen/parent' }];
 
 export const BLOG_ROUTES = BLOGS.map((b) => ({ path: `/blog/${b.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: b.updated || b.date }));
 

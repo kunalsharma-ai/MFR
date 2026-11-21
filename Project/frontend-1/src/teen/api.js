@@ -76,7 +76,7 @@ function mail(s, template, to, address, subject, data) {
   s.outbox = s.outbox || [];
   s.outbox.unshift({ id: rnd(8), template, to, address, subject, data, at: new Date().toISOString() });
 }
-const link = (p, t) => `${p}?t=${t}`;
+const link = (p, t) => `${p}${p.includes('?') ? '&' : '?'}t=${t}`;
 
 async function demoServer(method, path, body = {}) {
   await new Promise((r) => setTimeout(r, 450));
@@ -121,7 +121,7 @@ async function demoServer(method, path, body = {}) {
     s.tokens[gTok] = { purpose: 'guardian', ref };
     s.tokens[sTok] = { purpose: 'status', ref };
     mail(s, 'guardian-invite', 'guardian', reg.guardian.email, `${reg.teen.firstName} would like to join the Teen Panel. Yes or no?`, { yes: `${link('/teen/parent', gTok)}&d=yes`, no: `${link('/teen/parent', gTok)}&d=no`, review: link('/teen/parent', gTok) });
-    mail(s, 'teen-registered', 'teen', reg.teen.email, 'You’re in the queue! Your parent or guardian has your invite', { status: link('/teen/status', sTok) });
+    mail(s, 'teen-registered', 'teen', reg.teen.email, 'You’re in the queue! Your parent or guardian has your invite', { status: link('/sign-up?type=teen', sTok) });
     save(s);
     return { reference: ref, status: reg.status, guardianEmail: R.maskEmail(reg.guardian.email), statusToken: sTok, expiresAt: reg.expiresAt };
   }
@@ -192,7 +192,7 @@ async function demoServer(method, path, body = {}) {
       const pTok = rnd(43);
       s.tokens[pTok] = { purpose: 'password', ref: reg.ref };
       mail(s, 'guardian-complete', 'guardian', reg.guardian.email, 'All done. Your teen can now create their password', {});
-      mail(s, 'teen-password', 'teen', reg.teen.email, 'Your parent said yes! Create your password', { password: link('/teen/set-password', pTok) });
+      mail(s, 'teen-password', 'teen', reg.teen.email, 'Your parent said yes! Create your password', { password: link('/set-password?type=teen', pTok) });
       save(s);
       return { status: reg.status, teenEmail: R.maskEmail(reg.teen.email) };
     }

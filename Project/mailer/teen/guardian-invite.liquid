@@ -13,7 +13,7 @@
     <b style="color:#14213d;">If you choose NO</b>, you can tell us why if you wish. The request is closed and no account is created.
   </td></tr>
 </table>
-<p style="margin:0 0 16px;font-size:14px;line-height:22px;">Want to read more before you decide? <a href="{{ links.review }}" style="color:#0b5bd3;font-weight:bold;">Review the request</a> or read the <a href="{{ site }}/teen/terms" style="color:#0b5bd3;">Teen research terms</a>.</p>
+<p style="margin:0 0 16px;font-size:14px;line-height:22px;">Want to read more before you decide? <a href="{{ links.review }}" style="color:#0b5bd3;font-weight:bold;">Review the request</a> or read the <a href="{{ site }}/teen-terms" style="color:#0b5bd3;">Teen research terms</a>.</p>
 <p style="margin:0 0 16px;font-size:14px;line-height:22px;">Not {{ teen.firstName }}'s parent or legal guardian, or don't recognise this request? Choose NO and tell us. We'll close it.</p>
 {%- capture why -%}You received this because {{ teen.firstName }} gave this address as their {{ guardian.relationLabel | downcase }}'s email.{%- endcapture -%}
 {% include "mailer/teen/_foot.liquid" %}

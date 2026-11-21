@@ -1,5 +1,5 @@
 // Agreement MINOR-2026.10, Part A: the parents' information box and the 19 sections in 6 chapters, each with its
-// "in short" summary and the full approved text one tap away. Shared by the guardian's consent step and /teen/terms.
+// "in short" summary and the full approved text one tap away. Shared by the guardian's consent step and /teen-terms.
 // The wording is the approved text from src/teen/data/consent.js, unchanged.
 import { useState } from 'react';
 import Icon from '../components/Icon.jsx';
@@ -48,7 +48,7 @@ export default function ConsentReader({ read = [], onRead, openAll = false, idPr
                 </button>
                 {isOpen ? (
                   <div className="tz-sec-body" id={`${idPrefix}-${n}-body`}>
-                    {s.body.map((b, i) => (typeof b === 'string' ? <p key={i}>{b}</p> : b && b.contact ? (
+                    {s.body.map((b, i) => (typeof b === 'string' ? <p key={i}>{b}</p> : b && b.ul ? <ul key={i}>{b.ul.map((l) => <li key={l}>{l}</li>)}</ul> : b && b.contact ? (
                       <address key={i} className="tz-contact">
                         <span><Icon name="briefcase" size={14} /> {COMPANY.legalName}</span>
                         <span><Icon name="mail" size={14} /> <a href={`mailto:${COMPANY.supportEmail}`}>{COMPANY.supportEmail}</a></span>
