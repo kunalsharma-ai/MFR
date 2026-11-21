@@ -24,13 +24,13 @@ export function AboutPrism() {
   return (
     <div className="abo">
       <span className="abo-halo" />
-      <div className="abo-flags">{AB_FLAGS.map((f, k) => <i key={f} style={{ '--k': k }}><img src={asset(`/flags/${f}.svg`)} alt="" width="26" height="26" loading="lazy" /></i>)}</div>
+      <div className="abo-flags">{AB_FLAGS.map((f, k) => <i key={f} style={{ '--k': k }}><img src={asset(`/flags/${f}.svg`)} alt={`${f.toUpperCase()} flag`} width="26" height="26" loading="lazy" /></i>)}</div>
       {ORBITS.map((o, k) => (
         <div key={o.t} className={`abo-orbit o${k}`} style={{ '--tilt': `${o.tilt}deg`, '--dur': `${o.dur}s`, '--c': o.c }}>
           <span className="abo-moon"><span className="abo-moon-in"><Icon name={o.ic} size={18} /><b>{o.t}</b></span></span>
         </div>
       ))}
-      <span className="abo-core"><img src={asset('/images/brand/mfr-mark-160.webp')} alt="" width="96" height="96" /></span>
+      <span className="abo-core"><img src={asset('/images/brand/mfr-mark-160.webp')} alt="MyFrequentRewards logo" width="96" height="96" /></span>
       {[0, 1, 2, 3, 4].map((k) => <em key={k} className="abo-coin" style={{ '--k': k }}>$</em>)}
       {[0, 1, 2, 3, 4, 5].map((k) => <i key={k} className="ab-spark" style={{ '--k': k }} />)}
     </div>
@@ -109,7 +109,7 @@ export function ValueLoop() {
             <circle cx="150" cy="150" r="128" className="abl-flow" stroke="url(#abl-g)" />
             <circle r="7" className="abl-dot"><animateMotion dur="10.4s" repeatCount="indefinite" path="M150 22 a128 128 0 1 1 0 256 a128 128 0 1 1 0 -256" /></circle>
           </svg>
-          <div className="abl-core"><img src={BRAND.monogram} alt="" width="54" height="54" /><b>The value loop</b></div>
+          <div className="abl-core"><img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="54" height="54" /><b>The value loop</b></div>
           {LOOP.map((s, i) => (
             <span key={s.t} className={`abl-node${act === i ? ' is-act' : ''}`} style={{ '--c': s.c, left: `${(pos[i][0] / 300) * 100}%`, top: `${(pos[i][1] / 300) * 100}%` }}>
               <Icon name={s.ic} size={22} />

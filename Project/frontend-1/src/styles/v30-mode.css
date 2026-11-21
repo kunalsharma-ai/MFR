@@ -89,14 +89,17 @@ html.mode-vt::view-transition-group(mfx) { z-index: 3; }
 .cmp-stage .ws-copy > * { transition: opacity .6s, transform .6s; }
 .cmp-stage.is-auto.on-c .l-p .ws-copy > *, .cmp-stage.is-auto.on-p .l-c .ws-copy > * { opacity: .25; transform: translateY(8px); }
 @media (max-width: 860px) {
-  .cmp-stage.is-auto { display: grid; }
-  .cmp-stage.is-auto .cmp-layer { grid-area: 1 / 1; transition: opacity .8s ease, transform .8s cubic-bezier(.3, 1.1, .4, 1); }
-  .cmp-stage.is-auto.on-c .l-p, .cmp-stage.is-auto.on-p .l-c { opacity: 0; transform: translateX(24px) scale(.97); pointer-events: none; visibility: hidden; transition: opacity .8s, transform .8s, visibility 0s .8s; }
-  .cmp-stage.is-auto .ws-copy > * { opacity: 1 !important; transform: none !important; }
+  /* SEO round (Nov 20): the two worlds share one grid cell from the first paint. Before, they were stacked until the
+     section scrolled into view and then collapsed into one cell, which pulled everything below up by a whole card
+     (a 0.47 layout shift on phones). The dots now switch sides even when the auto-turns are off (reduced motion). */
+  .cmp-stage { display: grid; }
+  .cmp-stage .cmp-layer { grid-area: 1 / 1; transition: opacity .8s ease, transform .8s cubic-bezier(.3, 1.1, .4, 1); }
+  .cmp-stage.on-c .l-p, .cmp-stage.on-p .l-c { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity .8s, transform .8s, visibility 0s .8s; }
+  .cmp-stage.is-auto.on-c .l-p, .cmp-stage.is-auto.on-p .l-c { transform: translateX(24px) scale(.97); }
+  .cmp-stage .ws-copy > * { opacity: 1 !important; transform: none !important; }
   .cmp-dots { position: static; justify-self: center; transform: none; background: rgba(11, 30, 91, .1); }
   .cmp-dots button { background: rgba(11, 30, 91, .18); }
   .cmp-dots i { background: #0B1E5B; }
-  .cmp-stage:not(.is-auto) .cmp-dots { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cmp-dots { display: none; } }
 

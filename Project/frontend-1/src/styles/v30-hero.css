@@ -162,3 +162,10 @@ html[data-mode="dark"] .hx-confetti { opacity: .55; }
   .hm-hero .hero-stage { align-self: start; margin-top: -24px; }
 }
 @media (min-width: 1500px) { .hm-scene { --hk: 1.1; } .hm-hero .hero-stage { margin-top: 0; } }
+
+/* SEO round (Nov 20): the ribbon and the motto roll keep the height of their taller audience variant, so the 5 s
+   Consumer / Professional swap never moves the text below it (field CLS was 0.20). */
+.hx-hold { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; align-items: start; }
+.hx-hold > * { grid-area: 1 / 1; max-width: 100%; }
+.hx-hold > .hm-roll { justify-self: stretch; }
+.hx-ghost, .hx-ghost * { visibility: hidden !important; animation: none !important; transition: none !important; pointer-events: none; }

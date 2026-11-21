@@ -35,7 +35,7 @@ function LitePlayer({ yt, title }) {
   }
   return (
     <button type="button" className="vs-poster" onClick={() => setOn(true)} aria-label={`Play video: ${title}`}>
-      <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" width="480" height="360" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={(ev) => { ev.currentTarget.style.display = 'none'; }} />
+      <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt={`${title} video thumbnail`} width="480" height="360" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={(ev) => { ev.currentTarget.style.display = 'none'; }} />
       <span className="vs-shade" aria-hidden="true" />
       <span className="vs-play" aria-hidden="true">
         <i className="vs-ring" /><i className="vs-ring vs-ring--2" />

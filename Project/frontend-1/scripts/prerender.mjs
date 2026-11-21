@@ -4,6 +4,7 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { moveInlineStyles, protectEmails } from './html-hygiene.mjs';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dist = path.join(root, 'dist');
@@ -29,7 +30,9 @@ for (const r of ALL_ROUTES) {
   // (inline part, then the full sheet), which cost far more blocking time than the earlier first paint saved.
   // CRITICAL=1 turns it back on. Beasties writes empty attributes bare (alt), so they are put back as alt="".
   const keepEmptyAlt = (html) => html.replace(/(<img\b[^>]*?\s)alt(?=[\s>\/])/g, '$1alt=""');
-  await writeFile(out, process.env.CRITICAL ? keepEmptyAlt(await beasties.process(page)) : page);
+  const built = process.env.CRITICAL ? keepEmptyAlt(await beasties.process(page)) : page;
+  // No style="" attributes and no plain-text e-mail addresses in the served HTML (see scripts/html-hygiene.mjs).
+  await writeFile(out, protectEmails(moveInlineStyles(built)));
   count++;
 }
 

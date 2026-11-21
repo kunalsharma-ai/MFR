@@ -244,7 +244,7 @@ export function RewardExplorer() {
           </div>
           <div className="rex-tabs" role="tablist" aria-label="Reward kinds">
             {[['all', 'All rewards', '#0B1E5B'], ...Object.entries(REWARD_KINDS).map(([id, v]) => [id, v.label, v.c])].map(([id, label, c]) => (
-              <button type="button" role="tab" key={id} aria-selected={k === id} className={k === id ? 'on' : ''} style={{ '--kc': c }} onClick={() => { setK(id); setSel(0); }}>
+              <button type="button" role="tab" key={id} aria-selected={k === id} className={k === id ? 'on' : ''} data-kind={id} style={{ '--kc': c }} onClick={() => { setK(id); setSel(0); }}>
                 {label} <b>{id === 'all' ? PAYOUTS.length : PAYOUTS.filter((x) => x.kind === id).length}</b>
               </button>
             ))}
