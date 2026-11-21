@@ -1,0 +1,1847 @@
+{
+ "generated": "scripts/teen-content-sync.mjs — do not edit by hand",
+ "teenConsent": {
+  "version": "TEEN-REG-2026.11",
+  "agreement": "MINOR-2026.10",
+  "items": [
+   {
+    "id": "assent",
+    "required": true,
+    "text": "Yes, I understand the explanation and want to take part.",
+    "source": "MINOR-2026.10 Part C"
+   },
+   {
+    "id": "participation",
+    "required": true,
+    "text": "I understand I can only take part in age-appropriate research after my parent or guardian gives permission, and that either of us can stop at any time.",
+    "source": "Teen sign-up (site)"
+   },
+   {
+    "id": "accurate",
+    "required": true,
+    "text": "The details about me and my parent or guardian are true and accurate.",
+    "source": "Teen sign-up (site)"
+   },
+   {
+    "id": "terms",
+    "required": true,
+    "text": "I have read and accept the Terms and Conditions.",
+    "source": "Teen sign-up (site)"
+   },
+   {
+    "id": "privacy",
+    "required": true,
+    "text": "I have read and accept the Privacy Policy.",
+    "source": "Teen sign-up (site)"
+   }
+  ],
+  "assentPoints": [
+   "You may receive invitations to surveys that are suitable for your age.",
+   "You can choose whether to take part in each survey.",
+   "You can skip questions where the survey allows it or stop taking part.",
+   "You do not have to buy anything to participate.",
+   "Your answers will be handled as explained in the privacy information.",
+   "Some surveys may need extra permission before you can take part.",
+   "You can ask a question or raise a concern through the contact details provided."
+  ]
+ },
+ "guardianConsent": {
+  "version": "MINOR-2026.10",
+  "effective": "2026-10-21",
+  "declaration": [
+   "I am the parent or legal guardian, or otherwise legally authorised representative, of the teenager identified in this registration.",
+   "I have read and understood the information provided about Frequent Research's teen research programme.",
+   "I have had an opportunity to review the applicable privacy notice and ask questions.",
+   "I understand that the teenager may receive invitations to age-appropriate research activities, subject to the programme's eligibility and safeguarding rules.",
+   "I understand what information may be collected and the purposes, sharing arrangements and retention rules explained in the applicable privacy notice.",
+   "I understand that participation is voluntary and that the teenager may decline a survey or stop participating.",
+   "I understand that certain studies may require additional information, separate permission or further verification.",
+   "I understand that participation does not guarantee a reward and that any reward will be subject to the conditions disclosed for the relevant survey.",
+   "I understand how to contact Frequent Research about permission, privacy, withdrawal or complaints.",
+   "I understand that this consent applies only to the programme and purposes explained to me and does not authorise unrelated marketing or every possible future research activity."
+  ],
+  "selections": [
+   {
+    "id": "participation",
+    "required": true,
+    "title": "Permission for panel participation",
+    "text": "I give permission for the teenager identified above to enrol in the Frequent Research teen research panel and to be considered for eligible, age-appropriate research activities, subject to any additional permissions required for a specific study."
+   },
+   {
+    "id": "privacy",
+    "required": true,
+    "title": "Privacy information",
+    "text": "I confirm that I have been provided with the applicable privacy notice and understand how to access it. This acknowledgement does not replace any separate consent required by law."
+   },
+   {
+    "id": "contact",
+    "required": true,
+    "title": "Contact and verification",
+    "text": "I authorise the use of the contact method I supplied for parental permission verification and necessary programme communications, as described in the applicable privacy notice."
+   },
+   {
+    "id": "studyContact",
+    "required": false,
+    "title": "Additional study contact",
+    "text": "I agree to receive further contact about specific research opportunities through the channels and for the purposes separately explained to me."
+   },
+   {
+    "id": "recording",
+    "required": false,
+    "title": "Recording or identifiable material",
+    "text": "I understand that audio, video, photographs or identifiable quotations require separate study-specific information and any additional permission required by law. Selecting this option does not provide blanket permission for all future recordings or publications."
+   },
+   {
+    "id": "sensitive",
+    "required": false,
+    "title": "Sensitive research",
+    "text": "I understand that surveys involving sensitive information may require a separate explanation, risk review and additional permission. This option does not authorise all future sensitive-data collection."
+   }
+  ]
+ },
+ "parentSurvey": {
+  "id": "parent__registration",
+  "questions": [
+   {
+    "n": "parent-first-name",
+    "kind": "name",
+    "req": true,
+    "multi": false,
+    "fields": [
+     "parent-first-name",
+     "parent-middle-name",
+     "parent-last-name"
+    ],
+    "section": "About you",
+    "optional": false
+   },
+   {
+    "n": "parent-gender",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "Female",
+     "Male",
+     "Non-binary",
+     "Other",
+     "Prefer not to say"
+    ],
+    "other": "Other",
+    "section": "About you",
+    "optional": false
+   },
+   {
+    "n": "parent-dob",
+    "kind": "dob",
+    "req": true,
+    "multi": false,
+    "section": "About you",
+    "optional": false
+   },
+   {
+    "n": "P01",
+    "kind": "country",
+    "req": true,
+    "multi": false,
+    "section": "About you",
+    "optional": false
+   },
+   {
+    "n": "P02",
+    "kind": "region",
+    "req": true,
+    "multi": false,
+    "section": "About you",
+    "optional": false
+   },
+   {
+    "n": "P03",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "mother",
+     "father",
+     "guardian",
+     "foster",
+     "caregiver"
+    ],
+    "other": "caregiver",
+    "section": "Your household",
+    "optional": false
+   },
+   {
+    "n": "parent-marital",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "Single, never married",
+     "Married",
+     "Separated, divorced or widowed",
+     "Domestic partnership/living with someone",
+     "Prefer not to say"
+    ],
+    "section": "Your household",
+    "optional": false
+   },
+   {
+    "n": "P04",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "yes",
+     "no",
+     "unsure"
+    ],
+    "gate": true,
+    "section": "Your household",
+    "optional": false
+   },
+   {
+    "n": "P11",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "1",
+     "2",
+     "3",
+     "4+"
+    ],
+    "section": "Your household",
+    "optional": false
+   },
+   {
+    "n": "P06",
+    "kind": "language",
+    "req": true,
+    "multi": false,
+    "section": "Staying in touch",
+    "optional": false
+   },
+   {
+    "n": "P07",
+    "kind": "choice",
+    "req": true,
+    "multi": true,
+    "values": [
+     "email",
+     "sms",
+     "call",
+     "whatsapp"
+    ],
+    "section": "Staying in touch",
+    "optional": false
+   },
+   {
+    "n": "P08",
+    "kind": "email",
+    "req": true,
+    "multi": false,
+    "section": "Staying in touch",
+    "optional": false
+   },
+   {
+    "n": "P09",
+    "kind": "phone",
+    "req": false,
+    "multi": false,
+    "section": "Staying in touch",
+    "optional": false
+   },
+   {
+    "n": "P12",
+    "kind": "choice",
+    "req": true,
+    "multi": false,
+    "values": [
+     "yes",
+     "no"
+    ],
+    "section": "Staying in touch",
+    "optional": false
+   },
+   {
+    "n": "HQ1",
+    "kind": "choice",
+    "req": false,
+    "multi": true,
+    "values": [
+     "respiratory",
+     "diabetes",
+     "cardio",
+     "epilepsy",
+     "allergy",
+     "skin",
+     "gastro",
+     "neuro",
+     "mobility",
+     "developmental",
+     "mental",
+     "other",
+     "none",
+     "na"
+    ],
+    "exclusive": [
+     "none",
+     "na"
+    ],
+    "other": "other",
+    "section": "Your teen’s health",
+    "optional": true
+   },
+   {
+    "n": "HQ2",
+    "kind": "choice",
+    "req": false,
+    "multi": false,
+    "values": [
+     "primary",
+     "shared",
+     "no",
+     "other-person",
+     "na-applicable",
+     "na"
+    ],
+    "section": "Your teen’s health",
+    "optional": true
+   },
+   {
+    "n": "HQ4",
+    "kind": "choice",
+    "req": false,
+    "multi": true,
+    "values": [
+     "medication",
+     "appointments",
+     "daily",
+     "monitoring",
+     "coordinating",
+     "emotional",
+     "none",
+     "na"
+    ],
+    "exclusive": [
+     "none",
+     "na"
+    ],
+    "section": "Your teen’s health",
+    "optional": true
+   }
+  ]
+ },
+ "welcome": {
+  "keys": [
+   "D04",
+   "D05",
+   "D10",
+   "D08",
+   "D09",
+   "H01",
+   "T01"
+  ],
+  "known": {
+   "D01": "registration.dob (age only)",
+   "D02": "registration.country",
+   "D03": "registration.state",
+   "D06": "registration.gender"
+  }
+ },
+ "profileKeys": {
+  "D01": {
+   "kind": "dob",
+   "multi": false,
+   "profile": "minor__basic"
+  },
+  "D06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "Female",
+    "Male",
+    "Non-binary",
+    "Other",
+    "Prefer not to say"
+   ],
+   "other": "Other",
+   "profile": "minor__basic"
+  },
+  "D02": {
+   "kind": "country",
+   "multi": false,
+   "profile": "minor__basic"
+  },
+  "D03": {
+   "kind": "region",
+   "multi": false,
+   "profile": "minor__basic"
+  },
+  "D04": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "city",
+    "suburb",
+    "town",
+    "rural",
+    "na"
+   ],
+   "profile": "minor__basic"
+  },
+  "D07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "<1",
+    "1-3",
+    "3+",
+    "most",
+    "na"
+   ],
+   "profile": "minor__basic"
+  },
+  "D05": {
+   "kind": "language",
+   "multi": false,
+   "profile": "minor__basic"
+  },
+  "D10": {
+   "kind": "timezone",
+   "multi": false,
+   "profile": "minor__basic"
+  },
+  "D08": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "lower",
+    "upper",
+    "vocational",
+    "other",
+    "none",
+    "na"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "D09": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "ft",
+    "pt",
+    "home",
+    "break",
+    "none",
+    "na"
+   ],
+   "profile": "minor__education"
+  },
+  "E01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "maths",
+    "science",
+    "languages",
+    "arts",
+    "computing",
+    "history",
+    "business",
+    "pe",
+    "other",
+    "unsure"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "E06": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "science",
+    "tech",
+    "creative",
+    "languages",
+    "finance",
+    "environment",
+    "health",
+    "careers",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "E02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "reading",
+    "video",
+    "audio",
+    "practical",
+    "group",
+    "apps",
+    "mix"
+   ],
+   "profile": "minor__education"
+  },
+  "E03": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "books",
+    "web",
+    "apps",
+    "video",
+    "courses",
+    "ai",
+    "tutor",
+    "classroom",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "E04": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__education"
+  },
+  "E05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "phone",
+    "tablet",
+    "laptop",
+    "desktop",
+    "shared",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "E09": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "khan",
+    "duolingo",
+    "classroom",
+    "byjus",
+    "mooc",
+    "youtube",
+    "school",
+    "other",
+    "none",
+    "na"
+   ],
+   "other": "other",
+   "profile": "minor__education"
+  },
+  "E07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "monthly",
+    "rarely",
+    "never"
+   ],
+   "profile": "minor__education"
+  },
+  "H01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "both",
+    "one",
+    "step",
+    "guardian",
+    "shared",
+    "other",
+    "na"
+   ],
+   "other": "other",
+   "profile": "minor__household"
+  },
+  "H02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "1-2",
+    "3-4",
+    "5-6",
+    "7+",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "0",
+    "1",
+    "2",
+    "3+",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H04": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "0",
+    "1",
+    "2",
+    "3+",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "0",
+    "1",
+    "2",
+    "3+",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "parent",
+    "shared",
+    "other-adult",
+    "varies",
+    "unsure",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "parent",
+    "me",
+    "shared",
+    "other",
+    "varies",
+    "na"
+   ],
+   "profile": "minor__household"
+  },
+  "H10": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "food",
+    "tech",
+    "clothing",
+    "subs",
+    "travel",
+    "household",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__household"
+  },
+  "T01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "phone",
+    "tablet",
+    "laptop",
+    "desktop",
+    "console",
+    "tv",
+    "watch",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__devices"
+  },
+  "T13": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "android",
+    "ios",
+    "windows",
+    "macos",
+    "chromeos",
+    "other",
+    "unsure"
+   ],
+   "other": "other",
+   "profile": "minor__devices"
+  },
+  "T02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "many-daily",
+    "daily",
+    "weekly",
+    "rare",
+    "never"
+   ],
+   "profile": "minor__devices"
+  },
+  "T05": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "home",
+    "school",
+    "mobile",
+    "public",
+    "library",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__devices"
+  },
+  "T06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "home-wifi",
+    "mobile",
+    "public",
+    "school",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__devices"
+  },
+  "T10": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "unsure"
+   ],
+   "profile": "minor__devices"
+  },
+  "T11": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "permission",
+    "unsure"
+   ],
+   "profile": "minor__devices"
+  },
+  "T12": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "sometimes"
+   ],
+   "profile": "minor__devices"
+  },
+  "SM01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "instagram",
+    "youtube",
+    "whatsapp",
+    "snapchat",
+    "tiktok",
+    "facebook",
+    "discord",
+    "telegram",
+    "x",
+    "reddit",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__social"
+  },
+  "SM02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "instagram",
+    "youtube",
+    "whatsapp",
+    "snapchat",
+    "tiktok",
+    "discord",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__social"
+  },
+  "SM03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "<30",
+    "30-60",
+    "1-2h",
+    "2-4h",
+    "4h+"
+   ],
+   "profile": "minor__social"
+  },
+  "SM04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "fun",
+    "friends",
+    "creators",
+    "learning",
+    "sharing",
+    "gaming",
+    "news"
+   ],
+   "profile": "minor__social"
+  },
+  "SM06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "some"
+   ],
+   "profile": "minor__social"
+  },
+  "SM07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__social"
+  },
+  "SM08": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "photos",
+    "video",
+    "stories",
+    "text",
+    "memes"
+   ],
+   "profile": "minor__social"
+  },
+  "G01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "na"
+   ],
+   "profile": "minor__gaming"
+  },
+  "GE01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__gaming"
+  },
+  "G02": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "phone",
+    "tablet",
+    "pc",
+    "console",
+    "handheld",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "GE02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "mobile",
+    "pc",
+    "console",
+    "multiplayer",
+    "casual"
+   ],
+   "profile": "minor__gaming"
+  },
+  "G05": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "action",
+    "adventure",
+    "puzzle",
+    "sports",
+    "sim",
+    "strategy",
+    "rpg",
+    "racing",
+    "casual",
+    "sandbox",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "GE03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "often",
+    "sometimes",
+    "rarely",
+    "never"
+   ],
+   "profile": "minor__gaming"
+  },
+  "GE04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "films",
+    "tv",
+    "youtube",
+    "shorts",
+    "anime",
+    "sport",
+    "streams",
+    "music"
+   ],
+   "profile": "minor__gaming"
+  },
+  "G10": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "films",
+    "series",
+    "video",
+    "music",
+    "podcasts",
+    "books",
+    "live",
+    "streams",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "G12": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "pop",
+    "hiphop",
+    "rock",
+    "electronic",
+    "classical",
+    "regional",
+    "jazz",
+    "kpop",
+    "other",
+    "any"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "G13": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "streaming",
+    "radio",
+    "downloads",
+    "video",
+    "physical",
+    "live",
+    "other",
+    "never"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "GE05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "many",
+    "few",
+    "sometimes",
+    "no"
+   ],
+   "profile": "minor__gaming"
+  },
+  "G14": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "often",
+    "sometimes",
+    "rarely",
+    "never"
+   ],
+   "profile": "minor__gaming"
+  },
+  "G15": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "video",
+    "music",
+    "gaming",
+    "books",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__gaming"
+  },
+  "GE06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "communities",
+    "streaming",
+    "challenges",
+    "watchparty",
+    "reviews",
+    "recs",
+    "tournaments",
+    "creator"
+   ],
+   "profile": "minor__gaming"
+  },
+  "SH01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "often",
+    "weekly",
+    "biweekly",
+    "monthly",
+    "rarely"
+   ],
+   "profile": "minor__shopping"
+  },
+  "SH02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "online",
+    "mall",
+    "local",
+    "brand",
+    "both"
+   ],
+   "profile": "minor__shopping"
+  },
+  "SH03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "phone",
+    "laptop",
+    "tablet",
+    "family"
+   ],
+   "profile": "minor__shopping"
+  },
+  "SH07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "amazon",
+    "flipkart",
+    "myntra",
+    "meesho",
+    "shein",
+    "brand",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__shopping"
+  },
+  "SH04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "fashion",
+    "shoes",
+    "beauty",
+    "food",
+    "tech",
+    "gaming",
+    "accessories",
+    "books"
+   ],
+   "profile": "minor__shopping"
+  },
+  "SH05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "me",
+    "parents",
+    "family",
+    "shared"
+   ],
+   "profile": "minor__shopping"
+  },
+  "SH06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "full",
+    "mostly",
+    "shared",
+    "parents"
+   ],
+   "profile": "minor__shopping"
+  },
+  "FB01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "home",
+    "school",
+    "restaurant",
+    "fastfood",
+    "delivery",
+    "street"
+   ],
+   "profile": "minor__food"
+  },
+  "FB02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "fastfood",
+    "indian",
+    "asian",
+    "italian",
+    "street",
+    "healthy",
+    "dessert"
+   ],
+   "profile": "minor__food"
+  },
+  "FB03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "often",
+    "weekly",
+    "biweekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__food"
+  },
+  "FB04": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "swiggy",
+    "zomato",
+    "ubereats",
+    "own",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__food"
+  },
+  "FB06": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "chips",
+    "chocolate",
+    "biscuits",
+    "namkeen",
+    "fastfood",
+    "icecream",
+    "bakery",
+    "fruit"
+   ],
+   "profile": "minor__food"
+  },
+  "FB10": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "sweet",
+    "salty",
+    "savoury",
+    "fruit",
+    "baked",
+    "any",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__food"
+  },
+  "FB07": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "water",
+    "soft",
+    "juice",
+    "energy",
+    "sports",
+    "tea",
+    "milk",
+    "shakes"
+   ],
+   "profile": "minor__food"
+  },
+  "FB08": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__food"
+  },
+  "FB09": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__food"
+  },
+  "FB05": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "friends",
+    "social",
+    "creator",
+    "offer",
+    "packaging",
+    "restaurant",
+    "curiosity"
+   ],
+   "profile": "minor__food"
+  },
+  "FB11": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "none",
+    "vegetarian",
+    "vegan",
+    "religious",
+    "allergy",
+    "other",
+    "na"
+   ],
+   "other": "other",
+   "profile": "minor__food"
+  },
+  "FL01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "weekly",
+    "monthly",
+    "quarterly",
+    "rarely"
+   ],
+   "profile": "minor__fashion"
+  },
+  "FL02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "online",
+    "store",
+    "both",
+    "rarely"
+   ],
+   "profile": "minor__fashion"
+  },
+  "FL03": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "clothing",
+    "shoes",
+    "accessories",
+    "beauty",
+    "all"
+   ],
+   "profile": "minor__fashion"
+  },
+  "L09": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "casual",
+    "sports",
+    "formal",
+    "street",
+    "traditional",
+    "accessories",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__fashion"
+  },
+  "L12": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "sports",
+    "casual",
+    "formal",
+    "sandals",
+    "boots",
+    "any",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__fashion"
+  },
+  "L13": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "hair",
+    "skin",
+    "oral",
+    "bath",
+    "fragrance",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__fashion"
+  },
+  "FL05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "lot",
+    "some",
+    "little",
+    "none"
+   ],
+   "profile": "minor__fashion"
+  },
+  "FL06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "often",
+    "sometimes",
+    "no"
+   ],
+   "profile": "minor__fashion"
+  },
+  "FL07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "instagram",
+    "youtube",
+    "tiktok",
+    "pinterest",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__fashion"
+  },
+  "FL09": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "me",
+    "friends",
+    "family",
+    "creators",
+    "celebs"
+   ],
+   "profile": "minor__fashion"
+  },
+  "SP01": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__sports"
+  },
+  "SP02": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "cricket",
+    "football",
+    "basketball",
+    "badminton",
+    "swimming",
+    "running",
+    "gym",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "L16": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "team",
+    "solo",
+    "dance",
+    "fitness",
+    "cycling",
+    "walking",
+    "outdoor",
+    "esports",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "SP04": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "cricket",
+    "football",
+    "basketball",
+    "tennis",
+    "motorsport",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "SP05": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__sports"
+  },
+  "SP09": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "regular",
+    "sometimes",
+    "rarely",
+    "never"
+   ],
+   "profile": "minor__sports"
+  },
+  "SP06": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "regular",
+    "sometimes",
+    "no"
+   ],
+   "profile": "minor__sports"
+  },
+  "SP07": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "music",
+    "art",
+    "reading",
+    "gaming",
+    "gardening",
+    "photo",
+    "dance",
+    "cooking",
+    "collecting",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "L17": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "drawing",
+    "painting",
+    "photography",
+    "music",
+    "writing",
+    "crafts",
+    "editing",
+    "design",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "L19": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "reading",
+    "travel",
+    "cooking",
+    "gardening",
+    "animals",
+    "collecting",
+    "volunteering",
+    "outdoors",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__sports"
+  },
+  "X08": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "social",
+    "messaging",
+    "gaming",
+    "streaming",
+    "shopping",
+    "education",
+    "finance",
+    "ai",
+    "fitness",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__tech"
+  },
+  "X01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "phones",
+    "computers",
+    "wearables",
+    "smarthome",
+    "robotics",
+    "ai",
+    "vr",
+    "creative",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__tech"
+  },
+  "X06": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "watch",
+    "speaker",
+    "tv",
+    "home",
+    "vr",
+    "tracker",
+    "none",
+    "other"
+   ],
+   "other": "other",
+   "profile": "minor__tech"
+  },
+  "TA03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "daily",
+    "often",
+    "weekly",
+    "sometimes",
+    "never"
+   ],
+   "profile": "minor__tech"
+  },
+  "X04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "learning",
+    "writing",
+    "creative",
+    "translation",
+    "fun",
+    "coding",
+    "questions",
+    "other",
+    "na"
+   ],
+   "other": "other",
+   "profile": "minor__tech"
+  },
+  "TA04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "ai",
+    "vr",
+    "wearables",
+    "robotics",
+    "ev",
+    "gaming",
+    "other",
+    "none"
+   ],
+   "other": "other",
+   "profile": "minor__tech"
+  },
+  "R01": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "surveys",
+    "interviews",
+    "groups",
+    "products",
+    "diary",
+    "usability",
+    "none"
+   ],
+   "profile": "minor__research"
+  },
+  "R02": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "1-5",
+    "6-10",
+    "11-15",
+    "16-20",
+    "20+"
+   ],
+   "profile": "minor__research"
+  },
+  "R07": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "maybe"
+   ],
+   "profile": "minor__research"
+  },
+  "R08": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "maybe"
+   ],
+   "profile": "minor__research"
+  },
+  "R09": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "depends"
+   ],
+   "profile": "minor__research"
+  },
+  "R10": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "depends"
+   ],
+   "profile": "minor__research"
+  },
+  "R11": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "depends"
+   ],
+   "profile": "minor__research"
+  },
+  "R15": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no",
+    "depends"
+   ],
+   "profile": "minor__research"
+  },
+  "R03": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "weekly",
+    "biweekly",
+    "monthly",
+    "selected",
+    "none"
+   ],
+   "profile": "minor__research"
+  },
+  "R04": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "weekdays",
+    "weekends",
+    "holidays",
+    "varies",
+    "na"
+   ],
+   "profile": "minor__research"
+  },
+  "R05": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "morning",
+    "afternoon",
+    "evening",
+    "weekends",
+    "holidays",
+    "varies"
+   ],
+   "profile": "minor__research"
+  },
+  "R06": {
+   "kind": "language",
+   "multi": false,
+   "profile": "minor__research"
+  },
+  "R12": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "yes",
+    "no"
+   ],
+   "profile": "minor__research"
+  },
+  "A19": {
+   "kind": "choice",
+   "multi": true,
+   "values": [
+    "tech",
+    "entertainment",
+    "food",
+    "fashion",
+    "education",
+    "gaming",
+    "travel",
+    "environment",
+    "sport",
+    "household",
+    "any"
+   ],
+   "profile": "minor__topics"
+  },
+  "A20": {
+   "kind": "choice",
+   "multi": false,
+   "values": [
+    "3m",
+    "6m",
+    "12m",
+    "prompted"
+   ],
+   "profile": "minor__topics"
+  },
+  "A21": {
+   "kind": "textarea",
+   "multi": false,
+   "profile": "minor__topics"
+  }
+ }
+}

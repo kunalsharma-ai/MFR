@@ -16,6 +16,7 @@ import supportRouter from "./api/Support.js";
 import meResponse from "./api/Response.js";
 import llmRouter from "./api/llm.js"
 import rewardsRouter from "./api/Rewards.js";
+import teenRouter from "./api/Teen.js";
 
 import { isAuthenticated } from "../utils/index.js";
 
@@ -35,6 +36,7 @@ router
         console.log("user route called");
         next()
     }, userRouter)
+    .use("/api/v1/teen", teenRouter)
     .use("/api/v1/profile", profileRouter)
     .use("/api/v1/forgot-password", forgotPassword)
     .use("/api/v1/change-email", changeEmail)

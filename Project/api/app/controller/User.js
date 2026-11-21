@@ -30,7 +30,13 @@ class User extends CrudController {
 
         if (user.length !== 1) throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
         let temp = await userModel.findById(user[0]._id).select("+role");
-        if (temp?.registrationStatus === "consent_pending") throw new Error("Your parent or guardian hasn't given their consent yet. Ask them to check their email.");
+        // Teen Panel: no log in until the parent/guardian has finished and the teen has created a password
+        if (String(temp?.category || "").includes("minor") && (temp?.registrationStatus || "active") !== "active") {
+            const st = temp.registrationStatus;
+            if (["rejected", "cancelled"].includes(st)) throw new Error("This Teen Panel registration was not approved, so this account can't be used.");
+            if (st === "pending_password") throw new Error("Your parent or guardian has finished. Use the link in your email to create your password first.");
+            throw new Error("Your parent or guardian hasn't finished their part yet. Ask them to check their email.");
+        }
 
         let response = await temp.verifyPassword(password);
         if (response) {
