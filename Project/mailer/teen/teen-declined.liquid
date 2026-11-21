@@ -1,0 +1,16 @@
+{%- assign tone = "teen" -%}
+{%- assign preheader = "Your registration is closed and no account was created." -%}
+{%- assign kicker = "Teen Panel registration" -%}
+{%- capture title -%}An update on your registration, {{ teen.firstName }}{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+{% if notAuthorised %}
+<p style="margin:0 0 16px;">The adult you named told us they can't give permission for you, so we've closed your registration. <b>No account was created</b> and you won't receive surveys from us.</p>
+<p style="margin:0 0 16px;">If a different parent or legal guardian can give permission, you're welcome to register again with their email address.</p>
+{% else %}
+<p style="margin:0 0 16px;">Your {{ guardian.relationLabel | downcase }} decided not to enroll you in the Teen Panel this time, so we've closed your registration. <b>No account was created</b> and you won't receive surveys from us.</p>
+<p style="margin:0 0 16px;">That's completely okay. If they change their mind later, you can register again, or they can contact us.</p>
+{% endif %}
+{%- assign btn_url = site | append: "/teen" -%}{%- assign btn_label = "Back to the Teen Panel" -%}{%- assign btn_color = "#7c3aed" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You received this because you registered for the Teen Panel with this email address." -%}
+{% include "mailer/teen/_foot.liquid" %}

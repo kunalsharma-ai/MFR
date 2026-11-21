@@ -8,6 +8,8 @@ const FREE_MAIL = ['gmail.', 'yahoo.', 'hotmail.', 'outlook.', 'live.', 'icloud.
 const DISPOSABLE = ['mailinator.', 'tempmail', '10minutemail', 'guerrillamail', 'yopmail.', 'trashmail', 'sharklasers.', 'getnada.', 'dispostable.', 'throwaway'];
 
 export const ADULT_AGE = 18;
+// Under 13: friendly, and nothing typed is sent or kept (the server refuses these birthdays too)
+export const UNDER_MIN_MSG = 'Not quite yet! MyFrequentRewards starts at 13. We can’t create an account or keep any details before then — come back on your 13th birthday.';
 export const TEEN_DOB_MSG = 'Under 18? Teens join through the Teen sign-up, with a parent’s OK.';
 export const GENDERS = ['Male', 'Female', 'Other']; // values the backend accepts
 export const isFreeMail = (e = '') => FREE_MAIL.some((d) => e.toLowerCase().split('@')[1]?.includes(d));
@@ -39,7 +41,7 @@ export function validateDob(iso, min = MIN_SIGNUP_AGE, now = new Date()) {
   if (Date.UTC(b.y, b.m - 1, b.d) > today) return 'Your date of birth can’t be in the future.';
   const age = ageFromDob(iso, now);
   if (age > 110) return 'Please check the year.';
-  if (age < min) return `You must be at least ${min} to join.`;
+  if (age < min) return UNDER_MIN_MSG;
   return '';
 }
 

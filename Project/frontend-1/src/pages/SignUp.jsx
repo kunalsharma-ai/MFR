@@ -1,4 +1,5 @@
-import TeenJoin from './TeenJoin.jsx';
+import TeenRegister, { CARRY as TEEN_CARRY } from './TeenRegister.jsx';
+import { classifyDob } from '../teen/rules.js';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
@@ -165,6 +166,16 @@ function SignUp() {
       e.email = r.msg;
     return e;
   }, [v, remote]);
+
+  // Age routing (Kunal, Nov 2026): a 13–17 birthday moves straight to the Teen registration, taking along what was
+  // typed (kept in this tab only — never in the address bar). The Teen page explains why it switched.
+  useEffect(() => {
+    if (classifyDob(v.dob) !== "teen") return;
+    try {
+      sessionStorage.setItem(TEEN_CARRY, JSON.stringify({ dob: v.dob, firstName: v.firstName, lastName: v.lastName, email: v.email, gender: v.gender, country: v.country }));
+    } catch { /* storage blocked: the teen page simply starts empty */ }
+    goTeen("/sign-up?type=teen");
+  }, [v.dob]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const q = new URLSearchParams(search);
@@ -743,7 +754,7 @@ function SignUp() {
                       </div>
                       {!v.dob ||
                       !Number.isFinite(ageFromDob(v.dob)) ||
-                      ageFromDob(v.dob) >= ADULT_AGE ? null : (
+                      ageFromDob(v.dob) >= ADULT_AGE || ageFromDob(v.dob) < MIN_SIGNUP_AGE ? null : (
                         <p className="sx-note">
                           <Icon name="shield" size={16} />
                           Under 18: you join through the Teen sign-up, with
@@ -997,5 +1008,5 @@ function SignUp() {
 const TEEN_TYPES = new Set(['teen', 'minor']);
 export default function SignUpRoute() {
   const { search } = useLocation();
-  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenJoin /> : <SignUp />;
+  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenRegister /> : <SignUp />;
 }

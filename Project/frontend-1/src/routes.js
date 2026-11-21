@@ -27,7 +27,8 @@ export const STATIC_ROUTES = [
 
 
 // Prerendered but excluded from the sitemap (noindex)
-export const NOINDEX_ROUTES = [{ path: '/auth/password' }, { path: '/set-password' }, { path: '/forgot-password' }, { path: '/404' }];
+export const NOINDEX_ROUTES = [{ path: '/auth/password' }, { path: '/set-password' }, { path: '/forgot-password' }, { path: '/404' },
+  { path: '/teen/parent' }, { path: '/teen/set-password' }, { path: '/teen/status' }, { path: '/teen/renew' }, { path: '/teen/terms' }, { path: '/teen/welcome' }, { path: '/teen/profile' }];
 
 export const BLOG_ROUTES = BLOGS.map((b) => ({ path: `/blog/${b.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: b.updated || b.date }));
 

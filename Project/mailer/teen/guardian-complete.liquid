@@ -1,0 +1,21 @@
+{%- assign tone = "guardian" -%}
+{%- capture preheader -%}Your consent is recorded. {{ teen.firstName }} can now create a password.{%- endcapture -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- assign title = "All done. Thank you" -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;">Your consent is recorded. We've emailed {{ teen.firstName }} at <b>{{ teen.emailMasked }}</b> with a link to create a password. Their account becomes active only after that.</p>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #e3e7f1;border-radius:12px;margin:0 0 18px;">
+  <tr><td colspan="2" style="padding:14px 18px 6px;font-weight:bold;color:#14213d;font-size:15px;">Your consent record</td></tr>
+  <tr><td style="padding:4px 18px;font-size:14px;color:#5b6378;">Version</td><td align="right" style="padding:4px 18px;font-size:14px;color:#14213d;font-family:'Courier New',Courier,monospace;">{{ consent.version }}</td></tr>
+  <tr><td style="padding:4px 18px;font-size:14px;color:#5b6378;">Given on</td><td align="right" style="padding:4px 18px;font-size:14px;color:#14213d;">{{ consent.at | date: "%B %-d, %Y at %H:%M UTC" }}</td></tr>
+  {% for o in consent.optional %}
+  <tr><td style="padding:4px 18px;font-size:14px;color:#5b6378;">{{ o.title }}</td><td align="right" style="padding:4px 18px;font-size:14px;color:#14213d;font-weight:bold;">{% if o.given %}Given{% else %}Not given{% endif %}</td></tr>
+  {% endfor %}
+  <tr><td colspan="2" style="padding:0 0 10px;font-size:0;line-height:0;">&nbsp;</td></tr>
+</table>
+<p style="margin:0 0 16px;">You can change your mind at any time. Email {{ support.email }} with the reference below to withdraw permission or change your selections.</p>
+{%- assign btn_url = site | append: "/teen/terms" -%}{%- assign btn_label = "Read the Teen research terms" -%}{%- assign btn_color = "#0b5bd3" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- capture why -%}You received this because you gave consent for {{ teen.firstName }} to join the Teen Panel.{%- endcapture -%}
+{% include "mailer/teen/_foot.liquid" %}

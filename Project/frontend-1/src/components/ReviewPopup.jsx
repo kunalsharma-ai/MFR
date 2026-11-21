@@ -8,6 +8,7 @@ import { isKid, isPro, reviewedKey, useRater } from '../utils/rater.js';
 import { session, store } from '../utils/storage.js';
 import { publicName, rememberOwnReview } from '../utils/reviews.js';
 import { chime, fanfare, setSound, soundOn, SOUND_EVENT } from '../utils/sound.js';
+import { isDismissed } from '../utils/dismiss.js';
 
 
 

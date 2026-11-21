@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import Captcha from '../components/TeenCaptcha.jsx';
 import { PageSeo } from '../components/PageHero.jsx';
@@ -101,6 +101,7 @@ export default function TeenLogin() {
   const formRef = useRef(null);
   const tokenRef = useRef(null);
   const { search } = useLocation();
+  const navigate = useNavigate();
   const [aud, setAud] = useState('minor');
   useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional') setAud(t); if (t === 'minor' || t === 'teen') setAud('minor'); }, [search]);
   const pro = aud === 'professional';
@@ -163,6 +164,13 @@ export default function TeenLogin() {
     // login ke baad signup ke pending answers backend ko bhejo (kabhi throw nahi karta; 4s se zyada nahi rukega)
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
     const mail = f.email.trim().toLowerCase();
+    // Teen accounts: the Teen welcome page decides (first log-in → welcome survey, otherwise straight to the dashboard)
+    if (teen) {
+      setPhase('success');
+      if (res.demo) navigate('/teen/welcome?from=login');
+      else window.location.href = '/teen/welcome?from=login';
+      return;
+    }
     // First log in after the parent's consent and the password: the welcome questionnaire comes before the dashboard.
     const need = await welcomeNeeded({ mail, fallback: 'teen', demo: Boolean(res.demo) });
     if (need) {
@@ -284,7 +292,7 @@ export default function TeenLogin() {
             {teen ? (
               <div className="lx-teen" role="note">
                 <img src="/images/minor/emoji/family.webp" alt="" width="40" height="40" />
-                <p><b>New to the Teen Panel?</b> Start with your details, then add your parent or guardian. Teen accounts can log in once they have completed the consent form we email them.</p>
+                <p><b>New to the Teen Panel?</b> Start with your details, then add your parent or guardian. You can log in once your parent or guardian has said yes and you’ve created your password from our email. <Link to="/teen/renew">Link expired? Get a new one</Link> · <Link to="/teen/status">Check my registration</Link></p>
               </div>
             ) : null}
             <Link to={pro ? '/sign-up?type=professional' : teen ? '/sign-up?type=teen' : '/sign-up'} className="btn btn-ghost-dark btn-block lx-join"><Icon name={teen ? 'rocket' : 'gift'} size={18} /> {teen ? 'Start teen sign-up' : 'Create your free account'}</Link>

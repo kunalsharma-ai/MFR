@@ -3,7 +3,7 @@
 // guardian onboarding questions (keys, required flags, allowed values) and the welcome-survey keys.
 //
 //   node scripts/teen-content-sync.mjs           (run after editing anything in src/teen/data)
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { PARENT_SURVEY } from '../src/teen/data/parentSurvey.js';
@@ -59,3 +59,9 @@ const data = {
 };
 writeFileSync(out, `${JSON.stringify(data, null, 1)}\n`);
 console.log(`teen content → ${path.relative(process.cwd(), out)} (${questions.length} onboarding questions, ${Object.keys(profileKeys).length} profile keys)`);
+
+// the validation rules are written once, in the API, and copied here so the pages check exactly what the server checks
+const rulesSrc = path.resolve(here, '../../api/app/teen/rules.js');
+const rulesOut = path.resolve(here, '../src/teen/rules.js');
+writeFileSync(rulesOut, `// COPIED from api/app/teen/rules.js by scripts/teen-content-sync.mjs - edit the API file, then run the script.\n${readFileSync(rulesSrc, 'utf-8')}`);
+console.log('teen rules → src/teen/rules.js');

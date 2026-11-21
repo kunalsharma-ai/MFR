@@ -1,0 +1,9 @@
+{%- comment -%} One bulletproof button. Set btn_url, btn_label and btn_color (and optionally btn_note) before including. {%- endcomment -%}
+<table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:22px 0 8px;">
+  <tr>
+    <td align="center" bgcolor="{{ btn_color }}" style="border-radius:999px;background:{{ btn_color }};">
+      <a href="{{ btn_url }}" target="_blank" rel="noopener" style="display:inline-block;padding:15px 30px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px;">{{ btn_label }}</a>
+    </td>
+  </tr>
+</table>
+{% if btn_note %}<p style="margin:0 0 18px;font-size:13px;line-height:20px;color:#7b8399;">{{ btn_note }}</p>{% endif %}
