@@ -44,7 +44,8 @@ export default mongooseModel(
             last: {
                 type: String,
                 trim: true,
-                required: [true, "Lastname is required"]
+                // optional for Teen Panel members (the teen form asks for it but does not require it)
+                required: [function () { return !String(this.category || "").includes("minor"); }, "Lastname is required"]
             }
         },
         gender: {
@@ -282,12 +283,23 @@ export default mongooseModel(
                 type: String,
                 trim: true,
                 lowercase: true,
-                enum: ["father", "mother"]
+                enum: ["father", "mother", "legal_guardian"]
             },
+            dob: { type: Date },
+            gender: { type: String, trim: true },
+            phone: { type: String, trim: true },
             consent: {
                 type: Boolean,
                 default: null
-            }
+            },
+            consentAt: { type: Date },
+            consentVersion: { type: String, trim: true }
+        },
+        // Teen Panel: "consent_pending" until the parent or guardian agrees, then "active". Existing members stay "active".
+        registrationStatus: {
+            type: String,
+            trim: true,
+            default: "active"
         }
 
     },

@@ -30,6 +30,7 @@ class User extends CrudController {
 
         if (user.length !== 1) throw new Error(`${!phone ? "E-Mail id" : "Phone no."} or Password is invalid`)
         let temp = await userModel.findById(user[0]._id).select("+role");
+        if (temp?.registrationStatus === "consent_pending") throw new Error("Your parent or guardian hasn't given their consent yet. Ask them to check their email.");
 
         let response = await temp.verifyPassword(password);
         if (response) {

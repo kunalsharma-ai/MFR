@@ -1,6 +1,6 @@
 import express from "express";
-import { Response as responseController } from "../../controller/index.js";
-import { expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
+import { Response as responseController, Reward as rewardController } from "../../controller/index.js";
+import { Mutate, expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
 Date.prototype.resetTime = function (type = "start") {
     if (type === "end") {
         this.setHours(23);
@@ -42,7 +42,27 @@ router
                     }
                 }
             }
-            let data = await responseController.list({ ...filters, user: req.user._id })
+            let data = Mutate(await responseController.list({ ...filters, user: req.user._id }, null, { createdAt: -1 }))
+            // Profiles answered on the Profiles page have no survey response: show each paid profile as a completed row,
+            // so the participation and rewards history list them too (a profile done as a survey already has its row).
+            rewardController.request = req;
+            const have = new Set(data.map((r) => String(r?.survey?.slug || "").toLowerCase()));
+            const inRange = (d) => !filters.createdAt || (d >= filters.createdAt.$gte && d <= filters.createdAt.$lte);
+            const profileRows = (await rewardController.mine())
+                .filter((r) => r.category === "profile" && !have.has(String(r.key).replace(/^profile:/, "")) && inRange(new Date(r.createdAt)))
+                .map((r) => ({
+                    _id: r._id,
+                    user: req.user._id,
+                    survey: { name: r.name, slug: String(r.key).replace(/^profile:/, "") },
+                    timeline: { start: r.createdAt, end: r.createdAt },
+                    status: "complete",
+                    source: "profile",
+                    points: Number(r.points) || 0,
+                    loi: 0,
+                    createdAt: r.createdAt,
+                    updatedAt: r.createdAt
+                }));
+            data = [...profileRows, ...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             return { message, data };
         },
         responseController

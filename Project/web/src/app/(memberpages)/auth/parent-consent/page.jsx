@@ -226,6 +226,7 @@ function Terms({
   setSubmitted,
   User,
 }) {
+  const query = useQuery();
   const [category, setCategory] = React.useState({});
   React.useEffect(() => {
     console.log({ User });
@@ -298,7 +299,15 @@ function Terms({
   const handleSubmit = async () => {
     let resp = await api.put(`/api/v1/user/parent-consent/${User._id}`, {
       terms: acceptedTerms,
+      code: query.code, // the one-time code from the email link proves this is the parent
     });
+    if (!resp || resp.status === "error") {
+      useToast({
+        status: "error",
+        message: resp?.message || "We couldn't save your consent. Please try again.",
+      });
+      return;
+    }
     // if (pathName === "/auth/terms") router.push("/survey?name=welcome");
     // if ("Reload" in user) user.Reload();
     // else

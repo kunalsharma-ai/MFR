@@ -15,6 +15,7 @@ import projectRouter from "./api/ProjectLaunch.js";
 import supportRouter from "./api/Support.js";
 import meResponse from "./api/Response.js";
 import llmRouter from "./api/llm.js"
+import rewardsRouter from "./api/Rewards.js";
 
 import { isAuthenticated } from "../utils/index.js";
 
@@ -41,6 +42,7 @@ router
     .use("/api/v1/project-dev", projectRouter)
     .use("/api/v1/me", isAuthenticated, meRouter)
     .use("/api/v1/response", isAuthenticated, meResponse)
+    .use("/api/v1/rewards", isAuthenticated, rewardsRouter)
     .use("/api/v1/support", isAuthenticated, supportRouter)
     .use("/api/v1/project", isAuthenticated, projectRouter)
     .use("/api/v1/batch", isAuthenticated, batchRouter)

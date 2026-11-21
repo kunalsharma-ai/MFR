@@ -13,7 +13,6 @@ import {
   ListItem,
   Collapse,
 } from "@mui/material";
-import { Terms } from "@/app/(memberpages)/auth/terms/page";
 import { useMember } from "@/Context";
 import { useDebounce, useToast } from "@/hooks";
 
@@ -262,6 +261,8 @@ function SurveyNotification() {
 }
 
 function TermsAndConditions() {
+  // The old terms list (the pre-consent T&C checkboxes) is no longer shown here: members accept the current Terms and
+  // Conditions on the consent form after their first log in. This card links to the current documents instead.
   return (
     <Grid size={12} container spacing={2} my={2}>
       <Box
@@ -284,13 +285,18 @@ function TermsAndConditions() {
           Terms and Conditions
         </Typography>
       </Box>
-      <Grid
-        size={12}
-        sx={{
-          borderRadius: 2,
-        }}
-      >
-        <Terms width={"100%"} hideLoading={true} />
+      <Grid size={12} sx={{ borderRadius: 2, px: 1 }}>
+        <Typography sx={{ fontSize: "14px", color: "text.secondary", mb: 1.5 }}>
+          You accepted our Terms and Conditions when you joined. You can read the current versions at any time.
+        </Typography>
+        <Box display="flex" gap={1.5} flexWrap="wrap">
+          <Button variant="outlined" href="/terms" target="_blank" rel="noopener">
+            Terms and Conditions
+          </Button>
+          <Button variant="outlined" href="/privacy" target="_blank" rel="noopener">
+            Privacy Policy
+          </Button>
+        </Box>
       </Grid>
     </Grid>
   );
