@@ -42,7 +42,7 @@ export default defineConfig({
   build: {
     target: 'es2019',
     cssCodeSplit: true,
-    sourcemap: false,
+    sourcemap: !!process.env.SOURCEMAP,
     chunkSizeWarningLimit: 700,
   },
 

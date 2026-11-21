@@ -1,0 +1,21 @@
+/* v3.6 — contrast and ARIA fixes found by Lighthouse 13 on the PR #12 pages (SEO round, Nov 20). Light mode only;
+   dark mode already has its own colours. Loaded last so these win over the page files. */
+
+/* How It Works: ticket labels use the ticket colour; darkened so orange/teal labels stay readable (≥ 4.5:1). */
+html:not([data-mode="dark"]) .mtr .mtr-tk-k { color: color-mix(in srgb, var(--c) 58%, #000); }
+html:not([data-mode="dark"]) .mtr .mtr-tk-stub small { color: #5B6078; }
+
+/* Teens: green sticker, parent "Yes" chip, bookmark tabs */
+html:not([data-mode="dark"]) .mn-hero-copy .mk-sticker.s1 { background: #15803D; }
+html:not([data-mode="dark"]) .mn-key-card.kc1 i { background: #C2410C; }
+html:not([data-mode="dark"]) .nx-marks button:not(.on) small { color: #5B6390; }
+html:not([data-mode="dark"]) .nx-marks button.on { background: color-mix(in srgb, var(--c) 82%, #000); }
+html:not([data-mode="dark"]) .nx-marks button.on small { color: #fff; }
+
+/* Scan & Connect: back link on the lilac band */
+html:not([data-mode="dark"]) .qx-back a { color: #1D4ED8; }
+
+/* Rewards hero vault: the reward cards dimmed with opacity (.55) between turns, which made their small tags fail
+   contrast checks. They now dim with brightness instead, which looks the same on the dark vault. */
+@keyframes vtCard { 0%, 55% { scale: .7; filter: brightness(.72) saturate(.8); } 62%, 88% { scale: 1.08; filter: none; } 100% { scale: .7; filter: brightness(.72) saturate(.8); } }
+html:not([data-mode="dark"]) .sc-vault .vt-card { color: color-mix(in srgb, var(--c) 70%, #000); }

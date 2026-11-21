@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import HydrateLater from '../components/HydrateLater.jsx';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import { CtaBand, FaqSplit } from '../components/Common.jsx';
@@ -16,9 +16,9 @@ import BlogBento from '../sections/BlogBento.jsx';
 import SearchShowcase from '../sections/SearchShowcase.jsx';
 import { CommunityLedger, MemberVoices, SurveyBoard } from '../sections/CommunitySections.jsx';
 
-// Each block below the first screen is its own hydration unit: React wakes them up one by one in short tasks
-// after the first screen is interactive, instead of in one long task (the HTML is already there either way).
-const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
+// Each block below the first screen is its own hydration unit, and it is woken up only after the first interaction
+// (or a few idle seconds), see components/HydrateLater.jsx. The HTML is there from the first paint either way.
+const Part = HydrateLater;
 
 const page = PAGES.home;
 
@@ -36,9 +36,10 @@ export default function Home() {
     <>
       <PageSeo page={page} faqs={HOME_FAQS} home />
       <HeroOrbit />
-      <InviteMarquee />
-      <CommunityLedger />
+      <Part><InviteMarquee /></Part>
+      <Part><CommunityLedger /></Part>
 
+      <Part>
       <section className="section wh" aria-labelledby="intro-title">
         <div className="container wh-row">
           <div className="wh-copy reveal">
@@ -76,6 +77,7 @@ export default function Home() {
           </ul>
         </div>
       </section>
+      </Part>
 
       <Part><AudienceSplit /></Part>
       <Part><JourneyPath /></Part>
@@ -92,9 +94,9 @@ export default function Home() {
       <Part><SearchShowcase /></Part>
       <Part><BlogBento /></Part>
 
-      <FaqSplit id="faq-home-title" title="Quick answers before you join" sub={<>Still curious? Our <Link to="/faq">full FAQ</Link> covers surveys, rewards and privacy — or ask Live Help any time.</>} faqs={HOME_FAQS} hue="#FF8A00" hue2="#FF3B8D">
+      <Part><FaqSplit id="faq-home-title" title="Quick answers before you join" sub={<>Still curious? Our <Link to="/faq">full FAQ</Link> covers surveys, rewards and privacy — or ask Live Help any time.</>} faqs={HOME_FAQS} hue="#FF8A00" hue2="#FF3B8D">
         <a className="ext-note" href="https://esomar.org/codes-and-guidelines" target="_blank" rel="noopener noreferrer"><Icon name="book" size={16} /> Market research codes of conduct (ESOMAR)</a>
-      </FaqSplit>
+      </FaqSplit></Part>
 
       <Part><CtaBand /></Part>
     </>

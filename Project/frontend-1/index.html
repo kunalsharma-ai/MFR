@@ -35,6 +35,21 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#0B1E5B" />
+    <!-- Root classes (js, guarded, lite) are set here, before the stylesheet applies, so the browser styles the page
+         once. Setting them later from main.jsx restyled the whole 4,000-element page again (long tasks on phones).
+         If the app has not started after 6 s (blocked script), "js" is removed so hidden reveal blocks show anyway. -->
+    <script>
+      (function () {
+        var c = document.documentElement.classList;
+        c.add("js", "guarded");
+        try {
+          var n = navigator, k = n.connection || {};
+          if ((n.hardwareConcurrency && n.hardwareConcurrency <= 4) || (n.deviceMemory && n.deviceMemory <= 4) || k.saveData ||
+            (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)) c.add("lite");
+        } catch (e) {}
+        setTimeout(function () { if (!window.__mfrApp) c.remove("js"); }, 6000);
+      })();
+    </script>
     <!-- Dark mode (v3.0): apply the visitor's saved choice before first paint; dark.css downloads only when needed. -->
     <script>
       (function () {

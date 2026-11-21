@@ -12,8 +12,10 @@ MyFrequentRewards connects consumers and professionals with market-research oppo
 - [How It Works](https://www.myfrequentrewards.com/how-it-works): Registration, account verification, profile completion, survey invitations and reward claims.
 - [For Consumers](https://www.myfrequentrewards.com/paid-surveys-for-consumers): Consumer survey participation and everyday-interest topics.
 - [For Professionals](https://www.myfrequentrewards.com/paid-surveys-for-professionals): Business-to-business research opportunities for qualified professionals and decision-makers.
-- [Rewards & Payouts](https://www.myfrequentrewards.com/rewards-and-payouts): Reward claiming requirements and supported reward types.
-- [Quality & Data Security](https://www.myfrequentrewards.com/quality-and-data-security): Research-quality controls, account integrity and data-protection information.
+- [For Teens (13–17)](https://www.myfrequentrewards.com/paid-surveys-for-teens): Age-appropriate surveys for teenagers aged 13 to 17. A parent or guardian gives consent first; rewards are paid to the parent.
+- [Who Can Join](https://www.myfrequentrewards.com/who-can-join): Countries, demographics, interests, job titles, industries and departments welcome in the community.
+- [Rewards & Payouts](https://www.myfrequentrewards.com/rewards): Reward claiming requirements and supported reward types.
+- [Trust & Safety](https://www.myfrequentrewards.com/trust-and-safety): Research-quality controls, verification protocols, account integrity and data-protection information.
 - [Profiling & Quality Score](https://www.myfrequentrewards.com/profiling): Profile completeness and response-quality scoring.
 - [FAQ](https://www.myfrequentrewards.com/faq): Answers to common questions about membership, surveys, rewards, privacy and support.
 - [Blog](https://www.myfrequentrewards.com/blog): Guides about paid surveys, online earning, reward payouts and survey safety.
@@ -27,6 +29,7 @@ MyFrequentRewards connects consumers and professionals with market-research oppo
 
 ## What the platform offers
 - Free registration for eligible members (consumers and business professionals).
+- A teen programme for ages 13 to 17 that starts only after a parent or guardian consents; teen rewards are paid to the parent.
 - Consumer research surveys on topics such as shopping, food, technology, travel, entertainment, health, finance, gaming and more.
 - Professional (B2B) research opportunities for relevant roles and expertise, depending on study requirements; professional details are verified.
 - Survey invitations through the account dashboard, SMS, WhatsApp and email.

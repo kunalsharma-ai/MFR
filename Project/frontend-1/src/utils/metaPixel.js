@@ -71,7 +71,13 @@ export function initMetaPixel() {
     if (e?.detail?.analytics) start();
     else if (loaded && window.fbq) window.fbq('consent', 'revoke');
   };
-  if (consented()) start();
+  // A returning visitor who already accepted: load the pixel once the page is idle after the load event, so
+  // fbevents.js never competes with the first screen (PageSpeed, INP). A fresh "Accept all" click loads it at once.
+  if (consented()) {
+    const later = () => (window.requestIdleCallback ? window.requestIdleCallback(start, { timeout: 4000 }) : setTimeout(start, 1500));
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, { once: true });
+  }
   window.addEventListener('mfr:consent', onConsent);
   return () => window.removeEventListener('mfr:consent', onConsent);
 }
