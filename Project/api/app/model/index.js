@@ -25,3 +25,6 @@ export { default as TeenToken } from "./TeenToken.js";
 export { default as PointsHold } from "./PointsHold.js";
 export { default as StreakDay } from "./StreakDay.js";
 export { default as MemberPreference } from "./MemberPreference.js";
+export { default as CatalogueItem } from "./CatalogueItem.js";
+export { default as Redemption } from "./Redemption.js";
+export { default as BonusOffer } from "./BonusOffer.js";

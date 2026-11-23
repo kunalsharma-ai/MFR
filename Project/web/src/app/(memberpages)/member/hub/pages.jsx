@@ -15,6 +15,7 @@ import { t } from "./strings";
 import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock } from "./ui.jsx";
 import { ActivityTimeline } from "./modules.jsx";
 import { ActivityExtras } from "./engage/activity.jsx";
+import { RewardsExtras } from "./engage/rewards.jsx";
 import { usePoints, useLedger, useStats, useProfiles, useReferrals, qualityOf, memberTypeOf, fmt, money, relDay } from "./data";
 import { usePrefs, setPrefs, PALETTES, THEMES, currentLanguage, setLanguage } from "./prefs";
 import { play } from "./sound";
@@ -62,6 +63,8 @@ export function RewardsPage() {
           )}
         </div>
       </section>
+
+      <RewardsExtras />
 
       <div className="rv-grid">
         <Reveal className="rv-ladder">

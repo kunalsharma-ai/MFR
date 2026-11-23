@@ -23,6 +23,33 @@ export const DEFAULTS = {
         holdFrom: "2026-12-01T00:00:00Z",
     },
 
+    // ---- rewards: catalogue, redemptions, offers (DECISION: providers, values) --------------------------------------
+    rewards: {
+        // Members can browse the catalogue and set goals now. Requests to redeem stay closed until a payout route is
+        // chosen; with "manual" the team pays each approved request by hand from the admin queue.
+        redemptionsEnabled: false,
+        payoutProvider: "manual", // DECISION: "manual" | a gift-card vendor / UPI / PayPal payouts provider
+        // INR per USD for showing UPI amounts. DECISION: fixed rate or a live one from the provider.
+        inrPerUsd: 83,
+        // shown when the database has no catalogue yet. Placeholders: no real brands until vendors are chosen.
+        defaultCatalogue: [
+            { key: "giftcard-15", kind: "giftcard", title: "E-gift card", subtitle: "Vendor to be confirmed", points: 15000, value: 15, audience: ["consumer", "professional"] },
+            { key: "giftcard-25", kind: "giftcard", title: "E-gift card", subtitle: "Vendor to be confirmed", points: 25000, value: 25, audience: ["consumer", "professional"] },
+            { key: "upi-15", kind: "upi", title: "UPI payout", subtitle: "To your UPI ID (India)", points: 15000, value: 15, audience: ["consumer", "professional"], countries: ["in"] },
+            { key: "paypal-15", kind: "paypal", title: "PayPal payout", subtitle: "To your PayPal email", points: 15000, value: 15, audience: ["consumer", "professional"] },
+            { key: "paypal-50", kind: "paypal", title: "PayPal payout", subtitle: "To your PayPal email", points: 50000, value: 50, audience: ["professional"] },
+            { key: "charity-15", kind: "charity", title: "Donate to charity", subtitle: "Charity partner to be confirmed", points: 15000, value: 15, audience: ["consumer", "professional"] },
+            // Teens: learning rewards, every one approved by the parent or guardian. No cash.
+            { key: "learn-course", kind: "learning", title: "Skill course voucher", subtitle: "Online course of your choice", points: 6000, value: 6, audience: ["teen"] },
+            { key: "learn-study", kind: "learning", title: "Study voucher", subtitle: "Books and study material", points: 8000, value: 8, audience: ["teen"] },
+            { key: "learn-gaming", kind: "learning", title: "Gaming gift card", subtitle: "Needs your guardian's OK", points: 10000, value: 10, audience: ["teen"] },
+            { key: "learn-streaming", kind: "learning", title: "Streaming gift card", subtitle: "Needs your guardian's OK", points: 10000, value: 10, audience: ["teen"] },
+        ],
+    },
+    // limited-time bonus offers are created by admins (BonusOffer). The weekend multiplier is a standing offer.
+    // DECISION: 1 = off. 2 would double survey points earned on Saturdays and Sundays (member's time zone).
+    bonus: { weekendMultiplier: 1, weekendFrom: "2026-12-01", audiences: ["consumer", "professional"] },
+
     // ---- streaks and daily poll (DECISION: points values) -----------------------------------------------------------
     streak: {
         // a "streak day" is a day on which the member answered the daily poll, finished a survey or profile, or (Teens)

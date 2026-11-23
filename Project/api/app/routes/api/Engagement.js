@@ -4,9 +4,11 @@
 import express from "express";
 import { isAuthenticated } from "../../utils/index.js";
 import * as points from "../../engagement/points.routes.js";
+import * as rewards from "../../engagement/rewards.routes.js";
 
 const router = express.Router();
 router.use(isAuthenticated);
 points.mount(router);
+rewards.mount(router);
 
 export default router;
