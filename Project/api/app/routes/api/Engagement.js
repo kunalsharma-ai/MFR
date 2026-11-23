@@ -8,6 +8,7 @@ import * as rewards from "../../engagement/rewards.routes.js";
 import * as daily from "../../engagement/daily.routes.js";
 import * as quality from "../../engagement/quality.routes.js";
 import * as pro from "../../engagement/pro.routes.js";
+import * as teens from "../../engagement/teens.routes.js";
 
 const router = express.Router();
 router.use(isAuthenticated);
@@ -16,5 +17,6 @@ rewards.mount(router);
 daily.mount(router);
 quality.mount(router);
 pro.mount(router);
+teens.mount(router);
 
 export default router;

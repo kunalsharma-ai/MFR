@@ -121,6 +121,27 @@ export const DEFAULTS = {
         issuer: { name: "", address: "", email: "" },
     },
 
+    // ---- Teen Panel: levels, badges, seasons, learning rewards (no cash anywhere) -------------------------------------
+    teen: {
+        // learning rewards need a parent or guardian's YES by email for every request. DECISION: switch on once
+        // the vouchers are chosen.
+        redemptionsEnabled: false,
+        guardianLinkDays: { reward: 7, view: 90 },
+        // levels by points earned in total (points never go down when spent, so a level is never lost)
+        levels: [
+            { level: 1, name: "Explorer", min: 0 },
+            { level: 2, name: "Thinker", min: 500 },
+            { level: 3, name: "Creator", min: 1500 },
+            { level: 4, name: "Trailblazer", min: 3500 },
+            { level: 5, name: "Visionary", min: 7000 },
+        ],
+        // seasons: points earned between the dates fill the season track; stages are badges only
+        seasons: [
+            { key: "2026-winter", title: "Winter season", starts: "2026-12-01", ends: "2027-02-28", stages: [100, 300, 600, 1000] },
+            { key: "2027-spring", title: "Spring season", starts: "2027-03-01", ends: "2027-05-31", stages: [100, 300, 600, 1000] },
+        ],
+    },
+
     // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
     // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
     draw: { enabled: false },

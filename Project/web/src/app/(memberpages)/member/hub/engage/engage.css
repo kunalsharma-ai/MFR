@@ -190,3 +190,22 @@
 .hub .eg-table td.n, .hub .eg-table th.n { text-align: right; font-variant-numeric: tabular-nums; }
 .hub .eg-table td { padding: var(--s2); border-bottom: 1px solid var(--border); }
 .hub .eg-receipts { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: 6px; }
+
+/* ---- teens (phase 6) ---- */
+.hub .eg-tgrid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin: var(--s4) 0; align-items: start; }
+.hub .eg-tg-wide { grid-column: 1 / -1; }
+.hub .eg-lvl { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; font-weight: 800; }
+.hub .eg-bgrid { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--s2); }
+.hub .eg-bgrid li { display: grid; justify-items: center; gap: 4px; padding: var(--s3) var(--s2); border-radius: var(--r-m, 12px); background: var(--card-2); text-align: center; font-size: 13px; opacity: .65; }
+.hub .eg-bgrid li.is-on { opacity: 1; background: color-mix(in srgb, var(--primary) 12%, var(--card)); }
+.hub .eg-bico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--card); }
+.hub .eg-bgrid li.is-on .eg-bico { background: var(--primary); color: #fff; }
+.hub .eg-bgrid small { color: var(--muted); }
+.hub .eg-task-list { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.hub .eg-task { display: grid; gap: var(--s2); align-content: start; padding: var(--s3); border-radius: var(--r-m, 12px); background: var(--card-2); }
+.hub .eg-task p { margin: 0; }
+.hub .eg-task .eg-pill { justify-self: start; }
+.hub .eg-task textarea { width: 100%; padding: 10px 12px; border-radius: var(--r-s, 10px); border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; resize: vertical; }
+.hub .eg-opt-img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; margin-right: 6px; vertical-align: middle; }
+.hub .eg-ideas { margin: var(--s2) 0 0; padding-left: 18px; font-size: var(--f-small); display: grid; gap: 4px; }
+.hub .eg-gview { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
