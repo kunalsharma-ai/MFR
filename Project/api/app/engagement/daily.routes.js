@@ -15,6 +15,7 @@ import { config } from "./config.js";
 import { reconcile } from "./ledger.js";
 import * as D from "./daily.js";
 import * as Draw from "./draw.js";
+import { memberFacts } from "./pro.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
 
 const AUD = ["consumer", "professional", "teen"];
@@ -61,8 +62,8 @@ export async function storiesFor(user, origin, type = "story", limitN = 20) {
     if (type === "insight") {
         // insight reports are for Professionals, and for their own industry when the report names industries
         if (t !== "professional") return [];
-        const ind = String(user?.industry || user?.professional?.industry || "").toLowerCase();
-        q.$and = [{ $or: [{ industries: { $size: 0 } }, ...(ind ? [{ industries: ind }] : [])] }];
+        const { industries } = await memberFacts(user, origin);
+        q.$and = [{ $or: [{ industries: { $size: 0 } }, ...(industries.length ? [{ industries: { $in: industries } }] : [])] }];
     }
     const list = await Story.find(q).sort({ publishedAt: -1 }).limit(limitN).lean();
     return list.map((s) => ({ id: String(s._id), type: s.type, title: s.title, summary: s.summary, body: s.body, image: s.image, brand: s.brand, stats: s.stats, sampleSize: s.sampleSize, fileUrl: s.fileUrl, publishedAt: s.publishedAt }));
@@ -92,7 +93,9 @@ export function mount(router) {
         .post("/admin/tasks", requireAdmin, handle(async (req) => {
             const b = taskBody(req.body);
             if (!b.kind || !b.title) fail("validation", "kind and title are required.", 422);
-            if (b.kind === "poll" && (!b.day || !(b.options?.length >= 2))) fail("validation", "A poll needs a day and at least 2 options.", 422);
+            // a poll with a `day` is that day's daily poll; without one it is a Teen creative poll (audience teen)
+            if (["poll", "design_vote"].includes(b.kind) && !(b.options?.length >= 2)) fail("validation", "A poll or design vote needs at least 2 options.", 422);
+            if (b.kind === "poll" && !b.day && !(b.audience || []).includes("teen")) fail("validation", "A daily poll needs a day.", 422);
             if (b.kind === "challenge" && (!b.month || !D.METRICS.includes(b.goal?.metric) || !(b.goal?.target > 0))) fail("validation", `A challenge needs a month and a goal (metric one of ${D.METRICS.join(", ")}, target above 0).`, 422);
             return Task.create({ ...b, origin: req.origin, created: { By: req.user._id } });
         }))

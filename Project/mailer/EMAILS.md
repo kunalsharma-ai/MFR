@@ -32,6 +32,8 @@ those paths before switching anything on. Only the images the templates actually
 | `lifecycle/case4-partial` | Some profiles complete, some still open. This is the **every-2-days profile reminder** from Profile v4.1 | same | **new, off** (has an unsubscribe link). It shows the member's real figures: profiles done, points, rank and points to the next dollar, at the points the API really pays per profile (50 today) |
 | `engagement/weekly-summary` | Weekly points recap | `app/jobs/weekly-summary.js` | **new, off**: `weeklySummary.enabled` |
 | `engagement/expiry-reminder` | Points are about to expire | (Phase 2, only if expiry is ever switched on) | **new, off**: `expiry.enabled` |
+| `engagement/guardian-reward` | A Teen asks for a learning reward: the guardian gets YES / NO links | `POST /api/v1/engagement/rewards/redeem` → `engagement/teens.js` | **new, off**: only once `teen.redemptionsEnabled` is on |
+| `engagement/guardian-view` | The Teen asks us to send their guardian a read-only view link | `POST /api/v1/engagement/teen/guardian-view` | **new**: sent only when the Teen presses the button |
 | `teen/*` (12) | Teen Panel registration and guardian consent | `/api/v1/teen` | **live** (PR #15) |
 
 ### Templates with no trigger

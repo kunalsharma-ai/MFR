@@ -78,6 +78,77 @@ export const DEFAULTS = {
         ],
     },
 
+    // ---- quality score tiers (DECISION: bands) ----------------------------------------------------------------------
+    // User.qualityScore runs 0-200 (new members start at 100). The bands below are placeholders.
+    quality: {
+        tiers: [
+            { key: "bronze", label: "Bronze", min: 0 },
+            { key: "silver", label: "Silver", min: 90 },
+            { key: "gold", label: "Gold", min: 120 },
+            { key: "platinum", label: "Platinum", min: 160 },
+        ],
+    },
+
+    // ---- referral tiers (DECISION: thresholds and points) -----------------------------------------------------------
+    // A referral counts once the person who joined with the member's link finishes their first survey. Only first
+    // surveys finished on or after `from` count toward tier bonuses, so past referrals never pay out by surprise.
+    // Teen Panel members don't get tiers or the leaderboard (no pressure to recruit).
+    referrals: {
+        tiers: [
+            { count: 3, points: 300 },
+            { count: 10, points: 1500 },
+            { count: 25, points: 5000 },
+        ],
+        from: "2026-12-01",
+        audiences: ["consumer", "professional"],
+        // monthly board of members who opted in (first name + initial only)
+        leaderboard: { enabled: true, size: 10 },
+    },
+
+    // ---- Professionals ----------------------------------------------------------------------------------------------
+    professional: {
+        // The profile questions (Question.name) whose answers give the member's industry and seniority. DECISION:
+        // set these to the real question names in the Professional profile; until then nothing is matched.
+        industryQuestion: "industry",
+        seniorityQuestion: "seniority",
+        // Expertise score 0-100 (DECISION: weights). Each part is the member's real figure; the weights add up to 100.
+        expertise: {
+            weights: { profiles: 30, surveys: 30, quality: 25, verified: 15 },
+            surveysForFull: 20, // finished Professional surveys that give the full "surveys" part
+        },
+        // Who the statements and payout receipts are from. DECISION: company name and address as they should appear.
+        // Left empty, the documents say the details will be added and never invent them. No tax wording is added.
+        issuer: { name: "", address: "", email: "" },
+    },
+
+    // ---- Teen Panel: levels, badges, seasons, learning rewards (no cash anywhere) -------------------------------------
+    teen: {
+        // learning rewards need a parent or guardian's YES by email for every request. DECISION: switch on once
+        // the vouchers are chosen.
+        redemptionsEnabled: false,
+        guardianLinkDays: { reward: 7, view: 90 },
+        // levels by points earned in total (points never go down when spent, so a level is never lost)
+        levels: [
+            { level: 1, name: "Explorer", min: 0 },
+            { level: 2, name: "Thinker", min: 500 },
+            { level: 3, name: "Creator", min: 1500 },
+            { level: 4, name: "Trailblazer", min: 3500 },
+            { level: 5, name: "Visionary", min: 7000 },
+        ],
+        // seasons: points earned between the dates fill the season track; stages are badges only
+        seasons: [
+            { key: "2026-winter", title: "Winter season", starts: "2026-12-01", ends: "2027-02-28", stages: [100, 300, 600, 1000] },
+            { key: "2027-spring", title: "Spring season", starts: "2027-03-01", ends: "2027-05-31", stages: [100, 300, 600, 1000] },
+        ],
+    },
+
+    // ---- push and WhatsApp (DECISION: providers) ---------------------------------------------------------------------
+    // Web Push needs a VAPID key pair (npx web-push generate-vapid-keys) and the `web-push` package installed. Until
+    // both are there, members can't switch push on and nothing is sent. Quiet hours are respected.
+    push: { enabled: false, vapidPublicKey: "", vapidPrivateKey: "", subject: "mailto:support@myfrequentrewards.com" },
+    // WhatsApp needs a business provider (DECISION). Until then the setting is shown as "coming soon" and nothing is sent.
+    whatsapp: { enabled: false, provider: null },
+
     // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
     // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
     draw: { enabled: false },
@@ -143,5 +214,7 @@ export function publicConfig(memberType) {
         streakBonuses: c.streak.bonuses,
         dailyPoll: { enabled: c.dailyPoll.enabled, points: c.dailyPoll.points },
         drawEnabled: memberType !== "teen" && Boolean(c.draw?.enabled),
+        push: { enabled: Boolean(c.push?.enabled && c.push?.vapidPublicKey), publicKey: c.push?.enabled ? c.push.vapidPublicKey || null : null },
+        whatsapp: { enabled: Boolean(c.whatsapp?.enabled) },
     };
 }
