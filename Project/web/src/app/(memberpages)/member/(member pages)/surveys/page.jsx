@@ -35,6 +35,7 @@ import useProfileGate from "@/hooks/useProfileGate";
 import { isHighReward } from "../profiles/ps/profileRules";
 import WorldTile from "../profiles/ps/WorldTile"; // the profile card of the Profiles page
 import GateDialog from "../profiles/ps/GateDialog"; // the pop-up of a locked card: what to finish first
+import useClickSounds from "../profiles/ps/useClickSounds"; // v4.1 click sounds
 //import {useTourActive} from "@/hooks/useTourActive";
 //import mockSurveys from "@/mockData/surveys"
 
@@ -46,6 +47,7 @@ const inTab = (row, tab) => (tab === "high") === isHighReward(row.points);
 export default function SurveyDashboard() {
   const [query] = [useQuery()];
   const member = useMember();
+  useClickSounds();
   const doneProfiles = useCompletedProfiles(member?.category); // a survey whose profile is already complete is not shown again
   const [surveys, setSurveys] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);

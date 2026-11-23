@@ -22,13 +22,17 @@ import Celebration from "./Celebration.jsx";
 import { tap, ui } from "./sound.js";
 
 // v4.1 click sounds play on the instrument of the member's language (mfr.lang); the hub's Sound setting mutes them
-const sndLang = () => { try { return (localStorage.getItem("mfr.lang") || "en").split("-")[0]; } catch { return "en"; } };
+import { soundLang as sndLang } from "./useClickSounds.js";
 import { Tiles, Chips, RadioList, Combo, TextInput } from "./Controls.jsx";
+import { EXTRA_QUESTIONS, withAdditions } from "./v41Additions.js";
 import { IArrow, ICheck, IEdit, IGrid, ILock } from "./Icons.jsx";
 
 
 const AUTO_ADVANCE = true; // as in the profile source: a single-answer question moves on by itself (multi-select keeps its Continue button)
 const OPTION_TYPES = ["select", "multiselect", "checkbox", "radio"];
+// every other type the database may hold (text, number, email, textarea, url…) is typed in, like "text"
+const isTyped = (type) => Boolean(type) && !OPTION_TYPES.includes(type) && type !== "phone" && type !== "date";
+const safeRe = (p) => { try { return new RegExp(p); } catch { return null; } };
 const filled = (v) => !(v === null || v === undefined || v === "" || (Array.isArray(v) && v.length === 0));
 const lower = (x) => String(x ?? "").toLowerCase();
 const isOthers = (o) => lower(o?.value) === "others" || lower(o?.label) === "others";
@@ -79,13 +83,22 @@ function toggleMulti(def, opts, current, value) {
   return max > 0 ? next.slice(0, max) : next;
 }
 
+// the v4.1 questions that are not in the database's question list come from v41Additions.js
+const extraArray = (n, v) => (EXTRA_QUESTIONS[n]?.type === "multiselect" && filled(v) && !Array.isArray(v) ? [v] : v);
 const questionFn = (n) => async () => {
+  if (EXTRA_QUESTIONS[n]) return EXTRA_QUESTIONS[n];
   const resp = await api.post("/api/v1/question", { name: n });
   if (resp.status === "error") throw new Error(resp.message);
   if (resp.data instanceof Array && resp.data.length === 1) return resp.data[0];
   return {};
 };
 const optionFn = (endpoint, name, parentValue, parent) => async () => {
+  const extra = EXTRA_QUESTIONS[name];
+  if (extra) {
+    if (endpoint !== "option") return [];
+    if (extra.optionsFrom) return (await api.get(`/api/v1/option/${extra.optionsFrom}`))?.data ?? []; // e.g. the country list
+    return extra.options || [];
+  }
   const method = typeof parent === "undefined" ? "get" : "post";
   if (![null, undefined, ""].includes(parent) && [null, "", [], undefined].includes(parentValue)) return [];
   const resp = method === "get" ? await api[method](`/api/v1/${endpoint}/${name}`) : await api[method](`/api/v1/${endpoint}/${name}`, { parentValue });
@@ -115,8 +128,8 @@ function QuestionCard({ it, value, form, err, pos, total, secLabel, dir, onAnswe
     else if (items.length <= 30) control = <RadioList items={items} value={value} onPick={(v) => onAnswer(it, v, true)} filterPh={filterPh} noMatch={t("q.noMatch")} />;
     else control = <Combo key={def.name} items={items} value={value} raw="" onPick={(v) => onAnswer(it, v, true)} onRaw={() => {}} placeholder={t("q.search")}
       noMatch={t("q.noMatch")} onEnter={onNext} moreLabel={(a, b) => t("q.more", { n: a, t: b })} />;
-  } else if (def.type === "text") {
-    control = <TextInput spec={{ type: "text" }} value={value} onChange={(v) => onAnswer(it, v)} onEnter={onNext} placeholder={t("q.type")} autoFocus />;
+  } else if (isTyped(def.type)) {
+    control = <TextInput spec={{ type: def.type === "number" ? "number" : "text" }} long={def.type === "textarea"} value={value} onChange={(v) => onAnswer(it, v)} onEnter={onNext} placeholder={t("q.type")} autoFocus />;
   } else if (def.type === "phone") {
     control = <div className="ps-embed"><PhoneElement disabled={false} form={form} question={def} /></div>;
   } else if (def.type === "date") {
@@ -129,7 +142,7 @@ function QuestionCard({ it, value, form, err, pos, total, secLabel, dir, onAnswe
   } else if (def.type === "checkbox") {
     control = <div className="ps-embed"><CheckboxElement disabled={false} form={form} options={opts} question={def} /></div>;
   }
-  const hint = multi ? t("q.multi") : optLike && items.length <= 6 && items.length > 1 ? "" : !optLike && def.type === "text" ? t("q.enter") : "";
+  const hint = multi ? t("q.multi") : optLike && items.length <= 6 && items.length > 1 ? "" : !optLike && isTyped(def.type) ? t("q.enter") : "";
   return (
     <div className={`qcard ${dir > 0 ? "in-next" : "in-back"} ${err ? "has-err" : ""}`} data-q={def.name}>
       <div className="q-top">
@@ -222,7 +235,9 @@ function Review({ survey, names, theme, onEdit, onEditOne, onHub, onNext, hasNex
 export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", onHub, onNextProfile, hasNext, onSaved, asSurvey = false }) {
   const { t } = useI18n();
   const qc = useQueryClient();
-  const pages = survey.pages || [];
+  // the profile's pages as the database has them, with the v4.1 questions added where the package puts them
+  const extraCat = /minor/.test(String(user?.category || "")) ? "minor" : "b2c";
+  const pages = React.useMemo(() => withAdditions(survey.pages || [], extraCat, survey.slug), [survey.pages, survey.slug, extraCat]);
   const th = React.useMemo(() => themeOfProfile(survey), [survey]);
   const vars = React.useMemo(() => themeVars(th, false), [th]);
   const wasDone = progressOf(survey).done;
@@ -236,6 +251,11 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
   const [editOne, setEditOne] = React.useState(null); // the review screen's Edit button: only this question is asked, and its button says Update
   const form = useForm({ mode: "onChange" });
   const nextRef = React.useRef(() => {});
+  const [note, setNote] = React.useState(null); // v4.1 toast: "Section complete!"
+  const toast = (text) => { const id = Date.now(); setNote({ id, text }); setTimeout(() => setNote((n) => (n?.id === id ? null : n)), 2200); };
+  const asked = React.useRef(new Set()); // questions already shown on this page
+  const resume = React.useRef(null); // while questions listed before their parent are asked: the question the member had reached
+  const deferred = React.useRef(null); // Continue / an auto-advance that waits for a follow-up question still loading
   const top = React.useRef(null);
 
   // ---- names on the current page (Survey.jsx: phone-whatsapp pairs are added, duplicates removed)
@@ -256,7 +276,7 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
       // "country" is always asked for (not shown): state, city, zip code, currency options follow the country the
       // member picked at sign-up, whichever page of the profile they are on.
       const resp = await api.post("/api/v1/me", { questions: names.includes("country") ? names : [...names, "country"] });
-      Object.entries(resp.data || {}).filter(([k]) => names.includes(k)).forEach(([k, v]) => { form.setValue(k, v); if (k === "age") form.setValue(k, ""); });
+      Object.entries(resp.data || {}).filter(([k]) => names.includes(k)).forEach(([k, v]) => { form.setValue(k, extraArray(k, v)); if (k === "age") form.setValue(k, ""); });
       return resp.data;
     },
     enabled: mode === "q" && Boolean(page?.length),
@@ -280,7 +300,7 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
       const def = defQs[i]?.data;
       const parent = def?.parent;
       const pv = parent ? watchOf(parent) : null;
-      const kind = def?.name && OPTION_TYPES.includes(def.type) ? "option" : def?.name && def.type === "text" ? "validation" : null;
+      const kind = def?.name && OPTION_TYPES.includes(def.type) ? "option" : def?.name && isTyped(def.type) ? "validation" : null;
       return { queryKey: [kind || "none", n, pv, parent], queryFn: optionFn(kind, n, pv, parent), enabled: Boolean(kind) && (!parent || Boolean(pv)) && mode === "q" };
     }),
   });
@@ -296,10 +316,11 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
         if (parent && !pv) status = "hidden";
         else if (oq?.isLoading) status = "pending";
         else { opts = normalizeOptions(oq?.data, def, form, countryFb); status = !opts || (opts.length === 0 && def.type !== "checkbox") ? "hidden" : "visible"; }
-      } else if (def.type === "text") {
+      } else if (isTyped(def.type)) {
+        // asked whether or not the database has a validation pattern for it (as the classic survey form does)
         if (parent && !pv) status = "hidden";
         else if (oq?.isLoading) status = "pending";
-        else { pattern = oq?.data?.pattern ? new RegExp(oq.data.pattern) : null; status = pattern ? "visible" : "hidden"; }
+        else { pattern = oq?.data?.pattern ? safeRe(oq.data.pattern) : null; status = "visible"; }
       } else if (def.type === "phone" || def.type === "date") status = "visible";
     }
     return { name: n, def, opts, pattern, status, locked: isLockedDef(def) };
@@ -368,8 +389,10 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
     form.setValue(name, value, { shouldDirty: true });
     (def.children || []).forEach((c) => form.setValue(c, null));
     if (editOne) descendantsOf(name).forEach((c) => form.setValue(c, null));
-    const order = (pages[pageIdx] || []).slice(1); const at = order.indexOf(name);
-    if (at >= 0 && !editOne) order.slice(at + 1).forEach((q) => { const d = items.find((x) => x.name === q)?.def; if (d?.isEditable ?? true) form.setValue(q, null); });
+    // (a profile may list a question twice: the list is de-duplicated, and the answered question itself is never cleared)
+    const order = [...new Set((pages[pageIdx] || []).slice(1))]; const at = order.indexOf(name);
+    // (a question whose definition has not loaded yet is left alone: it may be a locked sign-up answer such as the e-mail)
+    if (at >= 0 && !editOne && !resume.current) order.slice(at + 1).forEach((q) => { const d = items.find((x) => x.name === q)?.def; if (q !== name && d?.name && !isLockedDef(d)) form.setValue(q, null); }); // never a locked one (e.g. the sign-up country)
     setErr("");
     if (Array.isArray(it.opts) && it.opts.length) {
       const picked = Array.isArray(value) ? value.find((v) => !(Array.isArray(prev) && prev.includes(v))) : value;
@@ -399,16 +422,25 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
     const { def, name } = it; const v = form.getValues(name);
     if (["phone", "date", "checkbox"].includes(def.type)) { const ok = await form.trigger(name); return ok ? "" : (form.formState.errors?.[name]?.message || "Please check this answer."); }
     if (def.required && !filled(v)) return "This field is required";
-    if (def.type === "text" && it.pattern && filled(v) && !it.pattern.test(String(v))) return "Please enter a valid value";
+    if (isTyped(def.type) && it.pattern && filled(v) && !it.pattern.test(String(v))) return "Please enter a valid value";
     return "";
+  };
+  // A follow-up question (one that depends on the answer just given) is still loading when it sits between this question and the next
+  // one shown: moving on now would skip it. The move waits for it instead and happens by itself once it has loaded.
+  const loadingAhead = () => {
+    const at = items.findIndex((x) => x.name === cur?.name);
+    const nextShown = flow[idx + 1];
+    const until = nextShown ? items.findIndex((x) => x.name === nextShown.name) : items.length;
+    return items.slice(at + 1, until).some((x) => x.status === "pending");
   };
   const onNext = async () => {
     if (!cur) return;
     const msg = await validate(cur);
     if (msg) { setErr(msg); return; }
+    if (loadingAhead()) { deferred.current = cur.name; setErr(""); return; }
+    deferred.current = null;
     if (editOne) {
       if (idx < flow.length - 1) { setErr(""); setDir(1); setCurName(flow[idx + 1].name); return; } // the next question under the edited one
-      if (waiting) { setErr("Loading the next question…"); return; }
       saveEdited();
       return;
     }
@@ -417,13 +449,30 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
       if (age !== undefined && age !== null && age !== "" && new Date().getFullYear() - dob.getFullYear() !== Number(age)) { setErr("The age you entered doesn't match the information on your profile. Please check and correct it."); return; }
     }
     setErr(""); setDir(1);
-    if (idx < flow.length - 1) { setCurName(flow[idx + 1].name); return; }
-    if (waiting) { setErr("Loading the next question…"); return; }
-    if (pageIdx + 1 < pages.length) { setPageIdx(pageIdx + 1); setCurName(null); return; }
+    asked.current.add(cur.name);
+    // A question listed before the one it depends on appears only once that one is answered: it is asked then (and any others like
+    // it), and the flow goes on from where the member was. Answers given meanwhile clear nothing.
+    const posIn = (n) => list.indexOf(n);
+    const from = resume.current || cur.name;
+    const missed = flow.find((x) => x.def?.parent && posIn(x.def.parent) > posIn(x.name) && posIn(x.name) < posIn(from) && !asked.current.has(x.name) && !filled(form.getValues(x.name)));
+    if (missed) { resume.current = from; ui("next"); setCurName(missed.name); return; }
+    if (resume.current) {
+      const ahead = flow.find((x) => posIn(x.name) > posIn(from) && !asked.current.has(x.name));
+      if (ahead) { resume.current = null; ui("next"); setCurName(ahead.name); return; }
+      if (waiting) { deferred.current = cur.name; return; } // a question still loading may be the next one
+      resume.current = null; // everything on the page was asked: the page ends
+    } else if (idx < flow.length - 1) { ui("next"); setCurName(flow[idx + 1].name); return; }
+    else if (waiting) { deferred.current = cur.name; return; } // last question shown, but one that depends on it is still loading
+    if (pageIdx + 1 < pages.length) { asked.current = new Set(); ui("section"); toast(t("q.sectionDone")); setPageIdx(pageIdx + 1); setCurName(null); return; }
     submit();
   };
   nextRef.current = onNext;
+  const pendingKey = items.map((x) => x.status[0]).join("");
+  React.useEffect(() => {
+    if (deferred.current && cur?.name === deferred.current && !loadingAhead()) { deferred.current = null; onNext(); }
+  }, [pendingKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const onBack = () => {
+    deferred.current = null; resume.current = null;
     ui("back");
     setErr(""); setDir(-1);
     if (editOne) { setEditOne(null); setMode("review"); return; }
@@ -485,6 +534,7 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
           )}
         </main>
       </div>
+      {note && <div className="toasts" role="status" aria-live="polite"><div className="toast" key={note.id}>🎉 {note.text}</div></div>}
       {party && (
         <Celebration survey={asSurvey} meta={{ s: survey.slug, c: "b2c" }} theme={th} name={survey.name} icon={th.icon} colors={colors}
           onClose={() => { setParty(false); setMode("review"); }} onEdit={() => { setParty(false); setPageIdx(0); setCurName(null); setMode("q"); }}
