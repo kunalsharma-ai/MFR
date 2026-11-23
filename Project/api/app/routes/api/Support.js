@@ -120,6 +120,21 @@ router
         },
         supportController
     ))
+// The signed-in member's own tickets, newest first (Help centre "My queries", Nov 2026).
+// Matches on the email stored when the ticket was created; the email comes from the database, never from the request.
+router
+    .route("/mine")
+    .get(expressRoute(
+        async req => {
+            User.request = req;
+            const me = await User.read(req.user._id);
+            const data = me?.mail
+                ? await supportController.list({ "issueRaisedBy.email": me.mail }, null, { _id: -1 })
+                : [];
+            return { message: "", data };
+        },
+        supportController
+    ))
 router
     .route('/:id')
     .get(expressRoute(

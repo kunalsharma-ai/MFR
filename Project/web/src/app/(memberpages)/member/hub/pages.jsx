@@ -630,7 +630,7 @@ export function SettingsPage() {
             <header><span className="st-ic"><Icon name="account" size={20} /></span><div><h2 id="sac-t" className="h-h3">{t("st.account")}</h2><p>{t("st.accountHint")}</p></div></header>
             <div className="st-links">
               <Link href="/member/myaccount" className="h-btn h-btn-soft">{t("nav.account")} <Icon name="arrow" size={16} /></Link>
-              <Link href="/member/support" className="h-btn h-btn-soft">{t("ma.close")} <Icon name="arrow" size={16} /></Link>
+              <Link href="/member/help?ask=account" className="h-btn h-btn-soft">{t("ma.close")} <Icon name="arrow" size={16} /></Link>
             </div>
           </section>
         </div>

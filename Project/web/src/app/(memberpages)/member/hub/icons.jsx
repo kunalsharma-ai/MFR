@@ -311,6 +311,33 @@ const P = {
       <path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.5 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" />
     </>
   ),
+  help: (
+    <>
+      <circle className="f" cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.4 9.3a2.7 2.7 0 0 1 5.2 1c0 1.8-2.6 2.2-2.6 3.9" />
+      <circle cx="12" cy="17.2" r=".6" fill="currentColor" />
+    </>
+  ),
+  search: (
+    <>
+      <circle className="f" cx="10.5" cy="10.5" r="6.5" />
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5L20 20" />
+    </>
+  ),
+  send: (
+    <>
+      <path className="f" d="M3.5 11.5L20 4l-5.5 16-3-6.5z" />
+      <path d="M3.5 11.5L20 4l-5.5 16-3-6.5zM11.5 13.5L20 4" />
+    </>
+  ),
+  book: (
+    <>
+      <path className="f" d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z" />
+      <path d="M4 20.5v-15A1.5 1.5 0 0 1 5.5 4H11a1 1 0 0 1 1 1v15M20 20.5v-15A1.5 1.5 0 0 0 18.5 4H13a1 1 0 0 0-1 1M4 20.5A1.5 1.5 0 0 1 5.5 19H11M20 20.5a1.5 1.5 0 0 0-1.5-1.5H13" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 22, className = "", title }) {
