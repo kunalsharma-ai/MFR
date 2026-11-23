@@ -47,3 +47,23 @@ animation (`profiles/ps/*`) and the Survey experience (`/member/surveys`, `/surv
 | Quality score history | Not stored. Quality page shows an empty history state. |
 | Quality score | Still computed in the browser (`creditQualityScore`); PR #16 caps the PUT. |
 | Separate consent vs T&C | The approved legal text is one combined document per type. Splitting it needs legal wording. |
+
+## Profile & Survey design v4.1 (Kunal, 23 Nov 2026)
+The Profile studio (`profiles/ps/*`) and the Survey cards were already a port of the v4.1 design (Prize Machine,
+capsules, LED counter, ranks, member cards, emoji answers, income in the member's currency, click ripple), running on
+live data: profiles from `POST /api/v1/profile`, answers from `POST /api/v1/me`, saves via the survey response
+`PATCH`, profile rewards via `PUT /api/v1/rewards` (paid once, checked on the server).
+
+Added now: the v4.1 sounds (`ps/sound.js`, a copy of v4.1 `audio/sound.js`): each language's instrument, a note on
+every answer click, the capsule and completion sounds. They follow the member hub's Sound switch (`mfr.hub.prefs`).
+
+Kept as the portal had it, on purpose:
+- **Points per profile:** v4.1 says 100; the API pays `DEFAULT_PROFILE_POINTS = 50` (`api/app/controller/Reward.js`) and the
+  page shows what the API pays. Changing it to 100 is a backend change and a business decision.
+- **Which profiles are listed:** the Profiles page lists the four core profiles plus completed ones; the others are in
+  Surveys once the core four are done (v4.1 lists all of them on one page).
+- **Language ribbon:** the portal header's language menu replaces v4.1's hero language ribbon.
+
+Needs backend (not built): the v4.1 reminder e-mails (`POST /api/progress`, a member store, the 48-hour scheduler,
+unsubscribe links and the e-mail sender). The portal already saves progress in the database (profile status and
+rewards), so `/api/progress` would read from there instead of a separate store.
