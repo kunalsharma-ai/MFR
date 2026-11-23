@@ -1,6 +1,7 @@
 "use client";
 // Small building blocks shared by every hub screen: counters, rings, meters, skeletons, empty and error states.
 import React from "react";
+import Link from "next/link";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 
@@ -239,5 +240,95 @@ export function SectionHead({ eyebrow, title, sub, icon, right }) {
       </div>
       {right ? <div className="h-shead-r">{right}</div> : null}
     </div>
+  );
+}
+
+/* ======================= v2 (Nov 2026 ground-up redesign) ======================= */
+
+/* Tooltip: shows on hover and keyboard focus; the text is also the accessible description. */
+export function Tip({ text, children, side = "bottom", className = "" }) {
+  const id = React.useId();
+  return (
+    <span className={`h-tip-wrap ${className}`} data-side={side}>
+      {React.isValidElement(children) ? React.cloneElement(children, { "aria-describedby": id }) : children}
+      <span role="tooltip" id={id} className="h-tip">{text}</span>
+    </span>
+  );
+}
+
+/* Small sparkline from a list of numbers (oldest first). */
+export function Spark({ values = [], w = 96, h = 28, className = "", label }) {
+  const v = values.length ? values : [0, 0];
+  const max = Math.max(1, ...v);
+  const x = (i) => (i * (w - 4)) / Math.max(1, v.length - 1) + 2;
+  const y = (n) => h - 3 - (n / max) * (h - 6);
+  const d = v.map((n, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(n).toFixed(1)}`).join(" ");
+  return (
+    <svg className={`h-spark ${className}`} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
+      <path d={`${d} L${x(v.length - 1)},${h} L${x(0)},${h} Z`} className="h-spark-a" />
+      <path d={d} className="h-spark-l" pathLength="1" />
+      <circle cx={x(v.length - 1)} cy={y(v[v.length - 1])} r="2.6" className="h-spark-d" />
+    </svg>
+  );
+}
+
+/* A CSS 3D coin (two faces + rim), spins slowly; still when motion is reduced. */
+export function Coin3D({ size = 96, label = "", className = "" }) {
+  return (
+    <span className={`h-coin3d ${className}`} style={{ "--cs": `${size}px` }} aria-hidden="true">
+      <span className="h-coin3d-spin">
+        <span className="h-coin3d-face f1"><b>{label}</b></span>
+        {Array.from({ length: 10 }).map((_, i) => <i key={i} style={{ "--k": i }} />)}
+        <span className="h-coin3d-face f2"><b>{label}</b></span>
+      </span>
+      <span className="h-coin3d-shadow" />
+    </span>
+  );
+}
+
+/* A short particle burst for completions and unlocks. Render it with a changing key to replay. */
+export function Burst({ n = 14, className = "" }) {
+  return (
+    <span className={`h-burst ${className}`} aria-hidden="true">
+      {Array.from({ length: n }).map((_, i) => <i key={i} style={{ "--a": `${(360 / n) * i}deg`, "--d": `${40 + ((i * 37) % 30)}px`, "--k": i % 4 }} />)}
+    </span>
+  );
+}
+
+/* Compact contextual hero used by every section. Each section passes its own art and status, and the skin + kind
+   decide the composition, so heroes never repeat the same layout. */
+export function Hero({ kind, crumbs = [], eyebrow, title, sub, status, art, actions, id, children }) {
+  return (
+    <section className={`hx hx-${kind}`} aria-labelledby={id}>
+      <div className="hx-bg" aria-hidden="true"><i /><i /><i /></div>
+      <div className="hx-main">
+        {crumbs.length ? (
+          <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}>
+            <ol>
+              {crumbs.map((c, i) => (
+                <li key={i}>{c.href && i < crumbs.length - 1 ? <Link href={c.href}>{c.label}</Link> : <span aria-current={i === crumbs.length - 1 ? "page" : undefined}>{c.label}</span>}</li>
+              ))}
+            </ol>
+          </nav>
+        ) : null}
+        {eyebrow ? <p className="hx-eyebrow">{eyebrow}</p> : null}
+        <h1 className="hx-title" id={id}>{title}</h1>
+        {sub ? <p className="hx-sub">{sub}</p> : null}
+        {status ? <div className="hx-status">{status}</div> : null}
+        {actions ? <div className="hx-actions">{actions}</div> : null}
+        {children}
+      </div>
+      {art ? <div className="hx-art" aria-hidden="true">{art}</div> : null}
+    </section>
+  );
+}
+
+/* Status chip with a non-colour cue (icon + text). */
+export function StatusChip({ state, label }) {
+  const icon = { available: "play", progress: "hourglass", done: "check", pending: "clock", action: "alert", locked: "lock" }[state] || "spark";
+  return (
+    <span className={`h-state s-${state}`}>
+      <Icon name={icon} size={14} /> {label}
+    </span>
   );
 }

@@ -12,6 +12,7 @@ import { useMember } from "@/Context";
 import { api } from "@/util";
 import { useRewardsTick, fetchRewardBalance } from "@/hooks/useRewardsRefresh";
 import { CORE_SLUGS } from "../(member pages)/profiles/ps/profileRules.js";
+import { locale } from "./prefs";
 
 const ok = (r) => r && r.status !== "error";
 const fail = (r) => {
@@ -193,7 +194,7 @@ export function monthlyPoints(ledger = [], months = 6) {
     const k = `${r.at.getFullYear()}-${String(r.at.getMonth() + 1).padStart(2, "0")}`;
     if (k in sum) sum[k] += r.points;
   }
-  return keys.map((k) => ({ key: k, points: sum[k], label: new Date(`${k}-01T00:00:00`).toLocaleString(undefined, { month: "short" }) }));
+  return keys.map((k) => ({ key: k, points: sum[k], label: new Date(`${k}-01T00:00:00`).toLocaleString(locale(), { month: "short" }) }));
 }
 
 // achievements worked out from real data only
@@ -210,9 +211,9 @@ export function achievementsOf({ stats, profiles, quality, ledger, referrals }) 
   ];
 }
 
-export const fmt = (n) => new Intl.NumberFormat(undefined).format(Math.round(Number(n) || 0));
+export const fmt = (n) => new Intl.NumberFormat(locale()).format(Math.round(Number(n) || 0));
 export const money = (pts, rate) =>
-  new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format((Number(pts) || 0) * (Number(rate) || 0));
+  new Intl.NumberFormat(locale(), { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format((Number(pts) || 0) * (Number(rate) || 0));
 
 export function relDay(d, t) {
   if (!d) return "";
@@ -223,5 +224,5 @@ export function relDay(d, t) {
   if (days <= 0) return t("c.today");
   if (days === 1) return t("c.yesterday");
   if (days < 7) return t("c.daysAgo", { n: days });
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: d.getFullYear() === now.getFullYear() ? undefined : "numeric" });
+  return d.toLocaleDateString(locale(), { day: "numeric", month: "short", year: d.getFullYear() === now.getFullYear() ? undefined : "numeric" });
 }

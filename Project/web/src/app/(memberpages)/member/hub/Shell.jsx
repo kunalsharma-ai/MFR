@@ -1,55 +1,85 @@
 "use client";
-// The member hub frame: header (logo, points, quality, notifications, language, theme, sound, avatar),
-// grouped side navigation on desktop, an icon rail on tablets and a bottom bar + drawer on phones.
+// The member hub frame (v2, Nov 2026 ground-up redesign).
+//   Header: logo + panel badge, live section indicator, three live status gauges (profile %, quality /10, points + level),
+//           notification centre, help, language, mode, palette, sound, account menu. On small screens the tools fold
+//           into one "more" menu and the gauges into one status chip.
+//   Navigation: sticky, grouped, with live badges. Each member type skins it differently (Consumer floating dock,
+//           Professional ink sidebar that collapses to a rail, Teen arcade tiles); phones get a bottom bar + drawer.
+// Every number comes from useHub() (store.js), the single source of truth.
 import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { useMember } from "@/Context";
+import { api } from "@/util";
 import { LANGUAGES } from "@/i18n/languages";
-import MemberNotification from "../components/MemberNotification";
 import Icon from "./icons.jsx";
-import { Counter } from "./ui.jsx";
+import { Counter, Tip } from "./ui.jsx";
 import { t, setStringsLanguage } from "./strings";
-import { usePrefs, setPrefs, applyTheme, paletteVars, currentLanguage, setLanguage, THEMES } from "./prefs";
-import { memberTypeOf, usePoints, qualityOf, fmt } from "./data";
+import { usePrefs, setPrefs, applyTheme, paletteVars, currentLanguage, setLanguage, MODES, PALETTES, resolvedMode, dirOf, motionReduced } from "./prefs";
+import { fmt } from "./data";
+import { useHub, useRise } from "./store";
 import { play } from "./sound";
 import { helpForSection } from "./help/content";
 import "./hub.css";
+import "./hub-sections.css";
+import "./hub-skins.css";
 
 export const NAV = [
-  { group: "nav.groupEarn", items: [
-    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home" },
-    { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.profile" },
-    { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys" },
-    { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards" },
+  { group: "nav.groupOverview", items: [
+    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home", hint: "nav.hDashboard" },
   ] },
-  { group: "nav.groupProgress", items: [
-    { key: "quality", href: "/member/quality", icon: "quality", label: "nav.quality" },
-    { key: "activity", href: "/member/activity", icon: "activity", label: "nav.activity" },
-    { key: "referrals", href: "/member/referrals", icon: "referrals", label: "nav.referrals" },
+  { group: "nav.groupEarn", items: [
+    { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.myProfile", short: "nav.profile", hint: "nav.hProfile" },
+    { key: "services", href: "/member/services", icon: "services", label: "nav.services", hint: "nav.hServices" },
+    { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys", hint: "nav.hSurveys" },
+    { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards", hint: "nav.hRewards" },
+  ] },
+  { group: "nav.groupGrow", items: [
+    { key: "quality", href: "/member/quality", icon: "quality", label: "nav.quality", short: "nav.qualityShort", hint: "nav.hQuality" },
+    { key: "activity", href: "/member/activity", icon: "activity", label: "nav.activity", hint: "nav.hActivity" },
+    { key: "referrals", href: "/member/referrals", icon: "referrals", label: "nav.referrals", hint: "nav.hReferrals" },
   ] },
   { group: "nav.groupYou", items: [
-    { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account" },
-    { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings" },
-    // Help centre (Nov 2026): FAQs, guides and "raise a query". The ticket pages under /member/support count as Help.
-    { key: "help", href: "/member/help", also: ["/member/support"], icon: "help", label: "nav.helpCentre", short: "nav.help" },
+    { key: "messages", href: "/member/messages", icon: "inbox", label: "nav.messages", hint: "nav.hMessages" },
+    { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account", hint: "nav.hAccount" },
+    { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings", hint: "nav.hSettings" },
+    // The ticket pages under /member/support count as Help.
+    { key: "help", href: "/member/help", also: ["/member/support"], icon: "help", label: "nav.support", short: "nav.help", hint: "nav.hHelp" },
   ] },
 ];
-const BOTTOM = ["dashboard", "surveys", "rewards", "profile", "help"];
 const ALL = NAV.flatMap((g) => g.items);
+const BOTTOM = { consumer: ["dashboard", "services", "surveys", "rewards"], professional: ["dashboard", "surveys", "quality", "rewards"], teen: ["dashboard", "services", "surveys", "rewards"] };
 
 const isActive = (pathname, href) => typeof pathname === "string" && (pathname === href || pathname.startsWith(`${href}/`));
 const isOn = (pathname, it) => isActive(pathname, it.href) || (it.also || []).some((h) => isActive(pathname, h));
+export const sectionOf = (pathname) => (ALL.find((x) => isOn(pathname, x)) || ALL[0]);
+
+/* ---------------- notifications (GET /api/v1/alerts, the feed the old bell read) ---------------- */
+export function useAlerts() {
+  const member = useMember();
+  return useQuery({
+    queryKey: ["hub", "alerts", member?._id],
+    enabled: Boolean(member?._id),
+    queryFn: async () => {
+      const r = await api.get("/api/v1/alerts");
+      if (!r || r.status === "error") throw new Error((r && r.message) || "alerts");
+      return (Array.isArray(r.data) ? r.data : [])
+        .filter(Boolean)
+        .map((a, i) => ({ id: String(a._id || i), title: a.title || "", subtitle: a.subtitle || "", message: a.message || "", cta: a.cta || "", ctaType: a.ctaType || "", at: a.createdAt ? new Date(a.createdAt) : null }))
+        .sort((a, b) => (b.at?.getTime() || 0) - (a.at?.getTime() || 0));
+    },
+    staleTime: 60_000,
+  });
+}
 
 /* click-outside + Esc popover used by every header control */
-function Pop({ id, label, icon, badge, children, className = "", buttonClass = "" }) {
+function Pop({ id, label, icon, badge, children, className = "", buttonClass = "", tip = true }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => {
     if (!open) return undefined;
-    const onDown = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
     const onKey = (e) => {
       if (e.key === "Escape") {
         setOpen(false);
@@ -58,29 +88,30 @@ function Pop({ id, label, icon, badge, children, className = "", buttonClass = "
     };
     document.addEventListener("pointerdown", onDown);
     document.addEventListener("keydown", onKey);
+    const first = ref.current?.querySelector(".hh-menu button, .hh-menu a, .hh-menu input");
+    first?.focus({ preventScroll: true });
     return () => {
       document.removeEventListener("pointerdown", onDown);
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
+  const btn = (
+    <button
+      type="button"
+      className={`hh-icon ${buttonClass} ${open ? "is-open" : ""}`}
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls={id}
+      aria-label={label}
+      onClick={() => { setOpen((o) => !o); play("tap"); }}
+    >
+      {icon}
+      {badge}
+    </button>
+  );
   return (
     <div className={`hh-pop ${className}`} ref={ref}>
-      <button
-        type="button"
-        className={`hh-icon ${buttonClass} ${open ? "is-open" : ""}`}
-        aria-haspopup="true"
-        aria-expanded={open}
-        aria-controls={id}
-        aria-label={label}
-        title={label}
-        onClick={() => {
-          setOpen((o) => !o);
-          play("tap");
-        }}
-      >
-        {icon}
-        {badge}
-      </button>
+      {tip ? <Tip text={label}>{btn}</Tip> : btn}
       {open ? (
         <div className="hh-menu" id={id} role="dialog" aria-label={label}>
           {typeof children === "function" ? children(() => setOpen(false)) : children}
@@ -90,99 +121,93 @@ function Pop({ id, label, icon, badge, children, className = "", buttonClass = "
   );
 }
 
-function ThemeMenu({ prefs }) {
-  const icons = { light: "sun", dark: "moon", night: "night" };
+const MODE_ICON = { light: "sun", dark: "moon", night: "night", system: "device" };
+
+function ModeList({ prefs, onPick }) {
   return (
-    <Pop id="hh-theme" label={t("hdr.theme")} icon={<Icon name={icons[prefs.theme]} size={20} />}>
-      {(close) => (
-        <div className="hh-list" role="radiogroup" aria-label={t("hdr.theme")}>
-          {THEMES.map((k) => (
-            <button
-              key={k}
-              type="button"
-              role="radio"
-              aria-checked={prefs.theme === k}
-              className={`hh-opt ${prefs.theme === k ? "on" : ""}`}
-              onClick={() => {
-                setPrefs({ theme: k });
-                play("tap");
-                close();
-              }}
-            >
-              <span className={`hh-swatch th-${k}`}>
-                <Icon name={icons[k]} size={16} />
-              </span>
-              <span>
-                <b>{t(`theme.${k}`)}</b>
-                <small>{t(`theme.${k}Hint`)}</small>
-              </span>
-              {prefs.theme === k ? <Icon name="check" size={16} className="hh-tick" /> : null}
-            </button>
-          ))}
-        </div>
-      )}
-    </Pop>
+    <div className="hh-seg" role="radiogroup" aria-label={t("hdr.mode")}>
+      {MODES.map((k) => (
+        <button key={k} type="button" role="radio" aria-checked={prefs.mode === k} className={prefs.mode === k ? "on" : ""} onClick={() => { setPrefs({ mode: k }); play("tap"); onPick?.(); }}>
+          <Icon name={MODE_ICON[k]} size={18} />
+          <span>{t(`mode.${k}`)}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
-function LanguageMenu() {
-  const [lang, setLang] = React.useState("en");
-  React.useEffect(() => setLang(currentLanguage()), []);
-  const cur = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
+export function PaletteList({ prefs, type, onPick, withCustom = false }) {
+  const keys = Object.keys(PALETTES);
+  const dark = resolvedMode(prefs) !== "light";
   return (
-    <Pop
-      id="hh-lang"
-      label={t("hdr.language")}
-      className="hh-lang"
-      buttonClass="hh-lang-btn"
-      icon={
-        <>
-          <Icon name="globe" size={20} />
-          <span className="hh-lang-code notranslate">{cur.native}</span>
-        </>
-      }
-    >
-      {(close) => (
-        <div className="hh-list hh-langs" role="listbox" aria-label={t("hdr.language")}>
-          {LANGUAGES.map((l) => (
-            <button
-              key={l.code}
-              type="button"
-              role="option"
-              aria-selected={l.code === lang}
-              className={`hh-opt notranslate ${l.code === lang ? "on" : ""}`}
-              dir={l.dir || "ltr"}
-              onClick={() => {
-                setLang(l.code);
-                setLanguage(l.code);
-                close();
-              }}
-            >
-              <span className="hh-glyph" style={{ background: `linear-gradient(135deg, ${l.grade[0]}, ${l.grade[1]})` }}>{l.glyph}</span>
-              <span>
-                <b>{l.native}</b>
-                <small>{l.name}</small>
-              </span>
-              {l.code === lang ? <Icon name="check" size={16} className="hh-tick" /> : null}
-            </button>
-          ))}
-        </div>
-      )}
-    </Pop>
+    <div className="hh-pals" role="radiogroup" aria-label={t("hdr.palette")}>
+      {keys.map((k) => {
+        const pal = PALETTES[k];
+        const v = pal ? (dark ? pal.dark : pal.light) : null;
+        return (
+          <button key={k} type="button" role="radio" aria-checked={prefs.palette === k} className={`hh-pal ${prefs.palette === k ? "on" : ""}`} onClick={() => { setPrefs({ palette: k }); play("tap"); onPick?.(); }}>
+            <span className={`hh-pal-sw ${v ? "" : `sig-${type}`}`} style={v ? { "--p1": v.primary, "--p2": v.secondary, "--p3": v.accent } : undefined} aria-hidden="true"><i /><i /><i /></span>
+            <span className="hh-pal-n">{t(`pal.${k}`)}</span>
+            {prefs.palette === k ? <Icon name="check" size={14} className="hh-tick" /> : null}
+          </button>
+        );
+      })}
+      {withCustom ? (
+        <button type="button" role="radio" aria-checked={prefs.palette === "custom"} className={`hh-pal ${prefs.palette === "custom" ? "on" : ""}`} onClick={() => { setPrefs({ palette: "custom" }); play("tap"); }}>
+          <span className="hh-pal-sw" style={{ "--p1": prefs.custom, "--p2": prefs.custom, "--p3": prefs.custom }} aria-hidden="true"><i /><i /><i /></span>
+          <span className="hh-pal-n">{t("pal.custom")}</span>
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function LanguageList({ onPick }) {
+  const [lang, setLang] = React.useState("en");
+  const [q, setQ] = React.useState("");
+  React.useEffect(() => setLang(currentLanguage()), []);
+  const list = LANGUAGES.filter((l) => !q || `${l.native} ${l.name}`.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <div className="hh-langs">
+      <label className="hh-search">
+        <Icon name="search" size={16} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("hdr.langSearch")} aria-label={t("hdr.langSearch")} />
+      </label>
+      <div className="hh-list" role="listbox" aria-label={t("hdr.language")}>
+        {list.map((l) => (
+          <button key={l.code} type="button" role="option" aria-selected={l.code === lang} className={`hh-opt notranslate ${l.code === lang ? "on" : ""}`} dir={l.dir || "ltr"}
+            onClick={() => { setLang(l.code); setLanguage(l.code); onPick?.(); }}>
+            <span className="hh-glyph" style={{ background: `linear-gradient(135deg, ${l.grade[0]}, ${l.grade[1]})` }}>{l.glyph}</span>
+            <span><b>{l.native}</b><small>{l.name}{l.dir === "rtl" ? " · RTL" : ""}</small></span>
+            {l.code === lang ? <Icon name="check" size={16} className="hh-tick" /> : null}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SoundButton({ prefs }) {
+  return (
+    <Tip text={prefs.sound ? t("hdr.soundOn") : t("hdr.soundOff")}>
+      <button type="button" className={`hh-icon ${prefs.sound ? "" : "is-muted"}`} aria-pressed={prefs.sound} aria-label={t("hdr.sound")}
+        onClick={() => { const next = !prefs.sound; setPrefs({ sound: next }); if (next) setTimeout(() => play("tap"), 0); }}>
+        <Icon name={prefs.sound ? "soundOn" : "soundOff"} size={20} />
+      </button>
+    </Tip>
   );
 }
 
 // tells an open Help centre to re-read the address after a client-side link changed only its query or hash
 const helpNav = () => setTimeout(() => window.dispatchEvent(new Event("hub-help-nav")), 60);
 
-// "?" in the header: the help for the page you are on, the Help centre and "raise a query", from every page.
 function HelpMenu({ section, type }) {
   const tip = helpForSection(section, type);
   return (
-    <Pop id="hh-help" label={t("hp.pageHelp")} className="hh-help" buttonClass="hh-help-btn" icon={<Icon name="help" size={21} />}>
+    <Pop id="hh-help" label={t("hp.pageHelp")} className="hh-help" icon={<Icon name="help" size={20} />}>
       {(close) => (
         <div className="hh-list hh-helpmenu">
-          <p className="hh-help-t"><span style={{ "--c1": tip.topic.c1, "--c2": tip.topic.c2 }}><Icon name={tip.topic.icon} size={16} /></span> {tip.topic.title}</p>
+          <p className="hh-menu-t"><span className="hh-help-ic" style={{ "--c1": tip.topic.c1, "--c2": tip.topic.c2 }}><Icon name={tip.topic.icon} size={16} /></span> {tip.topic.title}</p>
           {tip.guide ? (
             <Link className="hh-opt" href={`/member/help#guide-${tip.guide.id}`} onClick={() => { close(); helpNav(); }}>
               <Icon name="book" size={18} /> <span><b>{tip.guide.title}</b><small>{t("hp.guide")} · {t("hp.steps", { n: tip.guide.steps.length })}</small></span>
@@ -193,7 +218,7 @@ function HelpMenu({ section, type }) {
               <Icon name="help" size={18} /> <span><b>{f.q}</b></span>
             </Link>
           ))}
-          <div className="hh-help-end">
+          <div className="hh-menu-end">
             <Link className="h-btn h-btn-soft" href={`/member/help?topic=${tip.topic.id}`} onClick={() => { close(); helpNav(); }}>{t("hp.openCentre")}</Link>
             <Link className="h-btn h-btn-primary" href={`/member/help?ask=${tip.topic.id}`} onClick={() => { close(); helpNav(); }}>{t("hp.raise")}</Link>
           </div>
@@ -203,49 +228,94 @@ function HelpMenu({ section, type }) {
   );
 }
 
-function AvatarMenu({ member, type }) {
-  const router = useRouter();
-  const initials = `${member?.firstname?.[0] || ""}${member?.lastname?.[0] || ""}`.toUpperCase() || "M";
+export function NewsletterDialog({ url, onClose }) {
+  React.useEffect(() => {
+    if (!url) return undefined;
+    const k = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", k);
+    return () => document.removeEventListener("keydown", k);
+  }, [url, onClose]);
+  if (!url) return null;
   return (
-    <Pop
-      id="hh-me"
-      label={t("hdr.account")}
-      className="hh-me"
-      buttonClass="hh-avatar-btn"
-      icon={
-        <span className="hh-avatar">
-          {member?.profilePicture ? <img src={member.profilePicture} alt="" /> : <span>{initials}</span>}
-        </span>
-      }
-    >
+    <div className="hh-modal" role="dialog" aria-modal="true" aria-label={t("msg.newsletter")} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="hh-modal-box">
+        <div className="hh-modal-head"><b>{t("msg.newsletter")}</b><button type="button" className="hh-icon" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={18} /></button></div>
+        <iframe src={url} title={t("msg.newsletter")} />
+      </div>
+    </div>
+  );
+}
+
+function Notifications() {
+  const alerts = useAlerts();
+  const n = alerts.data?.length || 0;
+  const rose = useRise(alerts.data ? n : null, "notify");
+  const [popup, setPopup] = React.useState(null);
+  return (
+    <>
+      <Pop id="hh-notif" label={t("hdr.notifications")} className="hh-notif" buttonClass={rose ? "is-ring" : ""}
+        icon={<Icon name="bell" size={20} />}
+        badge={n ? <span className="hh-badge" aria-label={t("hdr.unread", { n })}>{n > 9 ? "9+" : n}</span> : null}>
+        {(close) => (
+          <div className="hh-notes">
+            <div className="hh-menu-head"><b>{t("hdr.notifications")}</b><small>{alerts.isLoading ? t("c.loading") : t("hdr.unread", { n })}</small></div>
+            {alerts.isError ? (
+              <p className="hh-empty"><Icon name="alert" size={18} /> {t("msg.alertsError")}</p>
+            ) : !n && !alerts.isLoading ? (
+              <p className="hh-empty"><Icon name="check" size={18} /> {t("msg.alertsEmpty")}</p>
+            ) : (
+              <ul className="hh-notes-list">
+                {(alerts.data || []).slice(0, 6).map((a) => (
+                  <li key={a.id}>
+                    <span className="hh-note-av" aria-hidden="true">{(a.title || "M").charAt(0)}</span>
+                    <span className="hh-note-tx">
+                      <b>{a.subtitle || a.title}</b>
+                      {a.message ? <small>{a.message}</small> : null}
+                      <em>{a.title}{a.at ? ` · ${a.at.toLocaleDateString()}` : ""}</em>
+                    </span>
+                    {a.cta ? (a.ctaType === "popup"
+                      ? <button type="button" className="h-link" onClick={() => { setPopup(a.cta); close(); }}>{t("c.view")}</button>
+                      : <a className="h-link" href={a.cta} target="_blank" rel="noopener noreferrer">{t("c.open")}</a>) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="hh-menu-end"><Link href="/member/messages" className="h-btn h-btn-soft" onClick={close}>{t("hdr.allMessages")} <Icon name="arrow" size={16} /></Link></div>
+          </div>
+        )}
+      </Pop>
+      <NewsletterDialog url={popup} onClose={() => setPopup(null)} />
+    </>
+  );
+}
+
+function initialsOf(m) {
+  return `${m?.firstname?.[0] || ""}${m?.lastname?.[0] || ""}`.toUpperCase() || "M";
+}
+export function Avatar({ member, size = "" }) {
+  const pic = member?.profilePicture && !String(member.profilePicture).includes("/images/logo/user.png") ? member.profilePicture : null;
+  return <span className={`hh-avatar ${size}`}>{pic ? <img src={pic} alt="" /> : <span>{initialsOf(member)}</span>}</span>;
+}
+
+function AvatarMenu({ hub }) {
+  const router = useRouter();
+  const { member, type, level, completion } = hub;
+  return (
+    <Pop id="hh-me" label={t("hdr.account")} className="hh-me" buttonClass="hh-avatar-btn" tip={false} icon={<Avatar member={member} />}>
       {(close) => (
         <div className="hh-list">
           <div className="hh-me-card">
-            <span className="hh-avatar lg">
-              {member?.profilePicture ? <img src={member.profilePicture} alt="" /> : <span>{initials}</span>}
-            </span>
+            <Avatar member={member} size="lg" />
             <span>
               <b>{member?.fullname || member?.firstname}</b>
               <small className={`hh-type t-${type}`}>{t(`type.${type}Member`)}</small>
+              <small className="hh-me-lv">{t("lv.level", { n: level.n })}{completion ? ` · ${t("hdr.profilePct", { n: completion.pct })}` : ""}</small>
             </span>
           </div>
-          <Link className="hh-opt" href="/member/myaccount" onClick={close}>
-            <Icon name="account" size={18} /> <span><b>{t("nav.account")}</b></span>
-          </Link>
-          <Link className="hh-opt" href="/member/settings" onClick={close}>
-            <Icon name="settings" size={18} /> <span><b>{t("nav.settings")}</b></span>
-          </Link>
-          <Link className="hh-opt" href="/member/help" onClick={close}>
-            <Icon name="help" size={18} /> <span><b>{t("nav.helpCentre")}</b></span>
-          </Link>
-          <button
-            type="button"
-            className="hh-opt danger"
-            onClick={() => {
-              close();
-              member?.Logout ? member.Logout() : router.replace("/");
-            }}
-          >
+          {[["account", "/member/myaccount", "nav.account"], ["user", "/member/settings#st-social", "nav.social"], ["settings", "/member/settings", "nav.settings"], ["inbox", "/member/messages", "nav.messages"], ["help", "/member/help", "nav.support"]].map(([ic, href, l]) => (
+            <Link key={href} className="hh-opt" href={href} onClick={close}><Icon name={ic} size={18} /> <span><b>{t(l)}</b></span></Link>
+          ))}
+          <button type="button" className="hh-opt danger" onClick={() => { close(); member?.Logout ? member.Logout() : router.replace("/"); }}>
             <Icon name="logout" size={18} /> <span><b>{t("hdr.logout")}</b></span>
           </button>
         </div>
@@ -254,174 +324,231 @@ function AvatarMenu({ member, type }) {
   );
 }
 
-function Header({ member, type, prefs, onMenu, section }) {
-  const points = usePoints();
-  const q = qualityOf(member);
-  const router = useRouter();
-  const prev = React.useRef(null);
-  const [bump, setBump] = React.useState(false);
-  React.useEffect(() => {
-    const v = points.data?.total;
-    if (v == null) return undefined;
-    if (prev.current != null && v > prev.current) {
-      setBump(true);
-      play("reward");
-      const id = setTimeout(() => setBump(false), 1200);
-      prev.current = v;
-      return () => clearTimeout(id);
-    }
-    prev.current = v;
-    return undefined;
-  }, [points.data?.total]);
-
+/* the three live gauges */
+function MiniRing({ pct, children }) {
   return (
-    <header className="hh" role="banner">
-      <a href="#hub-main" className="hh-skip">{t("hdr.skip")}</a>
-      <button type="button" className="hh-icon hh-burger" aria-label={t("nav.menu")} onClick={onMenu}>
-        <Icon name="menu" size={22} />
-      </button>
-      <Link href="/member/dashboard" className="hh-logo" aria-label="MyFrequentRewards dashboard">
-        <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="150" height="40" />
-        <span className={`hh-type-dot t-${type}`} aria-hidden="true" />
-      </Link>
-      <span className={`hh-type t-${type} hh-type-top`}>{t(`type.${type}`)}</span>
+    <span className="hs-ring" style={{ "--p": Math.max(0, Math.min(100, pct || 0)) }}>
+      <svg viewBox="0 0 36 36" aria-hidden="true">
+        <circle cx="18" cy="18" r="15" className="bg" />
+        <circle cx="18" cy="18" r="15" className="fg" pathLength="100" style={{ strokeDasharray: `${Math.max(0, Math.min(100, pct || 0))} 100` }} />
+      </svg>
+      <span className="hs-ring-in">{children}</span>
+    </span>
+  );
+}
 
-      <div className="hh-right">
-        <button
-          type="button"
-          id="rw-pts"
-          className={`hh-points ${bump ? "is-bump" : ""}`}
+function StatusCluster({ hub }) {
+  const router = useRouter();
+  const { completion, quality, pts, level, type } = hub;
+  const pPulse = useRise(completion?.pct ?? null, "complete");
+  const qPulse = useRise(quality?.raw ?? null, "achievement");
+  const ptPulse = useRise(pts?.total ?? null, "reward");
+  const lvPulse = useRise(level?.n ?? null, "levelup");
+  return (
+    <div className="hs" role="group" aria-label={t("hdr.status")}>
+      <Tip text={completion ? (completion.pct >= 100 ? t("hdr.profileDone") : t("hdr.profileTip", { n: completion.remaining.length })) : t("c.loading")}>
+        <Link href="/member/profiles" className={`hs-item hs-profile ${pPulse ? "is-pulse" : ""}`} aria-label={`${t("hdr.profile")} ${completion?.pct ?? 0}%`}>
+          <MiniRing pct={completion?.pct}><Icon name="profile" size={13} /></MiniRing>
+          <span className="hs-tx"><small>{t("hdr.profile")}</small><b>{completion ? <><Counter value={completion.pct} />%</> : "…"}</b></span>
+        </Link>
+      </Tip>
+      {quality ? (
+        <Tip text={t("hdr.qualityTip", { raw: fmt(quality.raw), scale: fmt(quality.scale), tier: quality.tier?.label || t(`qs.${quality.band}`) })}>
+          <Link href="/member/quality" className={`hs-item hs-quality b-${quality.band} ${qPulse ? "is-pulse" : ""}`} aria-label={`${t("hdr.quality")} ${quality.ten} / 10`}>
+            <MiniRing pct={quality.pct}><Icon name="quality" size={13} /></MiniRing>
+            <span className="hs-tx"><small>{t("hdr.quality")}</small><b><Counter value={quality.ten} format={(n) => n.toFixed(1)} /><em>/10</em></b></span>
+          </Link>
+        </Tip>
+      ) : null}
+      <Tip text={pts ? t("hdr.pointsTip", { n: fmt(level.left ?? 0), lv: (level.n || 1) + 1 }) : t("c.loading")}>
+        <button type="button" id="rw-pts" className={`hs-item hs-points ${ptPulse ? "is-pulse" : ""} ${lvPulse ? "is-level" : ""}`}
           onClick={() => {
             const machine = document.getElementById("rewards");
             if (machine) machine.scrollIntoView({ behavior: "smooth", block: "start" });
             else router.push("/member/rewards");
           }}
-          aria-label={`${fmt(points.data?.total || 0)} ${t("c.points")}`}
-        >
-          <span className="hh-coin" aria-hidden="true">
-            <Icon name="coin" size={18} />
-          </span>
-          <span className="hh-points-v">
-            <small>{t("hdr.points")}</small>
-            {points.isLoading ? <b className="h-skel-text">····</b> : <b><Counter value={points.data?.total || 0} /></b>}
-          </span>
+          aria-label={`${fmt(pts?.total || 0)} ${t("c.points")}, ${t("lv.level", { n: level.n })}`}>
+          <span className="hs-coin" aria-hidden="true"><Icon name="coin" size={16} /></span>
+          <span className="hs-tx"><small>{type === "teen" ? t("hdr.xp") : t("hdr.points")}</small><b>{pts ? <Counter value={pts.total} /> : "…"}</b></span>
+          <span className="hs-lv" aria-hidden="true">L{level.n}</span>
+          {ptPulse ? <span className="hs-float" aria-hidden="true">+</span> : null}
         </button>
-        {q ? (
-          <Link href="/member/quality" className="hh-quality" aria-label={`${t("hdr.quality")} ${q.score}${q.scale ? ` / ${q.scale}` : ""}`}>
-            <svg viewBox="0 0 36 36" className="hh-qring" aria-hidden="true">
-              <circle cx="18" cy="18" r="15" className="bg" />
-              <circle cx="18" cy="18" r="15" className="fg" pathLength="100" style={{ strokeDasharray: `${q.pct ?? 0} 100` }} />
-            </svg>
-            <span>
-              <small>{t("hdr.quality")}</small>
-              <b>
-                {q.score}
-                {q.scale ? <em>/{q.scale}</em> : null}
-              </b>
-            </span>
-          </Link>
-        ) : null}
-        <span className="hh-sep" aria-hidden="true" />
-        <span className="hh-notif">
-          <MemberNotification />
-        </span>
-        <HelpMenu section={section} type={type} />
-        <LanguageMenu />
-        <ThemeMenu prefs={prefs} />
-        <button
-          type="button"
-          className={`hh-icon ${prefs.sound ? "" : "is-muted"}`}
-          aria-pressed={prefs.sound}
-          aria-label={prefs.sound ? t("hdr.soundOn") : t("hdr.soundOff")}
-          title={prefs.sound ? t("hdr.soundOn") : t("hdr.soundOff")}
-          onClick={() => {
-            const next = !prefs.sound;
-            setPrefs({ sound: next });
-            if (next) setTimeout(() => play("tap"), 0);
-          }}
-        >
-          <Icon name={prefs.sound ? "soundOn" : "soundOff"} size={20} />
-        </button>
-        <AvatarMenu member={member} type={type} />
+      </Tip>
+    </div>
+  );
+}
+
+function Header({ hub, prefs, onMenu, section }) {
+  const { member, type } = hub;
+  return (
+    <header className="hh" role="banner">
+      <a href="#hub-main" className="hh-skip">{t("hdr.skip")}</a>
+      <button type="button" className="hh-icon hh-burger" aria-label={t("nav.menu")} aria-controls="hub-nav" onClick={onMenu}>
+        <Icon name="menu" size={22} />
+      </button>
+      <Link href="/member/dashboard" className="hh-logo" aria-label={t("hdr.home")}>
+        <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="150" height="40" />
+      </Link>
+      <span className={`hh-type t-${type}`}>{t(`type.${type}`)}</span>
+      <div className="hh-where" aria-live="polite">
+        <span className="hh-where-ic" aria-hidden="true"><Icon name={section.icon} size={16} /></span>
+        <span className="hh-where-tx"><small>{t("hdr.youAreIn")}</small><b>{t(section.label)}</b></span>
+      </div>
+      <StatusCluster hub={hub} />
+      <div className="hh-tools">
+        <Notifications />
+        <HelpMenu section={section.key === "messages" ? "dashboard" : section.key === "services" ? "surveys" : section.key} type={type} />
+        <div className="hh-wide">
+          <Pop id="hh-lang" label={t("hdr.language")} icon={<Icon name="globe" size={20} />}>{(close) => <LanguageList onPick={close} />}</Pop>
+          <Pop id="hh-mode" label={t("hdr.mode")} icon={<Icon name={MODE_ICON[prefs.mode]} size={20} />}>{(close) => <ModeList prefs={prefs} onPick={close} />}</Pop>
+          <Pop id="hh-pal" label={t("hdr.palette")} icon={<Icon name="palette" size={20} />}>
+            {() => (
+              <div className="hh-palmenu">
+                <p className="hh-menu-t">{t("hdr.palette")}</p>
+                <PaletteList prefs={prefs} type={type} />
+                <Link className="h-link" href="/member/settings#st-appearance">{t("hdr.moreAppearance")} <Icon name="chevron" size={14} /></Link>
+              </div>
+            )}
+          </Pop>
+          <SoundButton prefs={prefs} />
+        </div>
+        <Pop id="hh-more" label={t("hdr.more")} className="hh-narrow" icon={<Icon name="sliders" size={20} />}>
+          {(close) => (
+            <div className="hh-moremenu">
+              <p className="hh-menu-t">{t("hdr.mode")}</p>
+              <ModeList prefs={prefs} />
+              <p className="hh-menu-t">{t("hdr.palette")}</p>
+              <PaletteList prefs={prefs} type={type} />
+              <div className="hh-more-row">
+                <span>{t("hdr.sound")}</span>
+                <SoundButton prefs={prefs} />
+              </div>
+              <Link className="h-btn h-btn-soft" href="/member/settings#st-language" onClick={close}><Icon name="globe" size={16} /> {t("hdr.language")}</Link>
+            </div>
+          )}
+        </Pop>
+        <AvatarMenu hub={hub} />
       </div>
     </header>
   );
 }
 
-function SideNav({ pathname, open, onClose, type }) {
+function navBadge(key, hub, alerts) {
+  if (key === "profile" && hub.completion && hub.completion.remaining.length) return { n: hub.completion.remaining.length, tip: "nav.bProfile" };
+  if (key === "surveys" && hub.open) return { n: hub.open, tip: "nav.bSurveys" };
+  if (key === "messages" && alerts) return { n: alerts, tip: "nav.bMessages" };
+  if (key === "services" && hub.pollOpen) return { n: 1, tip: "nav.bServices", dot: true };
+  return null;
+}
+
+function NavFoot({ hub }) {
+  const { type, level, quality, completion } = hub;
+  if (type === "professional") {
+    return (
+      <div className="hn-foot">
+        <small>{t("hn.standing")}</small>
+        <b>{quality ? `${quality.ten.toFixed(1)} / 10` : "–"}{quality?.tier ? ` · ${quality.tier.label}` : ""}</b>
+        <span className="hn-foot-bar"><i style={{ "--w": `${quality?.pct ?? 0}%` }} /></span>
+      </div>
+    );
+  }
+  return (
+    <div className="hn-foot">
+      <small>{type === "teen" ? (level.name ? `${t("lv.level", { n: level.n })} · ${level.name}` : t("lv.level", { n: level.n })) : t("lv.level", { n: level.n })}</small>
+      <b>{level.left != null ? t("lv.toNext", { n: fmt(level.left) }) : t("lv.top")}</b>
+      <span className="hn-foot-bar"><i style={{ "--w": `${level.pct}%` }} /></span>
+      {completion && completion.pct < 100 ? <Link href="/member/profiles" className="hn-foot-cta">{t("hn.profileLeft", { n: completion.pct })}</Link> : null}
+    </div>
+  );
+}
+
+function SideNav({ pathname, open, onClose, hub, rail, onRail, alerts }) {
+  const { type } = hub;
   return (
     <>
       <div className={`hn-scrim ${open ? "is-open" : ""}`} onClick={onClose} aria-hidden="true" />
-      <nav className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav">
+      <nav className={`hn ${open ? "is-open" : ""} ${rail ? "is-rail" : ""}`} aria-label={t("nav.main")} id="hub-nav">
         <div className="hn-head">
           <span className={`hh-type t-${type}`}>{t(`type.${type}Member`)}</span>
-          <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.cancel")}>
-            <Icon name="close" size={20} />
-          </button>
+          <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={20} /></button>
+          {type === "professional" ? (
+            <button type="button" className="hh-icon hn-railbtn" onClick={onRail} aria-pressed={rail} aria-label={rail ? t("hn.expand") : t("hn.collapse")}>
+              <Icon name="chevron" size={18} />
+            </button>
+          ) : null}
         </div>
-        {NAV.map((g) => (
-          <div className="hn-group" key={g.group}>
-            <p className="hn-gt">{t(g.group)}</p>
-            <ul>
-              {g.items.map((it) => {
-                const on = isOn(pathname, it);
-                return (
-                  <li key={it.key}>
-                    <Link
-                      href={it.href}
-                      className={`hn-link s-${it.key} ${on ? "is-on" : ""}`}
-                      aria-current={on ? "page" : undefined}
-                      onClick={onClose}
-                      title={t(it.label)}
-                    >
-                      <span className="hn-ic">
-                        <Icon name={it.icon} size={21} />
-                      </span>
-                      <span className="hn-tx">{t(it.label)}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+        <div className="hn-scroll">
+          {NAV.map((g) => (
+            <div className="hn-group" key={g.group}>
+              <p className="hn-gt">{t(g.group)}</p>
+              <ul>
+                {g.items.map((it) => {
+                  const on = isOn(pathname, it);
+                  const b = navBadge(it.key, hub, alerts);
+                  return (
+                    <li key={it.key}>
+                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={onClose} title={rail ? t(it.label) : undefined}>
+                        <span className="hn-ic"><Icon name={it.icon} size={20} /></span>
+                        <span className="hn-tx"><b>{t(it.label)}</b><small>{t(it.hint)}</small></span>
+                        {b ? <span className={`hn-badge ${b.dot ? "dot" : ""}`} aria-label={t(b.tip, { n: b.n })}>{b.dot ? "" : b.n > 99 ? "99+" : b.n}</span> : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <NavFoot hub={hub} />
       </nav>
     </>
   );
 }
 
-function BottomNav({ pathname, onMore }) {
+function BottomNav({ pathname, onMore, type }) {
+  const keys = BOTTOM[type] || BOTTOM.consumer;
   return (
-    <nav className="hb" aria-label={t("nav.main")}>
-      {BOTTOM.map((k) => {
+    <nav className="hb" aria-label={t("nav.quick")}>
+      {keys.map((k) => {
         const it = ALL.find((x) => x.key === k);
         const on = isOn(pathname, it);
         return (
-          <Link key={k} href={it.href} className={`hb-link s-${k} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined}>
-            <Icon name={it.icon} size={22} />
-            <span>{t(it.short || it.label)}</span>
+          <Link key={k} href={it.href} className={`hb-link s-${k} ${on ? "is-on" : ""} ${k === "surveys" && type !== "professional" ? "hb-fab" : ""}`} aria-current={on ? "page" : undefined}>
+            <span className="hb-ic"><Icon name={it.icon} size={22} /></span>
+            <span className="hb-tx">{t(it.short || it.label)}</span>
           </Link>
         );
       })}
       <button type="button" className="hb-link" onClick={onMore} aria-controls="hub-nav">
-        <Icon name="menu" size={22} />
-        <span>{t("nav.more")}</span>
+        <span className="hb-ic"><Icon name="menu" size={22} /></span>
+        <span className="hb-tx">{t("nav.more")}</span>
       </button>
     </nav>
   );
 }
 
+function readRail() {
+  try { return localStorage.getItem("mfr.hub.rail") === "1"; } catch (e) { return false; }
+}
+
 export default function HubShell({ children }) {
-  const member = useMember();
   const pathname = usePathname();
   const prefs = usePrefs();
-  const type = memberTypeOf(member);
+  const hub = useHub();
+  const alerts = useAlerts();
+  const { type } = hub;
   const [navOpen, setNavOpen] = React.useState(false);
+  const [rail, setRail] = React.useState(false);
+  const [dir, setDir] = React.useState("ltr");
 
   React.useEffect(() => {
     applyTheme();
-    setStringsLanguage(currentLanguage());
+    const c = currentLanguage();
+    setStringsLanguage(c);
+    setDir(dirOf(c));
+    setRail(readRail());
   }, []);
+  React.useEffect(() => setDir(dirOf(currentLanguage())), [prefs]);
   React.useEffect(() => setNavOpen(false), [pathname]);
   React.useEffect(() => {
     if (!navOpen) return undefined;
@@ -429,19 +556,38 @@ export default function HubShell({ children }) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [navOpen]);
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.setAttribute("data-hub-text", String(prefs.text));
+    return () => document.documentElement.removeAttribute("data-hub-text");
+  }, [prefs.text]);
 
-  const section = (ALL.find((x) => isOn(pathname, x)) || {}).key || "dashboard";
+  const section = sectionOf(pathname);
   const vars = paletteVars(prefs) || undefined;
+  const mode = resolvedMode(prefs);
   return (
-    <div className="hub" data-type={type} data-sec={section} data-pal={prefs.palette} style={vars}>
-      <Header member={member} type={type} prefs={prefs} section={section} onMenu={() => setNavOpen(true)} />
-      <div className="hub-body">
-        <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} type={type} />
+    <div
+      className="hub"
+      dir={dir}
+      data-type={type}
+      data-sec={section.key}
+      data-pal={prefs.palette}
+      data-mode={mode}
+      data-density={prefs.density}
+      data-contrast={prefs.contrast}
+      data-motion={motionReduced(prefs) ? "reduced" : "full"}
+      data-focus={prefs.focusAlways ? "always" : "auto"}
+      style={vars}
+    >
+      <Header hub={hub} prefs={prefs} section={section} onMenu={() => setNavOpen(true)} />
+      <div className={`hub-body ${rail && type === "professional" ? "has-rail" : ""}`}>
+        <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={alerts.data?.length || 0}
+          rail={rail && type === "professional"} onRail={() => { const n = !rail; setRail(n); try { localStorage.setItem("mfr.hub.rail", n ? "1" : "0"); } catch (e) { /* blocked */ } }} />
         <main id="hub-main" className="hub-main" tabIndex={-1}>
           {children}
         </main>
       </div>
-      <BottomNav pathname={pathname} onMore={() => setNavOpen(true)} />
+      <BottomNav pathname={pathname} onMore={() => setNavOpen(true)} type={type} />
     </div>
   );
 }

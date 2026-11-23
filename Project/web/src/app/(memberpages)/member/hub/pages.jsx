@@ -1,240 +1,285 @@
 "use client";
-// Section pages of the member hub. Each has its own hero composition and component structure:
-//   Rewards   – vault door + milestone ladder + reward shelf
-//   Quality   – gauge "instrument panel" + factor bars + guidance
-//   Activity  – full timeline with month rail
-//   Referrals – network journey (You → Invited → Joined → Verified) with live counts
-//   Settings  – control center with a side index and live previews
+// Section pages (v2, Nov 2026 ground-up redesign). Each section has its own composition, never "hero → 4 cards → table":
+//   Rewards   – reward marketplace: coin-stack hero, level track, streak, catalogue, milestones, achievement history
+//   Quality   – performance analytics: gauge hero, what → why → how strip, breakdown, strengths vs attention, trend
+//   Activity  – a filterable visual timeline merging rewards, quality changes and notices, with a sticky month rail
+//   Referrals – a network constellation with live counts, share studio and invitation tracker
+//   Settings  – personalization control center (see ./settings.jsx)
 import React from "react";
 import Link from "next/link";
 import { useMember } from "@/Context";
 import { api } from "@/util";
-import { LANGUAGES } from "@/i18n/languages";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock } from "./ui.jsx";
-import { ActivityTimeline } from "./modules.jsx";
-import { ActivityExtras } from "./engage/activity.jsx";
+import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock, Hero, Coin3D } from "./ui.jsx";
+import { AchievementShelf } from "./modules.jsx";
+import { BalanceStrip, StreakCard, PendingPanel, LedgerTable } from "./engage/activity.jsx";
 import { RewardsExtras } from "./engage/rewards.jsx";
-import { SurveyPrefs, EngageNotifications, PrivacyCentre, GuardianTab } from "./engage/settings.jsx";
-import { InstallApp } from "./engage/pwa.jsx";
 import { QualityTiers, QualityTrend, ReferralExtras, ReferralStatus, ShareButtons } from "./engage/growth.jsx";
-import { usePoints, useLedger, useStats, useProfiles, useReferrals, qualityOf, memberTypeOf, fmt, money, relDay } from "./data";
-import { usePrefs, setPrefs, PALETTES, THEMES, currentLanguage, setLanguage } from "./prefs";
+import { monthlyPoints, fmt, money, relDay } from "./data";
+import { useHub, levelStart } from "./store";
+import { useAlerts } from "./Shell.jsx";
+import { locale } from "./prefs";
 import { play } from "./sound";
 
+export { SettingsPage } from "./settings.jsx";
+
+const crumbs = (label) => [{ label: t("nav.dashboard"), href: "/member/dashboard" }, { label }];
+
 /* =============================== REWARDS =============================== */
+function LevelTrack({ hub }) {
+  const { level, type } = hub;
+  const nodes = [0, 1, 2, 3].map((k) => level.n + k);
+  return (
+    <section className="rw-level" aria-labelledby="rwl-t">
+      <div className="rw-level-head">
+        <div>
+          <p className="k-eyebrow">{t("lv.current")}</p>
+          <h2 id="rwl-t" className="k-title">{level.name ? `${t("lv.level", { n: level.n })} · ${level.name}` : t("lv.level", { n: level.n })}</h2>
+        </div>
+        <p className="rw-xp"><b>{fmt(level.into)}</b> / {fmt(level.need)} {type === "teen" ? t("hdr.xp") : t("c.pts")}</p>
+      </div>
+      <ol className="rw-track">
+        {nodes.map((n, i) => (
+          <li key={n} className={i === 0 ? "now" : ""} style={{ "--i": i }}>
+            <span className="rw-node">{i === 0 ? <Icon name="star" size={16} /> : n}</span>
+            <small>{i === 0 ? t("lv.you") : `${fmt(levelStart(n))}`}</small>
+            {i === 0 ? <span className="rw-seg"><i style={{ "--w": `${level.pct}%` }} /></span> : i < nodes.length - 1 ? <span className="rw-seg" /> : null}
+          </li>
+        ))}
+      </ol>
+      <p className="k-note">{level.left != null ? t("lv.xpLine", { a: fmt(level.into), b: fmt(level.need), n: level.n + 1 }) : t("lv.top")} {t("lv.how")}</p>
+    </section>
+  );
+}
+
+function Milestones({ hub }) {
+  const d = hub.pts;
+  if (!d) return <LoadingBlock lines={4} h={220} />;
+  const rungs = [0.25, 0.5, 0.75, 1].map((f) => Math.round(d.threshold * f));
+  return (
+    <section className="rw-miles" aria-labelledby="rwm-t">
+      <h2 className="k-title" id="rwm-t"><Icon name="target" size={18} /> {t("rw2.upcoming")}</h2>
+      <ol className="rl">
+        {rungs.map((r, i) => {
+          const done = d.total >= r;
+          const now = !done && (i === 0 || d.total >= rungs[i - 1]);
+          const from = i ? rungs[i - 1] : 0;
+          return (
+            <li key={r} className={`${done ? "done" : ""} ${now ? "now" : ""}`} style={{ "--i": i }}>
+              <span className="rl-gem">{done ? <Icon name="check" size={16} /> : <Icon name={i === rungs.length - 1 ? "trophy" : "lock"} size={16} />}</span>
+              <span className="rl-tx"><b>{fmt(r)} {t("c.pts")}</b><small>{i === rungs.length - 1 ? t("rw.milestone") : done ? t("c.unlocked") : now ? t("rw2.left", { n: fmt(r - d.total) }) : t("c.locked")}</small></span>
+              {now ? <Meter pct={((d.total - from) / (r - from)) * 100} label={`${fmt(r)}`} /> : null}
+            </li>
+          );
+        })}
+      </ol>
+      <p className="k-note"><Icon name="wallet" size={15} /> {hub.type === "teen" ? t("rw2.teenNote") : t("rw.payoutNote")}</p>
+    </section>
+  );
+}
+
 export function RewardsPage() {
-  const points = usePoints();
-  const ledger = useLedger();
-  const d = points.data;
-  const pct = d ? Math.min(100, (d.total / d.threshold) * 100) : 0;
-  const rungs = d ? [0.25, 0.5, 0.75, 1].map((f) => Math.round(d.threshold * f)) : [];
-  const fromSurveys = (ledger.data || []).filter((r) => r.kind === "survey").reduce((n, r) => n + r.points, 0);
-  const fromProfiles = (ledger.data || []).filter((r) => r.kind !== "survey").reduce((n, r) => n + r.points, 0);
-  const prev = React.useRef(null);
-  React.useEffect(() => {
-    if (!d) return;
-    if (prev.current == null) {
-      prev.current = d.total;
-      if (d.total > 0) setTimeout(() => play("reward"), 400);
-    }
-  }, [d]);
+  const hub = useHub();
+  const { pts, points, ledger, ledgerQ, level, type } = hub;
+  const fromSurveys = ledger.filter((r) => r.kind === "survey").reduce((n, r) => n + r.points, 0);
+  const fromOther = ledger.filter((r) => r.kind !== "survey").reduce((n, r) => n + r.points, 0);
   return (
     <div className="pg pg-rewards">
-      <section className="rv-hero" aria-labelledby="rv-title">
-        <div className="rv-vault" aria-hidden="true">
-          <span className="rv-door">
-            <i className="rv-bolt" /><i className="rv-bolt" /><i className="rv-bolt" /><i className="rv-bolt" />
-            <span className="rv-wheel"><i /><i /><i /></span>
-          </span>
-          <span className="rv-glow" />
-          {Array.from({ length: 7 }).map((_, i) => <span key={i} className="rv-coin" style={{ "--i": i }} />)}
-        </div>
-        <div className="rv-copy">
-          <p className="h-eyebrow">{t("rw.eyebrow")}</p>
-          <h1 className="h-display" id="rv-title">{t("rw.title")}</h1>
-          <p className="h-lead">{t("rw.sub")}</p>
-          {points.isError ? (
-            <ErrorState onRetry={points.refetch} />
-          ) : (
-            <div className="rv-balance">
-              <small>{t("rw.balance")}</small>
-              <b>{d ? <Counter value={d.total} duration={1600} /> : <Skeleton h={48} w={180} />}</b>
-              {d ? <em>{t("rw.worth", { v: money(d.total, d.rate) })}</em> : null}
-            </div>
-          )}
-        </div>
-      </section>
-
+      <Hero
+        kind="rewards"
+        id="rv-title"
+        crumbs={crumbs(t("nav.rewards"))}
+        eyebrow={t("rw2.eyebrow")}
+        title={t("rw2.title")}
+        sub={t("rw2.sub")}
+        status={points.isError ? <ErrorState onRetry={points.refetch} /> : (
+          <div className="rv-balance">
+            <span className="rv-bal-main"><small>{t("rw.balance")}</small><b>{pts ? <Counter value={pts.total} duration={1500} /> : <Skeleton h={44} w={170} />}</b></span>
+            {pts && type !== "teen" ? <span className="rv-bal-chip">{t("rw.worth", { v: money(pts.total, pts.rate) })}</span> : null}
+            <span className="rv-bal-chip"><Icon name="rocket" size={14} /> {t("lv.level", { n: level.n })}</span>
+            {hub.bal?.pending ? <span className="rv-bal-chip wait"><Icon name="hourglass" size={14} /> {t("d2.pending", { n: fmt(hub.bal.pending) })}</span> : null}
+          </div>
+        )}
+        art={
+          <div className="rv-stack">
+            <Coin3D size={92} label="★" />
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} className="rv-fly" style={{ "--i": i }} />)}
+            <span className="rv-gift"><Icon name="gift" size={34} /></span>
+          </div>
+        }
+      />
+      <div className="rv-top">
+        <Reveal><LevelTrack hub={hub} /></Reveal>
+        <Reveal delay={60}><StreakCard compact /></Reveal>
+      </div>
+      <h2 className="sec-h" id="catalogue-h"><Icon name="gift" size={20} /> {t("rw2.available")}</h2>
       <RewardsExtras />
-
       <div className="rv-grid">
-        <Reveal className="rv-ladder">
-          <section aria-labelledby="rl-title">
-            <h2 className="h-h3" id="rl-title"><Icon name="stack" size={20} /> {t("rw.ladder")}</h2>
-            <p className="h-sub">{t("rw.ladderHint")}</p>
-            {d ? (
-              <ol className="rl">
-                {rungs.map((r, i) => {
-                  const done = d.total >= r;
-                  const now = !done && (i === 0 || d.total >= rungs[i - 1]);
-                  return (
-                    <li key={r} className={`${done ? "done" : ""} ${now ? "now" : ""}`} style={{ "--i": i }}>
-                      <span className="rl-gem">{done ? <Icon name="check" size={16} /> : <Icon name={i === rungs.length - 1 ? "trophy" : "lock"} size={16} />}</span>
-                      <span className="rl-tx">
-                        <b>{fmt(r)} {t("c.pts")}</b>
-                        <small>{i === rungs.length - 1 ? t("rw.milestone") : done ? t("c.unlocked") : t("c.locked")}</small>
-                      </span>
-                      {now ? <Meter pct={((d.total - (i ? rungs[i - 1] : 0)) / (r - (i ? rungs[i - 1] : 0))) * 100} label={`${fmt(r)}`} /> : null}
-                    </li>
-                  );
-                })}
-              </ol>
-            ) : <LoadingBlock lines={4} h={220} />}
-            {d ? <p className="rv-note">{d.total >= d.threshold ? t("rw.milestoneReached") : t("rw.untilMilestone", { n: fmt(d.threshold - d.total) })}</p> : null}
-            <p className="rv-note small"><Icon name="wallet" size={16} /> {t("rw.payoutNote")}</p>
-          </section>
-        </Reveal>
-
-        <Reveal className="rv-split" delay={80}>
-          <section aria-label={`${t("rw.fromSurveys")}, ${t("rw.fromProfiles")}`}>
-            <div className="rv-split-ring">
-              <Ring pct={fromSurveys + fromProfiles ? (fromSurveys / (fromSurveys + fromProfiles)) * 100 : 0} size={150} stroke={18}>
-                <b>{fmt(fromSurveys + fromProfiles)}</b>
-                <small>{t("c.pts")}</small>
-              </Ring>
+        <Reveal><Milestones hub={hub} /></Reveal>
+        <Reveal delay={60}>
+          <section className="rv-split" aria-label={`${t("rw.fromSurveys")}, ${t("rw.fromProfiles")}`}>
+            <h2 className="k-title"><Icon name="layers" size={18} /> {t("rw2.where")}</h2>
+            <div className="rv-split-body">
+              <Ring pct={fromSurveys + fromOther ? (fromSurveys / (fromSurveys + fromOther)) * 100 : 0} size={132} stroke={16}><b>{fmt(fromSurveys + fromOther)}</b><small>{t("c.pts")}</small></Ring>
+              <ul className="rv-legend">
+                <li className="l-s"><i /> {t("rw.fromSurveys")} <b>{fmt(fromSurveys)}</b></li>
+                <li className="l-p"><i /> {t("rw2.fromOther")} <b>{fmt(fromOther)}</b></li>
+              </ul>
             </div>
-            <ul className="rv-legend">
-              <li className="l-s"><i /> {t("rw.fromSurveys")} <b>{fmt(fromSurveys)}</b></li>
-              <li className="l-p"><i /> {t("rw.fromProfiles")} <b>{fmt(fromProfiles)}</b></li>
-            </ul>
             <div className="rv-ways">
-              <p className="h-eyebrow">{t("rw.ways")}</p>
               <Link href="/member/profiles" className="rv-way"><Icon name="profile" size={18} /> {t("rw.wayProfile")}</Link>
               <Link href="/member/surveys" className="rv-way"><Icon name="surveys" size={18} /> {t("rw.waySurvey")}</Link>
-              <Link href="/member/referrals" className="rv-way"><Icon name="referrals" size={18} /> {t("rw.wayRefer")}</Link>
+              {type !== "teen" ? <Link href="/member/referrals" className="rv-way"><Icon name="referrals" size={18} /> {t("rw.wayRefer")}</Link> : null}
             </div>
-          </section>
-        </Reveal>
-
-        <Reveal className="rv-history">
-          <section aria-labelledby="rh-title">
-            <h2 className="h-h3" id="rh-title"><Icon name="rewards" size={20} /> {t("rw.history")}</h2>
-            {ledger.isLoading ? <LoadingBlock lines={5} h={240} /> : ledger.isError ? <ErrorState onRetry={ledger.refetch} /> : !ledger.data.length ? (
-              <EmptyState kind="rewards" title={t("rw.historyEmpty")} text={t("rw.historyEmptyText")} action={<Link href="/member/profiles" className="h-btn h-btn-primary">{t("pj.cta")}</Link>} />
-            ) : (
-              <ul className="rh-shelf">
-                {ledger.data.map((r, i) => (
-                  <li key={r.id} className={`rh-item k-${r.kind}`} style={{ "--i": Math.min(i, 12) }}>
-                    <span className="rh-token"><Icon name={r.kind === "survey" ? "surveys" : "profile"} size={18} /></span>
-                    <span className="rh-tx">
-                      <b>{r.name || t(`ac.${r.kind}`)}</b>
-                      <small>{t(`ac.${r.kind}`)} · {relDay(r.at, t)}</small>
-                    </span>
-                    <span className="rh-pts">+{fmt(r.points)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
           </section>
         </Reveal>
       </div>
+      <Reveal><AchievementShelf stats={hub.stats} profiles={hub.profiles} quality={hub.quality} ledger={{ ...ledgerQ, data: ledger }} referrals={hub.referrals} /></Reveal>
+      <Reveal>
+        <section className="rv-history" aria-labelledby="rh-title">
+          <h2 className="k-title" id="rh-title"><Icon name="coin" size={18} /> {t("rw2.activity")}</h2>
+          {ledgerQ.isLoading ? <LoadingBlock lines={5} h={240} /> : ledgerQ.isError ? <ErrorState onRetry={ledgerQ.refetch} /> : !ledger.length ? (
+            <EmptyState kind="rewards" title={t("rw.historyEmpty")} text={t("rw.historyEmptyText")} action={<Link href="/member/profiles" className="h-btn h-btn-primary">{t("pj.cta")}</Link>} />
+          ) : (
+            <ul className="rh-shelf">
+              {ledger.slice(0, 12).map((r, i) => (
+                <li key={r.id} className={`rh-item k-${r.kind}`} style={{ "--i": Math.min(i, 12) }}>
+                  <span className="rh-token"><Icon name={r.kind === "survey" ? "surveys" : r.kind === "profile" ? "profile" : "coin"} size={18} /></span>
+                  <span className="rh-tx"><b>{r.name || t(`ac.${r.kind}`)}</b><small>{t(`ac.${r.kind}`)} · {relDay(r.at, t)}</small></span>
+                  <span className="rh-pts">+{fmt(r.points)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {ledger.length > 12 ? <Link href="/member/activity" className="h-link">{t("c.viewAll")} <Icon name="chevron" size={14} /></Link> : null}
+        </section>
+      </Reveal>
     </div>
   );
 }
 
 /* =============================== QUALITY SCORE =============================== */
-export function QualityPage() {
-  const member = useMember();
-  const stats = useStats();
-  const profiles = useProfiles();
-  const q = qualityOf(member);
-  const s = stats.data;
-  const p = profiles.data;
-  const angle = q?.pct != null ? -120 + (q.pct / 100) * 240 : -120;
-  const factors = [
-    { k: "p", icon: "profile", label: t("qs.fProfiles"), v: p ? `${p.done}/${p.list.length}` : "…", pct: p && p.list.length ? (p.done / p.list.length) * 100 : 0, good: true },
-    { k: "c", icon: "check", label: t("qs.fComplete"), v: s ? fmt(s.complete) : "…", pct: s && s.started ? (s.complete / s.started) * 100 : 0, good: true },
-    { k: "d", icon: "clock", label: t("qs.fDropout"), v: s ? fmt(s.dropout) : "…", pct: s && s.started ? (s.dropout / s.started) * 100 : 0, good: false },
-    { k: "v", icon: "mail", label: t("qs.fVerified"), v: member?.isVerified?.email === "verified" ? "✓" : "–", pct: member?.isVerified?.email === "verified" ? 100 : 0, good: true },
+function derivedFactors(hub) {
+  const s = hub.stats.data;
+  const p = hub.profiles.data;
+  const verified = hub.member?.isVerified?.email === "verified";
+  return [
+    { key: "finish", pct: s && s.started ? Math.round((s.complete / s.started) * 100) : 0, v: s && s.started ? `${Math.round((s.complete / s.started) * 100)}%` : "–", good: !s || !s.started || s.dropout <= s.complete / 4 },
+    { key: "profiles", pct: p && p.list.length ? Math.round((p.done / p.list.length) * 100) : 0, v: p ? `${p.done}/${p.list.length}` : "–", good: Boolean(p && p.coreDone === p.core.length) },
+    { key: "verified", pct: verified ? 100 : 0, v: verified ? t("c.yes") : t("c.no"), good: verified },
   ];
+}
+function factorsOf(hub) {
+  const f = hub.quality?.factors;
+  if (!Array.isArray(f) || !f.length) return derivedFactors(hub);
+  return f.map((x) => {
+    if (x.key === "verified") return { key: x.key, pct: x.value ? 100 : 0, v: x.value ? t("c.yes") : t("c.no"), good: Boolean(x.good) };
+    if (x.of != null) return { key: x.key, pct: x.of ? Math.round((x.value / x.of) * 100) : 0, v: `${x.value}/${x.of}`, good: Boolean(x.good) };
+    return { key: x.key, pct: Math.max(0, Math.min(100, Number(x.value) || 0)), v: `${x.value}${x.unit || ""}`, good: Boolean(x.good) };
+  });
+}
+
+function Gauge({ q }) {
+  const angle = q ? -120 + (q.pct / 100) * 240 : -120;
+  return (
+    <div className="qs-gauge" role="img" aria-label={q ? `${t("qs.title")} ${q.ten} / 10` : t("c.loading")}>
+      <svg viewBox="0 0 240 170" aria-hidden="true">
+        <defs>
+          <linearGradient id="qsG" x1="0" x2="1"><stop offset="0" stopColor="#ef4444" /><stop offset=".45" stopColor="#f59e0b" /><stop offset="1" stopColor="#10b981" /></linearGradient>
+        </defs>
+        <path d="M42.06 165 A90 90 0 1 1 197.94 165" className="qs-track" />
+        <path d="M42.06 165 A90 90 0 1 1 197.94 165" className="qs-arc" pathLength="100" style={{ strokeDasharray: `${q?.pct ?? 0} 100` }} />
+        {Array.from({ length: 11 }).map((_, i) => {
+          const a = ((-210 + i * 24) * Math.PI) / 180;
+          return <line key={i} x1={120 + Math.cos(a) * 68} y1={120 + Math.sin(a) * 68} x2={120 + Math.cos(a) * 77} y2={120 + Math.sin(a) * 77} className="qs-tick" />;
+        })}
+        <g className="qs-needle" style={{ transform: `rotate(${angle}deg)` }}><path d="M120 120 L116 118 L120 56 L124 118 Z" /><circle cx="120" cy="120" r="8" /></g>
+      </svg>
+      <div className="qs-read">
+        <b>{q ? <Counter value={q.ten} format={(n) => n.toFixed(1)} /> : "…"}<small>/10</small></b>
+        {q ? <span className={`qs-band b-${q.band}`}>{q.tier?.label || t(`qs.${q.band}`)}</span> : null}
+      </div>
+    </div>
+  );
+}
+
+export function QualityPage() {
+  const hub = useHub();
+  const q = hub.quality;
+  const factors = factorsOf(hub);
+  const strengths = factors.filter((f) => f.good);
+  const watch = factors.filter((f) => !f.good);
   const tips = [];
-  if (p && p.done < p.list.length) tips.push({ icon: "profile", text: t("qs.tipProfile"), href: "/member/profiles" });
-  if (s && s.dropout > 0) tips.push({ icon: "surveys", text: t("qs.tipFinish"), href: "/member/surveys" });
+  const c = hub.completion;
+  if (c && c.remaining.some((i) => i.kind === "profile")) tips.push({ icon: "profile", text: t("qs.tipProfile"), href: "/member/profiles", reward: c.pointsLeft });
+  if (hub.stats.data?.dropout > 0) tips.push({ icon: "surveys", text: t("qs.tipFinish"), href: "/member/surveys" });
+  if (hub.member?.isVerified?.email !== "verified") tips.push({ icon: "mail", text: t("q2.tipVerify"), href: "/member/myaccount#identity" });
+  if (watch.some((f) => f.key === "active")) tips.push({ icon: "calendar", text: t("q2.tipActive"), href: "/member/services" });
   tips.push({ icon: "eye", text: t("qs.tipHonest") });
   return (
     <div className="pg pg-quality">
-      <section className="qs-hero" aria-labelledby="qs-title">
-        <div className="qs-copy">
-          <p className="h-eyebrow">{t("qs.eyebrow")}</p>
-          <h1 className="h-display" id="qs-title">{t("qs.title")}</h1>
-          <p className="h-lead">{t("qs.whyText")}</p>
-        </div>
-        <div className="qs-gauge" role="img" aria-label={q ? `${t("qs.title")} ${q.score}${q.scale ? ` / ${q.scale}` : ""}` : t("c.loading")}>
-          <svg viewBox="0 0 240 170" aria-hidden="true">
-            <defs>
-              <linearGradient id="qsG" x1="0" x2="1">
-                <stop offset="0" stopColor="#ef4444" />
-                <stop offset=".45" stopColor="#f59e0b" />
-                <stop offset="1" stopColor="#10b981" />
-              </linearGradient>
-            </defs>
-            <path d="M30 140 A90 90 0 1 1 210 140" className="qs-track" />
-            <path d="M30 140 A90 90 0 1 1 210 140" className="qs-arc" pathLength="100" style={{ strokeDasharray: `${q?.pct ?? 0} 100` }} />
-            {Array.from({ length: 11 }).map((_, i) => {
-              const a = ((-210 + i * 24) * Math.PI) / 180;
-              return <line key={i} x1={120 + Math.cos(a) * 70} y1={120 + Math.sin(a) * 70} x2={120 + Math.cos(a) * 78} y2={120 + Math.sin(a) * 78} className="qs-tick" />;
-            })}
-            <g className="qs-needle" style={{ transform: `rotate(${angle}deg)` }}>
-              <path d="M120 120 L116 118 L120 52 L124 118 Z" />
-              <circle cx="120" cy="120" r="9" />
-            </g>
-          </svg>
-          <div className="qs-read">
-            <b>{q ? <Counter value={q.score} /> : "…"}{q?.scale ? <small> / {q.scale}</small> : null}</b>
-            {q?.band ? <span className={`qs-band b-${q.band}`}>{t(`qs.${q.band}`)}</span> : null}
-          </div>
-        </div>
-      </section>
-
+      <Hero
+        kind="quality"
+        id="qs-title"
+        crumbs={crumbs(t("nav.quality"))}
+        eyebrow={t("qs.eyebrow")}
+        title={t("qs.title")}
+        sub={q ? t("q2.sub", { ten: q.ten.toFixed(1), raw: fmt(q.raw), scale: fmt(q.scale) }) : t("c.loading")}
+        status={
+          <ol className="qs-why">
+            <li><span>1</span><b>{t("q2.what")}</b><small>{q ? `${q.ten.toFixed(1)} / 10 · ${q.tier?.label || t(`qs.${q.band}`)}` : "…"}</small></li>
+            <li><span>2</span><b>{t("q2.why")}</b><small>{t("q2.whyShort", { n: strengths.length, m: factors.length })}</small></li>
+            <li><span>3</span><b>{t("q2.how")}</b><small>{t("q2.howShort", { n: tips.length })}</small></li>
+          </ol>
+        }
+        art={<Gauge q={q} />}
+      />
       <div className="qs-grid">
-        <Reveal className="qs-tiers"><QualityTiers /></Reveal>
-        <Reveal className="qs-factors">
+        <Reveal className="qs-breakdown">
           <section aria-labelledby="qf-title">
-            <h2 className="h-h3" id="qf-title"><Icon name="gauge" size={20} /> {t("qs.factors")}</h2>
-            <ul>
-              {factors.map((f) => (
-                <li key={f.k} className={f.good ? "good" : "watch"}>
-                  <span className="qf-ic"><Icon name={f.icon} size={18} /></span>
-                  <span className="qf-l">{f.label}</span>
-                  <Meter pct={f.pct} label={f.label} />
-                  <b>{f.v}</b>
+            <h2 className="k-title" id="qf-title"><Icon name="gauge" size={18} /> {t("q2.breakdown")}</h2>
+            <ul className="qf">
+              {factors.map((f, i) => (
+                <li key={f.key} className={f.good ? "good" : "watch"} style={{ "--i": i }}>
+                  <span className="qf-mark" aria-hidden="true"><Icon name={f.good ? "check" : "alert"} size={14} /></span>
+                  <span className="qf-l"><b>{t(`qf.${f.key}`)}</b><small>{f.good ? t("q2.good") : t("q2.watch")}</small></span>
+                  <Meter pct={f.pct} label={t(`qf.${f.key}`)} />
+                  <b className="qf-v">{f.v}</b>
                 </li>
               ))}
             </ul>
           </section>
         </Reveal>
-        <Reveal className="qs-how" delay={60}>
+        <Reveal className="qs-sw" delay={60}>
+          <section className="qs-col good" aria-labelledby="qsg-t">
+            <h2 className="k-title" id="qsg-t"><Icon name="check" size={18} /> {t("q2.strengths")}</h2>
+            {strengths.length ? <ul>{strengths.map((f) => <li key={f.key}>{t(`qf.${f.key}`)} <b>{f.v}</b></li>)}</ul> : <p className="k-note">{t("q2.noneYet")}</p>}
+          </section>
+          <section className="qs-col watch" aria-labelledby="qsw-t">
+            <h2 className="k-title" id="qsw-t"><Icon name="alert" size={18} /> {t("q2.attention")}</h2>
+            {watch.length ? <ul>{watch.map((f) => <li key={f.key}>{t(`qf.${f.key}`)} <b>{f.v}</b></li>)}</ul> : <p className="k-note">{t("q2.allGood")}</p>}
+          </section>
+        </Reveal>
+        <Reveal className="qs-how">
           <section aria-labelledby="qh-title">
-            <h2 className="h-h3" id="qh-title"><Icon name="spark" size={20} /> {t("qs.howTitle")}</h2>
+            <h2 className="k-title" id="qh-title"><Icon name="spark" size={18} /> {t("qs.howTitle")}</h2>
             <ol className="qs-tips">
               {tips.map((x, i) => (
                 <li key={i} style={{ "--i": i }}>
-                  <span><Icon name={x.icon} size={18} /></span>
+                  <span className="qs-tip-ic"><Icon name={x.icon} size={18} /></span>
                   {x.href ? <Link href={x.href}>{x.text}</Link> : <p>{x.text}</p>}
+                  {x.reward ? <span className="qs-tip-r">+{fmt(x.reward)} {t("c.pts")}</span> : null}
                 </li>
               ))}
             </ol>
-            <div className="qs-benefit">
-              <h3>{t("qs.benefitTitle")}</h3>
-              <p>{t("qs.benefitText")}</p>
-            </div>
+            <p className="k-note">{t("qs.benefitText")}</p>
           </section>
         </Reveal>
-        <Reveal className="qs-history" delay={100}>
+        <Reveal className="qs-tiers" delay={60}><QualityTiers /></Reveal>
+        <Reveal className="qs-trend">
           <section aria-labelledby="qhh-title">
-            <h2 className="h-h3" id="qhh-title"><Icon name="chart" size={20} /> {t("qs.history")}</h2>
+            <h2 className="k-title" id="qhh-title"><Icon name="chart" size={18} /> {t("qs.history")}</h2>
             <QualityTrend />
           </section>
         </Reveal>
@@ -244,29 +289,95 @@ export function QualityPage() {
 }
 
 /* =============================== ACTIVITY =============================== */
+const KIND_ICON = { survey: "surveys", profile: "profile", reward: "coin", quality: "quality", notice: "bell" };
+
 export function ActivityPage() {
-  const ledger = useLedger();
-  const stats = useStats();
-  const total = (ledger.data || []).reduce((n, r) => n + r.points, 0);
+  const hub = useHub();
+  const alerts = useAlerts();
+  const [filter, setFilter] = React.useState("all");
+  const events = [
+    ...hub.ledger.map((r) => ({ id: `l-${r.id}`, kind: r.kind, at: r.at, title: r.points ? `+${fmt(r.points)} ${t("c.points")}` : t(`ac.${r.kind}`), sub: `${t(`ac.${r.kind}`)}${r.name ? ` · ${r.name}` : ""}`, pts: r.points })),
+    ...(hub.quality?.history || []).map((h) => ({ id: `q-${h.month}`, kind: "quality", at: new Date(`${h.month}-01T12:00:00`), title: t("a2.qualityTitle", { n: (Math.round((h.score / hub.quality.scale) * 100) / 10).toFixed(1) }), sub: t("a2.qualitySub") })),
+    ...(alerts.data || []).map((a) => ({ id: `n-${a.id}`, kind: "notice", at: a.at, title: a.subtitle || a.title, sub: a.title })),
+  ].filter((e) => e.at).sort((a, b) => b.at - a.at);
+  const kinds = ["all", "survey", "profile", "reward", "quality", "notice"].filter((k) => k === "all" || events.some((e) => e.kind === k));
+  const shown = filter === "all" ? events : events.filter((e) => e.kind === filter);
+  const groups = [];
+  for (const e of shown.slice(0, 60)) {
+    const k = `${e.at.getFullYear()}-${e.at.getMonth()}`;
+    let g = groups.find((x) => x.k === k);
+    if (!g) groups.push((g = { k, label: e.at.toLocaleDateString(locale(), { month: "long", year: "numeric" }), items: [], pts: 0 }));
+    g.items.push(e);
+    g.pts += e.pts || 0;
+  }
+  const months = monthlyPoints(hub.ledger, 6);
+  const thisMonth = months[months.length - 1]?.points || 0;
   return (
     <div className="pg pg-activity">
-      <section className="ac-hero" aria-labelledby="ac-title">
-        <div>
-          <p className="h-eyebrow">{t("ac.eyebrow")}</p>
-          <h1 className="h-display" id="ac-title">{t("ac.title")}</h1>
-          <p className="h-lead">{t("ac.sub")}</p>
+      <Hero
+        kind="activity"
+        id="ac-title"
+        crumbs={crumbs(t("nav.activity"))}
+        eyebrow={t("ac.eyebrow")}
+        title={t("ac.title")}
+        sub={t("a2.sub")}
+        status={
+          <ul className="ac-pulse">
+            <li><b>{hub.ledgerQ.data ? <Counter value={events.length} /> : "…"}</b><small>{t("a2.events")}</small></li>
+            <li><b><Counter value={thisMonth} /></b><small>{t("a2.thisMonth")}</small></li>
+            <li><b>{hub.completed == null ? "…" : <Counter value={hub.completed} />}</b><small>{t("qs.fComplete")}</small></li>
+          </ul>
+        }
+        art={
+          <svg className="ac-wave" viewBox="0 0 320 120" aria-hidden="true">
+            <path d="M0 70 L40 70 L55 30 L72 100 L88 50 L100 70 L150 70 L165 20 L182 95 L198 60 L210 70 L320 70" />
+            <circle cx="320" cy="70" r="5" />
+          </svg>
+        }
+      />
+      <Reveal><BalanceStrip /></Reveal>
+      <div className="ac-layout">
+        <div className="ac-main">
+          <div className="ac-filters" role="toolbar" aria-label={t("a2.filter")}>
+            {kinds.map((k) => (
+              <button key={k} type="button" className={filter === k ? "on" : ""} aria-pressed={filter === k} onClick={() => { setFilter(k); play("tap"); }}>
+                {k !== "all" ? <Icon name={KIND_ICON[k]} size={15} /> : null} {t(`a2.k.${k}`)}
+              </button>
+            ))}
+          </div>
+          {hub.ledgerQ.isLoading ? <LoadingBlock lines={6} h={320} /> : hub.ledgerQ.isError ? <ErrorState onRetry={hub.ledgerQ.refetch} /> : !groups.length ? (
+            <EmptyState kind="activity" title={t("ac.emptyTitle")} text={t("ac.emptyText")} action={<Link href="/member/services" className="h-btn h-btn-primary">{t("nav.services")}</Link>} />
+          ) : (
+            <ol className="tl">
+              {groups.map((g) => (
+                <li key={g.k} className="tl-month">
+                  <h2 className="tl-m"><span>{g.label}</span>{g.pts ? <small>+{fmt(g.pts)} {t("c.pts")}</small> : null}</h2>
+                  <ol>
+                    {g.items.map((e, i) => (
+                      <li key={e.id} className={`tl-ev k-${e.kind}`} style={{ "--i": Math.min(i, 10) }}>
+                        <span className="tl-dot" aria-hidden="true"><Icon name={KIND_ICON[e.kind] || "spark"} size={16} /></span>
+                        <div className="tl-card">
+                          <b>{e.title}</b>
+                          <small>{e.sub}</small>
+                        </div>
+                        <time dateTime={e.at.toISOString()}>{relDay(e.at, t)}</time>
+                      </li>
+                    ))}
+                  </ol>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
-        <ul className="ac-pulse">
-          <li><b>{ledger.data ? <Counter value={ledger.data.length} /> : "…"}</b><small>{t("nav.activity")}</small></li>
-          <li><b>{ledger.data ? <Counter value={total} /> : "…"}</b><small>{t("c.points")}</small></li>
-          <li><b>{stats.data ? <Counter value={stats.data.complete} /> : "…"}</b><small>{t("qs.fComplete")}</small></li>
-        </ul>
-        <svg className="ac-wave" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 50 Q 50 10 100 45 T 200 40 T 300 50 T 400 30 T 500 45 T 600 35" />
-        </svg>
-      </section>
-      <ActivityExtras />
-      <Reveal><ActivityTimeline ledger={ledger} limit={20} title={false} /></Reveal>
+        <aside className="ac-side">
+          <Reveal><StreakCard /></Reveal>
+          <Reveal delay={60}><PendingPanel /></Reveal>
+        </aside>
+      </div>
+      <details className="ac-statement">
+        <summary><Icon name="book" size={18} /> {t("a2.statement")}</summary>
+        <LedgerTable />
+      </details>
     </div>
   );
 }
@@ -275,7 +386,8 @@ export function ActivityPage() {
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function ReferralsPage() {
   const member = useMember();
-  const ref = useReferrals();
+  const hub = useHub();
+  const ref = hub.referrals;
   const [link, setLink] = React.useState("");
   const [copied, setCopied] = React.useState(false);
   const [emails, setEmails] = React.useState("");
@@ -285,10 +397,9 @@ export function ReferralsPage() {
   }, [member?._id]);
   const d = ref.data;
   const nodes = [
-    { k: "you", icon: "profile", label: t("rf.you"), v: member?.firstname || "" },
-    { k: "invited", icon: "mail", label: t("rf.invited"), v: d ? fmt(d.invited.length) : "…" },
-    { k: "joined", icon: "users", label: t("rf.joined"), v: d ? (d.joinedKnown ? fmt(d.joined.length) : "–") : "…" },
-    { k: "verified", icon: "quality", label: t("rf.verified"), v: d ? (d.joinedKnown ? fmt(d.joined.filter((x) => x.verified).length) : "–") : "…" },
+    { k: "invited", icon: "mail", label: t("rf.invited"), v: d ? d.invited.length : null },
+    { k: "joined", icon: "users", label: t("rf.joined"), v: d ? (d.joinedKnown ? d.joined.length : null) : null },
+    { k: "verified", icon: "quality", label: t("rf.verified"), v: d ? (d.joinedKnown ? d.joined.filter((x) => x.verified).length : null) : null },
   ];
   async function copy() {
     try {
@@ -302,11 +413,7 @@ export function ReferralsPage() {
   }
   async function share() {
     if (navigator.share) {
-      try {
-        await navigator.share({ title: "MyFrequentRewards", url: link });
-      } catch (e) {
-        /* cancelled */
-      }
+      try { await navigator.share({ title: "MyFrequentRewards", url: link }); } catch (e) { /* cancelled */ }
     } else copy();
   }
   async function send(e) {
@@ -314,6 +421,7 @@ export function ReferralsPage() {
     const list = [...new Set(emails.split(/[\s,;]+/).map((x) => x.trim().toLowerCase()).filter(Boolean))];
     if (!list.length || list.some((x) => !EMAIL.test(x))) {
       setState({ phase: "error", msg: t("rf.bad") });
+      play("error");
       return;
     }
     setState({ phase: "sending", msg: "" });
@@ -329,30 +437,31 @@ export function ReferralsPage() {
   }
   return (
     <div className="pg pg-referrals">
-      <section className="rf-hero" aria-labelledby="rf-title">
-        <div className="rf-copy">
-          <p className="h-eyebrow">{t("rf.eyebrow")}</p>
-          <h1 className="h-display" id="rf-title">{t("rf.title")}</h1>
-          <p className="h-lead">{t("rf.sub")}</p>
-        </div>
-        <ol className="rf-journey" aria-label={nodes.map((n) => `${n.label} ${n.v}`).join(", ")}>
-          {nodes.map((n, i) => (
-            <li key={n.k} className={`rf-node n-${n.k}`} style={{ "--i": i }}>
-              <span className="rf-orb"><Icon name={n.icon} size={22} /></span>
-              <b>{n.v}</b>
-              <small>{n.label}</small>
-            </li>
-          ))}
-          <span className="rf-wire" aria-hidden="true"><i /></span>
-        </ol>
-      </section>
-
+      <Hero
+        kind="referrals"
+        id="rf-title"
+        crumbs={crumbs(t("nav.referrals"))}
+        eyebrow={t("rf.eyebrow")}
+        title={t("rf.title")}
+        sub={t("rf.sub")}
+        status={
+          <ul className="rf-counts">
+            {nodes.map((n) => <li key={n.k}><Icon name={n.icon} size={16} /><b>{n.v == null ? "–" : <Counter value={n.v} />}</b><small>{n.label}</small></li>)}
+          </ul>
+        }
+        art={
+          <div className="rf-const">
+            <span className="rf-me"><Icon name="profile" size={24} /></span>
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} className={`rf-star ${d && i < Math.min(6, d.invited.length) ? "on" : ""}`} style={{ "--i": i }} />)}
+            <svg viewBox="0 0 200 200" className="rf-lines"><circle cx="100" cy="100" r="62" /><circle cx="100" cy="100" r="92" /></svg>
+          </div>
+        }
+      />
       <ReferralExtras />
-
       <div className="rf-grid">
         <Reveal className="rf-share">
           <section aria-labelledby="rs-title">
-            <h2 className="h-h3" id="rs-title"><Icon name="link" size={20} /> {t("rf.link")}</h2>
+            <h2 className="k-title" id="rs-title"><Icon name="link" size={18} /> {t("rf.link")}</h2>
             <div className="rf-link">
               <input readOnly value={link} aria-label={t("rf.link")} onFocus={(e) => e.target.select()} />
               <button type="button" className="h-btn h-btn-primary" onClick={copy}>{copied ? <><Icon name="check" size={18} /> {t("c.copied")}</> : <><Icon name="link" size={18} /> {t("c.copy")}</>}</button>
@@ -376,11 +485,11 @@ export function ReferralsPage() {
             ) : (
               <>
                 <ReferralStatus />
-                <h2 className="h-h3" id={d.joined.length ? "rl3-title" : "rl2-title"}><Icon name="mail" size={20} /> {t("rf.listInvited")}</h2>
+                <h2 className="k-title" id="rl2-title"><Icon name="mail" size={18} /> {t("rf.listInvited")}</h2>
                 <ul className="rf-people">
                   {d.invited.map((p, i) => (
                     <li key={`${p.email}-${i}`}>
-                      <span className="rf-av m"><Icon name="mail" size={16} /></span>
+                      <span className="rf-av"><Icon name="mail" size={16} /></span>
                       <span><b>{p.email}</b></span>
                       <em>{t("rf.invited")}</em>
                     </li>
@@ -395,266 +504,3 @@ export function ReferralsPage() {
   );
 }
 
-/* =============================== SETTINGS =============================== */
-function Toggle({ checked, onChange, label, hint }) {
-  return (
-    <label className="st-toggle">
-      <span>
-        <b>{label}</b>
-        {hint ? <small>{hint}</small> : null}
-      </span>
-      <input type="checkbox" role="switch" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <i aria-hidden="true" />
-    </label>
-  );
-}
-
-const CHANNELS = [
-  { value: "email", label: "st.chEmail", icon: "mail" },
-  { value: "sms", label: "st.chSms", icon: "bell" },
-  { value: "phone", label: "st.chPhone", icon: "support" },
-  { value: "dashboard", label: "st.chDashboard", icon: "dashboard" },
-  { value: "whatsapp", label: "st.chWhatsapp", icon: "share" },
-];
-
-function NotificationPrefs() {
-  const member = useMember();
-  const [sel, setSel] = React.useState(null);
-  const [init, setInit] = React.useState([]);
-  const [st, setSt] = React.useState("");
-  React.useEffect(() => {
-    if (!member?._id) return;
-    api.post("/api/v1/me", { questions: ["communication-methods"] }).then((r) => {
-      const v = [].concat(r?.data?.["communication-methods"] ?? []);
-      setSel(v);
-      setInit(v);
-    });
-  }, [member?._id]);
-  if (!sel) return <LoadingBlock lines={3} h={160} />;
-  const changed = JSON.stringify([...sel].sort()) !== JSON.stringify([...init].sort());
-  return (
-    <div className="st-channels">
-      {CHANNELS.map((c) => (
-        <label key={c.value} className={`st-chan ${sel.includes(c.value) ? "on" : ""}`}>
-          <input type="checkbox" checked={sel.includes(c.value)} onChange={() => setSel((s) => (s.includes(c.value) ? s.filter((x) => x !== c.value) : [...s, c.value]))} />
-          <Icon name={c.icon} size={20} />
-          <span>{t(c.label)}</span>
-          <i className="st-chan-tick" aria-hidden="true"><Icon name="check" size={14} /></i>
-        </label>
-      ))}
-      <div className="st-row-end">
-        <span role="status" className="st-status">{st}</span>
-        <button
-          type="button"
-          className="h-btn h-btn-primary"
-          disabled={!changed || st === t("c.saving")}
-          onClick={async () => {
-            setSt(t("c.saving"));
-            const r = await api.patch("/api/v1/me/answer", { "communication-methods": sel });
-            if (r && r.status !== "error") {
-              setInit(sel);
-              setSt(t("c.saved"));
-              play("complete");
-            } else setSt(t("c.errorTitle"));
-          }}
-        >
-          {t("c.save")}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function PasswordForm() {
-  const [v, setV] = React.useState({ oldPassword: "", newPassword: "", cnfPassword: "" });
-  const [msg, setMsg] = React.useState({ k: "", text: "" });
-  const err = v.newPassword && v.newPassword.length < 8 ? t("st.pwShort") : v.cnfPassword && v.cnfPassword !== v.newPassword ? t("st.pwMismatch") : "";
-  return (
-    <form
-      className="st-pw"
-      noValidate
-      onSubmit={async (e) => {
-        e.preventDefault();
-        if (err || !v.oldPassword || !v.newPassword) {
-          setMsg({ k: "error", text: err || t("st.pwShort") });
-          return;
-        }
-        setMsg({ k: "busy", text: t("c.saving") });
-        const r = await api.patch("/api/v1/me", v);
-        if (r && r.status === "success") {
-          setV({ oldPassword: "", newPassword: "", cnfPassword: "" });
-          setMsg({ k: "ok", text: r.message || t("c.saved") });
-          play("complete");
-        } else setMsg({ k: "error", text: (r && r.message) || t("c.errorTitle") });
-      }}
-    >
-      {[
-        ["oldPassword", "st.oldPw", "current-password"],
-        ["newPassword", "st.newPw", "new-password"],
-        ["cnfPassword", "st.cnfPw", "new-password"],
-      ].map(([k, l, ac]) => (
-        <label key={k} className="st-field">
-          <span>{t(l)}</span>
-          <input type="password" autoComplete={ac} value={v[k]} onChange={(e) => setV((s) => ({ ...s, [k]: e.target.value }))} aria-invalid={Boolean(err && k !== "oldPassword")} />
-        </label>
-      ))}
-      {err ? <p className="st-err" role="alert">{err}</p> : null}
-      <div className="st-row-end">
-        <span role="status" className={`st-status ${msg.k}`}>{msg.text}</span>
-        <button type="submit" className="h-btn h-btn-primary">{t("st.pwChange")}</button>
-      </div>
-    </form>
-  );
-}
-
-export function SettingsPage() {
-  const member = useMember();
-  const prefs = usePrefs();
-  const type = memberTypeOf(member);
-  const [lang, setLang] = React.useState("en");
-  React.useEffect(() => setLang(currentLanguage()), []);
-  const cats = [
-    { id: "appearance", icon: "palette", label: t("st.appearance") },
-    { id: "sound", icon: "soundOn", label: t("st.sound") },
-    { id: "language", icon: "globe", label: t("st.language") },
-    { id: "surveyprefs", icon: "surveys", label: t("sp.title") },
-    { id: "notifications", icon: "bell", label: t("st.notifications") },
-    { id: "security", icon: "lock", label: t("st.security") },
-    { id: "privacy", icon: "shield", label: t("st.privacy") },
-    ...(type === "teen" ? [{ id: "guardian", icon: "shield", label: t("gt.title") }] : []),
-    { id: "app", icon: "rocket", label: t("pw.title") },
-    { id: "account", icon: "account", label: t("st.account") },
-  ];
-  const [active, setActive] = React.useState("appearance");
-  React.useEffect(() => {
-    const els = cats.map((c) => document.getElementById(`st-${c.id}`)).filter(Boolean);
-    if (typeof IntersectionObserver === "undefined") return undefined;
-    const io = new IntersectionObserver((es) => {
-      const v = es.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (v) setActive(v.target.id.replace("st-", ""));
-    }, { rootMargin: "-30% 0px -60% 0px" });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const icons = { light: "sun", dark: "moon", night: "night" };
-  return (
-    <div className="pg pg-settings">
-      <section className="st-hero" aria-labelledby="st-title">
-        <p className="h-eyebrow">{t("st.eyebrow")}</p>
-        <h1 className="h-display" id="st-title">{t("st.title")}</h1>
-        <p className="h-lead">{t("st.sub")}</p>
-      </section>
-      <div className="st-layout">
-        <nav className="st-index" aria-label={t("st.title")}>
-          {cats.map((c) => (
-            <a key={c.id} href={`#st-${c.id}`} className={active === c.id ? "on" : ""} aria-current={active === c.id ? "true" : undefined}>
-              <Icon name={c.icon} size={18} /> <span>{t(c.label)}</span>
-            </a>
-          ))}
-        </nav>
-        <div className="st-panels">
-          <section id="st-appearance" className="st-card c-appearance" aria-labelledby="sa-t">
-            <header><span className="st-ic"><Icon name="palette" size={20} /></span><div><h2 id="sa-t" className="h-h3">{t("st.appearance")}</h2><p>{t("st.appearanceHint")}</p></div></header>
-            <div className="st-themes" role="radiogroup" aria-label={t("hdr.theme")}>
-              {THEMES.map((k) => (
-                <button key={k} type="button" role="radio" aria-checked={prefs.theme === k} className={`st-theme th-${k} ${prefs.theme === k ? "on" : ""}`} onClick={() => { setPrefs({ theme: k }); play("tap"); }}>
-                  <span className="st-theme-pv" aria-hidden="true"><i /><i /><i /></span>
-                  <span className="st-theme-l"><Icon name={icons[k]} size={16} /> {t(`theme.${k}`)}</span>
-                  <small>{t(`theme.${k}Hint`)}</small>
-                </button>
-              ))}
-            </div>
-            <h3 className="st-sub">{t("st.palette")}</h3>
-            <div className="st-pals" role="radiogroup" aria-label={t("st.palette")}>
-              {[...Object.keys(PALETTES), "custom"].map((k) => {
-                const pal = PALETTES[k];
-                const sw = k === "custom" ? [prefs.custom, prefs.custom, prefs.custom] : pal ? [pal.primary, pal.secondary, pal.accent] : null;
-                return (
-                  <button key={k} type="button" role="radio" aria-checked={prefs.palette === k} className={`st-pal p-${k} ${prefs.palette === k ? "on" : ""}`} onClick={() => { setPrefs({ palette: k }); play("tap"); }}>
-                    <span className={`st-pal-sw ${sw ? "" : `mfr-${type}`}`} style={sw ? { background: `conic-gradient(${sw[0]} 0 40%, ${sw[1]} 0 75%, ${sw[2]} 0)` } : undefined} aria-hidden="true" />
-                    <span>{t(`pal.${k}`)}</span>
-                  </button>
-                );
-              })}
-            </div>
-            {prefs.palette === "custom" ? (
-              <label className="st-color">
-                <span>{t("st.custom")}</span>
-                <input type="color" value={prefs.custom} onChange={(e) => setPrefs({ custom: e.target.value })} />
-                <code>{prefs.custom.toUpperCase()}</code>
-              </label>
-            ) : null}
-            <div className="st-preview" aria-label={t("st.preview")}>
-              <span className="h-btn h-btn-primary" aria-hidden="true">{t("op.go")}</span>
-              <Meter pct={68} label={t("st.preview")} />
-              <span className="st-preview-chip">+120 {t("c.pts")}</span>
-            </div>
-            <p className="st-foot">{t("st.storedHere")}</p>
-          </section>
-
-          <section id="st-sound" className="st-card c-sound" aria-labelledby="ss-t">
-            <header><span className="st-ic"><Icon name="soundOn" size={20} /></span><div><h2 id="ss-t" className="h-h3">{t("st.sound")}</h2><p>{t("st.soundHint")}</p></div></header>
-            <Toggle checked={prefs.sound} onChange={(v) => { setPrefs({ sound: v }); if (v) setTimeout(() => play("reward"), 0); }} label={t("st.soundAll")} />
-            <Toggle checked={prefs.soundNotify} onChange={(v) => setPrefs({ soundNotify: v })} label={t("st.soundNotify")} />
-            <button type="button" className="h-btn h-btn-soft" onClick={() => play("achievement")} disabled={!prefs.sound}><Icon name="soundOn" size={18} /> {t("st.soundTest")}</button>
-          </section>
-
-          <section id="st-language" className="st-card c-language" aria-labelledby="sl-t">
-            <header><span className="st-ic"><Icon name="globe" size={20} /></span><div><h2 id="sl-t" className="h-h3">{t("st.language")}</h2><p>{t("st.languageHint")}</p></div></header>
-            <label className="st-field">
-              <span>{t("hdr.language")}</span>
-              <select className="notranslate" value={lang} onChange={(e) => { setLang(e.target.value); setLanguage(e.target.value); }}>
-                {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.native} · {l.name}</option>)}
-              </select>
-            </label>
-          </section>
-
-          <section id="st-surveyprefs" className="st-card c-surveyprefs" aria-labelledby="sv-t">
-            <header><span className="st-ic"><Icon name="surveys" size={20} /></span><div><h2 id="sv-t" className="h-h3">{t("sp.title")}</h2><p>{t("sp.hint")}</p></div></header>
-            <SurveyPrefs />
-          </section>
-
-          <section id="st-notifications" className="st-card c-notifications" aria-labelledby="sn-t">
-            <header><span className="st-ic"><Icon name="bell" size={20} /></span><div><h2 id="sn-t" className="h-h3">{t("st.notifications")}</h2><p>{t("st.notificationsHint")}</p></div></header>
-            <NotificationPrefs />
-            <EngageNotifications teen={type === "teen"} />
-          </section>
-
-          <section id="st-security" className="st-card c-security" aria-labelledby="sx-t">
-            <header><span className="st-ic"><Icon name="lock" size={20} /></span><div><h2 id="sx-t" className="h-h3">{t("st.security")}</h2><p>{t("st.securityHint")}</p></div></header>
-            <PasswordForm />
-          </section>
-
-          <section id="st-privacy" className="st-card c-privacy" aria-labelledby="sp-t">
-            <header><span className="st-ic"><Icon name="shield" size={20} /></span><div><h2 id="sp-t" className="h-h3">{t("st.privacy")}</h2><p>{t("st.privacyHint")}</p></div></header>
-            <div className="st-links">
-              <a href={type === "teen" ? "/teen-terms" : "/terms"} target="_blank" rel="noopener" className="h-btn h-btn-soft">{t("st.terms")} <Icon name="arrow" size={16} /></a>
-              <a href="/privacy" target="_blank" rel="noopener" className="h-btn h-btn-soft">{t("st.privacyPolicy")} <Icon name="arrow" size={16} /></a>
-            </div>
-            <PrivacyCentre teen={type === "teen"} />
-          </section>
-
-{type === "teen" ? (
-            <section id="st-guardian" className="st-card c-guardian" aria-labelledby="sg-t">
-              <header><span className="st-ic"><Icon name="shield" size={20} /></span><div><h2 id="sg-t" className="h-h3">{t("gt.title")}</h2><p>{t("gt.hint")}</p></div></header>
-              <GuardianTab />
-            </section>
-          ) : null}
-
-          <section id="st-app" className="st-card c-app" aria-labelledby="sapp-t">
-            <header><span className="st-ic"><Icon name="rocket" size={20} /></span><div><h2 id="sapp-t" className="h-h3">{t("pw.title")}</h2><p>{t("pw.hint")}</p></div></header>
-            <InstallApp />
-          </section>
-
-          <section id="st-account" className="st-card c-account" aria-labelledby="sac-t">
-            <header><span className="st-ic"><Icon name="account" size={20} /></span><div><h2 id="sac-t" className="h-h3">{t("st.account")}</h2><p>{t("st.accountHint")}</p></div></header>
-            <div className="st-links">
-              <Link href="/member/myaccount" className="h-btn h-btn-soft">{t("nav.account")} <Icon name="arrow" size={16} /></Link>
-              <Link href="/member/help?ask=account" className="h-btn h-btn-soft">{t("ma.close")} <Icon name="arrow" size={16} /></Link>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-  );
-}
