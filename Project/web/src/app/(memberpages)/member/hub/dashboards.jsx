@@ -11,6 +11,8 @@ import { t } from "./strings";
 import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState } from "./ui.jsx";
 import { ProfileJourney, OpportunityCenter, AchievementShelf, ActivityTimeline, RewardPeek, ReferralTeaser, GuardianStatus } from "./modules.jsx";
 import TodayStrip from "./engage/today.jsx";
+import ProExtras from "./engage/pro.jsx";
+import TeenExtras from "./engage/teen.jsx";
 import { memberTypeOf, usePoints, useLedger, useStats, useOpportunities, useProfiles, useReferrals, qualityOf, monthlyPoints, fmt, money } from "./data";
 
 function greeting() {
@@ -274,6 +276,7 @@ function ProfessionalDashboard() {
     <div className="dash dash-pro">
       <ProfessionalHero member={member} points={points} stats={stats} opps={opps} />
       <Reveal className="d-today"><TodayStrip /></Reveal>
+      <ProExtras />
       <div className="dp-grid">
         <Reveal className="dp-journey"><ProfileJourney profiles={profiles} variant="ledger" /></Reveal>
         <Reveal className="dp-qual" delay={60}><Qualification member={member} profiles={profiles} /></Reveal>
@@ -346,6 +349,7 @@ function TeenDashboard() {
     <div className="dash dash-teen">
       <TeenHero member={member} points={points} />
       <Reveal className="d-today"><TodayStrip /></Reveal>
+      <TeenExtras />
       <div className="dt-grid">
         <Reveal className="dt-journey"><ProfileJourney profiles={profiles} variant="quest" /></Reveal>
         <Reveal className="dt-ach" delay={60}><AchievementShelf stats={stats} profiles={profiles} quality={q} ledger={ledger} referrals={referrals} /></Reveal>
