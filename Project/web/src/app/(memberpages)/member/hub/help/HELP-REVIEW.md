@@ -30,3 +30,5 @@ Those were **not invented**: they are copied from the FAQ that is live today (`s
 - Daily poll, challenges and stories entries (#22) appear when `GET /api/v1/engagement/today` answers.
 - Quality tier entries (#23) appear when `GET /api/v1/engagement/quality` answers; tier bands are never quoted (the page shows them).
 - Referral entries (#23): live status when `GET /api/v1/engagement/referrals` answers; tier/bonus copy only when its `tiersOn` is true (never for Teens); leaderboard copy only when `leaderboard` is true. The copy states "only first surveys from 1 December 2026 count" (config `referrals`), so update it if that date changes.
+- Teen entries (#25): levels/badges/seasons and the guardian activity link when `GET /api/v1/engagement/teen/progress` answers; creative tasks when `/teen/tasks` answers. Level names and season dates are not quoted (placeholders).
+- Professional entries (#24): premium studies, expertise score, verified expert badge, statements/receipts and insight reports when `GET /api/v1/engagement/pro/expertise` answers. Score weights are not quoted.

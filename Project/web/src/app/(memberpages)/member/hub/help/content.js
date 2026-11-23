@@ -224,6 +224,34 @@ export const GUIDES = [
     cta: { label: "Open my dashboard", href: "/member/dashboard" },
   },
   {
+    id: "g-teen-create", topic: "teen", icon: "spark", title: "Try a creative task", mins: 2, types: ["teen"], feature: "teenTasks",
+    steps: [
+      { t: "Open your creative tasks", d: "Design votes, quick polls and idea contests are on your Teen Zone." },
+      { t: "Vote or answer", d: "Design votes and polls pay points once, and you see the results after you vote." },
+      { t: "Share an idea", d: "In an idea contest, write your idea without links, usernames or phone numbers. A moderator checks it first." },
+      { t: "Collect your points", d: "An idea earns points once it is approved, and it is shown to others without your name. Every task counts as a streak day." },
+    ],
+    cta: { label: "Open my Teen Zone", href: "/member/dashboard" },
+  },
+  {
+    id: "g-guardian-view", topic: "teen", icon: "mail", title: "Show your guardian your activity", mins: 1, types: ["teen"], feature: "teenProgress",
+    steps: [
+      { t: "Find the guardian option", d: "Choose \"Send my parent or guardian a view of my activity\"." },
+      { t: "We email them a link", d: "It goes to the parent or guardian from your registration. The link is read-only and works for 90 days." },
+      { t: "Need a fresh one?", d: "Sending again makes a new link, and the old one stops working." },
+    ],
+    cta: { label: "Open my Teen Zone", href: "/member/dashboard" },
+  },
+  {
+    id: "g-pro-expert", topic: "pro", icon: "id", title: "Get your verified expert badge", mins: 3, types: ["professional"], feature: "proExpertise",
+    steps: [
+      { t: "Request the badge", d: "Send your LinkedIn profile link, your work email, or both. Personal email addresses (like Gmail) aren't accepted." },
+      { t: "Our team checks it", d: "The check is done by hand by our team." },
+      { t: "Watch your expertise score", d: "Your expertise score (0–100) takes in your profiles, Professional surveys finished, your quality score and the verified badge." },
+    ],
+    cta: { label: "Open my dashboard", href: "/member/dashboard" },
+  },
+  {
     id: "g-teen-safe", topic: "teen", icon: "shield", title: "Stay safe and in control", mins: 2, types: ["teen"],
     steps: [
       { t: "Keep your password secret", d: "Never share it, not even with friends. Nobody from MyFrequentRewards will ask for it." },
@@ -746,8 +774,11 @@ export const FAQS = [
   },
   {
     id: "teen-levels", topic: "teen", q: "How do levels and badges work?", types: ["teen"],
-    kw: "level badges xp unlock",
-    a: ["Every point you earn moves you towards your next level; your dashboard shows how many you need. Badges unlock when you reach goals such as your first survey, ten surveys or a complete profile."],
+    kw: "level badges xp unlock season",
+    a: [(ctx) => ctx.features.teenProgress
+      ? "There are 5 levels. Your level comes from all the points you have ever earned, so swapping points for a reward never lowers it. Badges unlock from what you really do, and each badge shows your progress towards it."
+      : "Every point you earn moves you towards your next level; your dashboard shows how many you need. Badges unlock when you reach goals such as your first survey, ten surveys or a complete profile.",
+    (ctx) => ctx.features.teenProgress ? "Seasons are themed stretches of time with stages to complete. Each stage gives you a badge (there are no prizes)." : null],
   },
   {
     id: "teen-change", topic: "teen", q: "My guardian's details changed, or they want to ask something.", types: ["teen"],
@@ -755,6 +786,41 @@ export const FAQS = [
     a: ["Ask your parent or guardian to contact us, or raise a query here under Teen Zone & your guardian, and we'll help."],
   },
 
+  {
+    id: "teen-ideas", topic: "teen", q: "What happens to the ideas I send?", types: ["teen"], feature: "teenTasks",
+    kw: "idea contest moderator approved name",
+    a: ["A moderator checks each idea first. Don't include links, usernames or phone numbers. Once approved you earn the points, and the idea may be shown to others without your name."],
+  },
+  {
+    id: "teen-guardian-link", topic: "teen", q: "Can my parent or guardian see what I do here?", types: ["teen"], feature: "teenProgress",
+    kw: "guardian see activity view link",
+    a: ["Only if you send them a view. \"Send my parent or guardian a view of my activity\" emails them a read-only link that works for 90 days. Sending again replaces the old link."],
+  },
+  {
+    id: "teen-guardian-yes", topic: "teen", q: "Why does my guardian get an email when I ask for a reward?", types: ["teen"], feature: "rewardsShop",
+    kw: "guardian email yes no reward request",
+    a: ["Every Teen reward request is emailed to the parent or guardian from your registration, who answers YES or NO. If they say NO, your points come back."],
+  },
+  {
+    id: "pro-premium", topic: "pro", q: "What are premium studies?", types: ["professional"], feature: "proExpertise",
+    kw: "premium studies industry seniority match",
+    a: ["Studies matched to the industry and seniority answers in your profile. If those answers are missing, we ask you to add them so we can match you."],
+  },
+  {
+    id: "pro-expertise", topic: "pro", q: "How is my expertise score worked out?", types: ["professional"], feature: "proExpertise",
+    kw: "expertise score 0 100 how",
+    a: ["It runs from 0 to 100 and takes in your completed profiles, the Professional surveys you finished, your quality score and whether you have the verified expert badge."],
+  },
+  {
+    id: "pro-statements", topic: "pro", q: "Can I get statements or receipts for my earnings?", types: ["professional"], feature: "proExpertise",
+    kw: "invoice statement receipt pdf earnings tax",
+    a: ["Yes. Monthly earnings statements and payout receipts are available to print or save as PDF."],
+  },
+  {
+    id: "pro-insights", topic: "pro", q: "What are industry insight reports?", types: ["professional"], feature: "proExpertise",
+    kw: "insight report industry findings",
+    a: ["Reports our team shares back with professionals about findings in their industry."],
+  },
   // ---- support
   {
     id: "sp-how", topic: "support", q: "How do I contact support?",

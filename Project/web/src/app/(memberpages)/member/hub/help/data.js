@@ -11,7 +11,8 @@ const ok = (r) => r && r.status !== "error";
 
 // Features the server has. engage1 = points ledger / streaks (GET /engagement/config), rewardsShop = rewards catalogue
 // (GET /engagement/rewards), today = daily poll, challenges and stories (GET /engagement/today), qualityTiers
-// (GET /engagement/quality), referralsLive / referralTiersOn / leaderboard (GET /engagement/referrals, PR #23).
+// (GET /engagement/quality), referralsLive / referralTiersOn / leaderboard (GET /engagement/referrals, PR #23),
+// teenProgress / teenTasks (GET /engagement/teen/progress, /teen/tasks, PR #25), proExpertise (GET /engagement/pro/expertise, PR #24).
 // A missing endpoint just hides those entries; nothing breaks.
 export function useHelpFeatures() {
   const member = useMember();
@@ -20,7 +21,11 @@ export function useHelpFeatures() {
     enabled: Boolean(member?._id),
     queryFn: async () => {
       // each feature is on only when its own endpoint answers (engagement PRs #18, #20, #22)
-      const [c, rw, td, ql, rf] = await Promise.all(["/config", "/rewards", "/today", "/quality", "/referrals"].map((u) => api.get(`/api/v1/engagement${u}`).catch(() => null)));
+      const type = memberTypeOf(member);
+      // the Teen and Professional endpoints answer 403 to other member types, so only ask the matching ones
+      const paths = ["/config", "/rewards", "/today", "/quality", "/referrals",
+        type === "teen" ? "/teen/progress" : null, type === "teen" ? "/teen/tasks" : null, type === "professional" ? "/pro/expertise" : null];
+      const [c, rw, td, ql, rf, tp, tt, px] = await Promise.all(paths.map((u) => (u ? api.get(`/api/v1/engagement${u}`).catch(() => null) : null)));
       const cfg = ok(c) && c.data && typeof c.data === "object" ? c.data : null;
       return {
         engage1: Boolean(cfg),
@@ -32,6 +37,9 @@ export function useHelpFeatures() {
         referralsLive: Boolean(ok(rf) && rf.data),
         referralTiersOn: Boolean(ok(rf) && rf.data?.tiersOn),
         leaderboard: Boolean(ok(rf) && rf.data?.leaderboard),
+        teenProgress: Boolean(ok(tp) && tp.data),
+        teenTasks: Boolean(ok(tt) && tt.data),
+        proExpertise: Boolean(ok(px) && px.data),
       };
     },
     staleTime: 10 * 60_000,
@@ -85,7 +93,7 @@ export function useHelpContext() {
       streakBonuses: Array.isArray(cfg.streakBonuses) ? cfg.streakBonuses : [],
       rewardsOpen: Boolean(features.data?.rewardsOpen),
       pollPoints: cfg.dailyPoll?.enabled ? Number(cfg.dailyPoll.points) || null : null,
-      features: Object.fromEntries(["engage1", "rewardsShop", "today", "qualityTiers", "referralsLive", "referralTiersOn", "leaderboard"].map((k) => [k, Boolean(features.data?.[k])])),
+      features: Object.fromEntries(["engage1", "rewardsShop", "today", "qualityTiers", "referralsLive", "referralTiersOn", "leaderboard", "teenProgress", "teenTasks", "proExpertise"].map((k) => [k, Boolean(features.data?.[k])])),
     };
   }, [type, member, p, features.data, showMoney]);
 }
