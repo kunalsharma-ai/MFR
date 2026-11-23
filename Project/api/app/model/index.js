@@ -22,3 +22,6 @@ export { default as TeenRegistration } from "./TeenRegistration.js";
 export { default as TeenGuardian } from "./TeenGuardian.js";
 export { default as TeenConsent } from "./TeenConsent.js";
 export { default as TeenToken } from "./TeenToken.js";
+export { default as PointsHold } from "./PointsHold.js";
+export { default as StreakDay } from "./StreakDay.js";
+export { default as MemberPreference } from "./MemberPreference.js";
