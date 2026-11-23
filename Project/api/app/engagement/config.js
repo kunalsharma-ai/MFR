@@ -142,6 +142,13 @@ export const DEFAULTS = {
         ],
     },
 
+    // ---- push and WhatsApp (DECISION: providers) ---------------------------------------------------------------------
+    // Web Push needs a VAPID key pair (npx web-push generate-vapid-keys) and the `web-push` package installed. Until
+    // both are there, members can't switch push on and nothing is sent. Quiet hours are respected.
+    push: { enabled: false, vapidPublicKey: "", vapidPrivateKey: "", subject: "mailto:support@myfrequentrewards.com" },
+    // WhatsApp needs a business provider (DECISION). Until then the setting is shown as "coming soon" and nothing is sent.
+    whatsapp: { enabled: false, provider: null },
+
     // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
     // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
     draw: { enabled: false },
@@ -207,5 +214,7 @@ export function publicConfig(memberType) {
         streakBonuses: c.streak.bonuses,
         dailyPoll: { enabled: c.dailyPoll.enabled, points: c.dailyPoll.points },
         drawEnabled: memberType !== "teen" && Boolean(c.draw?.enabled),
+        push: { enabled: Boolean(c.push?.enabled && c.push?.vapidPublicKey), publicKey: c.push?.enabled ? c.push.vapidPublicKey || null : null },
+        whatsapp: { enabled: Boolean(c.whatsapp?.enabled) },
     };
 }
