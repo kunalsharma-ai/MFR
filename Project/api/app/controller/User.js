@@ -90,8 +90,11 @@ class User extends CrudController {
             ...this.commonFilters
         });
 
-        if (surveys.length > 0) {
-            const autoInvites = surveys.map(s => ({
+        // a survey with a minimum quality score only invites members at or above it (Nov 2026; unset = everyone)
+        const score = Number(user.qualityScore ?? 100);
+        const open = surveys.filter((s) => s.minQualityScore == null || score >= s.minQualityScore);
+        if (open.length > 0) {
+            const autoInvites = open.map(s => ({
                 user: user._id,
                 survey: {
                     name: s.name,
@@ -103,7 +106,7 @@ class User extends CrudController {
                 ...this.commonFilters
             }));
             await responseModel.insertMany(autoInvites, { ordered: false });
-            for (const s of surveys) Emails.newSurvey([user._id], s, this.request.origin); // off unless config.emails.newSurvey
+            for (const s of open) Emails.newSurvey([user._id], s, this.request.origin); // off unless config.emails.newSurvey
         }
     } catch (e) {
         console.log("Auto-invite failed for new user", e.message);   // console.log, chhota l

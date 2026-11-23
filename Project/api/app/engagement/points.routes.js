@@ -52,6 +52,9 @@ export function sanitizePrefs(body = {}, current = {}) {
             weeklySummary: bool(n.weeklySummary, c.weeklySummary ?? true),
             expiryReminders: bool(n.expiryReminders, c.expiryReminders ?? true),
             newSurvey: bool(n.newSurvey, c.newSurvey ?? true),
+            // kept as they are unless the member changes them here (they can also be switched off from an email link)
+            lifecycle: bool(n.lifecycle, c.lifecycle ?? true),
+            birthday: bool(n.birthday, c.birthday ?? true),
             quietHours: {
                 enabled: bool(n.quietHours?.enabled, c.quietHours?.enabled ?? false),
                 start: hhmm(n.quietHours?.start, c.quietHours?.start || "22:00"),
