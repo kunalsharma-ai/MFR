@@ -101,3 +101,28 @@
 .eg-dialog::backdrop { background: rgba(10, 14, 30, .45); }
 .eg-dialog .eg-field { margin: 12px 0; }
 .eg-dialog .h-h3 { display: flex; gap: 8px; align-items: center; margin: 0 0 4px; }
+
+/* ---- dashboard: today strip (phase 3) ---- */
+.hub .d-today { margin: var(--s4) 0; }
+.hub .eg-today { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); align-items: start; }
+.hub .eg-today .h-eyebrow { display: flex; align-items: center; gap: 6px; margin: 0 0 var(--s1); }
+.hub .eg-poll-opts { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s2) 0; }
+.hub .eg-poll-opts .h-btn[aria-pressed="true"] { outline: 2px solid var(--primary); }
+.hub .eg-poll-res { list-style: none; padding: 0; margin: var(--s2) 0; display: grid; gap: 8px; }
+.hub .eg-poll-res li { position: relative; display: flex; justify-content: space-between; gap: var(--s2); padding: 8px 12px; border-radius: var(--r-s, 10px); background: var(--card-2); overflow: hidden; isolation: isolate; }
+.hub .eg-poll-res li > i { position: absolute; inset: 0 auto 0 0; width: var(--w); background: color-mix(in srgb, var(--primary) 16%, transparent); z-index: -1; transition: width .8s var(--ease); }
+.hub .eg-poll-res li.is-mine { font-weight: 700; }
+.hub .eg-poll-res li span { display: inline-flex; align-items: center; gap: 6px; }
+.hub .eg-ch-list { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: var(--s3); }
+.hub .eg-ch-top { display: flex; justify-content: space-between; align-items: center; gap: var(--s2); margin-bottom: 6px; font-size: var(--f-small); }
+.hub .eg-bar.sm { height: 8px; }
+.hub .eg-ch-list li.is-done .eg-bar > i { background: var(--success); }
+.hub .eg-story-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: var(--r-m, 12px); margin-bottom: var(--s2); }
+.hub .eg-story-stats { display: flex; flex-wrap: wrap; gap: var(--s3); margin: var(--s2) 0; }
+.hub .eg-story-stats div { min-width: 0; }
+.hub .eg-story-stats dt { font-size: 12px; color: var(--muted); }
+.hub .eg-story-stats dd { margin: 0; font-weight: 800; font-size: 1.25rem; }
+.hub .eg-story .h-link { background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.hub .eg-story-list { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: var(--s2); }
+.hub .eg-story-list li { display: grid; gap: 4px; padding-top: var(--s2); border-top: 1px solid var(--border); }
+.hub .eg-story-list span { color: var(--muted); font-size: var(--f-small); }

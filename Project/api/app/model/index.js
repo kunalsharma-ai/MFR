@@ -28,3 +28,8 @@ export { default as MemberPreference } from "./MemberPreference.js";
 export { default as CatalogueItem } from "./CatalogueItem.js";
 export { default as Redemption } from "./Redemption.js";
 export { default as BonusOffer } from "./BonusOffer.js";
+export { default as Task } from "./Task.js";
+export { default as TaskEntry } from "./TaskEntry.js";
+export { default as Story } from "./Story.js";
+export { default as PrizeDraw } from "./PrizeDraw.js";
+export { default as DrawEntry } from "./DrawEntry.js";

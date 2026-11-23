@@ -135,7 +135,7 @@ export async function ledger(user, origin, opts = {}) {
 }
 
 // ---- filters + export ----------------------------------------------------------------------------------------------
-export const TYPES = ["survey", "profile", "poll", "streak", "referral", "challenge", "bonus", "task", "redemption"];
+export const TYPES = ["survey", "profile", "poll", "streak", "referral", "challenge", "bonus", "task", "redemption", "draw"];
 export function filter(list, q = {}) {
     const types = String(q.type || "").split(",").map(slugOf).filter(Boolean);
     const statuses = String(q.status || "").split(",").map(slugOf).filter(Boolean);

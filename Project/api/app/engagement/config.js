@@ -64,6 +64,24 @@ export const DEFAULTS = {
     },
     dailyPoll: { enabled: true, points: 5 },
 
+    // ---- monthly challenges (DECISION: points values) ---------------------------------------------------------------
+    // Shown every month unless an admin schedules other challenges (Task kind "challenge") for that month. Progress is
+    // counted from what the member really did that month. Bonuses are paid only for months from `from` onward.
+    challenges: {
+        enabled: true,
+        from: "2026-12",
+        monthly: [
+            { key: "surveys-5", title: "Finish 5 surveys this month", metric: "surveys", target: 5, points: 50, audience: ["consumer", "professional"] },
+            { key: "polls-10", title: "Answer 10 daily polls", metric: "polls", target: 10, points: 20 },
+            { key: "active-12", title: "Be active on 12 days", metric: "active_days", target: 12, points: 30 },
+            { key: "profiles-3", title: "Complete 3 profiles", metric: "profiles", target: 3, points: 25 },
+        ],
+    },
+
+    // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
+    // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
+    draw: { enabled: false },
+
     // ---- weekly summary email (DECISION: switch on) ----------------------------------------------------------------
     // It never repeats the profile reminders the profile studio sends every 2 days; it is only a points/streak recap.
     weeklySummary: { enabled: false, weekday: 1 /* Monday */, maxPerRun: 5000 },
@@ -124,5 +142,6 @@ export function publicConfig(memberType) {
         holdDays: c.points.holdDays,
         streakBonuses: c.streak.bonuses,
         dailyPoll: { enabled: c.dailyPoll.enabled, points: c.dailyPoll.points },
+        drawEnabled: memberType !== "teen" && Boolean(c.draw?.enabled),
     };
 }
