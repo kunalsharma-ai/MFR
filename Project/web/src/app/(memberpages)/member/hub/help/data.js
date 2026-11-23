@@ -10,7 +10,8 @@ import { TOPICS, GUIDES, FAQS, SYNONYMS } from "./content";
 const ok = (r) => r && r.status !== "error";
 
 // Features the server has. engage1 = points ledger / streaks (GET /engagement/config), rewardsShop = rewards catalogue
-// (GET /engagement/rewards), today = daily poll, challenges and stories (GET /engagement/today).
+// (GET /engagement/rewards), today = daily poll, challenges and stories (GET /engagement/today), qualityTiers
+// (GET /engagement/quality), referralsLive / referralTiersOn / leaderboard (GET /engagement/referrals, PR #23).
 // A missing endpoint just hides those entries; nothing breaks.
 export function useHelpFeatures() {
   const member = useMember();
@@ -19,7 +20,7 @@ export function useHelpFeatures() {
     enabled: Boolean(member?._id),
     queryFn: async () => {
       // each feature is on only when its own endpoint answers (engagement PRs #18, #20, #22)
-      const [c, rw, td] = await Promise.all(["/config", "/rewards", "/today"].map((u) => api.get(`/api/v1/engagement${u}`).catch(() => null)));
+      const [c, rw, td, ql, rf] = await Promise.all(["/config", "/rewards", "/today", "/quality", "/referrals"].map((u) => api.get(`/api/v1/engagement${u}`).catch(() => null)));
       const cfg = ok(c) && c.data && typeof c.data === "object" ? c.data : null;
       return {
         engage1: Boolean(cfg),
@@ -27,6 +28,10 @@ export function useHelpFeatures() {
         rewardsShop: Boolean(ok(rw) && rw.data),
         rewardsOpen: Boolean(ok(rw) && rw.data?.open),
         today: Boolean(ok(td) && td.data),
+        qualityTiers: Boolean(ok(ql) && ql.data),
+        referralsLive: Boolean(ok(rf) && rf.data),
+        referralTiersOn: Boolean(ok(rf) && rf.data?.tiersOn),
+        leaderboard: Boolean(ok(rf) && rf.data?.leaderboard),
       };
     },
     staleTime: 10 * 60_000,
@@ -80,7 +85,7 @@ export function useHelpContext() {
       streakBonuses: Array.isArray(cfg.streakBonuses) ? cfg.streakBonuses : [],
       rewardsOpen: Boolean(features.data?.rewardsOpen),
       pollPoints: cfg.dailyPoll?.enabled ? Number(cfg.dailyPoll.points) || null : null,
-      features: { engage1: Boolean(features.data?.engage1), rewardsShop: Boolean(features.data?.rewardsShop), today: Boolean(features.data?.today) },
+      features: Object.fromEntries(["engage1", "rewardsShop", "today", "qualityTiers", "referralsLive", "referralTiersOn", "leaderboard"].map((k) => [k, Boolean(features.data?.[k])])),
     };
   }, [type, member, p, features.data, showMoney]);
 }

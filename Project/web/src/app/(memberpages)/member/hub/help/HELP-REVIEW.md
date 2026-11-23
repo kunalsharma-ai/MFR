@@ -28,3 +28,5 @@ Those were **not invented**: they are copied from the FAQ that is live today (`s
 - Streak bonuses and daily poll points: from `GET /api/v1/engagement/config` (#18), shown only when that endpoint exists.
 - Rewards catalogue entries (#20) appear when `GET /api/v1/engagement/rewards` answers; they say "opens soon" until its `open` flag is true.
 - Daily poll, challenges and stories entries (#22) appear when `GET /api/v1/engagement/today` answers.
+- Quality tier entries (#23) appear when `GET /api/v1/engagement/quality` answers; tier bands are never quoted (the page shows them).
+- Referral entries (#23): live status when `GET /api/v1/engagement/referrals` answers; tier/bonus copy only when its `tiersOn` is true (never for Teens); leaderboard copy only when `leaderboard` is true. The copy states "only first surveys from 1 December 2026 count" (config `referrals`), so update it if that date changes.

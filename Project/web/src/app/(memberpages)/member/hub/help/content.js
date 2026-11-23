@@ -158,6 +158,25 @@ export const GUIDES = [
     cta: { label: "Open referrals", href: "/member/referrals" },
   },
   {
+    id: "g-tiers", topic: "quality", icon: "trophy", title: "Climb the quality tiers", mins: 2, feature: "qualityTiers",
+    steps: [
+      { t: "Find your tier", d: "Quality Score shows your tier (Bronze, Silver, Gold or Platinum) and the score bands for each." },
+      { t: "See what the next tier opens", d: "Some surveys need a minimum score. The page shows how many open surveys are waiting for a higher tier." },
+      { t: "Follow the tips", d: "Your score breakdown comes with tips on what to do next." },
+      { t: "Track your trend", d: "Your monthly trend builds up from your first visit, and you'll see a message when your score goes up." },
+    ],
+    cta: { label: "See my tier", href: "/member/quality" },
+  },
+  {
+    id: "g-share", topic: "referrals", icon: "share", title: "Share your invite in one tap", mins: 2, types: ["consumer", "professional"], feature: "referralsLive",
+    steps: [
+      { t: "Open Referrals", d: "Your link and the share buttons are at the top." },
+      { t: "Pick where to share", d: "WhatsApp, Instagram, email or an invite card. For Instagram we save the invite card and copy your link, because Instagram has no web share link." },
+      { t: "Follow each friend", d: "See whether each friend has joined, verified their email and finished a first survey." },
+    ],
+    cta: { label: "Open referrals", href: "/member/referrals" },
+  },
+  {
     id: "g-photo", topic: "account", icon: "camera", title: "Add or change your profile photo", mins: 1,
     steps: [
       { t: "Open My Account", d: "Choose My Account in the menu or from your avatar at the top right." },
@@ -442,7 +461,7 @@ export const FAQS = [
     id: "ways", topic: "rewards", q: "What are the ways to earn points?",
     kw: "earn more points ways how",
     a: [
-      { ul: ["Complete a profile (each pays once).", "Finish a survey.", "Invite friends (referral rewards are not switched on yet)."] },
+      { ul: ["Complete a profile (each pays once).", "Finish a survey.", "Invite friends."] },
       (ctx) => ctx.features.today ? "Answer the daily poll and complete monthly challenges on your dashboard." : null,
     ],
   },
@@ -536,9 +555,24 @@ export const FAQS = [
     a: [{ ul: ["Complete your remaining profiles: each one adds to your score.", "Finish the surveys you start.", "Answer honestly and read each question.", "Verify your email address."] }],
   },
   {
+    id: "q-tiers", topic: "quality", q: "What are Bronze, Silver, Gold and Platinum?", feature: "qualityTiers",
+    kw: "tier bronze silver gold platinum level band",
+    a: [
+      "They are quality tiers based on your Quality Score. The Quality Score page shows your tier, the score bands for each tier, and how far you are from the next one.",
+      "Some surveys need a minimum score, so a higher tier can open more surveys. The page shows how many open surveys are waiting for a higher tier.",
+    ],
+  },
+  {
+    id: "q-who", topic: "quality", q: "Who sets my Quality Score?", feature: "qualityTiers",
+    kw: "who sets calculated formula change score",
+    a: ["Our quality team sets it. The page shows the factors that count and tips to improve, and a message appears when your score has gone up since your last visit."],
+  },
+  {
     id: "q-history", topic: "quality", q: "Can I see how my score changed over time?",
     kw: "history chart trend score",
-    a: ["Not yet. We keep your current score only. A history view will appear on the Quality Score page once score changes are recorded."],
+    a: [(ctx) => ctx.features.qualityTiers
+      ? "Yes. The Quality Score page shows your score month by month, starting from your first visit after the trend was switched on. Earlier months aren't filled in."
+      : "Not yet. We keep your current score only. A history view will appear on the Quality Score page once score changes are recorded."],
   },
 
   // ---- activity
@@ -575,7 +609,11 @@ export const FAQS = [
   {
     id: "rf-bonus", topic: "referrals", q: "Do I get points for referrals?",
     kw: "referral bonus points reward",
-    a: ["Referral rewards are not switched on yet. We'll show them on the Referrals page when they start."],
+    a: [(ctx) => ctx.features.referralTiersOn
+      ? "Yes. The Referrals page shows the referral tiers and the bonus for each. A friend counts once they finish their first survey, and each tier bonus is paid once."
+      : ctx.type === "teen"
+        ? "Referral bonuses aren't part of Teen membership. You can still see how each friend you invited is doing."
+        : "Referral rewards are not switched on yet. We'll show them on the Referrals page when they start."],
   },
   {
     id: "rf-teen", topic: "referrals", q: "Can I invite my friends?", types: ["teen"],
@@ -583,6 +621,26 @@ export const FAQS = [
     a: ["Ask your parent or guardian first. Friends under 18 need their own parent's or guardian's YES before they can join."],
   },
 
+  {
+    id: "rf-count", topic: "referrals", q: "When does a friend count for my referral tier?", feature: "referralTiersOn",
+    kw: "count tier friend first survey bonus when",
+    a: ["Once they finish their first survey. Only first surveys from 1 December 2026 count, and each tier bonus is paid once."],
+  },
+  {
+    id: "rf-live", topic: "referrals", q: "What do joined, verified and first survey mean?", feature: "referralsLive",
+    kw: "status joined verified first survey friend",
+    a: ["They are the steps each friend goes through: they joined with your link, verified their email, and finished their first survey. The Referrals page shows where each friend is."],
+  },
+  {
+    id: "rf-instagram", topic: "referrals", q: "How do I share my invite on Instagram?", types: ["consumer", "professional"], feature: "referralsLive",
+    kw: "instagram share story card",
+    a: ["Tap Instagram on Referrals. We save your invite card and copy your link, so you can post the card and paste the link. Instagram has no web share link, so this is the way to do it."],
+  },
+  {
+    id: "rf-board", topic: "referrals", q: "How does the referral leaderboard work?", feature: "leaderboard",
+    kw: "leaderboard ranking top board opt in",
+    a: ["It is opt-in. Turn on \"Show me on the leaderboard\" to appear; we show only your first name and initial."],
+  },
   // ---- account
   {
     id: "ma-what", topic: "account", q: "What can I change in My Account?",
