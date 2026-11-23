@@ -4,6 +4,7 @@
 //   Professional  – "Command center": slim status band with a KPI ticker, 12-column analytics grid, log tables
 //   Teen          – "Quest board": level badge hero, quest cards with XP, sticker shelf, power meter
 import React from "react";
+import JourneyDashboard from "./journey.jsx";
 import Link from "next/link";
 import StatBand from "./statband.jsx";
 import Icon from "./icons.jsx";
@@ -508,7 +509,11 @@ function TeenDashboard({ hub }) {
   );
 }
 
+// Round 4: every member type gets the journey dashboard (journey.jsx); the round 3 layouts stay below for reference.
 export default function MemberDashboard() {
+  return <JourneyDashboard />;
+}
+export function LegacyDashboard() {
   const hub = useHub();
   if (hub.type === "professional") return <ProDashboard hub={hub} />;
   if (hub.type === "teen") return <TeenDashboard hub={hub} />;

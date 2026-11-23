@@ -58,7 +58,7 @@ function daysLeft(d) {
 }
 
 /* one card: a survey or a topic profile taken as a survey */
-function SurveyCard({ row, type, locked, onStart, featured = false, i = 0 }) {
+export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0 }) {
   const isProfile = row.kind === "profile";
   const tp = isProfile ? profileTopic(row) : surveyTopic(row, type);
   const st = row.state; // available | resume | locked | done | closed
@@ -105,16 +105,14 @@ function CardSkeleton() {
   return <li className="sx-card is-skel" aria-hidden="true"><div className="sx-band" /><div className="sx-body"><Skeleton h={14} w="40%" /><Skeleton h={22} w="85%" /><Skeleton h={14} w="60%" /><Skeleton h={44} w="100%" r={14} /></div></li>;
 }
 
-export default function SurveysPage({ SurveyHistory }) {
+// Everything a survey list needs, shared by the Surveys page and the dashboard's opportunities section:
+// real /me/survey rows (invited + dropout), pending topic profiles, the gate, and the start action.
+export function useSurveyDesk(source) {
   const router = useRouter();
-  const hub = useHub();
-  const { type } = hub;
   const member = useMember();
-  const query = useQueryParams();
   const gate = useProfileGate();
   const doneProfiles = useCompletedProfiles(member?.category);
-  const { active, all } = useSurveys(query?.source);
-  const [filter, setFilter] = React.useState("all");
+  const { active, all } = useSurveys(source);
   const [gateOpen, setGateOpen] = React.useState(false);
 
   const locked = gate.loading || !gate.coreDone;
@@ -128,18 +126,9 @@ export default function SurveysPage({ SurveyHistory }) {
   const history = (all.data || []).filter((s) => !isProfileSurvey(s) && ["complete", "terminate", "overquota"].includes(s.participationStatus))
     .map((s) => ({ ...s, kind: "survey", state: s.participationStatus === "complete" ? "done" : "closed", at: s.updatedAt || s.createdAt }))
     .slice(0, 6);
-
-  const FILTERS = [
-    { k: "all", test: () => true },
-    { k: "quick", test: (r) => Number(r.loi) > 0 && Number(r.loi) <= QUICK },
-    { k: "top", test: (r) => Number(r.points) > HIGH },
-    ...(profileRows.length ? [{ k: "profiles", test: (r) => r.kind === "profile" }] : []),
-  ];
-  const f = FILTERS.find((x) => x.k === filter) || FILTERS[0];
-  const rows = openRows.filter(f.test);
-  // the best next one: the most points per minute among those the member can start now
   const startable = openRows.filter((r) => r.state === "available" || r.state === "resume");
-  const best = startable.length > 1 ? [...startable].sort((a, b) => (Number(b.points) || 0) / Math.max(1, Number(b.loi) || 1) - (Number(a.points) || 0) / Math.max(1, Number(a.loi) || 1))[0] : null;
+  // the best next one: the most points per minute among those the member can start now
+  const best = startable.length > 1 ? [...startable].sort((a, b) => (Number(b.points) || 0) / Math.max(1, Number(b.loi) || 1) - (Number(a.points) || 0) / Math.max(1, Number(a.loi) || 1))[0] : startable[0] || null;
   const total = openRows.reduce((n, r) => n + (Number(r.points) || 0), 0);
   const avg = openRows.length ? Math.round(openRows.reduce((n, r) => n + (Number(r.loi) || 0), 0) / openRows.length) : 0;
   const loading = active.isLoading || gate.loading;
@@ -150,6 +139,35 @@ export default function SurveysPage({ SurveyHistory }) {
     if (row.kind === "profile") return router.push(`/member/profiles?profile=${row.slug}`);
     if (PERMITTED.includes(row.participationStatus)) router.push(`/survey?name=${row.slug}`);
   };
+  const dialog = (
+    <GateDialog
+      open={gateOpen}
+      gate={gate}
+      onClose={() => setGateOpen(false)}
+      onStart={(slug) => { setGateOpen(false); router.push(`/member/profiles?profile=${slug}`); }}
+    />
+  );
+  return { gate, active, all, surveys, profileRows, openRows, history, startable, best, total, avg, locked, loading, start, gateOpen, setGateOpen, dialog };
+}
+
+export const surveyFilters = (profileRows) => [
+  { k: "all", test: () => true },
+  { k: "quick", test: (r) => Number(r.loi) > 0 && Number(r.loi) <= QUICK },
+  { k: "top", test: (r) => Number(r.points) > HIGH },
+  ...(profileRows.length ? [{ k: "profiles", test: (r) => r.kind === "profile" }] : []),
+];
+
+export default function SurveysPage({ SurveyHistory }) {
+  const hub = useHub();
+  const { type } = hub;
+  const query = useQueryParams();
+  const desk = useSurveyDesk(query?.source);
+  const { gate, active, surveys, profileRows, openRows, history, startable, total, avg, locked, loading, start, setGateOpen } = desk;
+  const best = startable.length > 1 ? desk.best : null;
+  const [filter, setFilter] = React.useState("all");
+  const FILTERS = surveyFilters(profileRows);
+  const f = FILTERS.find((x) => x.k === filter) || FILTERS[0];
+  const rows = openRows.filter(f.test);
 
   return (
     <div className="pg pg-surveys sx">
@@ -222,12 +240,7 @@ export default function SurveysPage({ SurveyHistory }) {
         </section>
       ) : null}
 
-      <GateDialog
-        open={gateOpen}
-        gate={gate}
-        onClose={() => setGateOpen(false)}
-        onStart={(slug) => { setGateOpen(false); router.push(`/member/profiles?profile=${slug}`); }}
-      />
+      {desk.dialog}
     </div>
   );
 }
