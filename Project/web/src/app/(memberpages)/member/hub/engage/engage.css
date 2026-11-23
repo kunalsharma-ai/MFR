@@ -170,3 +170,23 @@
 .hub .eg-lb-rank { font-weight: 800; text-align: center; }
 .hub .eg-check { display: flex; gap: var(--s2); align-items: center; font-size: var(--f-small); margin-top: var(--s2); }
 @media (max-width: 560px) { .hub .eg-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---- professionals (phase 5) ---- */
+.hub .eg-pgrid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin: var(--s4) 0; align-items: start; }
+.hub .eg-pg-studies { grid-column: 1 / -1; }
+.hub .eg-plist { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: var(--s2); }
+.hub .eg-plist li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); padding: var(--s2) var(--s3); border-radius: var(--r-m, 12px); background: var(--card-2); }
+.hub .eg-plist li > div { flex: 1 1 220px; display: grid; min-width: 0; }
+.hub .eg-plist small { color: var(--muted); }
+.hub .eg-badge { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; background: var(--success); color: #fff; font-size: 12px; font-weight: 700; }
+.hub .eg-xscore { display: flex; align-items: baseline; gap: 4px; margin: var(--s2) 0; }
+.hub .eg-xscore b { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+.hub .eg-xscore small { color: var(--muted); }
+.hub .eg-xparts { list-style: none; padding: 0; margin: 0 0 var(--s3); display: grid; gap: 8px; }
+.hub .eg-xparts li { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(60px, 1fr) auto; align-items: center; gap: var(--s2); font-size: var(--f-small); }
+.hub .eg-form { display: grid; gap: var(--s2); }
+.hub .eg-form label { display: grid; gap: 4px; font-size: var(--f-small); }
+.hub .eg-form input { padding: 10px 12px; border-radius: var(--r-s, 10px); border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; }
+.hub .eg-table td.n, .hub .eg-table th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.hub .eg-table td { padding: var(--s2); border-bottom: 1px solid var(--border); }
+.hub .eg-receipts { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: 6px; }

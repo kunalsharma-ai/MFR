@@ -105,6 +105,22 @@ export const DEFAULTS = {
         leaderboard: { enabled: true, size: 10 },
     },
 
+    // ---- Professionals ----------------------------------------------------------------------------------------------
+    professional: {
+        // The profile questions (Question.name) whose answers give the member's industry and seniority. DECISION:
+        // set these to the real question names in the Professional profile; until then nothing is matched.
+        industryQuestion: "industry",
+        seniorityQuestion: "seniority",
+        // Expertise score 0-100 (DECISION: weights). Each part is the member's real figure; the weights add up to 100.
+        expertise: {
+            weights: { profiles: 30, surveys: 30, quality: 25, verified: 15 },
+            surveysForFull: 20, // finished Professional surveys that give the full "surveys" part
+        },
+        // Who the statements and payout receipts are from. DECISION: company name and address as they should appear.
+        // Left empty, the documents say the details will be added and never invent them. No tax wording is added.
+        issuer: { name: "", address: "", email: "" },
+    },
+
     // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
     // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
     draw: { enabled: false },

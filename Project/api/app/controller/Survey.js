@@ -1,3 +1,4 @@
+import { premiumEligibleIds } from "../engagement/pro.js";
 import fs from "fs"
 import * as Emails from "../engagement/transactional.js";
 
@@ -90,6 +91,10 @@ class Survey extends CrudController {
                 ? [{ qualityScore: { $gte: survey.minQualityScore } }, { qualityScore: null }]
                 : [{ qualityScore: { $gte: survey.minQualityScore } }];
         }
+
+        // Nov 2026: a premium study with industry/seniority conditions only invites members whose answers fit
+        const premiumIds = await premiumEligibleIds(survey, this.request.origin);
+        if (premiumIds) query._id = { $in: premiumIds };
 
         const users = await userModel.find(query);
         const invites = users.map(user => ({

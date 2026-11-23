@@ -15,6 +15,7 @@ import { config } from "./config.js";
 import { reconcile } from "./ledger.js";
 import * as D from "./daily.js";
 import * as Draw from "./draw.js";
+import { memberFacts } from "./pro.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
 
 const AUD = ["consumer", "professional", "teen"];
@@ -61,8 +62,8 @@ export async function storiesFor(user, origin, type = "story", limitN = 20) {
     if (type === "insight") {
         // insight reports are for Professionals, and for their own industry when the report names industries
         if (t !== "professional") return [];
-        const ind = String(user?.industry || user?.professional?.industry || "").toLowerCase();
-        q.$and = [{ $or: [{ industries: { $size: 0 } }, ...(ind ? [{ industries: ind }] : [])] }];
+        const { industries } = await memberFacts(user, origin);
+        q.$and = [{ $or: [{ industries: { $size: 0 } }, ...(industries.length ? [{ industries: { $in: industries } }] : [])] }];
     }
     const list = await Story.find(q).sort({ publishedAt: -1 }).limit(limitN).lean();
     return list.map((s) => ({ id: String(s._id), type: s.type, title: s.title, summary: s.summary, body: s.body, image: s.image, brand: s.brand, stats: s.stats, sampleSize: s.sampleSize, fileUrl: s.fileUrl, publishedAt: s.publishedAt }));

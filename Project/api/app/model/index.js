@@ -34,3 +34,4 @@ export { default as Story } from "./Story.js";
 export { default as PrizeDraw } from "./PrizeDraw.js";
 export { default as DrawEntry } from "./DrawEntry.js";
 export { default as QualitySnapshot } from "./QualitySnapshot.js";
+export { default as ExpertVerification } from "./ExpertVerification.js";
