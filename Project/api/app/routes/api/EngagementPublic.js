@@ -1,12 +1,22 @@
 // /api/v1/engagement-public - links in engagement emails that must work without signing in.
-//   GET|POST /unsubscribe?u=<member id>&l=<weekly|expiry>&s=<signature>   one-click unsubscribe (RFC 8058 style)
+//   GET|POST /unsubscribe?u=<member id>&l=<weekly|expiry|lifecycle|birthday|newsurvey>&s=<signature>   one-click unsubscribe (RFC 8058 style)
+//   GET  /guardian/reward?t=     the learning-reward request a Teen's parent or guardian is asked about
+//   POST /guardian/reward        {t, decision: yes|no}
+//   GET  /guardian/view?t=       read-only view of the teen's points, level, badges and activity
 import express from "express";
 import mongoose from "mongoose";
 import { MemberPreference } from "../../model/index.js";
 import { checkUnsubscribe, siteUrl } from "../../engagement/mail.js";
-import { limit } from "../../engagement/http.js";
+import { limit, handle } from "../../engagement/http.js";
+import * as Teens from "../../engagement/teens.js";
 
-const LISTS = { weekly: "notifications.weeklySummary", expiry: "notifications.expiryReminders" };
+const LISTS = {
+    weekly: "notifications.weeklySummary",
+    expiry: "notifications.expiryReminders",
+    lifecycle: "notifications.lifecycle",
+    birthday: "notifications.birthday",
+    newsurvey: "notifications.newSurvey",
+};
 const router = express.Router();
 const unsubscribe = async (req, res) => {
     const { u, l, s } = { ...req.query, ...(req.body || {}) };
@@ -23,4 +33,8 @@ const unsubscribe = async (req, res) => {
     return res.send(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribed</title><body style="font-family:system-ui,sans-serif;max-width:520px;margin:15vh auto;padding:0 16px;color:#14213d"><h1 style="font-size:22px">You're unsubscribed</h1><p>We won't send you these emails any more. You can switch them back on in <a href="${siteUrl(req.origin)}/member/settings">Settings</a>.</p></body>`);
 };
 router.get("/unsubscribe", limit(30, 10), unsubscribe).post("/unsubscribe", limit(30, 10), express.urlencoded({ extended: false }), unsubscribe);
+router
+    .get("/guardian/reward", limit(30, 10), handle(async (req) => Teens.rewardRequest(String(req.query.t || ""), req.origin)))
+    .post("/guardian/reward", limit(10, 10), express.json(), handle(async (req) => Teens.decideReward(String(req.body?.t || ""), req.origin, String(req.body?.decision || ""))))
+    .get("/guardian/view", limit(60, 10), handle(async (req) => Teens.guardianView(String(req.query.t || ""), req.origin)));
 export default router;

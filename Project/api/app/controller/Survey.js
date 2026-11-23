@@ -1,4 +1,6 @@
+import { premiumEligibleIds } from "../engagement/pro.js";
 import fs from "fs"
+import * as Emails from "../engagement/transactional.js";
 
 import { CrudController, fsLogger, Mutate } from "../utils/index.js";
 import { Survey as modelSurvey, User as userModel, Response as responseModel } from "../model/index.js";
@@ -82,6 +84,17 @@ class Survey extends CrudController {
         if (!filters.all) {
             query.category = survey.category;
         }
+        // Nov 2026: a survey with a minimum quality score only invites members at or above it
+        if (survey.minQualityScore != null) {
+            // members saved before the score existed have none; they count as the default 100
+            query.$or = survey.minQualityScore <= 100
+                ? [{ qualityScore: { $gte: survey.minQualityScore } }, { qualityScore: null }]
+                : [{ qualityScore: { $gte: survey.minQualityScore } }];
+        }
+
+        // Nov 2026: a premium study with industry/seniority conditions only invites members whose answers fit
+        const premiumIds = await premiumEligibleIds(survey, this.request.origin);
+        if (premiumIds) query._id = { $in: premiumIds };
 
         const users = await userModel.find(query);
         const invites = users.map(user => ({
@@ -96,11 +109,15 @@ class Survey extends CrudController {
             ...this.commonFilters
         }));
 
+        let created = invites;
         try {
             await responseModel.insertMany(invites, { ordered: false });
         } catch (e) {
             fsLogger.Log("Bulk invite partial completion", e.message);
+            // only the invitations that really were new (duplicates are rejected by the unique index)
+            created = (e?.insertedDocs || []);
         }
+        Emails.newSurvey(created.map((i) => i.user), survey, this.request.origin); // off unless config.emails.newSurvey
         return { count: users.length };
     }
 }

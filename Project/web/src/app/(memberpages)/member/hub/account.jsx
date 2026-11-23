@@ -11,6 +11,7 @@ import { Counter, Reveal, Ring } from "./ui.jsx";
 import { GuardianStatus } from "./modules.jsx";
 import { memberTypeOf, usePoints, useStats, useProfiles, useLedger, qualityOf, fmt } from "./data";
 import { play } from "./sound";
+import { AccountExtras } from "./engage/settings.jsx";
 import { Payment, SocialAccounts } from "../(member pages)/myaccount/legacy.jsx";
 
 const MAX = 5 * 1024 * 1024;
@@ -209,6 +210,8 @@ export function AccountPage() {
           </Link>
         ) : null}
       </section>
+
+      <AccountExtras />
 
       <Reveal>
         <ul className="ma-numbers" aria-label={t("ma.stats")}>

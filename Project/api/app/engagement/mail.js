@@ -19,16 +19,17 @@ export const checkUnsubscribe = (userId, list, sig) => {
 export const unsubscribeLink = (origin, userId, list) =>
     `${siteUrl(origin)}/api/v1/engagement-public/unsubscribe?u=${userId}&l=${list}&s=${unsubscribeSig(userId, list)}`;
 
-export async function send({ origin, to, template, subject, data }) {
+// category = the mailer/<category>/ folder the template lives in (default: engagement)
+export async function send({ origin, to, template, subject, data, category = "engagement" }) {
     const payload = { ...data, template, subject, site: siteUrl(origin), support: SUPPORT, year: new Date().getFullYear() };
     try {
         if (process.env.ENGAGEMENT_MAIL_OUTBOX) {
             fs.mkdirSync(process.env.ENGAGEMENT_MAIL_OUTBOX, { recursive: true });
-            const f = path.join(process.env.ENGAGEMENT_MAIL_OUTBOX, `${Date.now()}-${crypto.randomBytes(3).toString("hex")}-${template}.json`);
-            fs.writeFileSync(f, JSON.stringify({ to, subject, data: payload }, null, 2));
+            const f = path.join(process.env.ENGAGEMENT_MAIL_OUTBOX, `${Date.now()}-${crypto.randomBytes(3).toString("hex")}-${category}-${template}.json`);
+            fs.writeFileSync(f, JSON.stringify({ to, subject, category, data: payload }, null, 2));
             return true;
         }
-        const mailer = await getMailer("engagement", template, payload);
+        const mailer = await getMailer(category, template, payload);
         const r = await sendMail({ origin, "content-type": "application/json" }, to, subject, mailer.data);
         return !(r && r.status === "error");
     } catch (e) {
