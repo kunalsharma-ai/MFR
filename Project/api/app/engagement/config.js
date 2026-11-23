@@ -78,6 +78,33 @@ export const DEFAULTS = {
         ],
     },
 
+    // ---- quality score tiers (DECISION: bands) ----------------------------------------------------------------------
+    // User.qualityScore runs 0-200 (new members start at 100). The bands below are placeholders.
+    quality: {
+        tiers: [
+            { key: "bronze", label: "Bronze", min: 0 },
+            { key: "silver", label: "Silver", min: 90 },
+            { key: "gold", label: "Gold", min: 120 },
+            { key: "platinum", label: "Platinum", min: 160 },
+        ],
+    },
+
+    // ---- referral tiers (DECISION: thresholds and points) -----------------------------------------------------------
+    // A referral counts once the person who joined with the member's link finishes their first survey. Only first
+    // surveys finished on or after `from` count toward tier bonuses, so past referrals never pay out by surprise.
+    // Teen Panel members don't get tiers or the leaderboard (no pressure to recruit).
+    referrals: {
+        tiers: [
+            { count: 3, points: 300 },
+            { count: 10, points: 1500 },
+            { count: 25, points: 5000 },
+        ],
+        from: "2026-12-01",
+        audiences: ["consumer", "professional"],
+        // monthly board of members who opted in (first name + initial only)
+        leaderboard: { enabled: true, size: 10 },
+    },
+
     // ---- monthly points prize draw (OFF: Kunal chose "build it, keep it off for legal", 23 Nov 2026) ----------------
     // Even when enabled, a draw is only offered in the countries listed on the draw itself, and never to Teens.
     draw: { enabled: false },

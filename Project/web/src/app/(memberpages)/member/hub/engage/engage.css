@@ -126,3 +126,47 @@
 .hub .eg-story-list { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; gap: var(--s2); }
 .hub .eg-story-list li { display: grid; gap: 4px; padding-top: var(--s2); border-top: 1px solid var(--border); }
 .hub .eg-story-list span { color: var(--muted); font-size: var(--f-small); }
+
+/* ---- quality tiers + referrals (phase 4) ---- */
+.hub .qs-tiers { grid-column: 1 / -1; }
+.hub .eg-ladder { list-style: none; padding: 0; margin: var(--s3) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s2); }
+.hub .eg-ladder li { display: grid; justify-items: center; gap: 4px; padding: var(--s3) var(--s2); border-radius: var(--r-m, 12px); background: var(--card-2); text-align: center; opacity: .6; }
+.hub .eg-ladder li.is-reached { opacity: 1; }
+.hub .eg-ladder li.is-cur { outline: 2px solid var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--card)); }
+.hub .eg-ladder small { color: var(--muted); font-size: 12px; }
+.hub .eg-medal { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; }
+.hub .t-bronze .eg-medal { background: #b26b3a; } .hub .t-silver .eg-medal { background: #8e9aa8; }
+.hub .t-gold .eg-medal { background: #d4a017; } .hub .t-platinum .eg-medal { background: linear-gradient(135deg, #6ee7f9, #a78bfa); }
+.hub .eg-unlocks { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: var(--f-small); }
+.hub .eg-unlocks li { display: flex; gap: 6px; align-items: center; }
+.hub .eg-celebrate { position: relative; display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); margin-bottom: var(--s3); border-radius: var(--r-l); background: linear-gradient(120deg, var(--primary), var(--accent)); color: #fff; overflow: hidden; }
+.hub .eg-celebrate > div { display: grid; flex: 1; }
+.hub .eg-celebrate .h-btn { background: rgba(255,255,255,.2); color: #fff; }
+.hub .eg-confetti { position: absolute; inset: 0; pointer-events: none; }
+.hub .eg-confetti i { position: absolute; top: -10px; left: calc(var(--i) * 7%); width: 8px; height: 12px; background: hsl(calc(var(--i) * 40) 90% 70%); border-radius: 2px; animation: eg-fall 1.8s ease-in calc(var(--i) * .07s) both; }
+@keyframes eg-fall { to { transform: translateY(140px) rotate(540deg); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hub .eg-confetti { display: none; } }
+.hub .eg-trend { margin: 0; }
+.hub .eg-trend svg { width: 100%; height: auto; }
+.hub .eg-trend-line { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linejoin: round; }
+.hub .eg-trend-dot { fill: var(--card); stroke: var(--primary); stroke-width: 3; }
+.hub .eg-trend-band { stroke: var(--border); stroke-dasharray: 4 6; }
+.hub .eg-trend-x { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.hub .eg-trend-x span { display: grid; justify-items: center; }
+.hub .eg-trend-x b { color: var(--text); }
+.hub .eg-rgrid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin: var(--s4) 0; }
+.hub .eg-rtrack { position: relative; padding-bottom: 40px; margin: var(--s3) 0; }
+.hub .eg-rtrack ol { list-style: none; padding: 0; margin: 0; }
+.hub .eg-rtrack ol li { position: absolute; top: 18px; left: var(--at); transform: translateX(-100%); display: grid; justify-items: end; font-size: 12px; color: var(--muted); }
+.hub .eg-rtrack ol li.is-reached b { color: var(--success); }
+.hub .eg-steps { display: flex; gap: 4px; list-style: none; padding: 0; margin: 0 0 0 auto; }
+.hub .eg-steps li i { display: block; width: 18px; height: 6px; border-radius: 3px; background: var(--card-2); }
+.hub .eg-steps li.on i { background: var(--success); }
+.hub .eg-share { margin: var(--s3) 0; }
+.hub .eg-share-l { margin: 0 0 var(--s2); font-weight: 700; font-size: var(--f-small); }
+.hub .eg-lb-list { list-style: none; padding: 0; margin: var(--s2) 0; display: grid; gap: 6px; }
+.hub .eg-lb-list li { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: var(--s2); padding: 8px 10px; border-radius: var(--r-s, 10px); background: var(--card-2); }
+.hub .eg-lb-list li.is-me { outline: 2px solid var(--primary); }
+.hub .eg-lb-rank { font-weight: 800; text-align: center; }
+.hub .eg-check { display: flex; gap: var(--s2); align-items: center; font-size: var(--f-small); margin-top: var(--s2); }
+@media (max-width: 560px) { .hub .eg-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

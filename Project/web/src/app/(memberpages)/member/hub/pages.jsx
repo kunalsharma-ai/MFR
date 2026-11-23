@@ -16,6 +16,7 @@ import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, Loading
 import { ActivityTimeline } from "./modules.jsx";
 import { ActivityExtras } from "./engage/activity.jsx";
 import { RewardsExtras } from "./engage/rewards.jsx";
+import { QualityTiers, QualityTrend, ReferralExtras, ReferralStatus, ShareButtons } from "./engage/growth.jsx";
 import { usePoints, useLedger, useStats, useProfiles, useReferrals, qualityOf, memberTypeOf, fmt, money, relDay } from "./data";
 import { usePrefs, setPrefs, PALETTES, THEMES, currentLanguage, setLanguage } from "./prefs";
 import { play } from "./sound";
@@ -196,6 +197,7 @@ export function QualityPage() {
       </section>
 
       <div className="qs-grid">
+        <Reveal className="qs-tiers"><QualityTiers /></Reveal>
         <Reveal className="qs-factors">
           <section aria-labelledby="qf-title">
             <h2 className="h-h3" id="qf-title"><Icon name="gauge" size={20} /> {t("qs.factors")}</h2>
@@ -231,7 +233,7 @@ export function QualityPage() {
         <Reveal className="qs-history" delay={100}>
           <section aria-labelledby="qhh-title">
             <h2 className="h-h3" id="qhh-title"><Icon name="chart" size={20} /> {t("qs.history")}</h2>
-            <EmptyState kind="quality" title={t("qs.historyEmpty")} text={t("qs.historyEmptyText")} />
+            <QualityTrend />
           </section>
         </Reveal>
       </div>
@@ -343,6 +345,8 @@ export function ReferralsPage() {
         </ol>
       </section>
 
+      <ReferralExtras />
+
       <div className="rf-grid">
         <Reveal className="rf-share">
           <section aria-labelledby="rs-title">
@@ -352,6 +356,7 @@ export function ReferralsPage() {
               <button type="button" className="h-btn h-btn-primary" onClick={copy}>{copied ? <><Icon name="check" size={18} /> {t("c.copied")}</> : <><Icon name="link" size={18} /> {t("c.copy")}</>}</button>
               <button type="button" className="h-btn h-btn-soft" onClick={share}><Icon name="share" size={18} /> {t("c.share")}</button>
             </div>
+            <ShareButtons link={link} name={member?.firstname || member?.name?.first || ""} />
             <form className="rf-invite" onSubmit={send} noValidate>
               <label htmlFor="rf-emails">{t("rf.invite")}</label>
               <textarea id="rf-emails" rows={3} value={emails} onChange={(e) => setEmails(e.target.value)} placeholder={t("rf.invitePh")} aria-invalid={state.phase === "error"} aria-describedby="rf-msg" />
@@ -360,7 +365,6 @@ export function ReferralsPage() {
                 <button type="submit" className="h-btn h-btn-primary" disabled={state.phase === "sending"}>{state.phase === "sending" ? t("rf.sending") : <>{t("rf.send")} <Icon name="arrow" size={18} /></>}</button>
               </div>
             </form>
-            <p className="rv-note small"><Icon name="coin" size={16} /> {t("rf.noBonus")}</p>
           </section>
         </Reveal>
         <Reveal className="rf-lists" delay={80}>
@@ -369,21 +373,8 @@ export function ReferralsPage() {
               <EmptyState kind="referrals" title={t("rf.emptyTitle")} text={t("rf.emptyText")} />
             ) : (
               <>
-                {d.joined.length ? (
-                  <>
-                    <h2 className="h-h3" id="rl2-title"><Icon name="users" size={20} /> {t("rf.listJoined")}</h2>
-                    <ul className="rf-people">
-                      {d.joined.map((p) => (
-                        <li key={p.id}>
-                          <span className="rf-av">{(p.name || "?").slice(0, 1).toUpperCase()}</span>
-                          <span><b>{p.name}</b><small>{p.at ? relDay(p.at, t) : ""}</small></span>
-                          <em className={p.verified ? "ok" : ""}>{p.verified ? t("rf.verified") : t("rf.joined")}</em>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : null}
-                <h2 className="h-h3" id={d.joined.length ? undefined : "rl2-title"}><Icon name="mail" size={20} /> {t("rf.listInvited")}</h2>
+                <ReferralStatus />
+                <h2 className="h-h3" id={d.joined.length ? "rl3-title" : "rl2-title"}><Icon name="mail" size={20} /> {t("rf.listInvited")}</h2>
                 <ul className="rf-people">
                   {d.invited.map((p, i) => (
                     <li key={`${p.email}-${i}`}>

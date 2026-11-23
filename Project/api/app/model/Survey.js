@@ -67,6 +67,13 @@ export default mongooseModel(
             type: Boolean,
             default: false
         },
+        // Nov 2026: only members whose quality score is at least this are invited (auto and bulk invites).
+        // Not set (null) = everyone, as before.
+        minQualityScore: {
+            type: Number,
+            default: null,
+            min: 0
+        },
         filters: {},
         batchSize: {
             type: Number

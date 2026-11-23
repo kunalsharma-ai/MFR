@@ -83,6 +83,13 @@ class Survey extends CrudController {
         if (!filters.all) {
             query.category = survey.category;
         }
+        // Nov 2026: a survey with a minimum quality score only invites members at or above it
+        if (survey.minQualityScore != null) {
+            // members saved before the score existed have none; they count as the default 100
+            query.$or = survey.minQualityScore <= 100
+                ? [{ qualityScore: { $gte: survey.minQualityScore } }, { qualityScore: null }]
+                : [{ qualityScore: { $gte: survey.minQualityScore } }];
+        }
 
         const users = await userModel.find(query);
         const invites = users.map(user => ({
