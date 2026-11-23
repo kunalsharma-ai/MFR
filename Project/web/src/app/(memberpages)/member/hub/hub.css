@@ -91,6 +91,7 @@
 .hub[data-sec="referrals"] { --sec: #8b5cf6; --sec-2: #ec4899; }
 .hub[data-sec="account"] { --sec: #4f46e5; --sec-2: #0ea5e9; }
 .hub[data-sec="settings"] { --sec: #475569; --sec-2: #6366f1; }
+.hub[data-sec="help"] { --sec: #ec4899; --sec-2: #f97316; }
 
 /* themes */
 html[data-hub-theme="dark"] .hub {
@@ -347,7 +348,7 @@ html[data-hub-theme="dark"] .hh-logo-img, html[data-hub-theme="night"] .hh-logo-
 }
 .hn-link.s-profile { --c: #2f6bff; } .hn-link.s-surveys { --c: #ff6a13; } .hn-link.s-rewards { --c: #e09b00; }
 .hn-link.s-quality { --c: #0f9f8a; } .hn-link.s-activity { --c: #0ea5e9; } .hn-link.s-referrals { --c: #8b5cf6; }
-.hn-link.s-account { --c: #4f46e5; } .hn-link.s-settings { --c: #64748b; } .hn-link.s-support { --c: #ec4899; }
+.hn-link.s-account { --c: #4f46e5; } .hn-link.s-settings { --c: #64748b; } .hn-link.s-support, .hn-link.s-help { --c: #ec4899; }
 .hn-link.s-dashboard { --c: var(--primary); }
 .hn-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); flex: none; transition: transform .35s var(--spring), background-color .2s; }
 .hn-link:hover { color: var(--text); background: color-mix(in srgb, var(--c) 7%, transparent); }
@@ -946,6 +947,17 @@ html[data-hub-theme="night"] .ma-id { background: linear-gradient(120deg, #241a1
 .st-err { margin: 0; color: var(--error); font-size: var(--f-small); }
 .st-links { display: flex; flex-wrap: wrap; gap: var(--s2); }
 
+/* ------------------------------------------------- header "?" (Help centre) ------------------------------------------------- */
+.hh-help-btn { color: #ec4899; }
+.hh-helpmenu { width: min(340px, calc(100vw - 24px)); }
+.hh-help-t { display: flex; align-items: center; gap: var(--s2); margin: 0; padding: 8px 12px 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.hh-help-t span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; color: #fff; background: linear-gradient(135deg, var(--c1), var(--c2)); }
+.hh-helpmenu .hh-opt .hi { color: #ec4899; flex: none; }
+.hh-helpmenu .hh-opt b { font-weight: 600; }
+.hh-help-end { display: flex; gap: var(--s2); padding: var(--s2) 4px 4px; border-top: 1px solid var(--border); margin-top: 4px; }
+.hh-help-end .h-btn { flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; }
+.hh-help-end .h-btn-primary { background: linear-gradient(135deg, #ec4899, #f97316); }
+
 /* ================================================== RESPONSIVE ================================================== */
 @media (max-width: 1279px) {
   .hh-type-top { display: none; }
@@ -1006,7 +1018,7 @@ html[data-hub-theme="night"] .ma-id { background: linear-gradient(120deg, #241a1
   .hub-main { padding: var(--s4) var(--s4) calc(var(--bnav) + var(--s6)); }
   .hb {
     position: fixed; z-index: 1250; left: 0; right: 0; bottom: 0; height: calc(var(--bnav) + env(safe-area-inset-bottom)); padding: 0 var(--s1) env(safe-area-inset-bottom);
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border);
   }
   .hb-link { display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 48px; border: 0; background: none; color: var(--muted); font: 600 11px/1.1 inherit; font-family: inherit; text-decoration: none; cursor: pointer; position: relative; }
   .hb-link span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -270,7 +270,7 @@ export function AccountPage() {
           <section aria-labelledby="mc-title">
             <h2 className="h-h3" id="mc-title">{t("ma.close")}</h2>
             <p>{t("ma.closeText")}</p>
-            <Link href="/member/support" className="h-btn h-btn-soft">{t("ma.closeCta")} <Icon name="arrow" size={16} /></Link>
+            <Link href="/member/help?ask=account" className="h-btn h-btn-soft">{t("ma.closeCta")} <Icon name="arrow" size={16} /></Link>
           </section>
         </Reveal>
       </div>

@@ -13,11 +13,12 @@ import { t, setStringsLanguage } from "./strings";
 import { usePrefs, setPrefs, applyTheme, paletteVars, currentLanguage, setLanguage, THEMES } from "./prefs";
 import { memberTypeOf, usePoints, qualityOf, fmt } from "./data";
 import { play } from "./sound";
+import { helpForSection } from "./help/content";
 import "./hub.css";
 
 export const NAV = [
   { group: "nav.groupEarn", items: [
-    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard" },
+    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home" },
     { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.profile" },
     { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys" },
     { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards" },
@@ -30,13 +31,15 @@ export const NAV = [
   { group: "nav.groupYou", items: [
     { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account" },
     { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings" },
-    { key: "support", href: "/member/support", icon: "support", label: "nav.support" },
+    // Help centre (Nov 2026): FAQs, guides and "raise a query". The ticket pages under /member/support count as Help.
+    { key: "help", href: "/member/help", also: ["/member/support"], icon: "help", label: "nav.helpCentre", short: "nav.help" },
   ] },
 ];
-const BOTTOM = ["dashboard", "surveys", "rewards", "profile"];
+const BOTTOM = ["dashboard", "surveys", "rewards", "profile", "help"];
 const ALL = NAV.flatMap((g) => g.items);
 
 const isActive = (pathname, href) => typeof pathname === "string" && (pathname === href || pathname.startsWith(`${href}/`));
+const isOn = (pathname, it) => isActive(pathname, it.href) || (it.also || []).some((h) => isActive(pathname, h));
 
 /* click-outside + Esc popover used by every header control */
 function Pop({ id, label, icon, badge, children, className = "", buttonClass = "" }) {
@@ -169,6 +172,37 @@ function LanguageMenu() {
   );
 }
 
+// tells an open Help centre to re-read the address after a client-side link changed only its query or hash
+const helpNav = () => setTimeout(() => window.dispatchEvent(new Event("hub-help-nav")), 60);
+
+// "?" in the header: the help for the page you are on, the Help centre and "raise a query", from every page.
+function HelpMenu({ section, type }) {
+  const tip = helpForSection(section, type);
+  return (
+    <Pop id="hh-help" label={t("hp.pageHelp")} className="hh-help" buttonClass="hh-help-btn" icon={<Icon name="help" size={21} />}>
+      {(close) => (
+        <div className="hh-list hh-helpmenu">
+          <p className="hh-help-t"><span style={{ "--c1": tip.topic.c1, "--c2": tip.topic.c2 }}><Icon name={tip.topic.icon} size={16} /></span> {tip.topic.title}</p>
+          {tip.guide ? (
+            <Link className="hh-opt" href={`/member/help#guide-${tip.guide.id}`} onClick={() => { close(); helpNav(); }}>
+              <Icon name="book" size={18} /> <span><b>{tip.guide.title}</b><small>{t("hp.guide")} · {t("hp.steps", { n: tip.guide.steps.length })}</small></span>
+            </Link>
+          ) : null}
+          {tip.faqs.map((f) => (
+            <Link key={f.id} className="hh-opt" href={`/member/help#faq-${f.id}`} onClick={() => { close(); helpNav(); }}>
+              <Icon name="help" size={18} /> <span><b>{f.q}</b></span>
+            </Link>
+          ))}
+          <div className="hh-help-end">
+            <Link className="h-btn h-btn-soft" href={`/member/help?topic=${tip.topic.id}`} onClick={() => { close(); helpNav(); }}>{t("hp.openCentre")}</Link>
+            <Link className="h-btn h-btn-primary" href={`/member/help?ask=${tip.topic.id}`} onClick={() => { close(); helpNav(); }}>{t("hp.raise")}</Link>
+          </div>
+        </div>
+      )}
+    </Pop>
+  );
+}
+
 function AvatarMenu({ member, type }) {
   const router = useRouter();
   const initials = `${member?.firstname?.[0] || ""}${member?.lastname?.[0] || ""}`.toUpperCase() || "M";
@@ -201,6 +235,9 @@ function AvatarMenu({ member, type }) {
           <Link className="hh-opt" href="/member/settings" onClick={close}>
             <Icon name="settings" size={18} /> <span><b>{t("nav.settings")}</b></span>
           </Link>
+          <Link className="hh-opt" href="/member/help" onClick={close}>
+            <Icon name="help" size={18} /> <span><b>{t("nav.helpCentre")}</b></span>
+          </Link>
           <button
             type="button"
             className="hh-opt danger"
@@ -217,7 +254,7 @@ function AvatarMenu({ member, type }) {
   );
 }
 
-function Header({ member, type, prefs, onMenu }) {
+function Header({ member, type, prefs, onMenu, section }) {
   const points = usePoints();
   const q = qualityOf(member);
   const router = useRouter();
@@ -288,6 +325,7 @@ function Header({ member, type, prefs, onMenu }) {
         <span className="hh-notif">
           <MemberNotification />
         </span>
+        <HelpMenu section={section} type={type} />
         <LanguageMenu />
         <ThemeMenu prefs={prefs} />
         <button
@@ -326,7 +364,7 @@ function SideNav({ pathname, open, onClose, type }) {
             <p className="hn-gt">{t(g.group)}</p>
             <ul>
               {g.items.map((it) => {
-                const on = isActive(pathname, it.href);
+                const on = isOn(pathname, it);
                 return (
                   <li key={it.key}>
                     <Link
@@ -357,11 +395,11 @@ function BottomNav({ pathname, onMore }) {
     <nav className="hb" aria-label={t("nav.main")}>
       {BOTTOM.map((k) => {
         const it = ALL.find((x) => x.key === k);
-        const on = isActive(pathname, it.href);
+        const on = isOn(pathname, it);
         return (
           <Link key={k} href={it.href} className={`hb-link s-${k} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined}>
             <Icon name={it.icon} size={22} />
-            <span>{t(it.label)}</span>
+            <span>{t(it.short || it.label)}</span>
           </Link>
         );
       })}
@@ -392,11 +430,11 @@ export default function HubShell({ children }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [navOpen]);
 
-  const section = (ALL.find((x) => isActive(pathname, x.href)) || {}).key || "dashboard";
+  const section = (ALL.find((x) => isOn(pathname, x)) || {}).key || "dashboard";
   const vars = paletteVars(prefs) || undefined;
   return (
     <div className="hub" data-type={type} data-sec={section} data-pal={prefs.palette} style={vars}>
-      <Header member={member} type={type} prefs={prefs} onMenu={() => setNavOpen(true)} />
+      <Header member={member} type={type} prefs={prefs} section={section} onMenu={() => setNavOpen(true)} />
       <div className="hub-body">
         <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} type={type} />
         <main id="hub-main" className="hub-main" tabIndex={-1}>
