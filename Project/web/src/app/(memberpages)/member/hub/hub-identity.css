@@ -1,0 +1,225 @@
+/* =====================================================================================================
+   Member hub v3 – three premium identities (Nov 2026 complete redesign, replaces the v2 hub-skins.css)
+     Consumer      "Velvet Lounge"  plum · berry rose · champagne gold. Plus Jakarta Sans. Soft 26px shapes, deep
+                                    gradient heroes, 3D reward coins, gentle lift + sheen on hover.
+     Professional  "Navy Ledger"    deep navy · executive blue · muted gold. Fraunces display + Manrope text,
+                                    tabular numerals, 12px corners, hairline rules, data-first, calm motion.
+     Teen          "Voltage"        ultraviolet · hot pink · cyan · lime. Unbounded display + Plus Jakarta Sans,
+                                    22px shapes, gradient rims and glow, energetic but grown-up motion.
+   Every identity has a designed light and dark set; night (low blue light) is shared. A palette picked in Settings
+   only replaces --primary / --secondary / --accent; type, shape and motion stay with the member type.
+   Fonts are self-hosted (public/fonts/hub, SIL Open Font License), no network font requests.
+   ===================================================================================================== */
+
+@font-face { font-family: "Plus Jakarta Sans"; src: url("/fonts/hub/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Plus Jakarta Sans"; src: url("/fonts/hub/plus-jakarta-sans-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Manrope"; src: url("/fonts/hub/manrope-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Manrope"; src: url("/fonts/hub/manrope-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Fraunces"; src: url("/fonts/hub/fraunces-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fraunces"; src: url("/fonts/hub/fraunces-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Unbounded"; src: url("/fonts/hub/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Unbounded"; src: url("/fonts/hub/unbounded-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+/* ---------------- shared: section tones, hero tokens ---------------- */
+.hub { --tone-reward: var(--accent); --tone-quality: var(--success); --tone-activity: var(--info); --tone-social: var(--secondary);
+  --hero-ink: #fff; --hero-muted: rgba(255, 255, 255, .78); --hero-accent: var(--accent); --hero-line: rgba(255, 255, 255, .16); --hero-chip: rgba(255, 255, 255, .1); }
+.hub[data-sec="rewards"] { --sec: var(--tone-reward); --sec-2: var(--primary); }
+.hub[data-sec="quality"] { --sec: var(--tone-quality); --sec-2: var(--info); }
+.hub[data-sec="activity"], .hub[data-sec="messages"] { --sec: var(--tone-activity); --sec-2: var(--primary); }
+.hub[data-sec="referrals"] { --sec: var(--tone-social); --sec-2: var(--accent); }
+.hub[data-type] .eg-card, .hub[data-type] .hp-faq, .hub[data-type] .hp-rail { border: var(--bw, 1px) solid var(--card-border, var(--border)); border-radius: var(--r-card); box-shadow: var(--card-shadow, var(--shadow)); }
+
+/* =========================================== CONSUMER · Velvet Lounge =========================================== */
+.hub[data-type="consumer"] {
+  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font); --font-num: var(--font); --w-display: 800;
+  --bg: #f8f4f2; --bg-2: #f1e8e4; --surface: #ffffff; --card: #ffffff; --card-2: #faf4f1;
+  --border: rgba(74, 22, 52, .09); --border-2: rgba(74, 22, 52, .18);
+  --text: #24121c; --muted: #6b5360; --faint: #9c8792;
+  --success: #0f8a5f; --warning: #a96300; --error: #c42f4b; --info: #3a5bd9;
+  --primary: #a82d63; --primary-hover: #8f2353; --secondary: #4b1d52; --accent: #c99437; --on-primary: #ffffff; --gold: #d8ab55;
+  --tone-reward: #b07a1c; --tone-quality: #0f8a5f; --tone-activity: #3a5bd9; --tone-social: #a82d63;
+  --shadow: 0 1px 2px rgba(60, 20, 40, .04), 0 10px 30px rgba(96, 30, 62, .07);
+  --shadow-lg: 0 4px 10px rgba(60, 20, 40, .06), 0 30px 70px rgba(96, 30, 62, .18);
+  --glass: rgba(252, 248, 246, .8);
+  --r-card: 26px; --r-hero: 32px; --r-btn: 999px; --r-icon: 14px; --r-nav: 18px; --r-avatar: 50%;
+  --card-border: rgba(74, 22, 52, .06); --card-shadow: var(--shadow);
+  --ic-fill: color-mix(in srgb, currentColor 18%, transparent);
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --hero-bg: radial-gradient(70% 120% at 100% 0%, rgba(240, 160, 110, .55), transparent 60%), radial-gradient(60% 90% at 0% 100%, rgba(216, 171, 85, .35), transparent 60%), linear-gradient(125deg, #2e0b33 0%, #5c1650 42%, #9c2a62 78%, #c4495f 100%);
+  --hero-ink: #fff8f4; --hero-muted: #f2d9e2; --hero-accent: #f6d28a; --hero-line: rgba(255, 236, 220, .2); --hero-chip: rgba(255, 240, 230, .12); --hero-border: transparent;
+  --hero-shadow: 0 30px 60px -24px rgba(92, 22, 80, .55);
+  --nav-bg: #fffdfc; --nav-bg-solid: #fffdfc; --nav-text: var(--text); --nav-muted: var(--muted);
+  --dock-bg: rgba(36, 18, 28, .92); --dock-ink: #f9e9ef; --dock-muted: #c7a9b7; --dock-on: linear-gradient(135deg, #d8ab55, #f3d58f); --dock-on-ink: #2e0b33;
+  background-image: radial-gradient(60% 40% at 100% 0%, rgba(216, 171, 85, .12), transparent 70%), radial-gradient(50% 40% at 0% 30%, rgba(168, 45, 99, .07), transparent 70%);
+  background-attachment: fixed;
+}
+.hub[data-type="consumer"][data-mode="dark"] {
+  --bg: #130a11; --bg-2: #1b0f18; --surface: #1f121c; --card: #1f121c; --card-2: #281826;
+  --border: rgba(255, 220, 235, .09); --border-2: rgba(255, 220, 235, .2);
+  --text: #f9ecf1; --muted: #c9adba; --faint: #957c89;
+  --success: #42d5a0; --warning: #f5be5a; --error: #ff7d93; --info: #8aa6ff;
+  --primary: #ff74a8; --primary-hover: #ff8fba; --secondary: #cda0dd; --accent: #f0c46a; --on-primary: #24060f;
+  --tone-reward: #f0c46a; --tone-quality: #42d5a0; --tone-activity: #8aa6ff; --tone-social: #ff74a8;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 16px 36px rgba(0, 0, 0, .35); --shadow-lg: 0 30px 70px rgba(0, 0, 0, .55);
+  --card-border: rgba(255, 220, 235, .07); --glass: rgba(19, 10, 17, .82);
+  --hero-bg: radial-gradient(70% 120% at 100% 0%, rgba(240, 120, 110, .35), transparent 60%), linear-gradient(125deg, #24081f 0%, #4a1242 50%, #7a2152 100%);
+  --nav-bg: #1b0f18; --nav-bg-solid: #1b0f18;
+  --dock-bg: rgba(38, 20, 34, .94);
+  background-image: radial-gradient(60% 40% at 100% 0%, rgba(240, 196, 106, .08), transparent 70%);
+}
+.hub[data-type="consumer"] .h-btn-primary { background: linear-gradient(120deg, var(--secondary), var(--primary) 60%, color-mix(in srgb, var(--primary) 60%, var(--accent))); }
+.hub[data-type="consumer"] .hx .h-btn-primary, .hub[data-type="consumer"] .pf-hero .h-btn-primary, .hub[data-type="consumer"] .sx-hero .h-btn-primary, .hub[data-type="consumer"] .rw3-hero .h-btn-primary { background: linear-gradient(135deg, #e9be66, #f8dc9b); color: #3a0f30; box-shadow: 0 10px 26px -8px rgba(233, 190, 102, .7); }
+.hub[data-type="consumer"] .k-card, .hub[data-type="consumer"] .dc-jar, .hub[data-type="consumer"] .k-tile, .hub[data-type="consumer"] .sx-card, .hub[data-type="consumer"] .pf-card { transition: transform .45s var(--ease), box-shadow .45s var(--ease); }
+.hub[data-type="consumer"] .k-card:hover, .hub[data-type="consumer"] .dc-jar:hover, .hub[data-type="consumer"] a.k-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.hub[data-type="consumer"] .hx-title { letter-spacing: -.035em; }
+
+/* =========================================== PROFESSIONAL · Navy Ledger =========================================== */
+.hub[data-type="professional"] {
+  --font: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif; --font-num: "Manrope", ui-sans-serif, system-ui, sans-serif; --w-display: 560;
+  --bg: #f3f5f9; --bg-2: #e8ecf3; --surface: #ffffff; --card: #ffffff; --card-2: #f6f8fb;
+  --border: rgba(10, 22, 48, .1); --border-2: rgba(10, 22, 48, .2);
+  --text: #0a1630; --muted: #475676; --faint: #7f8dab;
+  --success: #0f7a55; --warning: #946100; --error: #b42335; --info: #2453d6;
+  --primary: #2453d6; --primary-hover: #1c43b3; --secondary: #0a1a3a; --accent: #a8893f; --on-primary: #ffffff; --gold: #c2a35a;
+  --tone-reward: #94762e; --tone-quality: #0f7a55; --tone-activity: #2453d6; --tone-social: #4b3fb0;
+  --shadow: 0 1px 2px rgba(10, 22, 48, .05), 0 6px 18px rgba(10, 22, 48, .04); --shadow-lg: 0 20px 50px rgba(10, 22, 48, .18);
+  --glass: rgba(246, 248, 251, .86);
+  --r-xs: 6px; --r-s: 8px; --r-m: 12px; --r-l: 14px; --r-xl: 16px;
+  --r-card: 14px; --r-hero: 18px; --r-btn: 10px; --r-icon: 10px; --r-nav: 10px; --r-avatar: 12px;
+  --card-border: var(--border); --card-shadow: var(--shadow);
+  --ic-fill: transparent; --spring: var(--ease); --dur: .35s;
+  --hero-bg: radial-gradient(60% 120% at 100% 0%, rgba(36, 83, 214, .55), transparent 65%), linear-gradient(118deg, #06102a 0%, #0b1d4a 58%, #13306f 100%);
+  --hero-ink: #f2f5fb; --hero-muted: #a9b6d5; --hero-accent: #d9bd78; --hero-line: rgba(255, 255, 255, .13); --hero-chip: rgba(255, 255, 255, .06); --hero-border: transparent; --hero-shadow: 0 24px 50px -26px rgba(6, 16, 42, .7);
+  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: var(--text); --nav-muted: var(--muted);
+  --dock-bg: rgba(7, 16, 40, .94); --dock-ink: #e7ecf7; --dock-muted: #8f9cbd; --dock-on: linear-gradient(180deg, #2f62f0, #2453d6); --dock-on-ink: #ffffff;
+}
+.hub[data-type="professional"][data-mode="dark"] {
+  --bg: #050b1a; --bg-2: #081126; --surface: #0b1630; --card: #0b1630; --card-2: #10203f;
+  --border: rgba(170, 186, 235, .12); --border-2: rgba(170, 186, 235, .24);
+  --text: #e7ecf7; --muted: #9aa8c8; --faint: #6c7a9c;
+  --success: #4fd1a1; --warning: #f0c25a; --error: #ff8191; --info: #7ea2ff;
+  --primary: #7ea2ff; --primary-hover: #99b5ff; --secondary: #c6d2f2; --accent: #dcc07a; --on-primary: #050b1a;
+  --tone-reward: #dcc07a; --tone-quality: #4fd1a1; --tone-activity: #7ea2ff; --tone-social: #b9a2ff;
+  --shadow: none; --shadow-lg: 0 24px 60px rgba(0, 0, 0, .6); --glass: rgba(5, 11, 26, .88);
+  --hero-bg: radial-gradient(60% 120% at 100% 0%, rgba(62, 100, 220, .35), transparent 65%), linear-gradient(118deg, #0a1638, #08112a);
+  --nav-bg: #081126; --nav-bg-solid: #081126;
+  --dock-bg: rgba(14, 26, 56, .95);
+}
+.hub[data-type="professional"] .hi { stroke-width: 1.6; }
+.hub[data-type="professional"] .hi .f { display: none; }
+.hub[data-type="professional"] .k-title, .hub[data-type="professional"] .sec-h, .hub[data-type="professional"] .st-card > header h2, .hub[data-type="professional"] .pf-title, .hub[data-type="professional"] .sx-h { font-family: var(--font-display); font-weight: 560; letter-spacing: -.005em; }
+.hub[data-type="professional"] .h-eyebrow, .hub[data-type="professional"] .k-eyebrow, .hub[data-type="professional"] .hx-eyebrow { letter-spacing: .2em; font-weight: 700; }
+.hub[data-type="professional"] .hx-bg i { animation: none; opacity: .2; }
+.hub[data-type="professional"] .hx-bg::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, transparent, #000 65%); }
+.hub[data-type="professional"] .hx .h-btn-primary, .hub[data-type="professional"] .pf-hero .h-btn-primary, .hub[data-type="professional"] .sx-hero .h-btn-primary, .hub[data-type="professional"] .rw3-hero .h-btn-primary { background: var(--hero-accent); color: #0a1630; box-shadow: none; }
+.hub[data-type="professional"] .hx .h-btn-primary:hover, .hub[data-type="professional"] .pf-hero .h-btn-primary:hover, .hub[data-type="professional"] .sx-hero .h-btn-primary:hover, .hub[data-type="professional"] .rw3-hero .h-btn-primary:hover { background: color-mix(in srgb, var(--hero-accent) 85%, #fff); }
+.hub[data-type="professional"] .h-btn { font-weight: 650; letter-spacing: .005em; }
+.hub[data-type="professional"] .h-btn-primary { box-shadow: none; }
+.hub[data-type="professional"] .h-btn-primary:hover { transform: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+.hub[data-type="professional"] b, .hub[data-type="professional"] .k-num { font-variant-numeric: tabular-nums lining-nums; }
+.hub[data-type="professional"] .k-tile b, .hub[data-type="professional"] .dc-jar-n, .hub[data-type="professional"] .k-dial-n, .hub[data-type="professional"] .rv-bal-main b,
+.hub[data-type="professional"] .qs-read b, .hub[data-type="professional"] .ma-life b { font-weight: 700; letter-spacing: -.02em; }
+.hub[data-type="professional"] .cl li:hover, .hub[data-type="professional"] .sv-card:hover, .hub[data-type="professional"] a.k-tile:hover, .hub[data-type="professional"] .k-dial:hover { transform: none; }
+.hub[data-type="professional"] .sv-card:hover, .hub[data-type="professional"] .k-card:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 45%, transparent), var(--shadow); }
+.hub[data-type="professional"] .p-line, .hub[data-type="professional"] .p-pt { stroke: var(--accent); }
+
+/* =========================================== TEEN · Voltage =========================================== */
+.hub[data-type="teen"] {
+  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Plus Jakarta Sans", ui-sans-serif, sans-serif; --font-num: "Unbounded", "Plus Jakarta Sans", sans-serif; --w-display: 700;
+  --f-display: clamp(1.4rem, 1.1vw + 1rem, 2.05rem);
+  --bg: #f4f2ff; --bg-2: #ebe6ff; --surface: #ffffff; --card: #ffffff; --card-2: #f7f5ff;
+  --border: rgba(40, 16, 110, .1); --border-2: rgba(40, 16, 110, .22);
+  --text: #150b33; --muted: #554a7d; --faint: #8b81ab;
+  --success: #078a55; --warning: #a85b00; --error: #d1204f; --info: #0074b8;
+  --primary: #6a2cff; --primary-hover: #5a1ef0; --secondary: #e0277a; --accent: #0098cf; --on-primary: #ffffff; --lime: #b8f53a; --gold: #ffcf3f;
+  --tone-reward: #d0206f; --tone-quality: #078a55; --tone-activity: #0074b8; --tone-social: #e0277a;
+  --shadow: 0 1px 2px rgba(40, 16, 110, .05), 0 12px 30px rgba(106, 44, 255, .1); --shadow-lg: 0 24px 60px rgba(106, 44, 255, .24);
+  --glass: rgba(246, 244, 255, .84);
+  --r-card: 22px; --r-hero: 28px; --r-btn: 16px; --r-icon: 14px; --r-nav: 16px; --r-avatar: 16px;
+  --card-border: rgba(106, 44, 255, .14); --card-shadow: var(--shadow);
+  --ic-fill: color-mix(in srgb, var(--lime) 55%, transparent);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --hero-bg: radial-gradient(50% 90% at 92% 10%, rgba(184, 245, 58, .55), transparent 60%), radial-gradient(60% 100% at 0% 100%, rgba(0, 200, 255, .55), transparent 60%), linear-gradient(130deg, #3b0fc2 0%, #6a2cff 48%, #d42a86 100%);
+  --hero-ink: #ffffff; --hero-muted: #e9e0ff; --hero-accent: #d4ff5c; --hero-line: rgba(255, 255, 255, .26); --hero-chip: rgba(255, 255, 255, .14); --hero-border: transparent; --hero-shadow: 0 26px 60px -24px rgba(106, 44, 255, .75);
+  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: var(--text); --nav-muted: var(--muted);
+  --dock-bg: rgba(21, 11, 51, .93); --dock-ink: #f1ecff; --dock-muted: #a99ed3; --dock-on: linear-gradient(135deg, #b8f53a, #4be1ff); --dock-on-ink: #150b33;
+  background-image: radial-gradient(40% 30% at 100% 0%, rgba(184, 245, 58, .14), transparent 70%), radial-gradient(40% 40% at 0% 40%, rgba(106, 44, 255, .08), transparent 70%);
+  background-attachment: fixed;
+}
+.hub[data-type="teen"][data-mode="dark"] {
+  --bg: #0a0620; --bg-2: #100a2c; --surface: #150d33; --card: #150d33; --card-2: #1d1446;
+  --border: rgba(200, 180, 255, .13); --border-2: rgba(200, 180, 255, .28);
+  --text: #f3efff; --muted: #b9addf; --faint: #8477b0;
+  --success: #3ee59a; --warning: #ffc34d; --error: #ff6b93; --info: #4fd2ff;
+  --primary: #a47cff; --primary-hover: #b996ff; --secondary: #ff6aa9; --accent: #3fd7ff; --on-primary: #12052e;
+  --tone-reward: #ff6aa9; --tone-quality: #3ee59a; --tone-activity: #4fd2ff; --tone-social: #ff6aa9;
+  --card-border: rgba(164, 124, 255, .2); --shadow: 0 14px 34px rgba(0, 0, 0, .4); --shadow-lg: 0 28px 70px rgba(0, 0, 0, .6);
+  --glass: rgba(10, 6, 32, .86);
+  --hero-bg: radial-gradient(50% 90% at 92% 10%, rgba(184, 245, 58, .3), transparent 60%), radial-gradient(60% 100% at 0% 100%, rgba(0, 200, 255, .35), transparent 60%), linear-gradient(130deg, #2a0c8a 0%, #4b1fb8 50%, #8e1f63 100%);
+  --nav-bg: #100a2c; --nav-bg-solid: #100a2c;
+  --dock-bg: rgba(26, 16, 66, .95);
+  background-image: radial-gradient(40% 30% at 100% 0%, rgba(184, 245, 58, .07), transparent 70%);
+}
+.hub[data-type="teen"] .hi { stroke-width: 2.1; }
+.hub[data-type="teen"] .hx-title, .hub[data-type="teen"] .k-title, .hub[data-type="teen"] .sec-h, .hub[data-type="teen"] .pf-title, .hub[data-type="teen"] .sx-h, .hub[data-type="teen"] .st-card > header h2 { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
+.hub[data-type="teen"] .hx .h-btn-primary, .hub[data-type="teen"] .pf-hero .h-btn-primary, .hub[data-type="teen"] .sx-hero .h-btn-primary, .hub[data-type="teen"] .rw3-hero .h-btn-primary { background: linear-gradient(135deg, #d4ff5c, #8af2ff); color: #150b33; box-shadow: 0 10px 26px -8px rgba(212, 255, 92, .7); }
+.hub[data-type="teen"] .h-btn-primary { background: linear-gradient(120deg, var(--primary), var(--secondary)); }
+.hub[data-type="teen"] .h-btn-primary:hover { transform: translateY(-2px) scale(1.02); }
+.hub[data-type="teen"] .k-card, .hub[data-type="teen"] .sx-card, .hub[data-type="teen"] .pf-card { transition: transform .4s var(--spring), box-shadow .4s var(--ease), border-color .3s; }
+.hub[data-type="teen"] .k-card:hover { transform: translateY(-3px) rotate(-.25deg); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+.hub[data-type="teen"] .dt-hex path { fill: var(--lime); }
+.hub[data-type="teen"] .dt-hex { color: #150b33; }
+.hub[data-type="teen"] .dt-xpbar i { background: linear-gradient(90deg, var(--lime), #4be1ff); }
+.hub[data-type="teen"] .tq-count { background: var(--lime); color: #150b33; }
+.hub[data-type="teen"] .tp-cells i.on { background: linear-gradient(180deg, var(--lime), #3ee59a); }
+
+/* ---------------- every hero is a deep, premium surface: shared readable chips on it ---------------- */
+.hub .hx { color: var(--hero-ink); }
+.hub .hx-crumbs ol, .hub .hx .h-state, .hub .hx-sub { color: var(--hero-muted); }
+.hub .hx-crumbs [aria-current] { color: var(--hero-ink); }
+.hub .hx .h-btn-ghost, .hub .hx .h-btn-soft, .hub .pf-hero .h-btn-ghost, .hub .sx-hero .h-btn-ghost, .hub .rw3-hero .h-btn-ghost, .hub .rw3-hero .rv-bal-chip { color: var(--hero-ink); border-color: var(--hero-line); background: var(--hero-chip); }
+.hub .hx [class*="-chip"], .hub .hx .st-now li, .hub .hx .ac-pulse li, .hub .hx .qs-why li, .hub .hx .rf-counts li, .hub .hx .sv-filters button { background: var(--hero-chip); border-color: var(--hero-line); color: var(--hero-ink); }
+.hub .hx .sv-filters button.on { background: rgba(255, 255, 255, .2); box-shadow: inset 0 0 0 1px var(--hero-accent); }
+.hub .hx .ac-pulse small, .hub .hx .qs-why small, .hub .hx .rf-counts small, .hub .hx .rv-bal-main small, .hub .hx .dt-xp small { color: var(--hero-muted); }
+.hub .hx .qs-track { stroke: rgba(255, 255, 255, .14); }
+.hub .hx .qs-needle path, .hub .hx .qs-needle circle { fill: var(--hero-ink); }
+.hub .hx .qs-read b small, .hub .hx .qs-tick { color: var(--hero-muted); stroke: var(--hero-muted); }
+.hub .hx .h-ring-bg { stroke: rgba(255, 255, 255, .18); }
+.hub .hx .h-ring-fg { stroke: var(--hero-accent); }
+.hub .hx .ac-wave path, .hub .hx .h-spark-l { stroke: var(--hero-accent); }
+.hub .hx .ac-wave circle, .hub .hx .h-spark-d { fill: var(--hero-accent); }
+.hub .hx .h-spark-a { fill: color-mix(in srgb, var(--hero-accent) 18%, transparent); }
+.hub .hx .dc-chip, .hub .hx .msg-art .env, .hub .hx .st-knob, .hub .hx .sv-node, .hub .hx .rf-star { background: rgba(255, 255, 255, .1); color: var(--hero-ink); border-color: var(--hero-line); }
+.hub .hx .rf-lines circle { stroke: var(--hero-line); }
+.hub .hx .rf-star.on { background: var(--hero-accent); color: #1a0f2e; }
+.hub .hx .ht-safe { background: rgba(255, 255, 255, .16); color: #fff; }
+.hub .hx-dash-c, .hub .hx-dash-t, .hub .hx-dash-p { --hero-pad: 1; }
+.hub .ma-id { background: var(--hero-bg); color: var(--hero-ink); }
+.hub .ma-id .hx-crumbs ol, .hub .ma-id small { color: var(--hero-muted); }
+
+/* =========================================== NIGHT · low blue light, every type =========================================== */
+.hub[data-mode="night"] {
+  --bg: #15100b; --bg-2: #1b150f; --surface: #211a13; --card: #211a13; --card-2: #2a2118;
+  --border: rgba(255, 220, 170, .1); --border-2: rgba(255, 220, 170, .2);
+  --text: #f3e6d4; --muted: #c4ad91; --faint: #8f7b64;
+  --success: #b9c86a; --warning: #f0b35a; --error: #f08a6e; --info: #e0b77a;
+  --primary: #e8955a; --primary-hover: #f0a874; --secondary: #c98d55; --accent: #f2c063; --on-primary: #1d1208; --lime: #d9d36a;
+  --tone-reward: #f2c063; --tone-quality: #b9c86a; --tone-activity: #e0b77a; --tone-social: #e39a86;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 30px rgba(0, 0, 0, .35); --shadow-lg: 0 28px 64px rgba(0, 0, 0, .55);
+  --card-border: rgba(255, 220, 170, .08); --glass: rgba(21, 16, 11, .9);
+  --hero-bg: radial-gradient(120% 140% at 100% 0%, rgba(232, 149, 90, .28), transparent 55%), linear-gradient(120deg, #2a1f15, #1c150e);
+  --hero-ink: #f3e6d4; --hero-muted: #c4ad91; --hero-accent: #f2c063; --hero-line: rgba(255, 220, 170, .14); --hero-chip: rgba(255, 220, 170, .08);
+  --nav-bg: #1b150f; --nav-bg-solid: #1b150f; --nav-text: #f3e6d4; --nav-muted: #a8927a;
+  --dock-bg: rgba(34, 26, 18, .95); --dock-ink: #f3e6d4; --dock-muted: #a8927a; --dock-on: linear-gradient(135deg, #e8955a, #f2c063); --dock-on-ink: #1d1208;
+  --ic-fill: color-mix(in srgb, currentColor 18%, transparent);
+  background-image: none;
+}
+.hub[data-mode="night"] .hx-bg i { opacity: .25; }
+.hub[data-mode="dark"] .st-preview, .hub[data-mode="night"] .st-preview { background: var(--bg-2); }
+
+/* high contrast keeps every identity but strengthens edges */
+.hub[data-contrast="high"][data-type] { --card-border: var(--border-2); --bw: 1.5px; }
+.hub[data-contrast="high"][data-type][data-mode] { --border: color-mix(in srgb, var(--text) 38%, transparent); --border-2: color-mix(in srgb, var(--text) 60%, transparent); --muted: color-mix(in srgb, var(--text) 82%, var(--bg)); --faint: color-mix(in srgb, var(--text) 66%, var(--bg)); --hero-muted: var(--hero-ink); }

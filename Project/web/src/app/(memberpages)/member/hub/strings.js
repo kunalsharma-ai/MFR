@@ -7,6 +7,7 @@
 
 import { engage } from "./engage/strings.js";
 import { v2 } from "./strings-v2.js";
+import { v3 } from "./strings-v3.js";
 
 export const en = {
   // shell
@@ -445,6 +446,8 @@ export const en = {
 Object.assign(en, engage);
 // v2 hub (Nov 2026 redesign): only adds keys, never replaces one
 for (const [k, v] of Object.entries(v2)) if (!(k in en)) en[k] = v;
+// v3 hub (Nov 2026 premium redesign): only adds keys
+for (const [k, v] of Object.entries(v3)) if (!(k in en)) en[k] = v;
 
 const DICTS = { en };
 let active = "en";
