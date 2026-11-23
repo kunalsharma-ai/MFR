@@ -19,10 +19,12 @@ Those were **not invented**: they are copied from the FAQ that is live today (`s
 - Do screen-outs pay any points? (The Help says only that a screen-out ends the survey early and counts as a Quality factor.)
 - What happens to a Teen account at 18?
 - Can a guardian withdraw consent, and how? (The Help points the guardian to support.)
-- Teen rewards: what Teen points can be exchanged for (the engagement plan says every Teen redemption needs the guardian's YES; the Help will say so when that feature ships).
+- Prize draw: no Help copy on purpose; the draw's rules link is set by the admin.
 
 ## Values the Help reads live (never typed into the copy)
 
 - Payout milestone and conversion rate: from the points API (`usePoints`), hidden for Teens.
 - Quality score: from the member record.
-- Streak bonuses: from `GET /api/v1/engagement/config` (engagement phase 1), shown only when that endpoint exists.
+- Streak bonuses and daily poll points: from `GET /api/v1/engagement/config` (#18), shown only when that endpoint exists.
+- Rewards catalogue entries (#20) appear when `GET /api/v1/engagement/rewards` answers; they say "opens soon" until its `open` flag is true.
+- Daily poll, challenges and stories entries (#22) appear when `GET /api/v1/engagement/today` answers.

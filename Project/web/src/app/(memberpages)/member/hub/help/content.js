@@ -99,6 +99,35 @@ export const GUIDES = [
     cta: { label: "Open my rewards", href: "/member/rewards" },
   },
   {
+    id: "g-redeem", topic: "rewards", icon: "wallet", title: "Pick a reward and set a goal", mins: 2, types: ["consumer", "professional"], feature: "rewardsShop",
+    steps: [
+      { t: "Open Rewards", d: "Scroll to the rewards catalogue. Rewards you can already afford carry a badge." },
+      { t: "Set a reward goal", d: "Choose the reward you are saving for. A progress bar shows how close you are." },
+      { t: "Watch for bonus offers", d: "When a limited-time bonus offer is running, a banner shows it at the top of Rewards." },
+      { t: "Request your reward", d: "When redeeming is open and you have enough ready points, request the reward. If a request is rejected or cancelled, your points come back." },
+    ],
+    cta: { label: "Open the catalogue", href: "/member/rewards" },
+  },
+  {
+    id: "g-teen-learning", topic: "rewards", icon: "book", title: "Choose a learning reward", mins: 2, types: ["teen"], feature: "rewardsShop",
+    steps: [
+      { t: "Open Rewards", d: "Learning rewards are listed with the points they need." },
+      { t: "Set a goal", d: "Pick the reward you want and watch your progress bar grow." },
+      { t: "Ask for it", d: "When requests are open, send a request. Your parent or guardian has to say OK first." },
+      { t: "Not this time?", d: "If a request is turned down or cancelled, your points come back." },
+    ],
+    cta: { label: "Open my rewards", href: "/member/rewards" },
+  },
+  {
+    id: "g-today", topic: "start", icon: "calendar", title: "Use your daily Today strip", mins: 2, feature: "today",
+    steps: [
+      { t: "Answer the daily poll", d: "One quick question a day on your dashboard. You see the results after you answer." },
+      { t: "Follow your challenges", d: "Monthly challenges track your real activity and show your progress." },
+      { t: "Read the stories", d: "\"Your opinion mattered\" stories show what came out of research members took part in." },
+    ],
+    cta: { label: "Open my dashboard", href: "/member/dashboard" },
+  },
+  {
     id: "g-quality", topic: "quality", icon: "quality", title: "Raise your Quality Score", mins: 2,
     steps: [
       { t: "Open Quality Score", d: "Tap the ring in the header or choose Quality Score in the menu." },
@@ -414,6 +443,7 @@ export const FAQS = [
     kw: "earn more points ways how",
     a: [
       { ul: ["Complete a profile (each pays once).", "Finish a survey.", "Invite friends (referral rewards are not switched on yet)."] },
+      (ctx) => ctx.features.today ? "Answer the daily poll and complete monthly challenges on your dashboard." : null,
     ],
   },
   {
@@ -432,6 +462,58 @@ export const FAQS = [
     ],
   },
 
+  {
+    id: "rw-catalogue", topic: "rewards", q: "Can I redeem my points for a reward?", types: ["consumer", "professional"], feature: "rewardsShop",
+    kw: "redeem catalogue gift card reward shop exchange",
+    a: [
+      "The rewards catalogue on your Rewards page lists every reward with the points it needs, and marks the ones you can already afford.",
+      (ctx) => ctx.rewardsOpen
+        ? "Redeeming is open: when you have enough ready points, request the reward from the catalogue."
+        : "Redeeming opens soon. Until then you can browse the catalogue and set a reward goal so you're ready.",
+    ],
+  },
+  {
+    id: "rw-goal", topic: "rewards", q: "What is a reward goal?", feature: "rewardsShop",
+    kw: "goal saving target progress",
+    a: ["Pick one reward from the catalogue as your goal. A progress bar on Rewards shows how many points you still need. You can change or clear your goal at any time."],
+  },
+  {
+    id: "rw-back", topic: "rewards", q: "What happens to my points if a request is rejected or cancelled?", feature: "rewardsShop",
+    kw: "rejected cancelled refund points back request",
+    a: ["Your points come back to your balance."],
+  },
+  {
+    id: "rw-offers", topic: "rewards", q: "What are bonus offers?", types: ["consumer", "professional"], feature: "rewardsShop",
+    kw: "bonus offer promotion limited time",
+    a: ["When our team runs a limited-time bonus offer, a banner on your Rewards page shows it and what it applies to."],
+  },
+  {
+    id: "teen-redeem", topic: "teen", q: "Can I swap my points for something?", types: ["teen"], feature: "rewardsShop",
+    kw: "teen redeem learning reward guardian ok",
+    a: [
+      "Yes, for learning rewards, which are shown in points. Every request needs your parent's or guardian's OK first.",
+      (ctx) => ctx.rewardsOpen ? null : "Requests open soon. You can already pick a goal and watch your progress.",
+      "If a request is turned down or cancelled, your points come back.",
+    ],
+  },
+  {
+    id: "poll", topic: "start", q: "What is the daily poll?", feature: "today",
+    kw: "daily poll question today",
+    a: [
+      (ctx) => `One quick question a day, on your dashboard${ctx.pollPoints ? `, worth ${ctx.fmt(ctx.pollPoints)} points` : ""}. You see how other members answered after you reply.`,
+      (ctx) => ctx.features.engage1 ? "Answering it also counts as a streak day." : null,
+    ],
+  },
+  {
+    id: "challenges", topic: "start", q: "How do monthly challenges work?", feature: "today",
+    kw: "challenge monthly bonus goal",
+    a: ["Each month has challenges, such as finishing a number of surveys. Your progress comes from your real activity, and each challenge's bonus is paid once when you complete it."],
+  },
+  {
+    id: "stories", topic: "start", q: "What are \"Your opinion mattered\" stories?", feature: "today",
+    kw: "stories opinion mattered results impact",
+    a: ["Short stories written by our team about what came out of research that members took part in."],
+  },
   // ---- quality
   {
     id: "q-what", topic: "quality", q: "What is my Quality Score?",

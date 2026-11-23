@@ -9,7 +9,8 @@ import { TOPICS, GUIDES, FAQS, SYNONYMS } from "./content";
 
 const ok = (r) => r && r.status !== "error";
 
-// Features the server has. engage1 = points ledger / streaks (engagement phase 1, GET /api/v1/engagement/config).
+// Features the server has. engage1 = points ledger / streaks (GET /engagement/config), rewardsShop = rewards catalogue
+// (GET /engagement/rewards), today = daily poll, challenges and stories (GET /engagement/today).
 // A missing endpoint just hides those entries; nothing breaks.
 export function useHelpFeatures() {
   const member = useMember();
@@ -17,9 +18,16 @@ export function useHelpFeatures() {
     queryKey: ["hub", "help", "features", member?._id],
     enabled: Boolean(member?._id),
     queryFn: async () => {
-      const r = await api.get("/api/v1/engagement/config");
-      const c = ok(r) && r.data && typeof r.data === "object" ? r.data : null;
-      return { engage1: Boolean(c), config: c || {} };
+      // each feature is on only when its own endpoint answers (engagement PRs #18, #20, #22)
+      const [c, rw, td] = await Promise.all(["/config", "/rewards", "/today"].map((u) => api.get(`/api/v1/engagement${u}`).catch(() => null)));
+      const cfg = ok(c) && c.data && typeof c.data === "object" ? c.data : null;
+      return {
+        engage1: Boolean(cfg),
+        config: cfg || {},
+        rewardsShop: Boolean(ok(rw) && rw.data),
+        rewardsOpen: Boolean(ok(rw) && rw.data?.open),
+        today: Boolean(ok(td) && td.data),
+      };
     },
     staleTime: 10 * 60_000,
     retry: false,
@@ -70,7 +78,9 @@ export function useHelpContext() {
       money: (pts) => (rate ? money(pts, rate) : null),
       quality: qualityOf(member),
       streakBonuses: Array.isArray(cfg.streakBonuses) ? cfg.streakBonuses : [],
-      features: { engage1: Boolean(features.data?.engage1) },
+      rewardsOpen: Boolean(features.data?.rewardsOpen),
+      pollPoints: cfg.dailyPoll?.enabled ? Number(cfg.dailyPoll.points) || null : null,
+      features: { engage1: Boolean(features.data?.engage1), rewardsShop: Boolean(features.data?.rewardsShop), today: Boolean(features.data?.today) },
     };
   }, [type, member, p, features.data, showMoney]);
 }
