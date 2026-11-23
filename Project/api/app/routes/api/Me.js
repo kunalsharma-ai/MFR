@@ -17,6 +17,10 @@ import {
     sendMail,
     Token
 } from "../../utils/index.js"
+import { SELF_EDITABLE, pick, omit } from "../../utils/access.js";
+
+const QUALITY_MAX = 200; // same cap as model/User.js
+const QUALITY_STEP_MAX = 5; // most profiles a member can complete in one save
 Date.prototype.resetTime = function (type = "start") {
     if (type === "end") {
         this.setHours(23);
@@ -103,7 +107,20 @@ router
     .put(expressRoute(
         async req => {
             const [message, data] = ["Updated successfully", []];
-            await userController.update(req.user._id, req.body);
+            // Only the member's own preference fields (the same list as PUT /api/v1/user/:id). Role, category,
+            // verification flags, status, email, password and Teen/guardian data can never be set from here.
+            const body = omit(pick(req.body || {}, SELF_EDITABLE), []);
+            // The quality score is still worked out in the browser (profiles page). Until it moves to the server,
+            // accept it only as a small step up from the stored value, never down and never above the cap.
+            if (req.body && Object.prototype.hasOwnProperty.call(req.body, "qualityScore")) {
+                const current = Number((await userController.read(req.user._id))?.qualityScore) || 0;
+                const wanted = Math.round(Number(req.body.qualityScore));
+                if (Number.isFinite(wanted) && wanted > current && wanted - current <= QUALITY_STEP_MAX) {
+                    body.qualityScore = Math.min(wanted, QUALITY_MAX);
+                }
+            }
+            if (!Object.keys(body).length) throw new Error("Nothing to update.");
+            await userController.update(req.user._id, body);
             return { message, data };
         },
         userController
