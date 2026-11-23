@@ -1,0 +1,15 @@
+{%- assign tone = "guardian" -%}
+{%- assign preheader = "The request is closed and no account was created." -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- assign title = "We've recorded your decision" -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;">You chose <b>not</b> to enroll {{ teen.firstName }} in the Teen Panel. We've closed the request and <b>no account was created</b>. We've let {{ teen.firstName }} know, without sharing any reasons or comments you gave us.</p>
+{% if notRecognised %}
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff6e5" style="background:#fff6e5;border-radius:12px;margin:0 0 18px;">
+  <tr><td style="padding:14px 18px;font-size:14px;line-height:22px;color:#6b4a00;">You told us you don't recognise this request or aren't this teen's parent or guardian. Our support team will review it. You don't need to do anything else.</td></tr>
+</table>
+{% endif %}
+<p style="margin:0 0 16px;">Changed your mind, or chose NO by mistake? Reply to {{ support.email }} with the reference below and we'll help.</p>
+{%- capture why -%}You received this because you answered a Teen Panel request for {{ teen.firstName }}.{%- endcapture -%}
+{% include "mailer/teen/_foot.liquid" %}

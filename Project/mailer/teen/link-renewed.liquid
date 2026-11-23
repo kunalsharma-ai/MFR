@@ -1,0 +1,18 @@
+{%- if who == "guardian" -%}{%- assign tone = "guardian" -%}{%- assign kicker = "For parents and legal guardians" -%}{%- else -%}{%- assign tone = "teen" -%}{%- assign kicker = "Teen Panel" -%}{%- endif -%}
+{%- assign preheader = "Here is your new secure link. Older links no longer work." -%}
+{%- assign title = "Here is your new link" -%}
+{% include "mailer/teen/_head.liquid" %}
+{% if who == "guardian" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;">You asked for a new link for {{ teen.firstName }}'s Teen Panel request. Use the button below. Earlier links no longer work.</p>
+{%- assign btn_label = "Open the request" -%}{%- assign btn_color = "#0b5bd3" -%}
+{%- capture why -%}You received this because a new link was requested for {{ teen.firstName }}'s Teen Panel request.{%- endcapture -%}
+{% else %}
+<p style="margin:0 0 16px;">Hi {{ teen.firstName }}, here's a new link to create your password. Earlier links no longer work.</p>
+{%- assign btn_label = "Create my password" -%}{%- assign btn_color = "#7c3aed" -%}
+{%- assign why = "You received this because a new link was requested for this email address." -%}
+{% endif %}
+{%- assign btn_url = links.action -%}
+{%- capture btn_note -%}This link works until {{ expires | date: "%B %-d, %Y" }}. Didn't ask for it? You can ignore this email.{%- endcapture -%}
+{% include "mailer/teen/_button.liquid" %}
+{% include "mailer/teen/_foot.liquid" %}

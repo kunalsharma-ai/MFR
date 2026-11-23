@@ -1,6 +1,8 @@
-import TeenJoin from './TeenJoin.jsx';
+import TeenSignup, { TEEN_STEPS } from '../components/TeenSignup.jsx';
+import { DemoMailbox } from '../teen/shell.jsx';
+import { classifyDob } from '../teen/rules.js';
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import AudienceSwitch from "../components/AudienceSwitch.jsx";
 import Captcha from "../components/Captcha.jsx";
@@ -19,6 +21,7 @@ import {
   MIN_SIGNUP_AGE,
   NOTIFY_CHANNELS,
   USER_API,
+  DEMO_MODE,
 } from "../data/site.js";
 //import { ADULT_AGE, GENDERS, STEP_FIELDS, ageFromDob,validateSignup } from '../utils/validate.js';
 import { postJSON, putJSON } from "../utils/api.js";
@@ -50,20 +53,21 @@ const crumbs = [
 const LAST_STEP = 2;
 const RESEND_WAIT = 30;
 
-function LiveCard({ v, step, progress, sent }) {
+function LiveCard({ v, step, progress, sent, steps = STEPS }) {
   const pro = v.memberType === "professional";
+  const teen = v.memberType === "teen";
   const c = COUNTRIES.find((x) => x.iso === v.country);
   const name = `${v.firstName || ""} ${v.lastName || ""}`.trim();
   return (
     <div className="lc-stage" aria-hidden="true">
       <div
-        className={`lc-card ${pro ? "is-pro" : ""} ${name ? "has-name" : ""}`}
+        className={`lc-card ${pro ? "is-pro" : ""} ${teen ? "is-teen" : ""} ${name ? "has-name" : ""}`}
       >
         <span className="lc-holo" />
         <div className="lc-top">
           <img src={BRAND.monogram} alt="MyFrequentRewards monogram" width="40" height="40" />
           <span className="lc-type">
-            {pro ? "PROFESSIONAL" : "CONSUMER"} MEMBER
+            {pro ? "PROFESSIONAL" : teen ? "TEEN" : "CONSUMER"} MEMBER
           </span>
         </div>
         <div className="lc-mid">
@@ -94,7 +98,7 @@ function LiveCard({ v, step, progress, sent }) {
         </div>
       </div>
       <ol className="lc-steps">
-        {STEPS.map((x) => (
+        {steps.map((x) => (
           <li
             key={x.n}
             className={sent || x.n < step ? "done" : x.n === step ? "now" : ""}
@@ -111,7 +115,7 @@ function LiveCard({ v, step, progress, sent }) {
         ))}
       </ol>
       <p className="lc-hint">
-        {sent ? "Check your inbox" : STEPS[step - 1].art}
+        {sent ? (teen ? "Waiting for your parent’s yes" : "Check your inbox") : steps[step - 1].art}
       </p>
     </div>
   );
@@ -119,7 +123,7 @@ function LiveCard({ v, step, progress, sent }) {
 
 function SignUp() {
   const { search } = useLocation();
-  const goTeen = useNavigate(); // the Teen card opens the separate teen sign-up; consumer / pro steps are unchanged
+  const [teenView, setTeenView] = useState(null); // what the Teen form reports for the card on the left
   const [step, setStep] = useState(1);
   const [dir, setDir] = useState(1);
   const [v, setV] = useState({
@@ -166,6 +170,21 @@ function SignUp() {
     return e;
   }, [v, remote]);
 
+  // Teens join on this same page and card (Kunal, Nov 2026): picking Teen, or typing a 13–17 birthday, switches the
+  // form to the Teen steps and takes along what was already typed. The address keeps ?type=teen so a refresh stays.
+  const pickType = (k) => {
+    setV((s) => ({ ...s, memberType: k }));
+    try {
+      const u = new URL(window.location.href);
+      if (k === "consumer") u.searchParams.delete("type"); else u.searchParams.set("type", k);
+      window.history.replaceState(window.history.state, "", `${u.pathname}${u.search}${u.hash}`);
+    } catch { /* not in a browser */ }
+  };
+  const goTeen = () => pickType("teen");
+  useEffect(() => {
+    if (v.memberType !== "teen" && classifyDob(v.dob) === "teen") goTeen();
+  }, [v.dob]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const q = new URLSearchParams(search);
     const words = (q.get("name") || "").trim().split(/\s+/).filter(Boolean);
@@ -186,8 +205,9 @@ function SignUp() {
   }, [search]);
 
   useEffect(() => {
-    if (new URLSearchParams(search).get("type") === "professional")
-      setV((s) => ({ ...s, memberType: "professional" }));
+    const type = new URLSearchParams(search).get("type");
+    if (type === "professional") setV((s) => ({ ...s, memberType: "professional" }));
+    if (type === "teen" || type === "minor") setV((s) => ({ ...s, memberType: "teen" }));
   }, [search]);
 
   useEffect(() => {
@@ -354,7 +374,7 @@ function SignUp() {
     <>
       <PageSeo page={page} crumbs={crumbs} />
       <section
-        className={`sx ax-page ${v.memberType === "professional" ? "aud-pro" : "aud-con"}`}
+        className={`sx ax-page ${v.memberType === "professional" ? "aud-pro" : v.memberType === "teen" ? "aud-min" : "aud-con"}`}
       >
         <div className="sx-bg" aria-hidden="true">
           <span className="sx-orb o1" />
@@ -368,40 +388,56 @@ function SignUp() {
         </div>
         <div className="container sx-row">
           <aside className="sx-aside">
-            {status === "sent" ? null : (
+            {status === "sent" || teenView?.sent ? null : (
               <AudienceSwitch
-                value={v.memberType}
-                onChange={(k) => set("memberType", k)}
+                value={v.memberType === "teen" ? "minor" : v.memberType}
+                onChange={(k) => pickType(k === "minor" ? "teen" : k)}
                 label="Join as"
               />
             )}
             <p className="eyebrow eyebrow-light">
               {v.memberType === "professional"
                 ? "Join free · for professionals"
-                : "Join free · about 2 minutes"}
+                : v.memberType === "teen"
+                  ? "Join free · ages 13–17, with a parent’s OK"
+                  : "Join free · about 2 minutes"}
             </p>
             <h1>{page.h1}</h1>
             <p className="muted-light ax-swap" key={v.memberType}>
               {v.memberType === "professional"
                 ? "Get paid for your professional insight in expert B2B surveys — no investment, no fees, ever."
-                : "Earn money online by sharing your opinion — no investment, no fees, ever."}
+                : v.memberType === "teen"
+                  ? "Share what you think about games, apps, school and more, and earn reward points. Your parent or guardian says yes first."
+                  : "Earn money online by sharing your opinion — no investment, no fees, ever."}
             </p>
-            <LiveCard
-              v={v}
-              step={step}
-              progress={Math.max(
-                0,
-                Math.min(100, status === "sent" ? 100 : pct),
-              )}
-              sent={status === "sent"}
-            />
+            {v.memberType === "teen" ? (
+              <LiveCard
+                v={{ ...v, firstName: teenView?.firstName || "", lastName: teenView?.lastName || "", country: teenView?.country || "" }}
+                step={teenView?.step || 1}
+                progress={teenView?.pct || 0}
+                sent={Boolean(teenView?.sent)}
+                steps={TEEN_STEPS}
+              />
+            ) : (
+              <LiveCard
+                v={v}
+                step={step}
+                progress={Math.max(
+                  0,
+                  Math.min(100, status === "sent" ? 100 : pct),
+                )}
+                sent={status === "sent"}
+              />
+            )}
             <ul className="sx-perks">
               <li>
                 <Icon name="heart" size={18} /> 100% free membership
               </li>
               <li>
-                <Icon name="wallet" size={18} /> PayPal · Bank · Vouchers
-                · UPI (India)
+                <Icon name="wallet" size={18} />{" "}
+                {v.memberType === "teen"
+                  ? "Reward points, never cash"
+                  : "PayPal · Bank · Vouchers · UPI (India)"}
               </li>
               <li>
                 <Icon name="lock" size={18} /> Your details are never sold or
@@ -411,7 +447,9 @@ function SignUp() {
           </aside>
 
           <div className="sx-card" ref={cardRef}>
-            {status === "sent" ? (
+            {v.memberType === "teen" ? (
+              <TeenSignup seed={v} onSwitch={pickType} onView={setTeenView} />
+            ) : status === "sent" ? (
               <div className="sx-done" role="status">
                 <div className="done-check">
                   <Icon name="mail" size={40} stroke={2.4} />
@@ -505,7 +543,7 @@ function SignUp() {
                               name="memberType"
                               value={k}
                               checked={v.memberType === k}
-                              onChange={() => (k === "teen" ? goTeen("/sign-up?type=teen") : set("memberType", k))}
+                              onChange={() => pickType(k)}
                             />
                             <span className="sx-type-ico">
                               <Icon name={ic} size={26} />
@@ -576,7 +614,7 @@ function SignUp() {
                               {err("dob") === TEEN_DOB_MSG ? (
                                 <>
                                   {" "}
-                                  <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                                  <button type="button" className="sx-link" onClick={goTeen}>
                                     Join as a Teen
                                   </button>
                                 </>
@@ -743,12 +781,12 @@ function SignUp() {
                       </div>
                       {!v.dob ||
                       !Number.isFinite(ageFromDob(v.dob)) ||
-                      ageFromDob(v.dob) >= ADULT_AGE ? null : (
+                      ageFromDob(v.dob) >= ADULT_AGE || ageFromDob(v.dob) < MIN_SIGNUP_AGE ? null : (
                         <p className="sx-note">
                           <Icon name="shield" size={16} />
                           Under 18: you join through the Teen sign-up, with
                           your parent or guardian’s OK.{" "}
-                          <button type="button" className="sx-link" onClick={() => goTeen("/sign-up?type=teen")}>
+                          <button type="button" className="sx-link" onClick={goTeen}>
                             Join as a Teen
                           </button>
                         </p>
@@ -979,6 +1017,7 @@ function SignUp() {
           </div>
         </div>
       </section>
+      {DEMO_MODE && v.memberType === "teen" ? <DemoMailbox /> : null}
       {modalOpen ? (
         <VerifyEmailModal
           email={sentTo}
@@ -993,9 +1032,4 @@ function SignUp() {
   );
 }
 
-// Teens (?type=teen) get their own page; Consumers and Professionals keep this original page unchanged.
-const TEEN_TYPES = new Set(['teen', 'minor']);
-export default function SignUpRoute() {
-  const { search } = useLocation();
-  return TEEN_TYPES.has(new URLSearchParams(search).get('type')) ? <TeenJoin /> : <SignUp />;
-}
+export default SignUp;

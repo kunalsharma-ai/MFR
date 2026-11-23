@@ -1,0 +1,11 @@
+{%- assign tone = "teen" -%}
+{%- capture preheader -%}Your {{ guardian.relationLabel | downcase }} hasn't answered yet. A quick nudge might help.{%- endcapture -%}
+{%- assign kicker = "Teen Panel registration" -%}
+{%- capture title -%}Still waiting for your {{ guardian.relationLabel | downcase }}, {{ teen.firstName }}{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">We've sent your {{ guardian.relationLabel | downcase }} a reminder at <b>{{ guardian.emailMasked }}</b>. Your account switches on only after they say yes.</p>
+<p style="margin:0 0 16px;">Could you let them know? Ask them to look for an email from MyFrequentRewards, and to check their spam or promotions folder.</p>
+{%- assign btn_url = links.status -%}{%- assign btn_label = "Check my registration" -%}{%- assign btn_color = "#7c3aed" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You received this because you registered for the Teen Panel with this email address." -%}
+{% include "mailer/teen/_foot.liquid" %}

@@ -84,6 +84,8 @@ export default function ActivityToasts() {
     };
   }, [items, muted]);
 
+  // Teen pages never show cash payout toasts (no cash rewards for under-18s)
+  if (typeof document !== 'undefined' && document.querySelector('.aud-min, .tz, .minor-page')) return null;
   if (!cur || muted) return null;
   const close = (
     <button

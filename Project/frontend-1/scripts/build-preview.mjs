@@ -68,6 +68,19 @@ html = await replaceAsync(html, /\/(images\/[a-z0-9_\-/.]+\.(?:webp|png|jpg|svg)
   }
   return cache.get(p);
 });
+// (after the /images inliner, so the map keys below stay as plain paths)
+// Teen 3D art is picked at runtime (`/images/minor/art/${name}.webp`) → add it to the asset map used by utils/asset.js
+const art = {};
+for (const f of await readdir(path.join(root, 'public/images/minor/art'))) {
+  if (f.endsWith('.webp')) art[`/images/minor/art/${f}`] = 'data:image/webp;base64,' + (await readFile(path.join(root, 'public/images/minor/art', f))).toString('base64');
+}
+html = html.replace('<script type="module">', () => `<script>window.__MFR_ASSETS=Object.assign(window.__MFR_ASSETS||{},${JSON.stringify(art)})</script><script type="module">`);
+// Teen registration location lists (public/data/geo, fetched per country at runtime) → window.__MFR_GEO (teen/geo.js)
+const geo = {};
+for (const f of await readdir(path.join(root, 'public/data/geo'))) {
+  if (f.endsWith('.json')) geo[`/data/geo/${f}`] = JSON.parse(await readFile(path.join(root, 'public/data/geo', f), 'utf8'));
+}
+html = html.replace('<script type="module">', () => `<script>window.__MFR_GEO=${JSON.stringify(geo).replace(/<\//g, '<\\/')}</script><script type="module">`);
 // Dark mode: embed the generated dark stylesheet (it only applies under html[data-mode="dark"]).
 const darkCss = await readFile(path.join(root, 'public/css/dark.css'), 'utf8');
 html = html.replace(/<head>/, () => `<head><style id="mfr-dark-css">${darkCss}</style>`);

@@ -18,3 +18,7 @@ export { default as ProfileQuestions } from "./ProfileQuestions.js";
 export { default as ProfileOptions } from "./ProfileOptions.js";
 
 //*/export { default as Reward } from "./Reward.js";
+export { default as TeenRegistration } from "./TeenRegistration.js";
+export { default as TeenGuardian } from "./TeenGuardian.js";
+export { default as TeenConsent } from "./TeenConsent.js";
+export { default as TeenToken } from "./TeenToken.js";

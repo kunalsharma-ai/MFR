@@ -1,0 +1,15 @@
+{%- assign tone = "teen" -%}
+{%- assign preheader = "Your password is set. Log in with your email address." -%}
+{%- assign kicker = "Teen Panel" -%}
+{%- capture title -%}You're in, {{ teen.firstName }}! Your account is live{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Your password is set and your Teen Panel account is active.</p>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f6f0ff" style="background:#f6f0ff;border-radius:12px;margin:0 0 8px;">
+  <tr><td style="padding:14px 18px;font-size:14px;line-height:22px;color:#3a2a6b;">Your username: <b style="font-family:'Courier New',Courier,monospace;">{{ teen.email }}</b></td></tr>
+</table>
+<p style="margin:16px 0 0;">When you first log in, we'll ask a few quick questions so we can match you with surveys that suit you. You can skip any you'd rather not answer.</p>
+{%- assign btn_url = links.login -%}{%- assign btn_label = "Log in" -%}{%- assign btn_color = "#ff3da5" -%}
+{%- capture btn_note -%}Forgot your password later? <a href="{{ links.reset }}" style="color:#7c3aed;">Reset it here</a>.{%- endcapture -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You received this because you created your Teen Panel password." -%}
+{% include "mailer/teen/_foot.liquid" %}

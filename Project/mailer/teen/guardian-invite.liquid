@@ -1,0 +1,19 @@
+{%- assign tone = "guardian" -%}
+{%- capture preheader -%}{{ teen.firstName }} has asked to join the Teen Panel. Nothing happens unless you say yes.{%- endcapture -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- capture title -%}{% if resent %}A fresh link: {% endif %}{{ teen.firstName }} would like to join the Teen Panel{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;"><b>{{ teen.firstName }}</b>{% if teen.age %} (age {{ teen.age }}){% endif %} has registered for the MyFrequentRewards Teen Panel and named you as their <b>{{ guardian.relationLabel | downcase }}</b>. Teens aged 13 to 17 can take part only with permission from a parent or legal guardian, so we need your decision first.</p>
+<p style="margin:0 0 6px;font-size:18px;line-height:26px;font-weight:bold;color:#14213d;">Do you want to enroll {{ teen.firstName }} in the Teen Panel?</p>
+{% include "mailer/teen/_yesno.liquid" %}
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f3f6fc" style="background:#f3f6fc;border-radius:12px;margin:0 0 18px;">
+  <tr><td style="padding:16px 20px;font-size:14px;line-height:22px;color:#3a4256;">
+    <b style="color:#14213d;">If you choose YES</b>, you fill in a short form about you (about 3 minutes) and make your consent selections. Only then can {{ teen.firstName }} create a password.<br /><br />
+    <b style="color:#14213d;">If you choose NO</b>, you can tell us why if you wish. The request is closed and no account is created.
+  </td></tr>
+</table>
+<p style="margin:0 0 16px;font-size:14px;line-height:22px;">Want to read more before you decide? <a href="{{ links.review }}" style="color:#0b5bd3;font-weight:bold;">Review the request</a> or read the <a href="{{ site }}/teen-terms" style="color:#0b5bd3;">Teen research terms</a>.</p>
+<p style="margin:0 0 16px;font-size:14px;line-height:22px;">Not {{ teen.firstName }}'s parent or legal guardian, or don't recognise this request? Choose NO and tell us. We'll close it.</p>
+{%- capture why -%}You received this because {{ teen.firstName }} gave this address as their {{ guardian.relationLabel | downcase }}'s email.{%- endcapture -%}
+{% include "mailer/teen/_foot.liquid" %}

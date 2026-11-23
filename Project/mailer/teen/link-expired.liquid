@@ -1,0 +1,11 @@
+{%- assign tone = "teen" -%}
+{%- assign preheader = "Your registration link ran out. You can ask for a new one in a minute." -%}
+{%- assign kicker = "Teen Panel registration" -%}
+{%- capture title -%}Your link has expired, {{ teen.firstName }}{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">The link in your registration ran out before it was used{% if guardian.relationLabel %}, so we couldn't finish your registration with your {{ guardian.relationLabel | downcase }}{% endif %}. Your account is not active.</p>
+<p style="margin:0 0 16px;">No problem: ask for a fresh link with your email address and we'll send one.</p>
+{%- assign btn_url = links.action -%}{%- assign btn_label = "Get a new link" -%}{%- assign btn_color = "#7c3aed" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You received this because you registered for the Teen Panel with this email address." -%}
+{% include "mailer/teen/_foot.liquid" %}

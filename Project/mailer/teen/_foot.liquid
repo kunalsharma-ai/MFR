@@ -1,0 +1,40 @@
+{%- comment -%}
+  Teen registration emails: shared bottom. Optional before including:
+    why  one sentence on why this person got this email
+{%- endcomment -%}
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:8px 44px 0;">
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #e3e7f1;border-radius:12px;">
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;line-height:20px;color:#5b6378;">
+                  <b style="color:#14213d;">Reference:</b> <span style="font-family:'Courier New',Courier,monospace;color:#14213d;">{{ reference }}</span><br />
+                  Please quote this reference if you contact us about this registration.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:22px 44px 6px;font-size:13px;line-height:21px;color:#5b6378;">
+            <b style="color:#14213d;">Need help?</b> Email <a href="mailto:{{ support.email }}" style="color:#0b5bd3;">{{ support.email }}</a>{% if support.phone %} or call {{ support.phone }}{% endif %}.
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:6px 44px 26px;font-size:12px;line-height:19px;color:#7b8399;">
+            {% if why %}{{ why }} {% endif %}We will never ask you to send a password, payment or bank details by email. Links in this email are personal to this registration, so please don't forward it.
+            <br /><a href="{{ site }}/privacy" style="color:#7b8399;">Privacy Policy</a> &middot; <a href="{{ site }}/teen-terms" style="color:#7b8399;">Teen research terms</a> &middot; <a href="{{ site }}/terms" style="color:#7b8399;">Terms and Conditions</a>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#0b2a6b" style="padding:16px 24px;background:#0b2a6b;text-align:center;font-size:12px;line-height:18px;color:#c9d3ee;">
+            &copy; {{ year }} MyFrequentRewards &middot; Frequent Research
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

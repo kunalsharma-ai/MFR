@@ -1,0 +1,20 @@
+{%- comment -%} The bold YES / NO pair for the guardian. Uses links.yes and links.no. {%- endcomment -%}
+<table role="presentation" class="btn-row" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:22px 0 6px;">
+  <tr>
+    <td class="btn-cell" width="50%" style="padding-right:8px;">
+      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+        <td align="center" bgcolor="#14803c" style="border-radius:14px;background:#14803c;">
+          <a href="{{ links.yes }}" target="_blank" rel="noopener" style="display:block;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:24px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:14px;">YES<br /><span style="font-size:13px;line-height:18px;font-weight:normal;">I want to enroll my teen</span></a>
+        </td>
+      </tr></table>
+    </td>
+    <td class="btn-cell" width="50%" style="padding-left:8px;">
+      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+        <td align="center" bgcolor="#c62828" style="border-radius:14px;background:#c62828;">
+          <a href="{{ links.no }}" target="_blank" rel="noopener" style="display:block;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:24px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:14px;">NO<br /><span style="font-size:13px;line-height:18px;font-weight:normal;">I do not want to enroll my teen</span></a>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 18px;font-size:13px;line-height:20px;color:#7b8399;">Either button opens a secure page where you confirm your choice. Nothing is decided until you confirm. This link works until {{ expires | date: "%B %-d, %Y" }}.</p>

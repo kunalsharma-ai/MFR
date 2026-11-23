@@ -1,0 +1,21 @@
+{%- assign tone = "teen" -%}
+{%- capture preheader -%}We've emailed your {{ guardian.relationLabel | downcase }}. Your account switches on after they say yes.{%- endcapture -%}
+{%- assign kicker = "Teen Panel registration" -%}
+{%- capture title -%}You're in the queue, {{ teen.firstName }}!{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Your registration is in. We've sent your {{ guardian.relationLabel | downcase }} an email at <b>{{ guardian.emailMasked }}</b> so they can say yes or no.</p>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff6e5" style="background:#fff6e5;border-radius:12px;margin:0 0 18px;">
+  <tr><td style="padding:14px 18px;font-size:14px;line-height:22px;color:#6b4a00;"><b>Your account is not active yet.</b> It switches on only after your {{ guardian.relationLabel | downcase }} says yes and you create your password.</td></tr>
+</table>
+<p style="margin:0 0 8px;font-weight:bold;color:#1d1440;">What happens next</p>
+<ol style="margin:0 0 16px;padding-left:22px;font-size:15px;line-height:25px;">
+  <li>Your {{ guardian.relationLabel | downcase }} opens our email and chooses YES or NO.</li>
+  <li>If YES, they fill in a short form and give their consent.</li>
+  <li>You get an email with a link to create your password.</li>
+  <li>You log in with this email address as your username.</li>
+</ol>
+<p style="margin:0 0 4px;font-size:14px;line-height:22px;">Tip: tell them the email is coming from MyFrequentRewards. Their link works until {{ expires | date: "%B %-d, %Y" }}.</p>
+{%- assign btn_url = links.status -%}{%- assign btn_label = "Track my registration" -%}{%- assign btn_color = "#7c3aed" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You received this because you registered for the Teen Panel with this email address." -%}
+{% include "mailer/teen/_foot.liquid" %}

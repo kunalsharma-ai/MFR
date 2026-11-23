@@ -3,6 +3,8 @@
 // Legal owner must approve before go-live (see README → Legal review).
 // URLs are identical to the live site (/privacy, /gdpr, /cookies, /terms, /profiling) to preserve SEO.
 
+import { SECTIONS as TEEN_SECTIONS, INFO as TEEN_INFO, INFO_RULE as TEEN_INFO_RULE, ASSENT as TEEN_ASSENT, TERMS_VERSION as TEEN_VERSION, EFFECTIVE as TEEN_EFFECTIVE, EN as TEEN_EN } from '../teen/data/consent.js';
+
 export const LEGAL_UPDATED = '2026-10-14';
 
 export const LEGAL = {
@@ -166,6 +168,29 @@ export const LEGAL = {
       { h: 'Unique recruitment process', p: ['Members are profiled across a wide range of criteria — demographics, fast-moving consumer goods, durables, automotive, telecommunications, IT and business decision-makers, finance and insurance, healthcare and more.'] },
       { h: 'Digital fingerprinting', p: ['Our custom digital fingerprint system identifies each respondent and prevents fraud, eliminating duplicates so survey data is unique to each participant. We also use TrueSample, Radware and RelevantID technologies; RelevantID identifies and blocks duplicate respondents in real time as they enter a survey.'] },
       { h: 'Bot prevention', p: ['We are integrated with Distil Networks bot-detection technology to eliminate bot traffic before it reaches our servers — stopping online fraud and cybersecurity threats so only humans enter our surveys.'] },
+    ],
+  },
+  // The Teen research terms (agreement MINOR-2026.10, Part A and the teen's own part), word for word from
+  // teen/data/consent.js. Shown on the same policy page as the others; linked from the Teen sign-up and the parent pages.
+  teen: {
+    path: '/teen-terms',
+    label: 'Teen Research Terms',
+    icon: 'shield',
+    accent: '#7C3AED',
+    updated: TEEN_EFFECTIVE,
+    metaTitle: 'Teen Research Terms & Parental Consent | MyFrequentRewards',
+    metaDescription: `The teen research terms and parental consent information for members aged 13 to 17 (${TEEN_VERSION}).`,
+    hero: TEEN_EN.lead,
+    summary: [
+      { icon: 'user', t: 'Ages 13 to 17', d: TEEN_SECTIONS[1].short },
+      { icon: 'shield', t: 'Parent or guardian first', d: TEEN_SECTIONS[4].short },
+      { icon: 'check', t: 'Your own decision', d: TEEN_EN.c_decide },
+      { icon: 'lock', t: 'Version', d: `${TEEN_VERSION}. ${TEEN_EN.legal_en}` },
+    ],
+    intro: [...TEEN_INFO, TEEN_INFO_RULE].join(' '),
+    sections: [
+      ...Object.values(TEEN_SECTIONS).map((x) => ({ h: x.title, body: x.body })),
+      { h: TEEN_EN.partC_h, body: [TEEN_EN.c_lead, TEEN_EN.c_if, { ul: TEEN_ASSENT }, TEEN_EN.c_decide] },
     ],
   },
 };

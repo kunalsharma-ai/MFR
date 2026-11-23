@@ -21,6 +21,7 @@ import SetPassword from '../pages/SetPassword.jsx';
 import ForgotPassword from '../pages/ForgotPassword.jsx';
 import LegalPage from '../pages/LegalPage.jsx';
 import NotFound from '../pages/NotFound.jsx';
+import TeenParent from '../pages/TeenParent.jsx';
 
-const MAP = { Home, HowItWorks, Rewards, Consumers, Professionals, Minor, WhoCanJoin, Moved, Quality, About, Reviews, Connect, Faq, Contact, BlogList, BlogPost, SignUp, Login, SetPassword, ForgotPassword, LegalPage, NotFound };
+const MAP = { Home, HowItWorks, Rewards, Consumers, Professionals, Minor, WhoCanJoin, Moved, Quality, About, Reviews, Connect, Faq, Contact, BlogList, BlogPost, SignUp, Login, SetPassword, ForgotPassword, LegalPage, NotFound, TeenParent };
 export const eagerPages = { get: (n) => MAP[n], load: () => Promise.resolve() };

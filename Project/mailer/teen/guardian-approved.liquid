@@ -1,0 +1,17 @@
+{%- assign tone = "guardian" -%}
+{%- assign preheader = "You said yes. Two short steps are left: a form about you and your consent selections." -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- assign title = "Thank you. Two short steps are left" -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;">You said yes to {{ teen.firstName }} joining the Teen Panel. To finish, please:</p>
+<ol style="margin:0 0 16px;padding-left:22px;font-size:15px;line-height:25px;">
+  <li><b>Fill in a short form about you</b> (about 3 minutes). Anything {{ teen.firstName }} already told us is filled in for you to check.</li>
+  <li><b>Read the terms and make your consent selections.</b> Every box starts unticked.</li>
+</ol>
+<p style="margin:0 0 4px;">{{ teen.firstName }}'s account stays switched off until both are done.</p>
+{%- assign btn_url = links.continue -%}{%- assign btn_label = "Continue where I left off" -%}{%- assign btn_color = "#0b5bd3" -%}
+{%- capture btn_note -%}{% if expires %}This link works until {{ expires | date: "%B %-d, %Y" }}. {% endif %}Your answers save as you go, so you can stop and come back.{%- endcapture -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- capture why -%}You received this because you said yes to {{ teen.firstName }}'s Teen Panel request.{%- endcapture -%}
+{% include "mailer/teen/_foot.liquid" %}

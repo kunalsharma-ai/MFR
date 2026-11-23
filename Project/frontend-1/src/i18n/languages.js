@@ -60,6 +60,9 @@ export const DEFAULT_LANG = 'en';
 export const LIGHT_THEME = new Set(['en']);
 export const themeFor = (code) => (LIGHT_THEME.has(code) ? 'light' : 'classic');
 export const BY_CODE = Object.fromEntries(LANGUAGES.map((l) => [l.code, l]));
+// translate.js and LangPicker.jsx import these two; they were missing on main, which stopped `vite build`
+export const byCode = (code) => BY_CODE[code];
+export const POPULAR = ['en', 'hi', 'es', 'ar', 'zh-CN', 'pt', 'fr', 'de'].filter((c) => BY_CODE[c]);
 
 /** Best supported language for a browser locale list (navigator.languages), or null. */
 export function matchLocale(locales = []) {

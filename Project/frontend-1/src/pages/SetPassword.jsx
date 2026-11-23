@@ -28,6 +28,12 @@ import { patchJSON, postJSON } from "../utils/api.js";
 import { buildProfileAnswers } from "../utils/profileAnswers.js";
 import { recallSignup, savePendingProfile } from "../utils/signupMemo.js";
 import { recallNotify, forgetNotify } from "../utils/notifyMemo.js";
+import * as TR from "../teen/rules.js";
+import { err as teenErr } from "../teen/i18n.js";
+import { teenApi, relationLabel } from "../teen/api.js";
+import { useLinkToken, forgetLinkToken } from "../teen/link.js";
+import { DemoMailbox } from "../teen/shell.jsx";
+import { DEMO_MODE } from "../data/site.js";
 
 const page = PAGES.setPassword;
 const WORLD_ICON = {
@@ -57,6 +63,11 @@ const LAST_STEP = 3; // "Your world" (step 4) is now the welcome survey after th
 // It continues the sign-up wizard where /sign-up stopped:
 //   check the link → step 3 "Your world" → step 4 "Secure it" (choose a password) → save.
 export default function SetPassword() {
+  const [params] = useSearchParams();
+  return ["teen", "minor"].includes(params.get("type")) ? <TeenSetPassword /> : <MemberSetPassword />;
+}
+
+function MemberSetPassword() {
   const [params] = useSearchParams();
   const userId = params.get("user") || "";
   const code = params.get("code") || "";
@@ -861,6 +872,170 @@ export default function SetPassword() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+// ── Teens: the same page and "Secure it" step. The link comes from the email sent after the parent or guardian's
+// consent (/set-password?type=teen&t=…), works once, and the account switches on only when the password is saved.
+const TEEN_PW_STEPS = [
+  { n: 1, t: "About you", icon: "user" },
+  { n: 2, t: "Stay in touch", icon: "mail" },
+  { n: 3, t: "Your parent", icon: "family" },
+  { n: 4, t: "Agree", icon: "shield" },
+  { n: 5, t: "Secure it", icon: "lock" },
+];
+function TeenSetPassword() {
+  const token = useLinkToken("password");
+  const [view, setView] = useState(null);
+  const [problem, setProblem] = useState(null);
+  const [v, setV] = useState({ password: "", confirm: "" });
+  const [touched, setTouched] = useState({});
+  const [showPw, setShowPw] = useState(false);
+  const [phase, setPhase] = useState("checking"); // checking | steps | saving | done | invalid
+  const [serverMsg, setServerMsg] = useState("");
+  useEffect(() => {
+    if (token === null) return;
+    if (!token) { setProblem({ code: "link_invalid" }); setPhase("invalid"); return; }
+    teenApi.passwordView(token)
+      .then((x) => { setView(x); setPhase("steps"); })
+      .catch((e) => { setProblem({ code: e.code, canRenew: e.extra?.canRenew }); setPhase("invalid"); });
+  }, [token]);
+  const who = { email: view?.email, firstName: view?.firstName };
+  const errors = {};
+  const pe = TR.validatePassword(v.password, who);
+  if (pe) errors.password = teenErr(pe);
+  if (!v.confirm) errors.confirm = "Re-enter your password.";
+  else if (v.confirm !== v.password) errors.confirm = "Passwords do not match.";
+  const err = (k) => (touched[k] ? errors[k] : undefined);
+  const ok = (k) => touched[k] && !errors[k];
+  const checks = [
+    { k: "len", label: "8+ characters", ok: v.password.length >= 8 },
+    { k: "mix", label: "Letters and numbers", ok: /[A-Za-z]/.test(v.password) && /\d/.test(v.password) },
+    { k: "personal", label: "Not your name or email", ok: v.password.length > 0 && pe !== "pw_personal" },
+    { k: "match", label: "Both match", ok: v.password.length > 0 && v.password === v.confirm },
+  ];
+  const score = checks.filter((c) => c.ok).length;
+  const rel = relationLabel(view?.guardianRelation || view?.guardian?.relation || "").toLowerCase() || "parent or guardian";
+
+  async function submit(e) {
+    e.preventDefault();
+    if (phase !== "steps") return;
+    setTouched({ password: true, confirm: true });
+    if (errors.password || errors.confirm) { setTimeout(() => document.querySelector('.sx-card [aria-invalid="true"]')?.focus(), 30); return; }
+    setPhase("saving");
+    setServerMsg("");
+    try {
+      await teenApi.setPassword(token, v.password, v.confirm);
+      forgetLinkToken("password");
+      setPhase("done");
+    } catch (ex) {
+      if (["link_used", "link_expired", "link_revoked", "already_done", "link_invalid"].includes(ex.code)) {
+        setProblem({ code: ex.code, canRenew: ex.code !== "already_done" });
+        setPhase("invalid");
+      } else {
+        setServerMsg(teenErr(ex.code === "validation" ? Object.values(ex.fields || {})[0] : ex.code) || "We couldn’t save your password. Please try again.");
+        setPhase("steps");
+      }
+    }
+  }
+
+  return (
+    <>
+      <PageSeo page={page} />
+      <section className="sx ax-page aud-min">
+        <div className="sx-bg" aria-hidden="true">
+          <span className="sx-orb o1" /><span className="sx-orb o2" /><span className="sx-orb o3" />
+          <span className="ax-alt" />
+          {Array.from({ length: 14 }).map((_, i) => <i key={i} className="sx-coin" style={{ "--i": i }} />)}
+        </div>
+        <div className="container sx-row">
+          <aside className="sx-aside">
+            <p className="eyebrow eyebrow-light">{view ? `Your ${rel} said yes · last step` : "Teen account · last step"}</p>
+            <h1>{page.h1}</h1>
+            <p className="muted-light">Choose a password and your account switches on. Then log in with your email address: a few welcome questions come first, then your dashboard.</p>
+            <div className="sx-stage" aria-hidden="true">
+              <div className="sx-badge s4"><Icon name="lock" size={44} stroke={1.4} /></div>
+              <p className="sx-stage-t">Lock in your account</p>
+            </div>
+            <ul className="sx-perks">
+              <li><Icon name="shield" size={18} /> Parent approved</li>
+              <li><Icon name="lock" size={18} /> We will never ask for your password by email, SMS or WhatsApp</li>
+            </ul>
+          </aside>
+          <div className="sx-card">
+            {phase === "checking" ? (
+              <div className="sx-done" role="status" aria-busy="true"><h2>Checking your link…</h2><p>One moment.</p></div>
+            ) : null}
+            {phase === "invalid" ? (
+              <div className="sx-done" role="alert">
+                <div className="done-check"><Icon name={problem?.code === "already_done" ? "check" : "close"} size={40} stroke={2.6} /></div>
+                <h2>{problem?.code === "already_done" ? "Your password is already set" : "This link can’t be used"}</h2>
+                <p>{problem?.code === "already_done" ? "Your account is active. Log in with your email address." : teenErr(problem?.code) || "This link is no longer valid."}</p>
+                <p className="tiny muted">Password links work once and for 72 hours, to keep your account safe.</p>
+                <div className="done-actions">
+                  {problem?.canRenew ? <Link to="/forgot-password?type=teen" className="btn btn-primary">Get a new link</Link> : null}
+                  <Link to="/login?type=teen" className={`btn ${problem?.canRenew ? "btn-ghost-dark" : "btn-dark"}`}>Log in</Link>
+                </div>
+                <p className="tiny muted">Need help? <Link to="/contact-us">Contact us</Link>.</p>
+              </div>
+            ) : null}
+            {phase === "steps" || phase === "saving" ? (
+              <form onSubmit={submit} noValidate>
+                <SxRail steps={TEEN_PW_STEPS} step={5} pct={Math.round(80 + score * 5)} />
+                <div className="sx-pane d1">
+                  <p className="sx-verified"><Icon name="check" size={16} stroke={3} /> Your {rel} said yes{view?.firstName ? `, ${view.firstName}!` : "!"}</p>
+                  <h2 className="sx-h">Secure your account</h2>
+                  <p className="sx-sub">Your username is <strong>{view?.email}</strong>.</p>
+                  <div className="sx-grid">
+                    <Field id="password" label="Create password" error={err("password")} ok={ok("password")} half icon="lock">
+                      <input id="password" type={showPw ? "text" : "password"} placeholder=" " autoComplete="new-password" maxLength={128} value={v.password}
+                        onChange={(e) => setV((s) => ({ ...s, password: e.target.value }))} onBlur={() => setTouched((t) => ({ ...t, password: true }))} aria-invalid={Boolean(err("password"))} />
+                      <button type="button" className="pw-eye" onClick={() => setShowPw((s) => !s)} aria-label={showPw ? "Hide password" : "Show password"}><Icon name="eye" size={18} /></button>
+                    </Field>
+                    <Field id="confirm" label="Confirm password" error={err("confirm")} ok={ok("confirm")} half icon="lock">
+                      <input id="confirm" type={showPw ? "text" : "password"} placeholder=" " autoComplete="new-password" maxLength={128} value={v.confirm}
+                        onChange={(e) => setV((s) => ({ ...s, confirm: e.target.value }))} onBlur={() => setTouched((t) => ({ ...t, confirm: true }))} aria-invalid={Boolean(err("confirm"))} />
+                    </Field>
+                  </div>
+                  <div className="sx-pw">
+                    <svg viewBox="0 0 36 36" className={`sx-ring s${score}`} aria-hidden="true">
+                      <circle cx="18" cy="18" r="15.5" className="bg" />
+                      <circle cx="18" cy="18" r="15.5" className="fg" style={{ strokeDasharray: `${(score / 4) * 100} 100` }} pathLength="100" />
+                    </svg>
+                    <div>
+                      <strong aria-live="polite">{v.password ? STRENGTH[score] : "Password strength"}</strong>
+                      <ul>{checks.map((c) => <li key={c.k} className={c.ok ? "ok" : ""}><Icon name={c.ok ? "check" : "close"} size={12} stroke={3} /> {c.label}</li>)}</ul>
+                    </div>
+                  </div>
+                  {serverMsg ? <p className="form-error" role="alert">{serverMsg}</p> : null}
+                </div>
+                <div className="sx-nav">
+                  <span />
+                  <button type="submit" className="btn btn-primary btn-lg btn-shine" disabled={phase === "saving"}>
+                    {phase === "saving" ? <><span className="spinner" /> Saving…</> : <>Create my account <Icon name="sparkle" size={18} /></>}
+                  </button>
+                </div>
+              </form>
+            ) : null}
+            {phase === "done" ? (
+              <div className="sx-done" role="status">
+                <div className="done-burst" aria-hidden="true">{Array.from({ length: 14 }).map((_, i) => <i key={i} style={{ "--i": i }} />)}</div>
+                <div className="done-check"><Icon name="check" size={44} stroke={2.8} /></div>
+                <h2>You’re in{view?.firstName ? `, ${view.firstName}` : ""}! 🎉</h2>
+                <p>Your password is saved and your account is active. Log in with <strong>{view?.email}</strong> to answer a few welcome questions and see your first surveys.</p>
+                <ol className="sx-next">
+                  <li><Icon name="sparkle" size={18} /> A few welcome questions</li>
+                  <li><Icon name="layers" size={18} /> Complete profile surveys</li>
+                  <li><Icon name="gift" size={18} /> Earn reward points</li>
+                </ol>
+                <div className="done-actions"><Link to="/login?type=teen" className="btn btn-primary btn-lg">Log in</Link></div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </section>
+      {DEMO_MODE ? <DemoMailbox /> : null}
     </>
   );
 }

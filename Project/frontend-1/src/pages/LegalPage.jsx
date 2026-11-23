@@ -82,7 +82,7 @@ export default function LegalPage({ id }) {
             <p className="legal-badge"><Icon name={doc.icon} size={16} /> {doc.label}</p>
             <h1>{doc.label}</h1>
             <p className="legal-tag">{doc.hero}</p>
-            <p className="legal-date"><Icon name="calendar" size={14} /> Last updated: {new Date(LEGAL_UPDATED).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</p>
+            <p className="legal-date"><Icon name="calendar" size={14} /> Last updated: {new Date(doc.updated || LEGAL_UPDATED).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</p>
           </div>
           <div className="legal-seal" aria-hidden="true"><Icon name={doc.icon} size={64} stroke={1.2} /></div>
         </div>
@@ -115,6 +115,9 @@ export default function LegalPage({ id }) {
                 <h2><span>{String(i + 1).padStart(2, '0')}</span> {s.h}</h2>
                 {(s.p || []).map((p, k) => <p key={k}>{p}</p>)}
                 {s.list ? <ul>{s.list.map((l) => <li key={l}>{l}</li>)}</ul> : null}
+                {(s.body || []).map((b, k) => (typeof b === 'string' ? <p key={k}>{b}</p> : b?.ul ? <ul key={k}>{b.ul.map((l) => <li key={l}>{l}</li>)}</ul> : b?.contact ? (
+                  <p key={k}>Frequent Research Fieldwork Solutions Pvt. Ltd. (d/b/a MyFrequentRewards) · <a href="mailto:support@myfrequentrewards.com">support@myfrequentrewards.com</a> · Mangolpur Kalan, New Delhi 110085, India · +91 81300 15743</p>
+                ) : null))}
               </section>
             ))}
             {doc.cookieGroups ? <CookieGroups doc={doc} n={doc.sections.length + 1} /> : null}
