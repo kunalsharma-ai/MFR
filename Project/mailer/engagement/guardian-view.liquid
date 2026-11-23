@@ -1,0 +1,16 @@
+{%- comment -%}
+  A Teen asked us to send their parent or guardian a read-only view of their activity (api/app/engagement/teens.js).
+  Data: guardian.firstName, teen.firstName, links.view, expires
+{%- endcomment -%}
+{%- assign tone = "mfr" -%}
+{%- capture preheader -%}See {{ teen.firstName }}'s Teen Panel points, badges and activity.{%- endcapture -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- capture title -%}{{ teen.firstName }}'s Teen Panel activity{%- endcapture -%}
+{% include "mailer/engagement/_head.liquid" %}
+<p style="margin:0 0 14px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 14px;">{{ teen.firstName }} asked us to send you this link. It shows their Teen Panel points, level, badges, recent activity and any reward requests. You can look but not change anything.</p>
+{%- assign btn_url = links.view -%}{%- assign btn_label = "Open the guardian view" -%}{%- assign btn_color = "#0b5bd3" -%}
+{%- capture btn_note -%}This link works until {{ expires | date: "%B %-d, %Y" }}. A new link replaces this one.{%- endcapture -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- capture why -%}You received this because you are the parent or guardian who approved {{ teen.firstName }}'s Teen Panel account.{%- endcapture -%}
+{% include "mailer/engagement/_foot.liquid" %}

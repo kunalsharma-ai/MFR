@@ -32,6 +32,8 @@ export default mongooseModel(
         },
         // referral leaderboard: off unless the member opts in, and then only a first name + initial is shown
         leaderboard: { optIn: { type: Boolean, default: false } },
+        // the quality score the member last saw, so a rise can be celebrated once
+        quality: { seenScore: Number, seenAt: Date },
         // the reward the member is saving for (Rewards page goal)
         goal: {
             item: { type: String, trim: true },

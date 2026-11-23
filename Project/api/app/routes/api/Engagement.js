@@ -5,10 +5,20 @@ import express from "express";
 import { isAuthenticated } from "../../utils/index.js";
 import * as points from "../../engagement/points.routes.js";
 import * as rewards from "../../engagement/rewards.routes.js";
+import * as daily from "../../engagement/daily.routes.js";
+import * as quality from "../../engagement/quality.routes.js";
+import * as pro from "../../engagement/pro.routes.js";
+import * as teens from "../../engagement/teens.routes.js";
+import * as account from "../../engagement/account.routes.js";
 
 const router = express.Router();
 router.use(isAuthenticated);
 points.mount(router);
 rewards.mount(router);
+daily.mount(router);
+quality.mount(router);
+pro.mount(router);
+teens.mount(router);
+account.mount(router);
 
 export default router;

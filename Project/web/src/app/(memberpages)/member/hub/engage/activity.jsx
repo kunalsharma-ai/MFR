@@ -11,9 +11,9 @@ import { useSummary, useLedgerPage, ledgerCsvUrl } from "./data";
 import "./engage.css";
 
 const day = (d) => (d ? new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "");
-const TYPES = ["survey", "profile", "poll", "streak", "referral", "challenge", "bonus", "task", "redemption"];
+const TYPES = ["survey", "profile", "poll", "streak", "referral", "challenge", "bonus", "task", "redemption", "draw"];
 const STATES = ["cleared", "pending", "on_hold", "spent"];
-const ICON = { survey: "surveys", profile: "profile", poll: "chart", streak: "bolt", referral: "network", challenge: "trophy", bonus: "star", task: "spark", redemption: "wallet" };
+const ICON = { survey: "surveys", profile: "profile", poll: "chart", streak: "bolt", referral: "network", challenge: "trophy", bonus: "star", task: "spark", redemption: "wallet", draw: "star" };
 
 /* ---------------- balances strip ---------------- */
 export function BalanceStrip() {

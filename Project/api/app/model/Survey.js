@@ -67,6 +67,20 @@ export default mongooseModel(
             type: Boolean,
             default: false
         },
+        // Nov 2026: only members whose quality score is at least this are invited (auto and bulk invites).
+        // Not set (null) = everyone, as before.
+        minQualityScore: {
+            type: Number,
+            default: null,
+            min: 0
+        },
+        // Nov 2026: a premium study for Professionals, matched on the member's industry and seniority answers.
+        // Empty lists = any. Not set = an ordinary survey, as before.
+        premium: {
+            enabled: { type: Boolean, default: false },
+            industries: [{ type: String, trim: true, lowercase: true }],
+            seniority: [{ type: String, trim: true, lowercase: true }],
+        },
         filters: {},
         batchSize: {
             type: Number

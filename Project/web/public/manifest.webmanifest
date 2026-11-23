@@ -1,0 +1,15 @@
+{
+  "name": "MyFrequentRewards",
+  "short_name": "MFR",
+  "description": "Share your opinions in surveys and earn rewards.",
+  "start_url": "/member/dashboard?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b5bd3",
+  "icons": [
+    { "src": "/member/pwa-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/member/pwa-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/member/pwa-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
