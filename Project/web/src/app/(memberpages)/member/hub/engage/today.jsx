@@ -110,7 +110,7 @@ function StoryCard({ story }) {
   if (!story) return null;
   return (
     <section className="eg-card eg-story" aria-labelledby="st-title">
-      <p className="h-eyebrow"><Icon name="heart" size={16} /> {t("st.title")}</p>
+      <p className="h-eyebrow"><Icon name="heart" size={16} /> {t("sy.title")}</p>
       {story.image ? <img src={story.image} alt="" loading="lazy" className="eg-story-img" /> : null}
       <h2 className="h-h3" id="st-title">{story.title}</h2>
       {story.summary ? <p>{story.summary}</p> : null}
@@ -120,7 +120,7 @@ function StoryCard({ story }) {
         </dl>
       ) : null}
       <button type="button" className="h-link" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-        {open ? t("st.less") : t("st.more")} <Icon name="chevron" size={14} />
+        {open ? t("sy.less") : t("sy.more")} <Icon name="chevron" size={14} />
       </button>
       {open ? (
         all.isLoading ? <LoadingBlock lines={2} h={60} /> : (
@@ -129,7 +129,7 @@ function StoryCard({ story }) {
               <li key={s.id}>
                 <b>{s.title}</b>
                 {s.summary ? <span>{s.summary}</span> : null}
-                {s.body ? <details><summary>{t("st.read")}</summary><p>{s.body}</p></details> : null}
+                {s.body ? <details><summary>{t("sy.read")}</summary><p>{s.body}</p></details> : null}
               </li>
             ))}
           </ul>

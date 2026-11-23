@@ -138,8 +138,8 @@ export const engage = {
   "dr.rules": "Official rules",
   "dr.balance": "You don't have enough points for a ticket yet.",
   "dr.limit": "You have the most tickets allowed for this draw.",
-  "st.title": "Your opinion mattered",
-  "st.more": "More stories",
-  "st.less": "Show less",
-  "st.read": "Read the story",
+  "sy.title": "Your opinion mattered",
+  "sy.more": "More stories",
+  "sy.less": "Show less",
+  "sy.read": "Read the story",
 };
