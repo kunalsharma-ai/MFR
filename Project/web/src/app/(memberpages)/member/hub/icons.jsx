@@ -332,6 +332,137 @@ const P = {
       <path d="M3.5 11.5L20 4l-5.5 16-3-6.5zM11.5 13.5L20 4" />
     </>
   ),
+  services: (
+    <>
+      <rect className="f" x="3.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+      <path d="M17 13.5v7M13.5 17h7" />
+    </>
+  ),
+  inbox: (
+    <>
+      <path className="f" d="M3.5 13h5l1.5 2.5h4L15.5 13h5v5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" />
+      <path d="M3.5 13l2.6-7.1A2 2 0 0 1 8 4.5h8a2 2 0 0 1 1.9 1.4L20.5 13v5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2zM3.5 13h5l1.5 2.5h4L15.5 13h5" />
+    </>
+  ),
+  flame: (
+    <>
+      <path className="f" d="M12 21c-3.9 0-6.5-2.6-6.5-6.1 0-3.6 3-5.6 3.6-9.4 2.4 1.4 3.7 3.6 3.9 5.6 1-.8 1.6-2 1.7-3.4 2 1.6 3.8 4.2 3.8 7.2 0 3.5-2.6 6.1-6.5 6.1z" />
+      <path d="M12 21c-3.9 0-6.5-2.6-6.5-6.1 0-3.6 3-5.6 3.6-9.4 2.4 1.4 3.7 3.6 3.9 5.6 1-.8 1.6-2 1.7-3.4 2 1.6 3.8 4.2 3.8 7.2 0 3.5-2.6 6.1-6.5 6.1zM12 21c-1.6 0-2.7-1.1-2.7-2.6 0-1.7 1.6-2.4 2.7-4.4 1.1 2 2.7 2.7 2.7 4.4 0 1.5-1.1 2.6-2.7 2.6z" />
+    </>
+  ),
+  crown: (
+    <>
+      <path className="f" d="M4 8l4 4 4-7 4 7 4-4-1.5 10h-13z" />
+      <path d="M4 8l4 4 4-7 4 7 4-4-1.5 10h-13zM5.5 21h13" />
+    </>
+  ),
+  gift: (
+    <>
+      <rect className="f" x="4" y="10" width="16" height="10.5" rx="2" />
+      <path d="M4 10h16v10.5a0 0 0 0 1 0 0H4zM3 7h18v3H3zM12 7v13.5M12 7c-1.5-3.5-5.5-3.5-5.5-1 0 1 1 1 5.5 1zM12 7c1.5-3.5 5.5-3.5 5.5-1 0 1-1 1-5.5 1z" />
+    </>
+  ),
+  target: (
+    <>
+      <circle className="f" cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 7h9M17 7h3M4 17h3M11 17h9M4 12h5M13 12h7" />
+      <circle className="f" cx="15" cy="7" r="2" />
+      <circle cx="15" cy="7" r="2" />
+      <circle cx="9" cy="17" r="2" />
+      <circle cx="11" cy="12" r="2" />
+    </>
+  ),
+  text: (
+    <>
+      <path d="M4 7V5h10v2M9 5v14M7 19h4M14 12v-1.5h6V12M17 10.5V19M15.5 19h3" />
+    </>
+  ),
+  contrast: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path className="f" d="M12 3.5a8.5 8.5 0 0 1 0 17z" style={{ fill: "currentColor" }} />
+    </>
+  ),
+  motion: (
+    <>
+      <circle className="f" cx="15" cy="12" r="5" />
+      <circle cx="15" cy="12" r="5" />
+      <path d="M3 9h5M2 12h6M3 15h5" />
+    </>
+  ),
+  keyboard: (
+    <>
+      <rect className="f" x="2.5" y="6" width="19" height="12" rx="2.5" />
+      <rect x="2.5" y="6" width="19" height="12" rx="2.5" />
+      <path d="M6 10h.01M9 10h.01M12 10h.01M15 10h.01M18 10h.01M7 14h10" />
+    </>
+  ),
+  device: (
+    <>
+      <rect className="f" x="3" y="4.5" width="13" height="10" rx="1.5" />
+      <rect x="3" y="4.5" width="13" height="10" rx="1.5" />
+      <path d="M6.5 18.5h6M9.5 14.5v4" />
+      <rect x="17" y="9" width="4.5" height="10" rx="1.2" />
+    </>
+  ),
+  eyeOff: (
+    <>
+      <path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 8.5 4.3 9.5 6-.5.9-1.6 2.4-3.1 3.7M6.3 7.6C4.5 8.9 3.2 10.7 2.5 12c1 1.7 4.5 6 9.5 6 1.6 0 3-.4 4.3-1.1M9.9 10a3 3 0 0 0 4.1 4.1" />
+    </>
+  ),
+  alert: (
+    <>
+      <path className="f" d="M12 3.5l9 16H3z" />
+      <path d="M12 3.5l9 16H3zM12 10v4M12 17h.01" />
+    </>
+  ),
+  hourglass: (
+    <>
+      <path className="f" d="M7 4h10c0 4-5 6-5 8 0-2-5-4-5-8z" />
+      <path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9" />
+    </>
+  ),
+  play: (
+    <>
+      <circle className="f" cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M10 8.5l5 3.5-5 3.5z" />
+    </>
+  ),
+  layers: (
+    <>
+      <path className="f" d="M12 3.5l8.5 4.5L12 12.5 3.5 8z" />
+      <path d="M12 3.5l8.5 4.5L12 12.5 3.5 8zM3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5" />
+    </>
+  ),
+  user: (
+    <>
+      <circle className="f" cx="12" cy="8" r="3.5" />
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5" />
+    </>
+  ),
+  globe2: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.6 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.6-3.5-8.5s1-5.9 3.5-8.5z" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M20 11a8 8 0 0 0-14.6-4.2L4 8.5M4 4v4.5h4.5M4 13a8 8 0 0 0 14.6 4.2l1.4-1.7M20 20v-4.5h-4.5" />
+    </>
+  ),
   book: (
     <>
       <path className="f" d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z" />

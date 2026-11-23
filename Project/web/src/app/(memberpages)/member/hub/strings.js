@@ -6,6 +6,7 @@
 // does for the rest of the member area.
 
 import { engage } from "./engage/strings.js";
+import { v2 } from "./strings-v2.js";
 
 export const en = {
   // shell
@@ -442,6 +443,8 @@ export const en = {
 
 // engagement features (Nov 2026) keep their text in ./engage/strings.js
 Object.assign(en, engage);
+// v2 hub (Nov 2026 redesign): only adds keys, never replaces one
+for (const [k, v] of Object.entries(v2)) if (!(k in en)) en[k] = v;
 
 const DICTS = { en };
 let active = "en";

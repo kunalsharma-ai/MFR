@@ -35,6 +35,7 @@ import { ui } from "./ps/sound";
 import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
 import { visibleProfiles, normalizeInterests, basicsDone, isCore } from "./ps/profileRules";
+import ProfileBand from "../../hub/profile.jsx";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -461,6 +462,9 @@ function SkinProfiles() {
   const asSurvey = Boolean(current) && !isCore(current.slug);
   const nextExtra = asSurvey ? gate.pending.find((p) => p.slug !== current.slug) : null;
   return (
+    <>
+    {/* Member hub v2 (Nov 2026): profile hero + completion system above the approved v4.1 profile studio */}
+    {current ? null : <ProfileBand />}
     <div className="ps" data-theme={dark ? "dark" : "light"} style={{ minHeight: "calc(100vh - 70px)", overflowX: "hidden" }}>
       {current ? (
         <PsFlow
@@ -489,6 +493,7 @@ function SkinProfiles() {
         </div>
       ) : null}
     </div>
+    </>
   );
 }
 
