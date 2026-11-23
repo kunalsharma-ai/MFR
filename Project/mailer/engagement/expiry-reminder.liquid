@@ -1,0 +1,14 @@
+{%- comment -%}
+  Points expiry reminder (api/app/jobs/points-expiry.js). Only sent when config.expiry.enabled is true.
+  Data: member.firstName, expiring.points, expiring.date, balance.available, money, links.rewards, links.unsubscribe
+{%- endcomment -%}
+{%- assign tone = "mfr" -%}
+{%- capture preheader -%}{{ expiring.points }} points expire on {{ expiring.date }}{%- endcapture -%}
+{%- assign kicker = "Points reminder" -%}
+{%- capture title -%}{{ member.firstName }}, {{ expiring.points }} of your points expire on {{ expiring.date }}{%- endcapture -%}
+{% include "mailer/engagement/_head.liquid" %}
+<p style="margin:0 0 14px;">You have <b>{{ balance.available }} points</b> ready to use{% if money %} (about {{ money }}){% endif %}. Use them before {{ expiring.date }} so none are lost, or finish a survey to keep your account active.</p>
+{%- assign btn_url = links.rewards -%}{%- assign btn_label = "Use my points" -%}{%- assign btn_color = "#fe7e00" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You get this because some of your points are close to their expiry date." -%}
+{% include "mailer/engagement/_foot.liquid" %}

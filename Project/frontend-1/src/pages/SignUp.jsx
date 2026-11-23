@@ -42,6 +42,7 @@ import {
 } from "../utils/validate.js";
 import { checkEmailDomain, checkEmailTaken } from "../utils/emailChecks.js";
 import { detectCountry } from "../utils/geo.js";
+import SignupLocation, { useGeo, locationErrors } from "../components/SignupLocation.jsx";
 import { rememberNotify } from "../utils/notifyMemo.js";
 
 const page = PAGES.signup;
@@ -133,6 +134,12 @@ function SignUp() {
     gender: "",
     dob: "",
     country: "",
+    stateCode: "",
+    state: "",
+    stateManual: false,
+    city: "",
+    zip: "",
+    noZip: false,
     email: "",
     phoneIso: "",
     phone: "",
@@ -155,8 +162,9 @@ function SignUp() {
   const [remote, setRemote] = useState({}); // { email: {value,msg}, guardianEmail: {value,msg} }
   //const minor = isMinor(v.dob);
 
+  const geo = useGeo(v.memberType === "teen" ? "" : v.country);
   const errors = useMemo(() => {
-    const e = validateSignup(v);
+    const e = { ...validateSignup(v), ...locationErrors(v, geo.data) };
     const r = remote.email;
     if (
       !e.email &&
@@ -168,7 +176,7 @@ function SignUp() {
     )
       e.email = r.msg;
     return e;
-  }, [v, remote]);
+  }, [v, remote, geo.data]);
 
   // Teens join on this same page and card (Kunal, Nov 2026): picking Teen, or typing a 13–17 birthday, switches the
   // form to the Teen steps and takes along what was already typed. The address keeps ?type=teen so a refresh stays.
@@ -338,6 +346,7 @@ function SignUp() {
       rememberSignup(res.data?.user, {
         memberType: v.memberType,
         firstName: v.firstName.trim(),
+        mail: v.email.trim().toLowerCase(), // lets /set-password log the member in straight away
         answers: consentAnswers(v),
       });
       rememberNotify(res.data?.user ?? res.data, v.notify);
@@ -749,35 +758,7 @@ function SignUp() {
                             ))}
                           </select>
                         </Field> */}
-                        {/* <div
-                          className={`sx-field ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`}
-                        >
-                          <span className="sx-static-label" id="country-lbl">
-                            Country of residence
-                          </span>
-                          <CountryPicker
-                            id="country"
-                            list={SUPPORTED_COUNTRIES}
-                            value={v.country}
-                            invalid={Boolean(err("country"))}
-                            describedBy={
-                              err("country") ? "country-err" : "country-lbl"
-                            }
-                            onChange={(c) => {
-                              setV((s) => ({
-                                ...s,
-                                country: c.iso,
-                                phoneIso: s.phoneIso || c.iso,
-                              }));
-                              touch("country");
-                            }}
-                          />
-                          {err("country") ? (
-                            <p className="f-err" id="country-err" role="alert">
-                              {err("country")}
-                            </p>
-                          ) : null}
-                        </div> */}
+                        <SignupLocation v={v} setV={setV} list={SUPPORTED_COUNTRIES} err={err} ok={ok} touch={touch} geo={geo.data} loading={geo.loading} />
                       </div>
                       {!v.dob ||
                       !Number.isFinite(ageFromDob(v.dob)) ||

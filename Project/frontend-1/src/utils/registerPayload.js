@@ -5,7 +5,7 @@
 //   • `mail` (not `email`), lower-cased. The pair (mail, origin) is unique.
 //   • `phone` is country code + number, digits only. A leading "+" fails its validator.
 //   • `gender` is required: Male | Female | Other.
-//   • `address[].tag` is required; `country` is the lower-case ISO code.
+//   • `address[].tag` is required; `country` is the lower-case ISO code; state, city and zipcode are optional.
 //   • `password` is NOT sent. The backend drops it and sets it later from the emailed link.
 //
 // Fields the backend has no place for yet (job title, industry, company email, interests, marketing
@@ -30,7 +30,14 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
     mail,
     phone,
     timezone,
-    address: [{ tag: 'home', country: String(v.country).toLowerCase() }],
+    address: [{
+      tag: 'home',
+      country: String(v.country).toLowerCase(),
+      // Country → State / Province → City → ZIP, as asked on step 1 (User.address already has these fields)
+      ...(v.state && v.state.trim() ? { state: v.state.trim() } : {}),
+      ...(v.city && v.city.trim() ? { city: v.city.trim() } : {}),
+      ...(!v.noZip && v.zip && v.zip.trim() ? { zipcode: v.zip.trim() } : {}),
+    }],
     notification,
   };
  

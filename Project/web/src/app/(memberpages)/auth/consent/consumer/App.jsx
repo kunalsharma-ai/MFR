@@ -25,7 +25,7 @@ import { api } from "@/util/api.js";
 import useToast from "@/hooks/useToast.js";
 
 // Where the member goes after signing the agreement: the profiles page, to fill the first profiles (not the dashboard)
-const AFTER_CONSENT_URL = "/member/profiles";
+const AFTER_CONSENT_URL = "/member/dashboard"; // the approved button says "Continue to your dashboard"
 
 const THEME_KEY = "mfr.consent.theme"; // the member's own light/dark choice (wins over everything)
 const ls = {

@@ -19,11 +19,11 @@ const store = (all) => {
 };
 
 // /sign-up: remember what the member chose, keyed by the user id the backend returned.
-export function rememberSignup(userId, { memberType, firstName, answers }) {
+export function rememberSignup(userId, { memberType, firstName, mail, answers }) {
   if (!userId) return;
   const all = load();
   const waiting = answers && Object.keys(answers).length > 0;
-  all[userId] = { memberType, firstName, ...(waiting ? { answers } : {}), exp: Date.now() + (waiting ? PENDING_TTL : LINK_TTL) };
+  all[userId] = { memberType, firstName, ...(mail ? { mail } : {}), ...(waiting ? { answers } : {}), exp: Date.now() + (waiting ? PENDING_TTL : LINK_TTL) };
   store(all);
 }
 

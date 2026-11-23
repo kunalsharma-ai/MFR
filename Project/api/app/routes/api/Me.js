@@ -32,6 +32,15 @@ Date.prototype.resetTime = function (type = "start") {
         this.setSeconds(0);
     }
 }
+import { Redemption } from "../../model/index.js";
+import mongoose from "mongoose";
+async function redeemedPoints(user, origin) {
+    const r = await Redemption.aggregate([
+        { $match: { user: new mongoose.Types.ObjectId(String(user)), origin, status: { $in: ["requested", "guardian_pending", "approved", "fulfilled"] } } },
+        { $group: { _id: null, n: { $sum: "$points" } } },
+    ]);
+    return r[0]?.n || 0;
+}
 const router = express.Router();
 router
     .route('/')
@@ -142,11 +151,13 @@ router
                 let respPoints = await responseController.getPoints();
                 // completed surveys + paid profiles (a profile completed as a survey is counted once)
                 let earned = await rewardController.total();
+                // points spent on rewards (Redemption, Nov 2026); 0 for everyone until redemptions open
+                const redeemed = await redeemedPoints(req.user._id, req.origin);
                 data = {
                     respPoints,
                     rewardPoints: earned - respPoints,
-                    redeemPoints: 0,
-                    totalPoints: earned,
+                    redeemPoints: redeemed,
+                    totalPoints: earned - redeemed,
                     threshold: 15000,
                     conversionRate: 0.001
                 }

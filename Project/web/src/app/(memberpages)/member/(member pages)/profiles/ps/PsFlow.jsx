@@ -19,6 +19,10 @@ import ThemeScene from "./ThemeScene.jsx";
 import MemberCard from "./MemberCard.jsx";
 import ProgressRing from "./ProgressRing.jsx";
 import Celebration from "./Celebration.jsx";
+import { tap, ui } from "./sound.js";
+
+// v4.1 click sounds play on the instrument of the member's language (mfr.lang); the hub's Sound setting mutes them
+const sndLang = () => { try { return (localStorage.getItem("mfr.lang") || "en").split("-")[0]; } catch { return "en"; } };
 import { Tiles, Chips, RadioList, Combo, TextInput } from "./Controls.jsx";
 import { IArrow, ICheck, IEdit, IGrid, ILock } from "./Icons.jsx";
 
@@ -334,9 +338,9 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
       qc.invalidateQueries({ queryKey: ["profiles"] });
       qc.invalidateQueries({ queryKey: ["answers-all", survey.slug] });
       // the API has just paid the profile's points: refresh the Prize Machine / balance before the pop-up shows them
-      Promise.resolve(onSaved?.()).catch((e) => console.log(e)).finally(() => { if (editOne) { setEditOne(null); setMode("review"); } else if (wasDone) setMode("review"); else setParty(true); });
+      Promise.resolve(onSaved?.()).catch((e) => console.log(e)).finally(() => { if (editOne) { setEditOne(null); setMode("review"); } else if (wasDone) setMode("review"); else { ui("complete"); setParty(true); } });
     },
-    onError: (e) => { console.log(e); useToast(e); },
+    onError: (e) => { console.log(e); ui("error"); useToast(e); },
   });
   const submit = () => form.handleSubmit((data) => save.mutate(data))();
   // Update on the review screen: only the edited answer and the answers under it are saved (PATCH takes any number of answers);
@@ -360,12 +364,18 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
   // ---- answering: children reset + "clear later questions on this page" (Survey.jsx / Select.jsx)
   const answer = (it, value, auto) => {
     const { def, name } = it;
+    const prev = form.getValues(name); // before the change: tells a pick from an un-pick for the click sound
     form.setValue(name, value, { shouldDirty: true });
     (def.children || []).forEach((c) => form.setValue(c, null));
     if (editOne) descendantsOf(name).forEach((c) => form.setValue(c, null));
     const order = (pages[pageIdx] || []).slice(1); const at = order.indexOf(name);
     if (at >= 0 && !editOne) order.slice(at + 1).forEach((q) => { const d = items.find((x) => x.name === q)?.def; if (d?.isEditable ?? true) form.setValue(q, null); });
     setErr("");
+    if (Array.isArray(it.opts) && it.opts.length) {
+      const picked = Array.isArray(value) ? value.find((v) => !(Array.isArray(prev) && prev.includes(v))) : value;
+      const removed = Array.isArray(value) && picked === undefined;
+      tap(sndLang(), Math.max(0, it.opts.findIndex((o) => o.value === (removed ? (prev || []).find((v) => !value.includes(v)) : picked))), removed ? "unpick" : "pick");
+    }
     const opt = (it.opts || []).find((o) => o.value === value);
     const needsSpecify = def.type === "select" && (value === "others" || filled(opt?.describeLabel));
     setSpecifyOpen((s) => ({ ...s, [name]: needsSpecify }));
@@ -414,6 +424,7 @@ export default function PsFlow({ survey, user, endpage = "/api/v1/me/profile", o
   };
   nextRef.current = onNext;
   const onBack = () => {
+    ui("back");
     setErr(""); setDir(-1);
     if (editOne) { setEditOne(null); setMode("review"); return; }
     if (idx > 0) setCurName(flow[idx - 1].name);
