@@ -429,3 +429,9 @@
   .hub .pf-acc-row { grid-template-columns: auto minmax(0, 1fr); }
   .hub .pf-acc-row .pf-state { grid-column: 2; justify-self: start; }
 }
+
+/* v2 dashboard art on the new deep heroes: glass instead of white */
+.hub .hx .dc-ring { background: var(--hero-chip); border: 1px solid var(--hero-line); box-shadow: none; backdrop-filter: blur(8px); color: var(--hero-ink); }
+.hub .hx .dc-ring small { color: var(--hero-muted); }
+.hub .hx .dc-ring .h-ring-in b { color: var(--hero-ink); }
+.hub .hx .dc-chip .hi { color: var(--hero-accent); }
