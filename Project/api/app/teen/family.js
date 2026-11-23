@@ -89,13 +89,28 @@ function consentView(c, catalogue) {
     };
 }
 
+// The empty form: every section and question the parent will be asked, and every consent permission, with no
+// answers. Lets the profile show all the fields ("not filled yet") before the parent has finished.
+function skeleton() {
+    const form = onboardingView({ onboarding: {} }, {});
+    form.sections.forEach((s) => s.questions.forEach((q) => { q.applies = true; }));
+    return {
+        onboarding: { ...form, submittedAt: null },
+        consent: {
+            version: GUARDIAN_CONSENT.version,
+            statements: GUARDIAN_CONSENT.selections.map((s) => ({ id: s.id, title: s.title || null, text: s.text, required: Boolean(s.required), accepted: null })),
+        },
+        rewards: { redemptionsOpen: Boolean(config().teen?.redemptionsEnabled), guardianApprovalRequired: true },
+    };
+}
+
 export async function family(req) {
     if (!req.user || !String(req.user.category || "").includes("minor")) {
         throw new TeenError("not_teen", { status: 403 });
     }
     const origin = req.origin;
     const reg = await TeenRegistration.findOne({ teen: req.user._id, origin }).sort({ createdAt: -1 }).lean();
-    if (!reg) return { ready: false, found: false };
+    if (!reg) return { ready: false, found: false, steps: { approved: false, onboarding: false, consent: false, active: false }, skeleton: skeleton() };
 
     const [g, consents] = await Promise.all([
         TeenGuardian.findById(reg.guardian).select("+onboarding.answers").lean(),
@@ -110,7 +125,7 @@ export async function family(req) {
     };
     const ready = Boolean(g) && steps.approved && steps.onboarding && steps.consent && steps.active;
     // not finished: say how far it got, and nothing the parent submitted
-    if (!ready) return { ready: false, found: true, status: reg.status, reference: reg.reference, steps };
+    if (!ready) return { ready: false, found: true, status: reg.status, reference: reg.reference, steps, skeleton: skeleton() };
 
     const teen = await User.findById(reg.teen).select("name dob mail phone").lean();
     const w = world();

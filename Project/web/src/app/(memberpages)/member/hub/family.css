@@ -141,3 +141,13 @@
   .hub .fm-q { grid-template-columns: 1fr; gap: 2px; }
   .hub .fm-chip { padding: 10px; }
 }
+
+/* filled / not filled on every field (Nov 2026: every field is always listed) */
+.hub .fm-f dt { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.hub .fm-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 99px; font-size: .66rem; font-weight: 750; letter-spacing: .02em; text-transform: none; white-space: nowrap; font-style: normal; }
+.hub .fm-badge.ok { color: var(--success, #078a55); background: color-mix(in srgb, var(--success, #078a55) 12%, var(--card)); }
+.hub .fm-badge.nf { color: var(--warning, #a85b00); background: color-mix(in srgb, var(--warning, #a85b00) 12%, var(--card)); }
+.hub .fm-f.is-nf { border-style: dashed; background: var(--card); }
+.hub .fm-q dd.is-empty { font-style: normal; }
+.hub .fm-perms li.wait em { color: var(--warning, #a85b00); background: color-mix(in srgb, var(--warning, #a85b00) 12%, var(--card)); }
+.hub .fm-perms li.wait .fm-tick { color: var(--warning, #a85b00); background: color-mix(in srgb, var(--warning, #a85b00) 14%, var(--card)); }

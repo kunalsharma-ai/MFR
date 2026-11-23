@@ -334,6 +334,11 @@ test("teen profile: what the guardian submitted, only for that teen, only once c
     assert.equal(early.json.data.steps.active, false);
     assert.ok(!JSON.stringify(early.json).includes("priya.parent@example.com"));
     assert.equal(early.json.data.guardian, undefined);
+    // ...but the empty form is there, so the profile can list every field as "not filled"
+    const sk = early.json.data.skeleton;
+    assert.equal(sk.onboarding.sections.flatMap((s) => s.questions).length, 17);
+    assert.ok(sk.onboarding.sections.flatMap((s) => s.questions).every((q) => q.answered === false && q.display.length === 0));
+    assert.ok(sk.consent.statements.every((s) => s.accepted === null));
     await Models.TeenRegistration.updateOne({ _id: reg._id }, { $set: { status: "active" } });
     assert.equal((await call("GET", "/api/v1/teen/me/family")).status, 401);
 });

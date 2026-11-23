@@ -27,7 +27,13 @@ const S = {
   step_onboarding: "Parent or guardian form sent",
   step_consent: "Consent given",
   step_active: "Your account switched on",
-  notProvided: "Not provided",
+  notProvided: "Not filled",
+  filled: "Filled",
+  waiting: "Waiting for your parent or guardian",
+  pendingNote: "These are all the details your parent or guardian will give us. Each one fills in here when they finish; until then it shows as not filled.",
+  filledCount: "{a} of {b} filled",
+  notYet: "Not yet",
+  notGiven: "Not given yet",
   notApplied: "Didn't apply",
   notRecorded: "Not recorded",
   show: "Show",
@@ -181,9 +187,12 @@ function useFamily() {
 /* ---------------- small parts ---------------- */
 function Field({ label, children, empty }) {
   return (
-    <div className="fm-f">
-      <dt>{label}</dt>
-      <dd className={empty ? "is-empty" : ""}>{empty ? f("notProvided") : children}</dd>
+    <div className={`fm-f ${empty ? "is-nf" : "is-ok"}`}>
+      <dt>
+        <span>{label}</span>
+        <span className={`fm-badge ${empty ? "nf" : "ok"}`}><Icon name={empty ? "clock" : "check"} size={11} /> {empty ? f("notProvided") : f("filled")}</span>
+      </dt>
+      <dd className={empty ? "is-empty" : ""}>{empty ? "—" : children}</dd>
     </div>
   );
 }
@@ -224,14 +233,16 @@ function Card({ id, icon, tone, title, sub, status, open, onToggle, children }) 
 }
 
 /* ---------------- 1 guardian ---------------- */
-function GuardianCard({ d, ...card }) {
+function GuardianCard({ d, pending, ...card }) {
   const g = d.guardian;
   const name = [g.firstName, g.middleName, g.lastName].filter(Boolean).join(" ");
+  const vals = [name, g.relation, g.dob, g.gender, g.email, g.phone, g.verification?.emailVerifiedAt, g.verification?.authority];
+  const n = vals.filter(Boolean).length;
   return (
-    <Card {...card} icon="users" tone="guardian" title={f("gTitle")} sub={f("gSub")} status={{ state: "done", label: f("approved") }}>
+    <Card {...card} icon="users" tone="guardian" title={f("gTitle")} sub={f("gSub")} status={pending ? { state: "pending", label: f("waiting") } : { state: n === vals.length ? "done" : "progress", label: `${f("approved")} · ${f("filledCount", { a: n, b: vals.length })}` }}>
       <div className="fm-id">
         <span className="fm-av" aria-hidden="true">{(g.firstName || "?").slice(0, 1).toUpperCase()}</span>
-        <div><b>{name || f("notProvided")}</b><small>{REL[g.relation] || g.relation}</small></div>
+        <div><b>{name || f("notProvided")}</b><small>{REL[g.relation] || g.relation || f("waiting")}</small></div>
       </div>
       <dl className="fm-grid">
         <Field label={f("gName")} empty={!name}>{name}</Field>
@@ -251,21 +262,21 @@ function GuardianCard({ d, ...card }) {
 /* ---------------- 2 onboarding ---------------- */
 function Answer({ q }) {
   if (!q.applies) return <dd className="is-empty">{f("notApplied")}</dd>;
-  if (!q.answered) return <dd className="is-empty">{f("notProvided")}</dd>;
+  if (!q.answered) return <dd className="is-empty"><span className="fm-badge nf"><Icon name="clock" size={11} /> {f("notProvided")}</span></dd>;
   const vals = q.format === "date" ? q.display.map((v) => fmtDate(v)) : q.format === "language" ? q.display.map(langName) : q.kind === "phone" ? q.display.map((v) => `+${String(v).replace(/^\+/, "")}`) : q.display;
   return vals.length > 1
     ? <dd><ul className="fm-tags">{vals.map((v) => <li key={v}>{v}</li>)}</ul></dd>
     : <dd>{vals[0]}</dd>;
 }
-function OnboardingCard({ d, ...card }) {
+function OnboardingCard({ d, pending, ...card }) {
   const o = d.onboarding;
   const qs = o.sections.flatMap((s) => s.questions);
   const asked = qs.filter((q) => q.applies);
   const answered = asked.filter((q) => q.answered).length;
   const icons = { "About you": "user", "Your household": "home", "Staying in touch": "mail" };
   return (
-    <Card {...card} icon="book" tone="onboarding" title={f("oTitle")} sub={f("oSub")} status={{ state: "done", label: f("oCount", { a: answered, b: asked.length }) }}>
-      <p className="fm-meta"><Icon name="calendar" size={14} /> {f("oSent")} {fmtDate(o.submittedAt, true)}</p>
+    <Card {...card} icon="book" tone="onboarding" title={f("oTitle")} sub={f("oSub")} status={pending ? { state: "pending", label: f("filledCount", { a: 0, b: asked.length }) } : { state: answered === asked.length ? "done" : "progress", label: f("oCount", { a: answered, b: asked.length }) }}>
+      <p className="fm-meta"><Icon name="calendar" size={14} /> {f("oSent")}: {o.submittedAt ? fmtDate(o.submittedAt, true) : f("notYet")}</p>
       <div className="fm-sections">
         {o.sections.map((s, i) => {
           const health = s.optional;
@@ -277,7 +288,7 @@ function OnboardingCard({ d, ...card }) {
                 <b>{s.name}</b>
                 <small>{f("oCount", { a: s.questions.filter((q) => q.applies && q.answered).length, b: s.questions.filter((q) => q.applies).length })}</small>
               </summary>
-              {health ? <p className="fm-note fm-health"><Icon name="shield" size={14} /> {skipped ? f("oHealthNote") : f("oHealthPrivate")}</p> : null}
+              {health && !pending ? <p className="fm-note fm-health"><Icon name="shield" size={14} /> {skipped ? f("oHealthNote") : f("oHealthPrivate")}</p> : null}
               <dl className="fm-qa">
                 {s.questions.map((q) => (
                   <div key={q.n} className="fm-q">
@@ -295,7 +306,7 @@ function OnboardingCard({ d, ...card }) {
 }
 
 /* ---------------- 3 rewards ---------------- */
-function RewardsCard({ d, ...card }) {
+function RewardsCard({ d, pending, ...card }) {
   const hub = useHub();
   const tp = hub.teen?.data;
   const r = d.rewards;
@@ -412,17 +423,17 @@ function ConsentDialog({ d, onClose }) {
 }
 function Perm({ s }) {
   return (
-    <li className={s.accepted ? "yes" : "no"}>
-      <span className="fm-tick" aria-hidden="true"><Icon name={s.accepted ? "check" : "close"} size={14} /></span>
+    <li className={s.accepted == null ? "wait" : s.accepted ? "yes" : "no"}>
+      <span className="fm-tick" aria-hidden="true"><Icon name={s.accepted == null ? "clock" : s.accepted ? "check" : "close"} size={14} /></span>
       <span>
         {s.title ? <b>{s.title}</b> : null}
         <small>{s.text}</small>
       </span>
-      <em>{s.accepted ? f("cYes") : f("cNo")}</em>
+      <em>{s.accepted == null ? f("notGiven") : s.accepted ? f("cYes") : f("cNo")}</em>
     </li>
   );
 }
-function ConsentCard({ d, ...card }) {
+function ConsentCard({ d, pending, ...card }) {
   const [view, setView] = React.useState(false);
   const c = d.consent.guardian;
   const req = c.statements.filter((s) => s.required);
@@ -430,20 +441,20 @@ function ConsentCard({ d, ...card }) {
   const missing = d.notRecorded.filter((k) => k.startsWith("consent_"));
   const close = React.useCallback(() => setView(false), []);
   return (
-    <Card {...card} icon="shield" tone="consent" title={f("cTitle")} sub={f("cSub")} status={{ state: "done", label: f("given") }}>
+    <Card {...card} icon="shield" tone="consent" title={f("cTitle")} sub={f("cSub")} status={pending ? { state: "pending", label: f("notGiven") } : { state: "done", label: f("given") }}>
       <dl className="fm-grid">
-        <Field label={f("cStatus")}><span className="h-state s-done"><Icon name="check" size={14} /> {f("given")}</span></Field>
-        <Field label={f("cAt")}>{fmtDate(c.acceptedAt, true)}</Field>
+        <Field label={f("cStatus")}>{pending ? <span className="h-state s-pending"><Icon name="clock" size={14} /> {f("notGiven")}</span> : <span className="h-state s-done"><Icon name="check" size={14} /> {f("given")}</span>}</Field>
+        <Field label={f("cAt")} empty={!c.acceptedAt}>{fmtDate(c.acceptedAt, true)}</Field>
         <Field label={f("cVersion")}>{c.version}</Field>
         <Field label={f("cLang")} empty={!c.language}>{langName(c.language)}</Field>
-        <Field label={f("cRead")}>{c.sectionsRead.length ? f("cReadN", { n: c.sectionsRead.length }) : f("notRecorded")}</Field>
+        <Field label={f("cRead")} empty={pending}>{c.sectionsRead.length ? f("cReadN", { n: c.sectionsRead.length }) : f("notRecorded")}</Field>
       </dl>
       <h4 className="fm-h4"><Icon name="lock" size={16} /> {f("cRequired")}</h4>
       <ul className="fm-perms">{req.map((s) => <Perm key={s.id} s={s} />)}</ul>
       {opt.length ? <><h4 className="fm-h4"><Icon name="sliders" size={16} /> {f("cOptional")}</h4><ul className="fm-perms">{opt.map((s) => <Perm key={s.id} s={s} />)}</ul></> : null}
-      <div className="fm-actions">
+      {pending ? null : <div className="fm-actions">
         <button type="button" className="h-btn h-btn-primary" onClick={() => setView(true)}><Icon name="eye" size={16} /> {f("cView")}</button>
-      </div>
+      </div>}
       {d.consent.teen ? (
         <details className="fm-sec">
           <summary><Icon name="user" size={18} /><b>{f("cYours")}</b><small>{d.consent.teen.version} · {fmtDate(d.consent.teen.acceptedAt)}</small></summary>
@@ -462,15 +473,15 @@ function ConsentCard({ d, ...card }) {
 }
 
 /* ---------------- 5 teen ---------------- */
-function TeenCard({ d, ...card }) {
+function TeenCard({ d, pending, ...card }) {
   const t = d.teen;
   const name = [t.firstName, t.middleName, t.lastName].filter(Boolean).join(" ");
   const place = [t.location.city, t.location.state, t.location.countryName].filter(Boolean).join(", ") + (t.location.zip ? ` ${t.location.zip}` : "");
   const gender = t.gender === "Self-describe" && t.genderSelf ? t.genderSelf : t.gender;
   return (
-    <Card {...card} icon="id" tone="teen" title={f("tTitle")} sub={f("tSub")} status={{ state: "done", label: f("active") }}>
+    <Card {...card} icon="id" tone="teen" title={f("tTitle")} sub={f("tSub")} status={pending ? { state: "pending", label: f("waiting") } : { state: "done", label: f("active") }}>
       <dl className="fm-grid">
-        <Field label={f("tRef")}>{d.reference}</Field>
+        <Field label={f("tRef")} empty={!d.reference}>{d.reference}</Field>
         <Field label={f("tName")} empty={!name}>{name}</Field>
         <Field label={f("tDob")} empty={!t.dob}>{fmtDate(t.dob)}</Field>
         <Field label={f("tGender")} empty={!gender}>{gender}</Field>
@@ -482,6 +493,7 @@ function TeenCard({ d, ...card }) {
         <Field label={f("tWelcome")}>{d.registration.welcomeDoneAt ? `${f("tWelcomeDone")} · ${fmtDate(d.registration.welcomeDoneAt)}` : f("tWelcomeTodo")}</Field>
       </dl>
       <h4 className="fm-h4"><Icon name="clock" size={16} /> {f("tSteps")}</h4>
+      {!d.registration.timeline.length ? <p className="fm-note">{f("notYet")}</p> : null}
       <ol className="fm-time">
         {d.registration.timeline.map((h, i) => (
           <li key={`${h.status}-${i}`} style={{ "--i": i }}>
@@ -494,10 +506,40 @@ function TeenCard({ d, ...card }) {
   );
 }
 
+/* ---------------- before the parent has finished ---------------- */
+// Same shape as the ready answer, every parent value empty. The form's questions and the consent permissions come
+// from the server's skeleton (the real form), the teen's own details from their member record.
+function pendingView(d, member) {
+  const sk = d.skeleton || {};
+  const a = (member?.address || [])[0] || {};
+  const empty = { sections: [] };
+  return {
+    reference: d.reference || "",
+    guardian: { verification: {} },
+    onboarding: sk.onboarding || empty,
+    rewards: { redemptionsOpen: Boolean(sk.rewards?.redemptionsOpen), guardianApprovalRequired: true, requests: [], viewLinks: { sent: 0 } },
+    consent: {
+      guardian: { version: sk.consent?.version || "", acceptedAt: null, language: null, sectionsRead: [], statements: sk.consent?.statements || [] },
+      teen: null,
+      document: null,
+    },
+    registration: { decision: { value: null, at: null }, activatedAt: null, welcomeDoneAt: null, timeline: [] },
+    teen: {
+      firstName: member?.name?.first || "", middleName: member?.name?.middle || "", lastName: member?.name?.last || "",
+      dob: member?.dob ? String(member.dob).slice(0, 10) : "", email: member?.mail || "", phone: member?.phone || "",
+      gender: member?.gender || "", genderSelf: "",
+      location: { city: a.city || "", state: a.state || "", countryName: a.country ? String(a.country).toUpperCase() : "", zip: a.zipcode || "" },
+      language: "",
+    },
+    notRecorded: [],
+  };
+}
+
 /* ---------------- the panel ---------------- */
 const CARDS = ["fm-guardian", "fm-onboarding", "fm-rewards", "fm-consent", "fm-teen"];
 export default function FamilyPanel() {
   const q = useFamily();
+  const member = useMember();
   const [open, setOpen] = React.useState({ "fm-guardian": true });
   const toggle = React.useCallback((id, v) => setOpen((o) => (o[id] === v ? o : { ...o, [id]: v })), []);
   const all = CARDS.every((id) => open[id]);
@@ -510,26 +552,10 @@ export default function FamilyPanel() {
   if (q.isLoading) return <section className="fm" aria-labelledby="fm-t">{head}<LoadingBlock lines={4} h={220} /></section>;
   if (q.isError) return <section className="fm" aria-labelledby="fm-t">{head}<ErrorState text={f("loadError")} onRetry={q.refetch} /></section>;
   const d = q.data;
-  if (!d?.ready) {
-    const steps = d?.steps || {};
-    return (
-      <section className="fm" aria-labelledby="fm-t">
-        {head}
-        <div className="fm-wait">
-          <span className="fm-card-ic"><Icon name="hourglass" size={22} /></span>
-          <div>
-            <b>{f("waitTitle")}</b>
-            <p>{f("waitSub")}</p>
-            <ul className="fm-steps">
-              {["approved", "onboarding", "consent", "active"].map((k) => (
-                <li key={k} className={steps[k] ? "ok" : ""}><Icon name={steps[k] ? "check" : "clock"} size={14} /> {f(`step_${k}`)}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // before the parent or guardian has finished: the same cards, every field listed and marked not filled
+  const pending = !d?.ready;
+  const v = pending ? pendingView(d || {}, member) : d;
+  const steps = d?.steps || {};
   const card = (id) => ({ id, open: Boolean(open[id]), onToggle: toggle });
   return (
     <section className="fm" aria-labelledby="fm-t">
@@ -539,18 +565,32 @@ export default function FamilyPanel() {
           <Icon name="layers" size={16} /> {all ? f("collapseAll") : f("expandAll")}
         </button>
       </div>
+      {pending ? (
+        <div className="fm-wait">
+          <span className="fm-card-ic"><Icon name="hourglass" size={22} /></span>
+          <div>
+            <b>{f("waitTitle")}</b>
+            <p>{f("pendingNote")}</p>
+            <ul className="fm-steps">
+              {["approved", "onboarding", "consent", "active"].map((k) => (
+                <li key={k} className={steps[k] ? "ok" : ""}><Icon name={steps[k] ? "check" : "clock"} size={14} /> {f(`step_${k}`)}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
       <ul className="fm-chips" aria-label={f("title")}>
-        <Chip ok icon="id" label={f("chipReg")} value={f("active")} />
-        <Chip ok icon="users" label={f("chipGuardian")} value={`${f("approved")} · ${fmtDate(d.registration.decision.at)}`} />
-        <Chip ok icon="shield" label={f("chipConsent")} value={`${f("given")} · ${d.consent.guardian.version}`} />
-        <Chip ok={d.rewards.redemptionsOpen} warn={!d.rewards.redemptionsOpen} icon="gift" label={f("chipRewards")} value={d.rewards.redemptionsOpen ? f("rewardsOpen") : f("rewardsSoon")} />
+        <Chip ok={!pending} warn={pending} icon="id" label={f("chipReg")} value={pending ? f("notYet") : f("active")} />
+        <Chip ok={steps.approved || !pending} warn={pending && !steps.approved} icon="users" label={f("chipGuardian")} value={v.registration.decision.at ? `${f("approved")} · ${fmtDate(v.registration.decision.at)}` : f("waiting")} />
+        <Chip ok={!pending} warn={pending} icon="shield" label={f("chipConsent")} value={pending ? f("notGiven") : `${f("given")} · ${v.consent.guardian.version}`} />
+        <Chip ok={v.rewards.redemptionsOpen} warn={!v.rewards.redemptionsOpen} icon="gift" label={f("chipRewards")} value={v.rewards.redemptionsOpen ? f("rewardsOpen") : f("rewardsSoon")} />
       </ul>
       <div className="fm-cards">
-        <Reveal><GuardianCard d={d} {...card("fm-guardian")} /></Reveal>
-        <Reveal delay={40}><OnboardingCard d={d} {...card("fm-onboarding")} /></Reveal>
-        <Reveal delay={80}><RewardsCard d={d} {...card("fm-rewards")} /></Reveal>
-        <Reveal delay={120}><ConsentCard d={d} {...card("fm-consent")} /></Reveal>
-        <Reveal delay={160}><TeenCard d={d} {...card("fm-teen")} /></Reveal>
+        <Reveal><GuardianCard d={v} pending={pending} {...card("fm-guardian")} /></Reveal>
+        <Reveal delay={40}><OnboardingCard d={v} pending={pending} {...card("fm-onboarding")} /></Reveal>
+        <Reveal delay={80}><RewardsCard d={v} pending={pending} {...card("fm-rewards")} /></Reveal>
+        <Reveal delay={120}><ConsentCard d={v} pending={pending} {...card("fm-consent")} /></Reveal>
+        <Reveal delay={160}><TeenCard d={v} pending={pending} {...card("fm-teen")} /></Reveal>
       </div>
     </section>
   );
