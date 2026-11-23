@@ -18,7 +18,9 @@ import { memberType } from "./http.js";
 import { send, unsubscribeLink, siteUrl } from "./mail.js";
 
 const HOUR = 3600 * 1000;
-export const POINTS_PER_PROFILE = 100; // Profile v4.1
+// what the API really pays per completed profile (Kunal, 23 Nov 2026: keep 50 for now; v4.1 designs say 100)
+export { DEFAULT_PROFILE_POINTS as POINTS_PER_PROFILE } from "../controller/Reward.js";
+import { DEFAULT_PROFILE_POINTS as POINTS_PER_PROFILE } from "../controller/Reward.js";
 export const CORE_SLUGS = ["basic", "educational", "professional", "financial"]; // same as web profiles/ps/profileRules.js
 // Profile v4.1 arcade ranks (adults): Rookie, Player, Pro, Champion, Legend at 0 / 8 / 17 / 26 / 37 profiles
 export const RANKS = [["Rookie", 0], ["Player", 8], ["Pro", 17], ["Champion", 26], ["Legend", 37]];
@@ -51,6 +53,7 @@ export function progressFields(done, total, doneSlugs = []) {
     const pct = Math.round(((points % perDollar) / perDollar) * 100);
     const n = (x) => new Intl.NumberFormat("en-US").format(x);
     return {
+        per_profile: POINTS_PER_PROFILE,
         done, total, left, points: n(points),
         rank: r.rank, rank_index: r.index, next_rank: r.next, to_next_rank: r.toNext,
         core_done: CORE_SLUGS.every((s) => doneSlugs.includes(s)),
@@ -120,6 +123,10 @@ export async function payloadFor(user, c) {
     };
     if (c.id === "case1-password") data.links.set_password = await setPasswordLink(user);
     if (c.id === "case3-noprofiles" || c.id === "case4-partial") data.unsubscribe_url = unsubscribeLink(user.origin, String(user._id), "lifecycle");
+    if (c.id === "case3-noprofiles") {
+        const total = c.prog.total;
+        data.p = { total, per_profile: POINTS_PER_PROFILE, total_points: new Intl.NumberFormat("en-US").format(total * POINTS_PER_PROFILE), total_usd: usd(total * POINTS_PER_PROFILE), player_at: Math.round(8 * (total / 37)) || 1 };
+    }
     if (c.id === "case4-partial") {
         data.p = progressFields(c.prog.done, c.prog.total, c.prog.doneSlugs);
         data.profile = { completed_count: c.prog.done, total_count: c.prog.total, percent_complete: Math.round((c.prog.done / c.prog.total) * 100) };

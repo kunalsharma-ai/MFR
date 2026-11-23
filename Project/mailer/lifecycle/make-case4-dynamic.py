@@ -5,7 +5,7 @@ prints the member's real progress. Run it on a fresh build of mfr-v6/react/dist/
     python3 make-case4-dynamic.py <in.liquid> <out.liquid>
 
 Merge fields it expects (built by api/app/engagement/lifecycle.js):
-  p.done p.total p.left p.points p.rank p.next_rank p.to_next_rank p.core_done (true/false)
+  p.per_profile p.done p.total p.left p.points p.rank p.next_rank p.to_next_rank p.core_done (true/false)
   p.to_dollar_points p.to_dollar_profiles p.dollar_pct p.dollar_rest_pct p.left_points p.left_usd p.rank_index
 Every replacement must hit exactly the expected number of times, or the script stops, so a changed design is noticed.
 """
@@ -66,6 +66,11 @@ i = s.find('/g3d/rank-1.png')
 if i < 0: sys.exit("rank-1 image not found")
 a = s.rfind('<table', 0, i); b = s.find('</table>', i) + len('</table>')
 s = s[:a] + '{% if p.rank_index == 1 %}' + s[a:b] + '{% endif %}' + s[b:]
+
+# points per profile: the API pays config-driven points (DEFAULT_PROFILE_POINTS), so never print a fixed 100
+rep('pays the same 100 points.', 'pays the same {{ p.per_profile }} points.', 1)
+rep('pays the same 100 points as a short one', 'pays the same {{ p.per_profile }} points as a short one', 1)
+rep('>+100<', '>+{{ p.per_profile }}<', 4)
 
 body = s[s.find('{%- endcomment -%}'):]
 for left in ['33 still', 'Player now', '4 of 37', '600 points', 'Thirty-three', '400 points']:

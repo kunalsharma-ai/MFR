@@ -29,7 +29,7 @@ those paths before switching anything on. Only the images the templates actually
 | `lifecycle/case1-password` | Registered over 24 hours ago and the password was never set | `app/jobs/lifecycle-emails.js` (hourly) | **new, off**: `emails.lifecycle` |
 | `lifecycle/case2-terms` | Password set, research terms not accepted | same | **new, off** |
 | `lifecycle/case3-noprofiles` | Terms accepted, no profile complete | same | **new, off** (has an unsubscribe link) |
-| `lifecycle/case4-partial` | Some profiles complete, some still open. This is the **every-2-days profile reminder** from Profile v4.1 | same | **new, off** (has an unsubscribe link). It shows the member's real figures: profiles done, points, rank and points to the next dollar |
+| `lifecycle/case4-partial` | Some profiles complete, some still open. This is the **every-2-days profile reminder** from Profile v4.1 | same | **new, off** (has an unsubscribe link). It shows the member's real figures: profiles done, points, rank and points to the next dollar, at the points the API really pays per profile (50 today) |
 | `engagement/weekly-summary` | Weekly points recap | `app/jobs/weekly-summary.js` | **new, off**: `weeklySummary.enabled` |
 | `engagement/expiry-reminder` | Points are about to expire | (Phase 2, only if expiry is ever switched on) | **new, off**: `expiry.enabled` |
 | `teen/*` (12) | Teen Panel registration and guardian consent | `/api/v1/teen` | **live** (PR #15) |
@@ -70,7 +70,9 @@ Try a run first with `node app/jobs/lifecycle-emails.js --dry-run`, which lists 
 The React sources stay with the designer's pack (`mfr-emails-v6`, `mfr-templates-v6`). After a rebuild:
 
 - copy `dist/liquid/*` over the files here
-- for `case4-partial`, run `python3 lifecycle/make-case4-dynamic.py <new case4-partial.liquid> lifecycle/case4-partial.liquid`.
-  The design bakes in sample figures (4 of 37, 400 points, Player). The script swaps them for the member's own
-  figures, and it stops if the design changed so much that a figure can't be found.
+- for `case3-noprofiles` and `case4-partial`, run `python3 lifecycle/make-case3-dynamic.py <new case3> lifecycle/case3-noprofiles.liquid`
+  and `python3 lifecycle/make-case4-dynamic.py <new case4> lifecycle/case4-partial.liquid`. The designs bake in sample
+  figures (37 profiles at 100 points each, 4 of 37, 400 points, Player). The scripts swap them for the member's own
+  figures and for the points the API really pays per profile (50 today; Kunal chose to keep 50 for now). They stop
+  if the design changed so much that a figure can't be found.
 - in `support/ticket-updated-*`, keep the plain-text filter on `reply.message`

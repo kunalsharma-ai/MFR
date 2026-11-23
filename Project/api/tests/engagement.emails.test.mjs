@@ -35,11 +35,12 @@ test("progress figures and ranks (Profile v4.1)", () => {
     assert.equal(rankOf(0, 37).rank, "Rookie");
     assert.equal(rankOf(8, 37).rank, "Player");
     assert.equal(rankOf(37, 37).next, null);
-    const p = progressFields(9, 37, ["basic"]);
-    assert.equal(p.points, "900");
-    assert.equal(p.to_dollar_points, "100");
-    assert.equal(p.to_dollar_profiles, 1);
-    assert.equal(p.left_usd, "$2.80");
+    const p = progressFields(9, 37, ["basic"]); // 50 points per profile (what the API pays today)
+    assert.equal(p.per_profile, 50);
+    assert.equal(p.points, "450");
+    assert.equal(p.to_dollar_points, "550");
+    assert.equal(p.to_dollar_profiles, 11);
+    assert.equal(p.left_usd, "$1.40");
     assert.equal(p.core_done, false);
 });
 
@@ -66,6 +67,9 @@ test("lifecycle run: off by default; then 48h spacing, max, unsubscribe, real fi
     assert.equal(c4.data.p.done, 1);
     assert.equal(c4.data.p.total, 2);
     assert.match(c4.data.unsubscribe_url, /l=lifecycle/);
+    const c3 = mails("case3-noprofiles", before)[0];
+    assert.equal(c3.data.p.total, 2);
+    assert.equal(c3.data.p.per_profile, 50);
     const c1 = mails("case1-password", before)[0];
     assert.match(c1.data.links.set_password, /\/set-password\?user=.*&code=\d{6}/);
     assert.equal(c1.data.unsubscribe_url, undefined, "case 1 is transactional");
