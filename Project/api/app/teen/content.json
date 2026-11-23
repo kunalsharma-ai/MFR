@@ -113,7 +113,8 @@
      "parent-last-name"
     ],
     "section": "About you",
-    "optional": false
+    "optional": false,
+    "q": "What is your name?"
    },
    {
     "n": "parent-gender",
@@ -129,7 +130,15 @@
     ],
     "other": "Other",
     "section": "About you",
-    "optional": false
+    "optional": false,
+    "q": "How do you describe yourself?",
+    "labels": {
+     "Female": "Female",
+     "Male": "Male",
+     "Non-binary": "Non-binary",
+     "Other": "Another identity",
+     "Prefer not to say": "Prefer not to say"
+    }
    },
    {
     "n": "parent-dob",
@@ -137,7 +146,8 @@
     "req": true,
     "multi": false,
     "section": "About you",
-    "optional": false
+    "optional": false,
+    "q": "What is your date of birth?"
    },
    {
     "n": "P01",
@@ -145,7 +155,8 @@
     "req": true,
     "multi": false,
     "section": "About you",
-    "optional": false
+    "optional": false,
+    "q": "In which country do you live?"
    },
    {
     "n": "P02",
@@ -153,7 +164,8 @@
     "req": true,
     "multi": false,
     "section": "About you",
-    "optional": false
+    "optional": false,
+    "q": "Which state, province or region do you live in?"
    },
    {
     "n": "P03",
@@ -169,7 +181,15 @@
     ],
     "other": "caregiver",
     "section": "Your household",
-    "optional": false
+    "optional": false,
+    "q": "What is your relationship to the teenager?",
+    "labels": {
+     "mother": "Mother",
+     "father": "Father",
+     "guardian": "Legal guardian",
+     "foster": "Foster guardian",
+     "caregiver": "Other legally authorised caregiver"
+    }
    },
    {
     "n": "parent-marital",
@@ -184,7 +204,15 @@
      "Prefer not to say"
     ],
     "section": "Your household",
-    "optional": false
+    "optional": false,
+    "q": "What is your marital status?",
+    "labels": {
+     "Single, never married": "Single, never married",
+     "Married": "Married",
+     "Separated, divorced or widowed": "Separated, divorced or widowed",
+     "Domestic partnership/living with someone": "Domestic partnership / living with someone",
+     "Prefer not to say": "Prefer not to say"
+    }
    },
    {
     "n": "P04",
@@ -198,7 +226,13 @@
     ],
     "gate": true,
     "section": "Your household",
-    "optional": false
+    "optional": false,
+    "q": "Are you legally authorised to give permission for this teenager to take part?",
+    "labels": {
+     "yes": "Yes, I am",
+     "no": "No, I am not",
+     "unsure": "I am not sure"
+    }
    },
    {
     "n": "P11",
@@ -212,7 +246,14 @@
      "4+"
     ],
     "section": "Your household",
-    "optional": false
+    "optional": false,
+    "q": "How many children aged 13–17 are you parenting?",
+    "labels": {
+     "1": "1",
+     "2": "2",
+     "3": "3",
+     "4+": "4 or more"
+    }
    },
    {
     "n": "P06",
@@ -220,7 +261,8 @@
     "req": true,
     "multi": false,
     "section": "Staying in touch",
-    "optional": false
+    "optional": false,
+    "q": "Which language would you like us to write to you in?"
    },
    {
     "n": "P07",
@@ -234,7 +276,14 @@
      "whatsapp"
     ],
     "section": "Staying in touch",
-    "optional": false
+    "optional": false,
+    "q": "How would you prefer us to contact you?",
+    "labels": {
+     "email": "Email",
+     "sms": "SMS",
+     "call": "Phone call",
+     "whatsapp": "WhatsApp, where lawful"
+    }
    },
    {
     "n": "P08",
@@ -242,7 +291,8 @@
     "req": true,
     "multi": false,
     "section": "Staying in touch",
-    "optional": false
+    "optional": false,
+    "q": "What is your email address?"
    },
    {
     "n": "P09",
@@ -250,7 +300,8 @@
     "req": false,
     "multi": false,
     "section": "Staying in touch",
-    "optional": false
+    "optional": false,
+    "q": "What is your mobile number?"
    },
    {
     "n": "P12",
@@ -262,7 +313,12 @@
      "no"
     ],
     "section": "Staying in touch",
-    "optional": false
+    "optional": false,
+    "q": "Would you like to receive panel administration messages?",
+    "labels": {
+     "yes": "Yes, keep me updated",
+     "no": "No, only what is required"
+    }
    },
    {
     "n": "HQ1",
@@ -291,7 +347,24 @@
     ],
     "other": "other",
     "section": "Your teen’s health",
-    "optional": true
+    "optional": true,
+    "q": "Does your teen currently have a diagnosed or long-term health condition?",
+    "labels": {
+     "respiratory": "Asthma or other respiratory condition",
+     "diabetes": "Diabetes",
+     "cardio": "Heart or cardiovascular condition",
+     "epilepsy": "Epilepsy or seizure disorder",
+     "allergy": "Allergy or chronic allergic condition",
+     "skin": "Skin condition, such as eczema or psoriasis",
+     "gastro": "Gastrointestinal or digestive condition",
+     "neuro": "Neurological condition",
+     "mobility": "Physical disability or mobility-related condition",
+     "developmental": "Developmental condition",
+     "mental": "Mental or behavioural health condition",
+     "other": "Other diagnosed medical condition",
+     "none": "None of these",
+     "na": "Prefer not to disclose"
+    }
    },
    {
     "n": "HQ2",
@@ -307,7 +380,16 @@
      "na"
     ],
     "section": "Your teen’s health",
-    "optional": true
+    "optional": true,
+    "q": "Are you currently a caregiver for your teen in relation to a health condition, disability or ongoing health need?",
+    "labels": {
+     "primary": "Yes, I am the primary caregiver",
+     "shared": "Yes, I share caregiving responsibilities",
+     "no": "No, I am not a caregiver",
+     "other-person": "No, another person is primarily responsible",
+     "na-applicable": "Not applicable",
+     "na": "Prefer not to answer"
+    }
    },
    {
     "n": "HQ4",
@@ -329,7 +411,18 @@
      "na"
     ],
     "section": "Your teen’s health",
-    "optional": true
+    "optional": true,
+    "q": "Do you regularly help your teen with any of the following?",
+    "labels": {
+     "medication": "Managing medication or treatment",
+     "appointments": "Attending medical appointments",
+     "daily": "Managing daily activities because of a health condition",
+     "monitoring": "Monitoring symptoms or health needs",
+     "coordinating": "Coordinating healthcare or support services",
+     "emotional": "Providing emotional or behavioural support",
+     "none": "None of the above",
+     "na": "Prefer not to answer"
+    }
    }
   ]
  },

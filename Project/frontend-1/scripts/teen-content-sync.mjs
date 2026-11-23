@@ -30,6 +30,9 @@ PARENT_SURVEY.sections.forEach((s) => s.qs.forEach((q) => {
     ...(q.gate ? { gate: true } : {}),
     section: s.name,
     optional: Boolean(s.optional),
+    // display only (the Teen profile's "What your parent told us" cards show the exact wording the parent saw)
+    q: q.q,
+    ...(q.o ? { labels: Object.fromEntries(q.o.map((o) => [o[1], o[0]])) } : {}),
   });
 }));
 

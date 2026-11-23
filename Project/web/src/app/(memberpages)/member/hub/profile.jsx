@@ -18,6 +18,7 @@ import { fmt } from "./data";
 import { useHub, useRise } from "./store";
 import { play } from "./sound";
 import { profileTopic } from "./topics";
+import FamilyPanel from "./family.jsx";
 
 function useCelebrate(id, pct) {
   const [show, setShow] = React.useState(false);
@@ -160,7 +161,7 @@ function AccountSteps({ c }) {
 // isDone(p): the reward for p is already paid; onOpen(p): opens the question flow (or explains the lock)
 export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, isLocked = () => false, isDone = () => false, morePending = 0, ready = true }) {
   const hub = useHub();
-  const { member, completion: c, profiles: pq } = hub;
+  const { member, type, completion: c, profiles: pq } = hub;
   const [party, endParty] = useCelebrate(member?._id, c?.pct);
   const cards = profiles.map((p) => {
     const tp = profileTopic(p);
@@ -217,6 +218,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
           </section>
         </Reveal>
       </div>
+      {type === "teen" ? <FamilyPanel /> : null}
       {party ? (
         <div className="pb-party" role="dialog" aria-modal="false" aria-labelledby="pb-party-t">
           <Burst n={24} className="big" />
