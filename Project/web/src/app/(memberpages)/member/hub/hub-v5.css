@@ -499,3 +499,14 @@
   .hub .ja li:nth-child(n+4) { display: none; }
 }
 .hub .hn-scroll { min-height: 0; }
+/* header room on tablets and phones: the menu drawer holds every page, so the search and profile pill step aside */
+@media (max-width: 1000px) {
+  .hub .hs-profile, .hub .hh-type { display: none; }
+  .hub[data-type="teen"] .jh-bg i:nth-child(1) { inset-inline-start: auto; inset-inline-end: 24px; top: 24px; width: 56px; height: 56px; border-radius: 16px; }
+  .hub[data-type="teen"] .jh-bg i:nth-child(3) { display: none; }
+}
+@media (max-width: 640px) {
+  .hub .hh-jump { display: none; }
+  .hub[data-type="teen"] .jh-bg i:nth-child(1) { display: none; }
+}
+@media (max-width: 1000px) { .hub { --nav: 0px; } .hub .hh-logo { width: auto; } }
