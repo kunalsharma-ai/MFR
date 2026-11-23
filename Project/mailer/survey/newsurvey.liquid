@@ -1,454 +1,110 @@
-<table
-  width="100%"
-  border="0"
-  cellspacing="0"
-  cellpadding="0"
-  bgcolor="#f4f4f4"
-  style="
-    margin: 0;
-    padding: 0;
-    background: #f4f4f4;
-    font-family: Arial, Helvetica, sans-serif;
-  ">
-  <tr>
-    <td align="center">
-      <table
-        width="920"
-        border="0"
-        cellspacing="0"
-        cellpadding="0"
-        bgcolor="#ffffff"
-        style="
-          max-width: 920px;
-          width: 100%;
-          background: #ffffff;
-        ">
-        <!-- Top Accent -->
-        <tr>
-          <td height="12" bgcolor="#002b8f"></td>
-        </tr>
+{%- comment -%}
+===============================================================================
+  MyFrequentRewards — lifecycle email system v6
+  -----------------------------------------------------------------------------
+  Template   : 12. New survey available
+  File       : newsurvey.liquid
+  Class      : Engagement (marketing — unsubscribe required)
+  Trigger    : Member matched to an open study
+  Tone       : invitation
+  Replaces   : newsurvey.liquid
 
-        <!-- Logo -->
-        <tr>
-          <td align="center" style="
-              padding: 28px 20px 24px;
-              background: #ffffff;
-            ">
-            <img
-              src="https://myfrequentrewards.com/images/logo/mfr-logo.png"
-              alt="MyFrequentRewards"
-              width="460"
-              style="
-                display: block;
-                max-width: 100%;
-                height: auto;
-                border: 0;
-              " />
-          </td>
-        </tr>
+  SUBJECT LINES — pick one, or A/B them
+    1. A {{ survey.time }}-minute survey for you: {{ survey.name }}
+    2. {{ user.name.first }}, {{ survey.points }} points for about {{ survey.time }} minutes
+    3. New survey available: {{ survey.name }}
 
-        <!-- Orange Divider -->
-        <tr>
-          <td height="3" bgcolor="#fe7e00"></td>
-        </tr>
+  PREHEADER
+    The reward and the length are shown before you start. You can decline.
 
-        <!-- Hero Section -->
-        <tr>
-          <td align="center" style="
-              padding: 55px 40px 50px;
-              background: #f5f8ff;
-            ">
-            <!-- Decorative Dots -->
-            <table
-              border="0"
-              cellspacing="0"
-              cellpadding="0"
-              align="center">
-              <tr>
-                <td style="
-                    padding: 0 12px;
-                    color: #fe7e00;
-                    font-size: 28px;
-                    font-weight: bold;
-                  ">
-                  •
-                </td>
+  PRIMARY CTA
+    Start the survey  ->  survey.link
 
-                <td style="
-                    padding: 0 12px;
-                    color: #002b8f;
-                    font-size: 38px;
-                    font-weight: bold;
-                  ">
-                  •
-                </td>
+  PLAIN-TEXT ALTERNATIVE
+    dist/text/newsurvey.txt — send as the text/plain part of a multipart message.
+    HTML-only mail is scored down by most spam filters.
 
-                <td style="
-                    padding: 0 12px;
-                    color: #fe7e00;
-                    font-size: 24px;
-                    font-weight: bold;
-                  ">
-                  •
-                </td>
+  Generated from react/src/emails/12-newsurvey.jsx — edit the JSX and re-run
+  `npm run build`. Hand edits to this file are overwritten.
 
-                <td style="
-                    padding: 0 12px;
-                    color: #002b8f;
-                    font-size: 32px;
-                    font-weight: bold;
-                  ">
-                  •
-                </td>
+  Images are served from the base configured at build time; upload assets/
+  there before sending. Serve over HTTPS from a stable path — clients do not
+  retry a 404, so a moved asset breaks every copy already delivered.
+===============================================================================
+{%- endcomment -%}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light only"/><meta name="supported-color-schemes" content="light only"/><title>A {{ survey.time }}-minute survey for you: {{ survey.name }}</title><!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings>
+  <o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch>
+</o:OfficeDocumentSettings></xml></noscript>
+<style>
+  *{font-family:Arial,Helvetica,sans-serif!important}
+  table{border-collapse:collapse}
+</style>
+<![endif]--><style>
+  /* ---- resets ---- */
+  body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+  table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
+  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none}
+  table{border-collapse:collapse!important}
+  body{margin:0!important;padding:0!important;width:100%!important}
+  a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;
+    font-size:inherit!important;font-family:inherit!important;
+    font-weight:inherit!important;line-height:inherit!important}
+  .ExternalClass{width:100%}
+  .ExternalClass,.ExternalClass p,.ExternalClass span,.ExternalClass font,
+  .ExternalClass td,.ExternalClass div{line-height:100%}
+  u+#body a{color:inherit;text-decoration:none}
 
-                <td style="
-                    padding: 0 12px;
-                    color: #fe7e00;
-                    font-size: 26px;
-                    font-weight: bold;
-                  ">
-                  •
-                </td>
-              </tr>
-            </table>
+  /* ---- no motion ----
+     There is no animation in this build: no keyframes, no transitions, no GIFs.
+     Hover states change colour instantly, which is a state change rather than an
+     animation, and they only exist in clients that support :hover at all. */
+  .btn:hover{background-color:#E8590C!important}
+  .btn-ghost:hover{border-color:#FF8A00!important;color:#E8590C!important}
 
-            <!-- Main Heading -->
-            <h1 style="
-                margin: 28px 0 8px;
-                color: #0d2372;
-                font-size: 44px;
-                line-height: 54px;
-                font-weight: bold;
-              ">
-              New Survey Available
-            </h1>
+  /* ---- mobile: single column, bigger gutters, nothing clipped ---- */
+  @media screen and (max-width:600px){
+    .wrap{width:100%!important;max-width:100%!important}
+    .px{padding-left:24px!important;padding-right:24px!important}
+    .px-p{padding-left:18px!important;padding-right:18px!important}
+    .h1{font-size:25px!important;line-height:1.25!important}
+    .h2{font-size:18px!important}
+    .lead{font-size:16.5px!important}
+    .figure{font-size:38px!important}
+    .figure-sm{font-size:23px!important}
+    /* The purpose line stays the biggest thing on the screen, but a 24px display
+       face at 320px wraps to five lines — 20px holds it to three. */
+    .purpose{font-size:20px!important;line-height:1.3!important}
+    /* Chips sit in a row of cells; on a phone that row is wider than the card, so
+       each chip becomes its own block and they stack instead of squeezing. */
+    .chip-cell{display:block!important;width:100%!important;padding:0 0 8px 0!important}
+    .code{font-size:27px!important;letter-spacing:.16em!important}
+    .stack{display:block!important;width:100%!important;max-width:100%!important;
+      padding-left:0!important;padding-right:0!important}
+    .stack-pad{padding-top:16px!important}
+    .stack-center{text-align:center!important}
+    .stack-center img{margin:0 auto!important}
+    .hide-sm{display:none!important;max-height:0!important;overflow:hidden!important}
+    .btn,.btn-ghost,.btn-wrap{width:100%!important;max-width:100%!important}
+    .art{width:230px!important}
+    .foot-link{display:block!important;padding:7px 0!important}
+    .foot-sep{display:none!important}
+  }
 
-            <!-- Greeting -->
-            <p style="
-                margin: 12px 0 0;
-                color: #fe7e00;
-                font-size: 18px;
-                line-height: 28px;
-                font-weight: bold;
-              ">
-              Hey {{ user.name.first }}!
-            </p>
-
-            <!-- Secondary Heading -->
-            <h2 style="
-                margin: 6px 0 0;
-                color: #0d2372;
-                font-size: 28px;
-                line-height: 38px;
-                font-weight: bold;
-              ">
-              We Want Your Opinion
-            </h2>
-
-            <!-- Description -->
-            <p style="
-                margin: 22px auto 0;
-                max-width: 680px;
-                color: #263565;
-                font-size: 20px;
-                line-height: 32px;
-              ">
-              A new survey is waiting for you on
-              <strong>MyFrequentRewards</strong>.  
-              Share your opinion and earn rewards for your valuable insights.
-            </p>
-          </td>
-        </tr>
-
-        <!-- Survey Details -->
-        <tr>
-          <td style="padding: 40px 55px 20px;">
-            <table
-              width="100%"
-              border="0"
-              cellspacing="0"
-              cellpadding="0"
-              style="
-                background: #ffffff;
-                border: 1px solid #dce5f8;
-                border-radius: 16px;
-              ">
-              <tr>
-                <!-- Reward Panel -->
-                <td
-                  width="180"
-                  align="center"
-                  valign="middle"
-                  style="
-                    padding: 35px 15px;
-                    background: #fff7ef;
-                    border-radius: 16px 0 0 16px;
-                  ">
-                  <table
-                    border="0"
-                    cellspacing="0"
-                    cellpadding="0"
-                    align="center">
-                    <tr>
-                      <td align="center" style="
-                          color: #fe7e00;
-                          font-size: 54px;
-                          line-height: 60px;
-                          font-weight: bold;
-                        ">
-                        ★
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td align="center" style="
-                          padding-top: 8px;
-                          color: #002b8f;
-                          font-size: 16px;
-                          font-weight: bold;
-                          letter-spacing: 1px;
-                        ">
-                        EARN REWARDS
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <!-- Survey Information -->
-                <td valign="middle" style="
-                    padding: 38px 40px;
-                  ">
-                  <h2 style="
-                      margin: 0 0 18px;
-                      color: #0d2372;
-                      font-size: 28px;
-                      line-height: 36px;
-                    ">
-                    {{ survey.name }}
-                  </h2>
-
-                  <table
-                    width="100%"
-                    border="0"
-                    cellspacing="0"
-                    cellpadding="0"
-                    style="
-                      font-size: 17px;
-                      color: #253562;
-                    ">
-
-
-                    <!-- Points -->
-                    <tr>
-                      <td style="
-                          padding: 10px 0;
-                          color: #002b8f;
-                          font-weight: bold;
-                          border-bottom: 1px solid #edf1f8;
-                        ">
-                        Points
-                      </td>
-
-                      <td style="
-                          padding: 10px 0;
-                          border-bottom: 1px solid #edf1f8;
-                        ">
-                        <strong style="color: #fe7e00;">
-                          {{ survey.points }} points
-                        </strong>
-                      </td>
-                    </tr>
-
-                    <!-- Estimated Time -->
-                    <tr>
-                      <td style="
-                          padding: 10px 0;
-                          color: #002b8f;
-                          font-weight: bold;
-                        ">
-                        Estimated Time
-                      </td>
-
-                      <td style="padding: 10px 0;">
-                        {{ survey.time }} minutes
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <!-- Survey CTA -->
-        <tr>
-          <td style="padding: 20px 55px 35px;">
-            <table
-              width="100%"
-              border="0"
-              cellspacing="0"
-              cellpadding="0"
-              style="
-                background: #002b8f;
-                border-radius: 16px;
-              ">
-              <tr>
-                <td align="center" style="
-                    padding: 38px 35px;
-                  ">
-                  <p style="
-                      margin: 0 0 10px;
-                      color: #fe7e00;
-                      font-size: 17px;
-                      font-weight: bold;
-                      letter-spacing: 1.5px;
-                      text-transform: uppercase;
-                    ">
-                    Your Opinion Matters
-                  </p>
-
-                  <h2 style="
-                      margin: 0 0 14px;
-                      color: #ffffff;
-                      font-size: 30px;
-                      line-height: 40px;
-                    ">
-                    Ready to share your thoughts?
-                  </h2>
-
-                  <p style="
-                      margin: 0 auto 25px;
-                      max-width: 650px;
-                      color: #dce7ff;
-                      font-size: 17px;
-                      line-height: 28px;
-                    ">
-                    Your insights help brands and organizations make  
-                    better decisions. Complete this survey and earn
-                    rewards for your time.
-                  </p>
-
-                  <a
-                    href="{{survey.link}}"
-                    target="_blank"
-                    style="
-    display: inline-block;
-    background: #fe7e00;
-    color: #ffffff;
-    text-decoration: none;
-    padding: 15px 40px;
-    border-radius: 10px;
-    font-size: 17px;
-    font-weight: bold;
-  ">
-                    START SURVEY
-                  </a>
-
-                  <table
-                    border="0"
-                    cellspacing="0"
-                    cellpadding="0"
-                    align="center"
-                    width="100%"
-                    style="margin-top: 22px;">
-                    <tr>
-                      <td align="center" style="
-        color: #dce7ff;
-        font-size: 14px;
-        line-height: 22px;
-      ">
-                        If the button above doesn't work, copy and paste this link into your  
-      browser:
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td align="center" style="
-        padding-top: 6px;
-        word-break: break-all;
-      ">
-                        <a
-                          href="{{survey.link}}"
-                          target="_blank"
-                          style="
-          color: #ffffff;
-          font-size: 14px;
-          line-height: 22px;
-          text-decoration: underline;
-        ">
-                          {{ survey.link }}
-                        </a>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td align="center" style="
-        padding-top: 18px;
-        color: #dce7ff;
-        font-size: 14px;
-        line-height: 22px;
-      ">
-                        If you can’t see or click the above button, please drop a note at
-                        <a href="mailto:support@myfrequentrewards.com" style="
-          color: #ffffff;
-          text-decoration: underline;
-          font-weight: bold;
-        ">
-                          support@myfrequentrewards.com
-                        </a>,  
-      we would be glad to assist.
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <!-- Closing Message -->
-        <tr>
-          <td align="center" style="
-              padding: 15px 60px 40px;
-            ">
-            <table
-              border="0"
-              cellspacing="0"
-              cellpadding="0"
-              align="center">
-              <tr>
-                <td
-                  height="3"
-                  width="55"
-                  bgcolor="#fe7e00"></td>
-
-                <td width="15"></td>
-
-                <td
-                  height="3"
-                  width="55"
-                  bgcolor="#002b8f"></td>
-              </tr>
-            </table>
-
-            <p style="
-                margin: 20px 0 0;
-                color: #0d2372;
-                font-size: 20px;
-                line-height: 32px;
-                font-weight: bold;
-                font-style: italic;
-              ">
-              Your opinion makes a difference.
-            </p>
-          </td>
-        </tr>
-        {% include "mailer/footer.liquid" %}
-
-        <tr>
-          <td height="10" bgcolor="#fe7e00"></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+  /* ---- colour scheme ----
+     The brief asks for white throughout, so rather than shipping a dark palette we
+     declare light-only and pin the surfaces. Apple Mail and iOS honour the
+     declaration; these rules stop Outlook.com's [data-ogsc] pass and any client that
+     force-darkens anyway from turning the card black. */
+  :root{color-scheme:light only;supported-color-schemes:light only}
+  [data-ogsc] .keep-white,[data-ogsb] .keep-white{background-color:#FFFFFF!important}
+  [data-ogsc] .keep-ink,[data-ogsb] .keep-ink{color:#0B1E5B!important}
+  [data-ogsc] .keep-body,[data-ogsb] .keep-body{color:#434E6E!important}
+</style></head><body id="body" class="dm-page keep-white" style="margin:0;padding:0;width:100%;background-color:#FFFFFF;color:#434E6E;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif"><div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:transparent;opacity:0">The reward and the length are shown before you start. You can decline.&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0" bgcolor="#FFFFFF" class="dm-page keep-white" style="background-color:#FFFFFF;width:100%"><tbody><tr><td align="center" style="padding:20px 10px 32px"><!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]--><table role="presentation" width="600" border="0" cellPadding="0" cellSpacing="0" align="center" class="wrap dm-surface keep-white" style="width:600px;max-width:100%;background-color:#FFFFFF"><tbody><tr><td align="center" class="px dm-surface keep-white" style="padding:26px 40px 4px;background-color:#FFFFFF"><a href="https://www.myfrequentrewards.com?utm_source=email&amp;utm_medium=header" style="text-decoration:none"><img src="https://www.frequentresearch.com/mailer/v7/brand/mfr-logo.png" width="178" height="43" alt="MyFrequentRewards" style="display:block;border:0;width:178px;height:auto"/></a></td></tr><tr><td class="px keep-white" style="padding:22px 40px 0;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0" bgcolor="#F1F5FF" style="background-color:#F1F5FF;border-radius:18px;border:1px solid #D7E2FF;border-left:6px solid #2F6BFF"><tbody><tr><td class="px-p" style="padding:22px 24px 18px"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td width="72" valign="top" class="hide-sm" style="width:72px;padding-right:18px"><img src="https://www.frequentresearch.com/mailer/v7/heroes/d-survey.png" width="64" height="64" alt="" style="display:block;border:0;width:64px;height:64px"/></td><td valign="top"><p style="margin:0 0 7px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;line-height:1.4;color:#1E3A9E">What this email is about</p><p class="purpose" style="margin:0 0 9px;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:24px;font-weight:800;line-height:1.26;letter-spacing:-.015em;color:#0B1E5B">A study is <strong style="color:#E8590C">open and matched to you</strong>.</p><p style="margin:0;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:15.5px;font-weight:500;line-height:1.58;color:#434E6E">{{ survey.name }} — the brief is below in full. Places are limited and close as soon as the quota fills, so this one is worth opening today.</p></td></tr></tbody></table></td></tr><tr><td class="px-p" style="padding:0 24px 20px"><table role="presentation" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td class="chip-cell" style="padding-top:4px"><table role="presentation" border="0" cellPadding="0" cellSpacing="0" bgcolor="#FFFFFF" style="background-color:#FFFFFF;border-radius:20px;border:1px solid #D7E2FF;border-left:4px solid #FF8A00"><tbody><tr><td valign="middle" style="padding:7px 13px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;font-weight:600;line-height:1.3;color:#0B1E5B;white-space:nowrap">{{ survey.points }} points</td></tr></tbody></table></td><td width="8" class="hide-sm" style="width:8px"> </td><td class="chip-cell" style="padding-top:4px"><table role="presentation" border="0" cellPadding="0" cellSpacing="0" bgcolor="#FFFFFF" style="background-color:#FFFFFF;border-radius:20px;border:1px solid #D7E2FF;border-left:4px solid #2F6BFF"><tbody><tr><td valign="middle" style="padding:7px 13px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;font-weight:600;line-height:1.3;color:#0B1E5B;white-space:nowrap">About {{ survey.time }} minutes</td></tr></tbody></table></td><td width="8" class="hide-sm" style="width:8px"> </td><td class="chip-cell" style="padding-top:4px"><table role="presentation" border="0" cellPadding="0" cellSpacing="0" bgcolor="#FFFFFF" style="background-color:#FFFFFF;border-radius:20px;border:1px solid #D7E2FF;border-left:4px solid #14C9B5"><tbody><tr><td valign="middle" style="padding:7px 13px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;font-weight:600;line-height:1.3;color:#0B1E5B;white-space:nowrap">Closes when full</td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:18px 40px;background-color:#FFFFFF"></td></tr><tr><td align="center" class="keep-white" style="padding:0 22px;background-color:#FFFFFF"><img src="https://www.frequentresearch.com/mailer/v7/heroes/h-survey.jpg" width="556" alt="A questionnaire with one answer chosen, beside a clock and a reward coin" class="hero" style="display:block;border:0;width:556px;max-width:100%;height:auto"/></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:24px 40px;background-color:#FFFFFF"><h1 class="h1 dm-head" style="margin:0 0 14px;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:27px;line-height:1.22;font-weight:800;letter-spacing:-.02em;color:#0B1E5B;text-align:left">{{ survey.name }}</h1><p class="lead dm-body" style="margin:0 0 0px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:17.5px;line-height:1.6;color:#434E6E;text-align:left"><strong style="color:#0B1E5B;font-weight:700">{{ user.name.first }}</strong>, you match the audience for this one. Everything you need to decide is below.</p></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:16px 40px;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0" bgcolor="#F8FAFF" style="background-color:#F8FAFF;border-radius:14px;border:1px solid #E4EAF8"><tbody><tr><td colSpan="2" class="px-p" style="padding:18px 22px 4px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8590C">The brief</td></tr><tr><td class="px-p" width="38%" valign="top" style="padding:11px 10px 11px 22px;width:38%;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#6B7493">Reward</td><td class="px-p" valign="top" style="padding:11px 22px 11px 0;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:15.5px;line-height:1.5;font-weight:700;color:#E8590C;word-break:break-word">{{ survey.points }} points</td></tr><tr><td class="px-p" width="38%" valign="top" style="padding:11px 10px 11px 22px;width:38%;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#6B7493">Estimated time</td><td class="px-p" valign="top" style="padding:11px 22px 11px 0;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:15.5px;line-height:1.5;font-weight:700;color:#0B1E5B;word-break:break-word">{{ survey.time }} minutes</td></tr><tr><td class="px-p" width="38%" valign="top" style="padding:11px 10px 11px 22px;width:38%;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#6B7493">Survey</td><td class="px-p" valign="top" style="padding:11px 22px 11px 0;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:15.5px;line-height:1.5;font-weight:700;color:#0B1E5B;word-break:break-word">{{ survey.name }}</td></tr><tr><td colSpan="2" height="10" style="height:10px;font-size:1px"> </td></tr></tbody></table></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:12px 40px;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td align="center" style="padding:0"><table role="presentation" border="0" cellPadding="0" cellSpacing="0" align="center" class="btn-wrap" style="margin:0 auto"><tbody><tr><td align="center"><!--[if mso]>
+  <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+    href="{{ survey.link }}" style="height:54px;v-text-anchor:middle;width:290px;" arcsize="12%"
+    stroke="f" fillcolor="#FF8A00">
+    <w:anchorlock/>
+    <center style="color:#2B1400;font-family:Arial,sans-serif;font-size:16.5px;font-weight:bold;">Start the survey</center>
+  </v:roundrect>
+<![endif]--><!--[if !mso]><!--><a class="btn" href="{{ survey.link }}" style="display:inline-block;box-sizing:border-box;width:290px;max-width:100%;min-height:54px;padding:16px 26px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:16.5px;font-weight:700;line-height:22px;color:#2B1400;text-decoration:none;text-align:center;background-color:#FF8A00;border-radius:10px;border:1px solid #E8590C">Start the survey</a><!--<![endif]--></td></tr></tbody></table></td></tr><tr><td align="center" style="padding:12px 0 0"><p class="dm-mute" style="margin:0 0 0px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#6B7493;text-align:center">You can stop at any point.</p></td></tr><tr><td align="center" style="padding:20px 0 0"><p style="margin:0 0 7px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.5;color:#6B7493;text-align:center">If the button does not work, copy this link into your browser:</p><p style="margin:0;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;word-break:break-all;text-align:center"><a href="{{ survey.link }}" style="color:#E8590C;text-decoration:underline;text-underline-offset:2px">{{ survey.link }}</a></p></td></tr></tbody></table></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:0px 40px;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td height="1" class="dm-line" style="padding:0px 0;font-size:1px;line-height:1px;border-top:1px solid #E4E8F4"> </td></tr></tbody></table></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:22px 40px;background-color:#FFFFFF"><h2 class="h2 dm-head" style="margin:0 0 10px;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.32;font-weight:700;letter-spacing:-.01em;color:#0B1E5B;text-align:center">No obligation, either way</h2><p class="p dm-body" style="margin:0 0 0px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#434E6E;text-align:center">Declining a study never affects your standing or your balance. If this one is not for you, simply leave it — the next invitation will come when you match another.</p></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:6px 40px;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0" bgcolor="#FFF4E6" class="panel dm-panel" style="background-color:#FFF4E6;border-radius:14px;border-left:4px solid #FF8A00"><tbody><tr><td class="px-p" style="padding:20px 22px"><h3 class="dm-head" style="margin:0 0 6px;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.35;font-weight:700;color:#0B1E5B;text-align:left">How your answers are used</h3><p class="p dm-body" style="margin:0 0 0px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:14.5px;line-height:1.65;color:#434E6E;text-align:left">All research is conducted in accordance with the MRS Code of Conduct. Your answers are reported anonymously and non-attributably, and are never sold on or used for advertising. If you cannot open the link, <a href="https://www.myfrequentrewards.com/contact" style="color:#E8590C;font-weight:600;text-decoration:underline;text-underline-offset:2px">write to us</a> and we will help.</p></td></tr></tbody></table></td></tr><tr><td bgcolor="#FFFFFF" align="left" class="px dm-surface" style="padding:24px 40px;background-color:#FFFFFF"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td align="center" style="padding:0 0 18px"><table role="presentation" border="0" cellPadding="0" cellSpacing="0" align="center"><tbody><tr><td width="48" height="3" bgcolor="#FF8A00" style="width:48px;height:3px;font-size:1px;line-height:3px;background-color:#FF8A00"> </td><td width="14" style="width:14px"> </td><td width="48" height="3" bgcolor="#0B1E5B" style="width:48px;height:3px;font-size:1px;line-height:3px;background-color:#0B1E5B"> </td></tr></tbody></table></td></tr><tr><td align="center"><p style="margin:0;font-family:&#x27;Manrope&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;line-height:1.5;color:#0B1E5B;text-align:center">Your opinion makes a difference.</p></td></tr></tbody></table></td></tr><tr><td class="px" style="padding:0 40px"><table role="presentation" width="100%" border="0" cellPadding="0" cellSpacing="0"><tbody><tr><td height="1" class="dm-line" style="font-size:1px;line-height:1px;border-top:1px solid #E4E8F4"> </td></tr></tbody></table></td></tr><tr><td align="center" class="px dm-surface keep-white" style="padding:26px 40px 10px;background-color:#FFFFFF"><p class="dm-body" style="margin:0 0 14px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:14.5px;line-height:1.6;color:#434E6E;text-align:center">Questions? Write to <a href="mailto:support@myfrequentrewards.com" style="color:#E8590C;font-weight:600;text-decoration:underline">support@myfrequentrewards.com</a> or call <a href="tel:+918130015743" style="color:#E8590C;font-weight:600;text-decoration:underline;white-space:nowrap">+91 81300 15743</a>.</p><p style="margin:0 0 18px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.7;text-align:center"><a href="https://www.myfrequentrewards.com/account" class="foot-link dm-body" style="color:#434E6E;font-weight:600;text-decoration:none">My account</a><span class="foot-sep dm-mute" style="color:#6B7493">  ·  </span><a href="https://www.myfrequentrewards.com/contact" class="foot-link dm-body" style="color:#434E6E;font-weight:600;text-decoration:none">Help centre</a><span class="foot-sep dm-mute" style="color:#6B7493">  ·  </span><a href="https://www.myfrequentrewards.com/privacy" class="foot-link dm-body" style="color:#434E6E;font-weight:600;text-decoration:none">Privacy policy</a><span class="foot-sep dm-mute" style="color:#6B7493">  ·  </span><a href="https://www.myfrequentrewards.com/terms" class="foot-link dm-body" style="color:#434E6E;font-weight:600;text-decoration:none">Terms</a></p><table role="presentation" border="0" cellPadding="0" cellSpacing="0" align="center"><tbody><tr><td><a href="https://www.linkedin.com/company/my-frequent-rewards" style="text-decoration:none"><img src="https://www.frequentresearch.com/mailer/v7/icons/linkedin.png" width="28" height="28" alt="MFR on LinkedIn" style="display:block;border:0"/></a></td><td width="12" style="width:12px"> </td><td><a href="https://www.facebook.com/myfrequentreswards/" style="text-decoration:none"><img src="https://www.frequentresearch.com/mailer/v7/icons/facebook.png" width="28" height="28" alt="MFR on Facebook" style="display:block;border:0"/></a></td><td width="12" style="width:12px"> </td><td><a href="https://www.youtube.com/@MyFrequentRewards" style="text-decoration:none"><img src="https://www.frequentresearch.com/mailer/v7/icons/youtube.png" width="28" height="28" alt="MFR on YouTube" style="display:block;border:0"/></a></td><td width="12" style="width:12px"> </td><td><a href="https://www.instagram.com/myfrequentrewards/" style="text-decoration:none"><img src="https://www.frequentresearch.com/mailer/v7/icons/instagram.png" width="28" height="28" alt="MFR on Instagram" style="display:block;border:0"/></a></td></tr></tbody></table></td></tr><tr><td align="center" class="px dm-surface keep-white" style="padding:18px 40px 30px;background-color:#FFFFFF"><p class="dm-mute" style="margin:0 0 8px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.65;color:#6B7493;text-align:center">You are receiving this because you are a MyFrequentRewards member matched to this study.</p><p class="dm-mute" style="margin:0 0 8px;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.65;color:#6B7493;text-align:center">Sent to {{ member.email }} · <a href="{{ preferences_url }}" class="dm-mute" style="color:#6B7493;text-decoration:underline">Email preferences</a> · <a href="{{ unsubscribe_url }}" class="dm-mute" style="color:#6B7493;text-decoration:underline">Unsubscribe</a></p><p class="dm-mute" style="margin:0;font-family:&#x27;Inter&#x27;,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:#6B7493;text-align:center">Frequent Research Fieldwork Solutions Pvt. Ltd. · Mangolpur Kalan, New Delhi 110085, India<br/>© 2026 MyFrequentRewards. All rights reserved.</p></td></tr></tbody></table><!--[if mso]></td></tr></table><![endif]--></td></tr></tbody></table></body></html>

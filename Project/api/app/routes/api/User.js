@@ -16,6 +16,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 //            GET/PUT /:id of any member (role read fresh from the database, never from the request)
 // Teen Panel registration moved to /api/v1/teen (routes/api/Teen.js); the old /teen and /parent-consent routes answer 410.
 import express from "express";
+import * as Emails from "../../engagement/transactional.js";
 import rateLimit from "express-rate-limit";
 import {
     User as userController,
@@ -98,6 +99,7 @@ router
             if (String(userInfo.category || "").toLowerCase().includes("minor")) throw new Error("Please choose Consumer or Professional.");
             let message = "";
             let data = await userController.create(userInfo);
+            Emails.newUser(data, req.origin); // off unless config.emails.newUser
 
             let otp = await otpController.generate(
                 data._id,
@@ -134,6 +136,7 @@ router
             let status = await userController.setPassword(req.body.userID, req.body.password)
             if (!status) throw new Error("Something went wrong. Please contact support for more details");
             await otp.remove();
+            Emails.welcome(req.body.userID, req.origin); // off unless config.emails.welcome
             return { message, data: [] };
         },
         userController

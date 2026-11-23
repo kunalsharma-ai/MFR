@@ -1,12 +1,18 @@
 // /api/v1/engagement-public - links in engagement emails that must work without signing in.
-//   GET|POST /unsubscribe?u=<member id>&l=<weekly|expiry>&s=<signature>   one-click unsubscribe (RFC 8058 style)
+//   GET|POST /unsubscribe?u=<member id>&l=<weekly|expiry|lifecycle|birthday|newsurvey>&s=<signature>   one-click unsubscribe (RFC 8058 style)
 import express from "express";
 import mongoose from "mongoose";
 import { MemberPreference } from "../../model/index.js";
 import { checkUnsubscribe, siteUrl } from "../../engagement/mail.js";
 import { limit } from "../../engagement/http.js";
 
-const LISTS = { weekly: "notifications.weeklySummary", expiry: "notifications.expiryReminders" };
+const LISTS = {
+    weekly: "notifications.weeklySummary",
+    expiry: "notifications.expiryReminders",
+    lifecycle: "notifications.lifecycle",
+    birthday: "notifications.birthday",
+    newsurvey: "notifications.newSurvey",
+};
 const router = express.Router();
 const unsubscribe = async (req, res) => {
     const { u, l, s } = { ...req.query, ...(req.body || {}) };

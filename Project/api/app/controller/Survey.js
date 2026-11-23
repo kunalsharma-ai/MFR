@@ -1,4 +1,5 @@
 import fs from "fs"
+import * as Emails from "../engagement/transactional.js";
 
 import { CrudController, fsLogger, Mutate } from "../utils/index.js";
 import { Survey as modelSurvey, User as userModel, Response as responseModel } from "../model/index.js";
@@ -96,11 +97,15 @@ class Survey extends CrudController {
             ...this.commonFilters
         }));
 
+        let created = invites;
         try {
             await responseModel.insertMany(invites, { ordered: false });
         } catch (e) {
             fsLogger.Log("Bulk invite partial completion", e.message);
+            // only the invitations that really were new (duplicates are rejected by the unique index)
+            created = (e?.insertedDocs || []);
         }
+        Emails.newSurvey(created.map((i) => i.user), survey, this.request.origin); // off unless config.emails.newSurvey
         return { count: users.length };
     }
 }

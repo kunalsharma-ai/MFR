@@ -60,6 +60,8 @@ export async function start(db = "mfr_engagement_test") {
         server.close();
         if (!process.env.MONGO_URL) await mongoose.connection.db.dropDatabase().catch(() => {});
         await mongoose.disconnect();
+        // rate-limit stores and the app's start-up timers keep the event loop alive; the test result is already set
+        setTimeout(() => process.exit(), 1000).unref();
     }
     return { BASE, ORIGIN, member, call, stop };
 }

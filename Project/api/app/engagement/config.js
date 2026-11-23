@@ -41,6 +41,25 @@ export const DEFAULTS = {
     // It never repeats the profile reminders the profile studio sends every 2 days; it is only a points/streak recap.
     weeklySummary: { enabled: false, weekday: 1 /* Monday */, maxPerRun: 5000 },
 
+    // ---- emails (v6 designs, mailer/lifecycle + mailer/register|birthday|survey|newuser) ----------------------------
+    // Every automatic email below is OFF until Kunal switches it on. They go through the same email-template + email
+    // services as every other MFR email; nothing new is added on the provider side.
+    emails: {
+        // The four sign-up funnel reminders (v6 lifecycle cases 1-4), including the every-2-days profile reminder
+        // from Profile v4.1. Rules match v4.1: at most one every intervalHours, no email while the member is active
+        // (lastActivity inside intervalHours), at most `max` in total, one-click unsubscribe on the marketing ones.
+        lifecycle: { enabled: false, intervalHours: 48, max: 15, maxPerRun: 5000, startAfterHours: 24 },
+        // "Account active" after the member sets their password (register/welcome.liquid)
+        welcome: false,
+        // birthday greeting, sent once a year on the member's birthday in their time zone (birthday/birthday.liquid)
+        birthday: false,
+        // a new survey invitation was created for the member (survey/newsurvey.liquid). Respects the member's
+        // "new survey" and invites-per-week settings.
+        newSurvey: false,
+        // tell the team about each new registration (newuser/newuser.liquid). `to` = list of team addresses.
+        newUser: { enabled: false, to: [] },
+    },
+
     // ---- points expiry (DECISION: there is no expiry today) ---------------------------------------------------------
     // When enabled, points earned more than `months` ago and not spent would lapse. Only the reminder email is built;
     // nothing is ever deducted by this code.

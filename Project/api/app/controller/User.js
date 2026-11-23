@@ -6,6 +6,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 }
 
 import { CrudController, Mutate } from "../utils/index.js";
+import * as Emails from "../engagement/transactional.js";
 import { User as userModel, Invites as invitesModel, Answers, Survey,Response as responseModel } from "../model/index.js";
 import fs from "fs"
 
@@ -102,6 +103,7 @@ class User extends CrudController {
                 ...this.commonFilters
             }));
             await responseModel.insertMany(autoInvites, { ordered: false });
+            for (const s of surveys) Emails.newSurvey([user._id], s, this.request.origin); // off unless config.emails.newSurvey
         }
     } catch (e) {
         console.log("Auto-invite failed for new user", e.message);   // console.log, chhota l
