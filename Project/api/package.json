@@ -9,6 +9,7 @@
     "start": "npm install && node app/server.js",
     "test:teen": "node --test tests/teen.rules.test.mjs && node tests/teen.api.test.mjs",
     "test:engagement": "node --test tests/engagement.*.test.mjs"
+    "test:support": "node tests/support.access.test.mjs"
   },
   "keywords": [
     "express",
