@@ -11,6 +11,7 @@
 import React from "react";
 import Link from "next/link";
 import Scene3D from "./scene.jsx";
+import Tile from "./tiles.jsx";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/util";
@@ -65,45 +66,29 @@ export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0
   const st = row.state; // available | resume | locked | done | closed
   const mins = isProfile ? Math.max(1, Number(row.loi) || 1) : Number(row.loi) || null;
   const left = daysLeft(row.endsAt);
-  const canStart = st === "available" || st === "resume";
-  const cta = st === "resume" ? t("sx.resume") : isProfile ? t("sx.startProfile") : t("sx.start");
   const label = tx(`sx.topic.${tp.k}`, tx(`pf3.${tp.k}.title`, t("sx.topic.general")));
-  const unit = type === "teen" ? t("hdr.xp") : t("c.pts");
+  const unit = type === "teen" ? t("hdr.xp") : null;
+  const nq = Array.isArray(row.questions) ? row.questions.length : Number(row.questions) || 0;
+  const meta = [];
+  if (isProfile && nq) meta.push({ icon: "surveys", text: t("pf.questions", { n: nq }) });
+  if (mins) meta.push({ icon: "clock", text: `~${t("sx.min", { n: mins })}` });
+  if (left != null && st !== "done" && st !== "closed") meta.push({ icon: "calendar", text: left <= 1 ? t("sx.endsToday") : t("sx.endsIn", { n: left }) });
+  if (row.minQualityScore && st !== "done") meta.push({ icon: "quality", text: t("sx.eligQuality", { n: row.minQualityScore }) });
+  if (st === "done" && row.at) meta.push({ icon: "check", text: relDay(new Date(row.at), t) });
+  const tstate = st === "available" ? "open" : st === "resume" ? "going" : st;
+  const stateLabel = st === "available" ? (isProfile ? t("v7.tile.topicProfile") : type === "teen" ? t("v7.tile.xpSurvey") : t("v7.tile.paid")) : st === "closed" ? t(`sx.closed.${row.participationStatus}`) : t(`sx.state.${st}`);
+  const cta = st === "locked" ? t("v7.tile.howUnlock") : st === "resume" ? t("pf.continue") : isProfile ? t("sx.startProfile") : st === "done" || st === "closed" ? "" : t("v7.tile.startSurvey");
+  const off = st === "done" || st === "closed";
   return (
-    <li className={`sc is-${st} ${featured ? "is-featured" : ""}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": Math.min(i, 12) }}>
-      <div className="sc-stub" aria-hidden="true">
-        <span className="sc-glyph"><img src={isProfile ? profileArt(row.slug, tp) : artOf(tp)} alt="" width="56" height="56" loading="lazy" decoding="async" /></span>
-        <span className="sc-reward"><b>{fmt(Number(row.points) || 0)}</b><small>{unit}</small></span>
-        {mins ? <span className="sc-time"><Icon name="clock" size={14} /> {t("sx.min", { n: mins })}</span> : null}
-      </div>
-      <div className="sc-body">
-        <div className="sc-top">
-          <span className="sc-topic">{isProfile ? t("sx.profileTopic") : label}</span>
-          <span className={`sc-state s-${st}`}><Icon name={st === "done" ? "check" : st === "locked" ? "lock" : st === "closed" ? "close" : st === "resume" ? "hourglass" : "bolt"} size={13} /> {t(`sx.state.${st}`)}</span>
-        </div>
-        <h3 className="sc-name">{row.name}</h3>
-        {row.summary ? <p className="sc-sum">{row.summary}</p> : isProfile ? <p className="sc-sum">{tx(`pf3.${tp.k}.text`, t("sx.profileText"))}</p> : null}
-        <ul className="sc-meta">
-          {isProfile && row.questions ? <li><Icon name="surveys" size={15} /> {t("pf.questions", { n: row.questions })}</li> : null}
-          {left != null && st !== "done" ? <li><Icon name="calendar" size={15} /> {left <= 1 ? t("sx.endsToday") : t("sx.endsIn", { n: left })}</li> : null}
-          {st === "done" && row.at ? <li><Icon name="check" size={15} /> {relDay(new Date(row.at), t)}</li> : null}
-          <li className="sc-elig"><Icon name={row.minQualityScore ? "quality" : "check"} size={15} />
-            {st === "locked" ? t("sx.eligLocked") : st === "closed" ? t(`sx.closed.${row.participationStatus}`) : st === "done" ? t("sx.eligDone") : row.minQualityScore ? t("sx.eligQuality", { n: row.minQualityScore }) : isProfile ? t("sx.eligProfile") : st === "resume" ? t("sx.eligResume") : t("sx.eligInvited")}
-          </li>
-        </ul>
-        {canStart || st === "locked" ? (
-          <button type="button" className={`sc-go ${st === "locked" ? "is-lock" : ""}`} onClick={() => onStart(row)}
-            aria-label={`${st === "locked" ? t("sx.unlock") : cta}: ${row.name}`}>
-            {st === "locked" ? <><Icon name="lock" size={17} /> {t("sx.unlock")}</> : <>{cta} <Icon name="arrow" size={18} /></>}
-          </button>
-        ) : null}
-      </div>
-    </li>
+    <Tile c1={tp.c1} c2={tp.c2} art={isProfile ? profileArt(row.slug, tp) : artOf(tp)} name={row.name} topic={isProfile ? t("sx.profileTopic") : label}
+      ribbon={!isProfile && row.participationStatus === "invited" && st === "available" ? t("v5.new") : null}
+      meta={meta} pts={fmt(Number(row.points) || 0)} unit={unit} state={tstate} stateLabel={stateLabel} cta={cta} i={i} featured={featured}
+      disabled={off} onClick={off ? undefined : () => onStart(row)} ariaLabel={off ? `${row.name}: ${stateLabel}` : `${cta}: ${row.name}`} />
   );
 }
 
 function CardSkeleton() {
-  return <li className="sc is-skel" aria-hidden="true"><div className="sc-stub" /><div className="sc-body"><Skeleton h={14} w="40%" /><Skeleton h={22} w="85%" /><Skeleton h={14} w="60%" /><Skeleton h={44} w="100%" r={14} /></div></li>;
+  return <li className="tc is-skel" aria-hidden="true"><span className="tc-btn"><Skeleton h={18} w="70%" /><Skeleton h={14} w="50%" /><Skeleton h={30} w="100%" r={10} /></span></li>;
 }
 
 // Everything a survey list needs, shared by the Surveys page and the dashboard's opportunities section:
@@ -168,7 +153,12 @@ export default function SurveysPage({ SurveyHistory }) {
   const [filter, setFilter] = React.useState("all");
   const FILTERS = surveyFilters(profileRows);
   const f = FILTERS.find((x) => x.k === filter) || FILTERS[0];
-  const rows = openRows.filter(f.test);
+  const [q, setQ] = React.useState("");
+  const [shown, setShown] = React.useState(12);
+  const rank = { available: 0, resume: 0, locked: 1 };
+  const rows = openRows.filter(f.test)
+    .filter((r) => !q.trim() || String(r.name || "").toLowerCase().includes(q.trim().toLowerCase()))
+    .map((r, k) => [r, k]).sort((a, b) => (rank[a[0].state] ?? 2) - (rank[b[0].state] ?? 2) || a[1] - b[1]).map((x) => x[0]);
 
   return (
     <div className="pg pg-surveys sx">
@@ -195,19 +185,20 @@ export default function SurveysPage({ SurveyHistory }) {
         <section className="sx-best" aria-labelledby="sx-best-t">
           <h2 className="sx-h" id="sx-best-t"><Icon name="target" size={20} /> {t("sx.bestTitle")}</h2>
           <p className="k-note">{t("sx.bestWhy")}</p>
-          <ul className="sx-grid sc-grid one"><SurveyCard row={best} type={type} locked={locked} onStart={start} featured /></ul>
+          <ul className="sx-grid tc-grid one"><SurveyCard row={best} type={type} locked={locked} onStart={start} featured /></ul>
         </section>
       ) : null}
 
       <section className="sx-list" aria-labelledby="sx-list-t">
         <div className="sx-list-head">
           <h2 className="sx-h" id="sx-list-t"><Icon name="surveys" size={20} /> {t("sx.listTitle")}</h2>
+          <label className="tc-search"><Icon name="search" size={16} /><input type="search" value={q} onChange={(e) => { setQ(e.target.value); setShown(12); }} placeholder={t("v7.searchSurveys")} aria-label={t("v7.searchSurveys")} /></label>
           <div className="sx-filters" role="tablist" aria-label={t("sx.filterLabel")}>
             {FILTERS.map((x) => {
               const n = openRows.filter(x.test).length;
               if (!n && x.k !== "all" && filter !== x.k) return null; // a filter with nothing in it is not offered
               return (
-                <button key={x.k} type="button" role="tab" aria-selected={filter === x.k} className={filter === x.k ? "on" : ""} onClick={() => { setFilter(x.k); play("tap"); }}>
+                <button key={x.k} type="button" role="tab" aria-selected={filter === x.k} className={filter === x.k ? "on" : ""} onClick={() => { setFilter(x.k); setShown(12); play("tap"); }}>
                   {t(`sx.f.${x.k}`)} <span>{n}</span>
                 </button>
               );
@@ -215,13 +206,18 @@ export default function SurveysPage({ SurveyHistory }) {
           </div>
         </div>
         {active.isError ? <ErrorState onRetry={active.refetch} /> : loading ? (
-          <ul className="sx-grid sc-grid">{[0, 1, 2].map((k) => <CardSkeleton key={k} />)}</ul>
+          <ul className="sx-grid tc-grid">{[0, 1, 2].map((k) => <CardSkeleton key={k} />)}</ul>
         ) : !openRows.length ? (
           <EmptyState kind="surveys" title={t("sx.emptyTitle")} text={t(`sx.emptyText.${type}`)} action={<Link className="h-btn h-btn-primary" href="/member/profiles">{t("sx.emptyCta")}</Link>} />
         ) : !rows.length ? (
           <p className="sx-none"><Icon name="search" size={18} /> {t("sx.noneInFilter")} <button type="button" className="h-link" onClick={() => setFilter("all")}>{t("sx.showAll")}</button></p>
         ) : (
-          <ul className="sx-grid sc-grid">{rows.map((r, i) => <SurveyCard key={`${r.kind}-${r.slug}`} row={r} type={type} locked={locked} onStart={start} i={i} />)}</ul>
+          <>
+            <ul className="sx-grid tc-grid">{rows.slice(0, shown).map((r, i) => <SurveyCard key={`${r.kind}-${r.slug}`} row={r} type={type} locked={locked} onStart={start} i={i % 12} />)}</ul>
+            {rows.length > shown ? (
+              <div className="tc-more"><span>{t("v7.showing", { n: Math.min(shown, rows.length), m: rows.length })}</span><button type="button" className="h-btn h-btn-ghost" onClick={() => { setShown((n) => n + 12); play("tap"); }}>{t("v7.showMore")} <Icon name="chevron" size={14} /></button></div>
+            ) : null}
+          </>
         )}
       </section>
 
@@ -229,7 +225,7 @@ export default function SurveysPage({ SurveyHistory }) {
         <Reveal>
           <section className="sx-done" aria-labelledby="sx-done-t">
             <h2 className="sx-h" id="sx-done-t"><Icon name="check" size={20} /> {t("sx.doneTitle")}</h2>
-            <ul className="sx-grid sc-grid compact">{history.map((r, i) => <SurveyCard key={`h-${r.slug}`} row={r} type={type} locked={false} onStart={start} i={i} />)}</ul>
+            <ul className="sx-grid tc-grid compact">{history.map((r, i) => <SurveyCard key={`h-${r.slug}`} row={r} type={type} locked={false} onStart={start} i={i} />)}</ul>
           </section>
         </Reveal>
       ) : null}
