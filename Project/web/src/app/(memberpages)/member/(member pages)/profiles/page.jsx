@@ -30,6 +30,8 @@ import useProfileDark from "@/hooks/useProfileDark";
 import "./ps/ps.css";
 import PsHub from "./ps/PsHub";
 import PsFlow from "./ps/PsFlow";
+import useClickSounds from "./ps/useClickSounds";
+import { ui } from "./ps/sound";
 import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
 import { visibleProfiles, normalizeInterests, basicsDone, isCore } from "./ps/profileRules";
@@ -378,6 +380,7 @@ function SkinProfiles() {
   const visible = React.useCallback((list) => visibleProfiles(Array.isArray(list) ? list : [], interests, MIN_STATUS).filter((p) => isCore(p.slug)), [interests]);
   const shown = React.useMemo(() => visible(profiles), [profiles, visible]);
   const [dark] = useProfileDark(); // day / night button in the header
+  useClickSounds(); // v4.1: every button, link, tab and chip plays a note
 
   // ---- The hub lists Basic, Education, Professional and Financial. Every other profile is listed in the Survey section and is filled with
   // this same form (?profile=<slug>) once those four are complete; it then appears under "Completed" here.
@@ -440,7 +443,7 @@ function SkinProfiles() {
   const canOpen = (slug) => isCore(slug) || gate.coreDone; // the other profiles open after the four basics
   const [gateOpen, setGateOpen] = React.useState(false); // the pop-up of a locked capsule: what to finish first
   const open = (p) => {
-    if (canOpen(p.slug)) return router.push(`?profile=${p.slug}`, { scroll: false });
+    if (canOpen(p.slug)) { ui("open"); return router.push(`?profile=${p.slug}`, { scroll: false }); }
     setGateOpen(true); // not open yet: the pop-up lists the four basics to start
   };
   const hub = () => router.push(pathname, { scroll: false });

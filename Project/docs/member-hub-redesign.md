@@ -89,3 +89,28 @@ rewards), so `/api/progress` would read from there instead of a separate store.
   id shown on the PDF (made in the browser) and the time zone.
 - The minor package's `LEGAL-REVIEW.md` lists values legal must confirm before go-live (operator, privacy contact,
   versions).
+
+## Profile / survey flow fixes (23 Nov 2026, Kunal: missing data, no sounds, no auto-advance)
+Tested on a mock API loaded with the whole v4.1 question bank (`data-source/profile-data.json.gz`: 37 adult and 13 teen
+profiles, 821 questions) with 0.9 s answers, like a real network.
+- **Follow-up questions were skipped.** A question that depends on the answer just given loads after the answer. The
+  flow moved on after 420 ms, before it had loaded, so it was never asked (Professional: 5 of 18 questions asked).
+  The move now waits for it and then goes on by itself.
+- **Auto-advance stopped** with "Loading the next question…" on the last question of a page; it now waits and moves on.
+- **Typed questions without a validation pattern were hidden** (e.g. Alternate E-Mail, company website, LinkedIn,
+  postcode). They are asked now, as the classic survey form does; number, e-mail, URL and textarea types are typed in.
+- **The 33 questions v4.1 adds** (`additions.mjs`: middle name, nationality, household, work, devices, interests…) are in
+  `ps/v41Additions.js`, placed where the package puts them. They are not in the database's question list, so their
+  wording and options come from that file; answers are saved with the existing `PATCH /api/v1/me/profile`. The backend's
+  profile progress does not count them. v4.1's new gender labels are not carried (gender is locked after sign-up).
+- **Sounds:** only answer picks and three interface sounds were wired. Added v4.1's click sound on every button, link,
+  tab and chip (`ps/useClickSounds.js`, Profiles and Surveys pages), the next / section-complete sounds with the
+  "Section complete!" toast, and the open sound. All of them follow the hub's Sound switch.
+- **Questions listed twice wiped their own answer.** Some profiles list a question twice (Health & Wellness,
+  Gaming & Esports). Picking an answer cleared "the later questions on the page", which included the question itself, so
+  "This field is required" stayed and the profile could not be finished. Fixed.
+- **A question listed before the one it depends on** (Travel: flight types and travel purposes come before "Have you
+  travelled by airline?") was never asked once its parent was answered. It is now asked right after.
+- Answering a question clears the later answers on its page (as before), but never a locked one: with Alternate E-Mail and
+  Middle name now asked before it, the sign-up country would otherwise have been saved empty. Nor one whose question has
+  not loaded yet.
