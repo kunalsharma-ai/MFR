@@ -16,12 +16,14 @@
 //  GET  /password/:token, POST /password/:token {password, confirm}
 //  signed-in teen (JWT, same as /api/v1/me)
 //  GET  /me, PUT /me/answers
+//  GET  /me/family              what the guardian submitted (only once approved, onboarded, consented, active)
 //  operations
 //  POST /jobs/sweep                header x-job-key = TEEN_JOB_KEY (reminders + expiry; also app/jobs/teen-reminders.js)
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { isAuthenticated, fsLogger } from "../../utils/index.js";
 import * as S from "../../teen/service.js";
+import { family } from "../../teen/family.js";
 
 const router = express.Router();
 
@@ -88,6 +90,7 @@ router
     .post("/password/:token", limit(10, 10), noReferrer, handle(S.setPassword))
     .get("/me", isAuthenticated, handle(S.me))
     .put("/me/answers", isAuthenticated, handle(S.saveAnswers))
+    .get("/me/family", isAuthenticated, handle(family))
     .post("/jobs/sweep", (req, res, next) => {
         const key = process.env.TEEN_JOB_KEY;
         if (!key || req.headers["x-job-key"] !== key) return res.status(403).json({ status: "error", message: "Forbidden" });

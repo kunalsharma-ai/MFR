@@ -128,7 +128,7 @@ test("adult registration still works, and no longer returns the emailed code or 
     assert.equal(u.registrationStatus, "active");
 });
 
-let regRef, statusToken, guardianToken;
+let regRef, statusToken, guardianToken, teenCookie;
 test("validation: friendly field codes, nothing stored", async () => {
     const bad = await call("POST", "/api/v1/teen/register", teenBody({ teen: { firstName: "", email: "nope" }, guardian: { email: "aarav.teen@example.com" }, accepted: { terms: false } }));
     assert.equal(bad.status, 422);
@@ -284,6 +284,58 @@ test("teen creates a password, logs in, sees only their own profile", async () =
     const me2 = await call("GET", "/api/v1/teen/me", null, { cookie });
     assert.deepEqual(me2.json.data.answers.T01, ["phone", "laptop"]);
     assert.equal(me2.json.data.welcomeDone, true);
+    teenCookie = cookie;
+});
+
+test("teen profile: what the guardian submitted, only for that teen, only once complete", async () => {
+    const f = await call("GET", "/api/v1/teen/me/family", null, { cookie: teenCookie });
+    assert.equal(f.json.status, "success", JSON.stringify(f.json));
+    const d = f.json.data;
+    assert.equal(d.ready, true);
+    assert.equal(f.headers.get("cache-control"), "no-store");
+    // the guardian's real details, in full, for their own teen
+    assert.equal(d.guardian.email, "priya.parent@example.com");
+    assert.equal(d.guardian.firstName, "Priya");
+    assert.equal(d.guardian.relation, "mother");
+    assert.equal(d.guardian.verification.authority, "yes");
+    assert.ok(d.guardian.verification.emailVerifiedAt);
+    // every onboarding question is there, with the wording the parent saw
+    const qs = d.onboarding.sections.flatMap((s) => s.questions);
+    const by = Object.fromEntries(qs.map((q) => [q.n, q]));
+    assert.ok(d.onboarding.submittedAt);
+    assert.deepEqual(by["parent-first-name"].display, ["Priya Sharma"]);
+    assert.deepEqual(by.P01.display, ["India"]);
+    assert.equal(by.P02.display[0], "Delhi");
+    assert.deepEqual(by.P03.display, ["Mother"]);
+    assert.deepEqual(by.P12.display, ["Yes, keep me updated"]);
+    assert.equal(by.HQ1.answered, false, "unanswered optional questions say so");
+    assert.equal(by.HQ4.applies, false, "follow-up that did not apply");
+    assert.equal(qs.filter((q) => q.n !== "P05").length, 17);
+    // consent: the recorded statements and time, never the IP address or browser
+    assert.equal(d.consent.guardian.version, GUARDIAN_CONSENT.version);
+    assert.deepEqual(d.consent.guardian.sectionsRead, [1, 4, 9]);
+    assert.equal(d.consent.guardian.statements.find((s) => s.id === "sensitive").accepted, true);
+    assert.equal(d.consent.guardian.statements.find((s) => s.id === "recording").accepted, false);
+    assert.ok(d.consent.document.declaration.length >= 5);
+    assert.equal(d.consent.teen.party, "teen");
+    assert.equal(d.registration.decision.value, "yes");
+    assert.ok(d.registration.timeline.some((h) => h.status === "active"));
+    assert.equal(d.rewards.guardianApprovalRequired, true);
+    assert.deepEqual(d.rewards.requests, []);
+    assert.ok(d.notRecorded.includes("consent_receipt"));
+    const text = JSON.stringify(f.json);
+    assert.ok(!/userAgent|"ip"|comment/.test(text), "no consent IP, browser or decline comment");
+
+    // not complete (any step before active): only the status, nothing the parent submitted
+    const reg = await Models.TeenRegistration.findOne({ reference: regRef });
+    await Models.TeenRegistration.updateOne({ _id: reg._id }, { $set: { status: "pending_password" } });
+    const early = await call("GET", "/api/v1/teen/me/family", null, { cookie: teenCookie });
+    assert.equal(early.json.data.ready, false);
+    assert.equal(early.json.data.steps.active, false);
+    assert.ok(!JSON.stringify(early.json).includes("priya.parent@example.com"));
+    assert.equal(early.json.data.guardian, undefined);
+    await Models.TeenRegistration.updateOne({ _id: reg._id }, { $set: { status: "active" } });
+    assert.equal((await call("GET", "/api/v1/teen/me/family")).status, 401);
 });
 
 test("guardian says NO: confirmed decline, reasons optional, nothing activated", async () => {
@@ -395,5 +447,8 @@ test("member API lock-down", async () => {
 
     // teen endpoints need the teen's own login
     assert.equal((await call("GET", "/api/v1/teen/me", null, { cookie })).json.code, "not_teen");
+    const adultFamily = await call("GET", "/api/v1/teen/me/family", null, { cookie });
+    assert.equal(adultFamily.json.code, "not_teen");
+    assert.ok(!JSON.stringify(adultFamily.json).includes("priya.parent@example.com"), "an adult (even an admin) never gets a guardian's details");
     assert.equal((await call("GET", "/api/v1/teen/me")).status, 401);
 });
