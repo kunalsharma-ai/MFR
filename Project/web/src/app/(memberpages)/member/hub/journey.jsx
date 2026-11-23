@@ -23,7 +23,7 @@ import Scene3D from "./scene.jsx";
 import { Avatar } from "./Shell.jsx";
 import { useSurveyDesk, surveyFilters } from "./surveys.jsx";
 import { achievementsOf, fmt, relDay } from "./data";
-import { surveyTopic, profileTopic } from "./topics";
+import { surveyTopic, profileTopic, artOf, profileArt } from "./topics";
 import { useHub } from "./store";
 import { play } from "./sound";
 
@@ -228,7 +228,7 @@ function Opportunities({ hub, desk }) {
             const { tp, name } = label(feat);
             return (
               <article className={`jo-feat is-${feat.state}`} style={{ "--c1": tp.c1, "--c2": tp.c2 }}>
-                <span className="jo-blob" aria-hidden="true"><Icon name={tp.ic} size={40} /></span>
+                <span className="jo-blob" aria-hidden="true"><img src={feat.kind === "profile" ? profileArt(feat.slug, tp) : artOf(tp)} alt="" width="76" height="76" /></span>
                 <div className="jo-feat-tx">
                   <p className="jo-topic">{name}{feat.participationStatus === "invited" && feat.kind === "survey" ? <em>{t("v5.new")}</em> : null}</p>
                   <h3>{feat.name}</h3>
@@ -244,7 +244,7 @@ function Opportunities({ hub, desk }) {
               return (
                 <li key={`${r.kind}-${r.slug}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i }}>
                   <button type="button" className={`jo-row is-${r.state}`} onClick={() => desk.start(r)} aria-label={`${cta(r)}: ${r.name}`}>
-                    <span className="jo-row-ic" aria-hidden="true"><Icon name={r.state === "locked" ? "lock" : tp.ic} size={18} /></span>
+                    <span className="jo-row-ic" aria-hidden="true"><img src={r.kind === "profile" ? profileArt(r.slug, tp) : artOf(tp)} alt="" width="30" height="30" loading="lazy" /></span>
                     <span className="jo-row-tx"><b>{r.name}</b><small><span className="jo-pts">+{fmt(Number(r.points) || 0)} {unitOf(type)}</span>{Number(r.loi) ? <> · <Icon name="clock" size={12} /> {t("sx.min", { n: Number(r.loi) })}</> : null}</small></span>
                     <Icon name="arrow" size={16} className="jo-go" />
                   </button>

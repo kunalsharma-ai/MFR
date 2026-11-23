@@ -16,9 +16,14 @@ import { setProfileNames } from "../(member pages)/profiles/ps/i18n";
 import { visibleProfiles, normalizeInterests, isCore } from "../(member pages)/profiles/ps/profileRules";
 import GateDialog from "../(member pages)/profiles/ps/GateDialog";
 import "../(member pages)/profiles/ps/ps.css";
+import "./hub-machines.css";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { LoadingBlock } from "./ui.jsx";
+import { memberTypeOf } from "./data";
+
+// each segment has its own machine: Consumer the gumball garden, Professional the display vault, Teen the claw arcade
+const SKIN = { consumer: "globe", professional: "vault", teen: "claw" };
 
 const PrizeMachine = React.lazy(() => import("../(member pages)/profiles/ps/PrizeMachine"));
 const MIN_STATUS = 1; // as the Profiles page
@@ -63,6 +68,7 @@ export default function PrizeHall() {
   const router = useRouter();
   const { ready, cat, gate, prizeProfiles, error } = usePrizeData();
   const [gateOpen, setGateOpen] = React.useState(false);
+  const skin = SKIN[memberTypeOf(useMember())] || "globe";
   const canOpen = (slug) => isCore(slug) || gate.coreDone;
   // a capsule opens its profile in the Profiles page flow, exactly as it did there
   const onOpen = (p) => {
@@ -72,7 +78,7 @@ export default function PrizeHall() {
     else setGateOpen(true);
   };
   return (
-    <section className="rw3-machine" id="prize-machine" aria-labelledby="rw3-pm-t">
+    <section className={`rw3-machine pmx-${skin}`} id="prize-machine" aria-labelledby="rw3-pm-t">
       <header className="rw3-head">
         <p className="k-eyebrow"><Icon name="gift" size={15} /> {t("rw3.machineEyebrow")}</p>
         <h2 className="sec-h" id="rw3-pm-t">{t("rw3.machineTitle")}</h2>
@@ -81,7 +87,7 @@ export default function PrizeHall() {
       <div className="ps rw3-ps" data-theme="dark" style={{ minHeight: 0, background: "transparent", overflow: "visible" }}>
         {error ? <p className="k-note"><Icon name="alert" size={16} /> {t("d2.profileError")}</p> : ready && prizeProfiles.length ? (
           <Suspense fallback={<div className="pm-ph" aria-hidden="true" />}>
-            <PrizeMachine key={cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} cat={cat} isLocked={(slug) => !canOpen(slug)} onOpen={onOpen} />
+            <PrizeMachine key={skin + cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} skin={skin} cat={cat} isLocked={(slug) => !canOpen(slug)} onOpen={onOpen} />
           </Suspense>
         ) : ready ? <p className="k-note">{t("pf.none")}</p> : <LoadingBlock lines={4} h={420} />}
         <GateDialog

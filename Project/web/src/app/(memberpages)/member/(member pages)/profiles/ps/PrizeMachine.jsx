@@ -34,11 +34,24 @@ function pack(n) {
   pts.sort((a, b) => b[1] - a[1] || Math.abs(a[0] - G.cx) - Math.abs(b[0] - G.cx));
   return pts.slice(0, n);
 }
+// rectangular cases (the vault and the claw box) stack capsules in rows from the floor up
+function packBox(n, top) {
+  const pts = [], step = 38;
+  for (let row = 0; row < 12; row++) {
+    const y = 310 - row * step * 0.9;
+    if (y < top) break;
+    for (let col = 0; col < 7; col++) pts.push([52 + col * step + (row % 2 ? step / 2 : 0), y]);
+  }
+  pts.sort((a, b) => b[1] - a[1] || Math.abs(a[0] - G.cx) - Math.abs(b[0] - G.cx));
+  return pts.filter((p) => p[0] <= 278).slice(0, n);
+}
 const rot = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return (h % 70) - 35; };
 
 // isLocked(slug): the capsule cannot be won yet (the other profiles open after the four basics); its slot shows a lock and clicking it
 // goes to onOpen like any capsule (the page then explains what to finish first).
-export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
+// skin: "globe" (Consumer gumball garden), "vault" (Professional display vault), "claw" (Teen claw arcade).
+// Every skin dispenses the same capsules with the same rewards; only the machine and its motion differ.
+export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin = 'globe' }) {
   const { t, lang } = useI18n();
   useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion);
   const ps = useMemo(() => catProfiles(cat), [cat]);
@@ -52,7 +65,8 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
   const nf = new Intl.NumberFormat(lang);
 
   const inGlobe = ps.filter((p) => !shown.has(p.s));
-  const spots = useMemo(() => pack(ps.length), [ps.length]);
+  const spots = useMemo(() => (skin === 'globe' ? pack(ps.length) : packBox(ps.length, skin === 'claw' ? 150 : 96)), [ps.length, skin]);
+  const claw = useRef(null);
   const n = shown.size, rk = rankOf(n, ps.length), pts = paidPoints();
   const nextUsd = (Math.floor(pts / POINTS_PER_USD) + 1) * POINTS_PER_USD;
   const todo = ps.filter((p) => !isDone(p));
@@ -72,7 +86,25 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
     await wait(30);
     const el = flyEl.current;
     reward('drop', lang);
-    await path(el, [at(from[0], from[1], 1, rot(slug)), at(G.cx, G.cy + G.r - 30, 1, rot(slug) + 90, 0.25), at(G.cx, 346, 0.9, 200, 0.42), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1500, 'cubic-bezier(.45,.05,.55,.95)');
+    if (skin === 'claw' && claw.current && !reducedMotion()) {
+      // the claw travels to the capsule, drops, grabs it, lifts it to the chute and lets go
+      const C = claw.current, cw = (x, y) => [(x - 30) * u(), (y - 92) * u()];
+      const home = cw(G.cx, 112), over = cw(from[0], 112), down = cw(from[0], from[1]), lift = cw(from[0], 112), drop = cw(70, 112);
+      const a0 = at(from[0], from[1], 1, rot(slug));
+      if (el) el.style.transform = `translate(${a0[0]}px, ${a0[1]}px) rotate(${a0[3]}deg)`;
+      machine.current?.classList.add('claw-open');
+      await path(C, [home, over, down], 900, 'cubic-bezier(.45,.05,.4,1)');
+      machine.current?.classList.remove('claw-open');
+      await wait(180);
+      const up = [at(from[0], from[1], 1, rot(slug)), at(from[0], 112, 1, rot(slug)), at(70, 112, 1, rot(slug))];
+      await Promise.all([path(C, [down, lift, drop], 900, 'ease-in-out'), path(el, up, 900, 'ease-in-out')]);
+      machine.current?.classList.add('claw-open');
+      path(C, [drop, home], 700, 'ease-in-out').then(() => machine.current?.classList.remove('claw-open'));
+      await path(el, [at(70, 112, 1, rot(slug)), at(70, 330, 1, rot(slug) + 90, 0.35), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1200, 'cubic-bezier(.45,.05,.55,.95)');
+    } else {
+      const exit = skin === 'vault' ? at(G.cx, 330, 1, rot(slug) + 40, 0.25) : at(G.cx, G.cy + G.r - 30, 1, rot(slug) + 90, 0.25);
+      await path(el, [at(from[0], from[1], 1, rot(slug)), exit, at(G.cx, 346, 0.9, 200, 0.42), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1500, 'cubic-bezier(.45,.05,.55,.95)');
+    }
     machine.current?.classList.remove('is-running');
     if (reducedMotion() && el) el.style.transform = `translate(${(TRAY.x - CAP / 2) * u()}px, ${(TRAY.y - CAP / 2) * u()}px)`;
     setFly({ slug, open: true }); reward('pop', lang);
@@ -161,7 +193,7 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
   };
 
   return (
-    <section className={'pm' + (todo.length ? '' : ' maxed')} id="rewards" ref={root} aria-labelledby="pm-h">
+    <section className={'pm' + (todo.length ? '' : ' maxed')} data-skin={skin} id="rewards" ref={root} aria-labelledby="pm-h">
       <div className="pm-machine-wrap">
         <div className="pm-machine" ref={machine}>
           <div className="pm-sign" aria-hidden="true"><b>{sign || t('rw.machine')}</b></div>
@@ -171,7 +203,12 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
               return <Capsule key={p.s} slug={p.s} className={'in-globe' + (fly && fly.slug === p.s ? ' gone' : '')} style={{ '--x': x - CAP / 2, '--y': y - CAP / 2, '--r': rot(p.s) + 'deg', '--i': i }} />;
             })}
             <span className="pm-glass" />
+            {skin === 'globe' ? <span className="pm-stir"><i /><i /><i /></span> : null}
+            {skin === 'vault' ? <><span className="pm-shelf" /><span className="pm-scan" /><span className="pm-door l" /><span className="pm-door r" /></> : null}
+            {skin === 'claw' ? <><span className="pm-gantry" /><span className="pm-neon" /></> : null}
           </div>
+          {skin === 'claw' ? <span className="pm-claw" ref={claw}><i className="w" /><i className="h" /><i className="f l" /><i className="f r" /></span> : null}
+          {skin === 'globe' ? <span className="pm-dome" aria-hidden="true" /> : null}
           <div className="pm-neck" aria-hidden="true" />
           <div className="pm-body">
             <span className="pm-bulbrow" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>
@@ -184,6 +221,8 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
             <span className="pm-tray" aria-hidden="true" />
             <button type="button" className="pm-crank" onClick={lucky} disabled={busy || !openTodo.length} aria-label={t('rw.crank')} title={t('rw.crankHint')}>
               <span className="pm-crank-k" style={{ '--turns': crank }}><i /></span>
+              {skin === 'vault' ? <span className="pm-dial" style={{ '--turns': crank }} aria-hidden="true" /> : null}
+              {skin === 'claw' ? <span className="pm-stick" aria-hidden="true"><i /></span> : null}
             </button>
           </div>
           <div className="pm-base" aria-hidden="true" />

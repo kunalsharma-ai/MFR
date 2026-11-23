@@ -25,7 +25,7 @@ import { Counter, Reveal, EmptyState, ErrorState, Skeleton } from "./ui.jsx";
 import { fmt, relDay } from "./data";
 import { useHub } from "./store";
 import { play } from "./sound";
-import { surveyTopic, profileTopic } from "./topics";
+import { surveyTopic, profileTopic, artOf, profileArt } from "./topics";
 
 const PERMITTED = ["invited", "dropout"]; // the statuses a member can start or resume
 const HIGH = 50; // more than 50 points = top reward (profileRules.isHighReward)
@@ -57,7 +57,8 @@ function daysLeft(d) {
   return Math.ceil(ms / 86400000);
 }
 
-/* one card: a survey or a topic profile taken as a survey */
+/* one card (v6, round 5): a ticket. The stub holds the reward, the body the topic, name, facts and the action.
+   Nothing on it is invented: name, points, minutes (loi), dates, summary and the quality requirement come from the record. */
 export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0 }) {
   const isProfile = row.kind === "profile";
   const tp = isProfile ? profileTopic(row) : surveyTopic(row, type);
@@ -67,42 +68,42 @@ export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0
   const canStart = st === "available" || st === "resume";
   const cta = st === "resume" ? t("sx.resume") : isProfile ? t("sx.startProfile") : t("sx.start");
   const label = tx(`sx.topic.${tp.k}`, tx(`pf3.${tp.k}.title`, t("sx.topic.general")));
+  const unit = type === "teen" ? t("hdr.xp") : t("c.pts");
   return (
-    <li className={`sx-card is-${st} ${featured ? "is-featured" : ""}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": Math.min(i, 12) }}>
-      <div className="sx-band" aria-hidden="true"><span className="sx-orb" /><span className="sx-orb b" /></div>
-      <span className="sx-glyph" aria-hidden="true"><Icon name={tp.ic} size={featured ? 30 : 24} /></span>
-      <div className="sx-body">
-        <div className="sx-top">
-          <span className="sx-topic">{isProfile ? t("sx.profileTopic") : label}</span>
-          <span className={`sx-state s-${st}`}><Icon name={st === "done" ? "check" : st === "locked" ? "lock" : st === "closed" ? "close" : st === "resume" ? "hourglass" : "bolt"} size={12} /> {t(`sx.state.${st}`)}</span>
+    <li className={`sc is-${st} ${featured ? "is-featured" : ""}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": Math.min(i, 12) }}>
+      <div className="sc-stub" aria-hidden="true">
+        <span className="sc-glyph"><img src={isProfile ? profileArt(row.slug, tp) : artOf(tp)} alt="" width="56" height="56" loading="lazy" decoding="async" /></span>
+        <span className="sc-reward"><b>{fmt(Number(row.points) || 0)}</b><small>{unit}</small></span>
+        {mins ? <span className="sc-time"><Icon name="clock" size={14} /> {t("sx.min", { n: mins })}</span> : null}
+      </div>
+      <div className="sc-body">
+        <div className="sc-top">
+          <span className="sc-topic">{isProfile ? t("sx.profileTopic") : label}</span>
+          <span className={`sc-state s-${st}`}><Icon name={st === "done" ? "check" : st === "locked" ? "lock" : st === "closed" ? "close" : st === "resume" ? "hourglass" : "bolt"} size={13} /> {t(`sx.state.${st}`)}</span>
         </div>
-        <h3 className="sx-name">{row.name}</h3>
-        {row.summary ? <p className="sx-sum">{row.summary}</p> : isProfile ? <p className="sx-sum">{tx(`pf3.${tp.k}.text`, t("sx.profileText"))}</p> : null}
-        <ul className="sx-meta">
-          {mins ? <li><Icon name="clock" size={15} /> <span>{t("sx.min", { n: mins })}</span></li> : null}
-          {isProfile && row.questions ? <li><Icon name="surveys" size={15} /> <span>{t("pf.questions", { n: row.questions })}</span></li> : null}
-          {left != null && st !== "done" ? <li><Icon name="calendar" size={15} /> <span>{left <= 1 ? t("sx.endsToday") : t("sx.endsIn", { n: left })}</span></li> : null}
-          {st === "done" && row.at ? <li><Icon name="check" size={15} /> <span>{relDay(new Date(row.at), t)}</span></li> : null}
+        <h3 className="sc-name">{row.name}</h3>
+        {row.summary ? <p className="sc-sum">{row.summary}</p> : isProfile ? <p className="sc-sum">{tx(`pf3.${tp.k}.text`, t("sx.profileText"))}</p> : null}
+        <ul className="sc-meta">
+          {isProfile && row.questions ? <li><Icon name="surveys" size={15} /> {t("pf.questions", { n: row.questions })}</li> : null}
+          {left != null && st !== "done" ? <li><Icon name="calendar" size={15} /> {left <= 1 ? t("sx.endsToday") : t("sx.endsIn", { n: left })}</li> : null}
+          {st === "done" && row.at ? <li><Icon name="check" size={15} /> {relDay(new Date(row.at), t)}</li> : null}
+          <li className="sc-elig"><Icon name={row.minQualityScore ? "quality" : "check"} size={15} />
+            {st === "locked" ? t("sx.eligLocked") : st === "closed" ? t(`sx.closed.${row.participationStatus}`) : st === "done" ? t("sx.eligDone") : row.minQualityScore ? t("sx.eligQuality", { n: row.minQualityScore }) : isProfile ? t("sx.eligProfile") : st === "resume" ? t("sx.eligResume") : t("sx.eligInvited")}
+          </li>
         </ul>
-        <p className="sx-elig"><Icon name={row.minQualityScore ? "quality" : "check"} size={14} />
-          {st === "locked" ? t("sx.eligLocked") : st === "closed" ? t(`sx.closed.${row.participationStatus}`) : st === "done" ? t("sx.eligDone") : row.minQualityScore ? t("sx.eligQuality", { n: row.minQualityScore }) : isProfile ? t("sx.eligProfile") : st === "resume" ? t("sx.eligResume") : t("sx.eligInvited")}
-        </p>
-        <div className="sx-foot">
-          <span className="sx-pts"><span className="sx-coin" aria-hidden="true" /><b>{fmt(Number(row.points) || 0)}</b><small>{type === "teen" ? t("hdr.xp") : t("c.pts")}</small></span>
-          {canStart || st === "locked" ? (
-            <button type="button" className={`h-btn ${st === "locked" ? "h-btn-soft" : "h-btn-primary"} sx-go`} onClick={() => onStart(row)}
-              aria-label={`${st === "locked" ? t("sx.unlock") : cta}: ${row.name}`}>
-              {st === "locked" ? <><Icon name="lock" size={16} /> {t("sx.unlock")}</> : <>{cta} <Icon name="arrow" size={17} /></>}
-            </button>
-          ) : null}
-        </div>
+        {canStart || st === "locked" ? (
+          <button type="button" className={`sc-go ${st === "locked" ? "is-lock" : ""}`} onClick={() => onStart(row)}
+            aria-label={`${st === "locked" ? t("sx.unlock") : cta}: ${row.name}`}>
+            {st === "locked" ? <><Icon name="lock" size={17} /> {t("sx.unlock")}</> : <>{cta} <Icon name="arrow" size={18} /></>}
+          </button>
+        ) : null}
       </div>
     </li>
   );
 }
 
 function CardSkeleton() {
-  return <li className="sx-card is-skel" aria-hidden="true"><div className="sx-band" /><div className="sx-body"><Skeleton h={14} w="40%" /><Skeleton h={22} w="85%" /><Skeleton h={14} w="60%" /><Skeleton h={44} w="100%" r={14} /></div></li>;
+  return <li className="sc is-skel" aria-hidden="true"><div className="sc-stub" /><div className="sc-body"><Skeleton h={14} w="40%" /><Skeleton h={22} w="85%" /><Skeleton h={14} w="60%" /><Skeleton h={44} w="100%" r={14} /></div></li>;
 }
 
 // Everything a survey list needs, shared by the Surveys page and the dashboard's opportunities section:
@@ -194,7 +195,7 @@ export default function SurveysPage({ SurveyHistory }) {
         <section className="sx-best" aria-labelledby="sx-best-t">
           <h2 className="sx-h" id="sx-best-t"><Icon name="target" size={20} /> {t("sx.bestTitle")}</h2>
           <p className="k-note">{t("sx.bestWhy")}</p>
-          <ul className="sx-grid one"><SurveyCard row={best} type={type} locked={locked} onStart={start} featured /></ul>
+          <ul className="sx-grid sc-grid one"><SurveyCard row={best} type={type} locked={locked} onStart={start} featured /></ul>
         </section>
       ) : null}
 
@@ -214,13 +215,13 @@ export default function SurveysPage({ SurveyHistory }) {
           </div>
         </div>
         {active.isError ? <ErrorState onRetry={active.refetch} /> : loading ? (
-          <ul className="sx-grid">{[0, 1, 2].map((k) => <CardSkeleton key={k} />)}</ul>
+          <ul className="sx-grid sc-grid">{[0, 1, 2].map((k) => <CardSkeleton key={k} />)}</ul>
         ) : !openRows.length ? (
           <EmptyState kind="surveys" title={t("sx.emptyTitle")} text={t(`sx.emptyText.${type}`)} action={<Link className="h-btn h-btn-primary" href="/member/profiles">{t("sx.emptyCta")}</Link>} />
         ) : !rows.length ? (
           <p className="sx-none"><Icon name="search" size={18} /> {t("sx.noneInFilter")} <button type="button" className="h-link" onClick={() => setFilter("all")}>{t("sx.showAll")}</button></p>
         ) : (
-          <ul className="sx-grid">{rows.map((r, i) => <SurveyCard key={`${r.kind}-${r.slug}`} row={r} type={type} locked={locked} onStart={start} i={i} />)}</ul>
+          <ul className="sx-grid sc-grid">{rows.map((r, i) => <SurveyCard key={`${r.kind}-${r.slug}`} row={r} type={type} locked={locked} onStart={start} i={i} />)}</ul>
         )}
       </section>
 
@@ -228,7 +229,7 @@ export default function SurveysPage({ SurveyHistory }) {
         <Reveal>
           <section className="sx-done" aria-labelledby="sx-done-t">
             <h2 className="sx-h" id="sx-done-t"><Icon name="check" size={20} /> {t("sx.doneTitle")}</h2>
-            <ul className="sx-grid compact">{history.map((r, i) => <SurveyCard key={`h-${r.slug}`} row={r} type={type} locked={false} onStart={start} i={i} />)}</ul>
+            <ul className="sx-grid sc-grid compact">{history.map((r, i) => <SurveyCard key={`h-${r.slug}`} row={r} type={type} locked={false} onStart={start} i={i} />)}</ul>
           </section>
         </Reveal>
       ) : null}

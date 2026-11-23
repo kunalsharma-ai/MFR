@@ -18,7 +18,7 @@ import { Avatar } from "./Shell.jsx";
 import { fmt } from "./data";
 import { useHub, useRise } from "./store";
 import { play } from "./sound";
-import { profileTopic } from "./topics";
+import { profileTopic, profileArt } from "./topics";
 import FamilyPanel from "./family.jsx";
 
 function useCelebrate(id, pct) {
@@ -96,38 +96,39 @@ function ProfileHero({ hub, cards }) {
   );
 }
 
-/* ---------------- one profile card ---------------- */
+/* ---------------- one profile card (v6, round 5): art panel with a progress ring, big title, chips, full-width action ---------------- */
 function ProfileCard({ card, i }) {
   const { tp, title, text, pct, done, locked, questions, points, open } = card;
   const state = done ? "done" : locked ? "locked" : pct > 0 ? "going" : "new";
   const cta = done ? t("pf.review") : locked ? t("pf.locked") : pct > 0 ? t("pf.continue") : t("pf.start");
+  const R = 46;
+  const C = 2 * Math.PI * R;
+  const mins = Math.max(1, Math.round((questions * 8) / 60));
   return (
-    <li className={`pf-card is-${state}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i, "--w": `${pct}%` }}>
-      <button type="button" className="pf-card-btn" onClick={() => { play("tap"); open(); }}
+    <li className={`pc is-${state}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i }}>
+      <button type="button" className="pc-btn" onClick={() => { play("tap"); open(); }}
         aria-label={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`}>
-        <span className="pf-card-glow" aria-hidden="true" />
-        <span className="pf-card-top">
-          <span className="pf-glyph" aria-hidden="true"><Icon name={tp.ic} size={26} /><i /></span>
-          <span className={`pf-state s-${state}`}>
-            <Icon name={done ? "check" : locked ? "lock" : pct > 0 ? "hourglass" : "spark"} size={13} />
-            {t(`pf.state.${state}`, { n: pct })}
+        <span className="pc-art" aria-hidden="true">
+          <span className="pc-blob a" /><span className="pc-blob b" />
+          <span className="pc-ring">
+            <svg viewBox="0 0 108 108"><circle cx="54" cy="54" r={R} className="bg" /><circle cx="54" cy="54" r={R} className="fg" style={{ strokeDasharray: `${(pct / 100) * C} ${C}` }} /></svg>
+            <span className="pc-ic"><img src={card.art} alt="" width="64" height="64" loading="lazy" decoding="async" />{done || locked ? <i className="pc-badge"><Icon name={done ? "check" : "lock"} size={16} /></i> : null}</span>
+          </span>
+          <span className={`pc-state s-${state}`}>{t(`pf.state.${state}`, { n: pct })}</span>
+          {points ? <span className="pc-pts"><span className="pc-coin" />{done ? t("pf.earned", { n: fmt(points) }) : `+${fmt(points)}`}</span> : null}
+        </span>
+        <span className="pc-body">
+          <b className="pc-title">{title}</b>
+          {text ? <span className="pc-text">{text}</span> : null}
+          <span className="pc-chips">
+            {questions ? <span><Icon name="surveys" size={15} /> {t("pf.questions", { n: questions })}</span> : null}
+            <span><Icon name="clock" size={15} /> {t("pf.minutes", { n: mins })}</span>
           </span>
         </span>
-        <span className="pf-card-tx">
-          <b className="pf-card-t">{title}</b>
-          <small className="pf-card-d">{text}</small>
+        <span className="pc-foot">
+          <span className="pc-pct"><b>{pct}</b>%</span>
+          <span className="pc-go">{cta} <Icon name="arrow" size={18} /></span>
         </span>
-        <span className="pf-card-meta">
-          {questions ? <span><Icon name="surveys" size={14} /> {t("pf.questions", { n: questions })}</span> : null}
-          <span><Icon name="clock" size={14} /> {t("pf.minutes", { n: Math.max(1, Math.round((questions * 8) / 60)) })}</span>
-          {points ? <span className="pf-pts"><Icon name="coin" size={14} /> {done ? t("pf.earned", { n: fmt(points) }) : `+${fmt(points)}`}</span> : null}
-        </span>
-        <span className="pf-meter" aria-hidden="true"><i /></span>
-        <span className="pf-card-foot">
-          <span className="pf-pct">{pct}%</span>
-          <span className="pf-go">{cta} <Icon name="arrow" size={15} /></span>
-        </span>
-        {done ? <span className="pf-medal" aria-hidden="true"><Icon name="trophy" size={16} /></span> : null}
       </button>
     </li>
   );
@@ -169,7 +170,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
     const tp = profileTopic(p);
     const pct = isDone(p) ? 100 : pctOf(p);
     return {
-      slug: p.slug, tp, pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
+      slug: p.slug, tp, art: profileArt(p.slug, tp), pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
       title: tx(`pf3.${tp.k}.title`, p.name), text: tx(`pf3.${tp.k}.text`, p.description || p.summary || ""), name: p.name,
       open: () => onOpen(p),
     };
@@ -189,7 +190,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
         {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
           <p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p>
         ) : (
-          <ul className="pf-grid">{sorted.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+          <ul className="pf-grid pc-grid">{sorted.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
         )}
       </section>
       <div className="pf-duo">
