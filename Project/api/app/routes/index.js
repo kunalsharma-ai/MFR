@@ -17,6 +17,8 @@ import meResponse from "./api/Response.js";
 import llmRouter from "./api/llm.js"
 import rewardsRouter from "./api/Rewards.js";
 import teenRouter from "./api/Teen.js";
+import engagementRouter from "./api/Engagement.js";
+import engagementPublicRouter from "./api/EngagementPublic.js";
 
 import { isAuthenticated } from "../utils/index.js";
 
@@ -48,6 +50,8 @@ router
     .use("/api/v1/support", isAuthenticated, supportRouter)
     .use("/api/v1/project", isAuthenticated, projectRouter)
     .use("/api/v1/batch", isAuthenticated, batchRouter)
+    .use("/api/v1/engagement-public", engagementPublicRouter)
+    .use("/api/v1/engagement", engagementRouter)
 
 
 // router

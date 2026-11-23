@@ -5,6 +5,8 @@
 // (src/i18n/engine.js, switched by the language menu) translates the English text on the page, as it already
 // does for the rest of the member area.
 
+import { engage } from "./engage/strings.js";
+
 export const en = {
   // shell
   "nav.dashboard": "Dashboard",
@@ -352,6 +354,9 @@ export const en = {
   // empty / loading
   "e.loadingHub": "Gathering your rewards…",
 };
+
+// engagement features (Nov 2026) keep their text in ./engage/strings.js
+Object.assign(en, engage);
 
 const DICTS = { en };
 let active = "en";

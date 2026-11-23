@@ -1,0 +1,39 @@
+{%- comment -%}
+  Weekly points recap (api/app/jobs/weekly-summary.js). It is only a recap: profile reminders are sent by the profile
+  studio every 2 days and are not repeated here.
+  Data: member.firstName, member.type (consumer|professional|teen), week.points, week.surveys, week.from, week.to,
+  balance.available, balance.pending, balance.onHold, money (null for Teens), streak.current, streak.best,
+  streak.next.days, streak.next.daysLeft, links.activity, links.rewards, links.unsubscribe
+{%- endcomment -%}
+{%- if member.type == "teen" -%}{%- assign tone = "teen" -%}{%- else -%}{%- assign tone = "mfr" -%}{%- endif -%}
+{%- capture preheader -%}{{ week.points }} points this week · {{ balance.available }} ready to use{%- endcapture -%}
+{%- assign kicker = "Your week" -%}
+{%- capture title -%}Hi {{ member.firstName }}, here's your week{%- endcapture -%}
+{% include "mailer/engagement/_head.liquid" %}
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:0 0 18px;">
+  <tr>
+    <td width="33%" align="center" style="padding:14px 6px;background:#f3f6fc;border-radius:12px;">
+      <div style="font-size:26px;line-height:32px;font-weight:bold;color:#14213d;">+{{ week.points }}</div>
+      <div style="font-size:12px;line-height:16px;color:#5b6378;">points this week</div>
+    </td>
+    <td width="8">&nbsp;</td>
+    <td width="33%" align="center" style="padding:14px 6px;background:#f3f6fc;border-radius:12px;">
+      <div style="font-size:26px;line-height:32px;font-weight:bold;color:#14213d;">{{ week.surveys }}</div>
+      <div style="font-size:12px;line-height:16px;color:#5b6378;">surveys finished</div>
+    </td>
+    <td width="8">&nbsp;</td>
+    <td width="33%" align="center" style="padding:14px 6px;background:#f3f6fc;border-radius:12px;">
+      <div style="font-size:26px;line-height:32px;font-weight:bold;color:#14213d;">{{ streak.current }}</div>
+      <div style="font-size:12px;line-height:16px;color:#5b6378;">day streak</div>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 10px;"><b>{{ balance.available }} points</b> are ready to use{% if money %} (about {{ money }}){% endif %}.</p>
+{% if balance.pending > 0 %}<p style="margin:0 0 10px;">{{ balance.pending }} more points are pending and will clear soon. You can see the dates on your Activity page.</p>{% endif %}
+{% if balance.onHold > 0 %}<p style="margin:0 0 10px;">{{ balance.onHold }} points are on hold while our quality team checks them.</p>{% endif %}
+{% if streak.next %}<p style="margin:0 0 10px;">{{ streak.next.daysLeft }} more {% if streak.next.daysLeft == 1 %}day{% else %}days{% endif %} to reach a {{ streak.next.days }}-day streak.</p>{% endif %}
+{%- assign btn_url = links.activity -%}{%- assign btn_label = "See my activity" -%}{%- if tone == "teen" -%}{%- assign btn_color = "#7c3aed" -%}{%- else -%}{%- assign btn_color = "#fe7e00" -%}{%- endif -%}
+{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- assign why = "You get this weekly recap because you're a MyFrequentRewards member and have it switched on in Settings." -%}
+{% include "mailer/engagement/_foot.liquid" %}
