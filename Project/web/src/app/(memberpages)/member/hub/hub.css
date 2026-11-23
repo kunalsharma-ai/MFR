@@ -632,9 +632,7 @@ html[data-hub-theme="night"] .ht-hero .h-display { background: none; color: var(
 .ht-track li.done span { background: linear-gradient(135deg, var(--secondary), var(--primary)); border-color: transparent; }
 .ht-track li.now span { border-color: var(--accent); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 25%, transparent); animation: h-rise .5s var(--ease) both, h-now 1.8s ease-in-out infinite 1s; }
 @keyframes h-now { 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 5%, transparent); } }
-.ht-track span > .hi, .ht-track span { }
 .ht-track li span { color: #fff; }
-.ht-track li span > * { transform: rotate(-45deg); }
 .ht-track li:not(.done) span { text-indent: 0; }
 .dt-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--s5); }
 .dt-journey { grid-column: span 7; } .dt-ach { grid-column: span 5; }
@@ -687,7 +685,6 @@ html[data-hub-theme="night"] .ht-hero .h-display { background: none; color: var(
 .rl li .h-meter { grid-column: 2; --sec: #f5a300; --sec-2: #ff6a13; }
 .rl-gem { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--card-2); border: 2px solid var(--border-2); color: var(--faint); rotate: 45deg; }
 .rl-gem > * { rotate: -45deg; }
-.rl-gem .hi { transform: rotate(-45deg); }
 .rl li.done .rl-gem { background: linear-gradient(135deg, #ffc233, #ff6a13); border-color: transparent; color: #fff; }
 .rl li.now .rl-gem { border-color: #f5a300; color: #e09b00; animation: h-beacon 2s ease-in-out infinite; }
 .rl-tx { display: grid; }
