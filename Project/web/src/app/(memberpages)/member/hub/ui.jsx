@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
+import Scene3D from "./scene.jsx";
 
 export const reduced = () =>
   typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -318,7 +319,7 @@ export function Hero({ kind, crumbs = [], eyebrow, title, sub, status, art, acti
         {actions ? <div className="hx-actions">{actions}</div> : null}
         {children}
       </div>
-      {art ? <div className="hx-art" aria-hidden="true">{art}</div> : null}
+      <div className="hx-art" aria-hidden="true"><Scene3D kind={kind}>{art}</Scene3D></div>
     </section>
   );
 }

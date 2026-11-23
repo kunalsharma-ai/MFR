@@ -10,6 +10,7 @@
 // from the profile API, and "done" also when the reward for it is already paid (useProfileGate).
 import React from "react";
 import Link from "next/link";
+import Scene3D from "./scene.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Counter, Ring, Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
@@ -84,6 +85,7 @@ function ProfileHero({ hub, cards }) {
           <span className={`pf-badge s-${status || "load"}`}><Icon name={status === "full" ? "trophy" : "spark"} size={15} /> {status ? t(`pf.badge.${status}`) : "…"}</span>
         </div>
       </div>
+      <div className="pf-scene" aria-hidden="true"><Scene3D kind="profile" /></div>
       <ul className="pf-stats" aria-label={t("pb.status")}>
         <li><small>{t("pf.statProfiles")}</small><b>{done}<em>/{cards.length}</em></b></li>
         <li><small>{t("hdr.quality")}</small><b>{quality ? quality.ten.toFixed(1) : "–"}<em>/10</em></b></li>

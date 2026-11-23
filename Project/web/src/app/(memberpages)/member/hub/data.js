@@ -7,12 +7,20 @@
 // Nothing here writes data. Every number the hub shows comes from one of these reads; when a read fails the
 // hook returns error=true and the screen shows an error state instead of a made-up value.
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery as useRQ } from "@tanstack/react-query";
 import { useMember } from "@/Context";
 import { api } from "@/util";
 import { useRewardsTick, fetchRewardBalance } from "@/hooks/useRewardsRefresh";
 import { CORE_SLUGS } from "../(member pages)/profiles/ps/profileRules.js";
 import { locale } from "./prefs";
+
+// Every query here waits for the member (enabled: Boolean(member?._id)). On a fresh page load the member arrives a
+// moment after the first render, and a disabled query reports isLoading false with no data, so screens would read
+// fields of undefined. Report that wait as loading instead.
+function useQuery(opts) {
+  const q = useRQ(opts);
+  return !opts.enabled && q.data === undefined && !q.isError ? { ...q, isLoading: true } : q;
+}
 
 const ok = (r) => r && r.status !== "error";
 const fail = (r) => {

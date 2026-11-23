@@ -5,6 +5,7 @@
 //   Teen          – "Quest board": level badge hero, quest cards with XP, sticker shelf, power meter
 import React from "react";
 import Link from "next/link";
+import StatBand from "./statband.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock, Spark, Coin3D, Hero } from "./ui.jsx";
@@ -183,6 +184,7 @@ function ConsumerDashboard({ hub }) {
   return (
     <div className="dash dash-c">
       <ConsumerHero hub={hub} />
+      <StatBand hub={hub} />
       <Reveal className="d-today"><TodayStrip /></Reveal>
       <div className="dc-bento">
         <Reveal className="b-jar"><PointsJar hub={hub} /></Reveal>
@@ -387,6 +389,7 @@ function ProDashboard({ hub }) {
   return (
     <div className="dash dash-p">
       <ProHero hub={hub} />
+      <StatBand hub={hub} />
       <Reveal className="d-today"><TodayStrip /></Reveal>
       <div className="dp-grid">
         <Reveal className="g-trend"><TrendChart hub={hub} /></Reveal>
@@ -486,6 +489,7 @@ function TeenDashboard({ hub }) {
   return (
     <div className="dash dash-t">
       <TeenHero hub={hub} />
+      <StatBand hub={hub} />
       <div className="dt-top">
         <Reveal><Quests hub={hub} /></Reveal>
         <div className="dt-side">

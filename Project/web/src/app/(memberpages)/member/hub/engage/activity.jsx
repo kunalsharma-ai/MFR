@@ -20,7 +20,8 @@ export function BalanceStrip() {
   const s = useSummary();
   if (s.isLoading) return <LoadingBlock lines={1} h={90} />;
   if (s.isError) return <ErrorState onRetry={s.refetch} />;
-  const b = s.data.balances;
+  const b = s.data?.balances;
+  if (!b) return null;
   const items = [
     { k: "available", v: b.available, tone: "ok" },
     { k: "pending", v: b.pending, tone: "wait" },
@@ -80,7 +81,8 @@ export function StreakCard({ compact = false }) {
   const s = useSummary();
   if (s.isLoading) return <LoadingBlock lines={2} h={compact ? 90 : 150} />;
   if (s.isError) return <ErrorState onRetry={s.refetch} />;
-  const k = s.data.streak;
+  const k = s.data?.streak;
+  if (!k) return null; // summary not loaded (query disabled or feature off): show nothing rather than crash
   return (
     <section className={`eg-card eg-streak${compact ? " is-compact" : ""}`} aria-labelledby="sk-title">
       <div className="eg-streak-top">

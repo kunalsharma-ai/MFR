@@ -3,8 +3,9 @@
 //   Header: logo + panel badge, three live status gauges (profile %, Quality Points /10, points + level), language
 //           selector (globe, flag, language name, full list), notification bell with an animated unread dot, help,
 //           "more" menu (appearance, palette, sound, all sections) and the account menu.
-//   Navigation: a fixed bottom dock on every screen size (safe-area aware, sliding active indicator, live dots);
-//           "More" opens the full grouped section sheet. Each member type skins it in hub-identity.css.
+//   Navigation (v4, Kunal round 3): a fixed left menu that never moves while the page scrolls; only the main content
+//           scrolls. Reward balance + member card at its foot. Below 1000px it is a drawer opened from the header.
+//           There is no bottom bar.
 // Every number comes from useHub() (store.js), the single source of truth.
 import React from "react";
 import Link from "next/link";
@@ -25,6 +26,7 @@ import "./hub.css";
 import "./hub-sections.css";
 import "./hub-identity.css";
 import "./hub-v3.css";
+import "./hub-v4.css";
 
 export const NAV = [
   { group: "nav.groupOverview", items: [
@@ -50,7 +52,6 @@ export const NAV = [
   ] },
 ];
 const ALL = NAV.flatMap((g) => g.items);
-const DOCK = { consumer: ["dashboard", "profile", "surveys", "rewards", "quality"], professional: ["dashboard", "surveys", "profile", "quality", "rewards"], teen: ["dashboard", "surveys", "rewards", "profile", "quality"] };
 
 const isActive = (pathname, href) => typeof pathname === "string" && (pathname === href || pathname.startsWith(`${href}/`));
 const isOn = (pathname, it) => isActive(pathname, it.href) || (it.also || []).some((h) => isActive(pathname, h));
@@ -409,14 +410,15 @@ function StatusCluster({ hub }) {
   );
 }
 
-function Header({ hub, prefs, onMenu, section, alerts }) {
+function Header({ hub, prefs, onMenu, section, navOpen }) {
   const { type } = hub;
   return (
     <header className="hh" role="banner">
       <a href="#hub-main" className="hh-skip">{t("hdr.skip")}</a>
+      <button type="button" className="hh-icon hh-burger" onClick={onMenu} aria-controls="hub-nav" aria-expanded={Boolean(navOpen)} aria-label={t("nav.main")}><Icon name="menu" size={22} /></button>
       <Link href="/member/dashboard" className="hh-logo" aria-label={t("hdr.home")}>
-        <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="150" height="40" />
-        <img src="/images/logo/mfr/icon/128.webp" alt="" className="hh-mark" width="32" height="32" aria-hidden="true" />
+        <img src="/images/logo/mfr-logo-ondark.png" alt="MyFrequentRewards" className="hh-logo-img" width="168" height="40" />
+        <img src="/images/logo/mfr-mark-ondark.png" alt="" className="hh-mark" width="34" height="34" aria-hidden="true" />
       </Link>
       <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}`)}</span>
       <StatusCluster hub={hub} />
@@ -436,7 +438,6 @@ function Header({ hub, prefs, onMenu, section, alerts }) {
                 <SoundButton prefs={prefs} />
               </div>
               <div className="hh-more-links">
-                <button type="button" className="h-btn h-btn-soft" onClick={() => { close(); onMenu(); }}><Icon name="menu" size={16} /> {t("v3.allSections")}</button>
                 <Link className="h-btn h-btn-soft" href="/member/settings" onClick={close}><Icon name="settings" size={16} /> {t("nav.settings")}</Link>
                 <Link className="h-btn h-btn-soft hh-more-help" href="/member/help" onClick={close}><Icon name="help" size={16} /> {t("nav.support")}</Link>
               </div>
@@ -457,41 +458,62 @@ function navBadge(key, hub, alerts) {
   return null;
 }
 
+// Sidebar footer: the reward balance card and the member card, as on the MFR dashboard members know.
 function NavFoot({ hub }) {
-  const { type, level, quality, completion } = hub;
-  if (type === "professional") {
-    return (
-      <div className="hn-foot">
-        <small>{t("hn.standing")}</small>
-        <b>{quality ? `${quality.ten.toFixed(1)} / 10` : "–"}{quality?.tier ? ` · ${quality.tier.label}` : ""}</b>
-        <span className="hn-foot-bar"><i style={{ "--w": `${quality?.pct ?? 0}%` }} /></span>
-      </div>
-    );
-  }
+  const { type, pts, quality, member, level } = hub;
+  const unit = type === "teen" ? t("hdr.xp") : t("c.pts");
+  const pct = pts ? Math.min(100, (pts.total / pts.threshold) * 100) : 0;
   return (
     <div className="hn-foot">
-      <small>{type === "teen" ? (level.name ? `${t("lv.level", { n: level.n })} · ${level.name}` : t("lv.level", { n: level.n })) : t("lv.level", { n: level.n })}</small>
-      <b>{level.left != null ? t("lv.toNext", { n: fmt(level.left) }) : t("lv.top")}</b>
-      <span className="hn-foot-bar"><i style={{ "--w": `${level.pct}%` }} /></span>
-      {completion && completion.pct < 100 ? <Link href="/member/profiles" className="hn-foot-cta">{t("hn.profileLeft", { n: completion.pct })}</Link> : null}
+      <Link href="/member/rewards" className="hn-bal">
+        <span className="hn-bal-coin" aria-hidden="true"><i /></span>
+        <small>{type === "teen" ? t("rw3.xpBalance") : t("d2.balance")}</small>
+        <b>{pts ? <><Counter value={pts.total} /> <em>{unit}</em></> : "…"}</b>
+        <span className="hn-foot-bar" aria-hidden="true"><i style={{ "--w": `${pct}%` }} /></span>
+        <span className="hn-bal-note">
+          {type === "professional" && quality ? `${t("nav.quality")} ${quality.ten.toFixed(1)} / 10`
+            : type === "teen" ? (level.left != null ? `${t("lv.level", { n: level.n })} · ${t("lv.toNext", { n: fmt(level.left) })}` : t("lv.level", { n: level.n }))
+            : pts ? (pts.total >= pts.threshold ? t("rw.milestoneReached") : t("rw.untilMilestone", { n: fmt(pts.threshold - pts.total) })) : t("lv.level", { n: level.n })}
+        </span>
+      </Link>
+      <Link href="/member/myaccount" className="hn-user">
+        <Avatar member={member} />
+        <span><b>{member?.fullname || [member?.firstname, member?.lastname].filter(Boolean).join(" ")}</b><small>{member?.email || t(`type.${type}Member`)}</small></span>
+      </Link>
     </div>
   );
 }
 
-// "More": every section, grouped, as a sheet that slides up from the dock (all screen sizes).
-function NavSheet({ pathname, open, onClose, hub, alerts }) {
+function useDrawer() {
+  const [drawer, setDrawer] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return undefined;
+    const mq = window.matchMedia("(max-width: 1000px)");
+    const on = () => setDrawer(mq.matches);
+    on();
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
+  return drawer;
+}
+
+// The fixed left menu: it never moves while the page scrolls (only the main content does). Below 1000px it becomes
+// a drawer opened from the header menu button.
+function SideNav({ pathname, open, onClose, hub, alerts }) {
   const { type } = hub;
+  const drawer = useDrawer();
   const ref = React.useRef(null);
-  React.useEffect(() => { if (open) ref.current?.querySelector("a,button")?.focus({ preventScroll: true }); }, [open]);
+  React.useEffect(() => { if (open && drawer) ref.current?.querySelector("a,button")?.focus({ preventScroll: true }); }, [open, drawer]);
+  const hidden = drawer && !open;
   return (
     <>
       <div className={`hn-scrim ${open ? "is-open" : ""}`} onClick={onClose} aria-hidden="true" />
-      <nav ref={ref} className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav" aria-hidden={!open} inert={!open}>
+      <nav ref={ref} className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav" aria-hidden={hidden || undefined} inert={hidden}>
         <div className="hn-head">
-          <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}Member`)}</span>
-          <b className="hn-head-t">{t("v3.allSections")}</b>
+          <img src="/images/logo/mfr-logo-ondark.png" alt="MyFrequentRewards" className="hn-head-logo" width="150" height="36" />
           <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={20} /></button>
         </div>
+        <span className={`hn-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}Member`)}</span>
         <div className="hn-scroll">
           {NAV.map((g) => (
             <div className="hn-group" key={g.group}>
@@ -502,9 +524,9 @@ function NavSheet({ pathname, open, onClose, hub, alerts }) {
                   const b = navBadge(it.key, hub, alerts);
                   return (
                     <li key={it.key}>
-                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={onClose}>
+                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => { play("tap"); onClose(); }}>
                         <span className="hn-ic"><Icon name={it.icon} size={20} /></span>
-                        <span className="hn-tx"><b>{t(it.label)}</b><small>{t(it.hint)}</small></span>
+                        <span className="hn-tx"><b>{t(it.label)}</b></span>
                         {b ? <span className={`hn-badge ${b.dot ? "dot" : ""}`} aria-label={t(b.tip, { n: b.n })}>{b.dot ? "" : b.n > 99 ? "99+" : b.n}</span> : null}
                       </Link>
                     </li>
@@ -517,35 +539,6 @@ function NavSheet({ pathname, open, onClose, hub, alerts }) {
         <NavFoot hub={hub} />
       </nav>
     </>
-  );
-}
-
-// The fixed bottom dock: the main sections on every screen size, always in reach while scrolling.
-// The sliding indicator moves to the active item; "More" opens the full section sheet.
-function Dock({ pathname, onMore, hub, alerts, moreOpen }) {
-  const { type } = hub;
-  const keys = DOCK[type] || DOCK.consumer;
-  const items = keys.map((k) => ALL.find((x) => x.key === k));
-  const at = items.findIndex((it) => isOn(pathname, it));
-  const idx = moreOpen ? items.length : at;
-  return (
-    <nav className="hb" aria-label={t("nav.quick")} style={{ "--n": items.length + 1, "--at": idx < 0 ? -1 : idx }}>
-      <span className={`hb-glide ${idx < 0 ? "is-off" : ""}`} aria-hidden="true" />
-      {items.map((it, i) => {
-        const on = !moreOpen && i === at;
-        const b = navBadge(it.key, hub, alerts);
-        return (
-          <Link key={it.key} href={it.href} className={`hb-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => play("tap")}>
-            <span className="hb-ic"><Icon name={it.icon} size={22} />{b ? <i className="hb-dot" aria-label={t(b.tip, { n: b.n })} /> : null}</span>
-            <span className="hb-tx">{t(it.short || it.label)}</span>
-          </Link>
-        );
-      })}
-      <button type="button" className={`hb-link ${moreOpen ? "is-on" : ""}`} onClick={onMore} aria-controls="hub-nav" aria-expanded={moreOpen}>
-        <span className="hb-ic"><Icon name={moreOpen ? "close" : "menu"} size={22} /></span>
-        <span className="hb-tx">{t("nav.more")}</span>
-      </button>
-    </nav>
   );
 }
 
@@ -596,14 +589,13 @@ export default function HubShell({ children }) {
       data-focus={prefs.focusAlways ? "always" : "auto"}
       style={vars}
     >
-      <Header hub={hub} prefs={prefs} section={section} onMenu={() => setNavOpen(true)} />
+      <Header hub={hub} prefs={prefs} section={section} navOpen={navOpen} onMenu={() => setNavOpen(true)} />
+      <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} />
       <div className="hub-body">
         <main id="hub-main" className="hub-main" tabIndex={-1}>
           {children}
         </main>
       </div>
-      <NavSheet pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} />
-      <Dock pathname={pathname} onMore={() => setNavOpen((o) => !o)} hub={hub} alerts={nAlerts} moreOpen={navOpen} />
     </div>
   );
 }

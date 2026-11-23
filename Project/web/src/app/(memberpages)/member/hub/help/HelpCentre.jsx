@@ -13,6 +13,7 @@ import { play } from "../sound";
 import { t } from "../strings";
 import { useHelpContext, useHelpContent, searchHelp, answerBlocks, Highlight } from "./data";
 import RaiseQuery from "./RaiseQuery.jsx";
+import Scene3D from "../scene.jsx";
 import "./help.css";
 
 const POPULAR = {
@@ -106,19 +107,6 @@ function Guide({ g, topic, open, onToggle, query }) {
         </div>
       ) : null}
     </article>
-  );
-}
-
-function HeroArt({ type }) {
-  return (
-    <div className={`hp-art art-${type}`} aria-hidden="true">
-      <span className="hp-orb o1"><Icon name="help" size={44} /></span>
-      <span className="hp-orb o2"><Icon name="book" size={26} /></span>
-      <span className="hp-orb o3"><Icon name="support" size={24} /></span>
-      <span className="hp-orb o4"><Icon name="spark" size={20} /></span>
-      <span className="hp-ring r1" />
-      <span className="hp-ring r2" />
-    </div>
   );
 }
 
@@ -223,7 +211,7 @@ export default function HelpCentre() {
             <li><b>{topics.length}</b> {t("hp.statTopics")}</li>
           </ul>
         </div>
-        <HeroArt type={ctx.type} />
+        <div className="hp-scene" aria-hidden="true"><Scene3D kind="help" /></div>
       </section>
 
       {!searching ? (

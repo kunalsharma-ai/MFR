@@ -18,13 +18,18 @@ const dates = (e) => ({ ...e, at: e.at ? new Date(e.at) : null, clearsAt: e.clea
 export function useEngage(key, path, { enabled = true, tickDep = true, staleTime = 30_000, select } = {}) {
   const member = useMember();
   const tick = useRewardsTick();
-  return useQuery({
+  const q = useQuery({
     queryKey: ["engage", key, member?._id, tickDep ? tick : 0, path],
     enabled: Boolean(member?._id) && enabled,
     queryFn: () => get(path),
     select,
     staleTime,
   });
+  // On a fresh load of a member page the member arrives a moment after the first render; until then the query is
+  // disabled, so isLoading is false while data is still undefined. Report that as loading so cards wait instead
+  // of reading fields of undefined.
+  if (enabled && !member?._id && q.data === undefined) return { ...q, isLoading: true };
+  return q;
 }
 
 export const useEngageConfig = () => useEngage("config", "/config", { tickDep: false, staleTime: 300_000 });

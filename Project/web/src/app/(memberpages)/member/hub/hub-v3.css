@@ -6,7 +6,7 @@
    Loaded after hub.css / hub-sections.css / hub-identity.css, so equal selectors here win.
    ===================================================================================================== */
 
-.hub { --hdr: 72px; --bnav: 68px; --dock-gap: 14px; --dock-h: calc(var(--bnav) + var(--dock-gap) + env(safe-area-inset-bottom, 0px)); }
+.hub { --hdr: 72px; }
 
 /* ================================================= 1. HEADER ================================================= */
 .hub .hh { display: flex; align-items: center; gap: 10px; padding-inline: clamp(10px, 2vw, 28px); border-bottom: 1px solid var(--border); background: var(--glass); }
@@ -62,68 +62,6 @@
 .hub .hh-pal-sw.sig-professional { --p1: #0a1a3a; --p2: #2453d6; --p3: #c2a35a; }
 .hub .hh-pal-sw.sig-teen { --p1: #6a2cff; --p2: #e0277a; --p3: #b8f53a; }
 
-/* ================================================= 2. LAYOUT + DOCK ================================================= */
-.hub .hub-body { display: block; padding-top: var(--hdr); min-height: 100vh; }
-.hub .hub-main { padding: clamp(16px, 2.2vw, 30px) clamp(14px, 3vw, 40px) calc(var(--dock-h) + 36px); }
-.hub .hub-main > * { max-width: var(--maxw); }
-
-.hub .hb {
-  display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); align-items: stretch;
-  position: fixed; z-index: 1150; left: 50%; bottom: calc(var(--dock-gap) + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
-  width: min(620px, calc(100vw - 24px)); height: var(--bnav); padding: 6px; border-radius: 24px;
-  background: var(--dock-bg); color: var(--dock-ink); border: 1px solid rgba(255, 255, 255, .08);
-  backdrop-filter: saturate(1.5) blur(18px); -webkit-backdrop-filter: saturate(1.5) blur(18px);
-  box-shadow: 0 18px 40px -12px rgba(10, 6, 30, .45), 0 2px 6px rgba(10, 6, 30, .18);
-  inset: auto auto calc(var(--dock-gap) + env(safe-area-inset-bottom, 0px)) 50%;
-}
-.hub[data-type="professional"] .hb { border-radius: 16px; }
-.hub .hb-glide { position: absolute; top: 6px; bottom: 6px; inset-inline-start: 6px; width: calc((100% - 12px) / var(--n)); border-radius: 18px; background: var(--dock-on);
-  transform: translateX(calc(var(--at) * 100%)); transition: transform .5s var(--spring), opacity .25s; box-shadow: 0 6px 18px -4px rgba(0, 0, 0, .35); pointer-events: none; }
-.hub[data-type="professional"] .hb-glide { border-radius: 11px; }
-.hub[dir="rtl"] .hb-glide { transform: translateX(calc(var(--at) * -100%)); }
-.hub .hb-glide.is-off { opacity: 0; }
-.hub .hb-link { position: relative; z-index: 1; display: grid; justify-items: center; align-content: center; gap: 3px; min-width: 0; border: 0; background: transparent;
-  color: var(--dock-muted); text-decoration: none; font: 650 .68rem/1.1 var(--font); cursor: pointer; border-radius: 18px; transition: color .25s; }
-.hub .hb-link:hover { color: var(--dock-ink); }
-.hub .hb-link:focus-visible { outline: 2px solid var(--dock-ink); outline-offset: -3px; }
-.hub .hb-ic { position: relative; display: grid; place-items: center; width: 40px; height: 26px; border-radius: 99px; background: transparent; transition: transform .35s var(--spring); }
-.hub .hb-ic .hi .f { fill: color-mix(in srgb, currentColor 22%, transparent); }
-.hub .hb-link:hover .hb-ic { transform: translateY(-2px); }
-.hub .hb-link.is-on { color: var(--dock-on-ink); }
-.hub .hb-link.is-on .hb-ic { background: transparent; transform: translateY(-1px) scale(1.06); }
-.hub .hb-tx { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-inline: 4px; }
-.hub .hb-dot { position: absolute; top: -1px; inset-inline-end: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d6d; box-shadow: 0 0 0 2px var(--dock-bg); }
-.hub .hb-link.is-on .hb-dot { box-shadow: 0 0 0 2px transparent; }
-
-/* all sections: a sheet that rises above the dock */
-.hub .hn {
-  position: fixed; z-index: 1140; top: auto; height: auto; left: 50%; right: auto; bottom: calc(var(--dock-h) + 10px);
-  width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - var(--hdr) - var(--dock-h) - 26px); max-height: calc(100dvh - var(--hdr) - var(--dock-h) - 26px);
-  display: flex; flex-direction: column; border-radius: 26px; background: var(--nav-bg-solid, var(--card)); color: var(--nav-text, var(--text));
-  border: 1px solid var(--border); box-shadow: var(--shadow-lg); margin: 0;
-  transform: translate(-50%, 24px) scale(.98); opacity: 0; visibility: hidden; transition: transform .4s var(--ease), opacity .25s, visibility 0s .4s;
-}
-.hub[dir] .hn { transform: translate(-50%, 24px) scale(.98); }
-.hub[dir] .hn.is-open { transform: translate(-50%, 0) !important; opacity: 1; visibility: visible; transition: transform .45s var(--spring), opacity .2s, visibility 0s; }
-.hub[data-type="professional"] .hn { border-radius: 16px; }
-.hub .hn-head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 6px 18px; }
-.hub .hn-head-t { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-inline-end: auto; }
-.hub .hn-close { display: inline-flex; }
-.hub .hn-scroll { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; padding: 6px 14px 10px; overflow-y: auto; }
-.hub .hn-group + .hn-group { margin-top: 0; padding-top: 0; border-top: 0; }
-.hub .hn-tx, .hub .hn-gt { display: grid; }
-.hub .hn-gt { display: block; color: var(--nav-muted); }
-.hub .hn-tx small { display: block; color: var(--nav-muted); }
-.hub .hn-badge:not(.dot) { display: grid; }
-.hub .hn-badge.dot { position: static; }
-.hub .hn-link { justify-content: flex-start; padding: 6px 10px; min-height: 50px; }
-.hub .hn-link .hn-ic { background: var(--card-2); color: var(--primary); }
-.hub .hn-link.is-on { background: color-mix(in srgb, var(--primary) 10%, transparent); color: var(--text); }
-.hub .hn-link.is-on .hn-ic { background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 55%, var(--accent))); color: var(--on-primary); }
-.hub .hn-foot { margin: 4px 14px 14px; }
-.hub .hn-scrim { display: block; position: fixed; inset: 0; z-index: 1130; background: rgba(8, 5, 20, .42); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .3s; }
-.hub .hn-scrim.is-open { opacity: 1; pointer-events: auto; }
-
 /* ---------------- shell responsive ---------------- */
 @media (max-width: 1180px) {
   .hub .hs-lv { display: none; }
@@ -136,14 +74,10 @@
 }
 @media (max-width: 900px) {
   .hub { --hdr: 62px; }
-  .hub .hh-burger { display: none; }
   .hub .hh-lang-name { display: none; }
   .hub .hh-langbtn { padding: 0 8px; gap: 5px; box-shadow: none; }
-  .hub .hub-main { padding: var(--s4) var(--s4) calc(var(--dock-h) + 28px); }
-  .hub .hn { width: min(620px, calc(100vw - 24px)); }
 }
 @media (max-width: 640px) {
-  .hub { --bnav: 64px; --dock-gap: 0px; }
   .hub .hh { gap: 6px; padding-inline: 8px; }
   .hub .hh-logo-img { display: none; }
   .hub .hh-mark { display: block; }
@@ -163,19 +97,10 @@
   .hub .hh-avatar { width: 34px; height: 34px; }
   .hub .hh-menu { position: fixed; inset-inline: 8px; top: calc(var(--hdr) + 6px); max-width: none; min-width: 0; }
   .hub .hh-langs, .hub .hh-moremenu, .hub .hh-notes { width: auto; }
-  .hub .hb { width: 100%; left: 0; right: 0; transform: none; inset: auto 0 0 0; bottom: 0; border-radius: 22px 22px 0 0; height: calc(var(--bnav) + env(safe-area-inset-bottom, 0px));
-    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px)); border-width: 1px 0 0; }
-  .hub .hb-glide { bottom: calc(6px + env(safe-area-inset-bottom, 0px)); border-radius: 16px; }
-  .hub .hb-link { font-size: .64rem; }
-  .hub .hn { width: 100%; left: 0; bottom: calc(var(--dock-h) - 1px); border-radius: 24px 24px 0 0; border-bottom: 0; box-shadow: 0 -20px 50px rgba(0, 0, 0, .25); }
-  .hub[dir] .hn { transform: translateY(30px); }
-  .hub[dir] .hn.is-open { transform: none !important; }
-  .hub .hn-scroll { grid-template-columns: 1fr; }
 }
 @media (max-width: 380px) {
   .hub .hh { gap: 4px; padding-inline: 6px; }
   .hub .hs-coin { display: none; }
-  .hub .hb-tx { font-size: .6rem; }
 }
 
 /* ================================================= 3a. PROFILE STUDIO ================================================= */
