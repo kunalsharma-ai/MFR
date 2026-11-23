@@ -1,0 +1,11 @@
+// Public files (brand/, fonts/, flags/) resolved against config.assetBase — so the page works at any URL and
+// inside your app (embed mode). The single-file preview registers data: URIs in window.__MFR_MINOR_ASSETS.
+let base = '';
+export function setAssetBase(b) {
+  base = b ? (b.endsWith('/') ? b : `${b}/`) : '';
+}
+export function asset(p) {
+  const clean = p.replace(/^\//, '');
+  if (typeof window !== 'undefined' && window.__MFR_MINOR_ASSETS && window.__MFR_MINOR_ASSETS[clean]) return window.__MFR_MINOR_ASSETS[clean];
+  return base ? base + clean : clean; // relative to the page by default
+}

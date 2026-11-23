@@ -12,12 +12,13 @@ import * as R from '../teen/rules.js';
 import { teenApi, relationLabel } from '../teen/api.js';
 import { countries, country as loadCountry } from '../teen/geo.js';
 import { PARENT_SURVEY } from '../teen/data/parentSurvey.js';
-import { DECLARATION, SELECTIONS, EN as CEN, TERMS_VERSION } from '../teen/data/consent.js';
+import { SELECTIONS, EN as CEN, TERMS_VERSION } from '../teen/data/consent.js';
 import { LANGUAGES } from '../teen/data/surveyLanguages.js';
-import ConsentReader from '../teen/ConsentReader.jsx';
+import GuardianConsentV2 from '../teen/consent-v2/GuardianConsentV2.jsx';
+import { DEFAULT_CONFIG as MINOR_CFG } from '../teen/consent-v2/config.js';
 import { TeenPage, TeenSeo, Art, Emo, useLinkToken, forgetLinkToken, useFocusTitle, Loading, LinkProblem } from '../teen/shell.jsx';
-import { TextInput, DateField, Combo, PhoneField, Choice, Check, Btn, Alert, Celebrate, tap } from '../teen/ui.jsx';
-import { chime, fanfare } from '../utils/sound.js';
+import { TextInput, DateField, Combo, PhoneField, Choice, Btn, Alert, Celebrate, tap } from '../teen/ui.jsx';
+import { chime } from '../utils/sound.js';
 
 const play = (fn) => { try { fn(); } catch { /* sound off */ } };
 const thisYear = new Date().getUTCFullYear();
@@ -87,8 +88,10 @@ export default function TeenParent() {
         ) : null}
         {screen === 'stop' ? <Stopped kind={extra.stop} name={teenName} titleRef={titleRef} /> : null}
         {view && screen === 'consent' ? (
-          <Consent view={view} token={token} titleRef={titleRef} onEdit={() => setScreen('onboarding')} onDecline={() => setScreen('decline')}
-            onDone={(r) => { setExtra(r); forgetLinkToken('guardian'); play(fanfare); setScreen('approved'); }} />
+          <GuardianConsentV2 view={view}
+            submit={(b) => teenApi.consent(token, { version: TERMS_VERSION, ...b })}
+            onDecline={() => setScreen('decline')}
+            onDone={(rec, r) => { setExtra({ ...(r || {}), at: rec.timestamps.submittedAt, selections: rec.consents, record: rec }); forgetLinkToken('guardian'); setScreen('approved'); }} />
         ) : null}
         {view && screen === 'approved' ? <Approved view={view} r={extra} titleRef={titleRef} /> : null}
       </TeenPage>
@@ -532,77 +535,10 @@ function Review({ a, healthMode, list, titleRef, onEdit, busy, msg, onSubmit, on
 }
 
 // ═══════════════════════════════ consent (MINOR-2026.10 Part B) ═══════════════════════════════
-function Consent({ view, token, titleRef, onDone, onEdit, onDecline }) {
-  const [read, setRead] = useState([]);
-  const [sel, setSel] = useState({});
-  const [tried, setTried] = useState(false);
-  const [confirm, setConfirm] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState('');
-  const once = useRef(false);
-  const name = view.teen.firstName;
-  const missing = SELECTIONS.filter((s) => s.required && sel[s.id] !== true);
-  const ask = () => {
-    setTried(true);
-    if (missing.length) { document.getElementById(`gc-${missing[0].id}`)?.focus(); return; }
-    tap(); setConfirm(true);
-  };
-  const give = async () => {
-    if (once.current) return;
-    once.current = true; setBusy(true); setMsg('');
-    try {
-      const r = await teenApi.consent(token, { version: TERMS_VERSION, selections: Object.fromEntries(SELECTIONS.map((s) => [s.id, sel[s.id] === true])), sectionsRead: read, language: activeLang() });
-      onDone({ ...r, at: new Date().toISOString(), selections: sel });
-    } catch (e) { once.current = false; setBusy(false); setConfirm(false); setMsg(err(e.code) || err('server')); }
-  };
-  return (
-    <div className="tz-cs">
-      <header className="tz-cs-head">
-        <div>
-          <p className="tz-kicker"><Icon name="shield" size={15} /> {t('gd_kicker')} · {view.reference}</p>
-          <h1 className="tz-h2 tz-serif" ref={titleRef} tabIndex={-1}>{t('cs_title')}</h1>
-          <p className="tz-lead">{t('cs_lead')}</p>
-          <p className="tz-small"><button type="button" className="tz-link" onClick={onEdit}><Icon name="pen" size={13} /> {t('cs_edit_form')}</button> · <button type="button" className="tz-link" onClick={() => window.print()}><Icon name="book" size={13} /> {t('cs_print')}</button></p>
-        </div>
-        <Art name="consent" size={170} />
-      </header>
-      <ConsentReader read={read} onRead={(n) => setRead((r) => (r.includes(n) ? r : [...r, n]))} />
-      <section className="tz-decl">
-        <h2 className="tz-h3 tz-serif">{CEN.b2_h}</h2>
-        <p>{CEN.b2_lead}</p>
-        <ol>{DECLARATION.map((d) => <li key={d.slice(0, 24)}>{d}</li>)}</ol>
-      </section>
-      <section className="tz-sel">
-        <h2 className="tz-h3 tz-serif">{CEN.b3_h}</h2>
-        <p className="tz-small">{CEN.b3_lead}</p>
-        {SELECTIONS.map((s) => (
-          <Check key={s.id} id={`gc-${s.id}`} checked={sel[s.id] === true} onChange={(v) => setSel((x) => ({ ...x, [s.id]: v }))}
-            title={CEN[`c_${s.id}_k`]} icon={null} tag={s.required ? CEN[s.kind] : CEN.kind_opt}
-            error={tried && s.required && sel[s.id] !== true ? err('consent_required') : ''}>
-            <span aria-hidden="true">{s.emoji} </span>{CEN[`c_${s.id}`]}
-            <span className="tz-check-links">{s.refs.map((n) => <a key={n} href={`#sec-${n}`} onClick={(e) => e.stopPropagation()}>{t('cs_section', n)}</a>)}</span>
-          </Check>
-        ))}
-        <p className="tz-small">{CEN.opt_note}</p>
-      </section>
-      {msg ? <Alert>{msg}</Alert> : null}
-      <div className="tz-cs-bar">
-        <span>{missing.length ? t('cs_missing', missing.length) : <><Icon name="check" size={14} stroke={3} /> {t('cs_ready')}</>}</span>
-        <Btn icon="shield" onClick={ask}>{t('cs_submit')}</Btn>
-      </div>
-      <p className="tz-small tz-center"><button type="button" className="tz-link" onClick={onDecline}>{t('ob_changed_mind')}</button></p>
-      {confirm ? (
-        <div className="tz-modal" role="dialog" aria-modal="true" aria-labelledby="cs-ch">
-          <div className="tz-card tz-modal-card">
-            <h2 id="cs-ch" className="tz-h3 tz-serif">{t('cs_confirm_h', name)}</h2>
-            <p>{t('cs_confirm_p', TERMS_VERSION, name)}</p>
-            <ul className="tz-ticks">{SELECTIONS.map((s) => <li key={s.id} className={sel[s.id] ? '' : 'is-off'}><Icon name={sel[s.id] ? 'check' : 'close'} size={13} stroke={3} /> {CEN[`c_${s.id}_k`]}</li>)}</ul>
-            <div className="tz-actions"><Btn icon="check" busy={busy} onClick={give} autoFocus>{t('cs_confirm_btn')}</Btn><Btn kind="ghost" onClick={() => setConfirm(false)} disabled={busy}>{t('gd_cancel')}</Btn></div>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
+// the approved package's PDF: the consent record on page 1, then the binding English agreement
+async function savePdf(record) {
+  const { downloadAgreementPdf } = await import('../teen/consent-v2/pdf.js');
+  downloadAgreementPdf({ cfg: MINOR_CFG, record: { ...record, guardianPermissionStatus: 'verified' } });
 }
 
 function Approved({ view, r, titleRef }) {
@@ -631,7 +567,7 @@ function Approved({ view, r, titleRef }) {
         <li><b>{t('ap_n3')}</b></li>
       </ol>
       <p className="tz-small">{t('ap_change')}</p>
-      <div className="tz-actions"><button type="button" className="tf-btn tf-btn-ghost" onClick={() => window.print()}><Icon name="book" size={18} /> <span>{t('cs_print')}</span></button><Link className="tf-btn tf-btn-main" to="/"><Icon name="home" size={18} /> <span>{t('s4_home')}</span></Link></div>
+      <div className="tz-actions">{r.record ? <button type="button" className="tf-btn tf-btn-ghost" onClick={() => savePdf(r.record)}><Icon name="book" size={18} /> <span>{t('cs_print')}</span></button> : <button type="button" className="tf-btn tf-btn-ghost" onClick={() => window.print()}><Icon name="book" size={18} /> <span>{t('cs_print')}</span></button>}<Link className="tf-btn tf-btn-main" to="/"><Icon name="home" size={18} /> <span>{t('s4_home')}</span></Link></div>
     </div>
   );
 }

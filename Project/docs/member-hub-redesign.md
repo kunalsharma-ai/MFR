@@ -67,3 +67,25 @@ Kept as the portal had it, on purpose:
 Needs backend (not built): the v4.1 reminder e-mails (`POST /api/progress`, a member store, the 48-hour scheduler,
 unsubscribe links and the e-mail sender). The portal already saves progress in the database (profile status and
 rewards), so `/api/progress` would read from there instead of a separate store.
+
+## Consent pages (Kunal's approved packages, 23 Nov 2026)
+- **Consumer** (mfr-consent v1.1.0) and **Professional** (mfr-pro-consent): `/auth/consent/consumer` and `/auth/consent/b2b`
+  were already these packages with the same legal text (`content/terms.js` identical). Restored the approved English
+  button text ("Continue to your dashboard" / "Enter your dashboard") and the button now goes to the dashboard.
+  Flow: sign-up → set password → automatic login → consent page for the member type → dashboard.
+- **Teen / guardian** (mfr-minor-terms v2.0.1): Kunal chose to use it as the consent step of the guardian's
+  secure-link page (`/teen/parent`). `frontend-1/src/teen/consent-v2/` is the package, rendered in its own Shadow DOM
+  (`GuardianConsentV2.jsx`); its assets are in `public/minor-consent/`. Three optional config hooks were added to its
+  `App.jsx` (submit through the Teen API, hand off to the "approved" screen, the teen's sign-up "yes" shown locked);
+  text and design are unchanged. Guardian YES/NO, onboarding and the teen's password step stay as in PR #15. The
+  approved screen offers the package's PDF.
+
+### Consent storage (needs backend)
+- Consumer / Professional: only the ids of the accepted consents are saved (`PUT /api/v1/user/:id {terms}` →
+  `User.terms`). The packages' record (consent id, terms version, time, language, sections read, optional choices
+  given/not given, time zone) is not stored. The packages' `server/schema.sql` suggests an append-only
+  `member_consents` table; the API needs that table and an endpoint to write it.
+- Teen: the Teen API stores version, time, the six selections, sections read and language. Not stored: the consent
+  id shown on the PDF (made in the browser) and the time zone.
+- The minor package's `LEGAL-REVIEW.md` lists values legal must confirm before go-live (operator, privacy contact,
+  versions).
