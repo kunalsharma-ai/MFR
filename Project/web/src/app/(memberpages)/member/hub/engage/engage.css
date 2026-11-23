@@ -209,3 +209,41 @@
 .hub .eg-opt-img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; margin-right: 6px; vertical-align: middle; }
 .hub .eg-ideas { margin: var(--s2) 0 0; padding-left: 18px; font-size: var(--f-small); display: grid; gap: 4px; }
 .hub .eg-gview { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+
+/* ---- settings, privacy, account (phase 7) ---- */
+.hub .eg-set { display: grid; gap: var(--s2); margin-top: var(--s3); }
+.hub .eg-set-l { margin: var(--s3) 0 0; font-weight: 700; font-size: var(--f-small); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.hub .eg-switch { display: flex; align-items: center; gap: var(--s3); padding: 10px 0; cursor: pointer; }
+.hub .eg-switch.is-off { cursor: not-allowed; opacity: .6; }
+.hub .eg-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.hub .eg-switch-ui { flex: none; position: relative; width: 44px; height: 26px; border-radius: 99px; background: var(--card-2); border: 1px solid var(--border); transition: background .2s; }
+.hub .eg-switch-ui::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s var(--ease); }
+.hub .eg-switch input:checked + .eg-switch-ui { background: var(--primary); border-color: var(--primary); }
+.hub .eg-switch input:checked + .eg-switch-ui::after { transform: translateX(18px); }
+.hub .eg-switch input:focus-visible + .eg-switch-ui { outline: 2px solid var(--primary); outline-offset: 2px; }
+.hub .eg-switch > span:last-child { display: grid; }
+.hub .eg-switch small { color: var(--muted); font-size: 13px; }
+.hub .eg-chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.hub .eg-chip { padding: 8px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; cursor: pointer; }
+.hub .eg-chip.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.hub .eg-quiet { display: flex; flex-wrap: wrap; gap: var(--s3); }
+.hub .eg-quiet label { display: grid; gap: 4px; font-size: var(--f-small); }
+.hub .eg-quiet input { padding: 8px 10px; border-radius: var(--r-s, 10px); border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; }
+.hub .eg-priv { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s3) 0; border-top: 1px solid var(--border); }
+.hub .eg-priv > div:first-child { display: grid; flex: 1 1 240px; }
+.hub .eg-priv small { color: var(--muted); font-size: 13px; }
+.hub .eg-priv-state { display: grid; gap: 6px; justify-items: start; }
+.hub .eg-danger { color: var(--error); }
+.hub .h-btn-primary.eg-danger { background: var(--error); color: #fff; }
+.hub .eg-form textarea { width: 100%; padding: 10px 12px; border-radius: var(--r-s, 10px); border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; }
+.hub .eg-gt-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: var(--f-small); }
+.hub .eg-gt-list li { display: flex; gap: 8px; align-items: center; }
+.hub .eg-agrid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin: var(--s4) 0; align-items: start; }
+.hub .eg-strength-row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.hub .eg-strength-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: var(--f-small); flex: 1 1 160px; }
+.hub .eg-strength-list li { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+.hub .eg-strength-list li.on { color: var(--success); }
+.hub .eg-life-list { display: grid; gap: 8px; margin: var(--s2) 0 0; }
+.hub .eg-life-list div { display: flex; justify-content: space-between; gap: var(--s2); border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
+.hub .eg-life-list dt { color: var(--muted); font-size: var(--f-small); }
+.hub .eg-life-list dd { margin: 0; font-weight: 700; text-align: right; overflow-wrap: anywhere; }

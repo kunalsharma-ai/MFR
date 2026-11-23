@@ -38,6 +38,13 @@ export function newUser(user, origin) {
 
 // survey: { name, slug, points, loi } ; userIds: who was just invited
 export function newSurvey(userIds, survey, origin) {
+    // a push to each member's browsers too, when push is set up and the member switched it on (phase 7)
+    if (userIds?.length && config().push?.enabled) {
+        later(async () => {
+            const { pushTo } = await import("./account.js");
+            for (const id of userIds) await pushTo(id, origin, { title: "A new survey is open for you", body: `${survey.name} · ${survey.points || 0} points`, url: "/member/surveys" });
+        });
+    }
     if (!config().emails.newSurvey || !userIds?.length) return;
     later(async () => {
         const week = new Date(Date.now() - 7 * 86400000);
