@@ -1,17 +1,24 @@
 "use client";
-// Profile hero + completion system (v2, Nov 2026). Sits above the approved v4.1 profile studio (profiles/ps/*, untouched).
-// Reads the same snapshot as the header and dashboard (store.js), so the % here is the % everywhere. When the
-// studio saves a profile it calls bumpRewards(); this band, the header ring and the dashboard update together.
-// Reaching 100% plays a one-time celebration (remembered per member on this device).
+// Profile studio (v3, Nov 2026 premium redesign). Replaces the v2 band and the v4.1 world cards on /member/profiles;
+// the question flow itself (profiles/ps/PsFlow) is unchanged and still opens with ?profile=<slug>.
+//   Hero       – welcome, the member's avatar inside the live completion ring, status, next step, live stats
+//   Profiles   – one card per profile with its own identity (topic colours, icon, title, description), real
+//                progress from the database (status), points from the admin, and completed / in progress / new states
+//   Account    – the account steps that count toward completion (email, phone, location, photo)
+//   Achieved   – completed topic profiles (taken from the Survey section) shown as earned badges
+// Every figure comes from the same sources as the header: completion % from useHub() (store.js), each card's %
+// from the profile API, and "done" also when the reward for it is already paid (useProfileGate).
 import React from "react";
 import Link from "next/link";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import { Counter, Ring, Meter, Burst, LoadingBlock, ErrorState } from "./ui.jsx";
+import { Counter, Ring, Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
 import { Avatar } from "./Shell.jsx";
 import { fmt } from "./data";
 import { useHub, useRise } from "./store";
 import { play } from "./sound";
+import { profileTopic } from "./topics";
+import FamilyPanel from "./family.jsx";
 
 function useCelebrate(id, pct) {
   const [show, setShow] = React.useState(false);
@@ -28,78 +35,190 @@ function useCelebrate(id, pct) {
   return [show, () => setShow(false)];
 }
 
-export default function ProfileBand() {
-  const hub = useHub();
-  const { member, type, completion: c, quality, level, pts, profiles } = hub;
+const questionsOf = (p) => (p?.pages || []).reduce((n, pg) => n + Math.max(0, (pg?.length || 1) - 1), 0);
+const pctOf = (p) => Math.max(0, Math.min(100, Math.round(Number(p?.status) || 0)));
+const tx = (key, fallback) => { const s = t(key); return s === key ? fallback : s; };
+
+function greetingKey() {
+  const h = new Date().getHours();
+  return h < 12 ? "pf.morning" : h < 18 ? "pf.afternoon" : "pf.evening";
+}
+
+/* ---------------- hero ---------------- */
+function ProfileHero({ hub, cards }) {
+  const { member, type, completion: c, quality, pts } = hub;
   const rise = useRise(c?.pct ?? null);
-  const [party, endParty] = useCelebrate(member?._id, c?.pct);
-  if (profiles.isError) return <div className="pb pb-err"><ErrorState text={t("d2.profileError")} onRetry={profiles.refetch} /></div>;
-  if (!c) return <div className="pb"><LoadingBlock lines={3} h={200} /></div>;
-  const done = c.items.filter((i) => i.done);
-  const missing = c.remaining;
-  const steps = missing.slice(0, 3);
+  const done = cards.filter((x) => x.done).length;
+  const next = cards.find((x) => !x.done && !x.locked);
+  const status = !c ? null : c.pct >= 100 ? "full" : c.pct >= 60 ? "strong" : c.pct > 0 ? "building" : "new";
+  const first = member?.firstname || (member?.fullname || "").split(" ")[0] || "";
   return (
-    <section className={`pb t-${type} ${c.pct >= 100 ? "is-full" : ""}`} aria-labelledby="pb-title">
-      <div className="pb-hero">
-        <div className="pb-id">
-          <span className={`pb-av ${rise ? "is-rise" : ""}`}>
-            <Ring pct={c.pct} size={112} stroke={8} label={`${c.pct}%`}><Avatar member={member} size="xl" /></Ring>
-            {rise ? <Burst key={c.pct} /> : null}
-          </span>
-          <div>
-            <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.myProfile")}</span></li></ol></nav>
-            <h1 className="pb-title" id="pb-title">{c.pct >= 100 ? t("pb.titleDone") : t("pb.title", { n: c.pct })}</h1>
-            <p className="pb-sub">{c.pct >= 100 ? t("pb.subDone") : t("pb.sub", { n: missing.length })}</p>
+    <section className={`pf-hero is-${status || "load"}`} aria-labelledby="pf-title">
+      <div className="pf-hero-bg" aria-hidden="true"><i /><i /><i /><span className="pf-grain" /></div>
+      <div className="pf-hero-id">
+        <span className={`pf-av ${rise ? "is-rise" : ""}`}>
+          <Ring pct={c?.pct || 0} size={132} stroke={7} label={c ? t("pf.ringLabel", { n: c.pct }) : t("c.loading")}><Avatar member={member} size="xl" /></Ring>
+          <span className="pf-av-pct" aria-hidden="true">{c ? <><Counter value={c.pct} />%</> : "…"}</span>
+          {rise ? <Burst key={c?.pct} /> : null}
+        </span>
+      </div>
+      <div className="pf-hero-main">
+        <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.myProfile")}</span></li></ol></nav>
+        <p className="pf-hello">{t(greetingKey(), { name: first })}</p>
+        <h1 className="pf-title" id="pf-title">{status ? t(`pf.title.${status}`) : t("c.loading")}</h1>
+        <p className="pf-sub">{status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}</p>
+        {c ? (
+          <div className="pf-progress" role="img" aria-label={t("pf.ringLabel", { n: c.pct })}>
+            <span className="pf-track"><i style={{ "--w": `${c.pct}%` }} /></span>
+            <span className="pf-progress-tx"><b>{c.done}/{c.total}</b> {t("pf.stepsDone")}</span>
           </div>
-        </div>
-        <ul className="pb-stats" aria-label={t("pb.status")}>
-          <li><small>{t("pb.completion")}</small><b><Counter value={c.pct} />%</b><Meter pct={c.pct} label={t("pb.completion")} /></li>
-          <li><small>{t("nav.quality")}</small><b>{quality ? <>{quality.ten.toFixed(1)}<em>/10</em></> : "–"}</b><span className="pb-tag">{quality ? (quality.tier?.label || t(`qs.${quality.band}`)) : ""}</span></li>
-          <li><small>{t("lv.title")}</small><b>L{level.n}</b><span className="pb-tag">{level.left != null ? t("lv.toNext", { n: fmt(level.left) }) : t("lv.top")}</span></li>
-          <li><small>{t("pb.reward")}</small><b>{c.pointsLeft ? `+${fmt(c.pointsLeft)}` : <Icon name="check" size={20} />}</b><span className="pb-tag">{c.pointsLeft ? t("pb.toEarn") : t("pb.allPaid")}</span></li>
-        </ul>
-        <div className="pb-illus" aria-hidden="true">
-          <span className="pb-card c1"><i /><i /><i /></span>
-          <span className="pb-card c2"><i /><i /></span>
-          <span className="pb-card c3"><Icon name="check" size={18} /></span>
-        </div>
-      </div>
-
-      <div className="pb-grid">
-        <div className="pb-col pb-next">
-          <h2 className="pb-h"><Icon name="target" size={18} /> {c.pct >= 100 ? t("pb.keepGoing") : t("pb.nextSteps")}</h2>
-          {steps.length ? (
-            <ol className="pb-steps">
-              {steps.map((i, k) => (
-                <li key={i.key} style={{ "--i": k }}>
-                  <span className="pb-step-n">{k + 1}</span>
-                  <span className="pb-step-tx">
-                    <b>{i.kind === "profile" ? t(i.action, { name: i.label }) : t(i.label)}</b>
-                    <small>{i.kind === "profile" ? (i.reward ? t("pb.stepReward", { n: fmt(i.reward) }) : t("pb.stepMatch")) : t(`pb.why.${i.key}`)}</small>
-                  </span>
-                  <Link href={i.href} className="h-btn h-btn-primary">{k === 0 ? t("pb.go") : t("c.open")} <Icon name="arrow" size={16} /></Link>
-                </li>
-              ))}
-            </ol>
+        ) : null}
+        <div className="pf-hero-cta">
+          {next ? (
+            <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={next.open}>{next.pct > 0 ? t("pf.continueX", { name: next.title }) : t("pf.startX", { name: next.title })} <Icon name="arrow" size={18} /></button>
+          ) : c && c.remaining.length ? (
+            <Link className="h-btn h-btn-primary h-btn-lg" href={c.remaining[0].href}>{t("pf.finishAccount")} <Icon name="arrow" size={18} /></Link>
           ) : (
-            <p className="pb-more">{c.extraTotal ? t("pb.extra", { a: c.extraDone, b: c.extraTotal }) : t("pb.subDone")}</p>
+            <Link className="h-btn h-btn-primary h-btn-lg" href="/member/surveys">{t("pf.toSurveys")} <Icon name="arrow" size={18} /></Link>
           )}
-        </div>
-        <div className="pb-col pb-missing">
-          <h2 className="pb-h"><Icon name="alert" size={18} /> {t("pb.missing")} <span className="pb-count">{missing.length}</span></h2>
-          {missing.length ? (
-            <ul className="pb-chips">{missing.map((i) => <li key={i.key}><Link href={i.href}><Icon name={i.kind === "profile" ? "profile" : i.icon} size={14} /> {i.kind === "profile" ? i.label : t(i.label)}</Link></li>)}</ul>
-          ) : <p className="pb-more"><Icon name="check" size={16} /> {t("pb.nothingMissing")}</p>}
-        </div>
-        <div className="pb-col pb-done">
-          <h2 className="pb-h"><Icon name="check" size={18} /> {t("pb.completed")} <span className="pb-count">{done.length}</span></h2>
-          {done.length ? (
-            <ul className="pb-chips done">{done.map((i) => <li key={i.key}><span><Icon name="check" size={14} /> {i.kind === "profile" ? i.label : t(i.label)}</span></li>)}</ul>
-          ) : <p className="pb-more">{t("pb.noneYet")}</p>}
-          <p className="pb-benefit"><Icon name="spark" size={16} /> {t("pb.benefit", { n: pts ? fmt(hub.open || 0) : "…" })}</p>
+          <span className={`pf-badge s-${status || "load"}`}><Icon name={status === "full" ? "trophy" : "spark"} size={15} /> {status ? t(`pf.badge.${status}`) : "…"}</span>
         </div>
       </div>
+      <ul className="pf-stats" aria-label={t("pb.status")}>
+        <li><small>{t("pf.statProfiles")}</small><b>{done}<em>/{cards.length}</em></b></li>
+        <li><small>{t("hdr.quality")}</small><b>{quality ? quality.ten.toFixed(1) : "–"}<em>/10</em></b></li>
+        <li><small>{t("pf.statToEarn")}</small><b>{c ? (c.pointsLeft ? `+${fmt(c.pointsLeft)}` : <Icon name="check" size={20} />) : "…"}</b></li>
+        <li><small>{type === "teen" ? t("hdr.xp") : t("hdr.points")}</small><b>{pts ? <Counter value={pts.total} /> : "…"}</b></li>
+      </ul>
+    </section>
+  );
+}
 
+/* ---------------- one profile card ---------------- */
+function ProfileCard({ card, i }) {
+  const { tp, title, text, pct, done, locked, questions, points, open } = card;
+  const state = done ? "done" : locked ? "locked" : pct > 0 ? "going" : "new";
+  const cta = done ? t("pf.review") : locked ? t("pf.locked") : pct > 0 ? t("pf.continue") : t("pf.start");
+  return (
+    <li className={`pf-card is-${state}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i, "--w": `${pct}%` }}>
+      <button type="button" className="pf-card-btn" onClick={() => { play("tap"); open(); }}
+        aria-label={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`}>
+        <span className="pf-card-glow" aria-hidden="true" />
+        <span className="pf-card-top">
+          <span className="pf-glyph" aria-hidden="true"><Icon name={tp.ic} size={26} /><i /></span>
+          <span className={`pf-state s-${state}`}>
+            <Icon name={done ? "check" : locked ? "lock" : pct > 0 ? "hourglass" : "spark"} size={13} />
+            {t(`pf.state.${state}`, { n: pct })}
+          </span>
+        </span>
+        <span className="pf-card-tx">
+          <b className="pf-card-t">{title}</b>
+          <small className="pf-card-d">{text}</small>
+        </span>
+        <span className="pf-card-meta">
+          {questions ? <span><Icon name="surveys" size={14} /> {t("pf.questions", { n: questions })}</span> : null}
+          <span><Icon name="clock" size={14} /> {t("pf.minutes", { n: Math.max(1, Math.round((questions * 8) / 60)) })}</span>
+          {points ? <span className="pf-pts"><Icon name="coin" size={14} /> {done ? t("pf.earned", { n: fmt(points) }) : `+${fmt(points)}`}</span> : null}
+        </span>
+        <span className="pf-meter" aria-hidden="true"><i /></span>
+        <span className="pf-card-foot">
+          <span className="pf-pct">{pct}%</span>
+          <span className="pf-go">{cta} <Icon name="arrow" size={15} /></span>
+        </span>
+        {done ? <span className="pf-medal" aria-hidden="true"><Icon name="trophy" size={16} /></span> : null}
+      </button>
+    </li>
+  );
+}
+
+/* ---------------- account steps ---------------- */
+function AccountSteps({ c }) {
+  const items = c.items.filter((i) => i.kind === "account");
+  if (!items.length) return null;
+  return (
+    <section className="pf-acc" aria-labelledby="pf-acc-t">
+      <header className="pf-sec-h">
+        <h2 id="pf-acc-t" className="pf-h"><Icon name="shield" size={20} /> {t("pf.accTitle")}</h2>
+        <p>{t("pf.accSub")}</p>
+      </header>
+      <ul className="pf-acc-list">
+        {items.map((i, k) => (
+          <li key={i.key} className={i.done ? "is-done" : ""} style={{ "--i": k }}>
+            <Link href={i.href} className="pf-acc-row">
+              <span className="pf-acc-ic"><Icon name={i.done ? "check" : i.icon} size={18} /></span>
+              <span className="pf-acc-tx"><b>{t(i.label)}</b><small>{i.done ? t("pf.accDone") : t(`pb.why.${i.key}`)}</small></span>
+              <span className={`pf-state s-${i.done ? "done" : i.progress > 0 ? "going" : "new"}`}>{i.done ? t("pf.state.done") : i.progress > 0 ? t("pf.state.going", { n: Math.round(i.progress * 100) }) : t("pf.todo")}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/* ---------------- the page ---------------- */
+// profiles: the core profiles (API objects, with pages and status); extrasDone: topic profiles already completed
+// isDone(p): the reward for p is already paid; onOpen(p): opens the question flow (or explains the lock)
+export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, isLocked = () => false, isDone = () => false, morePending = 0, ready = true }) {
+  const hub = useHub();
+  const { member, type, completion: c, profiles: pq } = hub;
+  const [party, endParty] = useCelebrate(member?._id, c?.pct);
+  const cards = profiles.map((p) => {
+    const tp = profileTopic(p);
+    const pct = isDone(p) ? 100 : pctOf(p);
+    return {
+      slug: p.slug, tp, pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
+      title: tx(`pf3.${tp.k}.title`, p.name), text: tx(`pf3.${tp.k}.text`, p.description || p.summary || ""), name: p.name,
+      open: () => onOpen(p),
+    };
+  });
+  const order = { going: 0, new: 1, locked: 2, done: 3 };
+  const stateOf = (x) => (x.done ? "done" : x.locked ? "locked" : x.pct > 0 ? "going" : "new");
+  const sorted = [...cards].sort((a, b) => order[stateOf(a)] - order[stateOf(b)]);
+  if (pq.isError) return <div className="pf"><ErrorState text={t("d2.profileError")} onRetry={pq.refetch} /></div>;
+  return (
+    <div className="pf">
+      <ProfileHero hub={hub} cards={cards} />
+      <section className="pf-sec" aria-labelledby="pf-cards-t">
+        <header className="pf-sec-h">
+          <h2 id="pf-cards-t" className="pf-h"><Icon name="layers" size={20} /> {t("pf.cardsTitle")}</h2>
+          <p>{t("pf.cardsSub")}</p>
+        </header>
+        {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
+          <p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p>
+        ) : (
+          <ul className="pf-grid">{sorted.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+        )}
+      </section>
+      <div className="pf-duo">
+        {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
+        <Reveal delay={60}>
+          <section className="pf-ach" aria-labelledby="pf-ach-t">
+            <header className="pf-sec-h">
+              <h2 id="pf-ach-t" className="pf-h"><Icon name="trophy" size={20} /> {t("pf.achTitle")}</h2>
+              <p>{extrasDone.length ? t("pf.achSub", { n: extrasDone.length }) : t("pf.achNone")}</p>
+            </header>
+            {extrasDone.length ? (
+              <ul className="pf-badges">
+                {extrasDone.map((p, k) => {
+                  const tp = profileTopic(p);
+                  return (
+                    <li key={p.slug} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": k }} title={p.name}>
+                      <span className="pf-badge-ic"><Icon name={tp.ic} size={20} /></span>
+                      <span className="pf-badge-tx"><b>{p.name}</b><small>{p.points ? t("pf.earned", { n: fmt(p.points) }) : t("pf.state.done")}</small></span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
+            <div className="pf-ach-foot">
+              {morePending ? <Link className="h-btn h-btn-soft" href="/member/surveys"><Icon name="surveys" size={16} /> {t("pf.moreTopics", { n: morePending })}</Link> : null}
+              <Link className="h-btn h-btn-ghost" href="/member/rewards#prize-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
+            </div>
+          </section>
+        </Reveal>
+      </div>
+      {type === "teen" ? <FamilyPanel /> : null}
       {party ? (
         <div className="pb-party" role="dialog" aria-modal="false" aria-labelledby="pb-party-t">
           <Burst n={24} className="big" />
@@ -112,6 +231,6 @@ export default function ProfileBand() {
           </div>
         </div>
       ) : null}
-    </section>
+    </div>
   );
 }

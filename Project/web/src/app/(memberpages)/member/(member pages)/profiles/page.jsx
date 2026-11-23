@@ -28,14 +28,13 @@ import useProfileGate from "@/hooks/useProfileGate";
 import GateDialog from "./ps/GateDialog";
 import useProfileDark from "@/hooks/useProfileDark";
 import "./ps/ps.css";
-import PsHub from "./ps/PsHub";
 import PsFlow from "./ps/PsFlow";
 import useClickSounds from "./ps/useClickSounds";
 import { ui } from "./ps/sound";
 import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
 import { visibleProfiles, normalizeInterests, basicsDone, isCore } from "./ps/profileRules";
-import ProfileBand from "../../hub/profile.jsx";
+import ProfileStudio from "../../hub/profile.jsx";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -401,7 +400,6 @@ function SkinProfiles() {
   const gate = useProfileGate();
   const gateRef = React.useRef(gate);
   gateRef.current = gate;
-  const [rewardsReady, setRewardsReady] = React.useState(false);
   const applyRewards = React.useCallback((all, pts) => {
     const list = Array.isArray(all) ? all : [];
     const { extras, paid } = gateRef.current;
@@ -424,7 +422,6 @@ function SkinProfiles() {
     applyRewards(profiles, points);
     creditProfileRewards(user, profiles).then((n) => { if (n) bumpRewards(); }).catch(() => {}); // completed profiles without a reward yet are paid once
     creditQuality(profiles); // profiles that were already complete are counted once
-    setRewardsReady(true); // the machine is built only now, so it never starts empty
   }, [applyRewards, creditQuality, profiles, points, isLoading, interestsLoading, pointsFetched, gate.loading, gate.extras, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
   // called by the flow right after a profile was saved: the API has just paid its points and raised the quality score
   const afterSave = React.useCallback(async () => {
@@ -438,9 +435,6 @@ function SkinProfiles() {
   }, [qc, fetchProfiles, fetchPoints, applyRewards, creditQuality, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const doneExtras = React.useMemo(() => gate.extras.filter((e) => e.done).map((e) => ({ ...e, status: 100 })), [gate.extras]);
-  // every profile of the category with its progress: the four and the others (a completed one counts 100%)
-  const allProfiles = React.useMemo(() => [...shown, ...gate.extras.map((e) => ({ ...e, status: e.done ? 100 : Math.max(0, Number(e.status) || 0) }))], [shown, gate.extras]);
-  const prizeProfiles = React.useMemo(() => [...shown, ...profiles.filter((p) => !isCore(p.slug))], [shown, profiles]);
   const canOpen = (slug) => isCore(slug) || gate.coreDone; // the other profiles open after the four basics
   const [gateOpen, setGateOpen] = React.useState(false); // the pop-up of a locked capsule: what to finish first
   const open = (p) => {
@@ -463,9 +457,20 @@ function SkinProfiles() {
   const nextExtra = asSurvey ? gate.pending.find((p) => p.slug !== current.slug) : null;
   return (
     <>
-    {/* Member hub v2 (Nov 2026): profile hero + completion system above the approved v4.1 profile studio */}
-    {current ? null : <ProfileBand />}
-    <div className="ps" data-theme={dark ? "dark" : "light"} style={{ minHeight: "calc(100vh - 70px)", overflowX: "hidden" }}>
+    {/* Member hub v3 (Nov 2026): the profile studio (hero + profile cards) replaces the v4.1 world cards; the question flow
+        (PsFlow) is unchanged. The Prize Machine moved to the Rewards page (/member/rewards#prize-machine). */}
+    {current ? null : (
+      <ProfileStudio
+        profiles={shown}
+        extrasDone={doneExtras}
+        onOpen={open}
+        isLocked={(slug) => !canOpen(slug)}
+        isDone={(p) => gate.paid?.[p.slug] !== undefined}
+        morePending={gate.coreDone ? gate.pending.length : 0}
+        ready={!gate.loading}
+      />
+    )}
+    <div className="ps" data-theme={dark ? "dark" : "light"} style={current ? { minHeight: "calc(100vh - 70px)", overflowX: "hidden" } : { minHeight: 0, background: "transparent" }}>
       {current ? (
         <PsFlow
           key={current.slug}
@@ -478,9 +483,7 @@ function SkinProfiles() {
           hasNext={asSurvey ? Boolean(nextExtra) : Boolean(next)}
           onNextProfile={() => { const target = asSurvey ? nextExtra : next; if (target) open(target); }}
         />
-      ) : (
-        <PsHub isLocked={(slug) => !canOpen(slug)} profiles={shown} allProfiles={allProfiles} extraDone={doneExtras} prizeProfiles={prizeProfiles} onOpen={open} cat={cat} rewardsReady={rewardsReady} />
-      )}
+      ) : null}
       <GateDialog
         open={gateOpen}
         gate={gate}
