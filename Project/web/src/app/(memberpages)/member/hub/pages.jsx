@@ -14,6 +14,7 @@ import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock } from "./ui.jsx";
 import { ActivityTimeline } from "./modules.jsx";
+import { ActivityExtras } from "./engage/activity.jsx";
 import { usePoints, useLedger, useStats, useProfiles, useReferrals, qualityOf, memberTypeOf, fmt, money, relDay } from "./data";
 import { usePrefs, setPrefs, PALETTES, THEMES, currentLanguage, setLanguage } from "./prefs";
 import { play } from "./sound";
@@ -257,7 +258,8 @@ export function ActivityPage() {
           <path d="M0 50 Q 50 10 100 45 T 200 40 T 300 50 T 400 30 T 500 45 T 600 35" />
         </svg>
       </section>
-      <Reveal><ActivityTimeline ledger={ledger} limit={500} title={false} /></Reveal>
+      <ActivityExtras />
+      <Reveal><ActivityTimeline ledger={ledger} limit={20} title={false} /></Reveal>
     </div>
   );
 }

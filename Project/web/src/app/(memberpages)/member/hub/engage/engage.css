@@ -1,0 +1,70 @@
+/* Member engagement features (Nov 2026). Scoped under .hub like the rest of the hub; uses the hub tokens only. */
+.hub .eg-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-l); padding: clamp(16px, 2.4vw, 24px); box-shadow: var(--shadow); min-width: 0; }
+.hub .eg-card .h-h3 { display: flex; align-items: center; gap: var(--s2); margin: 0 0 var(--s1); }
+.hub .eg-card .h-sub { margin: 0 0 var(--s3); color: var(--muted); font-size: var(--f-small); }
+.hub .eg-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--s4); }
+.hub .eg-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--s4); }
+.hub .eg-muted { color: var(--muted); font-size: var(--f-small); margin: 0 0 var(--s3); }
+.hub .eg-cap { font-size: var(--f-cap); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 var(--s2); }
+.hub .eg-ok { display: flex; align-items: center; gap: var(--s2); color: var(--success); font-weight: 600; margin: 0; }
+.hub .eg-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); }
+.hub .eg-pill.ok { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
+.hub .eg-pill.warn { background: color-mix(in srgb, var(--warning) 14%, transparent); color: var(--warning); }
+.hub .eg-pill.muted { background: var(--card-2); color: var(--muted); }
+.hub .eg-actions { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.hub .eg-note { font-size: var(--f-small); color: var(--muted); margin: var(--s2) 0 0; }
+.hub .eg-err { color: var(--error); font-size: var(--f-small); margin: var(--s2) 0 0; }
+
+/* balances */
+.hub .eg-bal { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--s3); }
+.hub .eg-bal-i { display: grid; gap: 2px; padding: var(--s4); border-radius: var(--r-m); background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.hub .eg-bal-i b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.hub .eg-bal-i small { color: var(--muted); font-size: 12px; }
+.hub .eg-bal-i.ok b { color: var(--success); } .hub .eg-bal-i.wait b { color: var(--warning); } .hub .eg-bal-i.hold b { color: var(--error); }
+
+/* pending */
+.hub .eg-clear { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.hub .eg-clear li { display: flex; gap: var(--s2); align-items: baseline; font-size: 14px; }
+.hub .eg-clear small { color: var(--muted); }
+.hub .eg-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; transform: translateY(1px); }
+.hub .eg-dot.wait { background: var(--warning); } .hub .eg-dot.hold { background: var(--error); }
+
+/* streak */
+.hub .eg-streak-top { display: flex; gap: var(--s3); align-items: center; margin-bottom: var(--s2); }
+.hub .eg-streak-top .h-sub { margin: 0; }
+.hub .eg-flame { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: var(--card-2); color: var(--faint); flex: none; }
+.hub .eg-flame.on { background: linear-gradient(135deg, var(--accent), var(--primary)); color: #fff; animation: eg-flick 2.4s ease-in-out infinite; }
+@keyframes eg-flick { 0%, 100% { transform: rotate(-3deg) scale(1); } 50% { transform: rotate(3deg) scale(1.05); } }
+.hub .eg-strip { list-style: none; margin: 0 0 var(--s3); padding: 0; display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+.hub .eg-strip li { aspect-ratio: 1; border-radius: 6px; background: var(--card-2); border: 1px solid var(--border); }
+.hub .eg-strip li.on { background: linear-gradient(135deg, var(--accent), var(--primary)); border-color: transparent; }
+.hub .eg-next { display: flex; align-items: center; gap: var(--s2); margin: 0; font-size: var(--f-small); font-weight: 600; color: var(--primary); }
+
+/* ledger */
+.hub .eg-ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--s3); }
+.hub .eg-filters { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: flex-end; margin: var(--s2) 0 var(--s4); }
+.hub .eg-filters label, .hub .eg-field { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 130px; }
+.hub .eg-filters label.grow { flex: 1 1 200px; }
+.hub .eg-filters select, .hub .eg-filters input, .hub .eg-field select, .hub .eg-field input, .hub .eg-field textarea {
+  font: inherit; font-size: 14px; color: var(--text); background: var(--card-2); border: 1px solid var(--border-2); border-radius: var(--r-s); padding: 8px 10px; min-height: 40px; }
+.hub .eg-field textarea { min-height: 90px; resize: vertical; }
+.hub .eg-table-wrap { overflow-x: auto; margin: 0 calc(-1 * var(--s2)); }
+.hub .eg-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.hub .eg-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); padding: var(--s2); border-bottom: 1px solid var(--border); }
+.hub .eg-table td { padding: var(--s2); border-bottom: 1px solid var(--border); vertical-align: top; }
+.hub .eg-table .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.hub .eg-table .pos { color: var(--success); } .hub .eg-table .neg { color: var(--error); }
+.hub .eg-type { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.hub .eg-name { display: block; color: var(--muted); font-size: 12px; }
+.hub .eg-state { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--card-2); }
+.hub .eg-state.s-cleared { color: var(--success); } .hub .eg-state.s-pending { color: var(--warning); } .hub .eg-state.s-on_hold { color: var(--error); } .hub .eg-state.s-spent { color: var(--muted); }
+.hub .eg-more { margin-top: var(--s3); }
+
+/* progress bar used by goals, challenges, tiers */
+.hub .eg-bar { position: relative; height: 12px; border-radius: 99px; background: color-mix(in srgb, var(--primary) 12%, transparent); overflow: hidden; }
+.hub .eg-bar > i { position: absolute; inset: 0 auto 0 0; width: var(--w, 0%); border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 1s var(--ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hub .eg-flame.on { animation: none; }
+  .hub .eg-bar > i { transition: none; }
+}
