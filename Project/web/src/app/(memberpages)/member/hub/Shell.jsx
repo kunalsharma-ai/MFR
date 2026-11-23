@@ -1,10 +1,10 @@
 "use client";
-// The member hub frame (v2, Nov 2026 ground-up redesign).
-//   Header: logo + panel badge, live section indicator, three live status gauges (profile %, quality /10, points + level),
-//           notification centre, help, language, mode, palette, sound, account menu. On small screens the tools fold
-//           into one "more" menu and the gauges into one status chip.
-//   Navigation: sticky, grouped, with live badges. Each member type skins it differently (Consumer floating dock,
-//           Professional ink sidebar that collapses to a rail, Teen arcade tiles); phones get a bottom bar + drawer.
+// The member hub frame (v3, Nov 2026 premium redesign).
+//   Header: logo + panel badge, three live status gauges (profile %, Quality Points /10, points + level), language
+//           selector (globe, flag, language name, full list), notification bell with an animated unread dot, help,
+//           "more" menu (appearance, palette, sound, all sections) and the account menu.
+//   Navigation: a fixed bottom dock on every screen size (safe-area aware, sliding active indicator, live dots);
+//           "More" opens the full grouped section sheet. Each member type skins it in hub-identity.css.
 // Every number comes from useHub() (store.js), the single source of truth.
 import React from "react";
 import Link from "next/link";
@@ -23,7 +23,8 @@ import { play } from "./sound";
 import { helpForSection } from "./help/content";
 import "./hub.css";
 import "./hub-sections.css";
-import "./hub-skins.css";
+import "./hub-identity.css";
+import "./hub-v3.css";
 
 export const NAV = [
   { group: "nav.groupOverview", items: [
@@ -49,7 +50,7 @@ export const NAV = [
   ] },
 ];
 const ALL = NAV.flatMap((g) => g.items);
-const BOTTOM = { consumer: ["dashboard", "services", "surveys", "rewards"], professional: ["dashboard", "surveys", "quality", "rewards"], teen: ["dashboard", "services", "surveys", "rewards"] };
+const DOCK = { consumer: ["dashboard", "profile", "surveys", "rewards", "quality"], professional: ["dashboard", "surveys", "profile", "quality", "rewards"], teen: ["dashboard", "surveys", "rewards", "profile", "quality"] };
 
 const isActive = (pathname, href) => typeof pathname === "string" && (pathname === href || pathname.startsWith(`${href}/`));
 const isOn = (pathname, it) => isActive(pathname, it.href) || (it.also || []).some((h) => isActive(pathname, h));
@@ -162,28 +163,58 @@ export function PaletteList({ prefs, type, onPick, withCustom = false }) {
   );
 }
 
+export const flagSrc = (l) => (l?.flag ? `/images/flags/${l.flag}.svg` : null);
+export function Flag({ lang, size = 20 }) {
+  const src = flagSrc(lang);
+  return src ? <img className="hh-flag" src={src} alt="" width={Math.round(size * 1.34)} height={size} loading="lazy" /> : <span className="hh-flag hh-flag-x" aria-hidden="true" />;
+}
+
+// Every language the site is translated into, grouped by region, with its flag and native name. Picking one calls
+// setLanguage (prefs.js): it stores the choice (cookie + localStorage), switches the hub strings and runs the
+// site's translation engine (@/i18n/engine setPageLanguage) on the page.
 function LanguageList({ onPick }) {
   const [lang, setLang] = React.useState("en");
   const [q, setQ] = React.useState("");
   React.useEffect(() => setLang(currentLanguage()), []);
-  const list = LANGUAGES.filter((l) => !q || `${l.native} ${l.name}`.toLowerCase().includes(q.toLowerCase()));
+  const list = LANGUAGES.filter((l) => !q || `${l.native} ${l.name} ${l.region}`.toLowerCase().includes(q.toLowerCase()));
+  const regions = [...new Set(list.map((l) => l.region))];
   return (
     <div className="hh-langs">
+      <p className="hh-menu-t"><Icon name="globe" size={16} /> {t("v3.langTitle")}</p>
       <label className="hh-search">
         <Icon name="search" size={16} />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("hdr.langSearch")} aria-label={t("hdr.langSearch")} />
       </label>
       <div className="hh-list" role="listbox" aria-label={t("hdr.language")}>
-        {list.map((l) => (
-          <button key={l.code} type="button" role="option" aria-selected={l.code === lang} className={`hh-opt notranslate ${l.code === lang ? "on" : ""}`} dir={l.dir || "ltr"}
-            onClick={() => { setLang(l.code); setLanguage(l.code); onPick?.(); }}>
-            <span className="hh-glyph" style={{ background: `linear-gradient(135deg, ${l.grade[0]}, ${l.grade[1]})` }}>{l.glyph}</span>
-            <span><b>{l.native}</b><small>{l.name}{l.dir === "rtl" ? " · RTL" : ""}</small></span>
-            {l.code === lang ? <Icon name="check" size={16} className="hh-tick" /> : null}
-          </button>
+        {!list.length ? <p className="hh-empty">{t("v3.langNone")}</p> : null}
+        {regions.map((r) => (
+          <React.Fragment key={r}>
+            <p className="hh-lang-region">{r}</p>
+            {list.filter((l) => l.region === r).map((l) => (
+              <button key={l.code} type="button" role="option" aria-selected={l.code === lang} className={`hh-opt hh-lang notranslate ${l.code === lang ? "on" : ""}`} dir={l.dir || "ltr"} lang={l.code}
+                onClick={() => { setLang(l.code); setLanguage(l.code); play("tap"); onPick?.(); }}>
+                <Flag lang={l} />
+                <span><b>{l.native}</b><small>{l.name}{l.dir === "rtl" ? " · RTL" : ""}</small></span>
+                {l.code === lang ? <Icon name="check" size={16} className="hh-tick" /> : null}
+              </button>
+            ))}
+          </React.Fragment>
         ))}
       </div>
     </div>
+  );
+}
+
+// The header's language selector: globe + flag + language name + chevron; opens the full list.
+function LanguagePicker({ prefs }) {
+  const [code, setCode] = React.useState("en");
+  React.useEffect(() => setCode(currentLanguage()), [prefs]);
+  const l = LANGUAGES.find((x) => x.code === code) || LANGUAGES[0];
+  return (
+    <Pop id="hh-lang" label={`${t("hdr.language")}: ${l.name}`} className="hh-langpop" buttonClass="hh-langbtn" tip={false}
+      icon={<><Icon name="globe" size={18} className="hh-lang-globe" /><Flag lang={l} size={14} /><span className="hh-lang-name notranslate">{l.native}</span><Icon name="chevron" size={14} className="hh-lang-chev" /></>}>
+      {(close) => <LanguageList onPick={close} />}
+    </Pop>
   );
 }
 
@@ -253,7 +284,7 @@ function Notifications() {
   const [popup, setPopup] = React.useState(null);
   return (
     <>
-      <Pop id="hh-notif" label={t("hdr.notifications")} className="hh-notif" buttonClass={rose ? "is-ring" : ""}
+      <Pop id="hh-notif" label={t("hdr.notifications")} className="hh-notif" buttonClass={`${rose ? "is-ring" : ""} ${n ? "has-unread" : ""}`}
         icon={<Icon name="bell" size={20} />}
         badge={n ? <span className="hh-badge" aria-label={t("hdr.unread", { n })}>{n > 9 ? "9+" : n}</span> : null}>
         {(close) => (
@@ -378,41 +409,22 @@ function StatusCluster({ hub }) {
   );
 }
 
-function Header({ hub, prefs, onMenu, section }) {
-  const { member, type } = hub;
+function Header({ hub, prefs, onMenu, section, alerts }) {
+  const { type } = hub;
   return (
     <header className="hh" role="banner">
       <a href="#hub-main" className="hh-skip">{t("hdr.skip")}</a>
-      <button type="button" className="hh-icon hh-burger" aria-label={t("nav.menu")} aria-controls="hub-nav" onClick={onMenu}>
-        <Icon name="menu" size={22} />
-      </button>
       <Link href="/member/dashboard" className="hh-logo" aria-label={t("hdr.home")}>
         <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="150" height="40" />
+        <img src="/images/logo/mfr/icon/128.webp" alt="" className="hh-mark" width="32" height="32" aria-hidden="true" />
       </Link>
-      <span className={`hh-type t-${type}`}>{t(`type.${type}`)}</span>
-      <div className="hh-where" aria-live="polite">
-        <span className="hh-where-ic" aria-hidden="true"><Icon name={section.icon} size={16} /></span>
-        <span className="hh-where-tx"><small>{t("hdr.youAreIn")}</small><b>{t(section.label)}</b></span>
-      </div>
+      <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}`)}</span>
       <StatusCluster hub={hub} />
       <div className="hh-tools">
+        <LanguagePicker prefs={prefs} />
         <Notifications />
         <HelpMenu section={section.key === "messages" ? "dashboard" : section.key === "services" ? "surveys" : section.key} type={type} />
-        <div className="hh-wide">
-          <Pop id="hh-lang" label={t("hdr.language")} icon={<Icon name="globe" size={20} />}>{(close) => <LanguageList onPick={close} />}</Pop>
-          <Pop id="hh-mode" label={t("hdr.mode")} icon={<Icon name={MODE_ICON[prefs.mode]} size={20} />}>{(close) => <ModeList prefs={prefs} onPick={close} />}</Pop>
-          <Pop id="hh-pal" label={t("hdr.palette")} icon={<Icon name="palette" size={20} />}>
-            {() => (
-              <div className="hh-palmenu">
-                <p className="hh-menu-t">{t("hdr.palette")}</p>
-                <PaletteList prefs={prefs} type={type} />
-                <Link className="h-link" href="/member/settings#st-appearance">{t("hdr.moreAppearance")} <Icon name="chevron" size={14} /></Link>
-              </div>
-            )}
-          </Pop>
-          <SoundButton prefs={prefs} />
-        </div>
-        <Pop id="hh-more" label={t("hdr.more")} className="hh-narrow" icon={<Icon name="sliders" size={20} />}>
+        <Pop id="hh-more" label={t("hdr.more")} className="hh-morepop" icon={<Icon name="sliders" size={20} />}>
           {(close) => (
             <div className="hh-moremenu">
               <p className="hh-menu-t">{t("hdr.mode")}</p>
@@ -423,7 +435,11 @@ function Header({ hub, prefs, onMenu, section }) {
                 <span>{t("hdr.sound")}</span>
                 <SoundButton prefs={prefs} />
               </div>
-              <Link className="h-btn h-btn-soft" href="/member/settings#st-language" onClick={close}><Icon name="globe" size={16} /> {t("hdr.language")}</Link>
+              <div className="hh-more-links">
+                <button type="button" className="h-btn h-btn-soft" onClick={() => { close(); onMenu(); }}><Icon name="menu" size={16} /> {t("v3.allSections")}</button>
+                <Link className="h-btn h-btn-soft" href="/member/settings" onClick={close}><Icon name="settings" size={16} /> {t("nav.settings")}</Link>
+                <Link className="h-btn h-btn-soft hh-more-help" href="/member/help" onClick={close}><Icon name="help" size={16} /> {t("nav.support")}</Link>
+              </div>
             </div>
           )}
         </Pop>
@@ -462,20 +478,19 @@ function NavFoot({ hub }) {
   );
 }
 
-function SideNav({ pathname, open, onClose, hub, rail, onRail, alerts }) {
+// "More": every section, grouped, as a sheet that slides up from the dock (all screen sizes).
+function NavSheet({ pathname, open, onClose, hub, alerts }) {
   const { type } = hub;
+  const ref = React.useRef(null);
+  React.useEffect(() => { if (open) ref.current?.querySelector("a,button")?.focus({ preventScroll: true }); }, [open]);
   return (
     <>
       <div className={`hn-scrim ${open ? "is-open" : ""}`} onClick={onClose} aria-hidden="true" />
-      <nav className={`hn ${open ? "is-open" : ""} ${rail ? "is-rail" : ""}`} aria-label={t("nav.main")} id="hub-nav">
+      <nav ref={ref} className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav" aria-hidden={!open} inert={!open}>
         <div className="hn-head">
-          <span className={`hh-type t-${type}`}>{t(`type.${type}Member`)}</span>
+          <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}Member`)}</span>
+          <b className="hn-head-t">{t("v3.allSections")}</b>
           <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={20} /></button>
-          {type === "professional" ? (
-            <button type="button" className="hh-icon hn-railbtn" onClick={onRail} aria-pressed={rail} aria-label={rail ? t("hn.expand") : t("hn.collapse")}>
-              <Icon name="chevron" size={18} />
-            </button>
-          ) : null}
         </div>
         <div className="hn-scroll">
           {NAV.map((g) => (
@@ -487,7 +502,7 @@ function SideNav({ pathname, open, onClose, hub, rail, onRail, alerts }) {
                   const b = navBadge(it.key, hub, alerts);
                   return (
                     <li key={it.key}>
-                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={onClose} title={rail ? t(it.label) : undefined}>
+                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={onClose}>
                         <span className="hn-ic"><Icon name={it.icon} size={20} /></span>
                         <span className="hn-tx"><b>{t(it.label)}</b><small>{t(it.hint)}</small></span>
                         {b ? <span className={`hn-badge ${b.dot ? "dot" : ""}`} aria-label={t(b.tip, { n: b.n })}>{b.dot ? "" : b.n > 99 ? "99+" : b.n}</span> : null}
@@ -505,30 +520,33 @@ function SideNav({ pathname, open, onClose, hub, rail, onRail, alerts }) {
   );
 }
 
-function BottomNav({ pathname, onMore, type }) {
-  const keys = BOTTOM[type] || BOTTOM.consumer;
+// The fixed bottom dock: the main sections on every screen size, always in reach while scrolling.
+// The sliding indicator moves to the active item; "More" opens the full section sheet.
+function Dock({ pathname, onMore, hub, alerts, moreOpen }) {
+  const { type } = hub;
+  const keys = DOCK[type] || DOCK.consumer;
+  const items = keys.map((k) => ALL.find((x) => x.key === k));
+  const at = items.findIndex((it) => isOn(pathname, it));
+  const idx = moreOpen ? items.length : at;
   return (
-    <nav className="hb" aria-label={t("nav.quick")}>
-      {keys.map((k) => {
-        const it = ALL.find((x) => x.key === k);
-        const on = isOn(pathname, it);
+    <nav className="hb" aria-label={t("nav.quick")} style={{ "--n": items.length + 1, "--at": idx < 0 ? -1 : idx }}>
+      <span className={`hb-glide ${idx < 0 ? "is-off" : ""}`} aria-hidden="true" />
+      {items.map((it, i) => {
+        const on = !moreOpen && i === at;
+        const b = navBadge(it.key, hub, alerts);
         return (
-          <Link key={k} href={it.href} className={`hb-link s-${k} ${on ? "is-on" : ""} ${k === "surveys" && type !== "professional" ? "hb-fab" : ""}`} aria-current={on ? "page" : undefined}>
-            <span className="hb-ic"><Icon name={it.icon} size={22} /></span>
+          <Link key={it.key} href={it.href} className={`hb-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => play("tap")}>
+            <span className="hb-ic"><Icon name={it.icon} size={22} />{b ? <i className="hb-dot" aria-label={t(b.tip, { n: b.n })} /> : null}</span>
             <span className="hb-tx">{t(it.short || it.label)}</span>
           </Link>
         );
       })}
-      <button type="button" className="hb-link" onClick={onMore} aria-controls="hub-nav">
-        <span className="hb-ic"><Icon name="menu" size={22} /></span>
+      <button type="button" className={`hb-link ${moreOpen ? "is-on" : ""}`} onClick={onMore} aria-controls="hub-nav" aria-expanded={moreOpen}>
+        <span className="hb-ic"><Icon name={moreOpen ? "close" : "menu"} size={22} /></span>
         <span className="hb-tx">{t("nav.more")}</span>
       </button>
     </nav>
   );
-}
-
-function readRail() {
-  try { return localStorage.getItem("mfr.hub.rail") === "1"; } catch (e) { return false; }
 }
 
 export default function HubShell({ children }) {
@@ -538,7 +556,6 @@ export default function HubShell({ children }) {
   const alerts = useAlerts();
   const { type } = hub;
   const [navOpen, setNavOpen] = React.useState(false);
-  const [rail, setRail] = React.useState(false);
   const [dir, setDir] = React.useState("ltr");
 
   React.useEffect(() => {
@@ -546,7 +563,6 @@ export default function HubShell({ children }) {
     const c = currentLanguage();
     setStringsLanguage(c);
     setDir(dirOf(c));
-    setRail(readRail());
   }, []);
   React.useEffect(() => setDir(dirOf(currentLanguage())), [prefs]);
   React.useEffect(() => setNavOpen(false), [pathname]);
@@ -565,6 +581,7 @@ export default function HubShell({ children }) {
   const section = sectionOf(pathname);
   const vars = paletteVars(prefs) || undefined;
   const mode = resolvedMode(prefs);
+  const nAlerts = alerts.data?.length || 0;
   return (
     <div
       className="hub"
@@ -580,14 +597,13 @@ export default function HubShell({ children }) {
       style={vars}
     >
       <Header hub={hub} prefs={prefs} section={section} onMenu={() => setNavOpen(true)} />
-      <div className={`hub-body ${rail && type === "professional" ? "has-rail" : ""}`}>
-        <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={alerts.data?.length || 0}
-          rail={rail && type === "professional"} onRail={() => { const n = !rail; setRail(n); try { localStorage.setItem("mfr.hub.rail", n ? "1" : "0"); } catch (e) { /* blocked */ } }} />
+      <div className="hub-body">
         <main id="hub-main" className="hub-main" tabIndex={-1}>
           {children}
         </main>
       </div>
-      <BottomNav pathname={pathname} onMore={() => setNavOpen(true)} type={type} />
+      <NavSheet pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} />
+      <Dock pathname={pathname} onMore={() => setNavOpen((o) => !o)} hub={hub} alerts={nAlerts} moreOpen={navOpen} />
     </div>
   );
 }

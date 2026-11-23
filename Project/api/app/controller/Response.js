@@ -200,7 +200,12 @@ class Response extends CrudController {
                 source: "$surveyInfo.source",
                 createdAt: "$surveyInfo.createdAt",
                 status: "$surveyInfo.status",
-                participationStatus: "$status"
+                participationStatus: "$status",
+                // v3 survey cards (Nov 2026): fields the Survey already holds, shown on the member's card
+                summary: "$surveyInfo.summary",
+                icon: "$surveyInfo.icon",
+                endsAt: "$surveyInfo.active.to",
+                minQualityScore: "$surveyInfo.minQualityScore"
             }
         });
         //*/
