@@ -11,7 +11,6 @@ import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
-import WelcomeSurvey, { welcomeNeeded } from '../components/WelcomeSurvey.jsx';
 const page = PAGES.login;
 
 // Member log-in ("Member Pass").
@@ -166,14 +165,7 @@ function Login() {
 });
     // login ke baad signup ke pending answers backend ko bhejo (kabhi throw nahi karta; 4s se zyada nahi rukega)
     if (!res.demo) await Promise.race([flushPendingProfile(), new Promise((r) => setTimeout(r, 4000))]);
-    // First log in: a short welcome survey comes before the dashboard (the questions set-password used to ask).
-    const mail = f.email.trim().toLowerCase();
-    const need = await welcomeNeeded({ mail, fallback: pro ? 'professional' : teen ? 'teen' : 'consumer', demo: Boolean(res.demo) });
-    if (need) {
-      setWelcome({ ...need, mail, demo: Boolean(res.demo), redirect: res.redirect });
-      setPhase('welcome');
-      return;
-    }
+    // No welcome survey any more: the member goes straight to the dashboard.
     openDashboard(res);
     } catch (ex) {
       setPhase('idle');
@@ -242,7 +234,6 @@ function Login() {
               </div>
             </div>
 
-            {welcome ? <WelcomeSurvey type={welcome.type} name={welcome.name} mail={welcome.mail} demo={welcome.demo} onDone={() => openDashboard(welcome)} /> : null}
             <form ref={formRef} className="lx-form" hidden={Boolean(welcome)} onSubmit={submit} noValidate method="post" action={FORM_ACTION || undefined}>
               <div className={`lx-field ${err('email') ? 'bad' : ''} ${emailOk ? 'good' : ''}`}>
                 <Icon name="mail" size={18} />

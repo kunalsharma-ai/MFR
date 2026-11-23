@@ -1,28 +1,19 @@
 "use client";
-import MemberHeader from "./components/MemberHeader";
-import MemberSidebar from "./components/MemberSidebar";
-import MemberFooter from "./components/MemberFooter";
 import RewardSync from "./components/RewardSync";
-import FeedbackForm from "@/componentsMHO/FeedbackForm";
-import { Popup } from "@/components/Popup";
 import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
+import HubShell from "./hub/Shell.jsx";
 
+// Member hub redesign (Nov 2026): HubShell replaces MemberHeader + MemberSidebar + MemberFooter
+// (those files stay in components/ untouched). The profile studio and survey pages render inside it unchanged.
 function layout({ children }) {
   const user = useMember();
   if (!user) return <LoadingOverlay />;
   return (
-    <div>
+    <>
       <RewardSync />
-      <MemberHeader />
-      <MemberSidebar>
-        <main>{children}</main>
-      </MemberSidebar>
-      <MemberFooter />
-      {/* <Popup open={true} onClose={() => {}} hideTitle maxWidth="sm">
-          <FeedbackForm />
-        </Popup> */}
-    </div>
+      <HubShell>{children}</HubShell>
+    </>
   );
 }
 

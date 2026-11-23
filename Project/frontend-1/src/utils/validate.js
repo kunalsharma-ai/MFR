@@ -70,7 +70,7 @@ export function validatePhone(iso, raw = '') {
 
 // Field-level rules grouped by wizard step. Steps 1–2 are on /sign-up; steps 3–4 on /auth/password (the emailed link).
 export const STEP_FIELDS = {
-  1: ['memberType', 'firstName', 'lastName', 'gender', 'dob', 'country'],
+  1: ['memberType', 'firstName', 'lastName', 'gender', 'dob', 'country', 'state', 'city', 'zip'],
   2: ['email', 'phone','captcha', 'agreeTerms'],
   3: ['password', 'confirm'],
   4: ['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department', 'jobrole', 'jobTitleOther', 'companyEmail'],

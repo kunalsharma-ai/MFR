@@ -32,6 +32,10 @@ class ValidUser {
     this.router = router;
   }
   termsAccepted() {
+    // Teens never see the adult consent pages: their parent or guardian accepted the Teen terms (MINOR-2026.10)
+    // before the teen could set a password, and the API records that as parent.consent === true.
+    const cat = String(this.userinfo?.category || "");
+    if (/minor/.test(cat) && this.userinfo?.parent?.consent === true) return true;
     return (
       "terms" in this.userinfo &&
       this.userinfo.terms instanceof Array &&

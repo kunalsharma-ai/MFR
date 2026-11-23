@@ -33,6 +33,7 @@ import { err as teenErr } from "../teen/i18n.js";
 import { teenApi, relationLabel } from "../teen/api.js";
 import { useLinkToken, forgetLinkToken } from "../teen/link.js";
 import { DemoMailbox } from "../teen/shell.jsx";
+import AutoSignIn from "../components/AutoSignIn.jsx";
 import { DEMO_MODE } from "../data/site.js";
 
 const page = PAGES.setPassword;
@@ -56,7 +57,7 @@ const WORLD_HINT = {
 };
 const STRENGTH = ["Too weak", "Weak", "Fair", "Strong", "Excellent"];
 const FIRST_STEP = 3; // steps 1–2 were done on /sign-up
-const LAST_STEP = 3; // "Your world" (step 4) is now the welcome survey after the first log in (WelcomeSurvey.jsx)
+const LAST_STEP = 3; // "Your world" questions are no longer asked at sign-up; the member profiles collect them
 
 // Opened from the link in the verification / forgot-password email:
 //   /auth/password?user=<id>&code=<otp>
@@ -79,6 +80,7 @@ function MemberSetPassword() {
   const [dir, setDir] = useState(1);
   const [memberType, setMemberType] = useState("consumer");
   const [firstName, setFirstName] = useState("");
+  const [mail, setMail] = useState(""); // remembered at sign-up on this device, used to log in straight after
   const [channels, setChannels] = useState([]);
   const [v, setV] = useState({
     empstat: "",
@@ -140,6 +142,7 @@ function MemberSetPassword() {
         return;
       }
       const saved = recallSignup(userId);
+      if (live && (verified.email || saved?.mail)) setMail(verified.email || saved.mail);
 
       const fromServer = Array.isArray(verified.notification)
         ? verified.notification.map((n) => n && n.channel).filter(Boolean)
@@ -332,8 +335,8 @@ function MemberSetPassword() {
             </p>
             <h1>{page.h1}</h1>
             <p className="muted-light">
-              One quick step left. Choose a password, then log in: a few
-              welcome questions come first, then your dashboard.
+              One quick step left. Choose a password and we open your
+              dashboard for you.
             </p>
             <div className="sx-stage" aria-hidden="true">
               <div className={`sx-badge s${inWizard ? step : 4}`}>
@@ -848,13 +851,10 @@ function MemberSetPassword() {
                 </div>
                 <h2>You’re in{firstName ? `, ${firstName}` : ""}! 🎉</h2>
                 <p>
-                  Your password is saved and your email is verified. Log in to
-                  answer a few welcome questions and start earning.
+                  Your password is saved and your email is verified. We are
+                  logging you in now.
                 </p>
                 <ol className="sx-next">
-                  <li>
-                    <Icon name="sparkle" size={18} /> A few welcome questions
-                  </li>
                   <li>
                     <Icon name="layers" size={18} /> Complete profile surveys
                   </li>
@@ -862,11 +862,7 @@ function MemberSetPassword() {
                     <Icon name="gift" size={18} /> Start earning rewards
                   </li>
                 </ol>
-                <div className="done-actions">
-                  <Link to="/login" className="btn btn-primary btn-lg">
-                    Log in
-                  </Link>
-                </div>
+                <AutoSignIn mail={mail} password={v.password} />
               </div>
             ) : null}
           </div>
@@ -953,7 +949,7 @@ function TeenSetPassword() {
           <aside className="sx-aside">
             <p className="eyebrow eyebrow-light">{view ? `Your ${rel} said yes · last step` : "Teen account · last step"}</p>
             <h1>{page.h1}</h1>
-            <p className="muted-light">Choose a password and your account switches on. Then log in with your email address: a few welcome questions come first, then your dashboard.</p>
+            <p className="muted-light">Choose a password and your account switches on. We then open your dashboard for you.</p>
             <div className="sx-stage" aria-hidden="true">
               <div className="sx-badge s4"><Icon name="lock" size={44} stroke={1.4} /></div>
               <p className="sx-stage-t">Lock in your account</p>
@@ -1023,13 +1019,12 @@ function TeenSetPassword() {
                 <div className="done-burst" aria-hidden="true">{Array.from({ length: 14 }).map((_, i) => <i key={i} style={{ "--i": i }} />)}</div>
                 <div className="done-check"><Icon name="check" size={44} stroke={2.8} /></div>
                 <h2>You’re in{view?.firstName ? `, ${view.firstName}` : ""}! 🎉</h2>
-                <p>Your password is saved and your account is active. Log in with <strong>{view?.email}</strong> to answer a few welcome questions and see your first surveys.</p>
+                <p>Your password is saved and your account is active. We are logging you in as <strong>{view?.email}</strong>.</p>
                 <ol className="sx-next">
-                  <li><Icon name="sparkle" size={18} /> A few welcome questions</li>
                   <li><Icon name="layers" size={18} /> Complete profile surveys</li>
                   <li><Icon name="gift" size={18} /> Earn reward points</li>
                 </ol>
-                <div className="done-actions"><Link to="/login?type=teen" className="btn btn-primary btn-lg">Log in</Link></div>
+                <AutoSignIn mail={view?.email} password={v.password} loginHref="/login?type=teen" />
               </div>
             ) : null}
           </div>

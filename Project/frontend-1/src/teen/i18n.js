@@ -129,7 +129,7 @@ export const EN = {
   ap_title: 'Thank you, {0}!', ap_lead: 'Your part is complete. We’ve emailed {1} a secure link to create their password.',
   ap_user: 'Their username is their email: {0}', ap_record: 'Your consent record', ap_version: 'Version', ap_when: 'Given on',
   ap_change: 'You can change your mind at any time — email support@myfrequentrewards.com.', ap_next_h: 'What happens next',
-  ap_n1: '{0} creates a password', ap_n2: 'Their account switches on', ap_n3: 'They answer a few welcome questions',
+  ap_n1: '{0} creates a password', ap_n2: 'Their account switches on', ap_n3: 'They go straight to their dashboard',
   // decline
   dc_title: 'We’re sorry to hear that', dc_lead: 'Before we close the request, would you tell us why? It’s optional — you don’t have to explain.',
   dc_r_not_now: 'I do not wish to enroll my Teen at this time.', dc_r_understand_more: 'I would like to understand the Teen Panel better before making a decision.',
