@@ -1,0 +1,36 @@
+{%- comment -%}
+  A Teen asked for a learning reward; their parent or guardian says yes or no (api/app/engagement/teens.js).
+  Data: guardian.firstName, teen.firstName, reward.title, reward.subtitle, reward.points, reward.reference,
+        links.yes, links.no (both open the confirm page), links.view, expires
+{%- endcomment -%}
+{%- assign tone = "mfr" -%}
+{%- capture preheader -%}{{ teen.firstName }} asked for "{{ reward.title }}". Nothing happens until you say yes.{%- endcapture -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- capture title -%}{{ teen.firstName }} would like a learning reward{%- endcapture -%}
+{% include "mailer/engagement/_head.liquid" %}
+<p style="margin:0 0 14px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 14px;">{{ teen.firstName }} has used {{ reward.points }} Teen Panel points to ask for <b>{{ reward.title }}</b>{% if reward.subtitle != "" %} ({{ reward.subtitle }}){% endif %}. Every Teen Panel reward needs your OK first.</p>
+<p style="margin:0 0 4px;">If you say no, {{ teen.firstName }} gets the points back. Reference: {{ reward.reference }}.</p>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:22px 0 6px;">
+  <tr>
+    <td width="50%" style="padding-right:8px;">
+      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+        <td align="center" bgcolor="#14803c" style="border-radius:14px;background:#14803c;">
+          <a href="{{ links.yes }}" target="_blank" rel="noopener" style="display:block;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:24px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:14px;">YES<br /><span style="font-size:13px;line-height:18px;font-weight:normal;">This reward is OK</span></a>
+        </td>
+      </tr></table>
+    </td>
+    <td width="50%" style="padding-left:8px;">
+      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+        <td align="center" bgcolor="#c62828" style="border-radius:14px;background:#c62828;">
+          <a href="{{ links.no }}" target="_blank" rel="noopener" style="display:block;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:24px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:14px;">NO<br /><span style="font-size:13px;line-height:18px;font-weight:normal;">Not this time</span></a>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 18px;font-size:13px;line-height:20px;color:#7b8399;">Either button opens a secure page where you confirm your choice. Nothing is decided until you confirm. This link works until {{ expires | date: "%B %-d, %Y" }}.</p>
+{%- assign btn_url = links.view -%}{%- assign btn_label = "See " | append: teen.firstName | append: "'s points and activity" -%}{%- assign btn_color = "#0b5bd3" -%}{%- assign btn_note = "" -%}
+{% include "mailer/teen/_button.liquid" %}
+{%- capture why -%}You received this because you are the parent or guardian who approved {{ teen.firstName }}'s Teen Panel account.{%- endcapture -%}
+{% include "mailer/engagement/_foot.liquid" %}

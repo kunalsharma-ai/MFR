@@ -16,6 +16,8 @@ import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, Loading
 import { ActivityTimeline } from "./modules.jsx";
 import { ActivityExtras } from "./engage/activity.jsx";
 import { RewardsExtras } from "./engage/rewards.jsx";
+import { SurveyPrefs, EngageNotifications, PrivacyCentre, GuardianTab } from "./engage/settings.jsx";
+import { InstallApp } from "./engage/pwa.jsx";
 import { QualityTiers, QualityTrend, ReferralExtras, ReferralStatus, ShareButtons } from "./engage/growth.jsx";
 import { usePoints, useLedger, useStats, useProfiles, useReferrals, qualityOf, memberTypeOf, fmt, money, relDay } from "./data";
 import { usePrefs, setPrefs, PALETTES, THEMES, currentLanguage, setLanguage } from "./prefs";
@@ -515,9 +517,12 @@ export function SettingsPage() {
     { id: "appearance", icon: "palette", label: t("st.appearance") },
     { id: "sound", icon: "soundOn", label: t("st.sound") },
     { id: "language", icon: "globe", label: t("st.language") },
+    { id: "surveyprefs", icon: "surveys", label: t("sp.title") },
     { id: "notifications", icon: "bell", label: t("st.notifications") },
     { id: "security", icon: "lock", label: t("st.security") },
     { id: "privacy", icon: "shield", label: t("st.privacy") },
+    ...(type === "teen" ? [{ id: "guardian", icon: "shield", label: t("gt.title") }] : []),
+    { id: "app", icon: "rocket", label: t("pw.title") },
     { id: "account", icon: "account", label: t("st.account") },
   ];
   const [active, setActive] = React.useState("appearance");
@@ -604,9 +609,15 @@ export function SettingsPage() {
             </label>
           </section>
 
+          <section id="st-surveyprefs" className="st-card c-surveyprefs" aria-labelledby="sv-t">
+            <header><span className="st-ic"><Icon name="surveys" size={20} /></span><div><h2 id="sv-t" className="h-h3">{t("sp.title")}</h2><p>{t("sp.hint")}</p></div></header>
+            <SurveyPrefs />
+          </section>
+
           <section id="st-notifications" className="st-card c-notifications" aria-labelledby="sn-t">
             <header><span className="st-ic"><Icon name="bell" size={20} /></span><div><h2 id="sn-t" className="h-h3">{t("st.notifications")}</h2><p>{t("st.notificationsHint")}</p></div></header>
             <NotificationPrefs />
+            <EngageNotifications teen={type === "teen"} />
           </section>
 
           <section id="st-security" className="st-card c-security" aria-labelledby="sx-t">
@@ -620,6 +631,19 @@ export function SettingsPage() {
               <a href={type === "teen" ? "/teen-terms" : "/terms"} target="_blank" rel="noopener" className="h-btn h-btn-soft">{t("st.terms")} <Icon name="arrow" size={16} /></a>
               <a href="/privacy" target="_blank" rel="noopener" className="h-btn h-btn-soft">{t("st.privacyPolicy")} <Icon name="arrow" size={16} /></a>
             </div>
+            <PrivacyCentre teen={type === "teen"} />
+          </section>
+
+{type === "teen" ? (
+            <section id="st-guardian" className="st-card c-guardian" aria-labelledby="sg-t">
+              <header><span className="st-ic"><Icon name="shield" size={20} /></span><div><h2 id="sg-t" className="h-h3">{t("gt.title")}</h2><p>{t("gt.hint")}</p></div></header>
+              <GuardianTab />
+            </section>
+          ) : null}
+
+          <section id="st-app" className="st-card c-app" aria-labelledby="sapp-t">
+            <header><span className="st-ic"><Icon name="rocket" size={20} /></span><div><h2 id="sapp-t" className="h-h3">{t("pw.title")}</h2><p>{t("pw.hint")}</p></div></header>
+            <InstallApp />
           </section>
 
           <section id="st-account" className="st-card c-account" aria-labelledby="sac-t">

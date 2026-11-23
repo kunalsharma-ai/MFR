@@ -107,12 +107,17 @@ function payoutFor(kind, body, user) {
     return { method: kind === "charity" ? "charity" : "email", destination: user.mail, masked: maskEmail(user.mail) };
 }
 
+// phase 6 asks the guardian when a Teen requests a reward (registered by engagement/teens.js)
+const TEEN_HOOKS = [];
+export function onTeenRequest(fn) { TEEN_HOOKS.push(fn); }
+
 export async function redeem(user, origin, body = {}) {
     const c = config();
-    if (!c.rewards.redemptionsEnabled) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
     const type = memberType(user);
-    // Teens redeem only after their guardian's YES (phase 6); until then their requests are not accepted
-    if (type === "teen" && !c.teen?.redemptionsEnabled) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
+    // Teens have their own switch (learning rewards, each one needs their guardian's YES by email)
+    if (type === "teen") {
+        if (!c.teen?.redemptionsEnabled) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
+    } else if (!c.rewards.redemptionsEnabled) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
     const it = await findItem(user, origin, body.item);
     const { balances } = await ledger(user, origin);
     if (it.points < c.points.minRedemption && type !== "teen") fail("too_small", `The smallest reward is ${c.points.minRedemption} points.`, 422);
@@ -128,6 +133,7 @@ export async function redeem(user, origin, body = {}) {
             history: [{ status: type === "teen" ? "guardian_pending" : "requested", by: "member" }],
             created: { By: user._id },
         });
+        if (r.status === "guardian_pending") for (const fn of TEEN_HOOKS) setImmediate(() => fn(user, origin, r.toObject()).catch((e) => console.error("guardian ask failed:", e.message)));
         return view(r.toObject());
     } catch (e) {
         if (e?.code === 11000) fail("open_request", "You already have a reward request waiting. You can request another once it's done.", 409);
