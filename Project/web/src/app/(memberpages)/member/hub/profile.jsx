@@ -10,15 +10,16 @@
 // from the profile API, and "done" also when the reward for it is already paid (useProfileGate).
 import React from "react";
 import Link from "next/link";
-import Scene3D from "./scene.jsx";
+import Hero8 from "./v8/hero.jsx";
+import RewardMachine8 from "./v8/machine.jsx";
+import Tile from "./tiles.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import { Counter, Ring, Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
-import { Avatar } from "./Shell.jsx";
+import { Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
 import { fmt } from "./data";
-import { useHub, useRise } from "./store";
+import { useHub } from "./store";
 import { play } from "./sound";
-import { profileTopic } from "./topics";
+import { profileTopic, profileArt } from "./topics";
 import FamilyPanel from "./family.jsx";
 
 function useCelebrate(id, pct) {
@@ -45,91 +46,50 @@ function greetingKey() {
   return h < 12 ? "pf.morning" : h < 18 ? "pf.afternoon" : "pf.evening";
 }
 
-/* ---------------- hero ---------------- */
+/* ---------------- hero (v8, round 7): the shared section banner with the Profile builder scene, no photo ---------------- */
 function ProfileHero({ hub, cards }) {
   const { member, type, completion: c, quality, pts } = hub;
-  const rise = useRise(c?.pct ?? null);
   const done = cards.filter((x) => x.done).length;
   const next = cards.find((x) => !x.done && !x.locked);
   const status = !c ? null : c.pct >= 100 ? "full" : c.pct >= 60 ? "strong" : c.pct > 0 ? "building" : "new";
   const first = member?.firstname || (member?.fullname || "").split(" ")[0] || "";
+  const cta = next ? (
+    <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={next.open}>{next.pct > 0 ? t("pf.continueX", { name: next.title }) : t("pf.startX", { name: next.title })} <Icon name="arrow" size={18} /></button>
+  ) : c && c.remaining.length ? (
+    <Link className="h-btn h-btn-primary h-btn-lg" href={c.remaining[0].href}>{t("pf.finishAccount")} <Icon name="arrow" size={18} /></Link>
+  ) : (
+    <Link className="h-btn h-btn-primary h-btn-lg" href="/member/surveys">{t("pf.toSurveys")} <Icon name="arrow" size={18} /></Link>
+  );
   return (
-    <section className={`pf-hero is-${status || "load"}`} aria-labelledby="pf-title">
-      <div className="pf-hero-bg" aria-hidden="true"><i /><i /><i /><span className="pf-grain" /></div>
-      <div className="pf-hero-id">
-        <span className={`pf-av ${rise ? "is-rise" : ""}`}>
-          <Ring pct={c?.pct || 0} size={132} stroke={7} label={c ? t("pf.ringLabel", { n: c.pct }) : t("c.loading")}><Avatar member={member} size="xl" /></Ring>
-          <span className="pf-av-pct" aria-hidden="true">{c ? <><Counter value={c.pct} />%</> : "…"}</span>
-          {rise ? <Burst key={c?.pct} /> : null}
-        </span>
-      </div>
-      <div className="pf-hero-main">
-        <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.myProfile")}</span></li></ol></nav>
-        <p className="pf-hello">{t(greetingKey(), { name: first })}</p>
-        <h1 className="pf-title" id="pf-title">{status ? t(`pf.title.${status}`) : t("c.loading")}</h1>
-        <p className="pf-sub">{status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}</p>
-        {c ? (
-          <div className="pf-progress" role="img" aria-label={t("pf.ringLabel", { n: c.pct })}>
-            <span className="pf-track"><i style={{ "--w": `${c.pct}%` }} /></span>
-            <span className="pf-progress-tx"><b>{c.done}/{c.total}</b> {t("pf.stepsDone")}</span>
-          </div>
-        ) : null}
-        <div className="pf-hero-cta">
-          {next ? (
-            <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={next.open}>{next.pct > 0 ? t("pf.continueX", { name: next.title }) : t("pf.startX", { name: next.title })} <Icon name="arrow" size={18} /></button>
-          ) : c && c.remaining.length ? (
-            <Link className="h-btn h-btn-primary h-btn-lg" href={c.remaining[0].href}>{t("pf.finishAccount")} <Icon name="arrow" size={18} /></Link>
-          ) : (
-            <Link className="h-btn h-btn-primary h-btn-lg" href="/member/surveys">{t("pf.toSurveys")} <Icon name="arrow" size={18} /></Link>
-          )}
-          <span className={`pf-badge s-${status || "load"}`}><Icon name={status === "full" ? "trophy" : "spark"} size={15} /> {status ? t(`pf.badge.${status}`) : "…"}</span>
-        </div>
-      </div>
-      <div className="pf-scene" aria-hidden="true"><Scene3D kind="profile" /></div>
-      <ul className="pf-stats" aria-label={t("pb.status")}>
-        <li><small>{t("pf.statProfiles")}</small><b>{done}<em>/{cards.length}</em></b></li>
-        <li><small>{t("hdr.quality")}</small><b>{quality ? quality.ten.toFixed(1) : "–"}<em>/10</em></b></li>
-        <li><small>{t("pf.statToEarn")}</small><b>{c ? (c.pointsLeft ? `+${fmt(c.pointsLeft)}` : <Icon name="check" size={20} />) : "…"}</b></li>
-        <li><small>{type === "teen" ? t("hdr.xp") : t("hdr.points")}</small><b>{pts ? <Counter value={pts.total} /> : "…"}</b></li>
-      </ul>
-    </section>
+    <Hero8 kind="profile" id="pf-title"
+      crumbs={[{ label: t("nav.dashboard"), href: "/member/dashboard" }, { label: t("nav.myProfile") }]}
+      eyebrow={t(greetingKey(), { name: first })}
+      title={status ? t(`pf.title.${status}`) : t("c.loading")}
+      sub={status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}
+      actions={<>{cta}<a className="h-btn h-btn-ghost h-btn-lg" href="#reward-machine"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</a></>}
+      stats={[
+        { label: t("hdr.profile"), value: c ? c.pct : "…", unit: "%", pct: c?.pct, tone: "a" },
+        { label: t("pf.statProfiles"), value: done, unit: `/${cards.length}`, pct: cards.length ? (done / cards.length) * 100 : 0, tone: "b" },
+        { label: t("hdr.quality"), value: quality ? quality.ten.toFixed(1) : "–", unit: "/10", pct: quality?.pct, tone: "c" },
+        { label: type === "teen" ? t("hdr.xp") : t("hdr.points"), value: pts ? fmt(pts.total) : "…", tone: "d" },
+      ]}
+    />
   );
 }
 
-/* ---------------- one profile card ---------------- */
+/* ---------------- one profile card (v6, round 5): art panel with a progress ring, big title, chips, full-width action ---------------- */
 function ProfileCard({ card, i }) {
-  const { tp, title, text, pct, done, locked, questions, points, open } = card;
+  const { tp, title, pct, done, locked, questions, points, open, num } = card;
   const state = done ? "done" : locked ? "locked" : pct > 0 ? "going" : "new";
-  const cta = done ? t("pf.review") : locked ? t("pf.locked") : pct > 0 ? t("pf.continue") : t("pf.start");
+  const cta = done ? t("v7.tile.update") : locked ? t("v7.tile.howUnlock") : pct > 0 ? t("pf.continue") : t("pf.start");
+  const mins = Math.max(1, Math.round((questions * 8) / 60));
+  const meta = [];
+  if (questions) meta.push({ icon: "surveys", text: t("pf.questions", { n: questions }) });
+  meta.push({ icon: "clock", text: t("pf.minutes", { n: mins }) });
   return (
-    <li className={`pf-card is-${state}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i, "--w": `${pct}%` }}>
-      <button type="button" className="pf-card-btn" onClick={() => { play("tap"); open(); }}
-        aria-label={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`}>
-        <span className="pf-card-glow" aria-hidden="true" />
-        <span className="pf-card-top">
-          <span className="pf-glyph" aria-hidden="true"><Icon name={tp.ic} size={26} /><i /></span>
-          <span className={`pf-state s-${state}`}>
-            <Icon name={done ? "check" : locked ? "lock" : pct > 0 ? "hourglass" : "spark"} size={13} />
-            {t(`pf.state.${state}`, { n: pct })}
-          </span>
-        </span>
-        <span className="pf-card-tx">
-          <b className="pf-card-t">{title}</b>
-          <small className="pf-card-d">{text}</small>
-        </span>
-        <span className="pf-card-meta">
-          {questions ? <span><Icon name="surveys" size={14} /> {t("pf.questions", { n: questions })}</span> : null}
-          <span><Icon name="clock" size={14} /> {t("pf.minutes", { n: Math.max(1, Math.round((questions * 8) / 60)) })}</span>
-          {points ? <span className="pf-pts"><Icon name="coin" size={14} /> {done ? t("pf.earned", { n: fmt(points) }) : `+${fmt(points)}`}</span> : null}
-        </span>
-        <span className="pf-meter" aria-hidden="true"><i /></span>
-        <span className="pf-card-foot">
-          <span className="pf-pct">{pct}%</span>
-          <span className="pf-go">{cta} <Icon name="arrow" size={15} /></span>
-        </span>
-        {done ? <span className="pf-medal" aria-hidden="true"><Icon name="trophy" size={16} /></span> : null}
-      </button>
-    </li>
+    <Tile c1={tp.c1} c2={tp.c2} art={card.art} name={title} num={num} meta={meta} pts={points ? fmt(points) : null}
+      state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
+      onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
   );
 }
 
@@ -165,13 +125,13 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
   const hub = useHub();
   const { member, type, completion: c, profiles: pq } = hub;
   const [party, endParty] = useCelebrate(member?._id, c?.pct);
-  const cards = profiles.map((p) => {
+  const cards = profiles.map((p, k) => {
     const tp = profileTopic(p);
     const pct = isDone(p) ? 100 : pctOf(p);
     return {
-      slug: p.slug, tp, pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
+      slug: p.slug, tp, art: profileArt(p.slug, tp), pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
       title: tx(`pf3.${tp.k}.title`, p.name), text: tx(`pf3.${tp.k}.text`, p.description || p.summary || ""), name: p.name,
-      open: () => onOpen(p),
+      open: () => onOpen(p), num: k + 1,
     };
   });
   const order = { going: 0, new: 1, locked: 2, done: 3 };
@@ -181,17 +141,28 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
   return (
     <div className="pf">
       <ProfileHero hub={hub} cards={cards} />
-      <section className="pf-sec" aria-labelledby="pf-cards-t">
-        <header className="pf-sec-h">
-          <h2 id="pf-cards-t" className="pf-h"><Icon name="layers" size={20} /> {t("pf.cardsTitle")}</h2>
-          <p>{t("pf.cardsSub")}</p>
-        </header>
-        {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
-          <p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p>
-        ) : (
-          <ul className="pf-grid">{sorted.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
-        )}
-      </section>
+      {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
+        <section className="pf-sec"><p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p></section>
+      ) : (
+        [
+          { k: "going", art: "hourglass", list: sorted.filter((x) => stateOf(x) === "going") },
+          { k: "next", art: "sparkles", list: sorted.filter((x) => stateOf(x) === "new" || stateOf(x) === "locked") },
+          { k: "done", art: "verified", list: sorted.filter((x) => stateOf(x) === "done") },
+        ].filter((g) => g.list.length).map((g) => (
+          <section key={g.k} className={`pf-sec pf-g-${g.k}`} aria-labelledby={`pf-g-${g.k}`}>
+            <header className="h7-head">
+              <img className="h7-head-art" src={`/ps/images/emoji/${g.art}.webp`} alt="" width="40" height="40" loading="lazy" />
+              <div>
+                <h2 id={`pf-g-${g.k}`} className="h7-title">{t(`v7.pf.${g.k}`)}</h2>
+                <p className="h7-sub">{t(`v7.pf.${g.k}Sub`)}</p>
+              </div>
+              <span className="h7-count">{g.k === "done" ? `${g.list.length}/${cards.length}` : g.list.length}</span>
+            </header>
+            <ul className="pf-grid tc-grid">{g.list.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+          </section>
+        ))
+      )}
+      <RewardMachine8 />
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
@@ -215,7 +186,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
             ) : null}
             <div className="pf-ach-foot">
               {morePending ? <Link className="h-btn h-btn-soft" href="/member/surveys"><Icon name="surveys" size={16} /> {t("pf.moreTopics", { n: morePending })}</Link> : null}
-              <Link className="h-btn h-btn-ghost" href="/member/rewards#prize-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
+              <Link className="h-btn h-btn-ghost" href="#reward-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
             </div>
           </section>
         </Reveal>

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import Scene3D from "./scene.jsx";
+import Hero8 from "./v8/hero.jsx";
 
 export const reduced = () =>
   typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -298,30 +298,9 @@ export function Burst({ n = 14, className = "" }) {
 
 /* Compact contextual hero used by every section. Each section passes its own art and status, and the skin + kind
    decide the composition, so heroes never repeat the same layout. */
-export function Hero({ kind, crumbs = [], eyebrow, title, sub, status, art, actions, id, children }) {
-  return (
-    <section className={`hx hx-${kind}`} aria-labelledby={id}>
-      <div className="hx-bg" aria-hidden="true"><i /><i /><i /></div>
-      <div className="hx-main">
-        {crumbs.length ? (
-          <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}>
-            <ol>
-              {crumbs.map((c, i) => (
-                <li key={i}>{c.href && i < crumbs.length - 1 ? <Link href={c.href}>{c.label}</Link> : <span aria-current={i === crumbs.length - 1 ? "page" : undefined}>{c.label}</span>}</li>
-              ))}
-            </ol>
-          </nav>
-        ) : null}
-        {eyebrow ? <p className="hx-eyebrow">{eyebrow}</p> : null}
-        <h1 className="hx-title" id={id}>{title}</h1>
-        {sub ? <p className="hx-sub">{sub}</p> : null}
-        {status ? <div className="hx-status">{status}</div> : null}
-        {actions ? <div className="hx-actions">{actions}</div> : null}
-        {children}
-      </div>
-      <div className="hx-art" aria-hidden="true"><Scene3D kind={kind}>{art}</Scene3D></div>
-    </section>
-  );
+export function Hero({ kind, crumbs = [], eyebrow, title, sub, status, actions, id, children, stats, score, accent }) {
+  // v8 (round 7): every section banner is the website-style Hero8 with its own animated scene (v8/art.jsx)
+  return <Hero8 kind={kind} id={id} crumbs={crumbs} eyebrow={eyebrow} title={title} accent={accent} sub={sub} status={status} actions={actions} stats={stats} score={score}>{children}</Hero8>;
 }
 
 /* Status chip with a non-colour cue (icon + text). */

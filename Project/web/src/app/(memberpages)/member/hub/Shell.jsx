@@ -27,28 +27,34 @@ import "./hub-sections.css";
 import "./hub-identity.css";
 import "./hub-v3.css";
 import "./hub-v4.css";
+import "./hub-v5.css";
+import "./hub-v6.css";
+import "./hub-v7.css";
+import Celebrate from "./v8/celebrate.jsx";
+import "./v8/v8.css";
 
+// v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
+// with MFR's own Services and Messages kept where they belong.
 export const NAV = [
-  { group: "nav.groupOverview", items: [
-    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home", hint: "nav.hDashboard" },
-  ] },
+  // v8 (round 7): three short groups, like a chat app's sidebar: where you earn, how you are doing, your account.
   { group: "nav.groupEarn", items: [
-    { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.myProfile", short: "nav.profile", hint: "nav.hProfile" },
-    { key: "services", href: "/member/services", icon: "services", label: "nav.services", hint: "nav.hServices" },
-    { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys", hint: "nav.hSurveys" },
-    { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards", hint: "nav.hRewards" },
+    { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home", hint: "nav.hDashboard", tone: 1 },
+    { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.myProfile", short: "nav.profile", hint: "nav.hProfile", tone: 2 },
+    { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys", hint: "nav.hSurveys", tone: 3 },
+    { key: "services", href: "/member/services", icon: "services", label: "nav.services", hint: "nav.hServices", tone: 4 },
+    { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards", hint: "nav.hRewards", tone: 5 },
   ] },
-  { group: "nav.groupGrow", items: [
-    { key: "quality", href: "/member/quality", icon: "quality", label: "nav.quality", short: "nav.qualityShort", hint: "nav.hQuality" },
-    { key: "activity", href: "/member/activity", icon: "activity", label: "nav.activity", hint: "nav.hActivity" },
-    { key: "referrals", href: "/member/referrals", icon: "referrals", label: "nav.referrals", hint: "nav.hReferrals" },
+  { group: "nav.groupProgress", items: [
+    { key: "quality", href: "/member/quality", icon: "quality", label: "nav.quality", short: "nav.qualityShort", hint: "nav.hQuality", tone: 6 },
+    { key: "referrals", href: "/member/referrals", icon: "referrals", label: "nav.referrals", hint: "nav.hReferrals", tone: 7 },
+    { key: "activity", href: "/member/activity", icon: "activity", label: "nav.activity", hint: "nav.hActivity", tone: 8 },
   ] },
   { group: "nav.groupYou", items: [
-    { key: "messages", href: "/member/messages", icon: "inbox", label: "nav.messages", hint: "nav.hMessages" },
-    { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account", hint: "nav.hAccount" },
-    { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings", hint: "nav.hSettings" },
+    { key: "messages", href: "/member/messages", icon: "inbox", label: "nav.messages", hint: "nav.hMessages", tone: 1 },
+    { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account", hint: "nav.hAccount", tone: 2 },
+    { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings", hint: "nav.hSettings", tone: 4 },
     // The ticket pages under /member/support count as Help.
-    { key: "help", href: "/member/help", also: ["/member/support"], icon: "help", label: "nav.support", short: "nav.help", hint: "nav.hHelp" },
+    { key: "help", href: "/member/help", also: ["/member/support"], icon: "help", label: "nav.support", short: "nav.help", hint: "nav.hHelp", tone: 6 },
   ] },
 ];
 const ALL = NAV.flatMap((g) => g.items);
@@ -417,10 +423,11 @@ function Header({ hub, prefs, onMenu, section, navOpen }) {
       <a href="#hub-main" className="hh-skip">{t("hdr.skip")}</a>
       <button type="button" className="hh-icon hh-burger" onClick={onMenu} aria-controls="hub-nav" aria-expanded={Boolean(navOpen)} aria-label={t("nav.main")}><Icon name="menu" size={22} /></button>
       <Link href="/member/dashboard" className="hh-logo" aria-label={t("hdr.home")}>
-        <img src="/images/logo/mfr-logo-ondark.png" alt="MyFrequentRewards" className="hh-logo-img" width="168" height="40" />
-        <img src="/images/logo/mfr-mark-ondark.png" alt="" className="hh-mark" width="34" height="34" aria-hidden="true" />
+        <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="168" height="40" />
+        <img src="/images/logo/mfr/icon/128.webp" alt="" className="hh-mark" width="34" height="34" aria-hidden="true" />
       </Link>
-      <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}`)}</span>
+      <span className="hh-title" aria-hidden="true"><Icon name={section.icon} size={18} /><b>{t(section.label)}</b></span>
+      <JumpTo />
       <StatusCluster hub={hub} />
       <div className="hh-tools">
         <LanguagePicker prefs={prefs} />
@@ -458,29 +465,82 @@ function navBadge(key, hub, alerts) {
   return null;
 }
 
-// Sidebar footer: the reward balance card and the member card, as on the MFR dashboard members know.
-function NavFoot({ hub }) {
-  const { type, pts, quality, member, level } = hub;
-  const unit = type === "teen" ? t("hdr.xp") : t("c.pts");
-  const pct = pts ? Math.min(100, (pts.total / pts.threshold) * 100) : 0;
+// Sidebar foot (v5): the way to the payout (teens: to the next level), contact support and collapse.
+function NavFoot({ hub, rail, onRail }) {
+  const { type, pts, level } = hub;
+  const pct = type === "teen" ? Math.round(level.pct || 0) : pts ? Math.min(100, Math.round((pts.total / pts.threshold) * 100)) : 0;
+  const r = 15;
+  const c = 2 * Math.PI * r;
   return (
     <div className="hn-foot">
-      <Link href="/member/rewards" className="hn-bal">
-        <span className="hn-bal-coin" aria-hidden="true"><i /></span>
-        <small>{type === "teen" ? t("rw3.xpBalance") : t("d2.balance")}</small>
-        <b>{pts ? <><Counter value={pts.total} /> <em>{unit}</em></> : "…"}</b>
-        <span className="hn-foot-bar" aria-hidden="true"><i style={{ "--w": `${pct}%` }} /></span>
-        <span className="hn-bal-note">
-          {type === "professional" && quality ? `${t("nav.quality")} ${quality.ten.toFixed(1)} / 10`
-            : type === "teen" ? (level.left != null ? `${t("lv.level", { n: level.n })} · ${t("lv.toNext", { n: fmt(level.left) })}` : t("lv.level", { n: level.n }))
-            : pts ? (pts.total >= pts.threshold ? t("rw.milestoneReached") : t("rw.untilMilestone", { n: fmt(pts.threshold - pts.total) })) : t("lv.level", { n: level.n })}
+      <Link href="/member/myaccount" className="hn-me">
+        <Avatar member={hub.member} />
+        <span className="hn-tx"><b>{hub.member?.fullname || hub.member?.firstname || t("nav.account")}</b><small className={`t-${type}`}>{t(`type.${type}Member`)} · {t("lv.level", { n: level.n })}</small></span>
+      </Link>
+      <Link href="/member/rewards" className="hn-pay" aria-label={type === "teen" ? t("v5.toLevel", { n: pct, lv: (level.n || 1) + 1 }) : t("v5.toPayout", { n: pct })}>
+        <span className="hn-pay-ring" aria-hidden="true">
+          <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r={r} className="bg" /><circle cx="18" cy="18" r={r} className="fg" style={{ strokeDasharray: `${(pct / 100) * c} ${c}` }} /></svg>
+        </span>
+        <span className="hn-tx hn-pay-tx">
+          {type === "teen" ? <><b>{pct}%</b> {t("v5.toLevelShort", { lv: (level.n || 1) + 1 })}</> : <><b>{pts ? `${pct}%` : "…"}</b> {t("v5.toPayoutShort")}</>}
         </span>
       </Link>
-      <Link href="/member/myaccount" className="hn-user">
-        <Avatar member={member} />
-        <span><b>{member?.fullname || [member?.firstname, member?.lastname].filter(Boolean).join(" ")}</b><small>{member?.email || t(`type.${type}Member`)}</small></span>
-      </Link>
+      <button type="button" className="hn-link hn-mini hn-railbtn" onClick={onRail} aria-pressed={rail}>
+        <span className="hn-ic"><Icon name="arrow" size={18} className="hn-rail-ic" /></span><span className="hn-tx"><b>{rail ? t("v5.expand") : t("v5.collapse")}</b></span>
+      </button>
     </div>
+  );
+}
+
+/* "Jump to…" (Ctrl/⌘ K): find any section by name and go there. */
+function JumpTo() {
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+  const [q, setQ] = React.useState("");
+  const [at, setAt] = React.useState(0);
+  const input = React.useRef(null);
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setOpen(true); }
+      else if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+  React.useEffect(() => { if (open) { setQ(""); setAt(0); setTimeout(() => input.current?.focus(), 20); } }, [open]);
+  const norm = (x) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const list = ALL.filter((it) => !q || norm(`${t(it.label)} ${t(it.hint)}`).includes(norm(q)));
+  const go = (it) => { if (!it) return; setOpen(false); play("tap"); router.push(it.href); };
+  return (
+    <>
+      <button type="button" className="hh-jump" onClick={() => setOpen(true)} aria-haspopup="dialog">
+        <Icon name="search" size={18} /><span>{t("v5.jump")}</span><kbd>Ctrl K</kbd>
+      </button>
+      {open ? (
+        <div className="hj-scrim" onPointerDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
+          <div className="hj" role="dialog" aria-modal="true" aria-label={t("v5.jump")}>
+            <label className="hj-in"><Icon name="search" size={20} />
+              <input ref={input} value={q} placeholder={t("v5.jumpPh")} aria-label={t("v5.jump")}
+                onChange={(e) => { setQ(e.target.value); setAt(0); }}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") { e.preventDefault(); setAt((n) => Math.min(list.length - 1, n + 1)); }
+                  else if (e.key === "ArrowUp") { e.preventDefault(); setAt((n) => Math.max(0, n - 1)); }
+                  else if (e.key === "Enter") go(list[at]);
+                }} />
+            </label>
+            <ul className="hj-list" role="listbox">
+              {list.length ? list.map((it, i) => (
+                <li key={it.key} role="option" aria-selected={i === at}>
+                  <button type="button" className={`hj-opt t${it.tone} ${i === at ? "on" : ""}`} onMouseEnter={() => setAt(i)} onClick={() => go(it)}>
+                    <span className="hn-ic"><Icon name={it.icon} size={18} /></span><span><b>{t(it.label)}</b><small>{t(it.hint)}</small></span>
+                  </button>
+                </li>
+              )) : <li className="hj-none">{t("v5.jumpNone")}</li>}
+            </ul>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -499,7 +559,7 @@ function useDrawer() {
 
 // The fixed left menu: it never moves while the page scrolls (only the main content does). Below 1000px it becomes
 // a drawer opened from the header menu button.
-function SideNav({ pathname, open, onClose, hub, alerts }) {
+function SideNav({ pathname, open, onClose, hub, alerts, rail, onRail }) {
   const { type } = hub;
   const drawer = useDrawer();
   const ref = React.useRef(null);
@@ -510,10 +570,17 @@ function SideNav({ pathname, open, onClose, hub, alerts }) {
       <div className={`hn-scrim ${open ? "is-open" : ""}`} onClick={onClose} aria-hidden="true" />
       <nav ref={ref} className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav" aria-hidden={hidden || undefined} inert={hidden}>
         <div className="hn-head">
-          <img src="/images/logo/mfr-logo-ondark.png" alt="MyFrequentRewards" className="hn-head-logo" width="150" height="36" />
+          <Link href="/member/dashboard" className="hn-logo" aria-label={t("hdr.home")} onClick={onClose}>
+            <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hn-head-logo on-light" width="150" height="36" />
+            <img src="/images/logo/mfr-logo-ondark.png" alt="" aria-hidden="true" className="hn-head-logo on-dark" width="150" height="36" />
+          </Link>
           <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={20} /></button>
         </div>
-        <span className={`hn-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}Member`)}</span>
+        <Link href="/member/surveys" className="hn-new" onClick={() => { play("tap"); onClose(); }}>
+          <span className="hn-new-ic" aria-hidden="true"><Icon name="surveys" size={18} /></span>
+          <span className="hn-tx"><b>{t("v8.nav.find")}</b></span>
+          {hub.open ? <span className="hn-badge">{hub.open > 99 ? "99+" : hub.open}</span> : null}
+        </Link>
         <div className="hn-scroll">
           {NAV.map((g) => (
             <div className="hn-group" key={g.group}>
@@ -524,7 +591,7 @@ function SideNav({ pathname, open, onClose, hub, alerts }) {
                   const b = navBadge(it.key, hub, alerts);
                   return (
                     <li key={it.key}>
-                      <Link href={it.href} className={`hn-link s-${it.key} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => { play("tap"); onClose(); }}>
+                      <Link href={it.href} title={rail ? t(it.label) : undefined} className={`hn-link s-${it.key} t${it.tone} ${on ? "is-on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => { play("tap"); onClose(); }}>
                         <span className="hn-ic"><Icon name={it.icon} size={20} /></span>
                         <span className="hn-tx"><b>{t(it.label)}</b></span>
                         {b ? <span className={`hn-badge ${b.dot ? "dot" : ""}`} aria-label={t(b.tip, { n: b.n })}>{b.dot ? "" : b.n > 99 ? "99+" : b.n}</span> : null}
@@ -536,7 +603,7 @@ function SideNav({ pathname, open, onClose, hub, alerts }) {
             </div>
           ))}
         </div>
-        <NavFoot hub={hub} />
+        <NavFoot hub={hub} rail={rail} onRail={onRail} />
       </nav>
     </>
   );
@@ -549,6 +616,9 @@ export default function HubShell({ children }) {
   const alerts = useAlerts();
   const { type } = hub;
   const [navOpen, setNavOpen] = React.useState(false);
+  const [rail, setRail] = React.useState(false);
+  React.useEffect(() => { try { setRail(localStorage.getItem("mfr.hub.rail") === "1"); } catch (e) { /* storage blocked */ } }, []);
+  const toggleRail = () => setRail((r) => { try { localStorage.setItem("mfr.hub.rail", r ? "0" : "1"); } catch (e) { /* storage blocked */ } return !r; });
   const [dir, setDir] = React.useState("ltr");
 
   React.useEffect(() => {
@@ -577,7 +647,7 @@ export default function HubShell({ children }) {
   const nAlerts = alerts.data?.length || 0;
   return (
     <div
-      className="hub"
+      className="hub v8"
       dir={dir}
       data-type={type}
       data-sec={section.key}
@@ -587,10 +657,12 @@ export default function HubShell({ children }) {
       data-contrast={prefs.contrast}
       data-motion={motionReduced(prefs) ? "reduced" : "full"}
       data-focus={prefs.focusAlways ? "always" : "auto"}
+      data-rail={rail ? "1" : undefined}
       style={vars}
     >
       <Header hub={hub} prefs={prefs} section={section} navOpen={navOpen} onMenu={() => setNavOpen(true)} />
-      <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} />
+      <Celebrate hub={hub} />
+      <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} rail={rail} onRail={toggleRail} />
       <div className="hub-body">
         <main id="hub-main" className="hub-main" tabIndex={-1}>
           {children}
