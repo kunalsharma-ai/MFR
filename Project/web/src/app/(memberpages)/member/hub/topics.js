@@ -98,3 +98,21 @@ export function surveyTopic(survey, type = "consumer") {
   const words = new Set([...wordsOf(survey?.name), ...wordsOf(survey?.slug)]);
   return set.find((x) => x.w.some((w) => words.has(w))) || GENERAL[type] || GENERAL.consumer;
 }
+
+// 3D artwork (public/ps/images/emoji, the same HD set the prize capsules use) for a topic. Profiles use their own
+// capsule art; surveys use their topic's.
+const TOPIC_ART = {
+  food: "food", shopping: "shopping", beauty: "beauty", travel: "travel", tech: "tech", health: "health", auto: "automobile", gaming: "game",
+  media: "media", money: "financial", research: "research", sport: "sports", home: "home", family: "family", pets: "pet", fashion: "fashion",
+  luxury: "luxury", lifestyle: "lifestyle", creator: "creator", career: "professional", education: "educational", basic: "basic", more: "additional",
+  general: "rewards", bizFinance: "chart", bizGeneral: "briefcase2", bizHealth: "hospital", bizMarketing: "chart2", bizOps: "tools", bizPeople: "handshake",
+  bizStrategy: "target", bizTech: "desktop", tFood: "pizza", tGaming: "console", tGeneral: "star", tMusic: "music", tSchool: "school", tSocial: "sms",
+  tSport: "football", tStyle: "shirt", tTech: "vr",
+};
+export const artOf = (tp) => `/ps/images/emoji/${TOPIC_ART[tp?.k] || "rewards"}.webp`;
+export const profileArt = (slug, tp) => {
+  const s = String(slug || "").toLowerCase();
+  const own = { "banking-financial-services": "banking", "home-pet": "home", "home-household": "household", "household-services": "services", "pets-animal-care": "pet", "fashion-apparel": "fashion", "luxury-premium": "luxury", "lifestyle-food": "lifestyle", "food-beverages": "food", "restaurants-food-delivery": "delivery", "travel-tourism": "tourism", "automotive-mobility": "mobility", "health-wellness": "wellness", "beauty-personal-care": "personal-care", "consumer-electronics": "electronics", "technology-digital-services": "digital", "sports-physical-fitness": "fitness", "gaming-esports": "esports", mr: "rewards", "research-panel": "research", "entertainment-media": "media", "content-creator-social-influence1": "creator", "tobacco-nicotine-alcoholic": "tobacco" }[s];
+  const direct = ["basic", "professional", "educational", "financial", "parenting", "shopping", "travel", "automobile", "health", "beauty", "tech", "sports", "game", "additional"].includes(s) ? s : null;
+  return own || direct ? `/ps/images/emoji/${own || direct}.webp` : artOf(tp);
+};

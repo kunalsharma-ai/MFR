@@ -34,11 +34,36 @@ function pack(n) {
   pts.sort((a, b) => b[1] - a[1] || Math.abs(a[0] - G.cx) - Math.abs(b[0] - G.cx));
   return pts.slice(0, n);
 }
+// rectangular cases (the vault and the claw box) stack capsules in rows from the floor up
+function packBox(n, top, floor = 310, maxX = 278) {
+  const pts = [], step = 38;
+  for (let row = 0; row < 12; row++) {
+    const y = floor - row * step * 0.9;
+    if (y < top) break;
+    for (let col = 0; col < 7; col++) pts.push([52 + col * step + (row % 2 ? step / 2 : 0), y]);
+  }
+  pts.sort((a, b) => b[1] - a[1] || Math.abs(a[0] - G.cx) - Math.abs(b[0] - G.cx));
+  return pts.filter((p) => p[0] <= maxX).slice(0, n);
+}
+// where each skin keeps its capsules: the lift on shelves left of its rail, the spiral tower above its helix
+function spotsFor(skin, n) {
+  if (skin === 'globe') return pack(n);
+  if (skin === 'lift') return packBox(n, 96, 262, 244);
+  if (skin === 'spiral') return packBox(n, 80, 150);
+  return packBox(n, skin === 'claw' ? 150 : 96);
+}
+// the helix of the spiral tower, drawn in the globe's own 280×280 box (inner 264 machine units from x 28, y 68)
+const HELIX_D = 'M140 123 C200 123 248 130 248 146 C248 164 32 160 32 178 C32 196 248 192 248 210 C248 228 32 224 32 242 C32 258 100 269 140 269';
+const HELIX_FRONT = 'M140 123 C200 123 248 130 248 146 M32 178 C32 196 248 192 248 210 M32 242 C32 258 100 269 140 269';
+const fromBox = (x, y) => [28 + (x * 264) / 280, 68 + (y * 264) / 280];
 const rot = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return (h % 70) - 35; };
 
 // isLocked(slug): the capsule cannot be won yet (the other profiles open after the four basics); its slot shows a lock and clicking it
 // goes to onOpen like any capsule (the page then explains what to finish first).
-export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
+// skin: "claw" (Consumer claw arcade), "lift" (Professional executive lift), "spiral" (Teen spiral tower); "globe" and
+// "vault" are the round 5 machines, kept for reference.
+// Every skin dispenses the same capsules with the same rewards; only the machine and its motion differ.
+export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin = 'globe' }) {
   const { t, lang } = useI18n();
   useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion);
   const ps = useMemo(() => catProfiles(cat), [cat]);
@@ -52,7 +77,8 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
   const nf = new Intl.NumberFormat(lang);
 
   const inGlobe = ps.filter((p) => !shown.has(p.s));
-  const spots = useMemo(() => pack(ps.length), [ps.length]);
+  const spots = useMemo(() => spotsFor(skin, ps.length), [ps.length, skin]);
+  const claw = useRef(null), car = useRef(null);
   const n = shown.size, rk = rankOf(n, ps.length), pts = paidPoints();
   const nextUsd = (Math.floor(pts / POINTS_PER_USD) + 1) * POINTS_PER_USD;
   const todo = ps.filter((p) => !isDone(p));
@@ -72,7 +98,48 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
     await wait(30);
     const el = flyEl.current;
     reward('drop', lang);
-    await path(el, [at(from[0], from[1], 1, rot(slug)), at(G.cx, G.cy + G.r - 30, 1, rot(slug) + 90, 0.25), at(G.cx, 346, 0.9, 200, 0.42), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1500, 'cubic-bezier(.45,.05,.55,.95)');
+    if (skin === 'claw' && claw.current && !reducedMotion()) {
+      // the claw travels to the capsule, drops, grabs it, lifts it to the chute and lets go
+      const C = claw.current, cw = (x, y) => [(x - 30) * u(), (y - 92) * u()];
+      const home = cw(G.cx, 112), over = cw(from[0], 112), down = cw(from[0], from[1]), lift = cw(from[0], 112), drop = cw(70, 112);
+      const a0 = at(from[0], from[1], 1, rot(slug));
+      if (el) el.style.transform = `translate(${a0[0]}px, ${a0[1]}px) rotate(${a0[3]}deg)`;
+      machine.current?.classList.add('claw-open');
+      await path(C, [home, over, down], 900, 'cubic-bezier(.45,.05,.4,1)');
+      machine.current?.classList.remove('claw-open');
+      await wait(180);
+      const up = [at(from[0], from[1], 1, rot(slug)), at(from[0], 112, 1, rot(slug)), at(70, 112, 1, rot(slug))];
+      await Promise.all([path(C, [down, lift, drop], 900, 'ease-in-out'), path(el, up, 900, 'ease-in-out')]);
+      machine.current?.classList.add('claw-open');
+      path(C, [drop, home], 700, 'ease-in-out').then(() => machine.current?.classList.remove('claw-open'));
+      await path(el, [at(70, 112, 1, rot(slug)), at(70, 330, 1, rot(slug) + 90, 0.35), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1200, 'cubic-bezier(.45,.05,.55,.95)');
+    } else if (skin === 'lift' && !reducedMotion()) {
+      // the capsule is lifted off its shelf, rides the gold lift down the rail, then the conveyor through the scanner arch
+      const r0 = rot(slug), C = car.current, cr = (y) => [(268 - 26) * u(), (y + 20) * u()];
+      if (el) el.style.transform = `translate(${at(from[0], from[1])[0]}px, ${at(from[0], from[1])[1]}px) rotate(${r0}deg)`;
+      const y0 = from[1] - 16;
+      if (C) await path(C, [cr(300), cr(y0)], 520, 'cubic-bezier(.45,.05,.4,1)');
+      await path(el, [at(from[0], from[1], 1, r0), at(from[0], y0, 1.05, r0), at(268, y0, 1, 0)], 650, 'cubic-bezier(.45,.05,.4,1)');
+      await Promise.all([path(el, [at(268, y0, 1, 0), at(268, 300, 1, 0)], 700, 'cubic-bezier(.6,0,.3,1)'), C ? path(C, [cr(y0), cr(300)], 700, 'cubic-bezier(.6,0,.3,1)') : null]);
+      machine.current?.classList.add('is-scan');
+      await path(el, [at(268, 300, 1, 0), at(200, 300, 1, -120, 0.5), at(G.cx, 300, 1, -200)], 900, 'linear');
+      machine.current?.classList.remove('is-scan');
+      await path(el, [at(G.cx, 300, 1, -200), at(G.cx, 346, 0.9, -260, 0.35), at(CHUTE.x, CHUTE.y, 0.92, -330, 0.6), at(TRAY.x, TRAY.y, 1, -360, 0.78), at(TRAY.x, TRAY.y - 14, 1, -370, 0.88), at(TRAY.x, TRAY.y, 1, -360, 1)], 1100, 'cubic-bezier(.45,.05,.55,.95)');
+    } else if (skin === 'spiral' && !reducedMotion()) {
+      // the capsule drops through the gate and rolls down the helix, swinging nearer and further, into the chute
+      const r0 = rot(slug);
+      await path(el, [at(from[0], from[1], 1, r0), at(G.cx, 168, 1, r0 + 60)], 520, 'cubic-bezier(.5,0,.6,1)');
+      machine.current?.classList.add('is-spin');
+      const hp = root.current?.querySelector('.pm-helix .back');
+      const N = 28, len = hp?.getTotalLength?.() || 0;
+      const pts = len ? Array.from({ length: N + 1 }, (_, i) => { const q = hp.getPointAtLength((len * i) / N); const [x, y] = fromBox(q.x, q.y); return [...at(x, y, 0.84 + 0.24 * ((x - 58) / 204), r0 + 60 + i * 16), i / N]; }) : [at(G.cx, 168, 1, r0), at(G.cx, 322, 1, r0 + 480)];
+      await path(el, pts, 1800, 'linear');
+      machine.current?.classList.remove('is-spin');
+      await path(el, [at(G.cx, 322, 1, r0 + 508), at(G.cx, 346, 0.9, r0 + 520, 0.3), at(CHUTE.x, CHUTE.y, 0.92, r0 + 600, 0.6), at(TRAY.x, TRAY.y, 1, r0 + 640, 0.78), at(TRAY.x, TRAY.y - 16, 1, r0 + 650, 0.88), at(TRAY.x, TRAY.y, 1, r0 + 640, 1)], 1000, 'cubic-bezier(.45,.05,.55,.95)');
+    } else {
+      const exit = skin === 'vault' ? at(G.cx, 330, 1, rot(slug) + 40, 0.25) : at(G.cx, G.cy + G.r - 30, 1, rot(slug) + 90, 0.25);
+      await path(el, [at(from[0], from[1], 1, rot(slug)), exit, at(G.cx, 346, 0.9, 200, 0.42), at(CHUTE.x, CHUTE.y, 0.92, 300, 0.62), at(TRAY.x, TRAY.y, 1, 360, 0.78), at(TRAY.x, TRAY.y - 16, 1, 380, 0.86), at(TRAY.x, TRAY.y, 1, 360, 0.93), at(TRAY.x, TRAY.y - 5, 1, 365, 0.97), at(TRAY.x, TRAY.y, 1, 360, 1)], 1500, 'cubic-bezier(.45,.05,.55,.95)');
+    }
     machine.current?.classList.remove('is-running');
     if (reducedMotion() && el) el.style.transform = `translate(${(TRAY.x - CAP / 2) * u()}px, ${(TRAY.y - CAP / 2) * u()}px)`;
     setFly({ slug, open: true }); reward('pop', lang);
@@ -161,7 +228,7 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
   };
 
   return (
-    <section className={'pm' + (todo.length ? '' : ' maxed')} id="rewards" ref={root} aria-labelledby="pm-h">
+    <section className={'pm' + (todo.length ? '' : ' maxed')} data-skin={skin} id="rewards" ref={root} aria-labelledby="pm-h">
       <div className="pm-machine-wrap">
         <div className="pm-machine" ref={machine}>
           <div className="pm-sign" aria-hidden="true"><b>{sign || t('rw.machine')}</b></div>
@@ -171,7 +238,15 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
               return <Capsule key={p.s} slug={p.s} className={'in-globe' + (fly && fly.slug === p.s ? ' gone' : '')} style={{ '--x': x - CAP / 2, '--y': y - CAP / 2, '--r': rot(p.s) + 'deg', '--i': i }} />;
             })}
             <span className="pm-glass" />
+            {skin === 'globe' ? <span className="pm-stir"><i /><i /><i /></span> : null}
+            {skin === 'vault' ? <><span className="pm-shelf" /><span className="pm-scan" /><span className="pm-door l" /><span className="pm-door r" /></> : null}
+            {skin === 'claw' ? <><span className="pm-gantry" /><span className="pm-neon" /></> : null}
+            {skin === 'lift' ? <><span className="pm-shelf" /><span className="pm-rail" /><span className="pm-belt" /><span className="pm-arch" /></> : null}
+            {skin === 'spiral' ? <><span className="pm-gate" /><svg className="pm-helix" viewBox="0 0 280 280" preserveAspectRatio="none"><path className="back" d={HELIX_D} /><path className="front" d={HELIX_FRONT} /></svg><span className="pm-tower-glow" /></> : null}
           </div>
+          {skin === 'lift' ? <span className="pm-car" ref={car} aria-hidden="true"><i /></span> : null}
+          {skin === 'claw' ? <span className="pm-claw" ref={claw}><i className="w" /><i className="h" /><i className="f l" /><i className="f r" /></span> : null}
+          {skin === 'globe' ? <span className="pm-dome" aria-hidden="true" /> : null}
           <div className="pm-neck" aria-hidden="true" />
           <div className="pm-body">
             <span className="pm-bulbrow" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>
@@ -184,6 +259,10 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false }) {
             <span className="pm-tray" aria-hidden="true" />
             <button type="button" className="pm-crank" onClick={lucky} disabled={busy || !openTodo.length} aria-label={t('rw.crank')} title={t('rw.crankHint')}>
               <span className="pm-crank-k" style={{ '--turns': crank }}><i /></span>
+              {skin === 'vault' ? <span className="pm-dial" style={{ '--turns': crank }} aria-hidden="true" /> : null}
+              {skin === 'claw' ? <span className="pm-stick" aria-hidden="true"><i /></span> : null}
+              {skin === 'lift' ? <span className="pm-lever" style={{ '--turns': crank }} aria-hidden="true"><i /></span> : null}
+              {skin === 'spiral' ? <span className="pm-spinner" style={{ '--turns': crank }} aria-hidden="true"><i /><i /><i /></span> : null}
             </button>
           </div>
           <div className="pm-base" aria-hidden="true" />
