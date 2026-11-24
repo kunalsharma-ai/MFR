@@ -20,7 +20,9 @@ import { fmt } from "./data";
 import { useHub } from "./store";
 import { play } from "./sound";
 import { profileTopic, profileArt } from "./topics";
-import FamilyPanel from "./family.jsx";
+import { worldKey } from "./v9/worlds";
+import ParentCards from "./v9/parents.jsx";
+import GateBanner from "./v9/gate.jsx";
 
 function useCelebrate(id, pct) {
   const [show, setShow] = React.useState(false);
@@ -79,7 +81,7 @@ function ProfileHero({ hub, cards }) {
 
 /* ---------------- one profile card (v6, round 5): art panel with a progress ring, big title, chips, full-width action ---------------- */
 function ProfileCard({ card, i }) {
-  const { tp, title, pct, done, locked, questions, points, open, num } = card;
+  const { tp, title, pct, done, locked, questions, points, open, num, slug } = card;
   const state = done ? "done" : locked ? "locked" : pct > 0 ? "going" : "new";
   const cta = done ? t("v7.tile.update") : locked ? t("v7.tile.howUnlock") : pct > 0 ? t("pf.continue") : t("pf.start");
   const mins = Math.max(1, Math.round((questions * 8) / 60));
@@ -87,7 +89,7 @@ function ProfileCard({ card, i }) {
   if (questions) meta.push({ icon: "surveys", text: t("pf.questions", { n: questions }) });
   meta.push({ icon: "clock", text: t("pf.minutes", { n: mins }) });
   return (
-    <Tile c1={tp.c1} c2={tp.c2} art={card.art} name={title} num={num} meta={meta} pts={points ? fmt(points) : null}
+    <Tile world={worldKey(slug, tp.k)} art={card.art} name={title} blurb={card.text || null} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
       state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
       onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
   );
@@ -121,7 +123,7 @@ function AccountSteps({ c }) {
 /* ---------------- the page ---------------- */
 // profiles: the core profiles (API objects, with pages and status); extrasDone: topic profiles already completed
 // isDone(p): the reward for p is already paid; onOpen(p): opens the question flow (or explains the lock)
-export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, isLocked = () => false, isDone = () => false, morePending = 0, ready = true }) {
+export default function ProfileStudio({ profiles = [], more = [], gate = null, extrasDone = [], onOpen, isLocked = () => false, isDone = () => false, morePending = 0, ready = true }) {
   const hub = useHub();
   const { member, type, completion: c, profiles: pq } = hub;
   const [party, endParty] = useCelebrate(member?._id, c?.pct);
@@ -134,35 +136,56 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
       open: () => onOpen(p), num: k + 1,
     };
   });
-  const order = { going: 0, new: 1, locked: 2, done: 3 };
-  const stateOf = (x) => (x.done ? "done" : x.locked ? "locked" : x.pct > 0 ? "going" : "new");
-  const sorted = [...cards].sort((a, b) => order[stateOf(a)] - order[stateOf(b)]);
+  const toCard = (p, k) => {
+    const tp = profileTopic(p);
+    const pct = p.done || isDone(p) ? 100 : pctOf(p);
+    return {
+      slug: p.slug, tp, art: profileArt(p.slug, tp), pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
+      title: tx(`pf3.${tp.k}.title`, p.name), text: tx(`pf3.${tp.k}.text`, p.description || p.summary || ""), name: p.name,
+      open: () => onOpen(p), num: k + 1,
+    };
+  };
+  // round 9: the topic profiles, open ones first; all of them stay black and white with a padlock until the basics are done
+  const extra = more.map((p, k) => toCard(p, cards.length + k)).sort((a, b) => Number(a.done) - Number(b.done));
+  const [shownMore, setShownMore] = React.useState(8);
   if (pq.isError) return <div className="pf"><ErrorState text={t("d2.profileError")} onRetry={pq.refetch} /></div>;
   return (
     <div className="pf">
       <ProfileHero hub={hub} cards={cards} />
       <PrizeHall />
+      {type === "teen" ? <ParentCards /> : null}
       {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
         <section className="pf-sec"><p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p></section>
       ) : (
-        [
-          { k: "going", art: "hourglass", list: sorted.filter((x) => stateOf(x) === "going") },
-          { k: "next", art: "sparkles", list: sorted.filter((x) => stateOf(x) === "new" || stateOf(x) === "locked") },
-          { k: "done", art: "verified", list: sorted.filter((x) => stateOf(x) === "done") },
-        ].filter((g) => g.list.length).map((g) => (
-          <section key={g.k} className={`pf-sec pf-g-${g.k}`} aria-labelledby={`pf-g-${g.k}`}>
-            <header className="h7-head">
-              <img className="h7-head-art" src={`/hub/3d/${g.art}.webp`} alt="" width="40" height="40" loading="lazy" />
-              <div>
-                <h2 id={`pf-g-${g.k}`} className="h7-title">{t(`v7.pf.${g.k}`)}</h2>
-                <p className="h7-sub">{t(`v7.pf.${g.k}Sub`)}</p>
-              </div>
-              <span className="h7-count">{g.k === "done" ? `${g.list.length}/${cards.length}` : g.list.length}</span>
-            </header>
-            <ul className="pf-grid tc-grid">{g.list.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
-          </section>
-        ))
+        <section className="pf-sec pf-g-basics" aria-labelledby="pf-g-basics">
+          <header className="h7-head">
+            <img className="h7-head-art" src="/hub/3d/sparkles.webp" alt="" width="40" height="40" loading="lazy" />
+            <div>
+              <h2 id="pf-g-basics" className="h7-title">{t("v9.basics")}</h2>
+              <p className="h7-sub">{t("v9.basicsSub")}</p>
+            </div>
+            <span className="h7-count">{`${cards.filter((x) => x.done).length}/${cards.length}`}</span>
+          </header>
+          <ul className="pf-grid tc-grid">{cards.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+        </section>
       )}
+      {ready && extra.length ? (
+        <section className="pf-sec pf-g-more" aria-labelledby="pf-g-more">
+          <header className="h7-head">
+            <img className="h7-head-art" src={`/hub/3d/${gate && !gate.coreDone ? "lock" : "unlock"}.webp`} alt="" width="40" height="40" loading="lazy" />
+            <div>
+              <h2 id="pf-g-more" className="h7-title">{t("v9.more")}</h2>
+              <p className="h7-sub">{gate && !gate.coreDone ? t("v9.moreLockedSub") : t("v9.moreSub")}</p>
+            </div>
+            <span className="h7-count">{`${extra.filter((x) => x.done).length}/${extra.length}`}</span>
+          </header>
+          <GateBanner gate={gate} kind="profiles" />
+          <ul className="pf-grid tc-grid">{extra.slice(0, shownMore).map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+          {extra.length > shownMore ? (
+            <div className="tc-more"><span>{t("v7.showing", { n: shownMore, m: extra.length })}</span><button type="button" className="h-btn h-btn-ghost" onClick={() => { setShownMore((n) => n + 8); play("tap"); }}>{t("v7.showMore")} <Icon name="arrow" size={14} /></button></div>
+          ) : null}
+        </section>
+      ) : null}
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
@@ -191,7 +214,6 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
           </section>
         </Reveal>
       </div>
-      {type === "teen" ? <FamilyPanel /> : null}
       {party ? (
         <div className="pb-party" role="dialog" aria-modal="false" aria-labelledby="pb-party-t">
           <Burst n={24} className="big" />

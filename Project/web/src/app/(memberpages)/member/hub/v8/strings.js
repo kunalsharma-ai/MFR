@@ -72,4 +72,18 @@ export const v8 = {
   "v8.c.points.teen": "XP collected!",
   "v8.c.from": "From {name}",
   "v8.c.header": "Your header is up to date",
+
+  // v9 (round 9)
+  "v9.lockText": "Finish your basic profiles to unlock",
+  "v9.gate.title.surveys": "Surveys unlock after your basic profiles",
+  "v9.gate.title.profiles": "More profiles unlock after your basic profiles",
+  "v9.gate.sub": "{n} of {m} basic profiles still to finish. They tell us which surveys suit you, then everything opens.",
+  "v9.gate.parentOnb": "Parent onboarding form",
+  "v9.gate.parentCon": "Parental consent",
+  "v9.gate.subParent": "First your parent or guardian fills in their form and gives consent, then you finish your basic profiles. After that every survey opens.",
+  "v9.more": "More profiles",
+  "v9.moreSub": "Topic profiles. Each one you finish earns its reward and better matched surveys.",
+  "v9.moreLockedSub": "Locked until your basic profiles are done.",
+  "v9.basics": "Your basic profiles",
+  "v9.basicsSub": "Start here. Finish these first and every survey and profile opens.",
 };

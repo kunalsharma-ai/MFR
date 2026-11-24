@@ -192,7 +192,7 @@ function ConsumerDashboard({ hub }) {
         <Reveal className="b-prof" delay={60}><ProfileCard hub={hub} /></Reveal>
         <Reveal className="b-dial" delay={90}><QualityDial hub={hub} /></Reveal>
         <Reveal className="b-done" delay={110}><StatTile kind="done" icon="surveys" label={t("d2.completed")} value={hub.completed} spark={months.map((m) => m.points)} href="/member/activity" /></Reveal>
-        <Reveal className="b-tasks" delay={130}><StatTile kind="tasks" icon="target" label={t("d2.pendingTasks")} value={hub.tasks} sub={hub.pollOpen ? t("d2.pollWaiting") : null} href="/member/services" /></Reveal>
+        <Reveal className="b-tasks" delay={130}><StatTile kind="tasks" icon="target" label={t("d2.pendingTasks")} value={hub.tasks} sub={hub.pollOpen ? t("d2.pollWaiting") : null} href="/member/surveys" /></Reveal>
         <Reveal className="b-level" delay={150}><LevelCard hub={hub} /></Reveal>
       </div>
       <Reveal className="dc-opps"><OpportunityCenter opps={hub.opps} variant="board" /></Reveal>

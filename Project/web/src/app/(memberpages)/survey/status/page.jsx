@@ -1,539 +1,99 @@
 "use client";
-import { useRouter, useSearchParams, redirect } from "next/navigation";
+// Round 9: the screen a member lands on after a survey (complete, not a match, quota full, under review, unavailable).
+// One centred card in the MFR look, its own colour and 3D art per outcome, nothing layered on top of anything else.
+// The rating starts empty (nothing is answered for the member) and is sent only when they pick a star.
 import React from "react";
-import Avatar from "@mui/material/Avatar";
-import { CircularProgress, Rating } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-
-import {
-  HighlightOff as HighlightOffIcon,
-  Mood as MoodIcon,
-} from "@mui/icons-material";
-
-import { api, loadData, Page } from "@/util";
+import Link from "next/link";
+import { api, loadData } from "@/util";
 import { useQuery } from "@/Context";
+import "./status.css";
 
-function page() {
-  const [status, setStatus] = React.useState({ type: "terminate", points: 0 });
-  const background = "/images/logo/groupofpeople2.jpg";
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [query] = [useQuery()];
+const OUTCOMES = {
+  complete: { tone: "ok", art: "trophy", chip: "Survey complete", title: "Thank you, your answers are in!", info: "Your points are added to your balance once the survey team confirms the response." },
+  terminate: { tone: "soft", art: "compass", chip: "Not a match this time", title: "This survey was looking for a different group", info: "That happens to everyone, and it has no effect on your quality score. Your next match could be one tap away." },
+  overquota: { tone: "soft", art: "ballot", chip: "Survey full", title: "This survey already has all the answers it needs", info: "Thank you for your time. Surveys fill up fast, so try the ones below while they are open." },
+  speeder: { tone: "warn", art: "mag", chip: "Under review", title: "We are taking a closer look at this response", info: "Some answers came in faster or more alike than usual. Our team will review them and get back to you." },
+  unavailable: { tone: "warn", art: "wrench", chip: "Survey unavailable", title: "This survey is not available right now", info: "Please try the same link again a little later. In the meantime, there are other surveys waiting for you." },
+};
+const LABELS = ["", "Poor", "Fair", "Good", "Very good", "Excellent"];
+
+export default function SurveyStatusPage() {
+  const query = useQuery();
+  const [state, setState] = React.useState({ loading: true, type: null, points: 0 });
+  const [more, setMore] = React.useState([]);
+  const [rating, setRating] = React.useState(0);
+  const [hover, setHover] = React.useState(0);
+  const [thanks, setThanks] = React.useState(false);
+
   React.useEffect(() => {
-    setIsLoading(true);
+    setState((s) => ({ ...s, loading: true }));
     loadData(
       api.patch(`/api/v1/survey/response`, query),
-      (resp) => {
-        let { data } = resp;
-        if (!data) return;
-        setStatus({ type: data.status, points: data.points });
-      },
-      () => {
-        setIsLoading(false);
-      },
+      (resp) => { const d = resp?.data; if (d) setState({ loading: false, type: d.status, points: Number(d.points) || 0 }); },
+      () => setState((s) => ({ ...s, loading: false })),
     );
   }, [query]);
-  function starRatingChanged(value) {
-    api.put(`/api/v1/survey/response`, { sid: query.sid, rating: value });
-  }
-  return (
-    <Page.Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-      sx={{
-        background: "linear-gradient(-45deg, #b0d4f0, #d3e9f9, #b0d4f0)",
-        position: "relative",
-        zIndex: 1,
-      }}
-    >
-      <Page.Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage: `url(${background})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          opacity: 0.2,
-          zIndex: -2,
-        }}
-      />
-      <Page.Card
-        sx={{
-          minWidth: { xs: 300, md: 400 },
-          minHeight: 300,
-          textAlign: "center",
-          p: { xs: 1, md: 3 },
-          mx: 1,
-          BoxShadow: 4,
-          borderRadius: 4,
-        }}
-      >
-        {isLoading ? (
-          <Page.Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: 300,
-              width: { xs: 300, md: 400 },
-            }}
-          >
-            <CircularProgress />
-          </Page.Box>
-        ) : (
-          <Page.Box>
-            <Page.Box
-              sx={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Page.Box
-                sx={{
-                  // width: 220,
-                  // height: { xs: "60px", md: "80px" },
-                  // width: { xs: "180px", md: "300px" },
-                  position: "relative",
-                  mb: 2,
-                }}
-              >
-                <img src="/images/logo/mfr-logo.png" alt="logo" width={220} />
-                {/* <Page.Box
-                  component="img"
-                  src="/imagesmfr/dol-sign.gif"
-                  alt="logo"
-                  width={{ xs: 15, md: 20 }}
-                  sx={{
-                    position: "absolute",
-                    right: -4.5,
-                    top: { xs: 0, md: 5 },
-                  }}
-                /> */}
-              </Page.Box>{" "}
-            </Page.Box>
-            <Page.Divider sx={{ mb: 2, width: "90%", mx: "auto" }} />
-            <StatusMessage
-              type={status.type}
-              points={100}
-              link="/member/dashboard"
-              starRatingChanged={starRatingChanged}
-            />
-          </Page.Box>
-        )}
-      </Page.Card>
-    </Page.Box>
-  );
-}
-
-function StatusMessage({ type, points, link, starRatingChanged }) {
-  const [availableSurveys, setAvailableSurveys] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [query, setQuery] = [useQuery()];
   React.useEffect(() => {
-    setIsLoading(true);
-    loadData(
-      api.post("/api/v1/me/survey", {
-        status: "new",
-      }),
-      (resp) => {
-        setAvailableSurveys(resp.data);
-      },
-      () => {
-        setIsLoading(false);
-      },
-    );
+    loadData(api.post("/api/v1/me/survey", { status: "new" }), (resp) => setMore(Array.isArray(resp?.data) ? resp.data : []), () => {});
   }, []);
 
-  let avatarIcon = <HighlightOffIcon />;
-  let statusColor = "#f44336";
-  let surveyStatus = "";
-  let statusMessage = { title: "", info: "" };
-
-  switch (type) {
-    case "speeder":
-      surveyStatus = "Under Review !!!";
-      statusMessage = {
-        title: "Sorry, but your response to this survey seems suspicious.",
-        info: `Dear user, Your response to the survey seems suspicious, our team is working on it. We will reach you for more opportunities soon.`,
-      };
-      break;
-
-    case "terminate":
-      surveyStatus = "Terminate !!!";
-      statusMessage = {
-        title: "Sorry, but you do not qualify for this survey.",
-        info: `Dear user, You do not qualify for this survey hence we are terminating your response. We will reach you for more opportunities soon.`,
-      };
-      break;
-
-    case "overquota":
-      surveyStatus = "Overquota !!!";
-      statusMessage = {
-        title: "Sorry, but we have met the quota for this survey.",
-        info: `Dear user, Thank you for your valuable response but we already have reached out the quota for this survey hence your response shall be disgarded. We will reach you for more opportunities soon.`,
-      };
-      break;
-
-    case "unavailable":
-      surveyStatus = "Survey Unavailable !!!";
-      statusMessage = {
-        title: "Sorry, but this survey is not available at the moment.",
-        info: `Dear user, The survey you have requested is not available at this moment. Please reach out with the same link after some time, your response definately makes some difference. We will reach you for more opportunities soon.`,
-      };
-      break;
-
-    case "complete":
-      avatarIcon = <MoodIcon />;
-      statusColor = "green";
-      surveyStatus = "Complete !!!";
-      statusMessage = {
-        title: (
-          <div>
-            <h4>You have successfully completed the survey. </h4>
-            You have earned <span style={{ color: "green" }}>
-              {points}
-            </span>{" "}
-            points.
-          </div>
-        ),
-        info:
-          availableSurveys.length !== 0
-            ? ""
-            : `Dear user, You have successfully completed this survey. We will reach you for more opportunities soon.`,
-      };
-      break;
-  }
+  const rate = (v) => { setRating(v); setThanks(true); api.put(`/api/v1/survey/response`, { sid: query?.sid, rating: v }); };
+  const o = OUTCOMES[state.type] || OUTCOMES.terminate;
+  const shown = hover || rating;
 
   return (
-    <>
-      <Page.Box
-        mb={2}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Page.Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Avatar
-            sx={{
-              bgcolor: statusColor,
-              width: 21,
-              height: 21,
-            }}
-          >
-            {avatarIcon}
-          </Avatar>
+    <main className="sv9">
+      <span className="sv9-sky" aria-hidden="true"><i /><i /><i /></span>
+      <header className="sv9-top"><Link href="/member/dashboard" aria-label="My Frequent Rewards home"><img src="/images/logo/mfr-logo.png" alt="My Frequent Rewards" width="176" height="44" /></Link></header>
+      <section className={`sv9-card t-${o.tone}`} aria-live="polite" aria-busy={state.loading}>
+        {state.loading ? (
+          <div className="sv9-load"><span className="sv9-spin" aria-hidden="true" /><p>Checking your response…</p></div>
+        ) : (
+          <>
+            <div className="sv9-stage" aria-hidden="true">
+              <span className="sv9-halo" />
+              <img src={`/hub/3d/${o.art}.webp`} alt="" width="120" height="120" />
+              {state.type === "complete" ? <><i className="sv9-c c1" /><i className="sv9-c c2" /><i className="sv9-c c3" /></> : null}
+            </div>
+            <p className="sv9-chip">{o.chip}</p>
+            <h1>{o.title}</h1>
+            {state.type === "complete" && state.points > 0 ? (
+              <p className="sv9-pts"><span className="sv9-coin" aria-hidden="true" /><b>+{new Intl.NumberFormat().format(state.points)}</b> points</p>
+            ) : null}
+            <p className="sv9-info">{o.info}</p>
 
-          <Page.Text variant="h6" color={statusColor} fontWeight="bold">
-            {surveyStatus}
-          </Page.Text>
-        </Page.Box>
-
-        <Page.Text
-          variant="subtitle1"
-          color="text.primary"
-          mt={1.5}
-          fontWeight="bold"
-        >
-          {statusMessage.title}
-        </Page.Text>
-
-        <Page.Text
-          color="text.secondary"
-          mt={1}
-          sx={{
-            maxWidth: { xs: "320px", md: "500px" },
-            textAlign: "center",
-            fontWeight: 500,
-            mb: availableSurveys.length !== 0 ? 0 : 4,
-          }}
-        >
-          {statusMessage.info}
-        </Page.Text>
-      </Page.Box>
-
-      <Page.Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        mb={2}
-      >
-        <Page.Text mb={1}>
-          Your feedback helps us improve future surveys. Please rate your
-          experience.
-        </Page.Text>
-        <StarRating onChange={(value) => starRatingChanged(value)} />
-      </Page.Box>
-
-      {link && (
-        <Page.MuiButton
-          variant="contained"
-          color="primary"
-          sx={{
-            fontWeight: 600,
-            mt: 1,
-            mb: 2,
-          }}
-          onClick={() => redirect(link)}
-        >
-          Go to Dashboard
-        </Page.MuiButton>
-      )}
-
-      {availableSurveys.length !== 0 && (
-        <Page.Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Page.Divider sx={{ mb: 2, width: "90%", mx: "auto" }} />
-          <Page.Text
-            color="text.secondary"
-            mt={1}
-            sx={{
-              maxWidth: { xs: "320px", sm: "640px" },
-              textAlign: "center",
-              fontWeight: 500,
-            }}
-          >
-            More earning opportunities are waiting for you. Please check out the
-            available surveys below and earn more points by sharing your
-            valuable opinions.
-          </Page.Text>
-
-          <Page.Box
-            sx={{
-              mt: 2,
-              border: "1px solid rgba(0,0,0,0.12)",
-              borderRadius: 2,
-              overflow: "hidden",
-              maxWidth: { xs: "98vw", sm: "640px" },
-              background: "#fff",
-              maxHeight: 200,
-              overflow: "auto",
-            }}
-          >
-            <table
-              width="100%"
-              cellPadding="0"
-              cellSpacing="0"
-              style={{
-                fontSize: 14,
-                color: "#2a3940",
-                tableLayout: "fixed",
-                borderCollapse: "collapse",
-              }}
-            >
-              <thead
-                style={{
-                  position: "sticky",
-                  top: 0,
-                  background: "#f8fafc",
-                  zIndex: 2,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
-                }}
-              >
-                <tr
-                  style={{
-                    background: "#f8fafc",
-                  }}
-                >
-                  <th
-                    style={{
-                      width: "35%",
-                      padding: "4px 8px",
-                      fontWeight: 700,
-                      borderBottom: "1px solid rgba(0,0,0,0.12)",
-                      borderRight: "1px solid rgba(0,0,0,0.08)",
-                    }}
-                  >
-                    Survey Name
-                  </th>
-                  <th
-                    style={{
-                      width: "25%",
-                      padding: "4px 8px",
-                      fontWeight: 700,
-                      borderBottom: "1px solid rgba(0,0,0,0.12)",
-                      borderRight: "1px solid rgba(0,0,0,0.08)",
-                    }}
-                  >
-                    Time Required
-                  </th>
-                  <th
-                    style={{
-                      width: "15%",
-                      padding: "4px 8px",
-                      fontWeight: 700,
-                      textOverflow: "ellipsis",
-                      overflow: "hidden",
-                      borderBottom: "1px solid rgba(0,0,0,0.12)",
-                      borderRight: "1px solid rgba(0,0,0,0.08)",
-                    }}
-                  >
-                    Points
-                  </th>
-                  <th
-                    style={{
-                      width: "25%",
-                      padding: "4px 8px",
-                      borderBottom: "1px solid rgba(0,0,0,0.12)",
-                    }}
-                  />
-                </tr>
-              </thead>
-
-              <tbody>
-                {availableSurveys.map((survey, index, arr) => (
-                  <tr
-                    key={index}
-                    style={{
-                      borderBottom:
-                        index !== arr.length - 1
-                          ? "1px solid rgba(0,0,0,0.08)"
-                          : "none",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#f8fafc";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#ffffff";
-                    }}
-                  >
-                    <td
-                      style={{
-                        padding: "4px 8px",
-                        fontSize: 13,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        verticalAlign: "middle",
-                        borderRight: "1px solid rgba(0,0,0,0.08)",
-                      }}
-                    >
-                      {survey.name}
-                    </td>
-                    <td
-                      style={{
-                        padding: "4px 8px",
-                        fontSize: 13,
-                        whiteSpace: "nowrap",
-                        verticalAlign: "middle",
-                        borderRight: "1px solid rgba(0,0,0,0.08)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {survey.loi} minutes (approx)
-                    </td>
-                    <td
-                      style={{
-                        padding: "4px 8px",
-                        fontSize: 13,
-                        whiteSpace: "nowrap",
-                        verticalAlign: "middle",
-                        borderRight: "1px solid rgba(0,0,0,0.08)",
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {survey.points || 50} pts
-                    </td>
-                    <td
-                      style={{
-                        padding: "4px 8px",
-                        textAlign: "right",
-                        verticalAlign: "middle",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Page.MuiButton
-                        component="a"
-                        href={`/survey?name=${survey.slug}`}
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        sx={{
-                          height: { md: 24 },
-                          minWidth: { xs: 50, md: 100 },
-                          textAlign: "center",
-                        }}
-                      >
-                        Take Survey
-                      </Page.MuiButton>
-                    </td>
-                  </tr>
+            <div className="sv9-rate">
+              <p id="sv9-rate-l">{thanks ? "Thanks, your rating was sent." : "How was this survey?"}</p>
+              <div className="sv9-stars" role="radiogroup" aria-labelledby="sv9-rate-l" onMouseLeave={() => setHover(0)}>
+                {[1, 2, 3, 4, 5].map((v) => (
+                  <button key={v} type="button" role="radio" aria-checked={rating === v} aria-label={`${v} of 5, ${LABELS[v]}`} className={v <= shown ? "on" : ""} onMouseEnter={() => setHover(v)} onFocus={() => setHover(v)} onBlur={() => setHover(0)} onClick={() => rate(v)}>★</button>
                 ))}
-              </tbody>
-            </table>
-          </Page.Box>
-        </Page.Box>
-      )}
-    </>
-  );
-}
+              </div>
+              <span className="sv9-rate-t">{shown ? LABELS[shown] : "Tap a star"}</span>
+            </div>
 
-export default page;
+            <div className="sv9-actions">
+              <Link className="sv9-btn" href="/member/surveys">Find another survey <span aria-hidden="true">→</span></Link>
+              <Link className="sv9-btn ghost" href="/member/dashboard">Go to dashboard</Link>
+            </div>
+          </>
+        )}
+      </section>
 
-function StarRating({ onChange }) {
-  const [value, setValue] = React.useState(3.5);
-  const [hover, setHover] = React.useState(-1);
-
-  const labels = {
-    0.5: "Useless",
-    1: "Useless+",
-    1.5: "Poor",
-    2: "Poor+",
-    2.5: "Ok",
-    3: "Ok+",
-    3.5: "Good",
-    4: "Good+",
-    4.5: "Excellent",
-    5: "Excellent+",
-  };
-
-  return (
-    <Page.Box
-      sx={{ width: 200, display: "flex", alignItems: "center", ml: "60px" }}
-    >
-      <Rating
-        name="hover-feedback"
-        value={value}
-        precision={0.5}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-          onChange(newValue);
-        }}
-        onChangeActive={(event, newHover) => {
-          setHover(newHover);
-        }}
-        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-      />
-      {value !== null && (
-        <Page.Box sx={{ ml: 2 }}>
-          {labels[hover !== -1 ? hover : value]}
-        </Page.Box>
-      )}
-    </Page.Box>
+      {!state.loading && more.length ? (
+        <section className="sv9-more" aria-labelledby="sv9-more-h">
+          <h2 id="sv9-more-h">More surveys waiting for you</h2>
+          <ul>
+            {more.slice(0, 6).map((s) => (
+              <li key={s.slug || s._id || s.name}>
+                <span className="sv9-m-n">{s.name}</span>
+                <span className="sv9-m-meta">{s.loi ? `~${s.loi} min` : null}{s.points ? <b>+{s.points} pts</b> : null}</span>
+                <a className="sv9-btn sm" href={`/survey?name=${encodeURIComponent(s.slug || "")}`}>Start</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </main>
   );
 }

@@ -1,6 +1,8 @@
 
 import { reducedMotion } from './fx.js';
 
+// an open modal pop-up sits in the top layer: effects drawn while it is open go inside it, or they would be hidden
+const topHost = () => document.querySelector('dialog.celebrate[open]') || document.body;
 const mk = (cls, host, css) => { const e = document.createElement('span'); e.className = cls; if (css) Object.assign(e.style, css); host.append(e); return e; };
 const gone = (a, el) => a.finished.then(() => el.remove(), () => el.remove());
 export const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -49,7 +51,7 @@ export function flyToPoints(from, label, colors, fallback) {
   const hp = document.getElementById('rw-pts'), target = onScreen(hp) ? hp : fallback;
   if (!target || reducedMotion()) return Promise.resolve(null);
   const to = target.getBoundingClientRect(), tx = to.left + to.width / 2, ty = to.top + to.height / 2;
-  const el = mk('pm-fly', document.body, { left: from.x + 'px', top: from.y + 'px', '--k1': colors[0], '--k2': colors[1] || colors[0] });
+  const el = mk('pm-fly', topHost(), { left: from.x + 'px', top: from.y + 'px', '--k1': colors[0], '--k2': colors[1] || colors[0] });
   el.innerHTML = `<i></i><b>${label}</b>`;
   const dx = tx - from.x, dy = ty - from.y, lift = Math.min(-90, dy * 0.35 - 100), kf = [];
   for (let i = 0; i <= 18; i++) {
@@ -66,7 +68,7 @@ export function bump(target) {
   const r = target.getBoundingClientRect();
   for (let i = 0; i < 10; i++) {
     const a = (i / 10) * Math.PI * 2;
-    const s = mk('pm-spark', document.body, { position: 'fixed', left: r.left + r.width / 2 + 'px', top: r.top + r.height / 2 + 'px', color: i % 2 ? 'var(--L3,#ffc23d)' : 'var(--amber,#ffa200)', zIndex: 95 });
+    const s = mk('pm-spark', topHost(), { position: 'fixed', left: r.left + r.width / 2 + 'px', top: r.top + r.height / 2 + 'px', color: i % 2 ? 'var(--L3,#ffc23d)' : 'var(--amber,#ffa200)', zIndex: 95 });
     s.textContent = '✦';
     gone(s.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(a) * 36}px), calc(-50% + ${Math.sin(a) * 26}px)) scale(.3)`, opacity: 0 }], { duration: 650, easing: 'ease-out' }), s);
   }

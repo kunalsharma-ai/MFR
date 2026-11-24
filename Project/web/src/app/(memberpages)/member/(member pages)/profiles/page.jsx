@@ -462,6 +462,8 @@ function SkinProfiles() {
     {current ? null : (
       <ProfileStudio
         profiles={shown}
+        more={gate.extras}
+        gate={gate}
         extrasDone={doneExtras}
         onOpen={open}
         isLocked={(slug) => !canOpen(slug)}

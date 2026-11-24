@@ -26,6 +26,8 @@ import { soundLang as sndLang } from "./useClickSounds.js";
 import { Tiles, Chips, RadioList, Combo, TextInput } from "./Controls.jsx";
 import { EXTRA_QUESTIONS, withAdditions } from "./v41Additions.js";
 import { IArrow, ICheck, IEdit, IGrid, ILock } from "./Icons.jsx";
+// a date question with no range of its own (date of birth) must allow past dates: Form.Date defaults to "from today"
+const DOB_RANGE = ["1900-01-01T00:00:00", new Date().toISOString()];
 
 
 const AUTO_ADVANCE = true; // as in the profile source: a single-answer question moves on by itself (multi-select keeps its Continue button)
@@ -136,7 +138,7 @@ function QuestionCard({ it, value, form, err, pos, total, secLabel, dir, onAnswe
     const errors = form?.formState?.errors;
     control = (
       <div className="ps-embed"><Grid size={12} sx={{ px: 0, py: 1 }}><FormControl fullWidth required={def.required}>
-        <Form.Date {...form.register(def.name)} control={form.control} disabled={false} validations={{ required: def.required ? "This field is required" : false }} dateRange={def.dateRange} errors={errors?.[def.name]} />
+        <Form.Date {...form.register(def.name)} control={form.control} disabled={false} validations={{ required: def.required ? "This field is required" : false }} dateRange={def.dateRange || DOB_RANGE} errors={errors?.[def.name]} />
       </FormControl></Grid></div>
     );
   } else if (def.type === "checkbox") {

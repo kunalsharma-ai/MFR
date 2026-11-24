@@ -11,6 +11,7 @@ import { ensureRewardStyles } from './rstyles.js';
 import { totalPoints, fmtUsd, markPaid, isPaid, pKey, POINTS_PER_PROFILE, POINTS_PER_USD } from './rules.js';
 import { flyToPoints, bump } from './rfx.js';
 import { reward } from './sound.js';
+import { useMember } from '@/Context';
 
 
 /* Prize ticket (Prize Machine rewards): prints out of the pop-up with the profile's opened capsule,
@@ -20,6 +21,7 @@ function PrizeTicket({ meta }) {
   ensureRewardStyles(); // idempotent; only when a ticket is actually shown
   const { t, lang } = useI18n();
   const after = totalPoints(), nf = new Intl.NumberFormat(lang);
+  const teen = useMember()?.category === 'b2c-minor'; // teens see points only, never money
   const [v, setV] = useState(Math.max(0, after - POINTS_PER_PROFILE));
   const box = useRef(null);
   useEffect(() => {
@@ -40,9 +42,9 @@ function PrizeTicket({ meta }) {
       <span className="pm-ticket-t">
         <small>{t('rw.ticket')}</small>
         <b>{t('rw.won', { n: nf.format(POINTS_PER_PROFILE) })}</b>
-        <span aria-hidden="true"><LedCount value={v} lang={lang} /> {t('rw.pts')} · {fmtUsd(v, lang)}</span>
-        <span className="sr-only">{t('rw.balance', { pts: nf.format(after), usd: fmtUsd(after, lang) })}</span>
-        <span>{t('rw.toNext', { n: nf.format(next - after), usd: fmtUsd(next, lang) })}</span>
+        <span aria-hidden="true"><LedCount value={v} lang={lang} /> {t('rw.pts')}{teen ? null : <> · {fmtUsd(v, lang)}</>}</span>
+        {teen ? <span className="sr-only">{nf.format(after)} {t('rw.pts')}</span> : <span className="sr-only">{t('rw.balance', { pts: nf.format(after), usd: fmtUsd(after, lang) })}</span>}
+        {teen ? null : <span>{t('rw.toNext', { n: nf.format(next - after), usd: fmtUsd(next, lang) })}</span>}
       </span>
     </div>
   );
@@ -191,16 +193,17 @@ export default function Celebration({ meta, theme, name, icon, colors, onClose, 
   const { t } = useI18n();
   const cv = useRef(null);
   const first = useRef(null);
+  const box = useRef(null);
   const cfg = celebrationFor(meta, theme);
   useEffect(() => {
+    // native modal dialog: it sits in the top layer, above the header and the left menu, so nothing shows through
+    const d = box.current; try { if (d && !d.open) d.showModal(); } catch (e) { d?.setAttribute('open', ''); }
     first.current?.focus({ preventScroll: true });
     const stop = reducedMotion() ? () => {} : run(cv.current, cfg.mode, colors, cfg.icons);
-    const esc = (e) => e.key === 'Escape' && onClose();
-    addEventListener('keydown', esc);
-    return () => { stop(); removeEventListener('keydown', esc); };
+    return () => { stop(); try { d?.close(); } catch (e) { /* already closed */ } };
   }, []); // eslint-disable-line
   return (
-    <div className={`celebrate cel-${cfg.mode}`} role="dialog" aria-modal="true" aria-labelledby="cel-title">
+    <dialog ref={box} className={`celebrate cel-${cfg.mode}`} aria-labelledby="cel-title" onCancel={(e) => { e.preventDefault(); onClose(); }}>
       <canvas ref={cv} className="celebrate-cv" aria-hidden="true" />
       <div className={`celebrate-card enter-${cfg.enter}`}>
         <div className="cel-stage" aria-hidden="true">
@@ -219,6 +222,6 @@ export default function Celebration({ meta, theme, name, icon, colors, onClose, 
           <button type="button" className="btn-link cel-hub" onClick={onHub}>{t(survey ? 'd.hub.survey' : 'd.hub')}</button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
