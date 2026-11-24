@@ -21,6 +21,7 @@ import * as reports from "./reports.js";
 import * as engagement from "./engagement.js";
 import * as teens from "./teens.js";
 import * as dataRequests from "./datarequests.js";
+import * as experts from "./experts.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -89,6 +90,10 @@ router.get("/quality/tiers", handle(() => quality.tierList()));
 router.get("/quality/review", handle((req) => quality.review(req.adminOrigin, req.query)));
 router.get("/members/:id/quality", handle((req) => quality.history(req.adminOrigin, req.params.id)));
 router.post("/members/:id/quality", handle((req) => quality.changeScore(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+// Expert verification queue (Professionals): check the evidence by hand, then verify or decline. Nothing is e-mailed.
+router.get("/experts", handle((req) => experts.list(req.adminOrigin, req.query)));
+router.get("/experts/:id", handle((req) => experts.get(req.adminOrigin, req.params.id)));
+router.post("/experts/:id/decision", handle((req) => experts.decide(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.get("/referrals/fraud", handle((req) => quality.referralFraud(req.adminOrigin, req.query)));
 // Ticket desk, portal messages and help centre (step 3b). Nothing here sends e-mail.
 router.get("/tickets", handle((req) => tickets.list(req.adminOrigin, req.query)));

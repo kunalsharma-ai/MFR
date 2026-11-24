@@ -82,6 +82,7 @@ async function seed(code) {
     const guardian = await Models.TeenGuardian.create({ origin, relation: "mother", email: `parent.${code}@example.invalid`, name: { first: `Parent${tag}`, last: "Demo" } });
     ids.registration = (await Models.TeenRegistration.create({ origin, reference: `TR-${code}`, idempotencyKey: `k-${code}`, status: "manual_review", teen: ids.teen, guardian: guardian._id, history: [{ status: "manual_review", at: new Date(), by: "system" }] }))._id;
     ids.dataRequest = (await db.collection("DataRequest").insertOne({ ...base(origin), user: ids.member, kind: "delete", status: "requested", open: true, reason: `Leaving ${tag}`, history: [{ status: "requested", by: "member", at: new Date() }] })).insertedId;
+    ids.expert = (await db.collection("ExpertVerification").insertOne({ ...base(origin), user: ids.low, status: "requested", linkedin: `https://www.linkedin.com/in/ravi-${code}`, workDomain: `${code}-demo.example`, jobTitle: `Buyer ${tag}`, history: [] })).insertedId;
     for (const k of Object.keys(ids)) ids[k] = String(ids[k]);
     return { code, origin, tag, ids };
 }
@@ -105,7 +106,7 @@ const LISTS = (b) => [
     "/qb/export", "/qb/rules/check", "/questions", `/questions/${b.ids.question}`, "/qb/versions", "/qb/translations/missing?lang=hi",
     "/profiles", "/profiles/completion", "/segments", "/audiences",
     "/surveys", `/surveys/${b.ids.survey}`, `/surveys/${b.ids.survey}/responses`,
-    "/points/approvals?status=all", "/points/holds", "/quality/tiers", "/quality/review", "/referrals/fraud",
+    "/points/approvals?status=all", "/points/holds", "/quality/tiers", "/quality/review", "/referrals/fraud", "/experts?status=all", `/experts/${b.ids.expert}`,
     "/tickets?status=open_all", `/tickets/${b.ids.ticket}`, "/messages", `/messages/${b.ids.message}`, "/help", `/help/${b.ids.help}`,
     "/switches", "/rewards/catalogue", "/redemptions", `/redemptions/${b.ids.redemption}`, "/draws", "/offers",
     "/prize-machines", "/prize-machines/consumer/plays",
@@ -127,7 +128,7 @@ test("every GET route answers for every brand and never shows another brand's da
     }
     // The seed must reach the screens, or the test proves nothing: each brand sees its own data on the main lists.
     for (const b of brands)
-        for (const p of ["/members", "/questions", "/profiles", "/surveys", "/audiences", "/points/approvals", "/points/holds", "/quality/review", "/tickets", "/messages", "/help", "/rewards/catalogue", "/redemptions", "/draws", "/offers", "/prize-machines", "/engagement/tasks", "/engagement/ideas", "/engagement/stories", "/teens/registrations", "/data-requests"])
+        for (const p of ["/members", "/questions", "/profiles", "/surveys", "/audiences", "/points/approvals", "/points/holds", "/quality/review", "/experts", "/tickets", "/messages", "/help", "/rewards/catalogue", "/redemptions", "/draws", "/offers", "/prize-machines", "/engagement/tasks", "/engagement/ideas", "/engagement/stories", "/teens/registrations", "/data-requests"])
             assert.ok(own.has(`${b.code} ${p}`), `${b.code} sees its own data on ${p}`);
 });
 
@@ -135,7 +136,7 @@ test("another brand's id is not found, for reads and for every write", async () 
     const [t2o, mfr, mho] = brands;
     for (const [me, them] of [[mfr, mho], [mho, t2o], [t2o, mfr]]) {
         const x = them.ids;
-        const reads = [`/members/${x.member}`, `/members/${x.member}/ledger`, `/members/${x.member}/quality`, `/questions/${x.question}`, `/surveys/${x.survey}`, `/surveys/${x.survey}/responses`, `/tickets/${x.ticket}`, `/messages/${x.message}`, `/help/${x.help}`, `/redemptions/${x.redemption}`, `/teens/${x.teen}`, `/data-requests/${x.dataRequest}`];
+        const reads = [`/members/${x.member}`, `/members/${x.member}/ledger`, `/members/${x.member}/quality`, `/questions/${x.question}`, `/surveys/${x.survey}`, `/surveys/${x.survey}/responses`, `/tickets/${x.ticket}`, `/messages/${x.message}`, `/help/${x.help}`, `/redemptions/${x.redemption}`, `/teens/${x.teen}`, `/data-requests/${x.dataRequest}`, `/experts/${x.expert}`];
         for (const p of reads) {
             const r = await admin("GET", `${V1}${p}`, null, me.origin);
             assert.equal(r.status, 404, `${me.code} GET ${them.code}'s ${p}: ${r.status} ${r.text.slice(0, 200)}`);
@@ -186,6 +187,7 @@ test("another brand's id is not found, for reads and for every write", async () 
             ["POST", `/teens/${x.teen}/graduate?dryRun=0`, { reason }],
             ["POST", `/teens/${x.teen}/close`, { reason }],
             ["POST", `/data-requests/${x.dataRequest}/decision`, { decision: "reject", note: reason }],
+            ["POST", `/experts/${x.expert}/decision`, { decision: "verified" }],
         ];
         for (const [method, p, body] of writes) {
             const r = await admin(method, `${V1}${p}`, body, me.origin);
@@ -206,6 +208,7 @@ test("another brand's id is not found, for reads and for every write", async () 
         assert.equal((await db.collection("PointsAdjustment").findOne({ _id: new mongoose.Types.ObjectId(x.adjustment) })).status, "pending");
         assert.equal((await db.collection("Redemption").findOne({ _id: new mongoose.Types.ObjectId(x.redemption) })).status, "requested");
         assert.equal((await db.collection("TeenRegistration").findOne({ _id: new mongoose.Types.ObjectId(x.registration) })).status, "manual_review");
+        assert.equal((await db.collection("ExpertVerification").findOne({ _id: new mongoose.Types.ObjectId(x.expert) })).status, "requested");
         assert.equal((await db.collection("DataRequest").findOne({ _id: new mongoose.Types.ObjectId(x.dataRequest) })).status, "requested");
         assert.equal((await db.collection("PointsHold").findOne({ _id: new mongoose.Types.ObjectId(x.hold) })).releasedAt ?? null, null);
     }
