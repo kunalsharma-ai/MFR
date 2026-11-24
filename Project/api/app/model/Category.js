@@ -10,6 +10,8 @@ export default mongooseModel(
             trim: true,
             lowercase: true
         },
+        // Nov 2026, super admin console: signupOpen, countries, minAge, coreProfiles, theme. Unset = as before.
+        settings: { type: mongoose.Schema.Types.Mixed, default: undefined },
         termsMessage:{
             type:String
         },

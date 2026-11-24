@@ -7,6 +7,10 @@ import { handle } from "./http.js";
 import * as members from "./members.js";
 import * as qb from "./qb.js";
 import * as versions from "./versions.js";
+import * as points from "./points.js";
+import * as audiences from "./audiences.js";
+import * as surveys from "./surveys.js";
+import * as quality from "./quality.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -43,5 +47,37 @@ router.get("/qb/translations/missing", handle((req) => versions.missingTranslati
 router.get("/profiles", handle((req) => qb.listProfiles(req.adminOrigin, req.query)));
 router.get("/profiles/completion", handle((req) => qb.completionReport(req.adminOrigin, req.query)));
 router.put("/profiles/:id", handle((req) => qb.updateProfile(req.adminOrigin, req.params.id, req.body || {})));
+
+// Segments and audiences (module 2)
+router.get("/segments", handle((req) => audiences.listSegments(req.adminOrigin)));
+router.put("/segments/:name", handle((req) => audiences.updateSegment(req.adminOrigin, req.params.name, req.body || {})));
+router.post("/audiences/count", handle((req) => audiences.count(req.adminOrigin, req.body?.filter || {})));
+router.get("/audiences", handle((req) => audiences.listAudiences(req.adminOrigin)));
+router.post("/audiences", handle((req) => audiences.saveAudience(req.adminOrigin, null, req.body || {}, req.adminActor)));
+router.put("/audiences/:id", handle((req) => audiences.saveAudience(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.post("/audiences/:id/count", handle((req) => audiences.audienceCount(req.adminOrigin, req.params.id)));
+// Surveys and invitations (module 5)
+router.get("/surveys", handle((req) => surveys.listSurveys(req.adminOrigin, req.query)));
+router.post("/surveys", handle((req) => surveys.createSurvey(req.adminOrigin, req.body || {})));
+router.get("/surveys/:id", handle((req) => surveys.getSurvey(req.adminOrigin, req.params.id)));
+router.put("/surveys/:id", handle((req) => surveys.updateSurvey(req.adminOrigin, req.params.id, req.body || {})));
+router.post("/surveys/:id/status", handle((req) => surveys.setStatus(req.adminOrigin, req.params.id, req.body?.status)));
+router.post("/surveys/:id/feasibility", handle((req) => surveys.feasibility(req.adminOrigin, req.params.id, req.body || {})));
+router.post("/surveys/:id/invite", handle((req) => surveys.invite(req.adminOrigin, req.params.id, req.body || {}, { dryRun: req.query.dryRun !== "0" })));
+router.get("/surveys/:id/responses", handle((req) => surveys.responses(req.adminOrigin, req.params.id, req.query)));
+router.post("/surveys/:id/reconcile", handle((req) => surveys.reconcile(req.adminOrigin, req.params.id, req.body || {})));
+// Points (module 6)
+router.post("/members/:id/points", handle((req) => points.adjust(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.get("/points/approvals", handle((req) => points.approvals(req.adminOrigin, req.query)));
+router.post("/points/approvals/:id", handle((req) => points.decide(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.get("/points/holds", handle((req) => points.listHolds(req.adminOrigin, req.query)));
+router.post("/points/holds", handle((req) => points.createHold(req.adminOrigin, req.body || {})));
+router.post("/points/holds/:id/release", handle((req) => points.releaseHold(req.adminOrigin, req.params.id)));
+// Quality (module 9) and referral fraud (module 10)
+router.get("/quality/tiers", handle(() => quality.tierList()));
+router.get("/quality/review", handle((req) => quality.review(req.adminOrigin, req.query)));
+router.get("/members/:id/quality", handle((req) => quality.history(req.adminOrigin, req.params.id)));
+router.post("/members/:id/quality", handle((req) => quality.changeScore(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.get("/referrals/fraud", handle((req) => quality.referralFraud(req.adminOrigin, req.query)));
 
 export default router;
