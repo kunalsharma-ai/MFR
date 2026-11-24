@@ -111,6 +111,21 @@ test("key order inside a field doesn't count as a change (Excel round trips reor
     assert.equal((await admin("POST", "/api/admin/v1/qb/import", changed)).json.data.questions.changes, 1, "a real change is still seen");
 });
 
+test("teen guardrails on translations: a teen question can't be translated into blocked wording", async () => {
+    const name = file.Question[0].name;
+    const opt = file.Option.find((o) => o.question === name);
+    for (const body of [{ lang: "es", label: "¿Bebes alcohol?" }, { lang: "es", description: "Sobre tu health" }, ...(opt ? [{ lang: "es", options: { [opt.value]: "Cerveza o beer" } }] : [])]) {
+        const r = await admin("PUT", `/api/admin/v1/questions/${name}/translations`, body);
+        assert.equal(r.status, 422, JSON.stringify(body));
+        assert.equal(r.json.code, "teen_guardrail");
+        assert.match(r.json.message, /asked of teens/);
+    }
+    const before = (await db.collection("Question").findOne({ origin: MFR, name })).translations?.es?.label;
+    assert.ok(!/alcohol|health|beer/i.test(JSON.stringify((await db.collection("Question").findOne({ origin: MFR, name })).translations || {})), "nothing was saved");
+    assert.equal((await admin("PUT", `/api/admin/v1/questions/${name}/translations`, { lang: "es", label: "¿Cuál es tu deporte favorito?" })).status, 200);
+    assert.notEqual((await db.collection("Question").findOne({ origin: MFR, name })).translations.es.label, before);
+});
+
 test("import refuses duplicates, broken references and teen-blocked questions", async () => {
     const bad = structuredClone(file);
     bad.Question.push({ ...bad.Question[0] });
