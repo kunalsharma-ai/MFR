@@ -265,6 +265,11 @@ export const engage = {
   "sp.capHint": "This limits emails only. All your invitations still show in Surveys.",
   // settings: notifications
   "np.channels": "How we reach you",
+  "mk.title": "News and offers",
+  "mk.label": "Send me news and offers",
+  "mk.hint": "Occasional e-mails about new rewards, competitions and offers. Survey invitations don't depend on this.",
+  "mk.since": "Last changed {date}",
+  "mk.teen": "News and offers e-mails aren't sent to Teen Panel members.",
   "np.email": "Email",
   "np.emailHint": "Survey invitations, reminders and updates.",
   "np.push": "Push notifications",

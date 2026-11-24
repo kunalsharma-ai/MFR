@@ -945,8 +945,7 @@ function SignUp() {
                           onChange={(e) => set("marketing", e.target.checked)}
                         />
                         <span>
-                          Send me occasional earning tips and newsletters
-                          (optional).
+                          Send me news and offers (optional).
                         </span>
                       </label>
                       {status === "error" ? (

@@ -312,7 +312,24 @@ export default mongooseModel(
         statusChangedAt: { type: Date },
         archivedAt: { type: Date },
         lastActivityAt: { type: Date },
-        profileCheckedAt: { type: Date }
+        profileCheckedAt: { type: Date },
+        // Marketing e-mail consent ("Send me news and offers"). Unset means never asked: treat it as no.
+        // Only an explicit tick grants it; nothing opts existing members in. Teens can't opt in.
+        marketingOptIn: {
+            granted: { type: Boolean },
+            at: { type: Date },
+            source: { type: String, enum: ["signup", "profile", "admin"] },
+            wording: { type: String, trim: true }
+        },
+        // Every change to marketingOptIn, newest last (proof of consent). Capped in engagement/marketing.js.
+        marketingOptInHistory: [{
+            _id: false,
+            granted: Boolean,
+            at: Date,
+            source: { type: String, enum: ["signup", "profile", "admin"] },
+            wording: String,
+            by: String
+        }]
 
     },
     [

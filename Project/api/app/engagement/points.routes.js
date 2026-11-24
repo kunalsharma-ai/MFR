@@ -12,11 +12,12 @@
 //  POST /admin/holds                {user, source: survey|reward, entry, reason, memberNote?, expectedBy?}
 //  POST /admin/holds/:id/release    {outcome?: released}
 import mongoose from "mongoose";
-import { MemberPreference, PointsHold, Response, Reward } from "../model/index.js";
+import { MemberPreference, PointsHold, Response, Reward, User } from "../model/index.js";
 import { publicConfig } from "./config.js";
 import { isOn } from "./switches.js";
 import * as L from "./ledger.js";
 import { streakOf } from "./streak.js";
+import * as Marketing from "./marketing.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
 
 const oid = (id) => {
@@ -112,7 +113,13 @@ export function mount(router) {
             if (!Object.keys(patch).length) fail("bad_request", "Nothing to save.");
             const p = await savePrefs(req.user, req.origin, patch);
             return { survey: p.survey, notifications: p.notifications, leaderboard: p.leaderboard };
-        }));
+        }))
+        // "Send me news and offers": the member's marketing e-mail consent (see marketing.js)
+        .get("/marketing", handle(async (req) => {
+            const u = await User.findOne({ _id: req.user._id, origin: req.origin }).select("marketingOptIn").lean();
+            return { ...Marketing.view(u), teen: memberType(req.user) === "teen" };
+        }))
+        .put("/marketing", limit(20, 1), handle(async (req) => Marketing.setOptIn(req.user._id, req.origin, req.body?.optIn, "profile", "member")));
 
     // ---- admin: holds ------------------------------------------------------------------------------------------------
     router

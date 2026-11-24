@@ -32,6 +32,7 @@ import {
 } from "../../utils/index.js"
 import { requireAdmin, requireMember, selfOrAdmin, SELF_EDITABLE, ADMIN_BLOCKED, pick, omit, safeFilter } from "../../utils/access.js";
 import { classifyDob } from "../../teen/rules.js";
+import { setOptIn } from "../../engagement/marketing.js";
 import responseController from "../../controller/Response.js";
 
 const router = express.Router();
@@ -99,6 +100,8 @@ router
             if (String(userInfo.category || "").toLowerCase().includes("minor")) throw new Error("Please choose Consumer or Professional.");
             let message = "";
             let data = await userController.create(userInfo);
+            // "Send me news and offers": recorded only when the form sent a real true/false (unticked by default)
+            if (typeof req.body?.marketingOptIn === "boolean") await setOptIn(data._id, req.origin, req.body.marketingOptIn, "signup", "member");
             Emails.newUser(data, req.origin); // off unless config.emails.newUser
 
             let otp = await otpController.generate(

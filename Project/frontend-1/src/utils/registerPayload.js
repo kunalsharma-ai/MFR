@@ -8,8 +8,9 @@
 //   • `address[].tag` is required; `country` is the lower-case ISO code; state, city and zipcode are optional.
 //   • `password` is NOT sent. The backend drops it and sets it later from the emailed link.
 //
-// Fields the backend has no place for yet (job title, industry, company email, interests, marketing
-// opt-in, language) are collected by the form but not sent. Add them here once the model has them.
+//   • `marketingOptIn` is the "Send me news and offers" box: a real true only when ticked (unticked by default).
+//
+// Fields the backend has no place for yet (job title, industry, company email, interests, language) are collected by the form but not sent. Add them here once the model has them.
 
 const digits = (s = '') => String(s).replace(/\D/g, '');
 const DEVICE_CHANNELS = ['sms', 'whatsapp']; // identified by phone; everything else by email
@@ -39,6 +40,7 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
       ...(!v.noZip && v.zip && v.zip.trim() ? { zipcode: v.zip.trim() } : {}),
     }],
     notification,
+    marketingOptIn: v.marketing === true,
   };
  
   // the member who shared their referral link (User.referredBy); left out when the visitor did not come from one

@@ -106,6 +106,7 @@ export default function SignUp({
   const form = useForm({
     mode: "onBlur",
     defaultValues: {
+      marketingOptIn: false,
       category: "b2b",
       name: {
         salutation: "",
@@ -238,7 +239,9 @@ export default function SignUp({
   const onSubmit = async (userData) => {
     setIsLoading(true);
     try {
-      let { agreedtoterms, ...data } = userData;
+      let { agreedtoterms, marketingOptIn, ...data } = userData;
+      // "Send me news and offers": unticked by default; only a tick opts in
+      data.marketingOptIn = marketingOptIn === true;
       if (Boolean(query?.ref) && query.ref !== "") data.referredBy = query.ref;
       const temp = await api.put("api/v1/user", data);
       useToast(temp);
@@ -620,6 +623,15 @@ export default function SignUp({
                           Privacy Policy.
                         </Typography>
                       </Typography>
+                    </Grid>
+
+                    <Grid size={12} container spacing={0} alignItems="flex-start">
+                      <Form.Checkbox
+                        size="medium"
+                        name="marketingOptIn"
+                        control={control}
+                        label="Send me news and offers (optional)"
+                      />
                     </Grid>
 
                     <Page.MuiButton

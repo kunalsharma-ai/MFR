@@ -73,6 +73,24 @@ async function pushUnsubscribe() {
   if (sub) { await send("post", "/push/unsubscribe", { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); }
 }
 
+/* ---------------- marketing e-mail consent ("Send me news and offers") ---------------- */
+// Saved the moment the member flips it, with a timestamp on the server. Off unless the member turned it on.
+export function MarketingConsent() {
+  const q = useEngage("marketing", "/marketing", { tickDep: false });
+  const save = useEngageMutation("put", "/marketing");
+  if (q.isLoading) return <LoadingBlock lines={1} h={48} />;
+  if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
+  const m = save.data || q.data || {};
+  if (q.data?.teen) return <p className="h-sub">{t("mk.teen")}</p>;
+  return (
+    <div className="eg-set">
+      <p className="eg-set-l">{t("mk.title")}</p>
+      <Switch checked={m.granted === true} disabled={save.isPending} onChange={(v) => save.mutate({ optIn: v })} label={t("mk.label")} hint={t("mk.hint")} />
+      <span role="status" className="st-status">{save.isError ? t("c.errorTitle") : m.at ? t("mk.since", { date: when(m.at) }) : ""}</span>
+    </div>
+  );
+}
+
 export function EngageNotifications({ teen }) {
   const p = usePreferences();
   const cfg = useEngageConfig();
