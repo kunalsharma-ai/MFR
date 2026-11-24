@@ -137,7 +137,7 @@ export default function SurveyHistory7({ type = "consumer" }) {
       case "loi": return <span className="shx-muted shx-num">{fmtLoi(loiMs(r))}</span>;
       case "status":
         if (r.source === "internal" && r.status === "dropout" && r.survey?.slug) return <Link href={`/survey?name=${encodeURIComponent(r.survey.slug)}`} className="shx-badge s-resume"><Icon name="play" size={12} /> {t("hs.resume")}</Link>;
-        return <span className={`shx-badge s-${r.status}`}><img src={`/ps/images/emoji/${ART[r.status] || "question"}.webp`} alt="" width="14" height="14" />{t(`hs.s.${r.status}`) === `hs.s.${r.status}` ? r.status : t(`hs.s.${r.status}`)}</span>;
+        return <span className={`shx-badge s-${r.status}`}><img src={`/hub/3d/${ART[r.status] || "question"}.webp`} alt="" width="14" height="14" />{t(`hs.s.${r.status}`) === `hs.s.${r.status}` ? r.status : t(`hs.s.${r.status}`)}</span>;
       case "rewards": return r.status === "complete" ? <span className="shx-pts"><i className="tc-coin" aria-hidden="true" />+{fmt(r.points || 0)} <em>{unit}</em></span> : <span className="shx-muted">–</span>;
       case "feedback": return <Stars value={r.rating} />;
       default: return null;
@@ -147,7 +147,7 @@ export default function SurveyHistory7({ type = "consumer" }) {
   return (
     <section className={`shx shx-${type}`} aria-labelledby="shx-t">
       <header className="shx-head">
-        <span className="shx-head-art" aria-hidden="true"><img src="/ps/images/emoji/calendar.webp" alt="" width="36" height="36" /></span>
+        <span className="shx-head-art" aria-hidden="true"><img src="/hub/3d/calendar.webp" alt="" width="36" height="36" /></span>
         <div>
           <h2 id="shx-t" className="h7-title">{t("hs.title")}</h2>
           <p className="h7-sub">{loading ? t("c.loading") : t(rows.length === 1 ? "hs.subOne" : "hs.sub", { n: fmt(rows.length), r: rangeText })}</p>
@@ -221,7 +221,7 @@ export default function SurveyHistory7({ type = "consumer" }) {
         </table>
         {!loading && !shown.length ? (
           <div className="shx-empty">
-            <span className="shx-empty-art" aria-hidden="true"><img src={`/ps/images/emoji/${error ? "question" : filtered ? "research" : "calendar"}.webp`} alt="" width="84" height="84" /><i /><i /><i /></span>
+            <span className="shx-empty-art" aria-hidden="true"><img src={`/hub/3d/${error ? "question" : filtered ? "research" : "calendar"}.webp`} alt="" width="84" height="84" /><i /><i /><i /></span>
             <b>{error ? t("hs.e.errorT") : filtered ? t("hs.e.filterT") : t("hs.e.noneT")}</b>
             <p>{error ? t("hs.e.error") : filtered ? t("hs.e.filter") : t("hs.e.none", { r: rangeText })}</p>
             <div className="shx-empty-cta">

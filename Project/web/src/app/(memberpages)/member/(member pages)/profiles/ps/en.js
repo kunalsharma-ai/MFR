@@ -228,6 +228,7 @@ export default {
   "s.pet": "Pet ownership",
   // Prize Machine rewards (v4.1)
   "rw.title": "Your Prize Machine",
+  "rw.subPts": "Every profile you complete wins a prize capsule worth {n} points.",
   "rw.sub": "Every profile you complete wins a prize capsule worth {n} points. {rate} points = {usd}.",
   "rw.machine": "PRIZE MACHINE",
   "rw.points": "Reward points",
@@ -257,6 +258,7 @@ export default {
   "rw.earned": "+{n} won",
   "rw.slotDone": "{name}: capsule collected, {n} points won. Open to review or edit.",
   "rw.slotTodo": "{name}: capsule still in the machine. Complete this profile to win it and {n} points.",
+  "rw.boardAriaPts": "{rank}. {pts} reward points. {n} of {total} capsules collected.",
   "rw.boardAria": "{rank}. {pts} reward points, worth {usd}. {n} of {total} capsules collected.",
   "rw.pillAria": "{pts} reward points, worth {usd}. Show your Prize Machine",
   "rw.rankUp": "Rank up: {rank}!",

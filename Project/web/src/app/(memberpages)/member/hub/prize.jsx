@@ -112,7 +112,7 @@ export default function PrizeHall() {
       <div className="ps rw3-ps" data-theme="dark" style={{ minHeight: 0, background: "transparent", overflow: "visible" }}>
         {error ? <p className="k-note"><Icon name="alert" size={16} /> {t("d2.profileError")}</p> : ready && prizeProfiles.length ? (
           <Suspense fallback={<div className="pm-ph" aria-hidden="true" />}>
-            <PrizeMachine key={skin + cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} skin={skin} cat={cat} isLocked={(slug) => !canOpen(slug)} onOpen={onOpen} />
+            <PrizeMachine key={skin + cat + ":" + prizeProfiles.map((p) => p.slug).join(",")} skin={skin} cat={cat} cash={skin !== "spiral"} isLocked={(slug) => !canOpen(slug)} onOpen={onOpen} />
           </Suspense>
         ) : ready ? <p className="k-note">{t("pf.none")}</p> : <LoadingBlock lines={4} h={420} />}
         <GateDialog

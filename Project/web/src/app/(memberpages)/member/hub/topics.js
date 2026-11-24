@@ -109,10 +109,10 @@ const TOPIC_ART = {
   bizStrategy: "target", bizTech: "desktop", tFood: "pizza", tGaming: "console", tGeneral: "star", tMusic: "music", tSchool: "school", tSocial: "sms",
   tSport: "football", tStyle: "shirt", tTech: "vr",
 };
-export const artOf = (tp) => `/ps/images/emoji/${TOPIC_ART[tp?.k] || "rewards"}.webp`;
+export const artOf = (tp) => `/hub/3d/${TOPIC_ART[tp?.k] || "rewards"}.webp`;
 export const profileArt = (slug, tp) => {
   const s = String(slug || "").toLowerCase();
   const own = { "banking-financial-services": "banking", "home-pet": "home", "home-household": "household", "household-services": "services", "pets-animal-care": "pet", "fashion-apparel": "fashion", "luxury-premium": "luxury", "lifestyle-food": "lifestyle", "food-beverages": "food", "restaurants-food-delivery": "delivery", "travel-tourism": "tourism", "automotive-mobility": "mobility", "health-wellness": "wellness", "beauty-personal-care": "personal-care", "consumer-electronics": "electronics", "technology-digital-services": "digital", "sports-physical-fitness": "fitness", "gaming-esports": "esports", mr: "rewards", "research-panel": "research", "entertainment-media": "media", "content-creator-social-influence1": "creator", "tobacco-nicotine-alcoholic": "tobacco" }[s];
   const direct = ["basic", "professional", "educational", "financial", "parenting", "shopping", "travel", "automobile", "health", "beauty", "tech", "sports", "game", "additional"].includes(s) ? s : null;
-  return own || direct ? `/ps/images/emoji/${own || direct}.webp` : artOf(tp);
+  return own || direct ? `/hub/3d/${own || direct}.webp` : artOf(tp);
 };

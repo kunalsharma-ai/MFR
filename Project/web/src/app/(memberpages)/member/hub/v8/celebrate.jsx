@@ -91,7 +91,7 @@ export default function Celebrate({ hub }) {
           ))}
         </span>
       )}
-      <span className="c8-badge" aria-hidden="true"><img src={`/ps/images/emoji/${full ? "trophy" : type === "teen" ? "party" : "confetti"}.webp`} alt="" /></span>
+      <span className="c8-badge" aria-hidden="true"><img src={`/hub/3d/${full ? "trophy" : type === "teen" ? "party" : "confetti"}.webp`} alt="" /></span>
       <div className="c8-tx">
         <b className="c8-title">{title}</b>
         <small>{show.name ? t("v8.c.from", { name: show.name }) : t("v8.c.header")}</small>

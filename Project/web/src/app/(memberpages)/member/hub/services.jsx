@@ -73,11 +73,14 @@ function useServices() {
   return { hub, list, loading: !c && hub.profiles.isLoading };
 }
 
+// v8.1 (round 8): every service carries its own 3D art (public/hub/3d) on an animated tile
+const SV_ART = { profile: "sparkle_heart", mail: "envelope", spark: "research", network: "globe", trophy: "trophy", palette: "art", referrals: "handshake", gift: "gift", hourglass: "hourglass", help: "phonecall" };
 function ServiceCard({ s, i }) {
+  const art = s.key === "poll" ? "bulb" : s.key === "s-internal" ? "shoppingbag" : SV_ART[s.icon] || "sparkles";
   return (
     <article className={`sv-card st-${s.state}`} style={{ "--i": i }}>
       <header className="sv-top">
-        <span className="sv-art" aria-hidden="true"><Icon name={s.icon} size={24} /><i /><i /></span>
+        <span className="sv-art" aria-hidden="true"><img src={`/hub/3d/${art}.webp`} alt="" width="56" height="56" loading="lazy" decoding="async" /><i /><i /></span>
         <div className="sv-id">
           <small>{t(s.cat)}</small>
           <h3>{s.title}</h3>

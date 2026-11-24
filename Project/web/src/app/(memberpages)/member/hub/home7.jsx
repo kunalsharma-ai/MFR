@@ -24,7 +24,7 @@ import { achievementsOf, fmt, relDay, monthlyPoints } from "./data";
 import { surveyTopic, profileTopic, artOf, profileArt } from "./topics";
 import { useHub } from "./store";
 
-const E = (n) => `/ps/images/emoji/${n}.webp`;
+const E = (n) => `/hub/3d/${n}.webp`;
 const greet = () => { const h = new Date().getHours(); return h < 12 ? "pf.morning" : h < 18 ? "pf.afternoon" : "pf.evening"; };
 const unitOf = (type) => (type === "teen" ? t("hdr.xp") : t("c.pts"));
 const firstName = (m) => m?.firstname || (m?.fullname || "").split(" ")[0] || "";
