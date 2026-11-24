@@ -17,7 +17,7 @@ import {
     sendMail,
     Token
 } from "../../utils/index.js"
-import { SELF_EDITABLE, pick, omit } from "../../utils/access.js";
+import { SELF_EDITABLE, pick, omit, requireAdmin } from "../../utils/access.js";
 
 const QUALITY_MAX = 200; // same cap as model/User.js
 const QUALITY_STEP_MAX = 5; // most profiles a member can complete in one save
@@ -214,7 +214,10 @@ router
             answerController
         )
     )
+    // A member could move themselves between Consumer, Professional and Teen. Segment changes are an admin action
+    // (super admin console, Members module), so members get 403 here.
     .patch("/change-category",
+        requireAdmin,
         expressRoute(
             async req => {
                 const [message, data] = [

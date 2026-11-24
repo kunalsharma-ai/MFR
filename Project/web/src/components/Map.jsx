@@ -3,6 +3,8 @@ import React from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { useTelemetry } from "@/Context";
 
+const GOOGLE_MAPS_API_KEY = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "").trim();
+
 const containerStyle = {
   width: "100%",
   height: "500px",
@@ -52,8 +54,11 @@ export default function Map({ setCoordinates }) {
     }
   }, [markers]);
 
+  // The key comes from the environment (set per brand at build time) instead of the source code. Restrict it to the
+  // brand's domains in the Google Cloud console. Without a key the map is simply not shown.
+  if (!GOOGLE_MAPS_API_KEY) return null;
   return (
-    <LoadScript googleMapsApiKey="AIzaSyCNbWx_rMz7HI8YFR0cXI-cRUZ0yBfi_3E">
+    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
