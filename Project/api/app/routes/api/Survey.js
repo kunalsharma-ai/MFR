@@ -5,6 +5,10 @@ import {
     User as userController
 } from "../../controller/index.js";
 import { Mutate, expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
+import { requireAdmin, requireMember } from "../../utils/access.js";
+
+// Statuses a member's own survey redirect may set (status page after the survey tool sends them back).
+const MEMBER_END_STATUSES = ["complete", "terminate", "overquota"];
 
 const router = express.Router();
 router
@@ -26,7 +30,8 @@ router
         },
         surveyController
     ))
-    .put(expressRoute(
+    // creating surveys is an admin action (was open to anyone)
+    .put(requireAdmin, expressRoute(
         async req => {
             // Create new entry
             let message = "Survey created";
@@ -37,7 +42,8 @@ router
     ))
 router
     .route("/responses/:slug")
-    .get(expressRoute(
+    // every member's response to a survey: admins only (was open to anyone)
+    .get(requireAdmin, expressRoute(
         async req => {
             let data = await responseController.list({
                 "survey.slug": req.params.slug
@@ -48,20 +54,23 @@ router
     ))
 router
     .route("/response")
-    .patch(expressRoute(
+    // Was unauthenticated: anyone could mark any response complete. Now the member who owns the response (or an
+    // admin) may close it once, from invited/dropout, to one of the end statuses only.
+    .patch(requireMember, expressRoute(
         async req => {
-            responseController.request={
-                user:{}
+            const sid = String(req.body?.sid ?? "");
+            const status = String(req.body?.status ?? "").toLowerCase();
+            if (!/^[a-f0-9]{24}$/i.test(sid)) throw new Error("Invalid request");
+            let data = await responseController.read(sid);
+            if (!data) throw new Error("Invalid request");
+            if (!req.isAdmin && String(data.user?._id ?? data.user) !== String(req.user._id)) throw new Error("Invalid request");
+            if (data.status !== status && MEMBER_END_STATUSES.includes(status) && ["invited", "dropout", ""].includes(data.status)) {
+                await responseController.update(sid, {
+                    status,
+                    "timeline.end": new Date()
+                });
             }
-            let data = await responseController.read(req.body.sid);
-            if(!data)throw new Error("Invalid request");
-            if(data.status !== req.body.status && ["invited","dropout",""].includes(data.status)){
-                await responseController.update(req.body.sid,{
-                   status:req.body.status,
-                   "timeline.end":new Date()
-               });
-            }
-            data = await responseController.read(req.body.sid);
+            data = await responseController.read(sid);
             return { message: "", data }
         },
         responseController
@@ -91,7 +100,8 @@ router
         },
         surveyController
     ))
-    .put(expressRoute(
+    // editing and deleting surveys are admin actions (were open to anyone)
+    .put(requireAdmin, expressRoute(
         async req => {
             // update single entry
             let message = "Survey updated";
@@ -100,7 +110,7 @@ router
         },
         surveyController
     ))
-    .delete(expressRoute(
+    .delete(requireAdmin, expressRoute(
         async req => {
             // delete single entry
             let message = "Survey Deleted";

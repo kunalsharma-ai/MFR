@@ -7,10 +7,11 @@ router
     .route("/")
     .post(expressRoute(
         async req => {
-            let message = "A password reset link has been sent to your mailbox, Please check your email and proceed.";
+            // Same answer whether or not the e-mail is registered, so the form cannot be used to find out who is a member.
+            let message = "If this e-mail is registered with us, a password reset link is on its way. Please check your mailbox.";
+            if (typeof req.body?.user !== "string" || !req.body.user.trim()) throw new Error("Please enter your e-mail address.");
             let user = await userController.list({ mail: req.body.user });
-            if (user.length !== 1)
-                throw new Error("You have not registered with us with this email id. Please signup, or try some other email id.")
+            if (user.length !== 1) return { message, data: [] };
             let otp = await otpController.generate(
                 user[0]._id,
                 "email",
