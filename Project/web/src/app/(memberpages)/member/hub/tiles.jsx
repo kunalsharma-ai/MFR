@@ -1,67 +1,53 @@
 "use client";
-// v9 (round 9, Kunal 24 Nov 2026): the one card used for every profile and every survey, now a "world portal" in the
-// look of Kunal's minor profile suite. Each card wears the world of its topic (v9/worlds.js): its own sky, rendered
-// 3D art, two floating 3D stickers, card shape and accents. A glass panel holds the topic, name, facts, reward and
-// progress; the foot has a progress ring and one action. The card tilts toward the pointer.
-// Locked cards (a survey or topic profile before the basic profiles are done) turn black and white and show a
-// padlock with chains that rattles; the action says how to unlock. Completed cards get a stamp.
+// Round 9b (Kunal, 24 Nov 2026): back to the round-8 card he liked (light card, coloured art panel with the topic's
+// 3D art, name, facts, progress, reward and one clear action), rebuilt with more life:
+//   - the art panel is a living gradient in the topic's two colours, with drifting light blobs, a slow light-ray
+//     halo, twinkles and the 3D art floating above its own shadow; a soft wave joins it to the card body
+//   - the reward sits on a glass chip with a spinning coin; progress is a bar with a moving shimmer
+//   - on hover the card lifts, a shine sweeps across, the art pops and the action's arrow slides
+//   - locked (before the basic profiles are done): black and white, chained padlock that rattles, how to unlock
+//   - done: a green stamp and a full bar
+// Used for every profile and survey card of every member type. Reduced motion stops all movement.
 import React from "react";
 import Icon from "./icons.jsx";
-import { worldOf, worldVars } from "./v9/worlds";
 
-export default function Tile({ world = "celebrate", art, name, topic, blurb, num, ribbon, meta = [], pts, unit, state = "open", stateLabel, pct = null, cta, onClick, ariaLabel, i = 0, featured = false, disabled = false, lockText }) {
-  const w = worldOf(world);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof matchMedia === "undefined" || !matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    let raf = 0;
-    const move = (e) => {
-      const r = el.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      if (!raf) raf = requestAnimationFrame(() => { raf = 0; el.style.setProperty("--tx", `${(x * 8).toFixed(2)}deg`); el.style.setProperty("--ty", `${(-y * 8).toFixed(2)}deg`); el.style.setProperty("--gx", `${((x + 0.5) * 100).toFixed(0)}%`); });
-    };
-    const leave = () => { el.style.setProperty("--tx", "0deg"); el.style.setProperty("--ty", "0deg"); };
-    el.addEventListener("pointermove", move);
-    el.addEventListener("pointerleave", leave);
-    return () => { el.removeEventListener("pointermove", move); el.removeEventListener("pointerleave", leave); cancelAnimationFrame(raf); };
-  }, []);
-  const R = 16;
-  const C = 2 * Math.PI * R;
+export default function Tile({ c1 = "#6d5dfc", c2 = "#ff7ab6", art, name, topic, num, ribbon, meta = [], pts, unit, state = "open", stateLabel, pct = null, cta, onClick, ariaLabel, i = 0, featured = false, disabled = false, lockText }) {
   const p = state === "done" ? 100 : Math.max(0, Math.min(100, Number(pct) || 0));
-  const stickers = [art, w.stickers[0] ? `/hub/3d/${w.stickers[0]}.webp` : null].filter(Boolean);
+  const showBar = pct != null && state !== "locked";
   return (
-    <li className={`tw is-${state} shape-${w.shape} ${w.dark ? "is-dark" : "is-light"} ${featured ? "is-featured" : ""}`} style={{ ...worldVars(world), "--i": Math.min(i, 12) }}>
-      <button type="button" ref={ref} className="tw-btn" onClick={onClick} disabled={disabled} aria-label={ariaLabel || `${cta}: ${name}`}>
-        <span className="tw-sky" aria-hidden="true"><i className="s1" /><i className="s2" /><i className="s3" /></span>
-        <span className="tw-art" aria-hidden="true"><img src={`/hub/worlds/${w.art}.webp`} alt="" width="360" height="360" loading="lazy" decoding="async" /></span>
-        <span className="tw-stk" aria-hidden="true">{stickers.map((s, k) => <img key={s} className={`k${k}`} src={s} alt="" width="52" height="52" loading="lazy" decoding="async" />)}</span>
-        {ribbon ? <span className="tw-ribbon" aria-hidden="true">{ribbon}</span> : num != null ? <span className="tw-num" aria-hidden="true">#{num}</span> : null}
-        {state === "done" ? <span className="tw-stamp" aria-hidden="true"><Icon name="check" size={13} /> 100%</span> : null}
-        <span className="tw-body">
-          <span className="tw-world"><i aria-hidden="true" />{topic || w.name}</span>
-          <b className="tw-name">{name}</b>
-          {blurb ? <span className="tw-blurb">{blurb}</span> : null}
-          {meta.length ? <span className="tw-meta">{meta.map((m, k) => <span key={k}><Icon name={m.icon} size={12} /> {m.text}</span>)}</span> : null}
-          {pts != null ? <span className={`tw-pts ${state === "done" ? "won" : ""}`}><i className="tw-coin" aria-hidden="true" />{state === "done" ? "" : "+"}{pts}{unit ? <em> {unit}</em> : null}</span> : null}
-          <span className="tw-foot">
-            <span className="tw-state">
-              {pct != null && state !== "locked" ? (
-                <svg viewBox="0 0 40 40" className="tw-ring" aria-hidden="true"><circle cx="20" cy="20" r={R} className="bg" /><circle cx="20" cy="20" r={R} className="fg" style={{ strokeDasharray: `${(p / 100) * C} ${C}` }} /><text x="20" y="24" textAnchor="middle">{p}%</text></svg>
-              ) : null}
-              <span className="tw-sl">{stateLabel}</span>
+    <li className={`tk is-${state} ${featured ? "is-featured" : ""}`} style={{ "--c1": c1, "--c2": c2, "--i": Math.min(i, 12) }}>
+      <button type="button" className="tk-btn" onClick={onClick} disabled={disabled} aria-label={ariaLabel || `${cta}: ${name}`}>
+        <span className="tk-art" aria-hidden="true">
+          <i className="tk-blob b1" /><i className="tk-blob b2" /><i className="tk-dots" />
+          <i className="tk-rays" />
+          <span className="tk-float">
+            {art ? <img src={art} alt="" width="84" height="84" loading="lazy" decoding="async" /> : null}
+          </span>
+          <i className="tk-shadow" />
+          {[0, 1, 2, 3].map((k) => <i key={k} className={`tk-tw t${k}`} />)}
+          {ribbon ? <span className="tk-chip tk-ribbon">{ribbon}</span> : num != null ? <span className="tk-chip tk-num">#{num}</span> : null}
+          {pts != null ? <span className={`tk-chip tk-pts ${state === "done" ? "won" : ""}`}><i className="tk-coin" />{state === "done" ? "" : "+"}{pts}{unit ? <em> {unit}</em> : null}</span> : null}
+          {state === "done" ? <span className="tk-stamp"><Icon name="check" size={14} /></span> : null}
+          <svg className="tk-wave" viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M0 14 C 50 2, 100 2, 150 12 S 250 24, 300 10 L300 24 L0 24 Z" /></svg>
+          {state === "locked" ? (
+            <span className="tk-lock">
+              <i className="tk-chain c1" /><i className="tk-chain c2" />
+              <span className="tk-pad"><img src="/hub/3d/lock.webp" alt="" width="54" height="54" /></span>
             </span>
-            {cta ? <span className="tw-go">{state === "locked" ? <Icon name="lock" size={14} /> : null}{cta} {disabled || state === "locked" ? null : <Icon name="arrow" size={14} />}</span> : null}
-          </span>
+          ) : null}
         </span>
-        {state === "locked" ? (
-          <span className="tw-lock" aria-hidden="true">
-            <i className="tw-chain c1" /><i className="tw-chain c2" />
-            <span className="tw-pad"><img src="/hub/3d/lock.webp" alt="" width="64" height="64" /></span>
-            {lockText ? <span className="tw-lock-tx">{lockText}</span> : null}
-          </span>
-        ) : null}
+        <span className="tk-body">
+          {topic ? <span className="tk-topic"><i />{topic}</span> : null}
+          <b className="tk-name">{name}</b>
+          {meta.length ? <span className="tk-meta">{meta.map((m, k) => <span key={k}><Icon name={m.icon} size={12} /> {m.text}</span>)}</span> : null}
+          {showBar ? <span className="tk-bar"><i style={{ "--w": `${p}%` }} /><b>{p}%</b></span> : null}
+          {state === "locked" && lockText ? <span className="tk-locktx"><Icon name="lock" size={12} /> {lockText}</span> : null}
+        </span>
+        <span className="tk-foot">
+          <span className="tk-state">{stateLabel}</span>
+          {cta ? <span className="tk-go">{cta}{disabled ? null : <Icon name={state === "locked" ? "lock" : "arrow"} size={13} />}</span> : null}
+        </span>
+        <i className="tk-shine" aria-hidden="true" />
       </button>
     </li>
   );

@@ -5,7 +5,8 @@ import {
     OTP as otpController,
     Answer as answerController,
     Response as responseController,
-    Reward as rewardController
+    Reward as rewardController,
+    Profile as profileController
 } from "../../controller/index.js";
 import {
     Mutate,
@@ -18,6 +19,27 @@ import {
     Token
 } from "../../utils/index.js"
 import { SELF_EDITABLE, pick, omit, requireAdmin } from "../../utils/access.js";
+
+// Round 9 (Kunal, 24 Nov 2026): every survey stays locked until the member's basic profiles are complete. The hub
+// shows the lock; this is the same rule on the server, so a direct survey link cannot open a survey early.
+// The basic profiles are the ones of these slugs that exist for the member's category (Teens have fewer).
+// Profiles themselves are never blocked here, so the basics (and other profiles) can always be filled in.
+const CORE_SLUGS = ["basic", "educational", "professional", "financial"];
+async function basicsGate(req, slug) {
+    profileController.request = req;
+    const [status, profiles] = await Promise.all([
+        profileController.status(),
+        profileController.list({ category: req.user?.category }),
+    ]);
+    const list = Mutate(profiles) || [];
+    if (list.some((p) => String(p.slug) === String(slug))) return; // opening a profile, not a survey
+    const missing = list.filter((p) => CORE_SLUGS.includes(p.slug) && !(Number(status?.[p.slug]) >= 100));
+    if (missing.length) {
+        const err = new Error("Finish your basic profiles first. Surveys open as soon as they are done.");
+        err.code = "basics";
+        throw err;
+    }
+}
 
 const QUALITY_MAX = 200; // same cap as model/User.js
 const QUALITY_STEP_MAX = 5; // most profiles a member can complete in one save
@@ -436,6 +458,7 @@ router
     .put(expressRoute(
         async req => {
             let message = "";
+            await basicsGate(req, req.body.slug);
             surveyController.request = req;
             let data = await surveyController.openBySlug(req.body.slug)
             if (!data) throw new Error("Invalid Request");

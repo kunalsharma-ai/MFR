@@ -15,7 +15,9 @@ import { api, Page } from "@/util";
 import SecurityCheck from "./components/SecurityCheck";
 import SurveyAlreadyTaken from "./components/SurveyAlreadyTaken";
 import Survey from "./components/Survey";
-import { syncSurveyRewards } from "@/hooks/useProfileGate";
+import useProfileGate, { syncSurveyRewards } from "@/hooks/useProfileGate";
+import { isCore } from "@/app/(memberpages)/member/(member pages)/profiles/ps/profileRules";
+import { useParentStatus } from "@/app/(memberpages)/member/hub/v9/parentStore";
 
 export default function page() {
   const [user, router, query, pathName] = [
@@ -58,6 +60,17 @@ export default function page() {
       router.replace(consentPages[user?.category] || "/auth/consent/consumer");
     }
   }, [user]);
+  // Round 9 (Kunal): no survey opens before the basic profiles are done (and, for a Teen, the parent steps). A direct
+  // link goes back to the Surveys page, which shows what to finish. The server checks the same rule.
+  const gate = useProfileGate();
+  const parent = useParentStatus();
+  const slug = String(query?.name || "").toLowerCase();
+  const isProfile = isCore(slug) || Boolean(gate.profileSlugs?.has(slug));
+  const gateReady = !gate.loading && !parent.loading;
+  const blocked = Boolean(slug) && gateReady && !isProfile && (!gate.coreDone || !parent.done);
+  React.useEffect(() => {
+    if (blocked) router.replace("/member/surveys?locked=1");
+  }, [blocked]); // eslint-disable-line react-hooks/exhaustive-deps
   const {
     data: survey,
     isLoading: surveyLoading,
@@ -70,7 +83,7 @@ export default function page() {
       if (resp.status === "error") throw new Error(resp.message);
       return resp.data;
     },
-    enabled: Boolean(query?.name && user?.category),
+    enabled: Boolean(query?.name && user?.category) && gateReady && !blocked,
     retry: false,
   });
   const isLoading = surveyLoading || (!survey && !surveyError);

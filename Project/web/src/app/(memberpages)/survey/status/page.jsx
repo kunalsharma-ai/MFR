@@ -6,6 +6,8 @@ import React from "react";
 import Link from "next/link";
 import { api, loadData } from "@/util";
 import { useQuery } from "@/Context";
+import useProfileGate from "@/hooks/useProfileGate";
+import { useParentStatus } from "@/app/(memberpages)/member/hub/v9/parentStore";
 import "./status.css";
 
 const OUTCOMES = {
@@ -24,6 +26,9 @@ export default function SurveyStatusPage() {
   const [rating, setRating] = React.useState(0);
   const [hover, setHover] = React.useState(0);
   const [thanks, setThanks] = React.useState(false);
+  const gate = useProfileGate();
+  const parent = useParentStatus();
+  const open = !gate.loading && gate.coreDone && !parent.loading && parent.done; // surveys open only after the basics
 
   React.useEffect(() => {
     setState((s) => ({ ...s, loading: true }));
@@ -80,7 +85,7 @@ export default function SurveyStatusPage() {
         )}
       </section>
 
-      {!state.loading && more.length ? (
+      {!state.loading && open && more.length ? (
         <section className="sv9-more" aria-labelledby="sv9-more-h">
           <h2 id="sv9-more-h">More surveys waiting for you</h2>
           <ul>

@@ -20,7 +20,6 @@ import { fmt } from "./data";
 import { useHub } from "./store";
 import { play } from "./sound";
 import { profileTopic, profileArt } from "./topics";
-import { worldKey } from "./v9/worlds";
 import ParentCards from "./v9/parents.jsx";
 import GateBanner from "./v9/gate.jsx";
 
@@ -89,7 +88,7 @@ function ProfileCard({ card, i }) {
   if (questions) meta.push({ icon: "surveys", text: t("pf.questions", { n: questions }) });
   meta.push({ icon: "clock", text: t("pf.minutes", { n: mins }) });
   return (
-    <Tile world={worldKey(slug, tp.k)} art={card.art} name={title} blurb={card.text || null} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
+    <Tile c1={tp.c1} c2={tp.c2} art={card.art} name={title} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
       state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
       onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
   );
