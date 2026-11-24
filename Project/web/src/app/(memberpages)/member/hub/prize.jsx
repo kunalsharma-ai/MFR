@@ -30,7 +30,7 @@ const SKIN = { consumer: "claw", professional: "lift", teen: "spiral" };
 const PrizeMachine = React.lazy(() => import("../(member pages)/profiles/ps/PrizeMachine"));
 const MIN_STATUS = 1; // as the Profiles page
 
-function usePrizeData() {
+export function usePrizeData() {
   const user = useMember();
   const cat = user?.category === "minor" ? "minor" : "b2c";
   const profilesQ = useQuery({ queryKey: ["profiles", user?.category, "false"], queryFn: () => api.post("/api/v1/profile", { category: user.category }).then((r) => r.data), enabled: Boolean(user?.category) });

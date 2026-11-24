@@ -9,6 +9,7 @@ import { engage } from "./engage/strings.js";
 import { v2 } from "./strings-v2.js";
 import { v3 } from "./strings-v3.js";
 import { v7 } from "./strings-v7.js";
+import { v8 } from "./v8/strings.js";
 
 export const en = {
   // shell
@@ -451,6 +452,8 @@ for (const [k, v] of Object.entries(v2)) if (!(k in en)) en[k] = v;
 for (const [k, v] of Object.entries(v3)) if (!(k in en)) en[k] = v;
 // v7 hub (round 6): only adds keys
 for (const [k, v] of Object.entries(v7)) if (!(k in en)) en[k] = v;
+// v8 hub (round 7): only adds keys
+for (const [k, v] of Object.entries(v8)) if (!(k in en)) en[k] = v;
 
 const DICTS = { en };
 let active = "en";

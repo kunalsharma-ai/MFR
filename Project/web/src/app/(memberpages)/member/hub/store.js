@@ -67,7 +67,6 @@ export function qualityFrom(member, eq) {
 }
 
 /* ---------------- profile completion ---------------- */
-const hasPhoto = (m) => Boolean(m?.profilePicture) && !String(m.profilePicture).includes("/images/logo/user.png");
 const addrOf = (m) => (Array.isArray(m?.address) ? m.address[0] || {} : {});
 
 export function completionOf(member, type, profiles) {
@@ -86,7 +85,7 @@ export function completionOf(member, type, profiles) {
   if (type !== "teen") items.push({ key: "phone", kind: "account", label: "hub.cpPhone", icon: "support", progress: member?.phone ? 1 : 0, weight: 1, done: Boolean(member?.phone), href: "/member/myaccount#details" });
   const loc = Boolean(a.country && a.city);
   items.push({ key: "location", kind: "account", label: "hub.cpLocation", icon: "pin", progress: loc ? 1 : a.country ? 0.5 : 0, weight: 1, done: loc, href: "/member/myaccount#details" });
-  items.push({ key: "photo", kind: "account", label: "hub.cpPhoto", icon: "camera", progress: hasPhoto(member) ? 1 : 0, weight: 1, done: hasPhoto(member), href: "/member/myaccount#identity" });
+  // v8 (Kunal round 7): a profile photo is no longer asked for, so it does not count toward completion.
 
   const w = items.reduce((n, i) => n + i.weight, 0);
   const got = items.reduce((n, i) => n + i.weight * clamp(i.progress, 0, 1), 0);

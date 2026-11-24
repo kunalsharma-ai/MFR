@@ -10,7 +10,7 @@
 // the Survey record; the topic is read from the survey's own name. Cards differ by topic and by member segment.
 import React from "react";
 import Link from "next/link";
-import Scene3D from "./scene.jsx";
+import Hero8 from "./v8/hero.jsx";
 import Tile from "./tiles.jsx";
 import SurveyHistory7 from "./history.jsx";
 import { useRouter } from "next/navigation";
@@ -164,24 +164,18 @@ export default function SurveysPage() {
 
   return (
     <div className="pg pg-surveys sx">
-      <section className="sx-hero" aria-labelledby="sx-title">
-        <div className="sx-hero-bg" aria-hidden="true"><i /><i /><i /></div>
-        <div className="sx-hero-main">
-          <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.surveys")}</span></li></ol></nav>
-          <p className="hx-eyebrow">{t(`sx.eyebrow.${type}`)}</p>
-          <h1 className="sx-title" id="sx-title">{loading ? t("sx.loadingTitle") : !openRows.length ? t("sx.titleNone") : !profileRows.length ? t(surveys.length === 1 ? "sx.titleOne" : "sx.title", { n: surveys.length }) : !surveys.length ? t("sx.titleProfiles", { n: profileRows.length }) : t("sx.titleMix", { n: surveys.length, p: profileRows.length })}</h1>
-          <p className="hx-sub">{locked && !gate.loading ? t("sx.subLocked") : t(`sx.sub.${type}`)}</p>
-          {locked && !gate.loading ? (
-            <div className="hx-actions"><button type="button" className="h-btn h-btn-primary" onClick={() => setGateOpen(true)}><Icon name="lock" size={17} /> {t("sx.whatFirst")}</button></div>
-          ) : null}
-        </div>
-        <div className="sx-scene" aria-hidden="true"><Scene3D kind="surveys" /></div>
-        <ul className="sx-kpis" aria-label={t("sx.kpis")}>
-          <li><small>{t("sx.kOpen")}</small><b>{loading ? "…" : <Counter value={openRows.length} />}</b></li>
-          <li><small>{t("sx.kPoints")}</small><b>{loading ? "…" : openRows.length ? <Counter value={total} /> : "–"}</b></li>
-          <li><small>{t("sx.kTime")}</small><b>{loading ? "…" : avg ? t("sx.min", { n: avg }) : "–"}</b></li>
-        </ul>
-      </section>
+      <Hero8 kind="surveys" id="sx-title"
+        crumbs={[{ label: t("nav.dashboard"), href: "/member/dashboard" }, { label: t("nav.surveys") }]}
+        eyebrow={t(`sx.eyebrow.${type}`)}
+        title={loading ? t("sx.loadingTitle") : !openRows.length ? t("sx.titleNone") : !profileRows.length ? t(surveys.length === 1 ? "sx.titleOne" : "sx.title", { n: surveys.length }) : !surveys.length ? t("sx.titleProfiles", { n: profileRows.length }) : t("sx.titleMix", { n: surveys.length, p: profileRows.length })}
+        sub={locked && !gate.loading ? t("sx.subLocked") : t(`sx.sub.${type}`)}
+        actions={locked && !gate.loading ? <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={() => setGateOpen(true)}><Icon name="lock" size={17} /> {t("sx.whatFirst")}</button> : null}
+        stats={[
+          { label: t("sx.kOpen"), value: loading ? "…" : openRows.length, tone: "a" },
+          { label: t("sx.kPoints"), value: loading ? "…" : openRows.length ? fmt(total) : "–", tone: "b" },
+          { label: t("sx.kTime"), value: loading ? "…" : avg ? t("sx.min", { n: avg }) : "–", tone: "c" },
+        ]}
+      />
 
       {best && !loading ? (
         <section className="sx-best" aria-labelledby="sx-best-t">

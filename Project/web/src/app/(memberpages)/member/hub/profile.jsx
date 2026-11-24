@@ -10,14 +10,14 @@
 // from the profile API, and "done" also when the reward for it is already paid (useProfileGate).
 import React from "react";
 import Link from "next/link";
-import Scene3D from "./scene.jsx";
+import Hero8 from "./v8/hero.jsx";
+import RewardMachine8 from "./v8/machine.jsx";
 import Tile from "./tiles.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import { Counter, Ring, Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
-import { Avatar } from "./Shell.jsx";
+import { Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
 import { fmt } from "./data";
-import { useHub, useRise } from "./store";
+import { useHub } from "./store";
 import { play } from "./sound";
 import { profileTopic, profileArt } from "./topics";
 import FamilyPanel from "./family.jsx";
@@ -46,54 +46,34 @@ function greetingKey() {
   return h < 12 ? "pf.morning" : h < 18 ? "pf.afternoon" : "pf.evening";
 }
 
-/* ---------------- hero ---------------- */
+/* ---------------- hero (v8, round 7): the shared section banner with the Profile builder scene, no photo ---------------- */
 function ProfileHero({ hub, cards }) {
   const { member, type, completion: c, quality, pts } = hub;
-  const rise = useRise(c?.pct ?? null);
   const done = cards.filter((x) => x.done).length;
   const next = cards.find((x) => !x.done && !x.locked);
   const status = !c ? null : c.pct >= 100 ? "full" : c.pct >= 60 ? "strong" : c.pct > 0 ? "building" : "new";
   const first = member?.firstname || (member?.fullname || "").split(" ")[0] || "";
+  const cta = next ? (
+    <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={next.open}>{next.pct > 0 ? t("pf.continueX", { name: next.title }) : t("pf.startX", { name: next.title })} <Icon name="arrow" size={18} /></button>
+  ) : c && c.remaining.length ? (
+    <Link className="h-btn h-btn-primary h-btn-lg" href={c.remaining[0].href}>{t("pf.finishAccount")} <Icon name="arrow" size={18} /></Link>
+  ) : (
+    <Link className="h-btn h-btn-primary h-btn-lg" href="/member/surveys">{t("pf.toSurveys")} <Icon name="arrow" size={18} /></Link>
+  );
   return (
-    <section className={`pf-hero is-${status || "load"}`} aria-labelledby="pf-title">
-      <div className="pf-hero-bg" aria-hidden="true"><i /><i /><i /><span className="pf-grain" /></div>
-      <div className="pf-hero-id">
-        <span className={`pf-av ${rise ? "is-rise" : ""}`}>
-          <Ring pct={c?.pct || 0} size={132} stroke={7} label={c ? t("pf.ringLabel", { n: c.pct }) : t("c.loading")}><Avatar member={member} size="xl" /></Ring>
-          <span className="pf-av-pct" aria-hidden="true">{c ? <><Counter value={c.pct} />%</> : "…"}</span>
-          {rise ? <Burst key={c?.pct} /> : null}
-        </span>
-      </div>
-      <div className="pf-hero-main">
-        <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.myProfile")}</span></li></ol></nav>
-        <p className="pf-hello">{t(greetingKey(), { name: first })}</p>
-        <h1 className="pf-title" id="pf-title">{status ? t(`pf.title.${status}`) : t("c.loading")}</h1>
-        <p className="pf-sub">{status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}</p>
-        {c ? (
-          <div className="pf-progress" role="img" aria-label={t("pf.ringLabel", { n: c.pct })}>
-            <span className="pf-track"><i style={{ "--w": `${c.pct}%` }} /></span>
-            <span className="pf-progress-tx"><b>{c.done}/{c.total}</b> {t("pf.stepsDone")}</span>
-          </div>
-        ) : null}
-        <div className="pf-hero-cta">
-          {next ? (
-            <button type="button" className="h-btn h-btn-primary h-btn-lg" onClick={next.open}>{next.pct > 0 ? t("pf.continueX", { name: next.title }) : t("pf.startX", { name: next.title })} <Icon name="arrow" size={18} /></button>
-          ) : c && c.remaining.length ? (
-            <Link className="h-btn h-btn-primary h-btn-lg" href={c.remaining[0].href}>{t("pf.finishAccount")} <Icon name="arrow" size={18} /></Link>
-          ) : (
-            <Link className="h-btn h-btn-primary h-btn-lg" href="/member/surveys">{t("pf.toSurveys")} <Icon name="arrow" size={18} /></Link>
-          )}
-          <span className={`pf-badge s-${status || "load"}`}><Icon name={status === "full" ? "trophy" : "spark"} size={15} /> {status ? t(`pf.badge.${status}`) : "…"}</span>
-        </div>
-      </div>
-      <div className="pf-scene" aria-hidden="true"><Scene3D kind="profile" /></div>
-      <ul className="pf-stats" aria-label={t("pb.status")}>
-        <li><small>{t("pf.statProfiles")}</small><b>{done}<em>/{cards.length}</em></b></li>
-        <li><small>{t("hdr.quality")}</small><b>{quality ? quality.ten.toFixed(1) : "–"}<em>/10</em></b></li>
-        <li><small>{t("pf.statToEarn")}</small><b>{c ? (c.pointsLeft ? `+${fmt(c.pointsLeft)}` : <Icon name="check" size={20} />) : "…"}</b></li>
-        <li><small>{type === "teen" ? t("hdr.xp") : t("hdr.points")}</small><b>{pts ? <Counter value={pts.total} /> : "…"}</b></li>
-      </ul>
-    </section>
+    <Hero8 kind="profile" id="pf-title"
+      crumbs={[{ label: t("nav.dashboard"), href: "/member/dashboard" }, { label: t("nav.myProfile") }]}
+      eyebrow={t(greetingKey(), { name: first })}
+      title={status ? t(`pf.title.${status}`) : t("c.loading")}
+      sub={status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}
+      actions={<>{cta}<a className="h-btn h-btn-ghost h-btn-lg" href="#reward-machine"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</a></>}
+      stats={[
+        { label: t("hdr.profile"), value: c ? c.pct : "…", unit: "%", pct: c?.pct, tone: "a" },
+        { label: t("pf.statProfiles"), value: done, unit: `/${cards.length}`, pct: cards.length ? (done / cards.length) * 100 : 0, tone: "b" },
+        { label: t("hdr.quality"), value: quality ? quality.ten.toFixed(1) : "–", unit: "/10", pct: quality?.pct, tone: "c" },
+        { label: type === "teen" ? t("hdr.xp") : t("hdr.points"), value: pts ? fmt(pts.total) : "…", tone: "d" },
+      ]}
+    />
   );
 }
 
@@ -182,6 +162,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
           </section>
         ))
       )}
+      <RewardMachine8 />
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
@@ -205,7 +186,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
             ) : null}
             <div className="pf-ach-foot">
               {morePending ? <Link className="h-btn h-btn-soft" href="/member/surveys"><Icon name="surveys" size={16} /> {t("pf.moreTopics", { n: morePending })}</Link> : null}
-              <Link className="h-btn h-btn-ghost" href="/member/rewards#prize-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
+              <Link className="h-btn h-btn-ghost" href="#reward-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
             </div>
           </section>
         </Reveal>

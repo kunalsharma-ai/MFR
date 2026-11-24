@@ -30,19 +30,26 @@ import "./hub-v4.css";
 import "./hub-v5.css";
 import "./hub-v6.css";
 import "./hub-v7.css";
+import Celebrate from "./v8/celebrate.jsx";
+import "./v8/v8.css";
 
 // v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
 // with MFR's own Services and Messages kept where they belong.
 export const NAV = [
-  { group: "nav.groupJourney", items: [
+  // v8 (round 7): three short groups, like a chat app's sidebar: where you earn, how you are doing, your account.
+  { group: "nav.groupEarn", items: [
     { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home", hint: "nav.hDashboard", tone: 1 },
     { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.myProfile", short: "nav.profile", hint: "nav.hProfile", tone: 2 },
     { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys", hint: "nav.hSurveys", tone: 3 },
     { key: "services", href: "/member/services", icon: "services", label: "nav.services", hint: "nav.hServices", tone: 4 },
     { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards", hint: "nav.hRewards", tone: 5 },
+  ] },
+  { group: "nav.groupProgress", items: [
     { key: "quality", href: "/member/quality", icon: "quality", label: "nav.quality", short: "nav.qualityShort", hint: "nav.hQuality", tone: 6 },
     { key: "referrals", href: "/member/referrals", icon: "referrals", label: "nav.referrals", hint: "nav.hReferrals", tone: 7 },
     { key: "activity", href: "/member/activity", icon: "activity", label: "nav.activity", hint: "nav.hActivity", tone: 8 },
+  ] },
+  { group: "nav.groupYou", items: [
     { key: "messages", href: "/member/messages", icon: "inbox", label: "nav.messages", hint: "nav.hMessages", tone: 1 },
     { key: "account", href: "/member/myaccount", icon: "account", label: "nav.account", hint: "nav.hAccount", tone: 2 },
     { key: "settings", href: "/member/settings", icon: "settings", label: "nav.settings", hint: "nav.hSettings", tone: 4 },
@@ -419,7 +426,7 @@ function Header({ hub, prefs, onMenu, section, navOpen }) {
         <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hh-logo-img" width="168" height="40" />
         <img src="/images/logo/mfr/icon/128.webp" alt="" className="hh-mark" width="34" height="34" aria-hidden="true" />
       </Link>
-      <span className={`hh-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}`)}</span>
+      <span className="hh-title" aria-hidden="true"><Icon name={section.icon} size={18} /><b>{t(section.label)}</b></span>
       <JumpTo />
       <StatusCluster hub={hub} />
       <div className="hh-tools">
@@ -466,6 +473,10 @@ function NavFoot({ hub, rail, onRail }) {
   const c = 2 * Math.PI * r;
   return (
     <div className="hn-foot">
+      <Link href="/member/myaccount" className="hn-me">
+        <Avatar member={hub.member} />
+        <span className="hn-tx"><b>{hub.member?.fullname || hub.member?.firstname || t("nav.account")}</b><small className={`t-${type}`}>{t(`type.${type}Member`)} · {t("lv.level", { n: level.n })}</small></span>
+      </Link>
       <Link href="/member/rewards" className="hn-pay" aria-label={type === "teen" ? t("v5.toLevel", { n: pct, lv: (level.n || 1) + 1 }) : t("v5.toPayout", { n: pct })}>
         <span className="hn-pay-ring" aria-hidden="true">
           <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r={r} className="bg" /><circle cx="18" cy="18" r={r} className="fg" style={{ strokeDasharray: `${(pct / 100) * c} ${c}` }} /></svg>
@@ -474,7 +485,6 @@ function NavFoot({ hub, rail, onRail }) {
           {type === "teen" ? <><b>{pct}%</b> {t("v5.toLevelShort", { lv: (level.n || 1) + 1 })}</> : <><b>{pts ? `${pct}%` : "…"}</b> {t("v5.toPayoutShort")}</>}
         </span>
       </Link>
-      <Link href="/member/help" className="hn-link hn-mini"><span className="hn-ic"><Icon name="support" size={18} /></span><span className="hn-tx"><b>{t("v5.contact")}</b></span></Link>
       <button type="button" className="hn-link hn-mini hn-railbtn" onClick={onRail} aria-pressed={rail}>
         <span className="hn-ic"><Icon name="arrow" size={18} className="hn-rail-ic" /></span><span className="hn-tx"><b>{rail ? t("v5.expand") : t("v5.collapse")}</b></span>
       </button>
@@ -560,10 +570,17 @@ function SideNav({ pathname, open, onClose, hub, alerts, rail, onRail }) {
       <div className={`hn-scrim ${open ? "is-open" : ""}`} onClick={onClose} aria-hidden="true" />
       <nav ref={ref} className={`hn ${open ? "is-open" : ""}`} aria-label={t("nav.main")} id="hub-nav" aria-hidden={hidden || undefined} inert={hidden}>
         <div className="hn-head">
-          <img src="/images/logo/mfr-logo-ondark.png" alt="MyFrequentRewards" className="hn-head-logo" width="150" height="36" />
+          <Link href="/member/dashboard" className="hn-logo" aria-label={t("hdr.home")} onClick={onClose}>
+            <img src="/images/logo/mfr-logo.png" alt="MyFrequentRewards" className="hn-head-logo on-light" width="150" height="36" />
+            <img src="/images/logo/mfr-logo-ondark.png" alt="" aria-hidden="true" className="hn-head-logo on-dark" width="150" height="36" />
+          </Link>
           <button type="button" className="hh-icon hn-close" onClick={onClose} aria-label={t("c.close")}><Icon name="close" size={20} /></button>
         </div>
-        <span className={`hn-type t-${type}`}><i aria-hidden="true" />{t(`type.${type}Member`)}</span>
+        <Link href="/member/surveys" className="hn-new" onClick={() => { play("tap"); onClose(); }}>
+          <span className="hn-new-ic" aria-hidden="true"><Icon name="surveys" size={18} /></span>
+          <span className="hn-tx"><b>{t("v8.nav.find")}</b></span>
+          {hub.open ? <span className="hn-badge">{hub.open > 99 ? "99+" : hub.open}</span> : null}
+        </Link>
         <div className="hn-scroll">
           {NAV.map((g) => (
             <div className="hn-group" key={g.group}>
@@ -630,7 +647,7 @@ export default function HubShell({ children }) {
   const nAlerts = alerts.data?.length || 0;
   return (
     <div
-      className="hub"
+      className="hub v8"
       dir={dir}
       data-type={type}
       data-sec={section.key}
@@ -644,6 +661,7 @@ export default function HubShell({ children }) {
       style={vars}
     >
       <Header hub={hub} prefs={prefs} section={section} navOpen={navOpen} onMenu={() => setNavOpen(true)} />
+      <Celebrate hub={hub} />
       <SideNav pathname={pathname} open={navOpen} onClose={() => setNavOpen(false)} hub={hub} alerts={nAlerts} rail={rail} onRail={toggleRail} />
       <div className="hub-body">
         <main id="hub-main" className="hub-main" tabIndex={-1}>

@@ -40,7 +40,7 @@ function rowInfo(r, type) {
   return { tp, topic, art, cta, state };
 }
 
-function Head({ title, sub, action, id, art }) {
+export function Head({ title, sub, action, id, art }) {
   return (
     <header className="h7-head">
       {art ? <img className="h7-head-art" src={E(art)} alt="" width="40" height="40" loading="lazy" /> : null}
@@ -53,7 +53,7 @@ function Head({ title, sub, action, id, art }) {
   );
 }
 
-function Recent({ hub, art }) {
+export function Recent({ hub, art }) {
   const rows = hub.ledger.slice(0, 6);
   return (
     <section className="h7 h7-recent" aria-labelledby="h7-ra">
@@ -73,7 +73,7 @@ function Recent({ hub, art }) {
   );
 }
 
-function Badges({ hub, variant }) {
+export function Badges({ hub, variant }) {
   const list = achievementsOf({ stats: hub.stats?.data, profiles: hub.profiles?.data, quality: hub.quality, ledger: hub.ledger, referrals: hub.referrals?.data });
   const got = list.filter((x) => x.done).length;
   const ART = { first: "sparkles", ten: "trophy", profile: "verified", quality: "star", consistent: "calendar", referral: "handshake" };
@@ -123,7 +123,7 @@ function ConsumerHero({ hub, desk }) {
   );
 }
 
-function ConsumerMoves({ hub, desk }) {
+export function ConsumerMoves({ hub, desk }) {
   const c = hub.completion;
   const pts = hub.pts;
   const open = desk.loading ? null : desk.openRows.length;
@@ -147,7 +147,7 @@ function ConsumerMoves({ hub, desk }) {
   );
 }
 
-function ConsumerPicks({ hub, desk }) {
+export function ConsumerPicks({ hub, desk }) {
   const rows = [...desk.startable, ...desk.openRows.filter((r) => !desk.startable.includes(r))].slice(0, 8);
   return (
     <section className="h7 c7-picks" aria-labelledby="c7-pk">
@@ -163,7 +163,7 @@ function ConsumerPicks({ hub, desk }) {
   );
 }
 
-function ConsumerSide({ hub }) {
+export function ConsumerSide({ hub }) {
   const q = hub.quality;
   const d = hub.referrals?.data;
   const joined = d?.joinedKnown ? d.joined.length : null;
@@ -196,7 +196,7 @@ function ConsumerHome({ hub, desk }) {
 }
 
 /* =============================================== PROFESSIONAL · Executive =============================================== */
-function EarningsChart({ hub }) {
+export function EarningsChart({ hub }) {
   const m = monthlyPoints(hub.ledger, 6);
   const max = Math.max(1, ...m.map((x) => x.points));
   const W = 320, H = 120;
@@ -239,7 +239,7 @@ function ProHero({ hub }) {
   );
 }
 
-function ProKpis({ hub, desk }) {
+export function ProKpis({ hub, desk }) {
   const { pts, bal, quality: q, completion: c } = hub;
   const k = [
     { k: "bal", href: "/member/rewards", l: t("v7.p.k1"), v: pts ? <Counter value={pts.total} /> : "…", u: t("c.pts"), s: pts ? t("v5.toPayoutPill", { n: Math.min(100, Math.round((pts.total / pts.threshold) * 100)) }) : "", p: pts ? Math.min(100, (pts.total / pts.threshold) * 100) : 0 },
@@ -264,7 +264,7 @@ function ProKpis({ hub, desk }) {
   );
 }
 
-function ProStudies({ desk }) {
+export function ProStudies({ desk }) {
   const rows = [...desk.startable, ...desk.openRows.filter((r) => !desk.startable.includes(r))].slice(0, 7);
   return (
     <section className="h7 p7-studies" aria-labelledby="p7-st">
@@ -294,7 +294,7 @@ function ProStudies({ desk }) {
   );
 }
 
-function ProReadiness({ hub }) {
+export function ProReadiness({ hub }) {
   const c = hub.completion;
   const q = hub.quality;
   const items = c ? c.items.filter((i) => i.kind === "profile") : [];
@@ -372,7 +372,7 @@ function TeenHero({ hub }) {
   );
 }
 
-function TeenQuests({ hub, desk }) {
+export function TeenQuests({ hub, desk }) {
   const c = hub.completion;
   const q = hub.quality;
   const open = desk.loading ? null : desk.openRows.length;
@@ -400,7 +400,7 @@ function TeenQuests({ hub, desk }) {
   );
 }
 
-function TeenDrops({ desk }) {
+export function TeenDrops({ desk }) {
   const rows = [...desk.startable, ...desk.openRows.filter((r) => !desk.startable.includes(r))].slice(0, 8);
   return (
     <section className="h7 t7-drops" aria-labelledby="t7-d">

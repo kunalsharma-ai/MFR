@@ -21,7 +21,7 @@ import { monthlyPoints, fmt, money, relDay } from "./data";
 import { useHub, levelStart } from "./store";
 import { useAlerts } from "./Shell.jsx";
 import { locale } from "./prefs";
-import PrizeHall from "./prize.jsx";
+import Hero8 from "./v8/hero.jsx";
 import { play } from "./sound";
 
 export { SettingsPage } from "./settings.jsx";
@@ -90,44 +90,29 @@ export function RewardsPage() {
   const goalPct = pts && goal ? Math.min(100, Math.round((pts.total / goal) * 100)) : 100;
   return (
     <div className="pg pg-rewards">
-      <section className="rw3-hero" aria-labelledby="rv-title">
-        <div className="rw3-hero-bg" aria-hidden="true"><i /><i /><i /></div>
-        <div className="rw3-hero-main">
-          <nav className="hx-crumbs" aria-label={t("c.breadcrumb")}><ol><li><Link href="/member/dashboard">{t("nav.dashboard")}</Link></li><li><span aria-current="page">{t("nav.rewards")}</span></li></ol></nav>
-          <p className="hx-eyebrow">{t("rw2.eyebrow")}</p>
-          <h1 className="rw3-title" id="rv-title">{t("rw3.title")}</h1>
-          {points.isError ? <ErrorState onRetry={points.refetch} /> : (
-            <div className="rw3-bal">
-              <small>{type === "teen" ? t("rw3.xpBalance") : t("rw.balance")}</small>
-              <b>{pts ? <Counter value={pts.total} duration={1600} /> : <Skeleton h={56} w={200} />}<em>{type === "teen" ? t("hdr.xp") : t("c.pts")}</em></b>
-              <span className="rw3-chips">
-                {pts && type !== "teen" ? <span className="rv-bal-chip">{t("rw.worth", { v: money(pts.total, pts.rate) })}</span> : null}
-                <span className="rv-bal-chip"><Icon name="rocket" size={14} /> {t("lv.level", { n: level.n })}</span>
-                {hub.bal?.pending ? <span className="rv-bal-chip wait"><Icon name="hourglass" size={14} /> {t("d2.pending", { n: fmt(hub.bal.pending) })}</span> : null}
-              </span>
-            </div>
-          )}
-          <div className="hx-actions">
-            <a href="#prize-machine" className="h-btn h-btn-primary"><Icon name="gift" size={18} /> {t("rw3.toMachine")}</a>
-            <Link href="/member/surveys" className="h-btn h-btn-ghost">{t("rw.waySurvey")} <Icon name="arrow" size={16} /></Link>
-          </div>
-        </div>
-        <div className="rw3-hero-art" aria-hidden="true">
-          <Scene3D kind="rewards">
-          <div className="rw3-goal">
-            <Ring pct={goalPct} size={196} stroke={10}>
-              <span className="rw3-coins"><Coin3D size={84} label="★" /><i /><i /><i /></span>
-            </Ring>
-            {pts ? <span className="rw3-goal-tx">{goal ? t("rw3.toGoal", { n: fmt(goal - pts.total), g: fmt(goal) }) : t("rw3.goalReached")}</span> : null}
-          </div>
-          </Scene3D>
-        </div>
-      </section>
+      <Hero8
+        kind="rewards"
+        id="rv-title"
+        crumbs={crumbs(t("nav.rewards"))}
+        eyebrow={t("rw2.eyebrow")}
+        title={t("rw3.title")}
+        sub={points.isError ? null : pts ? (goal ? t("rw3.toGoal", { n: fmt(goal - pts.total), g: fmt(goal) }) : t("rw3.goalReached")) : t("c.loading")}
+        status={points.isError ? <ErrorState onRetry={points.refetch} /> : null}
+        actions={<>
+          <Link href="/member/profiles#reward-machine" className="h-btn h-btn-primary"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</Link>
+          <Link href="/member/surveys" className="h-btn h-btn-ghost">{t("rw.waySurvey")} <Icon name="arrow" size={16} /></Link>
+        </>}
+        stats={[
+          { label: type === "teen" ? t("rw3.xpBalance") : t("rw.balance"), value: pts ? <Counter value={pts.total} duration={1600} /> : "…", unit: type === "teen" ? t("hdr.xp") : t("c.pts"), pct: goalPct, tone: "a" },
+          ...(pts && type !== "teen" ? [{ label: t("v8.worth"), value: money(pts.total, pts.rate), tone: "b" }] : []),
+          { label: t("v8.levelL"), value: t("lv.level", { n: level.n }), pct: level.pct, tone: "c" },
+          ...(hub.bal?.pending ? [{ label: t("v8.pendingL"), value: fmt(hub.bal.pending), unit: t("c.pts"), tone: "d" }] : []),
+        ]}
+      />
       <div className="rv-top">
         <Reveal><LevelTrack hub={hub} /></Reveal>
         <Reveal delay={60}><StreakCard compact /></Reveal>
       </div>
-      <PrizeHall />
       <h2 className="sec-h" id="catalogue-h"><Icon name="gift" size={20} /> {t("rw2.available")}</h2>
       <RewardsExtras />
       <div className="rv-grid">
@@ -248,7 +233,7 @@ export function QualityPage() {
             <li><span>3</span><b>{t("q2.how")}</b><small>{t("q2.howShort", { n: tips.length })}</small></li>
           </ol>
         }
-        art={<Gauge q={q} />}
+        score={q ? q.ten : null}
       />
       <div className="qs-grid">
         <Reveal className="qs-breakdown">
