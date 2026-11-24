@@ -33,6 +33,7 @@ router.get("/members/:id/ledger", handle((req) => members.ledger(req.adminOrigin
 router.put("/members/:id", handle((req) => members.update(req.adminOrigin, req.params.id, req.body || {})));
 router.post("/members/:id/status", handle((req) => members.setStatus(req.adminOrigin, req.params.id, req.body?.action, req.body?.reason)));
 router.post("/members/:id/segment", handle((req) => members.changeSegment(req.adminOrigin, req.params.id, req.body?.category, req.body?.reason, req.adminActor)));
+router.post("/members/:id/marketing-opt-out", handle((req) => members.marketingOptOut(req.adminOrigin, req.params.id, req.body?.reason, req.adminActor)));
 router.post("/members/:id/unmask", handle((req) => members.unmask(req.adminOrigin, req.params.id, req.body?.fields || [])));
 
 // Question bank (module 3)

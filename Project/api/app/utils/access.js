@@ -78,7 +78,7 @@ export async function optionalMember(req, res, next) {
 // Teen/guardian data - can only be changed by an admin or by its own dedicated flow.
 export const SELF_EDITABLE = ["terms", "notification", "consent", "socials", "profilePicture", "timezone", "paymentMethod"];
 // Fields an admin may never set through the generic update (they have their own flows).
-export const ADMIN_BLOCKED = ["password", "_id", "origin", "createdAt", "updatedAt"];
+export const ADMIN_BLOCKED = ["password", "_id", "origin", "createdAt", "updatedAt", "marketingOptIn", "marketingOptInHistory"];
 
 export function pick(obj = {}, keys = []) {
     const out = {};

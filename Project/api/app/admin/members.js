@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { User, Response, Answers, Redemption, SupportTicket, TeenRegistration, Category, SegmentChange } from "../model/index.js";
 import { entries as ledgerEntries, balances } from "../engagement/ledger.js";
 import { memberType } from "../engagement/http.js";
+import * as Marketing from "../engagement/marketing.js";
 import { maskEmail, maskPhone, birthYear } from "./mask.js";
 import { AdminError } from "./http.js";
 
@@ -35,6 +36,7 @@ export function row(u) {
         lastActivityAt: u.lastActivityAt || null,
         profileCheckedAt: u.profileCheckedAt || null,
         archivedAt: u.archivedAt || null,
+        marketingOptIn: Marketing.view(u),
     };
 }
 
@@ -55,6 +57,10 @@ export async function search(origin, q = {}) {
     if (q.segment === "teen") f.category = { $regex: "minor" };
     // Admins without teen.read (checked in MADP) never get teen rows, and teens don't count in their totals.
     if (q.noTeens) f.$and = [...(f.$and || []), { category: { $not: /minor/ } }];
+    // marketing e-mail consent: granted, withdrawn, or never asked (unset counts as no)
+    if (q.marketing === "granted") f["marketingOptIn.granted"] = true;
+    else if (q.marketing === "withdrawn") f["marketingOptIn.granted"] = false;
+    else if (q.marketing === "unset") f["marketingOptIn.granted"] = { $exists: false };
     if (q.status) f.memberStatus = q.status === "active" ? { $in: [null, "active"] } : String(q.status);
     if (q.country) f["address.0.country"] = String(q.country).toLowerCase();
     if (q.from || q.to) f.createdAt = { ...(q.from ? { $gte: new Date(q.from) } : {}), ...(q.to ? { $lte: new Date(q.to) } : {}) };
@@ -112,6 +118,7 @@ export async function detail(origin, id) {
             tickets,
             ledgerEntries: list.length,
         },
+        marketingOptInHistory: (u.marketingOptInHistory || []).slice(-20).reverse(),
         segmentChanges: segmentChanges.map((c) => ({ from: c.from, to: c.to, reason: c.reason, actor: c.actor, at: c.createdAt })),
     };
 }
@@ -261,4 +268,15 @@ export async function bulkRestore(origin, ids = [], reason) {
         { $set: { memberStatus: "active", archivedAt: null, statusChangedAt: new Date(), statusReason: String(reason).trim().slice(0, 500), lastActivityAt: new Date() } },
     );
     return { asked: valid.length, restored: r.modifiedCount };
+}
+
+/**
+ * Record a member's marketing opt-out on their behalf (for example, they asked by e-mail or phone). An admin can only
+ * withdraw consent: opting someone in has to come from the member's own tick.
+ */
+export async function marketingOptOut(origin, id, reason, actor) {
+    const u = await load(origin, id);
+    if (!String(reason || "").trim()) throw new AdminError("reason_required", "Give a reason");
+    return Marketing.setOptIn(u._id, origin, false, "admin", `madp:${actor || "admin"}`)
+        .catch((e) => { throw new AdminError(e.code || "conflict", e.message, e.status || 409); });
 }

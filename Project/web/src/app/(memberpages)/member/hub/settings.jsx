@@ -11,7 +11,7 @@ import { LANGUAGES } from "@/i18n/languages";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Hero, LoadingBlock, Meter } from "./ui.jsx";
-import { SurveyPrefs, EngageNotifications, PrivacyCentre, GuardianTab } from "./engage/settings.jsx";
+import { SurveyPrefs, EngageNotifications, MarketingConsent, PrivacyCentre, GuardianTab } from "./engage/settings.jsx";
 import { usePreferences, useSavePreferences } from "./engage/data";
 import { InstallApp } from "./engage/pwa.jsx";
 import { PaletteList } from "./Shell.jsx";
@@ -402,6 +402,7 @@ export function SettingsPage() {
           <Panel c={P("notifications")} wide>
             <NotificationPrefs />
             <EngageNotifications teen={teen} />
+            <MarketingConsent />
           </Panel>
 
           <Panel c={P("surveyprefs")}><SurveyPrefs /></Panel>
