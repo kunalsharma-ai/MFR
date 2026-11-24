@@ -645,64 +645,87 @@ export default function ParentSection() {
     { k: "rew", tone: "b", world: "treasury", wname: f("w2"), art: "coin", art2: "gift", s: "info", pct: null, title: f("c2"), sub: f("c2s", { name: teen }) },
     { k: "con", tone: "c", world: "consent", wname: f("w3"), art: "scroll", art2: "lockkey", s: conS, pct: conPct, title: f("c3"), sub: f("c3s") },
   ];
+  // Round 10 (Kunal, 24 Nov 2026): the section is redesigned as the Teen "Family quest" in the teen sticker-arcade look:
+  // a neon quest board with a level path (who does each step, the next one marked), then the three forms as holo
+  // collectible cards. Content and behaviour are unchanged.
+  const nextIdx = journey.findIndex((j) => !sent(j.s));
+  const ART = ["clipboard", "pencil", "smile", "game"];
+  const CARD = { onb: ["family_mwg", "clipboard", "house2"], rew: ["gift", "trophy", "star2"], con: ["scroll", "lockkey", "verified"] };
+  const allSent = sent(onbS) && sent(conS);
   return (
-    <section className="pc9" aria-labelledby="pc9-t" id="parent-section">
-      <div className="pc9-hero">
-        <span className="pc9-hero-sky" aria-hidden="true"><i /><i /><i /></span>
-        <div className="pc9-hero-copy">
-          <p className="pc9-kicker"><span aria-hidden="true">🧑‍🍼</span> {f("kicker", { name: teen })}</p>
-          <h2 id="pc9-t">{f("heroA")} <mark>{teen}</mark> {f("heroB")}</h2>
-          <p className="pc9-hero-sub">{f("heroSub", { name: teen })}</p>
-          <ul className="pc9-chips"><li>🧑‍🍼 {f("chipYou")}</li><li>🤝 {f("chipPerm")}</li><li>⏱️ {f("chipTime")}</li></ul>
-          <div className="pc9-hero-go">
-            <button type="button" className="pc9-cta" onClick={() => { play("tap"); setOpen(sent(onbS) ? "con" : "onb"); }}>{sent(onbS) && sent(conS) ? f("review") : onbPct > 0 || conPct > 0 ? f("continue") : "Let's begin"} <Icon name="arrow" size={18} /></button>
-            <small>🔒 {f("heroNote")}</small>
+    <section className="pz10" aria-labelledby="pc9-t" id="parent-section">
+      <div className="pz10-board">
+        <i className="pz10-burst" aria-hidden="true" /><i className="pz10-dots" aria-hidden="true" />
+        <svg className="pz10-squig q1" viewBox="0 0 120 30" aria-hidden="true"><path d="M2 15 Q 17 0 32 15 T 62 15 T 92 15 T 118 15" /></svg>
+        <svg className="pz10-squig q2" viewBox="0 0 120 30" aria-hidden="true"><path d="M2 15 Q 17 0 32 15 T 62 15 T 92 15 T 118 15" /></svg>
+        <div className="pz10-head">
+          <div className="pz10-copy">
+            <p className="pz10-kicker"><img src="/hub/3d/family_mwg.webp" alt="" width="22" height="22" /> {f("kicker", { name: teen })}</p>
+            <h2 id="pc9-t">{f("heroA")} <mark>{teen}</mark> {f("heroB")}</h2>
+            <p className="pz10-sub">{f("heroSub", { name: teen })}</p>
+            <div className="pz10-go">
+              <button type="button" className="pz10-cta" onClick={() => { play("tap"); setOpen(sent(onbS) ? "con" : "onb"); }}>{allSent ? f("review") : onbPct > 0 || conPct > 0 ? f("continue") : "Let's begin"} <Icon name="arrow" size={18} /></button>
+              <span className="pz10-chips"><span>⏱️ {f("chipTime")}</span><span>🔒 {f("heroNote")}</span></span>
+            </div>
+          </div>
+          <div className="pz10-stage" aria-hidden="true">
+            <span className="pz10-ring" />
+            <img className="pz10-main" src="/hub/3d/family_mwg.webp" alt="" width="150" height="150" />
+            {["shield", "handshake", "gift", "heart", "sparkles"].map((e, i) => <span key={e} className={`pz10-stk k${i}`}><img src={`/hub/3d/${e}.webp`} alt="" width="46" height="46" /></span>)}
+            <span className="pz10-pass"><small>Member</small><b>{teen}</b><em className={st.done ? "ok" : ""}>{st.done ? "Ready" : "Waiting for you"}</em></span>
           </div>
         </div>
-        <div className="pc9-hero-art" aria-hidden="true">
-          <i className="pc9-orbit" />
-          <img className="core" src="/hub/worlds/trust.webp" alt="" width="300" height="300" />
-          {["shield", "handshake", "gift", "heart", "star2", "family_mwg"].map((e, i) => <img key={e} className={`sat s${i}`} src={`/hub/3d/${e}.webp`} alt="" width="52" height="52" />)}
-          <span className="pc9-mcard"><b>MyFrequentRewards</b><span><small>Member</small>{teen}</span><span><small>Status</small><em>{st.done ? "Ready" : "Waiting for you"}</em></span></span>
-        </div>
+
+        <ol className="pz10-path" aria-label="Who does what">
+          <svg className="pz10-road" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path d="M60 30 C 200 -10, 300 70, 380 30 S 560 -10, 640 30 S 820 70, 940 30" /></svg>
+          {journey.map((j, i) => {
+            const isNext = i === nextIdx;
+            const inner = (
+              <>
+                {isNext ? <span className="pz10-here" aria-hidden="true">▼</span> : null}
+                <span className="pz10-node">
+                  <Ring pct={j.pct} size={78} stroke={6}><img src={`/hub/3d/${ART[i]}.webp`} alt="" width="40" height="40" /></Ring>
+                  {sent(j.s) ? <i className="pz10-tick"><Icon name="check" size={12} /></i> : <i className="pz10-lv">{i + 1}</i>}
+                </span>
+                <em className={`pz10-who who-${j.who}`}>{j.who === "parent" ? f("parentPart") : f("teenPart", { name: teen })}</em>
+                <b>{f(j.k)}</b>
+                <small>{f(`${j.k}s`, { name: teen })}</small>
+                <span className={`pz10-st s-${j.s}`}>{j.label && !sent(j.s) ? `${j.label} · ` : ""}{f(STATE[j.s] || "st_new")}</span>
+              </>
+            );
+            return <li key={j.k} className={`who-${j.who} s-${j.s} ${isNext ? "is-next" : ""}`} style={{ "--i": i }}>{j.act ? <button type="button" onClick={j.act}>{inner}</button> : <Link href={j.href}>{inner}</Link>}</li>;
+          })}
+        </ol>
       </div>
 
-      <ol className="pc9-journey" aria-label="Who does what">
-        {journey.map((j, i) => {
-          const inner = (
-            <>
-              <Ring pct={j.pct} size={48} stroke={5}>{sent(j.s) ? <Icon name="check" size={16} /> : j.label || `${j.pct}%`}</Ring>
-              <span className="pc9-j-tx"><em className={`who-${j.who}`}>{j.who === "parent" ? f("parentPart") : f("teenPart", { name: teen })}</em><b>{i + 1}. {f(j.k)}</b><small>{f(`${j.k}s`, { name: teen })}</small></span>
-              <span className={`pc9-st s-${j.s}`}>{f(STATE[j.s] || "st_new")}</span>
-            </>
+      <ul className="pz10-cards">
+        {cards.map((x, i) => {
+          const [m, s1, s2] = CARD[x.k];
+          return (
+            <li key={x.k} className={`pz10-card t-${x.tone}`} style={{ "--i": i }}>
+              <button type="button" onClick={() => { play("tap"); setOpen(x.k); }} aria-haspopup="dialog">
+                <i className="pz10-holo" aria-hidden="true" />
+                <span className="pz10-in">
+                  <span className="pz10-art" aria-hidden="true">
+                    <i className="pz10-motif" />
+                    <img className="s1" src={`/hub/3d/${s1}.webp`} alt="" width="36" height="36" />
+                    <img className="s2" src={`/hub/3d/${s2}.webp`} alt="" width="32" height="32" />
+                    <span className="pz10-hero"><img src={`/hub/3d/${m}.webp`} alt="" width="92" height="92" /></span>
+                    <span className="pz10-no">#{String(i + 1).padStart(2, "0")}</span>
+                    {x.pct != null ? <span className="pz10-pct"><b>{x.pct}%</b></span> : <span className="pz10-pct info"><b>i</b></span>}
+                  </span>
+                  <span className="pz10-plate"><small>{x.wname}</small><b>{x.title}</b></span>
+                  <small className="pz10-csub">{x.sub}</small>
+                  {x.pct != null ? <span className="pz10-bar"><i style={{ "--w": `${x.pct}%` }} /></span> : null}
+                  <span className="pz10-foot">
+                    <span className={`pz10-st s-${x.s}`}>{f(x.s === "info" ? "st_info" : STATE[x.s])}</span>
+                    <span className="pz10-btn">{x.s === "draft" ? f("continue") : sent(x.s) ? f("review") : f("open")} <Icon name="arrow" size={15} /></span>
+                  </span>
+                </span>
+              </button>
+            </li>
           );
-          return <li key={j.k} className={`who-${j.who} s-${j.s}`} style={{ "--i": i }}>{j.act ? <button type="button" onClick={j.act}>{inner}</button> : <Link href={j.href}>{inner}</Link>}</li>;
         })}
-      </ol>
-
-      <ul className="pc9-cards">
-        {cards.map((x, i) => (
-          <li key={x.k} className={`pc9-card t-${x.tone}`} style={{ "--i": i }}>
-            <button type="button" onClick={() => { play("tap"); setOpen(x.k); }} aria-haspopup="dialog">
-              <span className="pc9-art" aria-hidden="true">
-                <img className="a0" src={`/hub/worlds/${x.world}.webp`} alt="" width="200" height="200" />
-                <img className="a1" src={`/hub/3d/${x.art}.webp`} alt="" width="64" height="64" />
-                <img className="a2" src={`/hub/3d/${x.art2}.webp`} alt="" width="52" height="52" />
-                <i className="pc9-spark s1" /><i className="pc9-spark s2" /><i className="pc9-spark s3" />
-                {x.k === "rew" ? <span className="pc9-coins">{[0, 1, 2, 3, 4].map((k) => <i key={k} style={{ "--k": k }} />)}</span> : null}
-              </span>
-              <span className="pc9-num">{i + 1}</span>
-              <span className="pc9-world"><i />{x.wname}</span>
-              <b className="pc9-title">{x.title}</b>
-              <small className="pc9-sub">{x.sub}</small>
-              <span className="pc9-foot">
-                {x.pct != null ? <Ring pct={x.pct} size={46} stroke={5} /> : null}
-                <span className={`pc9-st s-${x.s}`}>{f(x.s === "info" ? "st_info" : STATE[x.s])}</span>
-                <span className="pc9-go">{x.s === "draft" ? f("continue") : sent(x.s) ? f("review") : f("open")} <Icon name="arrow" size={16} /></span>
-              </span>
-            </button>
-          </li>
-        ))}
       </ul>
 
       {open === "onb" ? <OnboardingSheet teen={teen} onClose={close} /> : null}
