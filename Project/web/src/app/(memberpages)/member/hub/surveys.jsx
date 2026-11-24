@@ -10,6 +10,7 @@
 // the Survey record; the topic is read from the survey's own name. Cards differ by topic and by member segment.
 import React from "react";
 import Link from "next/link";
+import Scene3D from "./scene.jsx";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/util";
@@ -163,6 +164,7 @@ export default function SurveysPage({ SurveyHistory }) {
             <div className="hx-actions"><button type="button" className="h-btn h-btn-primary" onClick={() => setGateOpen(true)}><Icon name="lock" size={17} /> {t("sx.whatFirst")}</button></div>
           ) : null}
         </div>
+        <div className="sx-scene" aria-hidden="true"><Scene3D kind="surveys" /></div>
         <ul className="sx-kpis" aria-label={t("sx.kpis")}>
           <li><small>{t("sx.kOpen")}</small><b>{loading ? "…" : <Counter value={openRows.length} />}</b></li>
           <li><small>{t("sx.kPoints")}</small><b>{loading ? "…" : openRows.length ? <Counter value={total} /> : "–"}</b></li>

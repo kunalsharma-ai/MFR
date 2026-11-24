@@ -1,22 +1,12 @@
 /* =====================================================================================================
-   Member hub v3 – three premium identities (Nov 2026 complete redesign, replaces the v2 hub-skins.css)
-     Consumer      "Velvet Lounge"  plum · berry rose · champagne gold. Plus Jakarta Sans. Soft 26px shapes, deep
-                                    gradient heroes, 3D reward coins, gentle lift + sheen on hover.
-     Professional  "Navy Ledger"    deep navy · executive blue · muted gold. Fraunces display + Manrope text,
-                                    tabular numerals, 12px corners, hairline rules, data-first, calm motion.
-     Teen          "Voltage"        ultraviolet · hot pink · cyan · lime. Unbounded display + Plus Jakarta Sans,
-                                    22px shapes, gradient rims and glow, energetic but grown-up motion.
-   Every identity has a designed light and dark set; night (low blue light) is shared. A palette picked in Settings
-   only replaces --primary / --secondary / --accent; type, shape and motion stay with the member type.
+   Member hub identities: one per member type (v4, Kunal round 3, 23 Nov 2026; the v3 sets were replaced).
+   Every identity has a light and a dark set; night (low blue light) and high contrast are shared below.
+   A palette picked in Settings only replaces --primary / --secondary / --accent; type, shape and motion stay.
    Fonts are self-hosted (public/fonts/hub, SIL Open Font License), no network font requests.
    ===================================================================================================== */
 
-@font-face { font-family: "Plus Jakarta Sans"; src: url("/fonts/hub/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Plus Jakarta Sans"; src: url("/fonts/hub/plus-jakarta-sans-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Manrope"; src: url("/fonts/hub/manrope-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Manrope"; src: url("/fonts/hub/manrope-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: "Fraunces"; src: url("/fonts/hub/fraunces-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Fraunces"; src: url("/fonts/hub/fraunces-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Unbounded"; src: url("/fonts/hub/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Unbounded"; src: url("/fonts/hub/unbounded-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
@@ -29,150 +19,147 @@
 .hub[data-sec="referrals"] { --sec: var(--tone-social); --sec-2: var(--accent); }
 .hub[data-type] .eg-card, .hub[data-type] .hp-faq, .hub[data-type] .hp-rail { border: var(--bw, 1px) solid var(--card-border, var(--border)); border-radius: var(--r-card); box-shadow: var(--card-shadow, var(--shadow)); }
 
-/* =========================================== CONSUMER · Velvet Lounge =========================================== */
+/* =====================================================================================================
+   v4 identities (Kunal round 3, 23 Nov 2026). Built on the MFR brand: the navy and orange of the logo, the dark
+   header, the white left menu with a filled active item and the colour stat cards of the dashboard members know.
+     Consumer      "MFR Signature"  royal navy · MFR orange · vivid card colours. Fira Sans. Rounded 20px, glossy 3D.
+     Professional  "MFR Executive"  midnight · steel blue · brushed gold. Manrope. 12px corners, calm, data-first.
+     Teen          "MFR Arcade"     indigo night · violet · hot pink · lime · MFR orange. Unbounded + Fira Sans.
+   ===================================================================================================== */
+@font-face { font-family: "Fira Sans"; src: url("/fonts/hub/fira-sans-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("/fonts/hub/fira-sans-medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("/fonts/hub/fira-sans-semibold.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("/fonts/hub/fira-sans-bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("/fonts/hub/fira-sans-extrabold.woff2") format("woff2"); font-weight: 800 900; font-display: swap; }
+
+/* =========================================== CONSUMER · MFR Signature =========================================== */
 .hub[data-type="consumer"] {
-  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Fira Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font); --font-num: var(--font); --w-display: 800;
-  --bg: #f8f4f2; --bg-2: #f1e8e4; --surface: #ffffff; --card: #ffffff; --card-2: #faf4f1;
-  --border: rgba(74, 22, 52, .09); --border-2: rgba(74, 22, 52, .18);
-  --text: #24121c; --muted: #6b5360; --faint: #9c8792;
-  --success: #0f8a5f; --warning: #a96300; --error: #c42f4b; --info: #3a5bd9;
-  --primary: #a82d63; --primary-hover: #8f2353; --secondary: #4b1d52; --accent: #c99437; --on-primary: #ffffff; --gold: #d8ab55;
-  --tone-reward: #b07a1c; --tone-quality: #0f8a5f; --tone-activity: #3a5bd9; --tone-social: #a82d63;
-  --shadow: 0 1px 2px rgba(60, 20, 40, .04), 0 10px 30px rgba(96, 30, 62, .07);
-  --shadow-lg: 0 4px 10px rgba(60, 20, 40, .06), 0 30px 70px rgba(96, 30, 62, .18);
-  --glass: rgba(252, 248, 246, .8);
-  --r-card: 26px; --r-hero: 32px; --r-btn: 999px; --r-icon: 14px; --r-nav: 18px; --r-avatar: 50%;
-  --card-border: rgba(74, 22, 52, .06); --card-shadow: var(--shadow);
-  --ic-fill: color-mix(in srgb, currentColor 18%, transparent);
+  --bg: #f2f5fc; --bg-2: #e8edf8; --surface: #ffffff; --card: #ffffff; --card-2: #f5f7fd;
+  --border: rgba(11, 31, 107, .09); --border-2: rgba(11, 31, 107, .18);
+  --text: #0c1638; --muted: #4a5679; --faint: #8790ae;
+  --success: #0b9a68; --warning: #b45309; --error: #d0284a; --info: #2563eb;
+  --primary: #1a3fc4; --primary-hover: #1533a6; --secondary: #0b1f6b; --accent: #f7941d; --on-primary: #ffffff; --gold: #ffb547;
+  --tone-reward: #d97706; --tone-quality: #0b9a68; --tone-activity: #2563eb; --tone-social: #c026d3;
+  --shadow: 0 1px 2px rgba(11, 31, 107, .05), 0 10px 28px rgba(11, 31, 107, .07);
+  --shadow-lg: 0 4px 10px rgba(11, 31, 107, .07), 0 28px 64px rgba(11, 31, 107, .18);
+  --glass: rgba(255, 255, 255, .86);
+  --r-card: 20px; --r-hero: 24px; --r-btn: 12px; --r-icon: 12px; --r-nav: 12px; --r-avatar: 50%;
+  --card-border: rgba(11, 31, 107, .07); --card-shadow: var(--shadow);
+  --ic-fill: color-mix(in srgb, currentColor 16%, transparent);
   --ease: cubic-bezier(.22, 1, .36, 1);
-  --hero-bg: radial-gradient(70% 120% at 100% 0%, rgba(240, 160, 110, .55), transparent 60%), radial-gradient(60% 90% at 0% 100%, rgba(216, 171, 85, .35), transparent 60%), linear-gradient(125deg, #2e0b33 0%, #5c1650 42%, #9c2a62 78%, #c4495f 100%);
-  --hero-ink: #fff8f4; --hero-muted: #f2d9e2; --hero-accent: #f6d28a; --hero-line: rgba(255, 236, 220, .2); --hero-chip: rgba(255, 240, 230, .12); --hero-border: transparent;
-  --hero-shadow: 0 30px 60px -24px rgba(92, 22, 80, .55);
-  --nav-bg: #fffdfc; --nav-bg-solid: #fffdfc; --nav-text: var(--text); --nav-muted: var(--muted);
-  --dock-bg: rgba(36, 18, 28, .92); --dock-ink: #f9e9ef; --dock-muted: #c7a9b7; --dock-on: linear-gradient(135deg, #d8ab55, #f3d58f); --dock-on-ink: #2e0b33;
-  background-image: radial-gradient(60% 40% at 100% 0%, rgba(216, 171, 85, .12), transparent 70%), radial-gradient(50% 40% at 0% 30%, rgba(168, 45, 99, .07), transparent 70%);
-  background-attachment: fixed;
+  --hero-bg: radial-gradient(55% 120% at 100% 0%, rgba(247, 148, 29, .38), transparent 62%), radial-gradient(50% 90% at 0% 100%, rgba(56, 189, 248, .25), transparent 60%), linear-gradient(125deg, #071344 0%, #0b1f6b 45%, #1a3fc4 100%);
+  --hero-ink: #ffffff; --hero-muted: #c9d5f5; --hero-accent: #ffb547; --hero-line: rgba(255, 255, 255, .16); --hero-chip: rgba(255, 255, 255, .1); --hero-border: transparent;
+  --hero-shadow: 0 30px 60px -26px rgba(11, 31, 107, .6);
+  --hdr-bg: linear-gradient(90deg, #0b1230 0%, #111a3f 60%, #16204b 100%); --hdr-ink: #ffffff; --hdr-muted: #aab6d8; --hdr-line: rgba(255, 255, 255, .1); --hdr-chip: rgba(255, 255, 255, .07);
+  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: #24305a; --nav-muted: #7d87a8;
+  --nav-on: linear-gradient(135deg, #0b1f6b 0%, #1a3fc4 100%); --nav-on-ink: #ffffff; --nav-on-glow: rgba(26, 63, 196, .45); --nav-hover: #eef2fd;
+  --s3d-a: #ffb547; --s3d-b: #38bdf8; --s3d-c: #f472b6;
+  --tile-1: linear-gradient(135deg, #0a5e45 0%, #12936a 100%); --tile-2: linear-gradient(135deg, #2b2a9e 0%, #5b4ce6 100%); --tile-3: linear-gradient(135deg, #8b1648 0%, #db2f76 100%); --tile-4: linear-gradient(135deg, #116b33 0%, #22a653 100%); --tile-5: linear-gradient(135deg, #9a3d06 0%, #ef7d12 100%);
 }
 .hub[data-type="consumer"][data-mode="dark"] {
-  --bg: #130a11; --bg-2: #1b0f18; --surface: #1f121c; --card: #1f121c; --card-2: #281826;
-  --border: rgba(255, 220, 235, .09); --border-2: rgba(255, 220, 235, .2);
-  --text: #f9ecf1; --muted: #c9adba; --faint: #957c89;
-  --success: #42d5a0; --warning: #f5be5a; --error: #ff7d93; --info: #8aa6ff;
-  --primary: #ff74a8; --primary-hover: #ff8fba; --secondary: #cda0dd; --accent: #f0c46a; --on-primary: #24060f;
-  --tone-reward: #f0c46a; --tone-quality: #42d5a0; --tone-activity: #8aa6ff; --tone-social: #ff74a8;
+  --bg: #070b1d; --bg-2: #0b1129; --surface: #0f1733; --card: #0f1733; --card-2: #141d3e;
+  --border: rgba(160, 180, 255, .1); --border-2: rgba(160, 180, 255, .22);
+  --text: #edf1ff; --muted: #a6b1d6; --faint: #6f7aa1;
+  --success: #34d399; --warning: #fbbf24; --error: #fb7185; --info: #7aa2ff;
+  --primary: #7aa2ff; --primary-hover: #97b6ff; --secondary: #c7d4ff; --accent: #ffa940; --on-primary: #061033;
+  --tone-reward: #ffb547; --tone-quality: #34d399; --tone-activity: #7aa2ff; --tone-social: #f0abfc;
   --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 16px 36px rgba(0, 0, 0, .35); --shadow-lg: 0 30px 70px rgba(0, 0, 0, .55);
-  --card-border: rgba(255, 220, 235, .07); --glass: rgba(19, 10, 17, .82);
-  --hero-bg: radial-gradient(70% 120% at 100% 0%, rgba(240, 120, 110, .35), transparent 60%), linear-gradient(125deg, #24081f 0%, #4a1242 50%, #7a2152 100%);
-  --nav-bg: #1b0f18; --nav-bg-solid: #1b0f18;
-  --dock-bg: rgba(38, 20, 34, .94);
-  background-image: radial-gradient(60% 40% at 100% 0%, rgba(240, 196, 106, .08), transparent 70%);
+  --card-border: rgba(160, 180, 255, .08); --glass: rgba(7, 11, 29, .86);
+  --hero-bg: radial-gradient(55% 120% at 100% 0%, rgba(247, 148, 29, .26), transparent 62%), linear-gradient(125deg, #050c2e 0%, #0b1a5a 55%, #14308f 100%);
+  --hdr-bg: linear-gradient(90deg, #050817, #0a1028);
+  --nav-bg: #0a1028; --nav-bg-solid: #0a1028; --nav-text: #dbe3ff; --nav-muted: #7f8ab0; --nav-hover: rgba(122, 162, 255, .1);
+  --nav-on: linear-gradient(135deg, #1a3fc4, #4f74ff);
 }
-.hub[data-type="consumer"] .h-btn-primary { background: linear-gradient(120deg, var(--secondary), var(--primary) 60%, color-mix(in srgb, var(--primary) 60%, var(--accent))); }
-.hub[data-type="consumer"] .hx .h-btn-primary, .hub[data-type="consumer"] .pf-hero .h-btn-primary, .hub[data-type="consumer"] .sx-hero .h-btn-primary, .hub[data-type="consumer"] .rw3-hero .h-btn-primary { background: linear-gradient(135deg, #e9be66, #f8dc9b); color: #3a0f30; box-shadow: 0 10px 26px -8px rgba(233, 190, 102, .7); }
-.hub[data-type="consumer"] .k-card, .hub[data-type="consumer"] .dc-jar, .hub[data-type="consumer"] .k-tile, .hub[data-type="consumer"] .sx-card, .hub[data-type="consumer"] .pf-card { transition: transform .45s var(--ease), box-shadow .45s var(--ease); }
-.hub[data-type="consumer"] .k-card:hover, .hub[data-type="consumer"] .dc-jar:hover, .hub[data-type="consumer"] a.k-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.hub[data-type="consumer"] .hx-title { letter-spacing: -.035em; }
 
-/* =========================================== PROFESSIONAL · Navy Ledger =========================================== */
+/* =========================================== PROFESSIONAL · MFR Executive =========================================== */
 .hub[data-type="professional"] {
-  --font: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif; --font-num: "Manrope", ui-sans-serif, system-ui, sans-serif; --w-display: 560;
-  --bg: #f3f5f9; --bg-2: #e8ecf3; --surface: #ffffff; --card: #ffffff; --card-2: #f6f8fb;
-  --border: rgba(10, 22, 48, .1); --border-2: rgba(10, 22, 48, .2);
-  --text: #0a1630; --muted: #475676; --faint: #7f8dab;
-  --success: #0f7a55; --warning: #946100; --error: #b42335; --info: #2453d6;
-  --primary: #2453d6; --primary-hover: #1c43b3; --secondary: #0a1a3a; --accent: #a8893f; --on-primary: #ffffff; --gold: #c2a35a;
-  --tone-reward: #94762e; --tone-quality: #0f7a55; --tone-activity: #2453d6; --tone-social: #4b3fb0;
-  --shadow: 0 1px 2px rgba(10, 22, 48, .05), 0 6px 18px rgba(10, 22, 48, .04); --shadow-lg: 0 20px 50px rgba(10, 22, 48, .18);
-  --glass: rgba(246, 248, 251, .86);
-  --r-xs: 6px; --r-s: 8px; --r-m: 12px; --r-l: 14px; --r-xl: 16px;
-  --r-card: 14px; --r-hero: 18px; --r-btn: 10px; --r-icon: 10px; --r-nav: 10px; --r-avatar: 12px;
+  --font: "Manrope", "Fira Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font); --font-num: var(--font); --w-display: 800;
+  --bg: #f1f3f7; --bg-2: #e6e9f0; --surface: #ffffff; --card: #ffffff; --card-2: #f6f7fa;
+  --border: rgba(9, 20, 45, .1); --border-2: rgba(9, 20, 45, .2);
+  --text: #0a1428; --muted: #46526e; --faint: #7d88a2;
+  --success: #0f7a55; --warning: #946100; --error: #b42335; --info: #1d4ed8;
+  --primary: #1d4ed8; --primary-hover: #1a43b8; --secondary: #0a1630; --accent: #b8913a; --on-primary: #ffffff; --gold: #c9a24a;
+  --tone-reward: #94762e; --tone-quality: #0f7a55; --tone-activity: #1d4ed8; --tone-social: #4b3fb0;
+  --shadow: 0 1px 2px rgba(9, 20, 45, .05), 0 6px 18px rgba(9, 20, 45, .05); --shadow-lg: 0 20px 50px rgba(9, 20, 45, .18);
+  --glass: rgba(255, 255, 255, .9);
+  --r-xs: 6px; --r-s: 8px; --r-m: 10px; --r-l: 12px; --r-xl: 14px;
+  --r-card: 12px; --r-hero: 16px; --r-btn: 8px; --r-icon: 8px; --r-nav: 8px; --r-avatar: 10px;
   --card-border: var(--border); --card-shadow: var(--shadow);
   --ic-fill: transparent; --spring: var(--ease); --dur: .35s;
-  --hero-bg: radial-gradient(60% 120% at 100% 0%, rgba(36, 83, 214, .55), transparent 65%), linear-gradient(118deg, #06102a 0%, #0b1d4a 58%, #13306f 100%);
-  --hero-ink: #f2f5fb; --hero-muted: #a9b6d5; --hero-accent: #d9bd78; --hero-line: rgba(255, 255, 255, .13); --hero-chip: rgba(255, 255, 255, .06); --hero-border: transparent; --hero-shadow: 0 24px 50px -26px rgba(6, 16, 42, .7);
-  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: var(--text); --nav-muted: var(--muted);
-  --dock-bg: rgba(7, 16, 40, .94); --dock-ink: #e7ecf7; --dock-muted: #8f9cbd; --dock-on: linear-gradient(180deg, #2f62f0, #2453d6); --dock-on-ink: #ffffff;
+  --hero-bg: radial-gradient(50% 120% at 100% 0%, rgba(201, 162, 74, .28), transparent 62%), radial-gradient(60% 100% at 70% 120%, rgba(29, 78, 216, .45), transparent 60%), linear-gradient(118deg, #050b1e 0%, #0a1630 55%, #12264f 100%);
+  --hero-ink: #f3f5fa; --hero-muted: #aab5cf; --hero-accent: #e3c27a; --hero-line: rgba(255, 255, 255, .13); --hero-chip: rgba(255, 255, 255, .06); --hero-border: transparent; --hero-shadow: 0 24px 50px -26px rgba(5, 11, 30, .7);
+  --hdr-bg: linear-gradient(90deg, #060b18, #0b1426); --hdr-ink: #f3f5fa; --hdr-muted: #9aa6c2; --hdr-line: rgba(255, 255, 255, .09); --hdr-chip: rgba(255, 255, 255, .06);
+  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: #1b2640; --nav-muted: #7d88a2;
+  --nav-on: linear-gradient(135deg, #0a1630, #16285a); --nav-on-ink: #ffffff; --nav-on-glow: rgba(10, 22, 48, .35); --nav-hover: #f0f2f7;
+  --s3d-a: #e3c27a; --s3d-b: #60a5fa; --s3d-c: #94a3b8;
+  --tile-1: linear-gradient(135deg, #0a1630 0%, #1d3263 100%); --tile-2: linear-gradient(135deg, #0f3d68 0%, #1d6fb8 100%); --tile-3: linear-gradient(135deg, #4a1d2e 0%, #8a2f4a 100%); --tile-4: linear-gradient(135deg, #0b4a45 0%, #128174 100%); --tile-5: linear-gradient(135deg, #5c4714 0%, #a8822f 100%);
 }
 .hub[data-type="professional"][data-mode="dark"] {
-  --bg: #050b1a; --bg-2: #081126; --surface: #0b1630; --card: #0b1630; --card-2: #10203f;
+  --bg: #050a16; --bg-2: #080f20; --surface: #0b1428; --card: #0b1428; --card-2: #101c36;
   --border: rgba(170, 186, 235, .12); --border-2: rgba(170, 186, 235, .24);
   --text: #e7ecf7; --muted: #9aa8c8; --faint: #6c7a9c;
   --success: #4fd1a1; --warning: #f0c25a; --error: #ff8191; --info: #7ea2ff;
   --primary: #7ea2ff; --primary-hover: #99b5ff; --secondary: #c6d2f2; --accent: #dcc07a; --on-primary: #050b1a;
   --tone-reward: #dcc07a; --tone-quality: #4fd1a1; --tone-activity: #7ea2ff; --tone-social: #b9a2ff;
-  --shadow: none; --shadow-lg: 0 24px 60px rgba(0, 0, 0, .6); --glass: rgba(5, 11, 26, .88);
-  --hero-bg: radial-gradient(60% 120% at 100% 0%, rgba(62, 100, 220, .35), transparent 65%), linear-gradient(118deg, #0a1638, #08112a);
-  --nav-bg: #081126; --nav-bg-solid: #081126;
-  --dock-bg: rgba(14, 26, 56, .95);
+  --shadow: none; --shadow-lg: 0 24px 60px rgba(0, 0, 0, .6); --glass: rgba(5, 10, 22, .9);
+  --hdr-bg: linear-gradient(90deg, #03060f, #070d1c);
+  --nav-bg: #070d1c; --nav-bg-solid: #070d1c; --nav-text: #dbe2f3; --nav-muted: #7d88a2; --nav-hover: rgba(126, 162, 255, .08);
+  --nav-on: linear-gradient(135deg, #16285a, #1d4ed8);
 }
-.hub[data-type="professional"] .hi { stroke-width: 1.6; }
+.hub[data-type="professional"] .hi { stroke-width: 1.7; }
 .hub[data-type="professional"] .hi .f { display: none; }
-.hub[data-type="professional"] .k-title, .hub[data-type="professional"] .sec-h, .hub[data-type="professional"] .st-card > header h2, .hub[data-type="professional"] .pf-title, .hub[data-type="professional"] .sx-h { font-family: var(--font-display); font-weight: 560; letter-spacing: -.005em; }
-.hub[data-type="professional"] .h-eyebrow, .hub[data-type="professional"] .k-eyebrow, .hub[data-type="professional"] .hx-eyebrow { letter-spacing: .2em; font-weight: 700; }
-.hub[data-type="professional"] .hx-bg i { animation: none; opacity: .2; }
-.hub[data-type="professional"] .hx-bg::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, transparent, #000 65%); }
-.hub[data-type="professional"] .hx .h-btn-primary, .hub[data-type="professional"] .pf-hero .h-btn-primary, .hub[data-type="professional"] .sx-hero .h-btn-primary, .hub[data-type="professional"] .rw3-hero .h-btn-primary { background: var(--hero-accent); color: #0a1630; box-shadow: none; }
-.hub[data-type="professional"] .hx .h-btn-primary:hover, .hub[data-type="professional"] .pf-hero .h-btn-primary:hover, .hub[data-type="professional"] .sx-hero .h-btn-primary:hover, .hub[data-type="professional"] .rw3-hero .h-btn-primary:hover { background: color-mix(in srgb, var(--hero-accent) 85%, #fff); }
-.hub[data-type="professional"] .h-btn { font-weight: 650; letter-spacing: .005em; }
-.hub[data-type="professional"] .h-btn-primary { box-shadow: none; }
-.hub[data-type="professional"] .h-btn-primary:hover { transform: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+.hub[data-type="professional"] .h-eyebrow, .hub[data-type="professional"] .k-eyebrow, .hub[data-type="professional"] .hx-eyebrow { letter-spacing: .18em; font-weight: 800; }
+.hub[data-type="professional"] .h-btn { font-weight: 700; }
 .hub[data-type="professional"] b, .hub[data-type="professional"] .k-num { font-variant-numeric: tabular-nums lining-nums; }
-.hub[data-type="professional"] .k-tile b, .hub[data-type="professional"] .dc-jar-n, .hub[data-type="professional"] .k-dial-n, .hub[data-type="professional"] .rv-bal-main b,
-.hub[data-type="professional"] .qs-read b, .hub[data-type="professional"] .ma-life b { font-weight: 700; letter-spacing: -.02em; }
-.hub[data-type="professional"] .cl li:hover, .hub[data-type="professional"] .sv-card:hover, .hub[data-type="professional"] a.k-tile:hover, .hub[data-type="professional"] .k-dial:hover { transform: none; }
-.hub[data-type="professional"] .sv-card:hover, .hub[data-type="professional"] .k-card:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 45%, transparent), var(--shadow); }
 .hub[data-type="professional"] .p-line, .hub[data-type="professional"] .p-pt { stroke: var(--accent); }
 
-/* =========================================== TEEN · Voltage =========================================== */
+/* =========================================== TEEN · MFR Arcade =========================================== */
 .hub[data-type="teen"] {
-  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Unbounded", "Plus Jakarta Sans", ui-sans-serif, sans-serif; --font-num: "Unbounded", "Plus Jakarta Sans", sans-serif; --w-display: 700;
-  --f-display: clamp(1.4rem, 1.1vw + 1rem, 2.05rem);
+  --font: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Fira Sans", ui-sans-serif, sans-serif; --font-num: "Unbounded", "Fira Sans", sans-serif; --w-display: 700;
+  --f-display: clamp(1.35rem, 1.1vw + 1rem, 2rem);
   --bg: #f4f2ff; --bg-2: #ebe6ff; --surface: #ffffff; --card: #ffffff; --card-2: #f7f5ff;
   --border: rgba(40, 16, 110, .1); --border-2: rgba(40, 16, 110, .22);
   --text: #150b33; --muted: #554a7d; --faint: #8b81ab;
   --success: #078a55; --warning: #a85b00; --error: #d1204f; --info: #0074b8;
-  --primary: #6a2cff; --primary-hover: #5a1ef0; --secondary: #e0277a; --accent: #0098cf; --on-primary: #ffffff; --lime: #b8f53a; --gold: #ffcf3f;
-  --tone-reward: #d0206f; --tone-quality: #078a55; --tone-activity: #0074b8; --tone-social: #e0277a;
-  --shadow: 0 1px 2px rgba(40, 16, 110, .05), 0 12px 30px rgba(106, 44, 255, .1); --shadow-lg: 0 24px 60px rgba(106, 44, 255, .24);
-  --glass: rgba(246, 244, 255, .84);
-  --r-card: 22px; --r-hero: 28px; --r-btn: 16px; --r-icon: 14px; --r-nav: 16px; --r-avatar: 16px;
-  --card-border: rgba(106, 44, 255, .14); --card-shadow: var(--shadow);
-  --ic-fill: color-mix(in srgb, var(--lime) 55%, transparent);
+  --primary: #6d28d9; --primary-hover: #5b21b6; --secondary: #db2777; --accent: #f7941d; --on-primary: #ffffff; --lime: #a3e635; --gold: #ffcf3f;
+  --tone-reward: #db2777; --tone-quality: #078a55; --tone-activity: #0074b8; --tone-social: #db2777;
+  --shadow: 0 1px 2px rgba(40, 16, 110, .05), 0 12px 30px rgba(109, 40, 217, .1); --shadow-lg: 0 24px 60px rgba(109, 40, 217, .24);
+  --glass: rgba(255, 255, 255, .88);
+  --r-card: 22px; --r-hero: 26px; --r-btn: 14px; --r-icon: 14px; --r-nav: 14px; --r-avatar: 14px;
+  --card-border: rgba(109, 40, 217, .13); --card-shadow: var(--shadow);
+  --ic-fill: color-mix(in srgb, var(--lime) 50%, transparent);
   --spring: cubic-bezier(.34, 1.56, .64, 1);
-  --hero-bg: radial-gradient(50% 90% at 92% 10%, rgba(184, 245, 58, .55), transparent 60%), radial-gradient(60% 100% at 0% 100%, rgba(0, 200, 255, .55), transparent 60%), linear-gradient(130deg, #3b0fc2 0%, #6a2cff 48%, #d42a86 100%);
-  --hero-ink: #ffffff; --hero-muted: #e9e0ff; --hero-accent: #d4ff5c; --hero-line: rgba(255, 255, 255, .26); --hero-chip: rgba(255, 255, 255, .14); --hero-border: transparent; --hero-shadow: 0 26px 60px -24px rgba(106, 44, 255, .75);
-  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: var(--text); --nav-muted: var(--muted);
-  --dock-bg: rgba(21, 11, 51, .93); --dock-ink: #f1ecff; --dock-muted: #a99ed3; --dock-on: linear-gradient(135deg, #b8f53a, #4be1ff); --dock-on-ink: #150b33;
-  background-image: radial-gradient(40% 30% at 100% 0%, rgba(184, 245, 58, .14), transparent 70%), radial-gradient(40% 40% at 0% 40%, rgba(106, 44, 255, .08), transparent 70%);
-  background-attachment: fixed;
+  --hero-bg: radial-gradient(45% 90% at 95% 5%, rgba(163, 230, 53, .42), transparent 60%), radial-gradient(55% 100% at 0% 100%, rgba(34, 211, 238, .4), transparent 60%), linear-gradient(130deg, #1e0b5c 0%, #5b21b6 50%, #c0267a 100%);
+  --hero-ink: #ffffff; --hero-muted: #e6dcff; --hero-accent: #d9f99d; --hero-line: rgba(255, 255, 255, .24); --hero-chip: rgba(255, 255, 255, .13); --hero-border: transparent; --hero-shadow: 0 26px 60px -24px rgba(109, 40, 217, .7);
+  --hdr-bg: linear-gradient(90deg, #12072f 0%, #1d0b4a 55%, #2a0d55 100%); --hdr-ink: #ffffff; --hdr-muted: #c3b5f2; --hdr-line: rgba(255, 255, 255, .11); --hdr-chip: rgba(255, 255, 255, .08);
+  --nav-bg: #ffffff; --nav-bg-solid: #ffffff; --nav-text: #241650; --nav-muted: #8b81ab;
+  --nav-on: linear-gradient(120deg, #6d28d9 0%, #a21caf 55%, #db2777 100%); --nav-on-ink: #ffffff; --nav-on-glow: rgba(162, 28, 175, .45); --nav-hover: #f3efff;
+  --s3d-a: #a3e635; --s3d-b: #22d3ee; --s3d-c: #f472b6;
+  --tile-1: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%); --tile-2: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%); --tile-3: linear-gradient(135deg, #9d174d 0%, #ec4899 100%); --tile-4: linear-gradient(135deg, #3f6212 0%, #65a30d 100%); --tile-5: linear-gradient(135deg, #c2410c 0%, #f7941d 100%);
 }
 .hub[data-type="teen"][data-mode="dark"] {
   --bg: #0a0620; --bg-2: #100a2c; --surface: #150d33; --card: #150d33; --card-2: #1d1446;
   --border: rgba(200, 180, 255, .13); --border-2: rgba(200, 180, 255, .28);
   --text: #f3efff; --muted: #b9addf; --faint: #8477b0;
   --success: #3ee59a; --warning: #ffc34d; --error: #ff6b93; --info: #4fd2ff;
-  --primary: #a47cff; --primary-hover: #b996ff; --secondary: #ff6aa9; --accent: #3fd7ff; --on-primary: #12052e;
-  --tone-reward: #ff6aa9; --tone-quality: #3ee59a; --tone-activity: #4fd2ff; --tone-social: #ff6aa9;
-  --card-border: rgba(164, 124, 255, .2); --shadow: 0 14px 34px rgba(0, 0, 0, .4); --shadow-lg: 0 28px 70px rgba(0, 0, 0, .6);
-  --glass: rgba(10, 6, 32, .86);
-  --hero-bg: radial-gradient(50% 90% at 92% 10%, rgba(184, 245, 58, .3), transparent 60%), radial-gradient(60% 100% at 0% 100%, rgba(0, 200, 255, .35), transparent 60%), linear-gradient(130deg, #2a0c8a 0%, #4b1fb8 50%, #8e1f63 100%);
-  --nav-bg: #100a2c; --nav-bg-solid: #100a2c;
-  --dock-bg: rgba(26, 16, 66, .95);
-  background-image: radial-gradient(40% 30% at 100% 0%, rgba(184, 245, 58, .07), transparent 70%);
+  --primary: #a78bfa; --primary-hover: #c4b5fd; --secondary: #f472b6; --accent: #ffa940; --on-primary: #12052e;
+  --tone-reward: #f472b6; --tone-quality: #3ee59a; --tone-activity: #4fd2ff; --tone-social: #f472b6;
+  --card-border: rgba(167, 139, 250, .2); --shadow: 0 14px 34px rgba(0, 0, 0, .4); --shadow-lg: 0 28px 70px rgba(0, 0, 0, .6);
+  --glass: rgba(10, 6, 32, .88);
+  --hdr-bg: linear-gradient(90deg, #07031a, #12072f);
+  --nav-bg: #0d0826; --nav-bg-solid: #0d0826; --nav-text: #ece6ff; --nav-muted: #8f84b8; --nav-hover: rgba(167, 139, 250, .1);
 }
 .hub[data-type="teen"] .hi { stroke-width: 2.1; }
-.hub[data-type="teen"] .hx-title, .hub[data-type="teen"] .k-title, .hub[data-type="teen"] .sec-h, .hub[data-type="teen"] .pf-title, .hub[data-type="teen"] .sx-h, .hub[data-type="teen"] .st-card > header h2 { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
-.hub[data-type="teen"] .hx .h-btn-primary, .hub[data-type="teen"] .pf-hero .h-btn-primary, .hub[data-type="teen"] .sx-hero .h-btn-primary, .hub[data-type="teen"] .rw3-hero .h-btn-primary { background: linear-gradient(135deg, #d4ff5c, #8af2ff); color: #150b33; box-shadow: 0 10px 26px -8px rgba(212, 255, 92, .7); }
+.hub[data-type="teen"] .hx-title, .hub[data-type="teen"] .k-title, .hub[data-type="teen"] .sec-h, .hub[data-type="teen"] .pf-title, .hub[data-type="teen"] .sx-h, .hub[data-type="teen"] .sx-title, .hub[data-type="teen"] .rw3-title, .hub[data-type="teen"] .st-card > header h2 { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
 .hub[data-type="teen"] .h-btn-primary { background: linear-gradient(120deg, var(--primary), var(--secondary)); }
 .hub[data-type="teen"] .h-btn-primary:hover { transform: translateY(-2px) scale(1.02); }
-.hub[data-type="teen"] .k-card, .hub[data-type="teen"] .sx-card, .hub[data-type="teen"] .pf-card { transition: transform .4s var(--spring), box-shadow .4s var(--ease), border-color .3s; }
-.hub[data-type="teen"] .k-card:hover { transform: translateY(-3px) rotate(-.25deg); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
 .hub[data-type="teen"] .dt-hex path { fill: var(--lime); }
 .hub[data-type="teen"] .dt-hex { color: #150b33; }
-.hub[data-type="teen"] .dt-xpbar i { background: linear-gradient(90deg, var(--lime), #4be1ff); }
+.hub[data-type="teen"] .dt-xpbar i { background: linear-gradient(90deg, var(--lime), #22d3ee); }
 .hub[data-type="teen"] .tq-count { background: var(--lime); color: #150b33; }
 .hub[data-type="teen"] .tp-cells i.on { background: linear-gradient(180deg, var(--lime), #3ee59a); }
 
@@ -213,7 +200,8 @@
   --hero-bg: radial-gradient(120% 140% at 100% 0%, rgba(232, 149, 90, .28), transparent 55%), linear-gradient(120deg, #2a1f15, #1c150e);
   --hero-ink: #f3e6d4; --hero-muted: #c4ad91; --hero-accent: #f2c063; --hero-line: rgba(255, 220, 170, .14); --hero-chip: rgba(255, 220, 170, .08);
   --nav-bg: #1b150f; --nav-bg-solid: #1b150f; --nav-text: #f3e6d4; --nav-muted: #a8927a;
-  --dock-bg: rgba(34, 26, 18, .95); --dock-ink: #f3e6d4; --dock-muted: #a8927a; --dock-on: linear-gradient(135deg, #e8955a, #f2c063); --dock-on-ink: #1d1208;
+  --hdr-bg: #120d08; --hdr-ink: #f3e6d4; --hdr-muted: #a8927a; --nav-on: linear-gradient(135deg, #b8652e, #e8955a); --nav-on-ink: #1d1208; --nav-hover: rgba(255, 220, 170, .06);
+  --tile-1: linear-gradient(135deg, #3a2a1a, #5a4128); --tile-2: linear-gradient(135deg, #3d2a20, #61402e); --tile-3: linear-gradient(135deg, #43241c, #6b3a2c); --tile-4: linear-gradient(135deg, #343019, #544d28); --tile-5: linear-gradient(135deg, #4a3112, #7a5220);
   --ic-fill: color-mix(in srgb, currentColor 18%, transparent);
   background-image: none;
 }

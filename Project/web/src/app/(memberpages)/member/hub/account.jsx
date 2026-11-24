@@ -5,6 +5,7 @@
 //   shortcuts → close account. Social settings moved to Settings › Social & visibility.
 import React from "react";
 import Link from "next/link";
+import Scene3D from "./scene.jsx";
 import { api } from "@/util";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
@@ -180,6 +181,7 @@ export function AccountPage() {
           </p>
           <div className="ma-status"><span>{t("ma.status")}</span><b><i className="ma-live" aria-hidden="true" /> {t("ma.active")}</b></div>
         </div>
+        <div className="ma-scene" aria-hidden="true"><Scene3D kind="account" /></div>
         <div className="ma-health">
           <Link href="/member/profiles" className="ma-health-ring" aria-label={`${t("hdr.profile")} ${c?.pct ?? 0}%`}>
             <Ring pct={c?.pct ?? 0} size={96} stroke={8}><b>{c ? `${c.pct}%` : "…"}</b><small>{t("hdr.profile")}</small></Ring>

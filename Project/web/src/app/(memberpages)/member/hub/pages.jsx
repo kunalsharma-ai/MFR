@@ -7,6 +7,7 @@
 //   Settings  – personalization control center (see ./settings.jsx)
 import React from "react";
 import Link from "next/link";
+import Scene3D from "./scene.jsx";
 import { useMember } from "@/Context";
 import { api } from "@/util";
 import Icon from "./icons.jsx";
@@ -112,12 +113,14 @@ export function RewardsPage() {
           </div>
         </div>
         <div className="rw3-hero-art" aria-hidden="true">
+          <Scene3D kind="rewards">
           <div className="rw3-goal">
             <Ring pct={goalPct} size={196} stroke={10}>
               <span className="rw3-coins"><Coin3D size={84} label="★" /><i /><i /><i /></span>
             </Ring>
             {pts ? <span className="rw3-goal-tx">{goal ? t("rw3.toGoal", { n: fmt(goal - pts.total), g: fmt(goal) }) : t("rw3.goalReached")}</span> : null}
           </div>
+          </Scene3D>
         </div>
       </section>
       <div className="rv-top">

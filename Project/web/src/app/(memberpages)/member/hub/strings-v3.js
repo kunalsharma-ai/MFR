@@ -208,4 +208,22 @@ export const v3 = {
   "rw3.machineEyebrow": "Your prize machine",
   "rw3.machineTitle": "Win a capsule for every profile",
   "rw3.machineSub": "Each profile you complete drops its capsule and adds its points. Turn the crank to let the machine pick your next one.",
+
+  // v4 stat cards (round 3)
+  "v4.statsTitle": "Your survey and points summary",
+  "v4.stat.started.consumer": "Surveys participated",
+  "v4.stat.started.professional": "Studies participated",
+  "v4.stat.started.teen": "Surveys started",
+  "v4.stat.complete.consumer": "Surveys completed",
+  "v4.stat.complete.professional": "Studies completed",
+  "v4.stat.complete.teen": "Surveys completed",
+  "v4.stat.disqualified.consumer": "Surveys disqualified",
+  "v4.stat.disqualified.professional": "Screened out",
+  "v4.stat.disqualified.teen": "Not a match",
+  "v4.stat.earned.consumer": "Points earned",
+  "v4.stat.earned.professional": "Points earned",
+  "v4.stat.earned.teen": "XP earned",
+  "v4.stat.balance.consumer": "Points balance",
+  "v4.stat.balance.professional": "Points balance",
+  "v4.stat.balance.teen": "XP balance",
 };
