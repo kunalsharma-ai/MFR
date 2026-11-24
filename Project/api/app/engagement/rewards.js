@@ -7,7 +7,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import { CatalogueItem, Redemption, BonusOffer, Response, MemberPreference, User } from "../model/index.js";
 import { config } from "./config.js";
-import { isOn } from "./switches.js";
+import { isOn, resolve, scopeOf } from "./switches.js";
 import { registerSource, registerReconciler, grant, ledger } from "./ledger.js";
 import { memberType, fail } from "./http.js";
 import { dayKey } from "./time.js";
@@ -117,8 +117,8 @@ export async function redeem(user, origin, body = {}) {
     const type = memberType(user);
     // Teens have their own switch (learning rewards, each one needs their guardian's YES by email)
     if (type === "teen") {
-        if (!(await isOn(origin, "teen_redemptions"))) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
-    } else if (!(await isOn(origin, "redemptions"))) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
+        if (!(await isOn(origin, "teen_redemptions", scopeOf(user)))) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
+    } else if (!(await isOn(origin, "redemptions", scopeOf(user)))) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
     const it = await findItem(user, origin, body.item);
     const { balances } = await ledger(user, origin);
     if (it.points < c.points.minRedemption && type !== "teen") fail("too_small", `The smallest reward is ${c.points.minRedemption} points.`, 422);
@@ -191,21 +191,31 @@ export async function activeOffers(user, origin, now = new Date()) {
     const list = await BonusOffer.find({ origin, isActive: true, isDeleted: false, startsAt: { $lte: now }, endsAt: { $gt: now } }).lean();
     const out = list.filter((o) => !o.audience?.length || o.audience.includes(type))
         .map((o) => ({ id: String(o._id), title: o.title, description: o.description, multiplier: o.multiplier, endsAt: type === "teen" ? null : o.endsAt }));
-    const b = config().bonus;
-    if (b.weekendMultiplier > 1 && b.audiences.includes(type)) out.push({ id: "weekend", title: "Weekend bonus", description: "", multiplier: b.weekendMultiplier, weekend: true });
+    const w = await weekend(user, origin);
+    if (w) out.push({ id: "weekend", title: "Weekend bonus", description: "", multiplier: w.multiplier, weekend: true });
     return out;
+}
+
+// The weekend multiplier comes from the brand's weekend_multiplier switch (for the member's segment and country). It
+// counts only surveys finished on or after the config's weekendFrom and after the switch went on. Adults only.
+async function weekend(user, origin) {
+    const b = config().bonus;
+    if (!b.audiences.includes(memberType(user))) return null;
+    const s = await resolve(origin, "weekend_multiplier", scopeOf(user));
+    if (!s.on || !(s.value > 1)) return null;
+    const from = Math.max(new Date(b.weekendFrom).getTime() || 0, s.since ? new Date(s.since).getTime() : 0);
+    return { multiplier: s.value, from: new Date(from) };
 }
 
 const isWeekend = (date, tz) => { const d = new Date(`${dayKey(date, tz)}T12:00:00Z`).getUTCDay(); return d === 0 || d === 6; };
 
 registerReconciler(async (user, origin) => {
     const type = memberType(user);
-    const b = config().bonus;
+    const w = await weekend(user, origin);
     const offers = (await BonusOffer.find({ origin, isActive: true, isDeleted: false }).lean())
         .filter((o) => !o.audience?.length || o.audience.includes(type));
-    const weekendOn = b.weekendMultiplier > 1 && b.audiences.includes(type);
-    if (!offers.length && !weekendOn) return;
-    const earliest = Math.min(...offers.map((o) => new Date(o.startsAt).getTime()), weekendOn ? new Date(b.weekendFrom).getTime() : Infinity);
+    if (!offers.length && !w) return;
+    const earliest = Math.min(...offers.map((o) => new Date(o.startsAt).getTime()), w ? w.from.getTime() : Infinity);
     const done = await Response.find({ user: oid(user._id), origin, status: "complete", isActive: true, isDeleted: false, updatedAt: { $gte: new Date(earliest) } }).lean();
     for (const r of done) {
         const at = new Date(r.updatedAt);
@@ -215,8 +225,8 @@ registerReconciler(async (user, origin) => {
         const best = offers.filter((o) => at >= new Date(o.startsAt) && at < new Date(o.endsAt)).sort((x, y) => y.multiplier - x.multiplier)[0];
         if (best) {
             await grant(user, origin, { category: "bonus", key: `bonus:${best._id}:${r._id}`, name: best.title, points: Math.round(pts * (best.multiplier - 1)), remarks: `${best.multiplier}x ${best.title} on ${r?.survey?.name || r?.survey?.slug}` });
-        } else if (weekendOn && at >= new Date(b.weekendFrom) && isWeekend(at, user.timezone)) {
-            await grant(user, origin, { category: "bonus", key: `bonus:weekend:${r._id}`, name: "Weekend bonus", points: Math.round(pts * (b.weekendMultiplier - 1)), remarks: `${b.weekendMultiplier}x weekend bonus on ${r?.survey?.name || r?.survey?.slug}` });
+        } else if (w && at >= w.from && isWeekend(at, user.timezone)) {
+            await grant(user, origin, { category: "bonus", key: `bonus:weekend:${r._id}`, name: "Weekend bonus", points: Math.round(pts * (w.multiplier - 1)), remarks: `${w.multiplier}x weekend bonus on ${r?.survey?.name || r?.survey?.slug}` });
         }
     }
 });

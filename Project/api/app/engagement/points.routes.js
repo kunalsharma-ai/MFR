@@ -14,7 +14,7 @@
 import mongoose from "mongoose";
 import { MemberPreference, PointsHold, Response, Reward, User } from "../model/index.js";
 import { publicConfig } from "./config.js";
-import { isOn } from "./switches.js";
+import { isOn, scopeOf } from "./switches.js";
 import * as L from "./ledger.js";
 import { streakOf } from "./streak.js";
 import * as Marketing from "./marketing.js";
@@ -35,7 +35,8 @@ export async function prefsOf(user, origin) {
 const BEST_TIMES = ["morning", "afternoon", "evening", "night"];
 const hhmm = (s, d) => (/^\d{2}:\d{2}$/.test(String(s)) && Number(String(s).slice(0, 2)) < 24 && Number(String(s).slice(3)) < 60 ? String(s) : d);
 const bool = (v, d) => (typeof v === "boolean" ? v : d);
-export function sanitizePrefs(body = {}, current = {}) {
+// `on.whatsapp`: the brand's whatsapp switch. While it is off a member can't choose WhatsApp (it stays as it was).
+export function sanitizePrefs(body = {}, current = {}, on = { whatsapp: true }) {
     const b = clean(body) || {};
     const out = {};
     if (b.survey) {
@@ -50,7 +51,7 @@ export function sanitizePrefs(body = {}, current = {}) {
         out.notifications = {
             email: bool(n.email, c.email ?? true),
             push: bool(n.push, c.push ?? false),
-            whatsapp: bool(n.whatsapp, c.whatsapp ?? false),
+            whatsapp: on.whatsapp ? bool(n.whatsapp, c.whatsapp ?? false) : c.whatsapp ?? false,
             weeklySummary: bool(n.weeklySummary, c.weeklySummary ?? true),
             expiryReminders: bool(n.expiryReminders, c.expiryReminders ?? true),
             newSurvey: bool(n.newSurvey, c.newSurvey ?? true),
@@ -81,7 +82,7 @@ const view = (e) => ({ id: e.id, type: e.type, name: e.name, points: e.points, s
 
 export function mount(router) {
     router
-        .get("/config", handle(async (req) => publicConfig(memberType(req.user), { draw: await isOn(req.origin, "draw"), push: await isOn(req.origin, "push") })))
+        .get("/config", handle(async (req) => publicConfig(memberType(req.user), { draw: await isOn(req.origin, "draw", scopeOf(req.user)), push: await isOn(req.origin, "push"), whatsapp: await isOn(req.origin, "whatsapp", scopeOf(req.user)), hold: await L.holdFor(req.user, req.origin) })))
         .get("/summary", handle(async (req) => {
             const { balances, clearing, entries } = await L.ledger(req.user, req.origin);
             const streak = await streakOf(req.user, req.origin);
@@ -109,7 +110,7 @@ export function mount(router) {
         }))
         .put("/preferences", limit(30, 1), handle(async (req) => {
             const current = await prefsOf(req.user, req.origin);
-            const patch = sanitizePrefs(req.body, current);
+            const patch = sanitizePrefs(req.body, current, { whatsapp: await isOn(req.origin, "whatsapp", scopeOf(req.user)) });
             if (!Object.keys(patch).length) fail("bad_request", "Nothing to save.");
             const p = await savePrefs(req.user, req.origin, patch);
             return { survey: p.survey, notifications: p.notifications, leaderboard: p.leaderboard };

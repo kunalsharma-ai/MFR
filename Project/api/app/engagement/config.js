@@ -204,18 +204,18 @@ export function config() {
 export function setConfig(over = {}) { cached = deepMerge(DEFAULTS, over); return cached; }
 
 // What the member area may see (no internal switches).
-// `on`: the brand's switches that matter here ({ draw, push }), read by the caller from engagement/switches.js
+// `on`: the brand's switches that matter here ({ draw, push, whatsapp, hold }), read by the caller from engagement/switches.js
 export function publicConfig(memberType, on = {}) {
     const c = config();
     return {
         usdPerPoint: memberType === "teen" ? null : c.points.usdPerPoint, // Teens never see money values
         currency: c.points.currency,
         minRedemption: c.points.minRedemption,
-        holdDays: c.points.holdDays,
+        holdDays: on.hold ? on.hold.days : 0,
         streakBonuses: c.streak.bonuses,
         dailyPoll: { enabled: c.dailyPoll.enabled, points: c.dailyPoll.points },
         drawEnabled: memberType !== "teen" && Boolean(on.draw),
         push: { enabled: Boolean(on.push && c.push?.vapidPublicKey), publicKey: on.push ? c.push.vapidPublicKey || null : null },
-        whatsapp: { enabled: Boolean(c.whatsapp?.enabled) },
+        whatsapp: { enabled: Boolean(on.whatsapp) },
     };
 }

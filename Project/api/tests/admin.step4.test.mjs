@@ -63,7 +63,8 @@ await member(MHO, "Mo");
 test("switches: all off by default, a reason is required, the kill switch stops everything, brands are apart", async () => {
     const b = await admin("GET", `${V1}/switches`);
     assert.equal(b.status, 200, JSON.stringify(b.json));
-    assert.ok(b.json.data.switches.every((s) => s.effective === false), "everything starts off");
+    // everything starts off, except the streak, challenge and referral bonuses that pay today (step 4c switch)
+    assert.deepEqual(b.json.data.switches.filter((s) => s.effective).map((s) => s.key), ["bonuses"], "everything else starts off");
     assert.equal((await admin("PUT", `${V1}/switches/redemptions`, { on: true })).json.code, "reason_required");
     assert.equal((await admin("PUT", `${V1}/switches/nope`, { on: true, reason: "testing it" })).status, 404);
 

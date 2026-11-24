@@ -238,6 +238,6 @@ export async function guardianInfo(user, origin) {
         status: reg.status,
         decidedAt: reg.decision?.at || null,
         rewardsNeedOk: true,
-        rewardsOpen: await isOn(origin, "teen_redemptions"),
+        rewardsOpen: await isOn(origin, "teen_redemptions", { segment: "teen" }),
     };
 }

@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import { Task, TaskEntry, Response, Reward, StreakDay } from "../model/index.js";
 import { config } from "./config.js";
 import { grant, registerReconciler } from "./ledger.js";
+import { isOn, scopeOf } from "./switches.js";
 import { record } from "./streak.js";
 import { dayKey, monthKey, daysBetween } from "./time.js";
 import { memberType, fail } from "./http.js";
@@ -177,6 +178,7 @@ export async function challenges(user, origin, now = new Date()) {
 registerReconciler(async (user, origin) => {
     const c = config().challenges;
     if (!c?.enabled) return;
+    if (!(await isOn(origin, "bonuses", scopeOf(user)))) return; // the brand's bonuses switch
     // this month, and last month in case the target was reached in its final hours and nothing was read since
     const now = new Date();
     const cur = monthKey(now, user.timezone);
