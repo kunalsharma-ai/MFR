@@ -11,6 +11,7 @@
 import React from "react";
 import Link from "next/link";
 import Scene3D from "./scene.jsx";
+import Tile from "./tiles.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Counter, Ring, Burst, LoadingBlock, ErrorState, Reveal } from "./ui.jsx";
@@ -18,7 +19,7 @@ import { Avatar } from "./Shell.jsx";
 import { fmt } from "./data";
 import { useHub, useRise } from "./store";
 import { play } from "./sound";
-import { profileTopic } from "./topics";
+import { profileTopic, profileArt } from "./topics";
 import FamilyPanel from "./family.jsx";
 
 function useCelebrate(id, pct) {
@@ -96,40 +97,19 @@ function ProfileHero({ hub, cards }) {
   );
 }
 
-/* ---------------- one profile card ---------------- */
+/* ---------------- one profile card (v6, round 5): art panel with a progress ring, big title, chips, full-width action ---------------- */
 function ProfileCard({ card, i }) {
-  const { tp, title, text, pct, done, locked, questions, points, open } = card;
+  const { tp, title, pct, done, locked, questions, points, open, num } = card;
   const state = done ? "done" : locked ? "locked" : pct > 0 ? "going" : "new";
-  const cta = done ? t("pf.review") : locked ? t("pf.locked") : pct > 0 ? t("pf.continue") : t("pf.start");
+  const cta = done ? t("v7.tile.update") : locked ? t("v7.tile.howUnlock") : pct > 0 ? t("pf.continue") : t("pf.start");
+  const mins = Math.max(1, Math.round((questions * 8) / 60));
+  const meta = [];
+  if (questions) meta.push({ icon: "surveys", text: t("pf.questions", { n: questions }) });
+  meta.push({ icon: "clock", text: t("pf.minutes", { n: mins }) });
   return (
-    <li className={`pf-card is-${state}`} style={{ "--c1": tp.c1, "--c2": tp.c2, "--i": i, "--w": `${pct}%` }}>
-      <button type="button" className="pf-card-btn" onClick={() => { play("tap"); open(); }}
-        aria-label={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`}>
-        <span className="pf-card-glow" aria-hidden="true" />
-        <span className="pf-card-top">
-          <span className="pf-glyph" aria-hidden="true"><Icon name={tp.ic} size={26} /><i /></span>
-          <span className={`pf-state s-${state}`}>
-            <Icon name={done ? "check" : locked ? "lock" : pct > 0 ? "hourglass" : "spark"} size={13} />
-            {t(`pf.state.${state}`, { n: pct })}
-          </span>
-        </span>
-        <span className="pf-card-tx">
-          <b className="pf-card-t">{title}</b>
-          <small className="pf-card-d">{text}</small>
-        </span>
-        <span className="pf-card-meta">
-          {questions ? <span><Icon name="surveys" size={14} /> {t("pf.questions", { n: questions })}</span> : null}
-          <span><Icon name="clock" size={14} /> {t("pf.minutes", { n: Math.max(1, Math.round((questions * 8) / 60)) })}</span>
-          {points ? <span className="pf-pts"><Icon name="coin" size={14} /> {done ? t("pf.earned", { n: fmt(points) }) : `+${fmt(points)}`}</span> : null}
-        </span>
-        <span className="pf-meter" aria-hidden="true"><i /></span>
-        <span className="pf-card-foot">
-          <span className="pf-pct">{pct}%</span>
-          <span className="pf-go">{cta} <Icon name="arrow" size={15} /></span>
-        </span>
-        {done ? <span className="pf-medal" aria-hidden="true"><Icon name="trophy" size={16} /></span> : null}
-      </button>
-    </li>
+    <Tile c1={tp.c1} c2={tp.c2} art={card.art} name={title} num={num} meta={meta} pts={points ? fmt(points) : null}
+      state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
+      onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
   );
 }
 
@@ -165,13 +145,13 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
   const hub = useHub();
   const { member, type, completion: c, profiles: pq } = hub;
   const [party, endParty] = useCelebrate(member?._id, c?.pct);
-  const cards = profiles.map((p) => {
+  const cards = profiles.map((p, k) => {
     const tp = profileTopic(p);
     const pct = isDone(p) ? 100 : pctOf(p);
     return {
-      slug: p.slug, tp, pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
+      slug: p.slug, tp, art: profileArt(p.slug, tp), pct, done: pct >= 100, locked: isLocked(p.slug), questions: questionsOf(p), points: Number(p.points) || 0,
       title: tx(`pf3.${tp.k}.title`, p.name), text: tx(`pf3.${tp.k}.text`, p.description || p.summary || ""), name: p.name,
-      open: () => onOpen(p),
+      open: () => onOpen(p), num: k + 1,
     };
   });
   const order = { going: 0, new: 1, locked: 2, done: 3 };
@@ -181,17 +161,27 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
   return (
     <div className="pf">
       <ProfileHero hub={hub} cards={cards} />
-      <section className="pf-sec" aria-labelledby="pf-cards-t">
-        <header className="pf-sec-h">
-          <h2 id="pf-cards-t" className="pf-h"><Icon name="layers" size={20} /> {t("pf.cardsTitle")}</h2>
-          <p>{t("pf.cardsSub")}</p>
-        </header>
-        {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
-          <p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p>
-        ) : (
-          <ul className="pf-grid">{sorted.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
-        )}
-      </section>
+      {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
+        <section className="pf-sec"><p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p></section>
+      ) : (
+        [
+          { k: "going", art: "hourglass", list: sorted.filter((x) => stateOf(x) === "going") },
+          { k: "next", art: "sparkles", list: sorted.filter((x) => stateOf(x) === "new" || stateOf(x) === "locked") },
+          { k: "done", art: "verified", list: sorted.filter((x) => stateOf(x) === "done") },
+        ].filter((g) => g.list.length).map((g) => (
+          <section key={g.k} className={`pf-sec pf-g-${g.k}`} aria-labelledby={`pf-g-${g.k}`}>
+            <header className="h7-head">
+              <img className="h7-head-art" src={`/ps/images/emoji/${g.art}.webp`} alt="" width="40" height="40" loading="lazy" />
+              <div>
+                <h2 id={`pf-g-${g.k}`} className="h7-title">{t(`v7.pf.${g.k}`)}</h2>
+                <p className="h7-sub">{t(`v7.pf.${g.k}Sub`)}</p>
+              </div>
+              <span className="h7-count">{g.k === "done" ? `${g.list.length}/${cards.length}` : g.list.length}</span>
+            </header>
+            <ul className="pf-grid tc-grid">{g.list.map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
+          </section>
+        ))
+      )}
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
