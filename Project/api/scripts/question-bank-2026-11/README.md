@@ -10,7 +10,7 @@ bank check against the 22 Survey 2026 documents.
   question keeps their own answer.
 - **Move** (123 questions): an old question with no twin moves into the new profile where it belongs.
 - The old profiles end up empty and are switched off (`isActive: false`). Teen (`minor`) profiles keep working: a merged
-  question is replaced by its new question in place.
+  question is replaced by its new question in place. Teen profiles get no tobacco, nicotine or alcohol questions.
 - Nothing is hard-deleted from the bank; retired rows get `isDeleted: true, isActive: false`. Copied answers carry
   `migratedFrom`. The old answers stay in place.
 
