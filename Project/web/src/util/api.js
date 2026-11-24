@@ -49,6 +49,11 @@ export class API {
           errorData = { message: response.statusText };
         }
 
+        // Teen turning 18: the account is paused until the adult terms are accepted on the move screen
+        if (errorData?.code === 'adult_terms_required' && typeof window !== 'undefined' && !window.location.pathname.startsWith('/member/adult')) {
+          window.location.assign('/member/adult');
+          return errorData;
+        }
         document.dispatchEvent(
           new CustomEvent('error-received', {
             detail: {
