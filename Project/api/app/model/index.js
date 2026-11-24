@@ -46,3 +46,4 @@ export { default as Audience } from "./Audience.js";
 export { default as AdminMessage } from "./AdminMessage.js";
 export { default as MessageReceipt } from "./MessageReceipt.js";
 export { default as HelpArticle } from "./HelpArticle.js";
+export { default as FeatureSwitch } from "./FeatureSwitch.js";

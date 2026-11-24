@@ -11,6 +11,7 @@ import {
     TeenRegistration, TeenGuardian, Invites, PointsHold, QualitySnapshot, ExpertVerification,
 } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn } from "./switches.js";
 import { ledger } from "./ledger.js";
 import { streakOf } from "./streak.js";
 import { profileProgress } from "./lifecycle.js";
@@ -168,9 +169,10 @@ export async function adminDecide(admin, origin, id, b = {}) {
 }
 
 // ---- Web Push ----------------------------------------------------------------------------------------------------------
-export const pushReady = () => Boolean(config().push?.enabled && config().push?.vapidPublicKey && config().push?.vapidPrivateKey);
+// push needs the VAPID keys in the config and the brand's "push" switch on
+export const pushReady = async (origin) => Boolean(config().push?.vapidPublicKey && config().push?.vapidPrivateKey && (await isOn(origin, "push")));
 export async function subscribe(user, origin, sub = {}, ua = "") {
-    if (!pushReady()) fail("closed", "Push notifications aren't switched on yet.", 409);
+    if (!(await pushReady(origin))) fail("closed", "Push notifications aren't switched on yet.", 409);
     const endpoint = String(sub.endpoint || "");
     if (!/^https:\/\/[^\s]{10,1000}$/.test(endpoint)) fail("validation", "That push subscription isn't valid.", 422);
     const keys = { p256dh: String(sub.keys?.p256dh || "").slice(0, 200), auth: String(sub.keys?.auth || "").slice(0, 100) };
@@ -197,7 +199,7 @@ async function lib() {
 // {title, body, url}. Returns how many browsers it reached. Never throws.
 export async function pushTo(userId, origin, payload) {
     try {
-        if (!pushReady()) return 0;
+        if (!(await pushReady(origin))) return 0;
         const u = await User.findById(userId).select("timezone").lean();
         const p = await prefsOf({ _id: userId }, origin);
         if (!p?.notifications?.push || inQuietHours(p.notifications.quietHours, u?.timezone)) return 0;
@@ -236,6 +238,6 @@ export async function guardianInfo(user, origin) {
         status: reg.status,
         decidedAt: reg.decision?.at || null,
         rewardsNeedOk: true,
-        rewardsOpen: Boolean(config().teen?.redemptionsEnabled),
+        rewardsOpen: await isOn(origin, "teen_redemptions"),
     };
 }

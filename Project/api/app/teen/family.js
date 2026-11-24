@@ -13,7 +13,7 @@
 // on the server (select: false) and are never sent.
 import { User, TeenRegistration, TeenGuardian, TeenConsent, Redemption, GuardianLink } from "../model/index.js";
 import { PARENT_SURVEY_RULES, GUARDIAN_CONSENT, TEEN_CONSENT } from "./content.js";
-import { config } from "../engagement/config.js";
+import { isOn } from "../engagement/switches.js";
 import { world, TeenError } from "./service.js";
 import * as R from "./rules.js";
 
@@ -122,7 +122,6 @@ export async function family(req) {
     const loc = td.location || {};
     const teenAssent = consents.find((c) => c.party === "teen") || null;
     const at = (status) => iso((reg.history || []).find((h) => h.status === status)?.at);
-    const cfg = config().teen || {};
 
     return {
         ready: true,
@@ -170,7 +169,7 @@ export async function family(req) {
         rewards: {
             // from the engagement settings: Teens earn points only (never money) and every learning reward needs
             // the guardian's YES by email
-            redemptionsOpen: Boolean(cfg.redemptionsEnabled),
+            redemptionsOpen: await isOn(origin, "teen_redemptions"),
             guardianApprovalRequired: true,
             requests: requests.map((r) => ({
                 reference: r.reference, title: r.item?.title || "", kind: r.item?.kind || "", points: r.points, status: r.status,

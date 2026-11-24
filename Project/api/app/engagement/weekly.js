@@ -4,6 +4,7 @@
 // not-yet-active accounts (e.g. a Teen waiting for guardian consent), and anyone already sent one in the last 6 days.
 import { User, MemberPreference } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn, onAnywhere } from "./switches.js";
 import * as L from "./ledger.js";
 import { streakOf } from "./streak.js";
 import { memberType } from "./http.js";
@@ -29,8 +30,9 @@ export async function weeklyFor(user, origin, { now = new Date() } = {}) {
 
 export async function runWeekly({ dryRun = false, origin, now = new Date(), force = false } = {}) {
     const c = config().weeklySummary;
-    const report = { enabled: Boolean(c.enabled), considered: 0, sent: 0, skipped: {}, dryRun };
-    if (!c.enabled && !force) return report;
+    const enabled = origin ? await isOn(origin, "email_weekly") : await onAnywhere("email_weekly");
+    const report = { enabled, considered: 0, sent: 0, skipped: {}, dryRun };
+    if (!enabled && !force) return report;
     const skip = (why) => { report.skipped[why] = (report.skipped[why] || 0) + 1; };
     const q = { isActive: true, isDeleted: false, registrationStatus: { $in: ["active", null] } };
     if (origin) q.origin = origin;
@@ -39,6 +41,7 @@ export async function runWeekly({ dryRun = false, origin, now = new Date(), forc
         if (report.sent >= c.maxPerRun) break;
         report.considered += 1;
         user._id = String(user._id);
+        if (!force && !(await isOn(user.origin, "email_weekly"))) { skip("switched_off"); continue; }
         const prefs = await MemberPreference.findOne({ user: user._id, origin: user.origin }).lean();
         const n = prefs?.notifications || {};
         if (n.email === false || n.weeklySummary === false) { skip("opted_out"); continue; }

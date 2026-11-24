@@ -2,7 +2,7 @@
 //
 // BUILT BUT OFF. Kunal chose on 23 Nov 2026 to build it and keep it switched off until legal confirms where a points
 // prize draw is allowed. Three locks keep it shut:
-//   1. config.draw.enabled must be true
+//   1. the brand's "draw" switch must be on (config.draw.enabled is its default)
 //   2. the draw lists the countries legal has cleared (an empty list means nowhere)
 //   3. Teens are never offered a draw, whatever the settings
 // The rules text shown to members is the admin's own (PrizeDraw.prize + rulesUrl); this code writes no legal wording.
@@ -11,7 +11,7 @@
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { PrizeDraw, DrawEntry, User } from "../model/index.js";
-import { config } from "./config.js";
+import { isOn } from "./switches.js";
 import { registerSource, ledger } from "./ledger.js";
 import { memberType, fail } from "./http.js";
 
@@ -26,8 +26,9 @@ registerSource(async (user, origin) => {
     }));
 });
 
-export function eligible(user, draw) {
-    if (!config().draw?.enabled) return { ok: false, reason: "off" };
+// `on`: the brand's draw switch, read by the caller (isOn(origin, "draw"))
+export function eligible(user, draw, on) {
+    if (!on) return { ok: false, reason: "off" };
     if (memberType(user) === "teen") return { ok: false, reason: "teen" };
     if (!draw) return { ok: false, reason: "none" };
     const c = countryOf(user);
@@ -44,9 +45,10 @@ const view = (d, mine) => ({
 
 // The open draw for this member, or null. Says nothing at all when the feature is off or the member can't enter.
 export async function current(user, origin) {
-    if (!config().draw?.enabled || memberType(user) === "teen") return null;
+    const on = await isOn(origin, "draw");
+    if (!on || memberType(user) === "teen") return null;
     const d = await PrizeDraw.findOne({ origin, status: "open", isActive: true, isDeleted: false, closesAt: { $gt: new Date() } }).sort({ closesAt: 1 }).lean();
-    if (!d || !eligible(user, d).ok) return null;
+    if (!d || !eligible(user, d, on).ok) return null;
     const mine = await DrawEntry.findOne({ draw: d._id, user: oid(user._id), origin }).lean();
     return view(d, mine);
 }
@@ -58,7 +60,7 @@ export async function enter(user, origin, id, tickets) {
     if (!(n >= 1 && n <= 100)) fail("validation", "Choose how many tickets.", 422);
     if (!mongoose.isValidObjectId(id)) fail("bad_request", "That id isn't valid.");
     const d = await PrizeDraw.findOne({ _id: id, origin, isActive: true, isDeleted: false }).lean();
-    const el = eligible(user, d);
+    const el = eligible(user, d, await isOn(origin, "draw"));
     if (!el.ok) fail(el.reason === "off" || el.reason === "teen" ? "closed" : el.reason, el.reason === "closed" ? "This draw has closed." : "This draw isn't open to you.", el.reason === "none" ? 404 : 409);
     const key = `${user._id}`;
     if (busy.has(key)) fail("too_soon", "One moment, your last entry is still being saved.", 429);

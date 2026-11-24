@@ -7,6 +7,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import { CatalogueItem, Redemption, BonusOffer, Response, MemberPreference, User } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn } from "./switches.js";
 import { registerSource, registerReconciler, grant, ledger } from "./ledger.js";
 import { memberType, fail } from "./http.js";
 import { dayKey } from "./time.js";
@@ -116,8 +117,8 @@ export async function redeem(user, origin, body = {}) {
     const type = memberType(user);
     // Teens have their own switch (learning rewards, each one needs their guardian's YES by email)
     if (type === "teen") {
-        if (!c.teen?.redemptionsEnabled) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
-    } else if (!c.rewards.redemptionsEnabled) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
+        if (!(await isOn(origin, "teen_redemptions"))) fail("closed", "Rewards for Teen Panel members open soon, with your parent or guardian's OK.", 409);
+    } else if (!(await isOn(origin, "redemptions"))) fail("closed", "Redemptions open soon. Your points are safe and keep adding up.", 409);
     const it = await findItem(user, origin, body.item);
     const { balances } = await ledger(user, origin);
     if (it.points < c.points.minRedemption && type !== "teen") fail("too_small", `The smallest reward is ${c.points.minRedemption} points.`, 422);

@@ -8,6 +8,7 @@
 import mongoose from "mongoose";
 import { User, MemberPreference } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn, onAnywhere } from "./switches.js";
 import { memberType } from "./http.js";
 import { send, unsubscribeLink, siteUrl } from "./mail.js";
 import { dayKey } from "./time.js";
@@ -17,8 +18,8 @@ const later = (fn) => { setImmediate(() => fn().catch((e) => fsLogger.Log("engag
 const plainUser = (u) => { const x = Mutate(u); x.fullName = [x?.name?.first, x?.name?.middle, x?.name?.last].filter(Boolean).join(" "); return x; };
 
 export function welcome(user, origin) {
-    if (!config().emails.welcome) return;
     later(async () => {
+        if (!(await isOn(origin, "email_welcome"))) return;
         const u = plainUser(await User.findById(user._id || user).lean());
         if (!u?.mail || memberType(u) === "teen") return; // Teens get teen/teen-active
         await send({ origin, to: u.mail, category: "register", template: "welcome", subject: "Your MyFrequentRewards account is active", data: { user: u } });
@@ -27,8 +28,9 @@ export function welcome(user, origin) {
 
 export function newUser(user, origin) {
     const c = config().emails.newUser;
-    if (!c?.enabled || !c.to?.length) return;
+    if (!c?.to?.length) return;
     later(async () => {
+        if (!(await isOn(origin, "email_new_user"))) return;
         const u = plainUser(user);
         for (const to of c.to) {
             await send({ origin, to, category: "newuser", template: "newuser", subject: "New registration on the MyFrequentRewards panel", data: { user: u, member: { email: u.mail }, preferences_url: `${siteUrl(origin)}/member/settings` } });
@@ -39,14 +41,16 @@ export function newUser(user, origin) {
 // survey: { name, slug, points, loi } ; userIds: who was just invited
 export function newSurvey(userIds, survey, origin) {
     // a push to each member's browsers too, when push is set up and the member switched it on (phase 7)
-    if (userIds?.length && config().push?.enabled) {
+    if (userIds?.length) {
         later(async () => {
+            if (!(await isOn(origin, "push"))) return;
             const { pushTo } = await import("./account.js");
             for (const id of userIds) await pushTo(id, origin, { title: "A new survey is open for you", body: `${survey.name} · ${survey.points || 0} points`, url: "/member/surveys" });
         });
     }
-    if (!config().emails.newSurvey || !userIds?.length) return;
+    if (!userIds?.length) return;
     later(async () => {
+        if (!(await isOn(origin, "email_new_survey"))) return;
         const week = new Date(Date.now() - 7 * 86400000);
         for (const id of userIds) {
             const u = plainUser(await User.findById(id).lean());
@@ -79,8 +83,9 @@ export function newSurvey(userIds, survey, origin) {
 }
 
 export async function runBirthdays({ dryRun = false, origin, now = new Date(), force = false } = {}) {
-    const report = { enabled: Boolean(config().emails.birthday), sent: 0, dryRun };
-    if (!config().emails.birthday && !force) return report;
+    const enabled = origin ? await isOn(origin, "email_birthday") : await onAnywhere("email_birthday");
+    const report = { enabled, sent: 0, dryRun };
+    if (!enabled && !force) return report;
     const q = { isActive: true, isDeleted: false, registrationStatus: { $in: ["active", null] }, dob: { $ne: null } };
     if (origin) q.origin = origin;
     const year = now.getUTCFullYear();
@@ -89,6 +94,7 @@ export async function runBirthdays({ dryRun = false, origin, now = new Date(), f
         const today = dayKey(now, u.timezone).slice(5);
         const bday = new Date(u.dob).toISOString().slice(5, 10);
         if (today !== bday) continue;
+        if (!force && !(await isOn(u.origin, "email_birthday"))) continue;
         const prefs = await MemberPreference.findOne({ user: u._id, origin: u.origin }).lean();
         if (prefs?.lastBirthdayYear === year || prefs?.notifications?.email === false || prefs?.notifications?.birthday === false) continue;
         if (dryRun) { report.sent += 1; continue; }

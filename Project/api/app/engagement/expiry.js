@@ -3,6 +3,7 @@
 // reminder before the date. Oldest points are treated as spent first. Teens are never included.
 import { User, MemberPreference } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn, onAnywhere } from "./switches.js";
 import { entries } from "./ledger.js";
 import { memberType } from "./http.js";
 import { send, unsubscribeLink, siteUrl } from "./mail.js";
@@ -28,12 +29,14 @@ export function atRisk(list, { months, now = new Date() }) {
 
 export async function runExpiryReminders({ dryRun = false, origin, now = new Date(), force = false } = {}) {
     const c = config().expiry;
-    const report = { enabled: Boolean(c.enabled), sent: 0, dryRun };
-    if (!c.enabled && !force) return report;
+    const enabled = origin ? await isOn(origin, "email_expiry") : await onAnywhere("email_expiry");
+    const report = { enabled, sent: 0, dryRun };
+    if (!enabled && !force) return report;
     const q = { isActive: true, isDeleted: false, registrationStatus: { $in: ["active", null] } };
     if (origin) q.origin = origin;
     for await (const u of User.find(q).select("name mail category timezone origin").lean().cursor()) {
         if (memberType(u) === "teen") continue;
+        if (!force && !(await isOn(u.origin, "email_expiry"))) continue;
         u._id = String(u._id);
         const prefs = await MemberPreference.findOne({ user: u._id, origin: u.origin }).lean();
         if (prefs?.notifications?.email === false || prefs?.notifications?.expiryReminders === false) continue;

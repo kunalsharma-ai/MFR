@@ -12,6 +12,7 @@
 import mongoose from "mongoose";
 import { Task, PrizeDraw, DrawEntry, Story } from "../model/index.js";
 import { config } from "./config.js";
+import { isOn } from "./switches.js";
 import { reconcile } from "./ledger.js";
 import * as D from "./daily.js";
 import * as Draw from "./draw.js";
@@ -115,7 +116,7 @@ export function mount(router) {
             const draws = await PrizeDraw.find({ origin: req.origin, isDeleted: false }).sort({ month: -1 }).lean();
             const counts = await DrawEntry.aggregate([{ $match: { origin: req.origin } }, { $group: { _id: "$draw", members: { $sum: 1 }, tickets: { $sum: "$tickets" } } }]);
             const by = new Map(counts.map((c) => [String(c._id), c]));
-            return { enabled: Boolean(config().draw?.enabled), draws: draws.map((d) => ({ ...d, members: by.get(String(d._id))?.members || 0, tickets: by.get(String(d._id))?.tickets || 0 })) };
+            return { enabled: await isOn(req.origin, "draw"), draws: draws.map((d) => ({ ...d, members: by.get(String(d._id))?.members || 0, tickets: by.get(String(d._id))?.tickets || 0 })) };
         }))
         .post("/admin/draws", requireAdmin, handle(async (req) => {
             const x = clean(req.body) || {};
