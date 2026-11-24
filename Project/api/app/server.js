@@ -14,8 +14,11 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
         db: process.env.mongodb ?? "mongodb://db/mfr"
     }
     await mongoose.connect(env.db);
+    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)
+        fsLogger.Log("WARNING: JWT_SECRET is missing or shorter than 32 characters. Use a long random secret in production.");
     const app = express();
     app
+        .disable("x-powered-by")
         .set("view-engine", "twig")
         .set('views', "views")
         .use([
@@ -34,7 +37,8 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
             }),
             cookieParser(),
             pureIP,
-            fileUpload(),
+            // uploads: 10 MB a file, 5 files a request, nothing parsed into the request beyond that
+            fileUpload({ limits: { fileSize: 10 * 1024 * 1024, files: 5, fields: 50 }, abortOnLimit: true, safeFileNames: true, preserveExtension: 4 }),
             setOrigin,
             errorRoute,
             appRoute

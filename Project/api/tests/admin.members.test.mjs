@@ -2,6 +2,7 @@
 //
 //   MONGO_URL=mongodb://127.0.0.1:27017/mfr_admin_test node --test --test-force-exit tests/admin.members.test.mjs
 import test from "node:test";
+import crypto from "node:crypto";
 import assert from "node:assert/strict";
 import dns from "node:dns";
 
@@ -33,12 +34,14 @@ const ACTOR = "11111111-2222-4333-8444-555555555555";
 
 async function admin(method, path, body, { origin = MFR, secret = SECRET, ts = Math.floor(Date.now() / 1000), actor = ACTOR } = {}) {
     const raw = body ? JSON.stringify(body) : "";
+    const nonce = crypto.randomBytes(16).toString("hex");
     const headers = {
         "content-type": "application/json",
         "x-madp-timestamp": String(ts),
+        "x-madp-nonce": nonce,
         "x-madp-origin": origin,
         "x-madp-actor": actor,
-        "x-madp-signature": sign(secret, { timestamp: String(ts), method, path, origin, actor, body: raw }),
+        "x-madp-signature": sign(secret, { nonce, timestamp: String(ts), method, path, origin, actor, body: raw }),
     };
     const res = await fetch(`${BASE}${path}`, { method, headers, body: raw || undefined });
     let json = {};

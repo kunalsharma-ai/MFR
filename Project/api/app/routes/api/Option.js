@@ -1,6 +1,8 @@
 import express from "express";
 import { Option as optionController } from "../../controller/index.js";
 import { expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
+import { requireAdmin } from "../../utils/access.js";
+// Reading answer options is public. Creating, changing and deleting them is for admins only.
 
 const router = express.Router();
 router
@@ -48,7 +50,7 @@ router
         },
         optionController
     ))
-    .put(expressRoute(
+    .put(requireAdmin, expressRoute(
         async req => {
             // Create new entry
             let message = "";
@@ -69,7 +71,7 @@ router
         },
         optionController
     ))
-    .put(expressRoute(
+    .put(requireAdmin, expressRoute(
         async req => {
             // update single entry
             let message = "";
@@ -78,7 +80,7 @@ router
         },
         optionController
     ))
-    .delete(expressRoute(
+    .delete(requireAdmin, expressRoute(
         async req => {
             // delete single entry
             let message = "";

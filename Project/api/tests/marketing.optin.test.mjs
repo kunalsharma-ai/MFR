@@ -5,6 +5,7 @@
 //   MONGO_URL=mongodb://127.0.0.1:27017/mfr_marketing node --test --test-force-exit tests/marketing.optin.test.mjs
 // Needs ports 8080 and 3000 free (stub mail services for the registration path).
 import test from "node:test";
+import crypto from "node:crypto";
 import assert from "node:assert/strict";
 import dns from "node:dns";
 import http from "node:http";
@@ -50,7 +51,8 @@ async function call(method, path, body, token) {
 async function admin(method, path, body) {
     const raw = body ? JSON.stringify(body) : "";
     const ts = String(Math.floor(Date.now() / 1000));
-    const res = await fetch(`${BASE}${path}`, { method, body: raw || undefined, headers: { "content-type": "application/json", "x-madp-timestamp": ts, "x-madp-origin": MFR, "x-madp-actor": ALICE, "x-madp-signature": sign(SECRET, { timestamp: ts, method, path, origin: MFR, actor: ALICE, body: raw }) } });
+    const nonce = crypto.randomBytes(16).toString("hex");
+    const res = await fetch(`${BASE}${path}`, { method, body: raw || undefined, headers: { "content-type": "application/json", "x-madp-timestamp": ts, "x-madp-origin": MFR, "x-madp-actor": ALICE, "x-madp-nonce": nonce, "x-madp-signature": sign(SECRET, { nonce, timestamp: ts, method, path, origin: MFR, actor: ALICE, body: raw }) } });
     return { status: res.status, json: await res.json().catch(() => ({})) };
 }
 const db = mongoose.connection.db;

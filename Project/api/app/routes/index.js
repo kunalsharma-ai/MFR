@@ -21,6 +21,9 @@ import engagementRouter from "./api/Engagement.js";
 import engagementPublicRouter from "./api/EngagementPublic.js";
 
 import { isAuthenticated } from "../utils/index.js";
+import { requireAdmin } from "../utils/access.js";
+import { bindRequest } from "../utils/requestContext.js";
+import { securityHeaders, sanitizeInput } from "../utils/security.js";
 
 import meRouter from "./api/Me.js";
 import adminRouter from "../admin/routes.js";
@@ -28,6 +31,10 @@ import changeEmail from "./api/changeEmail.js"
 import { alerts as alertsRouter, help as helpRouter } from "./api/Inbox.js";
 const router = express.Router();
 router
+    // every answer gets the browser security headers; member routes run in their own request context (so two
+    // requests for different brands can't swap origins) and never see code-running Mongo operators
+    .use(securityHeaders)
+    .use("/api/v1", bindRequest, sanitizeInput)
     .use("/api/v1/llm", llmRouter)
     .use("/api/v1/auth",authRouter)
     .use("/api/v1/answers", ansRouter)
@@ -36,22 +43,21 @@ router
     .use("/api/v1/question", questionRouter)
     .use("/api/v1/option", optionRouter)
     .use("/api/v1/options", optionsRouter)
-    .use("/api/v1/user", (req, res, next) => {
-        console.log("user route called");
-        next()
-    }, userRouter)
+    .use("/api/v1/user", userRouter)
     .use("/api/v1/teen", teenRouter)
     .use("/api/v1/profile", profileRouter)
     .use("/api/v1/forgot-password", forgotPassword)
     .use("/api/v1/change-email", changeEmail)
     .use("/api/v1/feasibility", feasibilityRouter)
-    .use("/api/v1/project-dev", projectRouter)
+    // projects and scheduled e-mail batches are admin tools (project-dev had no sign-in at all, and any member could
+    // create projects or schedule e-mails to any address from the brand's sender)
+    .use("/api/v1/project-dev", requireAdmin, projectRouter)
     .use("/api/v1/me", isAuthenticated, meRouter)
     .use("/api/v1/response", isAuthenticated, meResponse)
     .use("/api/v1/rewards", isAuthenticated, rewardsRouter)
     .use("/api/v1/support", isAuthenticated, supportRouter)
-    .use("/api/v1/project", isAuthenticated, projectRouter)
-    .use("/api/v1/batch", isAuthenticated, batchRouter)
+    .use("/api/v1/project", requireAdmin, projectRouter)
+    .use("/api/v1/batch", requireAdmin, batchRouter)
     .use("/api/v1/engagement-public", engagementPublicRouter)
     .use("/api/v1/engagement", engagementRouter)
     .use("/api/v1/alerts", isAuthenticated, alertsRouter)
