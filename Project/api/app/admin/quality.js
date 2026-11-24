@@ -64,6 +64,7 @@ export async function changeScore(origin, memberId, { rule, delta, note, survey 
 
 export async function history(origin, memberId) {
     if (!isId(memberId)) throw new AdminError("not_found", "Member not found", 404);
+    if (!(await User.exists({ _id: oid(memberId), origin }))) throw new AdminError("not_found", "Member not found", 404);
     const rows = await QualityEvent.find({ origin, user: oid(memberId) }).sort({ createdAt: -1 }).limit(200).lean();
     return rows.map((e) => ({ id: String(e._id), rule: e.rule, delta: e.delta, from: e.from, to: e.to, note: e.note || "", survey: e.survey || null, actor: e.actor, at: e.createdAt }));
 }

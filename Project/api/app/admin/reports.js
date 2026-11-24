@@ -95,7 +95,7 @@ const REPORTS = {
 
     /** Per profile: members who answered at least one question, members who finished, and the biggest drop-off question. */
     async profile_completion(origin) {
-        const profiles = await Profile.find({ isActive: true, isDeleted: false }).select("slug name category pages").lean();
+        const profiles = await Profile.find({ origin, isActive: true, isDeleted: false }).select("slug name category pages").lean();
         const out = [];
         for (const pr of profiles.slice(0, 120)) {
             const names = (pr.pages || []).flat().filter(Boolean);
