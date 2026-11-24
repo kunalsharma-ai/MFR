@@ -14,6 +14,7 @@ import { User, Answers, Response, Reward, Profile, OTP, MemberPreference } from 
 import profileController from "../controller/Profile.js";
 import otpController from "../controller/OTP.js";
 import { config } from "./config.js";
+import { isOn, onAnywhere } from "./switches.js";
 import { memberType } from "./http.js";
 import { send, unsubscribeLink, siteUrl } from "./mail.js";
 
@@ -136,8 +137,9 @@ export async function payloadFor(user, c) {
 
 export async function runLifecycle({ dryRun = false, origin, now = new Date(), force = false } = {}) {
     const c = config().emails.lifecycle;
-    const report = { enabled: Boolean(c.enabled), considered: 0, sent: 0, byCase: {}, skipped: {}, dryRun };
-    if (!c.enabled && !force) return report;
+    const enabled = origin ? await isOn(origin, "email_lifecycle") : await onAnywhere("email_lifecycle");
+    const report = { enabled, considered: 0, sent: 0, byCase: {}, skipped: {}, dryRun };
+    if (!enabled && !force) return report;
     const skip = (why) => { report.skipped[why] = (report.skipped[why] || 0) + 1; };
     const q = { isActive: true, isDeleted: false, registrationStatus: { $in: ["active", null] }, createdAt: { $lte: new Date(now - c.startAfterHours * HOUR) } };
     if (origin) q.origin = origin;
@@ -146,6 +148,7 @@ export async function runLifecycle({ dryRun = false, origin, now = new Date(), f
         if (report.sent >= c.maxPerRun) break;
         report.considered += 1;
         if (memberType(user) === "teen") { skip("teen"); continue; }
+        if (!force && !(await isOn(user.origin, "email_lifecycle"))) { skip("switched_off"); continue; }
         const prefs = await MemberPreference.findOne({ user: user._id, origin: user.origin }).lean();
         const st = prefs?.lifecycle || {};
         if ((st.count || 0) >= c.max) { skip("max_reached"); continue; }

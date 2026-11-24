@@ -14,6 +14,7 @@
 import mongoose from "mongoose";
 import { MemberPreference, PointsHold, Response, Reward } from "../model/index.js";
 import { publicConfig } from "./config.js";
+import { isOn } from "./switches.js";
 import * as L from "./ledger.js";
 import { streakOf } from "./streak.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
@@ -79,7 +80,7 @@ const view = (e) => ({ id: e.id, type: e.type, name: e.name, points: e.points, s
 
 export function mount(router) {
     router
-        .get("/config", handle(async (req) => publicConfig(memberType(req.user))))
+        .get("/config", handle(async (req) => publicConfig(memberType(req.user), { draw: await isOn(req.origin, "draw"), push: await isOn(req.origin, "push") })))
         .get("/summary", handle(async (req) => {
             const { balances, clearing, entries } = await L.ledger(req.user, req.origin);
             const streak = await streakOf(req.user, req.origin);

@@ -204,7 +204,8 @@ export function config() {
 export function setConfig(over = {}) { cached = deepMerge(DEFAULTS, over); return cached; }
 
 // What the member area may see (no internal switches).
-export function publicConfig(memberType) {
+// `on`: the brand's switches that matter here ({ draw, push }), read by the caller from engagement/switches.js
+export function publicConfig(memberType, on = {}) {
     const c = config();
     return {
         usdPerPoint: memberType === "teen" ? null : c.points.usdPerPoint, // Teens never see money values
@@ -213,8 +214,8 @@ export function publicConfig(memberType) {
         holdDays: c.points.holdDays,
         streakBonuses: c.streak.bonuses,
         dailyPoll: { enabled: c.dailyPoll.enabled, points: c.dailyPoll.points },
-        drawEnabled: memberType !== "teen" && Boolean(c.draw?.enabled),
-        push: { enabled: Boolean(c.push?.enabled && c.push?.vapidPublicKey), publicKey: c.push?.enabled ? c.push.vapidPublicKey || null : null },
+        drawEnabled: memberType !== "teen" && Boolean(on.draw),
+        push: { enabled: Boolean(on.push && c.push?.vapidPublicKey), publicKey: on.push ? c.push.vapidPublicKey || null : null },
         whatsapp: { enabled: Boolean(c.whatsapp?.enabled) },
     };
 }

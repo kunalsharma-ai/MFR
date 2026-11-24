@@ -14,6 +14,11 @@ import * as quality from "./quality.js";
 import * as tickets from "./tickets.js";
 import * as messages from "./messages.js";
 import * as help from "./help.js";
+import * as switches from "./switches.js";
+import * as rewards from "./rewards.js";
+import * as engagement from "./engagement.js";
+import * as teens from "./teens.js";
+import * as dataRequests from "./datarequests.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -100,5 +105,42 @@ router.post("/help", handle((req) => help.create(req.adminOrigin, req.body || {}
 router.get("/help/:id", handle((req) => help.get(req.adminOrigin, req.params.id)));
 router.put("/help/:id", handle((req) => help.update(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.post("/help/:id/status", handle((req) => help.setStatus(req.adminOrigin, req.params.id, req.body?.status, req.adminActor)));
+
+// Feature switches (step 4). MADP lets only its Super Admin change them, always with a reason.
+router.get("/switches", handle((req) => switches.board(req.adminOrigin)));
+router.put("/switches/:key", handle((req) => switches.set(req.adminOrigin, req.params.key, req.body || {}, req.adminActor)));
+// Rewards (module 7): catalogue, redemption queue, prize draws, bonus offers
+router.get("/rewards/catalogue", handle((req) => rewards.listCatalogue(req.adminOrigin)));
+router.post("/rewards/catalogue", handle((req) => rewards.createItem(req.adminOrigin, req.body || {})));
+router.put("/rewards/catalogue/:key", handle((req) => rewards.updateItem(req.adminOrigin, req.params.key, req.body || {})));
+router.get("/redemptions", handle((req) => rewards.listRedemptions(req.adminOrigin, req.query)));
+router.get("/redemptions/:id", handle((req) => rewards.getRedemption(req.adminOrigin, req.params.id)));
+router.post("/redemptions/:id/decision", handle((req) => rewards.decideRedemption(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.get("/draws", handle((req) => rewards.listDraws(req.adminOrigin)));
+router.post("/draws", handle((req) => rewards.createDraw(req.adminOrigin, req.body || {})));
+router.post("/draws/:id/run", handle((req) => rewards.runDraw(req.adminOrigin, req.params.id)));
+router.post("/draws/:id/cancel", handle((req) => rewards.cancelDraw(req.adminOrigin, req.params.id)));
+router.get("/offers", handle((req) => rewards.listOffers(req.adminOrigin)));
+router.post("/offers", handle((req) => rewards.createOffer(req.adminOrigin, req.body || {})));
+router.post("/offers/:id/end", handle((req) => rewards.endOffer(req.adminOrigin, req.params.id)));
+// Engagement (module 8)
+router.get("/engagement/tasks", handle((req) => engagement.listTasks(req.adminOrigin, req.query)));
+router.post("/engagement/tasks", handle((req) => engagement.createTask(req.adminOrigin, req.body || {})));
+router.put("/engagement/tasks/:id", handle((req) => engagement.updateTask(req.adminOrigin, req.params.id, req.body || {})));
+router.get("/engagement/ideas", handle((req) => engagement.ideaQueue(req.adminOrigin, req.query)));
+router.post("/engagement/ideas/:id", handle((req) => engagement.moderate(req.adminOrigin, req.params.id, req.body?.status)));
+router.get("/engagement/stories", handle((req) => engagement.listStories(req.adminOrigin, req.query)));
+router.post("/engagement/stories", handle((req) => engagement.createStory(req.adminOrigin, req.body || {})));
+router.put("/engagement/stories/:id", handle((req) => engagement.updateStory(req.adminOrigin, req.params.id, req.body || {})));
+router.get("/engagement/streaks", handle((req) => engagement.streakStats(req.adminOrigin, req.query)));
+// Teen Panel and guardians (module 13)
+router.get("/teens", handle((req) => teens.list(req.adminOrigin, req.query)));
+router.get("/teens/:id", handle((req) => teens.get(req.adminOrigin, req.params.id)));
+router.post("/teens/:id/revoke-links", handle((req) => teens.revokeLinks(req.adminOrigin, req.params.id, req.body?.reason)));
+router.post("/teens/:id/graduate", handle((req) => teens.graduate(req.adminOrigin, req.params.id, { reason: req.body?.reason, dryRun: req.query.dryRun !== "0" }, req.adminActor)));
+// Data requests (module 14). Nothing here deletes anything.
+router.get("/data-requests", handle((req) => dataRequests.list(req.adminOrigin, req.query)));
+router.get("/data-requests/:id", handle((req) => dataRequests.get(req.adminOrigin, req.params.id)));
+router.post("/data-requests/:id/decision", handle((req) => dataRequests.decide(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 
 export default router;
