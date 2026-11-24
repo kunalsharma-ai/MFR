@@ -96,6 +96,9 @@ test("search is per brand and masks personal data", async () => {
     assert.equal((await admin("GET", "/api/admin/v1/members?q=asha@example.invalid")).json.data.total, 1);
     assert.equal((await admin("GET", "/api/admin/v1/members?q=Ben")).json.data.items[0].id, ben);
     assert.equal((await admin("GET", "/api/admin/v1/members?segment=teen")).json.data.items[0].id, teen);
+    const adults = (await admin("GET", "/api/admin/v1/members?noTeens=1")).json.data;
+    assert.equal(adults.total, 3);
+    assert.ok(!adults.items.some((m) => m.id === teen));
     // MHO sees only its own member.
     const m = await admin("GET", "/api/admin/v1/members", null, { origin: MHO });
     assert.deepEqual(m.json.data.items.map((x) => x.id), [mhoOnly]);

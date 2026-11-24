@@ -53,12 +53,14 @@ export async function search(origin, q = {}) {
     }
     if (q.category) f.category = String(q.category);
     if (q.segment === "teen") f.category = { $regex: "minor" };
+    // Admins without teen.read (checked in MADP) never get teen rows, and teens don't count in their totals.
+    if (q.noTeens) f.$and = [...(f.$and || []), { category: { $not: /minor/ } }];
     if (q.status) f.memberStatus = q.status === "active" ? { $in: [null, "active"] } : String(q.status);
     if (q.country) f["address.0.country"] = String(q.country).toLowerCase();
     if (q.from || q.to) f.createdAt = { ...(q.from ? { $gte: new Date(q.from) } : {}), ...(q.to ? { $lte: new Date(q.to) } : {}) };
     if (q.qualityMin != null || q.qualityMax != null)
         f.qualityScore = { ...(q.qualityMin != null ? { $gte: Number(q.qualityMin) } : {}), ...(q.qualityMax != null ? { $lte: Number(q.qualityMax) } : {}) };
-    if (q.inactiveSince) f.$and = [{ $or: [{ lastActivityAt: null }, { lastActivityAt: { $lt: new Date(q.inactiveSince) } }] }];
+    if (q.inactiveSince) f.$and = [...(f.$and || []), { $or: [{ lastActivityAt: null }, { lastActivityAt: { $lt: new Date(q.inactiveSince) } }] }];
     if (q.dueBefore) f.$and = [...(f.$and || []), { $or: [{ profileCheckedAt: null, createdAt: { $lt: new Date(q.dueBefore) } }, { profileCheckedAt: { $lt: new Date(q.dueBefore) } }] }];
     const page = Math.max(1, Math.min(10000, Number(q.page) || 1));
     const [items, total] = await Promise.all([
