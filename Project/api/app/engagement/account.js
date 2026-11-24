@@ -41,7 +41,7 @@ export function anniversary(createdAt, now = new Date()) {
 export async function summary(user, origin) {
     const u = await User.findById(user._id).select("name mail phone address isVerified createdAt category timezone respondentID dob gender").lean();
     const [led, streak, prof, surveys, referrals, payouts] = await Promise.all([
-        ledger(user, origin), streakOf(user, origin), profileProgress(user).catch(() => null),
+        ledger(user, origin), streakOf(user, origin), profileProgress(user, origin).catch(() => null),
         Response.countDocuments({ user: oid(user._id), origin, status: "complete", isDeleted: false }),
         User.countDocuments({ referredBy: String(user._id), origin, isDeleted: { $ne: true } }),
         Redemption.find({ user: oid(user._id), origin, "payout.method": { $in: ["upi", "paypal"] } }).sort({ createdAt: -1 }).limit(20).lean(),

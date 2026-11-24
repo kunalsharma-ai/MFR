@@ -45,7 +45,7 @@ async function breakdown(user, origin) {
     const u = oid(user._id);
     const [rows, profiles, days, fresh] = await Promise.all([
         Response.aggregate([{ $match: { user: u, origin, isDeleted: false } }, { $group: { _id: "$status", n: { $sum: 1 } } }]),
-        profileProgress(user).catch(() => null),
+        profileProgress(user, origin).catch(() => null),
         activeDays(user, origin, 31),
         User.findById(user._id).select("isVerified").lean(),
     ]);

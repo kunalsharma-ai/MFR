@@ -34,7 +34,7 @@ class Question extends CrudController {
     async children(query = {}) {
         return await modelQuestion.aggregate([
             {
-                $match: { ...query }
+                $match: { ...query, origin: this.request?.origin }
             },
             {
                 $graphLookup: {
@@ -42,6 +42,7 @@ class Question extends CrudController {
                     startWith: "$name",
                     connectFromField: "name",
                     connectToField: "parent",
+                    restrictSearchWithMatch: { origin: this.request?.origin },
                     as: "descendants"
                 }
             },

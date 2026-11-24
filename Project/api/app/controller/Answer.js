@@ -47,10 +47,12 @@ class Answer extends CrudController {
             }, {})
         return temp;
     }
-    async feasibility(filters) {
+    // One database holds every brand: every read below is for one brand (origin) only.
+    async feasibility(filters, origin = this.request?.origin) {
+        if (!origin) throw new Error("Unknown brand");
         let questions = Object.keys(filters);
         let filterOptions = {};
-        let aggregation = [];
+        let aggregation = [{ $match: { origin } }];
         if (questions.length > 0) {
             aggregation.push({
                 $match: {
@@ -135,6 +137,7 @@ class Answer extends CrudController {
                 pipeline: [
                     {
                         $match: {
+                            origin,
                             $expr: {
                                 $eq: [
                                     "$_id",
@@ -193,9 +196,10 @@ class Answer extends CrudController {
         let data = (await answerModel.aggregate(aggregation))
         return data;
     }
-    async summarizeByUsers() {
-        // let data=await answerModel.find();
+    async summarizeByUsers(origin = this.request?.origin) {
+        if (!origin) throw new Error("Unknown brand");
         let data = await answerModel.aggregate([
+            { $match: { origin } },
             {
                 $group: {
                     _id: {
@@ -266,8 +270,10 @@ class Answer extends CrudController {
         ])
         return data;
     }
-    async summarizeQuestionResponse() {
+    async summarizeQuestionResponse(origin = this.request?.origin) {
+        if (!origin) throw new Error("Unknown brand");
         const data = await answerModel.aggregate([
+            { $match: { origin } },
             {
                 $group: {
                     _id: "$question",
@@ -282,8 +288,10 @@ class Answer extends CrudController {
             return a;
         }, {});
     }
-    async summarize() {
+    async summarize(origin = this.request?.origin) {
+        if (!origin) throw new Error("Unknown brand");
         const data = await answerModel.aggregate([
+            { $match: { origin } },
             {
                 $group: {
                     _id: "$question",

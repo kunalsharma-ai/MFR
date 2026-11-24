@@ -10,6 +10,7 @@ router
             // Read all entries
             let message = "";
 
+            optionController.request = req;
             let optionStatus = await optionController.summary();
             let data = Mutate(await questionController.list()).map(elm => {
                 return {

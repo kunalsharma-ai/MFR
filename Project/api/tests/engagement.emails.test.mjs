@@ -18,7 +18,8 @@ await db().collection("Profile").insertMany([
     { slug: "basic", name: "basic", category: "b2c", pages: [["q_basic"]], isActive: true, isDeleted: false, origin: H.ORIGIN },
     { slug: "travel", name: "travel", category: "b2c", pages: [["q_travel"]], isActive: true, isDeleted: false, origin: H.ORIGIN },
 ]);
-await db().collection("Question").insertMany([{ name: "q_basic", parent: null }, { name: "q_travel", parent: null }]);
+// questions and answers carry the brand, as every document does in the shared database
+await db().collection("Question").insertMany([{ name: "q_basic", parent: null, origin: H.ORIGIN }, { name: "q_travel", parent: null, origin: H.ORIGIN }]);
 
 async function adult({ password = true, terms = true, answered = [] } = {}) {
     const m = await H.member();
@@ -26,7 +27,7 @@ async function adult({ password = true, terms = true, answered = [] } = {}) {
     if (password) set.password = "$2a$10$abcdefghijklmnopqrstuuJr8mJ8b7h0bYgS2rK0bKkq2dQW8w1lK";
     if (terms) set.terms = ["consumer-terms-v1"];
     await Models.User.collection.updateOne({ _id: m.user._id }, { $set: set });
-    for (const q of answered) await db().collection("Answer").insertOne({ user: m.id, question: q, answer: ["x"], updatedAt: old(72), createdAt: old(72) });
+    for (const q of answered) await db().collection("Answer").insertOne({ origin: H.ORIGIN, user: m.id, question: q, answer: ["x"], updatedAt: old(72), createdAt: old(72) });
     const user = await Models.User.findById(m.user._id).lean();
     return { ...m, user };
 }
