@@ -1,0 +1,11156 @@
+{
+ "name": "question-bank-2026-11",
+ "created": "2026-11-24",
+ "source": "Survey 2026 profile documents vs turn2opinion exports (Question/Option/Profiles)",
+ "retiredProfiles": [
+  "financial",
+  "home-pet",
+  "lifestyle-food",
+  "travel",
+  "automobile",
+  "health",
+  "beauty",
+  "tech",
+  "sports",
+  "game",
+  "mr"
+ ],
+ "steps": [
+  {
+   "op": "relabel",
+   "question": "household-services10",
+   "label": "Which household services have you used in the past 12 months?",
+   "note": "typo \"have do u use\""
+  },
+  {
+   "op": "relabel",
+   "question": "household-services12",
+   "label": "Which home maintenance services do you use?",
+   "note": "typo \"services services\""
+  },
+  {
+   "op": "relabelReplace",
+   "question": "tobacco-nicotine-alcoholic3",
+   "find": "products you use?",
+   "replace": "products do you use?"
+  },
+  {
+   "op": "relabelReplace",
+   "question": "tobacco-nicotine-alcoholic18",
+   "find": "permtted",
+   "replace": "permitted"
+  },
+  {
+   "op": "relabelReplace",
+   "question": "entertainment-media5",
+   "find": "most ofte",
+   "replace": "most often"
+  },
+  {
+   "op": "relabel",
+   "question": "restaurants-food-delivery9",
+   "label": "Which types of food/restaurant research would you be willing to participate in?"
+  },
+  {
+   "op": "relabel",
+   "question": "tobacco-nicotine-alcoholic15",
+   "label": "Which types of tobacco, nicotine or alcohol research would you be willing to participate in?"
+  },
+  {
+   "op": "relabel",
+   "question": "pet15",
+   "label": "Do you currently own or care for any pets?"
+  },
+  {
+   "op": "relabel",
+   "question": "parenting1",
+   "label": "Are you currently expecting a child?"
+  },
+  {
+   "op": "setOptionParentValue",
+   "question": "parenting1",
+   "parentValue": [],
+   "note": "doc asks every parent, not only some relationship types"
+  },
+  {
+   "op": "setQuestion",
+   "question": "parenting1",
+   "unset": [
+    "parent"
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "banking-financial-services2",
+   "options": [
+    {
+     "label": "Public/Government bank",
+     "value": "Public/Government bank"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "household-services10",
+   "options": [
+    {
+     "label": "Installation",
+     "value": "Installation"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "household-services18",
+   "options": [
+    {
+     "label": "Full-service moving",
+     "value": "Full-service moving"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "parenting21",
+   "options": [
+    {
+     "label": "Parent/guardian",
+     "value": "Parent/guardian"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "parenting38",
+   "options": [
+    {
+     "label": "Children's technology research",
+     "value": "Children's technology research"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "sports-physical-fitness4",
+   "options": [
+    {
+     "label": "Stretching / Mobility",
+     "value": "Stretching / Mobility"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "sports-physical-fitness23",
+   "options": [
+    {
+     "label": "None",
+     "value": "None"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "travel-tourism1",
+   "options": [
+    {
+     "label": "None",
+     "value": "None"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "gaming-esports2",
+   "options": [
+    {
+     "label": "2–3 hours",
+     "value": "2–3 hours"
+    }
+   ]
+  },
+  {
+   "op": "addOptions",
+   "question": "pet15",
+   "options": [
+    {
+     "label": "Previously owned a pet",
+     "value": "Previously owned a pet"
+    },
+    {
+     "label": "Planning to get a pet",
+     "value": "Planning to get a pet"
+    }
+   ]
+  },
+  {
+   "op": "deleteOptions",
+   "question": "automotive-mobility11",
+   "values": [
+    "abcd"
+   ]
+  },
+  {
+   "op": "deleteOptions",
+   "question": "pets-animal-care21",
+   "values": [
+    "Maybe",
+    "No"
+   ]
+  },
+  {
+   "op": "addOptionParentValue",
+   "question": "automotive-mobility16",
+   "add": [
+    "Ride-Hailing"
+   ]
+  },
+  {
+   "op": "softDeleteQuestion",
+   "question": "health-wellness6",
+   "note": "identical to health-wellness5"
+  },
+  {
+   "op": "replaceOptions",
+   "question": "shopping24",
+   "options": [
+    {
+     "label": "Daily",
+     "value": "Daily"
+    },
+    {
+     "label": "Several times a week",
+     "value": "Several times a week"
+    },
+    {
+     "label": "Weekly",
+     "value": "Weekly"
+    },
+    {
+     "label": "2–3 times a month",
+     "value": "2–3 times a month"
+    },
+    {
+     "label": "Monthly",
+     "value": "Monthly"
+    },
+    {
+     "label": "Less often",
+     "value": "Less often"
+    },
+    {
+     "label": "Never",
+     "value": "Never"
+    }
+   ],
+   "answerMap": {
+    "Daily": [
+     "Daily"
+    ],
+    "Weekly": [
+     "Weekly"
+    ],
+    "Biweekly/Fortnightly": [
+     "2–3 times a month"
+    ],
+    "Monthly": [
+     "Monthly"
+    ],
+    "Occasional/As-Needed": [
+     "Less often"
+    ],
+    "Seasonal": [
+     "Less often"
+    ]
+   }
+  },
+  {
+   "op": "replaceOptions",
+   "question": "shopping20",
+   "options": [
+    {
+     "label": "Clothing & Apparel",
+     "value": "Clothing & Apparel"
+    },
+    {
+     "label": "Footwear",
+     "value": "Footwear"
+    },
+    {
+     "label": "Beauty & Personal Care",
+     "value": "Beauty & Personal Care"
+    },
+    {
+     "label": "Consumer Electronics",
+     "value": "Consumer Electronics"
+    },
+    {
+     "label": "Home & Household Products",
+     "value": "Home & Household Products"
+    },
+    {
+     "label": "Food & Grocery",
+     "value": "Food & Grocery"
+    },
+    {
+     "label": "Sports & Fitness Products",
+     "value": "Sports & Fitness Products"
+    },
+    {
+     "label": "Toys & Games",
+     "value": "Toys & Games"
+    },
+    {
+     "label": "Pet Products",
+     "value": "Pet Products"
+    },
+    {
+     "label": "Automotive Products/Accessories",
+     "value": "Automotive Products/Accessories"
+    },
+    {
+     "label": "Jewellery & Accessories",
+     "value": "Jewellery & Accessories"
+    },
+    {
+     "label": "Other",
+     "value": "Other"
+    }
+   ],
+   "answerMap": {
+    "Clothing and apparel (e.g., shirts, dresses, pants, shoes)": [
+     "Clothing & Apparel",
+     "Footwear"
+    ],
+    "Accessories (e.g., handbags, wallets, belts, jewelry)": [
+     "Jewellery & Accessories"
+    ],
+    "Electronics (e.g., smartphones, laptops, televisions, headphones)": [
+     "Consumer Electronics"
+    ],
+    "Home appliances (e.g., refrigerators, washing machines, vacuum cleaners)": [
+     "Home & Household Products"
+    ],
+    "Furniture (e.g., sofas, beds, tables, chairs)": [
+     "Home & Household Products"
+    ],
+    "Home decor items (e.g., curtains, rugs, wall art, decorative items)": [
+     "Home & Household Products"
+    ],
+    "Kitchen appliances and utensils (e.g., microwave ovens, blenders, cookware)": [
+     "Home & Household Products"
+    ],
+    "Beauty and personal care products (e.g., skincare, makeup, hair care)": [
+     "Beauty & Personal Care"
+    ],
+    "Health and wellness products (e.g., vitamins, supplements, fitness equipment)": [
+     "Other"
+    ],
+    "Groceries and food items (e.g., fruits, vegetables, dairy products, snacks)": [
+     "Food & Grocery"
+    ],
+    "Sports and outdoor equipment (e.g., bicycles, camping gear, sports gear)": [
+     "Sports & Fitness Products"
+    ],
+    "Toys and games": [
+     "Toys & Games"
+    ],
+    "Baby and child care products": [
+     "Other"
+    ],
+    "Pet supplies": [
+     "Pet Products"
+    ],
+    "Automotive products and accessories (e.g., car parts, tires, car care products)": [
+     "Automotive Products/Accessories"
+    ],
+    "Tools and hardware items": [
+     "Home & Household Products"
+    ],
+    "Office supplies": [
+     "Other"
+    ],
+    "Musical instruments": [
+     "Other"
+    ],
+    "DIY and home improvement products": [
+     "Home & Household Products"
+    ],
+    "Party supplies and decorations": [
+     "Other"
+    ],
+    "Travel accessories (e.g., luggage, travel adapters, travel pillows)": [
+     "Other"
+    ],
+    "Fitness and exercise equipment": [
+     "Sports & Fitness Products"
+    ],
+    "Art and craft supplies": [
+     "Other"
+    ],
+    "Gardening tools and supplies": [
+     "Home & Household Products"
+    ]
+   }
+  },
+  {
+   "op": "replaceOptions",
+   "question": "shopping22",
+   "options": [
+    {
+     "label": "Online marketplaces",
+     "value": "Online marketplaces"
+    },
+    {
+     "label": "Brand websites/apps",
+     "value": "Brand websites/apps"
+    },
+    {
+     "label": "Supermarkets/Hypermarkets",
+     "value": "Supermarkets/Hypermarkets"
+    },
+    {
+     "label": "Shopping malls",
+     "value": "Shopping malls"
+    },
+    {
+     "label": "Department stores",
+     "value": "Department stores"
+    },
+    {
+     "label": "Specialty stores",
+     "value": "Specialty stores"
+    },
+    {
+     "label": "Local/Independent stores",
+     "value": "Local/Independent stores"
+    },
+    {
+     "label": "Social commerce",
+     "value": "Social commerce"
+    },
+    {
+     "label": "Other",
+     "value": "Other"
+    }
+   ],
+   "answerMap": {
+    "In-store Shopping": [],
+    "Online Shopping": [
+     "Online marketplaces"
+    ],
+    "Mobile Shopping": [
+     "Brand websites/apps"
+    ],
+    "Catalog Shopping": [
+     "Other"
+    ],
+    "Television Shopping": [
+     "Other"
+    ],
+    "Social Media Shopping": [
+     "Social commerce"
+    ],
+    "Subscription-based Shopping": [
+     "Other"
+    ],
+    "Peer-to-Peer Shopping": [
+     "Other"
+    ],
+    "Click and Collect": [
+     "Other"
+    ],
+    "Virtual Reality (VR) Shopping": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "replaceOptions",
+   "question": "shopping23",
+   "options": [
+    {
+     "label": "Credit card",
+     "value": "Credit card"
+    },
+    {
+     "label": "Debit card",
+     "value": "Debit card"
+    },
+    {
+     "label": "Digital wallet",
+     "value": "Digital wallet"
+    },
+    {
+     "label": "Bank transfer",
+     "value": "Bank transfer"
+    },
+    {
+     "label": "UPI/Instant payment",
+     "value": "UPI/Instant payment"
+    },
+    {
+     "label": "Buy Now Pay Later",
+     "value": "Buy Now Pay Later"
+    },
+    {
+     "label": "Cash",
+     "value": "Cash"
+    },
+    {
+     "label": "Other",
+     "value": "Other"
+    }
+   ],
+   "answerMap": {
+    "Cash": [
+     "Cash"
+    ],
+    "Debit Card": [
+     "Debit card"
+    ],
+    "Credit Card": [
+     "Credit card"
+    ],
+    "Mobile Payment Apps": [
+     "UPI/Instant payment"
+    ],
+    "Digital Wallets": [
+     "Digital wallet"
+    ],
+    "Bank Transfers": [
+     "Bank transfer"
+    ],
+    "Online Payment Platforms": [
+     "Digital wallet"
+    ],
+    "Contactless Payments": [],
+    "Cryptocurrency": [
+     "Other"
+    ],
+    "Checks": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "insertQuestions",
+   "copyFrom": "pets-animal-care1",
+   "questions": [
+    {
+     "name": "pets-animal-care28",
+     "label": "Do you currently own or care for a dog?",
+     "parent": "pet16",
+     "adminLabel": "Dog Owner"
+    },
+    {
+     "name": "pets-animal-care29",
+     "label": "How many dogs do you own?",
+     "parent": "pets-animal-care28",
+     "adminLabel": "Dog Count"
+    },
+    {
+     "name": "pets-animal-care30",
+     "label": "Do you currently own or care for a cat?",
+     "parent": "pet16",
+     "adminLabel": "Cat Owner"
+    },
+    {
+     "name": "pets-animal-care31",
+     "label": "How many cats do you own?",
+     "parent": "pets-animal-care30",
+     "adminLabel": "Cat Count"
+    }
+   ],
+   "options": [
+    {
+     "question": "pets-animal-care28",
+     "label": "Yes",
+     "value": "Yes",
+     "parentValue": [
+      "Spiders",
+      "Horses",
+      "Sheep",
+      "Cats",
+      "Snails",
+      "Guinea pigs",
+      "Hamsters",
+      "Aquatic pets (such as turtles, frogs, newts)",
+      "Goats",
+      "Reptiles (such as turtles, snakes, lizards, geckos)",
+      "Small farm animals (such as chickens, ducks, miniature goats)",
+      "Ferrets",
+      "Fish (such as goldfish, bettas, and guppies)",
+      "Miniature pigs",
+      "Rabbits",
+      "Fish (in ponds or large aquariums)",
+      "Insects (such as stick insects, praying mantises)",
+      "Cattle (such as miniature cows)",
+      "Gerbils",
+      "Rodents (such as mice, rats, squirrels)",
+      "Exotic pets (such as sugar gliders, hedgehogs, tarantulas)",
+      "Invertebrates (such as hermit crabs, tarantulas, scorpions)",
+      "Dogs",
+      "Birds (such as parrots, canaries, budgies)",
+      "Poultry (such as chickens, turkeys, ducks)",
+      "Amphibians (such as frogs, newts)",
+      "Ponies",
+      "Others"
+     ]
+    },
+    {
+     "question": "pets-animal-care28",
+     "label": "No",
+     "value": "No",
+     "parentValue": [
+      "Spiders",
+      "Horses",
+      "Sheep",
+      "Cats",
+      "Snails",
+      "Guinea pigs",
+      "Hamsters",
+      "Aquatic pets (such as turtles, frogs, newts)",
+      "Goats",
+      "Reptiles (such as turtles, snakes, lizards, geckos)",
+      "Small farm animals (such as chickens, ducks, miniature goats)",
+      "Ferrets",
+      "Fish (such as goldfish, bettas, and guppies)",
+      "Miniature pigs",
+      "Rabbits",
+      "Fish (in ponds or large aquariums)",
+      "Insects (such as stick insects, praying mantises)",
+      "Cattle (such as miniature cows)",
+      "Gerbils",
+      "Rodents (such as mice, rats, squirrels)",
+      "Exotic pets (such as sugar gliders, hedgehogs, tarantulas)",
+      "Invertebrates (such as hermit crabs, tarantulas, scorpions)",
+      "Dogs",
+      "Birds (such as parrots, canaries, budgies)",
+      "Poultry (such as chickens, turkeys, ducks)",
+      "Amphibians (such as frogs, newts)",
+      "Ponies",
+      "Others"
+     ]
+    },
+    {
+     "question": "pets-animal-care29",
+     "label": "1",
+     "value": "1",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care29",
+     "label": "2",
+     "value": "2",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care29",
+     "label": "3",
+     "value": "3",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care29",
+     "label": "4",
+     "value": "4",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care29",
+     "label": "5 or more",
+     "value": "5 or more",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care30",
+     "label": "Yes",
+     "value": "Yes",
+     "parentValue": [
+      "Spiders",
+      "Horses",
+      "Sheep",
+      "Cats",
+      "Snails",
+      "Guinea pigs",
+      "Hamsters",
+      "Aquatic pets (such as turtles, frogs, newts)",
+      "Goats",
+      "Reptiles (such as turtles, snakes, lizards, geckos)",
+      "Small farm animals (such as chickens, ducks, miniature goats)",
+      "Ferrets",
+      "Fish (such as goldfish, bettas, and guppies)",
+      "Miniature pigs",
+      "Rabbits",
+      "Fish (in ponds or large aquariums)",
+      "Insects (such as stick insects, praying mantises)",
+      "Cattle (such as miniature cows)",
+      "Gerbils",
+      "Rodents (such as mice, rats, squirrels)",
+      "Exotic pets (such as sugar gliders, hedgehogs, tarantulas)",
+      "Invertebrates (such as hermit crabs, tarantulas, scorpions)",
+      "Dogs",
+      "Birds (such as parrots, canaries, budgies)",
+      "Poultry (such as chickens, turkeys, ducks)",
+      "Amphibians (such as frogs, newts)",
+      "Ponies",
+      "Others"
+     ]
+    },
+    {
+     "question": "pets-animal-care30",
+     "label": "No",
+     "value": "No",
+     "parentValue": [
+      "Spiders",
+      "Horses",
+      "Sheep",
+      "Cats",
+      "Snails",
+      "Guinea pigs",
+      "Hamsters",
+      "Aquatic pets (such as turtles, frogs, newts)",
+      "Goats",
+      "Reptiles (such as turtles, snakes, lizards, geckos)",
+      "Small farm animals (such as chickens, ducks, miniature goats)",
+      "Ferrets",
+      "Fish (such as goldfish, bettas, and guppies)",
+      "Miniature pigs",
+      "Rabbits",
+      "Fish (in ponds or large aquariums)",
+      "Insects (such as stick insects, praying mantises)",
+      "Cattle (such as miniature cows)",
+      "Gerbils",
+      "Rodents (such as mice, rats, squirrels)",
+      "Exotic pets (such as sugar gliders, hedgehogs, tarantulas)",
+      "Invertebrates (such as hermit crabs, tarantulas, scorpions)",
+      "Dogs",
+      "Birds (such as parrots, canaries, budgies)",
+      "Poultry (such as chickens, turkeys, ducks)",
+      "Amphibians (such as frogs, newts)",
+      "Ponies",
+      "Others"
+     ]
+    },
+    {
+     "question": "pets-animal-care31",
+     "label": "1",
+     "value": "1",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care31",
+     "label": "2",
+     "value": "2",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care31",
+     "label": "3",
+     "value": "3",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care31",
+     "label": "4",
+     "value": "4",
+     "parentValue": [
+      "Yes"
+     ]
+    },
+    {
+     "question": "pets-animal-care31",
+     "label": "5 or more",
+     "value": "5 or more",
+     "parentValue": [
+      "Yes"
+     ]
+    }
+   ]
+  },
+  {
+   "op": "dedupeAllOptions",
+   "note": "same value twice in a question (case, spaces, & vs and); answers move to the row kept. Hits jobrole, unemp-jobtype, city, org-city, vocational_diploma, hobbies and others"
+  },
+  {
+   "op": "softDeleteOrphanOptions",
+   "questions": [
+    "parenting3",
+    "parenting4",
+    "lifestyle_2",
+    "fin_personal_income",
+    "fin_household_income",
+    "hw_or_freelancer",
+    "restaurant35",
+    "restaurant36",
+    "restaurant37",
+    "restaurant38",
+    "restaurant39",
+    "restaurant40",
+    "orgrevenue",
+    "decision-ret",
+    "industryret",
+    "what are the age groups of your children",
+    "orgcountry",
+    "orgstate",
+    "orgzipcode",
+    "orgcity",
+    "household-family-structure1",
+    "household-family-structure2",
+    "household-family-structure3",
+    "household-family-structure4",
+    "household-family-structure5",
+    "household-family-structure6",
+    "household-family-structure7",
+    "banking-financial-services31",
+    "banking-tobacco-nicotine-alcoholic3"
+   ]
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_card",
+   "to": "banking-financial-services9",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [
+     "Yes"
+    ],
+    "No": [
+     "No"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Yes"
+    ],
+    "No": [
+     "No"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_insurance_types",
+   "to": "banking-financial-services20",
+   "toMultiple": null,
+   "valueMap": {
+    "Life": [
+     "Life insurance"
+    ],
+    "Health": [
+     "Health insurance"
+    ],
+    "Car": [
+     "Motor/Auto insurance"
+    ],
+    "Homeowner's/Renter's": [
+     "Home insurance"
+    ],
+    "Disability": [
+     "Disability insurance"
+    ],
+    "Critical Illness": [
+     "Critical illness insurance"
+    ],
+    "Long Term Care": [
+     "Long Term Care"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "None": [
+     "None"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Long Term Care",
+     "value": "Long Term Care"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Life": [
+     "Life insurance"
+    ],
+    "Health": [
+     "Health insurance"
+    ],
+    "Car": [
+     "Motor/Auto insurance"
+    ],
+    "Homeowner's/Renter's": [
+     "Home insurance"
+    ],
+    "Disability": [
+     "Disability insurance"
+    ],
+    "Critical Illness": [
+     "Critical illness insurance"
+    ],
+    "Long Term Care": [
+     "Long Term Care"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "None": [
+     "None"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_loan",
+   "to": "banking-financial-services14",
+   "toMultiple": null,
+   "valueMap": {
+    "Personal Loan": [
+     "Personal loan"
+    ],
+    "Credit Card Loan": [
+     "Credit line"
+    ],
+    "Home Loan": [
+     "Home loan/mortgage"
+    ],
+    "Car Loan": [
+     "Auto loan"
+    ],
+    "Two-Wheeler Loan": [
+     "Auto loan"
+    ],
+    "Small Business Loan": [
+     "Business loan"
+    ],
+    "Payday Loans": [
+     "Payday Loans"
+    ],
+    "Home Renovation Loan": [
+     "Home Renovation Loan"
+    ],
+    "Agriculture Loan": [
+     "Agriculture Loan"
+    ],
+    "Gold Loan": [
+     "Gold Loan"
+    ],
+    "Education Loan": [
+     "Education loan"
+    ],
+    "Consumer Durable Loan": [
+     "Consumer Durable Loan"
+    ],
+    "Loan Against the Insurance Schemes": [
+     "Loan Against the Insurance Schemes"
+    ],
+    "Loan Against Fixed Deposits": [
+     "Loan Against Fixed Deposits"
+    ],
+    "Loan Against Mutual Funds and Shares": [
+     "Loan Against Mutual Funds and Shares"
+    ],
+    "Mortgage": [
+     "Home loan/mortgage"
+    ],
+    "No loan": [
+     "None"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Payday Loans",
+     "value": "Payday Loans"
+    },
+    {
+     "label": "Home Renovation Loan",
+     "value": "Home Renovation Loan"
+    },
+    {
+     "label": "Agriculture Loan",
+     "value": "Agriculture Loan"
+    },
+    {
+     "label": "Gold Loan",
+     "value": "Gold Loan"
+    },
+    {
+     "label": "Consumer Durable Loan",
+     "value": "Consumer Durable Loan"
+    },
+    {
+     "label": "Loan Against the Insurance Schemes",
+     "value": "Loan Against the Insurance Schemes"
+    },
+    {
+     "label": "Loan Against Fixed Deposits",
+     "value": "Loan Against Fixed Deposits"
+    },
+    {
+     "label": "Loan Against Mutual Funds and Shares",
+     "value": "Loan Against Mutual Funds and Shares"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Personal Loan": [
+     "Personal loan"
+    ],
+    "Credit Card Loan": [
+     "Credit line"
+    ],
+    "Home Loan": [
+     "Home loan/mortgage"
+    ],
+    "Car Loan": [
+     "Auto loan"
+    ],
+    "Two-Wheeler Loan": [
+     "Auto loan"
+    ],
+    "Small Business Loan": [
+     "Business loan"
+    ],
+    "Payday Loans": [
+     "Payday Loans"
+    ],
+    "Home Renovation Loan": [
+     "Home Renovation Loan"
+    ],
+    "Agriculture Loan": [
+     "Agriculture Loan"
+    ],
+    "Gold Loan": [
+     "Gold Loan"
+    ],
+    "Education Loan": [
+     "Education loan"
+    ],
+    "Consumer Durable Loan": [
+     "Consumer Durable Loan"
+    ],
+    "Loan Against the Insurance Schemes": [
+     "Loan Against the Insurance Schemes"
+    ],
+    "Loan Against Fixed Deposits": [
+     "Loan Against Fixed Deposits"
+    ],
+    "Loan Against Mutual Funds and Shares": [
+     "Loan Against Mutual Funds and Shares"
+    ],
+    "Mortgage": [
+     "Home loan/mortgage"
+    ],
+    "No loan": [
+     "None"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_account_types",
+   "to": "banking-financial-services5",
+   "toMultiple": null,
+   "valueMap": {
+    "Savings": [
+     "Savings account"
+    ],
+    "Checking": [
+     "Current/checking account"
+    ],
+    "Money Market": [
+     "Money Market"
+    ],
+    "Stocks &/or Bonds": [
+     "Stocks &/or Bonds"
+    ],
+    "Mutual Funds": [
+     "Mutual Funds"
+    ],
+    "RRSP": [
+     "RRSP"
+    ],
+    "TFSA": [
+     "TFSA"
+    ],
+    "Employer Sponsored Plan": [
+     "Employer Sponsored Plan"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Money Market",
+     "value": "Money Market"
+    },
+    {
+     "label": "Stocks &/or Bonds",
+     "value": "Stocks &/or Bonds"
+    },
+    {
+     "label": "Mutual Funds",
+     "value": "Mutual Funds"
+    },
+    {
+     "label": "RRSP",
+     "value": "RRSP"
+    },
+    {
+     "label": "TFSA",
+     "value": "TFSA"
+    },
+    {
+     "label": "Employer Sponsored Plan",
+     "value": "Employer Sponsored Plan"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Savings": [
+     "Savings account"
+    ],
+    "Checking": [
+     "Current/checking account"
+    ],
+    "Money Market": [
+     "Money Market"
+    ],
+    "Stocks &/or Bonds": [
+     "Stocks &/or Bonds"
+    ],
+    "Mutual Funds": [
+     "Mutual Funds"
+    ],
+    "RRSP": [
+     "RRSP"
+    ],
+    "TFSA": [
+     "TFSA"
+    ],
+    "Employer Sponsored Plan": [
+     "Employer Sponsored Plan"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "homeowner1",
+   "to": "home-household1",
+   "toMultiple": null,
+   "valueMap": {
+    "Single": [
+     "Independent House"
+    ],
+    "Family detached home": [
+     "Independent House"
+    ],
+    "Duplex or Triplex": [
+     "Duplex"
+    ],
+    "Mobile Home": [
+     "Mobile Home"
+    ],
+    "Apartment or Flat": [
+     "Apartment / Flat"
+    ],
+    "Condominium": [
+     "Condominium"
+    ],
+    "RV": [
+     "RV"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Bungalow": [
+     "Independent House"
+    ],
+    "Caravan": [
+     "RV"
+    ],
+    "Castle": [
+     "Other"
+    ],
+    "Cottage": [
+     "Independent House"
+    ],
+    "Dormitory or Group Quarters": [
+     "Shared Accommodation"
+    ],
+    "Terraced House": [
+     "Townhouse / Row House"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Mobile Home",
+     "value": "Mobile Home"
+    },
+    {
+     "label": "Condominium / Condo",
+     "value": "Condominium"
+    },
+    {
+     "label": "Recreational Vehicle (RV)",
+     "value": "RV"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Single": [
+     "Independent House"
+    ],
+    "Family detached home": [
+     "Independent House"
+    ],
+    "Duplex or Triplex": [
+     "Duplex"
+    ],
+    "Mobile Home": [
+     "Mobile Home"
+    ],
+    "Apartment or Flat": [
+     "Apartment / Flat"
+    ],
+    "Condominium": [
+     "Condominium"
+    ],
+    "RV": [
+     "RV"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Bungalow": [
+     "Independent House"
+    ],
+    "Caravan": [
+     "RV"
+    ],
+    "Castle": [
+     "Other"
+    ],
+    "Cottage": [
+     "Independent House"
+    ],
+    "Dormitory or Group Quarters": [
+     "Shared Accommodation"
+    ],
+    "Terraced House": [
+     "Townhouse / Row House"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "Co-op Recreational Vehicle (RV)": [
+     "RV"
+    ],
+    "Apartment": [
+     "Apartment / Flat"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_rasidence_type",
+   "to": "home-household1",
+   "toMultiple": null,
+   "valueMap": {
+    "Studio apartment": [
+     "Studio"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Rownhouse (in a small rural village)": [
+     "Townhouse / Row House"
+    ],
+    "House": [
+     "Independent House"
+    ],
+    "Ranch": [
+     "Independent House"
+    ],
+    "Loft apartment (all in one room)": [
+     "Studio"
+    ],
+    "Condominium": [
+     "Condominium"
+    ],
+    "Mansion": [
+     "Villa"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Studio apartment": [
+     "Studio"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Rownhouse (in a small rural village)": [
+     "Townhouse / Row House"
+    ],
+    "House": [
+     "Independent House"
+    ],
+    "Ranch": [
+     "Independent House"
+    ],
+    "Loft apartment (all in one room)": [
+     "Studio"
+    ],
+    "Condominium": [
+     "Condominium"
+    ],
+    "Mansion": [
+     "Villa"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "household-services3",
+   "to": "home-household1",
+   "toMultiple": null,
+   "valueMap": {
+    "Independent house": [
+     "Independent House"
+    ],
+    "Villa": [
+     "Villa"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Duplex": [
+     "Duplex"
+    ],
+    "Farm/rural property": [
+     "Farm/rural property"
+    ],
+    "Apartment/flat": [
+     "Apartment / Flat"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Farm/rural property",
+     "value": "Farm/rural property"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Independent house": [
+     "Independent House"
+    ],
+    "Villa": [
+     "Villa"
+    ],
+    "Townhouse": [
+     "Townhouse / Row House"
+    ],
+    "Duplex": [
+     "Duplex"
+    ],
+    "Farm/rural property": [
+     "Farm/rural property"
+    ],
+    "Apartment/flat": [
+     "Apartment / Flat"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "homeowner2",
+   "to": "home-household3",
+   "toMultiple": null,
+   "valueMap": {
+    "Own": [],
+    "Rent": [
+     "Rent"
+    ],
+    "Living with family": [
+     "Family-owned"
+    ],
+    "Company Provided Housing": [
+     "Employer-provided"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "Hostel": [
+     "Hostel"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Hostel",
+     "value": "Hostel"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [
+    {
+     "value": "Own",
+     "when": {
+      "question": "homeowner6",
+      "value": "Yes"
+     },
+     "to": [
+      "Own with mortgage/home loan"
+     ]
+    },
+    {
+     "value": "Own",
+     "when": {
+      "question": "homeowner6",
+      "value": "No"
+     },
+     "to": [
+      "Own outright"
+     ]
+    }
+   ],
+   "childParentValueMap": {
+    "Rent": [
+     "Rent"
+    ],
+    "Living with family": [
+     "Family-owned"
+    ],
+    "Company Provided Housing": [
+     "Employer-provided"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "Hostel": [
+     "Hostel"
+    ],
+    "Own": [
+     "Own with mortgage/home loan",
+     "Own outright"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "homeowner6",
+   "to": "home-household3",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Own with mortgage/home loan"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "fin_property_type",
+   "to": "home-household3",
+   "toMultiple": null,
+   "valueMap": {},
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {}
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "homeowner28",
+   "to": "home-household13",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [
+     "Solar panels"
+    ],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Solar panels"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "pet18",
+   "to": "pets-animal-care3",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [
+     "Myself"
+    ],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Myself"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "pet19",
+   "to": "pets-animal-care16",
+   "toMultiple": null,
+   "valueMap": {
+    "Pet Boarding": [
+     "Boarding"
+    ],
+    "Pet Sitting": [
+     "Pet sitting"
+    ],
+    "Dog Walking": [
+     "Dog walking"
+    ],
+    "Pet Grooming": [
+     "Grooming"
+    ],
+    "Pet Training": [
+     "Training"
+    ],
+    "Veterinary Care": [
+     "Veterinary care"
+    ],
+    "Pet Daycare": [
+     "Daycare"
+    ],
+    "Pet Taxi": [
+     "Pet taxi/transport"
+    ],
+    "Pet Massage and Therapy": [
+     "Pet Massage and Therapy"
+    ],
+    "Pet Waste Removal": [
+     "Pet Waste Removal"
+    ],
+    "Pet Photography": [
+     "Pet photography"
+    ],
+    "Pet Behavior Consultation": [
+     "Pet Behavior Consultation"
+    ],
+    "Pet Nutrition and Dietary Consultation": [
+     "Pet Nutrition and Dietary Consultation"
+    ],
+    "Pet Reiki and Energy Healing": [
+     "Pet Reiki and Energy Healing"
+    ],
+    "Pet Bereavement Counseling": [
+     "Pet Bereavement Counseling"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Pet Massage and Therapy",
+     "value": "Pet Massage and Therapy"
+    },
+    {
+     "label": "Pet Waste Removal",
+     "value": "Pet Waste Removal"
+    },
+    {
+     "label": "Pet Behavior Consultation",
+     "value": "Pet Behavior Consultation"
+    },
+    {
+     "label": "Pet Nutrition and Dietary Consultation",
+     "value": "Pet Nutrition and Dietary Consultation"
+    },
+    {
+     "label": "Pet Reiki and Energy Healing",
+     "value": "Pet Reiki and Energy Healing"
+    },
+    {
+     "label": "Pet Bereavement Counseling",
+     "value": "Pet Bereavement Counseling"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Pet Boarding": [
+     "Boarding"
+    ],
+    "Pet Sitting": [
+     "Pet sitting"
+    ],
+    "Dog Walking": [
+     "Dog walking"
+    ],
+    "Pet Grooming": [
+     "Grooming"
+    ],
+    "Pet Training": [
+     "Training"
+    ],
+    "Veterinary Care": [
+     "Veterinary care"
+    ],
+    "Pet Daycare": [
+     "Daycare"
+    ],
+    "Pet Taxi": [
+     "Pet taxi/transport"
+    ],
+    "Pet Massage and Therapy": [
+     "Pet Massage and Therapy"
+    ],
+    "Pet Waste Removal": [
+     "Pet Waste Removal"
+    ],
+    "Pet Photography": [
+     "Pet photography"
+    ],
+    "Pet Behavior Consultation": [
+     "Pet Behavior Consultation"
+    ],
+    "Pet Nutrition and Dietary Consultation": [
+     "Pet Nutrition and Dietary Consultation"
+    ],
+    "Pet Reiki and Energy Healing": [
+     "Pet Reiki and Energy Healing"
+    ],
+    "Pet Bereavement Counseling": [
+     "Pet Bereavement Counseling"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "cigratte_type",
+   "to": "tobacco-nicotine-alcoholic3",
+   "toMultiple": true,
+   "valueMap": {
+    "E-Cigarettes": [
+     "E-cigarettes/vapes"
+    ],
+    "Cigarettes": [
+     "Cigarettes"
+    ],
+    "Cigars & Pipes": [
+     "Cigars",
+     "Pipe tobacco"
+    ],
+    "Hookahs": [
+     "Hookah / Shisha"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Hookah / Shisha",
+     "value": "Hookah / Shisha"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "E-Cigarettes": [
+     "E-cigarettes/vapes"
+    ],
+    "Cigarettes": [
+     "Cigarettes"
+    ],
+    "Cigars & Pipes": [
+     "Cigars",
+     "Pipe tobacco"
+    ],
+    "Hookahs": [
+     "Hookah / Shisha"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food16",
+   "to": "tobacco-nicotine-alcoholic3",
+   "toMultiple": true,
+   "valueMap": {
+    "Cigarettes": [
+     "Cigarettes"
+    ],
+    "Cigars": [
+     "Cigars"
+    ],
+    "Pipe_Tobacco": [
+     "Pipe tobacco"
+    ],
+    "Rolling_Tobacco": [
+     "Cigarettes"
+    ],
+    "Vapes": [
+     "E-cigarettes/vapes"
+    ],
+    "Heated_Tobacco": [
+     "Heated tobacco products"
+    ],
+    "Hookah_Shisha": [
+     "Hookah / Shisha"
+    ],
+    "Smokeless_Tobacco": [
+     "Smokeless tobacco"
+    ],
+    "Nicotine_Pouches": [
+     "Nicotine pouches"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Cigarettes": [
+     "Cigarettes"
+    ],
+    "Cigars": [
+     "Cigars"
+    ],
+    "Pipe_Tobacco": [
+     "Pipe tobacco"
+    ],
+    "Rolling_Tobacco": [
+     "Cigarettes"
+    ],
+    "Vapes": [
+     "E-cigarettes/vapes"
+    ],
+    "Heated_Tobacco": [
+     "Heated tobacco products"
+    ],
+    "Hookah_Shisha": [
+     "Hookah / Shisha"
+    ],
+    "Smokeless_Tobacco": [
+     "Smokeless tobacco"
+    ],
+    "Nicotine_Pouches": [
+     "Nicotine pouches"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food19",
+   "to": "tobacco-nicotine-alcoholic9",
+   "toMultiple": true,
+   "valueMap": {
+    "Beer": [
+     "Beer"
+    ],
+    "Red wine": [
+     "Wine"
+    ],
+    "White wine": [
+     "Wine"
+    ],
+    "Vodka": [
+     "Spirits"
+    ],
+    "Gin": [
+     "Spirits"
+    ],
+    "Tequila": [
+     "Spirits"
+    ],
+    "Rum": [
+     "Spirits"
+    ],
+    "Whiskey": [
+     "Spirits"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Beer": [
+     "Beer"
+    ],
+    "Red wine": [
+     "Wine"
+    ],
+    "White wine": [
+     "Wine"
+    ],
+    "Vodka": [
+     "Spirits"
+    ],
+    "Gin": [
+     "Spirits"
+    ],
+    "Tequila": [
+     "Spirits"
+    ],
+    "Rum": [
+     "Spirits"
+    ],
+    "Whiskey": [
+     "Spirits"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food14",
+   "to": "health-wellness29",
+   "toMultiple": null,
+   "valueMap": {},
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {}
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food15",
+   "to": "tobacco-nicotine-alcoholic11",
+   "toMultiple": null,
+   "valueMap": {},
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {}
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "smoking",
+   "to": "tobacco-nicotine-alcoholic2",
+   "toMultiple": true,
+   "valueMap": {
+    "Yes,I do": [
+     "Current tobacco/nicotine user"
+    ],
+    "Ex-User from last 6 Months": [
+     "Former tobacco/nicotine user"
+    ],
+    "Ex-User from more than 6 Months": [
+     "Former tobacco/nicotine user"
+    ],
+    "No, I Do Not": [
+     "Never used tobacco/nicotine"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes,I do": [
+     "Current tobacco/nicotine user"
+    ],
+    "Ex-User from last 6 Months": [
+     "Former tobacco/nicotine user"
+    ],
+    "Ex-User from more than 6 Months": [
+     "Former tobacco/nicotine user"
+    ],
+    "No, I Do Not": [
+     "Never used tobacco/nicotine"
+    ],
+    "Yes,I Smoke": [
+     "Current tobacco/nicotine user"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food8",
+   "to": "tobacco-nicotine-alcoholic2",
+   "toMultiple": true,
+   "valueMap": {
+    "Yes": [
+     "Current alcohol consumer"
+    ],
+    "Ex-User from last 6 Months": [
+     "Former alcohol consumer"
+    ],
+    "Ex-User from more than 6 Months": [
+     "Former alcohol consumer"
+    ],
+    "I Do Not Drink": [
+     "Never consumed alcohol"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Current alcohol consumer"
+    ],
+    "Ex-User from last 6 Months": [
+     "Former alcohol consumer"
+    ],
+    "Ex-User from more than 6 Months": [
+     "Former alcohol consumer"
+    ],
+    "I Do Not Drink": [
+     "Never consumed alcohol"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food2",
+   "to": "restaurants-food-delivery3",
+   "toMultiple": null,
+   "valueMap": {
+    "Fast Food": [
+     "QSR / Fast Food"
+    ],
+    "Casual": [
+     "Casual Dining"
+    ],
+    "Dine in": [],
+    "Takeout": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Fast Food": [
+     "QSR / Fast Food"
+    ],
+    "Casual": [
+     "Casual Dining"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food4",
+   "to": "restaurants-food-delivery8",
+   "toMultiple": true,
+   "valueMap": {
+    "Vegetarian": [
+     "Vegetarian"
+    ],
+    "Vegan": [
+     "Vegan"
+    ],
+    "Non_vegetarian": [
+     "Non-Vegetarian"
+    ],
+    "Pescatarian": [
+     "Pescatarian"
+    ],
+    "Flexitarian": [
+     "Flexitarian"
+    ],
+    "Keto_or_low_carb": [
+     "Low-Carb"
+    ],
+    "Gluten_free": [
+     "Gluten-Free"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Pescatarian (Eat fish but not meat)",
+     "value": "Pescatarian"
+    },
+    {
+     "label": "Flexitarian (Mostly vegetarian but occasionally eat meat)",
+     "value": "Flexitarian"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Vegetarian": [
+     "Vegetarian"
+    ],
+    "Vegan": [
+     "Vegan"
+    ],
+    "Non_vegetarian": [
+     "Non-Vegetarian"
+    ],
+    "Pescatarian": [
+     "Pescatarian"
+    ],
+    "Flexitarian": [
+     "Flexitarian"
+    ],
+    "Keto_or_low_carb": [
+     "Low-Carb"
+    ],
+    "Gluten_free": [
+     "Gluten-Free"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "food6",
+   "to": "restaurants-food-delivery1",
+   "toMultiple": null,
+   "valueMap": {
+    "Daily": [
+     "Daily"
+    ],
+    "Several_times_a_week": [
+     "Several times a week"
+    ],
+    "Once_a_week": [
+     "Once a week"
+    ],
+    "2_3_times_a_month": [
+     "2–3 times a month"
+    ],
+    "Once_a_month": [
+     "Once a month"
+    ],
+    "Few_times_a_year": [
+     "Less than once a month"
+    ],
+    "Rarely": [
+     "Less than once a month"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Daily": [
+     "Daily"
+    ],
+    "Several_times_a_week": [
+     "Several times a week"
+    ],
+    "Once_a_week": [
+     "Once a week"
+    ],
+    "2_3_times_a_month": [
+     "2–3 times a month"
+    ],
+    "Once_a_month": [
+     "Once a month"
+    ],
+    "Few_times_a_year": [
+     "Less than once a month"
+    ],
+    "Rarely": [
+     "Less than once a month"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "lifestyle_3",
+   "to": "entertainment-media7",
+   "toMultiple": null,
+   "valueMap": {
+    "Action": [
+     "Action"
+    ],
+    "Adventure": [
+     "Adventure"
+    ],
+    "Animation": [
+     "Animation"
+    ],
+    "Comedy": [
+     "Comedy"
+    ],
+    "Crime": [
+     "Crime"
+    ],
+    "Documentary": [
+     "Documentary"
+    ],
+    "Drama": [
+     "Drama"
+    ],
+    "Family": [
+     "Family"
+    ],
+    "Fantasy": [
+     "Fantasy"
+    ],
+    "Historical_Biographical": [
+     "Biography"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Romance": [
+     "Romance"
+    ],
+    "Science_Fiction": [
+     "Science Fiction"
+    ],
+    "Superhero": [
+     "Superhero"
+    ],
+    "Thriller_Mystery": [
+     "Thriller"
+    ],
+    "War": [
+     "War"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Musical": [
+     "Musical"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Superhero",
+     "value": "Superhero"
+    },
+    {
+     "label": "War",
+     "value": "War"
+    },
+    {
+     "label": "Sports",
+     "value": "Sports"
+    },
+    {
+     "label": "Musical",
+     "value": "Musical"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Action": [
+     "Action"
+    ],
+    "Adventure": [
+     "Adventure"
+    ],
+    "Animation": [
+     "Animation"
+    ],
+    "Comedy": [
+     "Comedy"
+    ],
+    "Crime": [
+     "Crime"
+    ],
+    "Documentary": [
+     "Documentary"
+    ],
+    "Drama": [
+     "Drama"
+    ],
+    "Family": [
+     "Family"
+    ],
+    "Fantasy": [
+     "Fantasy"
+    ],
+    "Historical_Biographical": [
+     "Biography"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Romance": [
+     "Romance"
+    ],
+    "Science_Fiction": [
+     "Science Fiction"
+    ],
+    "Superhero": [
+     "Superhero"
+    ],
+    "Thriller_Mystery": [
+     "Thriller"
+    ],
+    "War": [
+     "War"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Musical": [
+     "Musical"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "media10",
+   "to": "entertainment-media2",
+   "toMultiple": null,
+   "valueMap": {
+    "Drama": [
+     "Drama / Soap"
+    ],
+    "Comedy": [
+     "Comedy"
+    ],
+    "Action/Adventure": [
+     "Action/Adventure"
+    ],
+    "Crime/Mystery": [
+     "Crime/Mystery"
+    ],
+    "Sci-Fi/Fantasy": [
+     "Sci-Fi/Fantasy"
+    ],
+    "Thriller/Suspense": [
+     "Thriller/Suspense"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Romance": [
+     "Romance"
+    ],
+    "Reality TV": [
+     "Reality shows"
+    ],
+    "Documentary": [
+     "Documentary"
+    ],
+    "News/Current Affairs": [
+     "News/Current Affairs"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Animation": [
+     "Kids / Family"
+    ],
+    "Talk Shows": [
+     "Talk Shows"
+    ],
+    "Travel/Adventure": [
+     "Lifestyle"
+    ],
+    "Cooking/Food": [
+     "Lifestyle"
+    ],
+    "Educational/Instructional": [
+     "Educational/Instructional"
+    ],
+    "Game Shows": [
+     "Game shows"
+    ],
+    "Historical Drama": [
+     "Drama / Soap"
+    ],
+    "Music": [
+     "Music"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Action/Adventure",
+     "value": "Action/Adventure"
+    },
+    {
+     "label": "Crime/Mystery",
+     "value": "Crime/Mystery"
+    },
+    {
+     "label": "Sci-Fi/Fantasy",
+     "value": "Sci-Fi/Fantasy"
+    },
+    {
+     "label": "Thriller/Suspense",
+     "value": "Thriller/Suspense"
+    },
+    {
+     "label": "Horror",
+     "value": "Horror"
+    },
+    {
+     "label": "Romance",
+     "value": "Romance"
+    },
+    {
+     "label": "News/Current Affairs",
+     "value": "News/Current Affairs"
+    },
+    {
+     "label": "Talk Shows",
+     "value": "Talk Shows"
+    },
+    {
+     "label": "Educational/Instructional",
+     "value": "Educational/Instructional"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Drama": [
+     "Drama / Soap"
+    ],
+    "Comedy": [
+     "Comedy"
+    ],
+    "Action/Adventure": [
+     "Action/Adventure"
+    ],
+    "Crime/Mystery": [
+     "Crime/Mystery"
+    ],
+    "Sci-Fi/Fantasy": [
+     "Sci-Fi/Fantasy"
+    ],
+    "Thriller/Suspense": [
+     "Thriller/Suspense"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Romance": [
+     "Romance"
+    ],
+    "Reality TV": [
+     "Reality shows"
+    ],
+    "Documentary": [
+     "Documentary"
+    ],
+    "News/Current Affairs": [
+     "News/Current Affairs"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Animation": [
+     "Kids / Family"
+    ],
+    "Talk Shows": [
+     "Talk Shows"
+    ],
+    "Travel/Adventure": [
+     "Lifestyle"
+    ],
+    "Cooking/Food": [
+     "Lifestyle"
+    ],
+    "Educational/Instructional": [
+     "Educational/Instructional"
+    ],
+    "Game Shows": [
+     "Game shows"
+    ],
+    "Historical Drama": [
+     "Drama / Soap"
+    ],
+    "Music": [
+     "Music"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "media11",
+   "to": "entertainment-media2",
+   "toMultiple": null,
+   "valueMap": {
+    "TV Series": [
+     "TV series"
+    ],
+    "Sitcoms": [
+     "Comedy"
+    ],
+    "News Programs": [
+     "News Programs"
+    ],
+    "Documentaries": [
+     "Documentary"
+    ],
+    "Reality TV": [
+     "Reality shows"
+    ],
+    "Sports Coverage": [
+     "Sports"
+    ],
+    "Variety Shows": [
+     "Variety Shows"
+    ],
+    "Talk Shows": [
+     "Talk Shows"
+    ],
+    "Children's Programming": [
+     "Kids / Family"
+    ],
+    "Game Shows": [
+     "Game shows"
+    ],
+    "Special Events and Live Broadcasts": [
+     "Special Events and Live Broadcasts"
+    ],
+    "Educational/Instructional Programming": [
+     "Educational/Instructional"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "News Programs",
+     "value": "News Programs"
+    },
+    {
+     "label": "Variety Shows",
+     "value": "Variety Shows"
+    },
+    {
+     "label": "Special Events and Live Broadcasts",
+     "value": "Special Events and Live Broadcasts"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "TV Series": [
+     "TV series"
+    ],
+    "Sitcoms": [
+     "Comedy"
+    ],
+    "News Programs": [
+     "News Programs"
+    ],
+    "Documentaries": [
+     "Documentary"
+    ],
+    "Reality TV": [
+     "Reality shows"
+    ],
+    "Sports Coverage": [
+     "Sports"
+    ],
+    "Variety Shows": [
+     "Variety Shows"
+    ],
+    "Talk Shows": [
+     "Talk Shows"
+    ],
+    "Children's Programming": [
+     "Kids / Family"
+    ],
+    "Game Shows": [
+     "Game shows"
+    ],
+    "Special Events and Live Broadcasts": [
+     "Special Events and Live Broadcasts"
+    ],
+    "Educational/Instructional Programming": [
+     "Educational/Instructional"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "media6",
+   "to": "entertainment-media16",
+   "toMultiple": null,
+   "valueMap": {
+    "Facebook": [
+     "Facebook"
+    ],
+    "Instagram": [
+     "Instagram"
+    ],
+    "Twitter": [
+     "X"
+    ],
+    "Snapchat": [
+     "Snapchat"
+    ],
+    "LinkedIn": [
+     "LinkedIn"
+    ],
+    "Pinterest": [
+     "Pinterest"
+    ],
+    "TikTok": [
+     "TikTok"
+    ],
+    "WhatsApp": [
+     "WhatsApp"
+    ],
+    "WeChat": [
+     "WeChat"
+    ],
+    "YouTube": [
+     "YouTube"
+    ],
+    "Reddit": [
+     "Reddit"
+    ],
+    "Tumblr": [
+     "Tumblr"
+    ],
+    "Discord": [
+     "Discord"
+    ],
+    "Viber": [
+     "Viber"
+    ],
+    "Telegram": [
+     "Telegram"
+    ],
+    "Weibo": [
+     "Weibo"
+    ],
+    "Line": [
+     "Line"
+    ],
+    "VKontakte (VK)": [
+     "VKontakte (VK)"
+    ],
+    "Sina Weibo": [
+     "Weibo"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "WhatsApp",
+     "value": "WhatsApp"
+    },
+    {
+     "label": "WeChat",
+     "value": "WeChat"
+    },
+    {
+     "label": "Tumblr",
+     "value": "Tumblr"
+    },
+    {
+     "label": "Discord",
+     "value": "Discord"
+    },
+    {
+     "label": "Viber",
+     "value": "Viber"
+    },
+    {
+     "label": "Telegram",
+     "value": "Telegram"
+    },
+    {
+     "label": "Weibo",
+     "value": "Weibo"
+    },
+    {
+     "label": "Line",
+     "value": "Line"
+    },
+    {
+     "label": "VKontakte (VK)",
+     "value": "VKontakte (VK)"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Facebook": [
+     "Facebook"
+    ],
+    "Instagram": [
+     "Instagram"
+    ],
+    "Twitter": [
+     "X"
+    ],
+    "Snapchat": [
+     "Snapchat"
+    ],
+    "LinkedIn": [
+     "LinkedIn"
+    ],
+    "Pinterest": [
+     "Pinterest"
+    ],
+    "TikTok": [
+     "TikTok"
+    ],
+    "WhatsApp": [
+     "WhatsApp"
+    ],
+    "WeChat": [
+     "WeChat"
+    ],
+    "YouTube": [
+     "YouTube"
+    ],
+    "Reddit": [
+     "Reddit"
+    ],
+    "Tumblr": [
+     "Tumblr"
+    ],
+    "Discord": [
+     "Discord"
+    ],
+    "Viber": [
+     "Viber"
+    ],
+    "Telegram": [
+     "Telegram"
+    ],
+    "Weibo": [
+     "Weibo"
+    ],
+    "Line": [
+     "Line"
+    ],
+    "VKontakte (VK)": [
+     "VKontakte (VK)"
+    ],
+    "Sina Weibo": [
+     "Weibo"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "media8",
+   "to": "entertainment-media4",
+   "toMultiple": null,
+   "valueMap": {
+    "Netflix": [
+     "Netflix"
+    ],
+    "Amazon Prime Video": [
+     "Amazon Prime Video"
+    ],
+    "Disney+ Hotstar": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Hulu": [
+     "Hulu"
+    ],
+    "HBO Max": [
+     "HBO Max"
+    ],
+    "Apple TV+": [
+     "Apple TV+"
+    ],
+    "YouTube Premium": [
+     "YouTube"
+    ],
+    "Zee5": [
+     "ZEE5"
+    ],
+    "Voot": [
+     "Voot"
+    ],
+    "Discovery+": [
+     "Discovery+"
+    ],
+    "ALTBalaji": [
+     "ALTBalaji"
+    ],
+    "MX Player": [
+     "MX Player"
+    ],
+    "Sony Liv": [
+     "Sony LIV"
+    ],
+    "Viu": [
+     "Viu"
+    ],
+    "Iflix": [
+     "Iflix"
+    ],
+    "Tencent Video": [
+     "Tencent Video"
+    ],
+    "iQiyi": [
+     "iQiyi"
+    ],
+    "Youku Tudou": [
+     "Youku Tudou"
+    ],
+    "Rakuten TV": [
+     "Rakuten TV"
+    ],
+    "Acorn TV": [
+     "Acorn TV"
+    ],
+    "Tubi": [
+     "Tubi"
+    ],
+    "Crunchyroll": [
+     "Crunchyroll"
+    ],
+    "Funimation": [
+     "Funimation"
+    ],
+    "Peacock": [
+     "Peacock"
+    ],
+    "Sling TV": [
+     "Sling TV"
+    ],
+    "FuboTV": [
+     "FuboTV"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Hulu",
+     "value": "Hulu"
+    },
+    {
+     "label": "HBO Max",
+     "value": "HBO Max"
+    },
+    {
+     "label": "Voot",
+     "value": "Voot"
+    },
+    {
+     "label": "Discovery+",
+     "value": "Discovery+"
+    },
+    {
+     "label": "ALTBalaji",
+     "value": "ALTBalaji"
+    },
+    {
+     "label": "Viu",
+     "value": "Viu"
+    },
+    {
+     "label": "Iflix",
+     "value": "Iflix"
+    },
+    {
+     "label": "Tencent Video",
+     "value": "Tencent Video"
+    },
+    {
+     "label": "iQiyi",
+     "value": "iQiyi"
+    },
+    {
+     "label": "Youku Tudou",
+     "value": "Youku Tudou"
+    },
+    {
+     "label": "Rakuten TV",
+     "value": "Rakuten TV"
+    },
+    {
+     "label": "Acorn TV",
+     "value": "Acorn TV"
+    },
+    {
+     "label": "Tubi",
+     "value": "Tubi"
+    },
+    {
+     "label": "Crunchyroll",
+     "value": "Crunchyroll"
+    },
+    {
+     "label": "Funimation",
+     "value": "Funimation"
+    },
+    {
+     "label": "Peacock",
+     "value": "Peacock"
+    },
+    {
+     "label": "Sling TV",
+     "value": "Sling TV"
+    },
+    {
+     "label": "FuboTV",
+     "value": "FuboTV"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Netflix": [
+     "Netflix"
+    ],
+    "Amazon Prime Video": [
+     "Amazon Prime Video"
+    ],
+    "Disney+ Hotstar": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Hulu": [
+     "Hulu"
+    ],
+    "HBO Max": [
+     "HBO Max"
+    ],
+    "Apple TV+": [
+     "Apple TV+"
+    ],
+    "YouTube Premium": [
+     "YouTube"
+    ],
+    "Zee5": [
+     "ZEE5"
+    ],
+    "Voot": [
+     "Voot"
+    ],
+    "Discovery+": [
+     "Discovery+"
+    ],
+    "ALTBalaji": [
+     "ALTBalaji"
+    ],
+    "MX Player": [
+     "MX Player"
+    ],
+    "Sony Liv": [
+     "Sony LIV"
+    ],
+    "Viu": [
+     "Viu"
+    ],
+    "Iflix": [
+     "Iflix"
+    ],
+    "Tencent Video": [
+     "Tencent Video"
+    ],
+    "iQiyi": [
+     "iQiyi"
+    ],
+    "Youku Tudou": [
+     "Youku Tudou"
+    ],
+    "Rakuten TV": [
+     "Rakuten TV"
+    ],
+    "Acorn TV": [
+     "Acorn TV"
+    ],
+    "Tubi": [
+     "Tubi"
+    ],
+    "Crunchyroll": [
+     "Crunchyroll"
+    ],
+    "Funimation": [
+     "Funimation"
+    ],
+    "Peacock": [
+     "Peacock"
+    ],
+    "Sling TV": [
+     "Sling TV"
+    ],
+    "FuboTV": [
+     "FuboTV"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "media12",
+   "to": "entertainment-media4",
+   "toMultiple": null,
+   "valueMap": {
+    "DirecTV Stream": [
+     "DirecTV Stream"
+    ],
+    "YouTube TV": [
+     "YouTube"
+    ],
+    "Fubo": [
+     "FuboTV"
+    ],
+    "Philo": [
+     "Philo"
+    ],
+    "Hulu + Live TV": [
+     "Hulu"
+    ],
+    "Sling TV": [
+     "Sling TV"
+    ],
+    "LG Channel Plus": [
+     "LG Channel Plus"
+    ],
+    "TV Everywhere": [
+     "TV Everywhere"
+    ],
+    "NBC News Now": [
+     "NBC News Now"
+    ],
+    "Spectrum TV": [
+     "Spectrum TV"
+    ],
+    "Pluto.tv": [
+     "Pluto TV"
+    ],
+    "Xumo": [
+     "Xumo"
+    ],
+    "KlowdTV": [
+     "KlowdTV"
+    ],
+    "Frndly TV": [
+     "Frndly TV"
+    ],
+    "Vidgo": [
+     "Vidgo"
+    ],
+    "Max": [
+     "HBO Max"
+    ],
+    "AMC+": [
+     "AMC+"
+    ],
+    "Lifetime Movie Club": [
+     "Lifetime Movie Club"
+    ],
+    "Paramount+": [
+     "Paramount+"
+    ],
+    "History Vault": [
+     "History Vault"
+    ],
+    "The CW (now merged with CW Seed)": [
+     "The CW (now merged with CW Seed)"
+    ],
+    "Peacock": [
+     "Peacock"
+    ],
+    "Disney+": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Disney+ Star": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Showtime": [
+     "Showtime"
+    ],
+    "Hallmark Movies Now": [
+     "Hallmark Movies Now"
+    ],
+    "Starz": [
+     "Starz"
+    ],
+    "MGM+": [
+     "MGM+"
+    ],
+    "MAX GO": [
+     "HBO Max"
+    ],
+    "Netflix": [
+     "Netflix"
+    ],
+    "Hulu": [
+     "Hulu"
+    ],
+    "Crackle": [
+     "Crackle"
+    ],
+    "Popcornflix": [
+     "Popcornflix"
+    ],
+    "Vudu": [
+     "Vudu"
+    ],
+    "Discovery+": [
+     "Discovery+"
+    ],
+    "Fearless.li": [
+     "Fearless.li"
+    ],
+    "Vimeo": [
+     "Vimeo"
+    ],
+    "PantaFlix": [
+     "PantaFlix"
+    ],
+    "Volta": [
+     "Volta"
+    ],
+    "Roku": [
+     "Roku"
+    ],
+    "RedBox": [
+     "RedBox"
+    ],
+    "Tubi TV": [
+     "Tubi"
+    ],
+    "IMDb TV": [
+     "Tubi"
+    ],
+    "Apple iTunes": [
+     "Apple iTunes"
+    ],
+    "Google Play": [
+     "Google Play Movies & TV"
+    ],
+    "Shout Factory TV": [
+     "Shout Factory TV"
+    ],
+    "FlixFling": [
+     "FlixFling"
+    ],
+    "Amazon Prime Video": [
+     "Amazon Prime Video"
+    ],
+    "Facebook Watch": [
+     "Facebook Watch"
+    ],
+    "Outside TV": [
+     "Outside TV"
+    ],
+    "Crunchyroll": [
+     "Crunchyroll"
+    ],
+    "Funimation Now": [
+     "Funimation"
+    ],
+    "VRV": [
+     "VRV"
+    ],
+    "Dove Channel": [
+     "Dove Channel"
+    ],
+    "BritBox": [
+     "BritBox"
+    ],
+    "Acorn TV": [
+     "Acorn TV"
+    ],
+    "Turner Classic Movies": [
+     "Turner Classic Movies"
+    ],
+    "Hi-Yah": [
+     "Hi-Yah"
+    ],
+    "KocawaTV": [
+     "KocawaTV"
+    ],
+    "BroadwayHD": [
+     "BroadwayHD"
+    ],
+    "DC Universe Infinite": [
+     "DC Universe Infinite"
+    ],
+    "Curiosity Stream": [
+     "CuriosityStream"
+    ],
+    "GuideDoc": [
+     "GuideDoc"
+    ],
+    "HIDIVE": [
+     "HIDIVE"
+    ],
+    "UP Faith and Family": [
+     "UP Faith and Family"
+    ],
+    "Blaze TV": [
+     "Blaze TV"
+    ],
+    "Magnolia Selects": [
+     "Magnolia Selects"
+    ],
+    "Hopster TV": [
+     "Hopster TV"
+    ],
+    "Pure Flix": [
+     "Pure Flix"
+    ],
+    "Fandor": [
+     "Fandor"
+    ],
+    "Gaia": [
+     "Gaia"
+    ],
+    "Qello": [
+     "Qello"
+    ],
+    "Screambox": [
+     "Screambox"
+    ],
+    "Sundance Now": [
+     "Sundance Now"
+    ],
+    "Hayu": [
+     "Hayu"
+    ],
+    "Hoopla": [
+     "Hoopla"
+    ],
+    "allblk": [
+     "allblk"
+    ],
+    "Revry": [
+     "Revry"
+    ],
+    "Realeyz": [
+     "Realeyz"
+    ],
+    "Mubi": [
+     "Mubi"
+    ],
+    "Short of the Week": [
+     "Short of the Week"
+    ],
+    "Kanopy": [
+     "Kanopy"
+    ],
+    "Rakuten Viki": [
+     "Rakuten Viki"
+    ],
+    "Shudder": [
+     "Shudder"
+    ],
+    "ESPN+": [
+     "ESPN+"
+    ],
+    "NBA League Pass": [
+     "NBA League Pass"
+    ],
+    "NFL Game Pass": [
+     "NFL Game Pass"
+    ],
+    "Willow TV": [
+     "Willow TV"
+    ],
+    "F1 TV": [
+     "F1 TV"
+    ],
+    "Ginx": [
+     "Ginx"
+    ],
+    "NHL.TV": [
+     "NHL.TV"
+    ],
+    "Twitter": [],
+    "DAZN": [
+     "DAZN"
+    ],
+    "WWE Network": [
+     "WWE Network"
+    ],
+    "Bleacher Report": [
+     "Bleacher Report"
+    ],
+    "MLB.TV": [
+     "MLB.TV"
+    ],
+    "PokerGo": [
+     "PokerGo"
+    ],
+    "Twitch": [
+     "Twitch"
+    ],
+    "MOTORTREND+": [
+     "MOTORTREND+"
+    ],
+    "UFC Fight Pass": [
+     "UFC Fight Pass"
+    ],
+    "ITV Hub": [
+     "ITV Hub"
+    ],
+    "STV Player": [
+     "STV Player"
+    ],
+    "Freeview": [
+     "Freeview"
+    ],
+    "UK TV Play": [
+     "UK TV Play"
+    ],
+    "TV Player": [
+     "TV Player"
+    ],
+    "BBC iPlayer": [
+     "BBC iPlayer"
+    ],
+    "All 4": [
+     "All 4"
+    ],
+    "4Seven": [
+     "4Seven"
+    ],
+    "My 5": [
+     "My 5"
+    ],
+    "Rakuten TV": [
+     "Rakuten TV"
+    ],
+    "Chili": [
+     "Chili"
+    ],
+    "BFI Player": [
+     "BFI Player"
+    ],
+    "Dropout": [
+     "Dropout"
+    ],
+    "Spectiv": [
+     "Spectiv"
+    ],
+    "Curzon Home Cinema": [
+     "Curzon Home Cinema"
+    ],
+    "TalkTalk TV": [
+     "TalkTalk TV"
+    ],
+    "Virgin TV Go": [
+     "Virgin TV Go"
+    ],
+    "Now TV": [
+     "Now TV"
+    ],
+    "Airtel": [
+     "Airtel"
+    ],
+    "JioTV": [
+     "JioTV"
+    ],
+    "YuppTV": [
+     "YuppTV"
+    ],
+    "Voot": [
+     "Voot"
+    ],
+    "NexGTv": [
+     "NexGTv"
+    ],
+    "Hotstar": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "ALTBalaji": [
+     "ALTBalaji"
+    ],
+    "Eros Now": [
+     "Eros Now"
+    ],
+    "Zee5": [
+     "ZEE5"
+    ],
+    "SonyLIV": [
+     "Sony LIV"
+    ],
+    "Spuul": [
+     "Spuul"
+    ],
+    "Viu": [
+     "Viu"
+    ],
+    "Huajiao": [
+     "Huajiao"
+    ],
+    "Taobao Live": [
+     "Taobao Live"
+    ],
+    "JD Live": [
+     "JD Live"
+    ],
+    "Inke": [
+     "Inke"
+    ],
+    "YY Live": [
+     "YY Live"
+    ],
+    "Yizhibo": [
+     "Yizhibo"
+    ],
+    "Tencent Video": [
+     "Tencent Video"
+    ],
+    "Bilibili": [
+     "Bilibili"
+    ],
+    "Douyin": [
+     "Douyin"
+    ],
+    "Kuaishou": [
+     "Kuaishou"
+    ],
+    "Xigua Video": [
+     "Xigua Video"
+    ],
+    "Sohu Video": [
+     "Sohu Video"
+    ],
+    "iQiyi": [
+     "iQiyi"
+    ],
+    "Mango TV": [
+     "Mango TV"
+    ],
+    "Youku": [
+     "Youku Tudou"
+    ],
+    "Douyu TV": [
+     "Douyu TV"
+    ],
+    "HuoMaoTV": [
+     "HuoMaoTV"
+    ],
+    "PPTV": [
+     "PPTV"
+    ],
+    "Ivi": [
+     "Ivi"
+    ],
+    "Kinopoisk": [
+     "Kinopoisk"
+    ],
+    "Amediateka": [
+     "Amediateka"
+    ],
+    "puhutv": [
+     "puhutv"
+    ],
+    "Turkish123": [
+     "Turkish123"
+    ],
+    "Stoiximan": [
+     "Stoiximan"
+    ],
+    "Alphatv": [
+     "Alphatv"
+    ],
+    "Pobre TV": [
+     "Pobre TV"
+    ],
+    "RTP": [
+     "RTP"
+    ],
+    "myCANAL": [
+     "myCANAL"
+    ],
+    "France TV": [
+     "France TV"
+    ],
+    "ARTE": [
+     "ARTE"
+    ],
+    "Play TV": [
+     "Play TV"
+    ],
+    "Movistar+ Lite": [
+     "Movistar+ Lite"
+    ],
+    "Atresplayer Premium": [
+     "Atresplayer Premium"
+    ],
+    "C More": [
+     "C More"
+    ],
+    "Via Play": [
+     "Via Play"
+    ],
+    "SVT Play": [
+     "SVT Play"
+    ],
+    "TIMvision": [
+     "TIMvision"
+    ],
+    "Rai Play": [
+     "Rai Play"
+    ],
+    "Mediaset International": [
+     "Mediaset International"
+    ],
+    "MagentaTV": [
+     "MagentaTV"
+    ],
+    "Maxdome": [
+     "Maxdome"
+    ],
+    "HBO Max": [
+     "HBO Max"
+    ],
+    "Apple TV+": [
+     "Apple TV+"
+    ],
+    "YouTube Premium": [
+     "YouTube"
+    ],
+    "Google Play Movies & TV": [
+     "Google Play Movies & TV"
+    ],
+    "Tubi": [
+     "Tubi"
+    ],
+    "Pluto TV": [
+     "Pluto TV"
+    ],
+    "Funimation": [
+     "Funimation"
+    ],
+    "fuboTV": [
+     "FuboTV"
+    ],
+    "AT&T TV Now": [
+     "AT&T TV Now"
+    ],
+    "CBS All Access (now Paramount+)": [
+     "Paramount+"
+    ],
+    "NBCUniversal's Peacock": [
+     "Peacock"
+    ],
+    "Quibi": [
+     "Quibi"
+    ],
+    "Roku Channel": [
+     "Roku"
+    ],
+    "CuriosityStream": [
+     "CuriosityStream"
+    ],
+    "The Criterion Channel": [
+     "The Criterion Channel"
+    ],
+    "Tidal (music streaming with exclusive content)": [
+     "Tidal (music streaming with exclusive content)"
+    ],
+    "Spotify": [
+     "Spotify"
+    ],
+    "Apple Music": [
+     "Apple Music"
+    ],
+    "Amazon Music Unlimited": [
+     "Amazon Music Unlimited"
+    ],
+    "Pandora": [
+     "Pandora"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "DirecTV Stream",
+     "value": "DirecTV Stream"
+    },
+    {
+     "label": "Philo",
+     "value": "Philo"
+    },
+    {
+     "label": "LG Channel Plus",
+     "value": "LG Channel Plus"
+    },
+    {
+     "label": "TV Everywhere",
+     "value": "TV Everywhere"
+    },
+    {
+     "label": "NBC News Now",
+     "value": "NBC News Now"
+    },
+    {
+     "label": "Spectrum TV",
+     "value": "Spectrum TV"
+    },
+    {
+     "label": "Pluto TV",
+     "value": "Pluto TV"
+    },
+    {
+     "label": "Xumo",
+     "value": "Xumo"
+    },
+    {
+     "label": "KlowdTV",
+     "value": "KlowdTV"
+    },
+    {
+     "label": "Frndly TV",
+     "value": "Frndly TV"
+    },
+    {
+     "label": "Vidgo",
+     "value": "Vidgo"
+    },
+    {
+     "label": "AMC+",
+     "value": "AMC+"
+    },
+    {
+     "label": "Lifetime Movie Club",
+     "value": "Lifetime Movie Club"
+    },
+    {
+     "label": "Paramount+",
+     "value": "Paramount+"
+    },
+    {
+     "label": "History Vault",
+     "value": "History Vault"
+    },
+    {
+     "label": "The CW (now merged with CW Seed)",
+     "value": "The CW (now merged with CW Seed)"
+    },
+    {
+     "label": "Showtime",
+     "value": "Showtime"
+    },
+    {
+     "label": "Hallmark Movies Now",
+     "value": "Hallmark Movies Now"
+    },
+    {
+     "label": "Starz",
+     "value": "Starz"
+    },
+    {
+     "label": "MGM+",
+     "value": "MGM+"
+    },
+    {
+     "label": "Crackle",
+     "value": "Crackle"
+    },
+    {
+     "label": "Popcornflix",
+     "value": "Popcornflix"
+    },
+    {
+     "label": "Vudu",
+     "value": "Vudu"
+    },
+    {
+     "label": "Fearless.li",
+     "value": "Fearless.li"
+    },
+    {
+     "label": "Vimeo",
+     "value": "Vimeo"
+    },
+    {
+     "label": "PantaFlix",
+     "value": "PantaFlix"
+    },
+    {
+     "label": "Volta",
+     "value": "Volta"
+    },
+    {
+     "label": "Roku",
+     "value": "Roku"
+    },
+    {
+     "label": "RedBox",
+     "value": "RedBox"
+    },
+    {
+     "label": "Apple iTunes",
+     "value": "Apple iTunes"
+    },
+    {
+     "label": "Google Play Movies & TV",
+     "value": "Google Play Movies & TV"
+    },
+    {
+     "label": "Shout Factory TV",
+     "value": "Shout Factory TV"
+    },
+    {
+     "label": "FlixFling",
+     "value": "FlixFling"
+    },
+    {
+     "label": "Facebook Watch",
+     "value": "Facebook Watch"
+    },
+    {
+     "label": "Outside TV",
+     "value": "Outside TV"
+    },
+    {
+     "label": "VRV",
+     "value": "VRV"
+    },
+    {
+     "label": "Dove Channel",
+     "value": "Dove Channel"
+    },
+    {
+     "label": "BritBox",
+     "value": "BritBox"
+    },
+    {
+     "label": "Turner Classic Movies",
+     "value": "Turner Classic Movies"
+    },
+    {
+     "label": "Hi-Yah",
+     "value": "Hi-Yah"
+    },
+    {
+     "label": "KocawaTV",
+     "value": "KocawaTV"
+    },
+    {
+     "label": "BroadwayHD",
+     "value": "BroadwayHD"
+    },
+    {
+     "label": "DC Universe Infinite",
+     "value": "DC Universe Infinite"
+    },
+    {
+     "label": "CuriosityStream",
+     "value": "CuriosityStream"
+    },
+    {
+     "label": "GuideDoc",
+     "value": "GuideDoc"
+    },
+    {
+     "label": "HIDIVE",
+     "value": "HIDIVE"
+    },
+    {
+     "label": "UP Faith and Family",
+     "value": "UP Faith and Family"
+    },
+    {
+     "label": "Blaze TV",
+     "value": "Blaze TV"
+    },
+    {
+     "label": "Magnolia Selects",
+     "value": "Magnolia Selects"
+    },
+    {
+     "label": "Hopster TV",
+     "value": "Hopster TV"
+    },
+    {
+     "label": "Pure Flix",
+     "value": "Pure Flix"
+    },
+    {
+     "label": "Fandor",
+     "value": "Fandor"
+    },
+    {
+     "label": "Gaia",
+     "value": "Gaia"
+    },
+    {
+     "label": "Qello",
+     "value": "Qello"
+    },
+    {
+     "label": "Screambox",
+     "value": "Screambox"
+    },
+    {
+     "label": "Sundance Now",
+     "value": "Sundance Now"
+    },
+    {
+     "label": "Hayu",
+     "value": "Hayu"
+    },
+    {
+     "label": "Hoopla",
+     "value": "Hoopla"
+    },
+    {
+     "label": "allblk",
+     "value": "allblk"
+    },
+    {
+     "label": "Revry",
+     "value": "Revry"
+    },
+    {
+     "label": "Realeyz",
+     "value": "Realeyz"
+    },
+    {
+     "label": "Mubi",
+     "value": "Mubi"
+    },
+    {
+     "label": "Short of the Week",
+     "value": "Short of the Week"
+    },
+    {
+     "label": "Kanopy",
+     "value": "Kanopy"
+    },
+    {
+     "label": "Rakuten Viki",
+     "value": "Rakuten Viki"
+    },
+    {
+     "label": "Shudder",
+     "value": "Shudder"
+    },
+    {
+     "label": "ESPN+",
+     "value": "ESPN+"
+    },
+    {
+     "label": "NBA League Pass",
+     "value": "NBA League Pass"
+    },
+    {
+     "label": "NFL Game Pass",
+     "value": "NFL Game Pass"
+    },
+    {
+     "label": "Willow TV",
+     "value": "Willow TV"
+    },
+    {
+     "label": "F1 TV",
+     "value": "F1 TV"
+    },
+    {
+     "label": "Ginx",
+     "value": "Ginx"
+    },
+    {
+     "label": "NHL.TV",
+     "value": "NHL.TV"
+    },
+    {
+     "label": "DAZN",
+     "value": "DAZN"
+    },
+    {
+     "label": "WWE Network",
+     "value": "WWE Network"
+    },
+    {
+     "label": "Bleacher Report",
+     "value": "Bleacher Report"
+    },
+    {
+     "label": "MLB.TV",
+     "value": "MLB.TV"
+    },
+    {
+     "label": "PokerGo",
+     "value": "PokerGo"
+    },
+    {
+     "label": "Twitch",
+     "value": "Twitch"
+    },
+    {
+     "label": "MOTORTREND+",
+     "value": "MOTORTREND+"
+    },
+    {
+     "label": "UFC Fight Pass",
+     "value": "UFC Fight Pass"
+    },
+    {
+     "label": "ITV Hub",
+     "value": "ITV Hub"
+    },
+    {
+     "label": "STV Player",
+     "value": "STV Player"
+    },
+    {
+     "label": "Freeview",
+     "value": "Freeview"
+    },
+    {
+     "label": "UK TV Play",
+     "value": "UK TV Play"
+    },
+    {
+     "label": "TV Player",
+     "value": "TV Player"
+    },
+    {
+     "label": "BBC iPlayer",
+     "value": "BBC iPlayer"
+    },
+    {
+     "label": "All 4",
+     "value": "All 4"
+    },
+    {
+     "label": "4Seven",
+     "value": "4Seven"
+    },
+    {
+     "label": "My 5",
+     "value": "My 5"
+    },
+    {
+     "label": "Chili",
+     "value": "Chili"
+    },
+    {
+     "label": "BFI Player",
+     "value": "BFI Player"
+    },
+    {
+     "label": "Dropout",
+     "value": "Dropout"
+    },
+    {
+     "label": "Spectiv",
+     "value": "Spectiv"
+    },
+    {
+     "label": "Curzon Home Cinema",
+     "value": "Curzon Home Cinema"
+    },
+    {
+     "label": "TalkTalk TV",
+     "value": "TalkTalk TV"
+    },
+    {
+     "label": "Virgin TV Go",
+     "value": "Virgin TV Go"
+    },
+    {
+     "label": "Now TV",
+     "value": "Now TV"
+    },
+    {
+     "label": "Airtel",
+     "value": "Airtel"
+    },
+    {
+     "label": "JioTV",
+     "value": "JioTV"
+    },
+    {
+     "label": "YuppTV",
+     "value": "YuppTV"
+    },
+    {
+     "label": "NexGTv",
+     "value": "NexGTv"
+    },
+    {
+     "label": "Eros Now",
+     "value": "Eros Now"
+    },
+    {
+     "label": "Spuul",
+     "value": "Spuul"
+    },
+    {
+     "label": "Huajiao",
+     "value": "Huajiao"
+    },
+    {
+     "label": "Taobao Live",
+     "value": "Taobao Live"
+    },
+    {
+     "label": "JD Live",
+     "value": "JD Live"
+    },
+    {
+     "label": "Inke",
+     "value": "Inke"
+    },
+    {
+     "label": "YY Live",
+     "value": "YY Live"
+    },
+    {
+     "label": "Yizhibo",
+     "value": "Yizhibo"
+    },
+    {
+     "label": "Bilibili",
+     "value": "Bilibili"
+    },
+    {
+     "label": "Douyin",
+     "value": "Douyin"
+    },
+    {
+     "label": "Kuaishou",
+     "value": "Kuaishou"
+    },
+    {
+     "label": "Xigua Video",
+     "value": "Xigua Video"
+    },
+    {
+     "label": "Sohu Video",
+     "value": "Sohu Video"
+    },
+    {
+     "label": "Mango TV",
+     "value": "Mango TV"
+    },
+    {
+     "label": "Douyu TV",
+     "value": "Douyu TV"
+    },
+    {
+     "label": "HuoMaoTV",
+     "value": "HuoMaoTV"
+    },
+    {
+     "label": "PPTV",
+     "value": "PPTV"
+    },
+    {
+     "label": "Ivi",
+     "value": "Ivi"
+    },
+    {
+     "label": "Kinopoisk",
+     "value": "Kinopoisk"
+    },
+    {
+     "label": "Amediateka",
+     "value": "Amediateka"
+    },
+    {
+     "label": "puhutv",
+     "value": "puhutv"
+    },
+    {
+     "label": "Turkish123",
+     "value": "Turkish123"
+    },
+    {
+     "label": "Stoiximan",
+     "value": "Stoiximan"
+    },
+    {
+     "label": "Alphatv",
+     "value": "Alphatv"
+    },
+    {
+     "label": "Pobre TV",
+     "value": "Pobre TV"
+    },
+    {
+     "label": "RTP",
+     "value": "RTP"
+    },
+    {
+     "label": "myCANAL",
+     "value": "myCANAL"
+    },
+    {
+     "label": "France TV",
+     "value": "France TV"
+    },
+    {
+     "label": "ARTE",
+     "value": "ARTE"
+    },
+    {
+     "label": "Play TV",
+     "value": "Play TV"
+    },
+    {
+     "label": "Movistar+ Lite",
+     "value": "Movistar+ Lite"
+    },
+    {
+     "label": "Atresplayer Premium",
+     "value": "Atresplayer Premium"
+    },
+    {
+     "label": "C More",
+     "value": "C More"
+    },
+    {
+     "label": "Via Play",
+     "value": "Via Play"
+    },
+    {
+     "label": "SVT Play",
+     "value": "SVT Play"
+    },
+    {
+     "label": "TIMvision",
+     "value": "TIMvision"
+    },
+    {
+     "label": "Rai Play",
+     "value": "Rai Play"
+    },
+    {
+     "label": "Mediaset International",
+     "value": "Mediaset International"
+    },
+    {
+     "label": "MagentaTV",
+     "value": "MagentaTV"
+    },
+    {
+     "label": "Maxdome",
+     "value": "Maxdome"
+    },
+    {
+     "label": "AT&T TV Now",
+     "value": "AT&T TV Now"
+    },
+    {
+     "label": "Quibi",
+     "value": "Quibi"
+    },
+    {
+     "label": "The Criterion Channel",
+     "value": "The Criterion Channel"
+    },
+    {
+     "label": "Tidal (music streaming with exclusive content)",
+     "value": "Tidal (music streaming with exclusive content)"
+    },
+    {
+     "label": "Spotify",
+     "value": "Spotify"
+    },
+    {
+     "label": "Apple Music",
+     "value": "Apple Music"
+    },
+    {
+     "label": "Amazon Music Unlimited",
+     "value": "Amazon Music Unlimited"
+    },
+    {
+     "label": "Pandora",
+     "value": "Pandora"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "DirecTV Stream": [
+     "DirecTV Stream"
+    ],
+    "YouTube TV": [
+     "YouTube"
+    ],
+    "Fubo": [
+     "FuboTV"
+    ],
+    "Philo": [
+     "Philo"
+    ],
+    "Hulu + Live TV": [
+     "Hulu"
+    ],
+    "Sling TV": [
+     "Sling TV"
+    ],
+    "LG Channel Plus": [
+     "LG Channel Plus"
+    ],
+    "TV Everywhere": [
+     "TV Everywhere"
+    ],
+    "NBC News Now": [
+     "NBC News Now"
+    ],
+    "Spectrum TV": [
+     "Spectrum TV"
+    ],
+    "Pluto.tv": [
+     "Pluto TV"
+    ],
+    "Xumo": [
+     "Xumo"
+    ],
+    "KlowdTV": [
+     "KlowdTV"
+    ],
+    "Frndly TV": [
+     "Frndly TV"
+    ],
+    "Vidgo": [
+     "Vidgo"
+    ],
+    "Max": [
+     "HBO Max"
+    ],
+    "AMC+": [
+     "AMC+"
+    ],
+    "Lifetime Movie Club": [
+     "Lifetime Movie Club"
+    ],
+    "Paramount+": [
+     "Paramount+"
+    ],
+    "History Vault": [
+     "History Vault"
+    ],
+    "The CW (now merged with CW Seed)": [
+     "The CW (now merged with CW Seed)"
+    ],
+    "Peacock": [
+     "Peacock"
+    ],
+    "Disney+": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Disney+ Star": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "Showtime": [
+     "Showtime"
+    ],
+    "Hallmark Movies Now": [
+     "Hallmark Movies Now"
+    ],
+    "Starz": [
+     "Starz"
+    ],
+    "MGM+": [
+     "MGM+"
+    ],
+    "MAX GO": [
+     "HBO Max"
+    ],
+    "Netflix": [
+     "Netflix"
+    ],
+    "Hulu": [
+     "Hulu"
+    ],
+    "Crackle": [
+     "Crackle"
+    ],
+    "Popcornflix": [
+     "Popcornflix"
+    ],
+    "Vudu": [
+     "Vudu"
+    ],
+    "Discovery+": [
+     "Discovery+"
+    ],
+    "Fearless.li": [
+     "Fearless.li"
+    ],
+    "Vimeo": [
+     "Vimeo"
+    ],
+    "PantaFlix": [
+     "PantaFlix"
+    ],
+    "Volta": [
+     "Volta"
+    ],
+    "Roku": [
+     "Roku"
+    ],
+    "RedBox": [
+     "RedBox"
+    ],
+    "Tubi TV": [
+     "Tubi"
+    ],
+    "IMDb TV": [
+     "Tubi"
+    ],
+    "Apple iTunes": [
+     "Apple iTunes"
+    ],
+    "Google Play": [
+     "Google Play Movies & TV"
+    ],
+    "Shout Factory TV": [
+     "Shout Factory TV"
+    ],
+    "FlixFling": [
+     "FlixFling"
+    ],
+    "Amazon Prime Video": [
+     "Amazon Prime Video"
+    ],
+    "Facebook Watch": [
+     "Facebook Watch"
+    ],
+    "Outside TV": [
+     "Outside TV"
+    ],
+    "Crunchyroll": [
+     "Crunchyroll"
+    ],
+    "Funimation Now": [
+     "Funimation"
+    ],
+    "VRV": [
+     "VRV"
+    ],
+    "Dove Channel": [
+     "Dove Channel"
+    ],
+    "BritBox": [
+     "BritBox"
+    ],
+    "Acorn TV": [
+     "Acorn TV"
+    ],
+    "Turner Classic Movies": [
+     "Turner Classic Movies"
+    ],
+    "Hi-Yah": [
+     "Hi-Yah"
+    ],
+    "KocawaTV": [
+     "KocawaTV"
+    ],
+    "BroadwayHD": [
+     "BroadwayHD"
+    ],
+    "DC Universe Infinite": [
+     "DC Universe Infinite"
+    ],
+    "Curiosity Stream": [
+     "CuriosityStream"
+    ],
+    "GuideDoc": [
+     "GuideDoc"
+    ],
+    "HIDIVE": [
+     "HIDIVE"
+    ],
+    "UP Faith and Family": [
+     "UP Faith and Family"
+    ],
+    "Blaze TV": [
+     "Blaze TV"
+    ],
+    "Magnolia Selects": [
+     "Magnolia Selects"
+    ],
+    "Hopster TV": [
+     "Hopster TV"
+    ],
+    "Pure Flix": [
+     "Pure Flix"
+    ],
+    "Fandor": [
+     "Fandor"
+    ],
+    "Gaia": [
+     "Gaia"
+    ],
+    "Qello": [
+     "Qello"
+    ],
+    "Screambox": [
+     "Screambox"
+    ],
+    "Sundance Now": [
+     "Sundance Now"
+    ],
+    "Hayu": [
+     "Hayu"
+    ],
+    "Hoopla": [
+     "Hoopla"
+    ],
+    "allblk": [
+     "allblk"
+    ],
+    "Revry": [
+     "Revry"
+    ],
+    "Realeyz": [
+     "Realeyz"
+    ],
+    "Mubi": [
+     "Mubi"
+    ],
+    "Short of the Week": [
+     "Short of the Week"
+    ],
+    "Kanopy": [
+     "Kanopy"
+    ],
+    "Rakuten Viki": [
+     "Rakuten Viki"
+    ],
+    "Shudder": [
+     "Shudder"
+    ],
+    "ESPN+": [
+     "ESPN+"
+    ],
+    "NBA League Pass": [
+     "NBA League Pass"
+    ],
+    "NFL Game Pass": [
+     "NFL Game Pass"
+    ],
+    "Willow TV": [
+     "Willow TV"
+    ],
+    "F1 TV": [
+     "F1 TV"
+    ],
+    "Ginx": [
+     "Ginx"
+    ],
+    "NHL.TV": [
+     "NHL.TV"
+    ],
+    "DAZN": [
+     "DAZN"
+    ],
+    "WWE Network": [
+     "WWE Network"
+    ],
+    "Bleacher Report": [
+     "Bleacher Report"
+    ],
+    "MLB.TV": [
+     "MLB.TV"
+    ],
+    "PokerGo": [
+     "PokerGo"
+    ],
+    "Twitch": [
+     "Twitch"
+    ],
+    "MOTORTREND+": [
+     "MOTORTREND+"
+    ],
+    "UFC Fight Pass": [
+     "UFC Fight Pass"
+    ],
+    "ITV Hub": [
+     "ITV Hub"
+    ],
+    "STV Player": [
+     "STV Player"
+    ],
+    "Freeview": [
+     "Freeview"
+    ],
+    "UK TV Play": [
+     "UK TV Play"
+    ],
+    "TV Player": [
+     "TV Player"
+    ],
+    "BBC iPlayer": [
+     "BBC iPlayer"
+    ],
+    "All 4": [
+     "All 4"
+    ],
+    "4Seven": [
+     "4Seven"
+    ],
+    "My 5": [
+     "My 5"
+    ],
+    "Rakuten TV": [
+     "Rakuten TV"
+    ],
+    "Chili": [
+     "Chili"
+    ],
+    "BFI Player": [
+     "BFI Player"
+    ],
+    "Dropout": [
+     "Dropout"
+    ],
+    "Spectiv": [
+     "Spectiv"
+    ],
+    "Curzon Home Cinema": [
+     "Curzon Home Cinema"
+    ],
+    "TalkTalk TV": [
+     "TalkTalk TV"
+    ],
+    "Virgin TV Go": [
+     "Virgin TV Go"
+    ],
+    "Now TV": [
+     "Now TV"
+    ],
+    "Airtel": [
+     "Airtel"
+    ],
+    "JioTV": [
+     "JioTV"
+    ],
+    "YuppTV": [
+     "YuppTV"
+    ],
+    "Voot": [
+     "Voot"
+    ],
+    "NexGTv": [
+     "NexGTv"
+    ],
+    "Hotstar": [
+     "Disney+ / Disney+ Hotstar"
+    ],
+    "ALTBalaji": [
+     "ALTBalaji"
+    ],
+    "Eros Now": [
+     "Eros Now"
+    ],
+    "Zee5": [
+     "ZEE5"
+    ],
+    "SonyLIV": [
+     "Sony LIV"
+    ],
+    "Spuul": [
+     "Spuul"
+    ],
+    "Viu": [
+     "Viu"
+    ],
+    "Huajiao": [
+     "Huajiao"
+    ],
+    "Taobao Live": [
+     "Taobao Live"
+    ],
+    "JD Live": [
+     "JD Live"
+    ],
+    "Inke": [
+     "Inke"
+    ],
+    "YY Live": [
+     "YY Live"
+    ],
+    "Yizhibo": [
+     "Yizhibo"
+    ],
+    "Tencent Video": [
+     "Tencent Video"
+    ],
+    "Bilibili": [
+     "Bilibili"
+    ],
+    "Douyin": [
+     "Douyin"
+    ],
+    "Kuaishou": [
+     "Kuaishou"
+    ],
+    "Xigua Video": [
+     "Xigua Video"
+    ],
+    "Sohu Video": [
+     "Sohu Video"
+    ],
+    "iQiyi": [
+     "iQiyi"
+    ],
+    "Mango TV": [
+     "Mango TV"
+    ],
+    "Youku": [
+     "Youku Tudou"
+    ],
+    "Douyu TV": [
+     "Douyu TV"
+    ],
+    "HuoMaoTV": [
+     "HuoMaoTV"
+    ],
+    "PPTV": [
+     "PPTV"
+    ],
+    "Ivi": [
+     "Ivi"
+    ],
+    "Kinopoisk": [
+     "Kinopoisk"
+    ],
+    "Amediateka": [
+     "Amediateka"
+    ],
+    "puhutv": [
+     "puhutv"
+    ],
+    "Turkish123": [
+     "Turkish123"
+    ],
+    "Stoiximan": [
+     "Stoiximan"
+    ],
+    "Alphatv": [
+     "Alphatv"
+    ],
+    "Pobre TV": [
+     "Pobre TV"
+    ],
+    "RTP": [
+     "RTP"
+    ],
+    "myCANAL": [
+     "myCANAL"
+    ],
+    "France TV": [
+     "France TV"
+    ],
+    "ARTE": [
+     "ARTE"
+    ],
+    "Play TV": [
+     "Play TV"
+    ],
+    "Movistar+ Lite": [
+     "Movistar+ Lite"
+    ],
+    "Atresplayer Premium": [
+     "Atresplayer Premium"
+    ],
+    "C More": [
+     "C More"
+    ],
+    "Via Play": [
+     "Via Play"
+    ],
+    "SVT Play": [
+     "SVT Play"
+    ],
+    "TIMvision": [
+     "TIMvision"
+    ],
+    "Rai Play": [
+     "Rai Play"
+    ],
+    "Mediaset International": [
+     "Mediaset International"
+    ],
+    "MagentaTV": [
+     "MagentaTV"
+    ],
+    "Maxdome": [
+     "Maxdome"
+    ],
+    "HBO Max": [
+     "HBO Max"
+    ],
+    "Apple TV+": [
+     "Apple TV+"
+    ],
+    "YouTube Premium": [
+     "YouTube"
+    ],
+    "Google Play Movies & TV": [
+     "Google Play Movies & TV"
+    ],
+    "Tubi": [
+     "Tubi"
+    ],
+    "Pluto TV": [
+     "Pluto TV"
+    ],
+    "Funimation": [
+     "Funimation"
+    ],
+    "fuboTV": [
+     "FuboTV"
+    ],
+    "AT&T TV Now": [
+     "AT&T TV Now"
+    ],
+    "CBS All Access (now Paramount+)": [
+     "Paramount+"
+    ],
+    "NBCUniversal's Peacock": [
+     "Peacock"
+    ],
+    "Quibi": [
+     "Quibi"
+    ],
+    "Roku Channel": [
+     "Roku"
+    ],
+    "CuriosityStream": [
+     "CuriosityStream"
+    ],
+    "The Criterion Channel": [
+     "The Criterion Channel"
+    ],
+    "Tidal (music streaming with exclusive content)": [
+     "Tidal (music streaming with exclusive content)"
+    ],
+    "Spotify": [
+     "Spotify"
+    ],
+    "Apple Music": [
+     "Apple Music"
+    ],
+    "Amazon Music Unlimited": [
+     "Amazon Music Unlimited"
+    ],
+    "Pandora": [
+     "Pandora"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "lifestyle_8",
+   "to": "entertainment-media11",
+   "toMultiple": null,
+   "valueMap": {
+    "Popular music": [
+     "Pop"
+    ],
+    "Pop music": [
+     "Pop"
+    ],
+    "Rock": [
+     "Rock"
+    ],
+    "Hip hop music": [
+     "Hip-hop / Rap"
+    ],
+    "Classical music": [
+     "Classical"
+    ],
+    "Jazz": [
+     "Jazz"
+    ],
+    "Rhythm and blues": [
+     "Rhythm and blues"
+    ],
+    "Country music": [
+     "Country"
+    ],
+    "Electronic music": [
+     "Electronic / EDM"
+    ],
+    "Blues": [
+     "Blues"
+    ],
+    "Soul music": [
+     "Soul music"
+    ],
+    "Folk music": [
+     "Folk music"
+    ],
+    "Reggae": [
+     "Reggae"
+    ],
+    "Heavy metal": [
+     "Heavy metal"
+    ],
+    "Alternative rock": [
+     "Rock"
+    ],
+    "Dance music": [
+     "Dance music"
+    ],
+    "World music": [
+     "International music"
+    ],
+    "Singing": [
+     "Singing"
+    ],
+    "Easy listening": [
+     "Easy listening"
+    ],
+    "Music of Latin America": [
+     "Music of Latin America"
+    ],
+    "Punk rock": [
+     "Rock"
+    ],
+    "Electronic dance music": [
+     "Electronic / EDM"
+    ],
+    "New-age music": [
+     "New-age music"
+    ],
+    "Musical theatre": [
+     "Musical theatre"
+    ],
+    "Funk": [
+     "Funk"
+    ],
+    "Latin music": [
+     "Music of Latin America"
+    ],
+    "Progressive rock": [
+     "Rock"
+    ],
+    "Ambient music": [
+     "Ambient music"
+    ],
+    "Industrial music": [
+     "Industrial music"
+    ],
+    "Indie rock": [
+     "Indie"
+    ],
+    "Rock and roll": [
+     "Rock"
+    ],
+    "Disco": [
+     "Disco"
+    ],
+    "Ska": [
+     "Ska"
+    ],
+    "Techno": [
+     "Techno"
+    ],
+    "House music": [
+     "House music"
+    ],
+    "Dubstep": [
+     "Dubstep"
+    ],
+    "Instrumental": [
+     "Instrumental"
+    ],
+    "Swing music": [
+     "Swing music"
+    ],
+    "Flamenco": [
+     "Flamenco"
+    ],
+    "Vocal music": [
+     "Vocal music"
+    ],
+    "Grunge": [
+     "Grunge"
+    ],
+    "New wave": [
+     "New wave"
+    ],
+    "Bluegrass": [
+     "Bluegrass"
+    ],
+    "Gospel music": [
+     "Gospel music"
+    ],
+    "Jazz fusion": [
+     "Jazz"
+    ],
+    "J-pop": [
+     "J-pop"
+    ],
+    "Trance music": [
+     "Trance music"
+    ],
+    "Opera": [
+     "Opera"
+    ],
+    "Hip hop": [
+     "Hip-hop / Rap"
+    ],
+    "Psychedelic rock": [
+     "Rock"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Rhythm and blues",
+     "value": "Rhythm and blues"
+    },
+    {
+     "label": "Blues",
+     "value": "Blues"
+    },
+    {
+     "label": "Soul music",
+     "value": "Soul music"
+    },
+    {
+     "label": "Folk music",
+     "value": "Folk music"
+    },
+    {
+     "label": "Reggae",
+     "value": "Reggae"
+    },
+    {
+     "label": "Heavy metal",
+     "value": "Heavy metal"
+    },
+    {
+     "label": "Dance music",
+     "value": "Dance music"
+    },
+    {
+     "label": "Singing",
+     "value": "Singing"
+    },
+    {
+     "label": "Easy listening",
+     "value": "Easy listening"
+    },
+    {
+     "label": "Music of Latin America",
+     "value": "Music of Latin America"
+    },
+    {
+     "label": "New-age music",
+     "value": "New-age music"
+    },
+    {
+     "label": "Musical theatre",
+     "value": "Musical theatre"
+    },
+    {
+     "label": "Funk",
+     "value": "Funk"
+    },
+    {
+     "label": "Ambient music",
+     "value": "Ambient music"
+    },
+    {
+     "label": "Industrial music",
+     "value": "Industrial music"
+    },
+    {
+     "label": "Disco",
+     "value": "Disco"
+    },
+    {
+     "label": "Ska",
+     "value": "Ska"
+    },
+    {
+     "label": "Techno",
+     "value": "Techno"
+    },
+    {
+     "label": "House music",
+     "value": "House music"
+    },
+    {
+     "label": "Dubstep",
+     "value": "Dubstep"
+    },
+    {
+     "label": "Instrumental",
+     "value": "Instrumental"
+    },
+    {
+     "label": "Swing music",
+     "value": "Swing music"
+    },
+    {
+     "label": "Flamenco",
+     "value": "Flamenco"
+    },
+    {
+     "label": "Vocal music",
+     "value": "Vocal music"
+    },
+    {
+     "label": "Grunge",
+     "value": "Grunge"
+    },
+    {
+     "label": "New wave",
+     "value": "New wave"
+    },
+    {
+     "label": "Bluegrass",
+     "value": "Bluegrass"
+    },
+    {
+     "label": "Gospel music",
+     "value": "Gospel music"
+    },
+    {
+     "label": "J-pop",
+     "value": "J-pop"
+    },
+    {
+     "label": "Trance music",
+     "value": "Trance music"
+    },
+    {
+     "label": "Opera",
+     "value": "Opera"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Popular music": [
+     "Pop"
+    ],
+    "Pop music": [
+     "Pop"
+    ],
+    "Rock": [
+     "Rock"
+    ],
+    "Hip hop music": [
+     "Hip-hop / Rap"
+    ],
+    "Classical music": [
+     "Classical"
+    ],
+    "Jazz": [
+     "Jazz"
+    ],
+    "Rhythm and blues": [
+     "Rhythm and blues"
+    ],
+    "Country music": [
+     "Country"
+    ],
+    "Electronic music": [
+     "Electronic / EDM"
+    ],
+    "Blues": [
+     "Blues"
+    ],
+    "Soul music": [
+     "Soul music"
+    ],
+    "Folk music": [
+     "Folk music"
+    ],
+    "Reggae": [
+     "Reggae"
+    ],
+    "Heavy metal": [
+     "Heavy metal"
+    ],
+    "Alternative rock": [
+     "Rock"
+    ],
+    "Dance music": [
+     "Dance music"
+    ],
+    "World music": [
+     "International music"
+    ],
+    "Singing": [
+     "Singing"
+    ],
+    "Easy listening": [
+     "Easy listening"
+    ],
+    "Music of Latin America": [
+     "Music of Latin America"
+    ],
+    "Punk rock": [
+     "Rock"
+    ],
+    "Electronic dance music": [
+     "Electronic / EDM"
+    ],
+    "New-age music": [
+     "New-age music"
+    ],
+    "Musical theatre": [
+     "Musical theatre"
+    ],
+    "Funk": [
+     "Funk"
+    ],
+    "Latin music": [
+     "Music of Latin America"
+    ],
+    "Progressive rock": [
+     "Rock"
+    ],
+    "Ambient music": [
+     "Ambient music"
+    ],
+    "Industrial music": [
+     "Industrial music"
+    ],
+    "Indie rock": [
+     "Indie"
+    ],
+    "Rock and roll": [
+     "Rock"
+    ],
+    "Disco": [
+     "Disco"
+    ],
+    "Ska": [
+     "Ska"
+    ],
+    "Techno": [
+     "Techno"
+    ],
+    "House music": [
+     "House music"
+    ],
+    "Dubstep": [
+     "Dubstep"
+    ],
+    "Instrumental": [
+     "Instrumental"
+    ],
+    "Swing music": [
+     "Swing music"
+    ],
+    "Flamenco": [
+     "Flamenco"
+    ],
+    "Vocal music": [
+     "Vocal music"
+    ],
+    "Grunge": [
+     "Grunge"
+    ],
+    "New wave": [
+     "New wave"
+    ],
+    "Bluegrass": [
+     "Bluegrass"
+    ],
+    "Gospel music": [
+     "Gospel music"
+    ],
+    "Jazz fusion": [
+     "Jazz"
+    ],
+    "J-pop": [
+     "J-pop"
+    ],
+    "Trance music": [
+     "Trance music"
+    ],
+    "Opera": [
+     "Opera"
+    ],
+    "Hip hop": [
+     "Hip-hop / Rap"
+    ],
+    "Psychedelic rock": [
+     "Rock"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "travel1",
+   "to": "automotive-mobility15",
+   "toMultiple": true,
+   "valueMap": {
+    "Bicycle": [
+     "Bicycle"
+    ],
+    "Bus": [
+     "Bus"
+    ],
+    "Car": [
+     "Personal Car"
+    ],
+    "Ferry": [
+     "Ferry"
+    ],
+    "Taxi": [
+     "Taxi"
+    ],
+    "Train": [
+     "Train"
+    ],
+    "Tram / Light Rail": [
+     "Tram / Light Rail"
+    ],
+    "Ride share (Lyft / Uber,OLA etc.)": [
+     "Ride-Hailing"
+    ],
+    "Walk": [
+     "Walking"
+    ],
+    "Subway / Metro": [
+     "Metro / Subway"
+    ],
+    "Airplanes": [
+     "Airplanes"
+    ],
+    "Boat": [
+     "Boat"
+    ],
+    "Helicopter": [],
+    "Jetpack": [],
+    "Jeep": [
+     "Personal Car"
+    ],
+    "Kayak": [
+     "Boat"
+    ],
+    "Lorry": [
+     "Lorry"
+    ],
+    "Motorcycle": [
+     "Motorcycle"
+    ],
+    "Minivan": [
+     "Personal Car"
+    ],
+    "Plane": [
+     "Airplanes"
+    ],
+    "Semi Truck": [
+     "Lorry"
+    ],
+    "Sail Boat": [
+     "Boat"
+    ],
+    "Scooter": [
+     "Scooter"
+    ],
+    "Ship": [
+     "Ferry"
+    ],
+    "Subway": [
+     "Metro / Subway"
+    ],
+    "Van": [
+     "Personal Car"
+    ],
+    "Zeppelin": [],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Ferry",
+     "value": "Ferry"
+    },
+    {
+     "label": "Tram / Light Rail",
+     "value": "Tram / Light Rail"
+    },
+    {
+     "label": "Airplanes",
+     "value": "Airplanes"
+    },
+    {
+     "label": "Boat",
+     "value": "Boat"
+    },
+    {
+     "label": "Lorry",
+     "value": "Lorry"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Bicycle": [
+     "Bicycle"
+    ],
+    "Bus": [
+     "Bus"
+    ],
+    "Car": [
+     "Personal Car"
+    ],
+    "Ferry": [
+     "Ferry"
+    ],
+    "Taxi": [
+     "Taxi"
+    ],
+    "Train": [
+     "Train"
+    ],
+    "Tram / Light Rail": [
+     "Tram / Light Rail"
+    ],
+    "Ride share (Lyft / Uber,OLA etc.)": [
+     "Ride-Hailing"
+    ],
+    "Walk": [
+     "Walking"
+    ],
+    "Subway / Metro": [
+     "Metro / Subway"
+    ],
+    "Airplanes": [
+     "Airplanes"
+    ],
+    "Boat": [
+     "Boat"
+    ],
+    "Jeep": [
+     "Personal Car"
+    ],
+    "Kayak": [
+     "Boat"
+    ],
+    "Lorry": [
+     "Lorry"
+    ],
+    "Motorcycle": [
+     "Motorcycle"
+    ],
+    "Minivan": [
+     "Personal Car"
+    ],
+    "Plane": [
+     "Airplanes"
+    ],
+    "Semi Truck": [
+     "Lorry"
+    ],
+    "Sail Boat": [
+     "Boat"
+    ],
+    "Scooter": [
+     "Scooter"
+    ],
+    "Ship": [
+     "Ferry"
+    ],
+    "Subway": [
+     "Metro / Subway"
+    ],
+    "Van": [
+     "Personal Car"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "travel4",
+   "to": "travel-tourism5",
+   "toMultiple": true,
+   "valueMap": {
+    "Business": [
+     "Business"
+    ],
+    "Leisure": [
+     "Leisure / Vacation"
+    ],
+    "Health": [
+     "Wellness / Health"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Business": [
+     "Business"
+    ],
+    "Leisure": [
+     "Leisure / Vacation"
+    ],
+    "Health": [
+     "Wellness / Health"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "travel13",
+   "to": "travel-tourism8",
+   "toMultiple": true,
+   "valueMap": {
+    "Yes": [
+     "Airplane"
+    ],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Airplane"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "travel6",
+   "to": "travel14",
+   "toMultiple": null,
+   "valueMap": {
+    "Italy": [
+     "Italy"
+    ],
+    "France": [
+     "France"
+    ],
+    "Germany/Austria/Switzerland": [
+     "Germany",
+     "Austria",
+     "Switzerland"
+    ],
+    "Spain/Portugal": [
+     "Spain",
+     "Portugal"
+    ],
+    "Russia": [
+     "Russia"
+    ],
+    "Nordic/Baltic countries": [
+     "Nordic/Baltic countries"
+    ],
+    "East European countries (not Russia)": [
+     "East European countries (not Russia)"
+    ],
+    "UK/Ireland": [
+     "United Kingdom",
+     "Ireland"
+    ],
+    "Balkan countries, Greece or Turkey": [
+     "Balkan countries, Greece or Turkey"
+    ],
+    "Northern Africa": [
+     "Northern Africa"
+    ],
+    "Western/Central/Eastern Africa": [
+     "Western/Central/Eastern Africa"
+    ],
+    "Southern Africa": [
+     "Southern Africa"
+    ],
+    "Middle East": [
+     "Middle East"
+    ],
+    "The Arabian peninsula": [
+     "The Arabian peninsula"
+    ],
+    "Japan": [
+     "Japan"
+    ],
+    "China": [
+     "China"
+    ],
+    "India": [
+     "India"
+    ],
+    "South Korea": [
+     "South Korea"
+    ],
+    "South East Asia (e.g. Thailand, Malaysia)": [
+     "South East Asia (e.g. Thailand, Malaysia)"
+    ],
+    "Australia": [
+     "Australia"
+    ],
+    "New Zealand and rest of Oceania": [
+     "New Zealand and rest of Oceania"
+    ],
+    "North America": [
+     "North America"
+    ],
+    "Central America": [
+     "Central America"
+    ],
+    "South America - Brazil": [
+     "Brazil"
+    ],
+    "South America - other countries": [
+     "South America - other countries"
+    ],
+    "None": [
+     "None"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Nordic/Baltic countries",
+     "value": "Nordic/Baltic countries"
+    },
+    {
+     "label": "East European countries (not Russia)",
+     "value": "East European countries (not Russia)"
+    },
+    {
+     "label": "Balkan countries, Greece or Turkey",
+     "value": "Balkan countries, Greece or Turkey"
+    },
+    {
+     "label": "Northern Africa",
+     "value": "Northern Africa"
+    },
+    {
+     "label": "Western/Central/Eastern Africa",
+     "value": "Western/Central/Eastern Africa"
+    },
+    {
+     "label": "Southern Africa",
+     "value": "Southern Africa"
+    },
+    {
+     "label": "Middle East",
+     "value": "Middle East"
+    },
+    {
+     "label": "The Arabian peninsula",
+     "value": "The Arabian peninsula"
+    },
+    {
+     "label": "South East Asia (e.g. Thailand, Malaysia)",
+     "value": "South East Asia (e.g. Thailand, Malaysia)"
+    },
+    {
+     "label": "New Zealand and rest of Oceania",
+     "value": "New Zealand and rest of Oceania"
+    },
+    {
+     "label": "North America",
+     "value": "North America"
+    },
+    {
+     "label": "Central America",
+     "value": "Central America"
+    },
+    {
+     "label": "South America - other countries",
+     "value": "South America - other countries"
+    },
+    {
+     "label": "None of the above",
+     "value": "None"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Italy": [
+     "Italy"
+    ],
+    "France": [
+     "France"
+    ],
+    "Germany/Austria/Switzerland": [
+     "Germany",
+     "Austria",
+     "Switzerland"
+    ],
+    "Spain/Portugal": [
+     "Spain",
+     "Portugal"
+    ],
+    "Russia": [
+     "Russia"
+    ],
+    "Nordic/Baltic countries": [
+     "Nordic/Baltic countries"
+    ],
+    "East European countries (not Russia)": [
+     "East European countries (not Russia)"
+    ],
+    "UK/Ireland": [
+     "United Kingdom",
+     "Ireland"
+    ],
+    "Balkan countries, Greece or Turkey": [
+     "Balkan countries, Greece or Turkey"
+    ],
+    "Northern Africa": [
+     "Northern Africa"
+    ],
+    "Western/Central/Eastern Africa": [
+     "Western/Central/Eastern Africa"
+    ],
+    "Southern Africa": [
+     "Southern Africa"
+    ],
+    "Middle East": [
+     "Middle East"
+    ],
+    "The Arabian peninsula": [
+     "The Arabian peninsula"
+    ],
+    "Japan": [
+     "Japan"
+    ],
+    "China": [
+     "China"
+    ],
+    "India": [
+     "India"
+    ],
+    "South Korea": [
+     "South Korea"
+    ],
+    "South East Asia (e.g. Thailand, Malaysia)": [
+     "South East Asia (e.g. Thailand, Malaysia)"
+    ],
+    "Australia": [
+     "Australia"
+    ],
+    "New Zealand and rest of Oceania": [
+     "New Zealand and rest of Oceania"
+    ],
+    "North America": [
+     "North America"
+    ],
+    "Central America": [
+     "Central America"
+    ],
+    "South America - Brazil": [
+     "Brazil"
+    ],
+    "South America - other countries": [
+     "South America - other countries"
+    ],
+    "None": [
+     "None"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "automobile21",
+   "to": "automotive-mobility9",
+   "toMultiple": true,
+   "valueMap": {
+    "Acura": [
+     "Acura"
+    ],
+    "Alfa Romeo": [
+     "Alfa Romeo"
+    ],
+    "Aston Martin": [
+     "Aston Martin"
+    ],
+    "Audi": [
+     "Audi"
+    ],
+    "Bentley": [
+     "Bentley"
+    ],
+    "BMW": [
+     "BMW"
+    ],
+    "Bugatti": [
+     "Bugatti"
+    ],
+    "Buick": [
+     "Buick"
+    ],
+    "Cadillac": [
+     "Cadillac"
+    ],
+    "Chevrolet": [
+     "Chevrolet"
+    ],
+    "Chrysler": [
+     "Chrysler"
+    ],
+    "Citroën": [
+     "Citroën"
+    ],
+    "Dacia": [
+     "Dacia"
+    ],
+    "Daihatsu": [
+     "Daihatsu"
+    ],
+    "Dodge": [
+     "Dodge"
+    ],
+    "Ferrari": [
+     "Ferrari"
+    ],
+    "Fiat": [
+     "Fiat"
+    ],
+    "Ford": [
+     "Ford"
+    ],
+    "Genesis": [
+     "Genesis"
+    ],
+    "GMC": [
+     "GMC"
+    ],
+    "Honda": [
+     "Honda"
+    ],
+    "Hummer": [
+     "Hummer"
+    ],
+    "Hyundai": [
+     "Hyundai"
+    ],
+    "Infiniti": [
+     "Infiniti"
+    ],
+    "Isuzu": [
+     "Isuzu"
+    ],
+    "Jaguar": [
+     "Jaguar"
+    ],
+    "Jeep": [
+     "Jeep"
+    ],
+    "Kia": [
+     "Kia"
+    ],
+    "Koenigsegg": [
+     "Koenigsegg"
+    ],
+    "Lamborghini": [
+     "Lamborghini"
+    ],
+    "Land Rover": [
+     "Land Rover"
+    ],
+    "Lexus": [
+     "Lexus"
+    ],
+    "Lincoln": [
+     "Lincoln"
+    ],
+    "Lotus": [
+     "Lotus"
+    ],
+    "Maserati": [
+     "Maserati"
+    ],
+    "Mazda": [
+     "Mazda"
+    ],
+    "McLaren": [
+     "McLaren"
+    ],
+    "Mercedes-Benz": [
+     "Mercedes-Benz"
+    ],
+    "MG": [
+     "MG"
+    ],
+    "MINI": [
+     "MINI"
+    ],
+    "Mitsubishi": [
+     "Mitsubishi"
+    ],
+    "Nissan": [
+     "Nissan"
+    ],
+    "Opel": [
+     "Opel"
+    ],
+    "Pagani": [
+     "Pagani"
+    ],
+    "Peugeot": [
+     "Peugeot"
+    ],
+    "Polestar": [
+     "Polestar"
+    ],
+    "Pontiac": [
+     "Pontiac"
+    ],
+    "Porsche": [
+     "Porsche"
+    ],
+    "RAM": [
+     "RAM"
+    ],
+    "Renault": [
+     "Renault"
+    ],
+    "Rolls-Royce": [
+     "Rolls-Royce"
+    ],
+    "Saab": [
+     "Saab"
+    ],
+    "Saturn": [
+     "Saturn"
+    ],
+    "Scion": [
+     "Scion"
+    ],
+    "SEAT": [
+     "SEAT"
+    ],
+    "Škoda": [
+     "Škoda"
+    ],
+    "Smart": [
+     "Smart"
+    ],
+    "Subaru": [
+     "Subaru"
+    ],
+    "Suzuki": [
+     "Maruti Suzuki"
+    ],
+    "Tesla": [
+     "Tesla"
+    ],
+    "Toyota": [
+     "Toyota"
+    ],
+    "Vauxhall": [
+     "Vauxhall"
+    ],
+    "Volkswagen": [
+     "Volkswagen"
+    ],
+    "Volvo": [
+     "Volvo"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Acura",
+     "value": "Acura"
+    },
+    {
+     "label": "Alfa Romeo",
+     "value": "Alfa Romeo"
+    },
+    {
+     "label": "Aston Martin",
+     "value": "Aston Martin"
+    },
+    {
+     "label": "Bentley",
+     "value": "Bentley"
+    },
+    {
+     "label": "Bugatti",
+     "value": "Bugatti"
+    },
+    {
+     "label": "Buick",
+     "value": "Buick"
+    },
+    {
+     "label": "Cadillac",
+     "value": "Cadillac"
+    },
+    {
+     "label": "Chevrolet",
+     "value": "Chevrolet"
+    },
+    {
+     "label": "Chrysler",
+     "value": "Chrysler"
+    },
+    {
+     "label": "Citroën",
+     "value": "Citroën"
+    },
+    {
+     "label": "Dacia",
+     "value": "Dacia"
+    },
+    {
+     "label": "Daihatsu",
+     "value": "Daihatsu"
+    },
+    {
+     "label": "Dodge",
+     "value": "Dodge"
+    },
+    {
+     "label": "Ferrari",
+     "value": "Ferrari"
+    },
+    {
+     "label": "Fiat",
+     "value": "Fiat"
+    },
+    {
+     "label": "Ford",
+     "value": "Ford"
+    },
+    {
+     "label": "Genesis",
+     "value": "Genesis"
+    },
+    {
+     "label": "GMC",
+     "value": "GMC"
+    },
+    {
+     "label": "Hummer",
+     "value": "Hummer"
+    },
+    {
+     "label": "Infiniti",
+     "value": "Infiniti"
+    },
+    {
+     "label": "Isuzu",
+     "value": "Isuzu"
+    },
+    {
+     "label": "Jaguar",
+     "value": "Jaguar"
+    },
+    {
+     "label": "Jeep",
+     "value": "Jeep"
+    },
+    {
+     "label": "Koenigsegg",
+     "value": "Koenigsegg"
+    },
+    {
+     "label": "Lamborghini",
+     "value": "Lamborghini"
+    },
+    {
+     "label": "Land Rover",
+     "value": "Land Rover"
+    },
+    {
+     "label": "Lexus",
+     "value": "Lexus"
+    },
+    {
+     "label": "Lincoln",
+     "value": "Lincoln"
+    },
+    {
+     "label": "Lotus",
+     "value": "Lotus"
+    },
+    {
+     "label": "Maserati",
+     "value": "Maserati"
+    },
+    {
+     "label": "Mazda",
+     "value": "Mazda"
+    },
+    {
+     "label": "McLaren",
+     "value": "McLaren"
+    },
+    {
+     "label": "MINI",
+     "value": "MINI"
+    },
+    {
+     "label": "Mitsubishi",
+     "value": "Mitsubishi"
+    },
+    {
+     "label": "Opel",
+     "value": "Opel"
+    },
+    {
+     "label": "Pagani",
+     "value": "Pagani"
+    },
+    {
+     "label": "Peugeot",
+     "value": "Peugeot"
+    },
+    {
+     "label": "Polestar",
+     "value": "Polestar"
+    },
+    {
+     "label": "Pontiac",
+     "value": "Pontiac"
+    },
+    {
+     "label": "Porsche",
+     "value": "Porsche"
+    },
+    {
+     "label": "RAM",
+     "value": "RAM"
+    },
+    {
+     "label": "Rolls-Royce",
+     "value": "Rolls-Royce"
+    },
+    {
+     "label": "Saab",
+     "value": "Saab"
+    },
+    {
+     "label": "Saturn",
+     "value": "Saturn"
+    },
+    {
+     "label": "Scion",
+     "value": "Scion"
+    },
+    {
+     "label": "SEAT",
+     "value": "SEAT"
+    },
+    {
+     "label": "Škoda",
+     "value": "Škoda"
+    },
+    {
+     "label": "Smart",
+     "value": "Smart"
+    },
+    {
+     "label": "Subaru",
+     "value": "Subaru"
+    },
+    {
+     "label": "Vauxhall",
+     "value": "Vauxhall"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Acura": [
+     "Acura"
+    ],
+    "Alfa Romeo": [
+     "Alfa Romeo"
+    ],
+    "Aston Martin": [
+     "Aston Martin"
+    ],
+    "Audi": [
+     "Audi"
+    ],
+    "Bentley": [
+     "Bentley"
+    ],
+    "BMW": [
+     "BMW"
+    ],
+    "Bugatti": [
+     "Bugatti"
+    ],
+    "Buick": [
+     "Buick"
+    ],
+    "Cadillac": [
+     "Cadillac"
+    ],
+    "Chevrolet": [
+     "Chevrolet"
+    ],
+    "Chrysler": [
+     "Chrysler"
+    ],
+    "Citroën": [
+     "Citroën"
+    ],
+    "Dacia": [
+     "Dacia"
+    ],
+    "Daihatsu": [
+     "Daihatsu"
+    ],
+    "Dodge": [
+     "Dodge"
+    ],
+    "Ferrari": [
+     "Ferrari"
+    ],
+    "Fiat": [
+     "Fiat"
+    ],
+    "Ford": [
+     "Ford"
+    ],
+    "Genesis": [
+     "Genesis"
+    ],
+    "GMC": [
+     "GMC"
+    ],
+    "Honda": [
+     "Honda"
+    ],
+    "Hummer": [
+     "Hummer"
+    ],
+    "Hyundai": [
+     "Hyundai"
+    ],
+    "Infiniti": [
+     "Infiniti"
+    ],
+    "Isuzu": [
+     "Isuzu"
+    ],
+    "Jaguar": [
+     "Jaguar"
+    ],
+    "Jeep": [
+     "Jeep"
+    ],
+    "Kia": [
+     "Kia"
+    ],
+    "Koenigsegg": [
+     "Koenigsegg"
+    ],
+    "Lamborghini": [
+     "Lamborghini"
+    ],
+    "Land Rover": [
+     "Land Rover"
+    ],
+    "Lexus": [
+     "Lexus"
+    ],
+    "Lincoln": [
+     "Lincoln"
+    ],
+    "Lotus": [
+     "Lotus"
+    ],
+    "Maserati": [
+     "Maserati"
+    ],
+    "Mazda": [
+     "Mazda"
+    ],
+    "McLaren": [
+     "McLaren"
+    ],
+    "Mercedes-Benz": [
+     "Mercedes-Benz"
+    ],
+    "MG": [
+     "MG"
+    ],
+    "MINI": [
+     "MINI"
+    ],
+    "Mitsubishi": [
+     "Mitsubishi"
+    ],
+    "Nissan": [
+     "Nissan"
+    ],
+    "Opel": [
+     "Opel"
+    ],
+    "Pagani": [
+     "Pagani"
+    ],
+    "Peugeot": [
+     "Peugeot"
+    ],
+    "Polestar": [
+     "Polestar"
+    ],
+    "Pontiac": [
+     "Pontiac"
+    ],
+    "Porsche": [
+     "Porsche"
+    ],
+    "RAM": [
+     "RAM"
+    ],
+    "Renault": [
+     "Renault"
+    ],
+    "Rolls-Royce": [
+     "Rolls-Royce"
+    ],
+    "Saab": [
+     "Saab"
+    ],
+    "Saturn": [
+     "Saturn"
+    ],
+    "Scion": [
+     "Scion"
+    ],
+    "SEAT": [
+     "SEAT"
+    ],
+    "Škoda": [
+     "Škoda"
+    ],
+    "Smart": [
+     "Smart"
+    ],
+    "Subaru": [
+     "Subaru"
+    ],
+    "Suzuki": [
+     "Maruti Suzuki"
+    ],
+    "Tesla": [
+     "Tesla"
+    ],
+    "Toyota": [
+     "Toyota"
+    ],
+    "Vauxhall": [
+     "Vauxhall"
+    ],
+    "Volkswagen": [
+     "Volkswagen"
+    ],
+    "Volvo": [
+     "Volvo"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "automobile1",
+   "to": "automotive-mobility1",
+   "toMultiple": true,
+   "valueMap": {
+    "Cars": [
+     "Car"
+    ],
+    "Motorcycles": [
+     "Motorcycle"
+    ],
+    "Bicycles": [
+     "Bicycle"
+    ],
+    "Buses": [
+     "Buses"
+    ],
+    "Electric Vehicles (EVs)": [
+     "Electric Car"
+    ],
+    "Recreational Vehicles (RVs)": [
+     "Recreational Vehicles (RVs)"
+    ],
+    "Construction and Heavy Machinery": [
+     "Construction and Heavy Machinery"
+    ],
+    "Commercial Vehicles": [
+     "Commercial Vehicle"
+    ],
+    "Aircraft": [
+     "Aircraft"
+    ],
+    "Hybrid Vehicle": [
+     "Hybrid Vehicle"
+    ],
+    "Luxury Vehicle": [
+     "Luxury Vehicle"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Buses",
+     "value": "Buses"
+    },
+    {
+     "label": "Recreational Vehicles (RVs)",
+     "value": "Recreational Vehicles (RVs)"
+    },
+    {
+     "label": "Construction and Heavy Machinery",
+     "value": "Construction and Heavy Machinery"
+    },
+    {
+     "label": "Aircraft",
+     "value": "Aircraft"
+    },
+    {
+     "label": "Luxury Vehicle",
+     "value": "Luxury Vehicle"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Cars": [
+     "Car"
+    ],
+    "Motorcycles": [
+     "Motorcycle",
+     "Scooter"
+    ],
+    "Bicycles": [
+     "Bicycle"
+    ],
+    "Buses": [
+     "Buses"
+    ],
+    "Electric Vehicles (EVs)": [
+     "Electric Car",
+     "Electric Two-Wheeler"
+    ],
+    "Recreational Vehicles (RVs)": [
+     "Recreational Vehicles (RVs)"
+    ],
+    "Construction and Heavy Machinery": [
+     "Construction and Heavy Machinery"
+    ],
+    "Commercial Vehicles": [
+     "Commercial Vehicle"
+    ],
+    "Aircraft": [
+     "Aircraft"
+    ],
+    "Hybrid Vehicle": [
+     "Hybrid Vehicle"
+    ],
+    "Luxury Vehicle": [
+     "Luxury Vehicle"
+    ],
+    "Sports Cars": [
+     "Car"
+    ],
+    "Trucks": [
+     "Pickup Truck"
+    ],
+    "SUVs (Sport Utility Vehicles)": [
+     "SUV / MUV"
+    ],
+    "Hatchbacks": [
+     "Car"
+    ],
+    "Coupes": [
+     "Car"
+    ],
+    "Convertibles": [
+     "Car"
+    ],
+    "Vans": [
+     "Van"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "automobile0",
+   "to": "automotive-mobility1",
+   "toMultiple": true,
+   "valueMap": {
+    "Yes": [],
+    "No": [
+     "None"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "No": [
+     "None"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "beauty2",
+   "to": "beauty-personal-care3",
+   "toMultiple": null,
+   "valueMap": {
+    "Facial cleansers or wash": [
+     "Face wash/Cleanser"
+    ],
+    "Facial scrub, exfoliator or dermabrasion": [
+     "Exfoliator/Scrub"
+    ],
+    "Makeup remover": [
+     "Makeup remover"
+    ],
+    "Toners or astringents": [
+     "Toner"
+    ],
+    "Anti-acne products": [
+     "Acne treatment"
+    ],
+    "Oil blotting paper": [
+     "Oil blotting paper"
+    ],
+    "Liquid moisturizer": [
+     "Moisturizer"
+    ],
+    "Cream moisturizer": [
+     "Moisturizer"
+    ],
+    "Gel moisturizer": [
+     "Moisturizer"
+    ],
+    "Beauty essence or serum": [
+     "Face serum"
+    ],
+    "Eye treatment including creams, lotions and gels": [
+     "Eye cream"
+    ],
+    "Facial massage cream": [
+     "Face cream"
+    ],
+    "Facial mask or pack, such as sheet, cream or gel type": [
+     "Face mask"
+    ],
+    "Facial sunscreen/UV protection": [
+     "Sunscreen/Sun protection"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Makeup remover",
+     "value": "Makeup remover"
+    },
+    {
+     "label": "Oil blotting paper",
+     "value": "Oil blotting paper"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Facial cleansers or wash": [
+     "Face wash/Cleanser"
+    ],
+    "Facial scrub, exfoliator or dermabrasion": [
+     "Exfoliator/Scrub"
+    ],
+    "Makeup remover": [
+     "Makeup remover"
+    ],
+    "Toners or astringents": [
+     "Toner"
+    ],
+    "Anti-acne products": [
+     "Acne treatment"
+    ],
+    "Oil blotting paper": [
+     "Oil blotting paper"
+    ],
+    "Liquid moisturizer": [
+     "Moisturizer"
+    ],
+    "Cream moisturizer": [
+     "Moisturizer"
+    ],
+    "Gel moisturizer": [
+     "Moisturizer"
+    ],
+    "Beauty essence or serum": [
+     "Face serum"
+    ],
+    "Eye treatment including creams, lotions and gels": [
+     "Eye cream"
+    ],
+    "Facial massage cream": [
+     "Face cream"
+    ],
+    "Facial mask or pack, such as sheet, cream or gel type": [
+     "Face mask"
+    ],
+    "Facial sunscreen/UV protection": [
+     "Sunscreen/Sun protection"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "beauty12",
+   "to": "beauty-personal-care18",
+   "toMultiple": null,
+   "valueMap": {
+    "Cologne Eau de toilette": [
+     "Eau de Toilette"
+    ],
+    "Perfume": [
+     "Perfume"
+    ],
+    "Body spray": [
+     "Body spray"
+    ],
+    "Solid fragrance (cologne, perfume or EDT)": [
+     "Solid fragrance (cologne, perfume or EDT)"
+    ],
+    "Roll-on fragrance (cologne, perfume or EDT)": [
+     "Roll-on fragrance (cologne, perfume or EDT)"
+    ],
+    "Fragrance body lotion": [
+     "Fragrance body lotion"
+    ],
+    "Scented body powder": [
+     "Scented body powder"
+    ],
+    "N Micro dermabrasion": [],
+    "One": [],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Solid fragrance (cologne, perfume or EDT)",
+     "value": "Solid fragrance (cologne, perfume or EDT)"
+    },
+    {
+     "label": "Roll-on fragrance (cologne, perfume or EDT)",
+     "value": "Roll-on fragrance (cologne, perfume or EDT)"
+    },
+    {
+     "label": "Fragrance body lotion",
+     "value": "Fragrance body lotion"
+    },
+    {
+     "label": "Scented body powder",
+     "value": "Scented body powder"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Cologne Eau de toilette": [
+     "Eau de Toilette"
+    ],
+    "Perfume": [
+     "Perfume"
+    ],
+    "Body spray": [
+     "Body spray"
+    ],
+    "Solid fragrance (cologne, perfume or EDT)": [
+     "Solid fragrance (cologne, perfume or EDT)"
+    ],
+    "Roll-on fragrance (cologne, perfume or EDT)": [
+     "Roll-on fragrance (cologne, perfume or EDT)"
+    ],
+    "Fragrance body lotion": [
+     "Fragrance body lotion"
+    ],
+    "Scented body powder": [
+     "Scented body powder"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "beauty11",
+   "to": "beauty-personal-care21",
+   "toMultiple": null,
+   "valueMap": {
+    "Antiperspirant": [
+     "Antiperspirant"
+    ],
+    "Deodorant": [
+     "Deodorant"
+    ],
+    "Combination": [
+     "Antiperspirant",
+     "Deodorant"
+    ],
+    "Natural_Deodorant": [
+     "Deodorant"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Antiperspirant": [
+     "Antiperspirant"
+    ],
+    "Deodorant": [
+     "Deodorant"
+    ],
+    "Combination": [
+     "Antiperspirant",
+     "Deodorant"
+    ],
+    "Natural_Deodorant": [
+     "Deodorant"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "beauty1",
+   "to": "beauty-personal-care15",
+   "toMultiple": null,
+   "valueMap": {
+    "Lipstick": [
+     "Lipstick"
+    ],
+    "Crayon Lipstick": [
+     "Lipstick"
+    ],
+    "Matte Lipstick": [
+     "Lipstick"
+    ],
+    "Hi-Shine Lipstick": [
+     "Lipstick"
+    ],
+    "Liquid Lipstick": [
+     "Lipstick"
+    ],
+    "Lip Gloss": [
+     "Lip gloss"
+    ],
+    "Hi-Shine Lipgloss": [
+     "Lip gloss"
+    ],
+    "Lip Liner": [
+     "Lip liner"
+    ],
+    "Lip Balm": [],
+    "Glitter": [
+     "Glitter"
+    ],
+    "Lip Stain": [
+     "Lip Stain"
+    ],
+    "Lipstick Set": [
+     "Lipstick"
+    ],
+    "Lip Kit": [
+     "Makeup Kits"
+    ],
+    "Face Sets": [
+     "Makeup Kits"
+    ],
+    "Fixing Powder": [
+     "Face powder"
+    ],
+    "Primer": [
+     "Primer"
+    ],
+    "Concealer": [
+     "Concealer"
+    ],
+    "Foundation": [
+     "Foundation"
+    ],
+    "Compact": [
+     "Face powder"
+    ],
+    "Banana Powder": [
+     "Face powder"
+    ],
+    "Highlighter": [
+     "Highlighter"
+    ],
+    "Blush": [
+     "Blush"
+    ],
+    "Bronzer": [
+     "Bronzer"
+    ],
+    "Sindoor": [
+     "Sindoor"
+    ],
+    "Cheek Stain": [
+     "Blush"
+    ],
+    "Setting Powder": [
+     "Face powder"
+    ],
+    "Makeup Accessories": [
+     "Makeup Accessories"
+    ],
+    "Makeup Brushes": [
+     "Makeup Accessories"
+    ],
+    "Eye Shadow": [
+     "Eye shadow"
+    ],
+    "Eyeliner": [
+     "Eyeliner"
+    ],
+    "Eyebrows": [
+     "Eyebrow products"
+    ],
+    "Mascara": [
+     "Mascara"
+    ],
+    "Kajal": [
+     "Kajal"
+    ],
+    "Eyeshadow Brushes": [
+     "Makeup Accessories"
+    ],
+    "Eye Combos": [
+     "Makeup Kits"
+    ],
+    "Nail Polish": [
+     "Nail Polish"
+    ],
+    "Matte Nail Polish": [
+     "Nail Polish"
+    ],
+    "Nail Lacquer": [
+     "Nail Polish"
+    ],
+    "Moisturiser": [],
+    "Night Cream": [],
+    "Eye Cream": [],
+    "Body lotion": [],
+    "Serum": [],
+    "Sunscreen": [],
+    "Skincare Kits": [],
+    "Cleansing Products": [],
+    "Exfoliator & Scrub": [],
+    "Face Wash": [],
+    "Cleanser": [],
+    "Mask": [],
+    "Face Pack": [],
+    "Sheet Mask": [],
+    "Shower Gels": [],
+    "Soaps": [],
+    "Body Lotion": [],
+    "Body Spray & Mists": [],
+    "Hand Wash": [],
+    "Foot Cream": [],
+    "Sanitizing Wipes": [],
+    "Sanitizing Kits": [],
+    "Sanitizing Spray": [],
+    "Hand Sanitizer": [],
+    "Makeup Kits": [
+     "Makeup Kits"
+    ],
+    "Bridal Makeup Kits": [
+     "Makeup Kits"
+    ],
+    "Makeup Combo": [
+     "Makeup Kits"
+    ],
+    "Makeup Gift Sets": [
+     "Makeup Kits"
+    ],
+    "Cosmetics Kits & Combos": [
+     "Makeup Kits"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Glitter",
+     "value": "Glitter"
+    },
+    {
+     "label": "Lip Stain",
+     "value": "Lip Stain"
+    },
+    {
+     "label": "Makeup Kits",
+     "value": "Makeup Kits"
+    },
+    {
+     "label": "Primer",
+     "value": "Primer"
+    },
+    {
+     "label": "Sindoor",
+     "value": "Sindoor"
+    },
+    {
+     "label": "Makeup Accessories",
+     "value": "Makeup Accessories"
+    },
+    {
+     "label": "Kajal",
+     "value": "Kajal"
+    },
+    {
+     "label": "Nail Polish",
+     "value": "Nail Polish"
+    }
+   ],
+   "crossMap": {
+    "Lip Balm": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Lip care"
+     }
+    ],
+    "Moisturiser": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Moisturizer"
+     }
+    ],
+    "Night Cream": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face cream"
+     }
+    ],
+    "Eye Cream": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Eye cream"
+     }
+    ],
+    "Body lotion": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Body lotion"
+     }
+    ],
+    "Serum": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face serum"
+     }
+    ],
+    "Sunscreen": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Sunscreen/Sun protection"
+     }
+    ],
+    "Cleansing Products": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face wash/Cleanser"
+     }
+    ],
+    "Exfoliator & Scrub": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Exfoliator/Scrub"
+     }
+    ],
+    "Face Wash": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face wash/Cleanser"
+     }
+    ],
+    "Cleanser": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face wash/Cleanser"
+     }
+    ],
+    "Mask": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face mask"
+     }
+    ],
+    "Face Pack": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face mask"
+     }
+    ],
+    "Sheet Mask": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Face mask"
+     }
+    ],
+    "Shower Gels": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Body wash"
+     }
+    ],
+    "Soaps": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Body wash"
+     }
+    ],
+    "Body Lotion": [
+     {
+      "question": "beauty-personal-care3",
+      "value": "Body lotion"
+     }
+    ],
+    "Body Spray & Mists": [
+     {
+      "question": "beauty-personal-care18",
+      "value": "Body spray"
+     }
+    ],
+    "Hand Wash": [
+     {
+      "question": "beauty-personal-care21",
+      "value": "Hand hygiene"
+     }
+    ],
+    "Sanitizing Wipes": [
+     {
+      "question": "beauty-personal-care21",
+      "value": "Hand hygiene"
+     }
+    ],
+    "Sanitizing Kits": [
+     {
+      "question": "beauty-personal-care21",
+      "value": "Hand hygiene"
+     }
+    ],
+    "Sanitizing Spray": [
+     {
+      "question": "beauty-personal-care21",
+      "value": "Hand hygiene"
+     }
+    ],
+    "Hand Sanitizer": [
+     {
+      "question": "beauty-personal-care21",
+      "value": "Hand hygiene"
+     }
+    ]
+   },
+   "conditional": [],
+   "childParentValueMap": {
+    "Lipstick": [
+     "Lipstick"
+    ],
+    "Crayon Lipstick": [
+     "Lipstick"
+    ],
+    "Matte Lipstick": [
+     "Lipstick"
+    ],
+    "Hi-Shine Lipstick": [
+     "Lipstick"
+    ],
+    "Liquid Lipstick": [
+     "Lipstick"
+    ],
+    "Lip Gloss": [
+     "Lip gloss"
+    ],
+    "Hi-Shine Lipgloss": [
+     "Lip gloss"
+    ],
+    "Lip Liner": [
+     "Lip liner"
+    ],
+    "Glitter": [
+     "Glitter"
+    ],
+    "Lip Stain": [
+     "Lip Stain"
+    ],
+    "Lipstick Set": [
+     "Lipstick"
+    ],
+    "Lip Kit": [
+     "Makeup Kits"
+    ],
+    "Face Sets": [
+     "Makeup Kits"
+    ],
+    "Fixing Powder": [
+     "Face powder"
+    ],
+    "Primer": [
+     "Primer"
+    ],
+    "Concealer": [
+     "Concealer"
+    ],
+    "Foundation": [
+     "Foundation"
+    ],
+    "Compact": [
+     "Face powder"
+    ],
+    "Banana Powder": [
+     "Face powder"
+    ],
+    "Highlighter": [
+     "Highlighter"
+    ],
+    "Blush": [
+     "Blush"
+    ],
+    "Bronzer": [
+     "Bronzer"
+    ],
+    "Sindoor": [
+     "Sindoor"
+    ],
+    "Cheek Stain": [
+     "Blush"
+    ],
+    "Setting Powder": [
+     "Face powder"
+    ],
+    "Makeup Accessories": [
+     "Makeup Accessories"
+    ],
+    "Makeup Brushes": [
+     "Makeup Accessories"
+    ],
+    "Eye Shadow": [
+     "Eye shadow"
+    ],
+    "Eyeliner": [
+     "Eyeliner"
+    ],
+    "Eyebrows": [
+     "Eyebrow products"
+    ],
+    "Mascara": [
+     "Mascara"
+    ],
+    "Kajal": [
+     "Kajal"
+    ],
+    "Eyeshadow Brushes": [
+     "Makeup Accessories"
+    ],
+    "Eye Combos": [
+     "Makeup Kits"
+    ],
+    "Nail Polish": [
+     "Nail Polish"
+    ],
+    "Matte Nail Polish": [
+     "Nail Polish"
+    ],
+    "Nail Lacquer": [
+     "Nail Polish"
+    ],
+    "Makeup Kits": [
+     "Makeup Kits"
+    ],
+    "Bridal Makeup Kits": [
+     "Makeup Kits"
+    ],
+    "Makeup Combo": [
+     "Makeup Kits"
+    ],
+    "Makeup Gift Sets": [
+     "Makeup Kits"
+    ],
+    "Cosmetics Kits & Combos": [
+     "Makeup Kits"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "beauty4",
+   "to": "beauty-personal-care9",
+   "toMultiple": null,
+   "valueMap": {
+    "Anti-dandruff": [
+     "Anti-dandruff products"
+    ],
+    "Anti-Itch Conditioners": [
+     "Conditioner"
+    ],
+    "Detanglers": [
+     "Detanglers"
+    ],
+    "Finishing": [
+     "Finishing"
+    ],
+    "Mists": [
+     "Mists"
+    ],
+    "Frizz Control Gels/Wax": [
+     "Hair styling products"
+    ],
+    "Hair Loss Prevention": [
+     "Hair growth products"
+    ],
+    "Hair Pomade": [
+     "Hair styling products"
+    ],
+    "Hair Vitamins/Food": [
+     "Hair Vitamins/Food"
+    ],
+    "Hairsprays": [
+     "Hair styling products"
+    ],
+    "Heat Protecting Serums": [
+     "Hair serum"
+    ],
+    "Hot Oils Mousse": [
+     "Hot Oils Mousse"
+    ],
+    "Permanent Colours Relaxers": [
+     "Hair color"
+    ],
+    "Semi-Permanent Colours": [
+     "Hair color"
+    ],
+    "Shampoos Shine Serums": [
+     "Shampoo"
+    ],
+    "Treatments/Masks Two-in-one Shampoo & Conditioners": [
+     "Conditioner"
+    ],
+    "Hair Straighteners": [
+     "Hair Straighteners"
+    ],
+    "I don't use hair products": [
+     "None"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Detanglers",
+     "value": "Detanglers"
+    },
+    {
+     "label": "Finishing",
+     "value": "Finishing"
+    },
+    {
+     "label": "Mists",
+     "value": "Mists"
+    },
+    {
+     "label": "Hair Vitamins/Food",
+     "value": "Hair Vitamins/Food"
+    },
+    {
+     "label": "Hot Oils Mousse",
+     "value": "Hot Oils Mousse"
+    },
+    {
+     "label": "Hair Straighteners",
+     "value": "Hair Straighteners"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Anti-dandruff": [
+     "Anti-dandruff products"
+    ],
+    "Anti-Itch Conditioners": [
+     "Conditioner"
+    ],
+    "Detanglers": [
+     "Detanglers"
+    ],
+    "Finishing": [
+     "Finishing"
+    ],
+    "Mists": [
+     "Mists"
+    ],
+    "Frizz Control Gels/Wax": [
+     "Hair styling products"
+    ],
+    "Hair Loss Prevention": [
+     "Hair growth products"
+    ],
+    "Hair Pomade": [
+     "Hair styling products"
+    ],
+    "Hair Vitamins/Food": [
+     "Hair Vitamins/Food"
+    ],
+    "Hairsprays": [
+     "Hair styling products"
+    ],
+    "Heat Protecting Serums": [
+     "Hair serum"
+    ],
+    "Hot Oils Mousse": [
+     "Hot Oils Mousse"
+    ],
+    "Permanent Colours Relaxers": [
+     "Hair color"
+    ],
+    "Semi-Permanent Colours": [
+     "Hair color"
+    ],
+    "Shampoos Shine Serums": [
+     "Shampoo"
+    ],
+    "Treatments/Masks Two-in-one Shampoo & Conditioners": [
+     "Conditioner"
+    ],
+    "Hair Straighteners": [
+     "Hair Straighteners"
+    ],
+    "I don't use hair products": [
+     "None"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "tech_connection_type",
+   "to": "technology-digital-services3",
+   "toMultiple": true,
+   "valueMap": {
+    "Fiber": [
+     "Fiber Internet"
+    ],
+    "Cable": [
+     "Home Broadband"
+    ],
+    "DSL": [
+     "Home Broadband"
+    ],
+    "Satellite": [
+     "Satellite"
+    ],
+    "Mobile Data (4G/5G)": [
+     "Mobile Data / 4G"
+    ],
+    "Wi-Fi (Shared / Community)": [
+     "Public Wi-Fi"
+    ],
+    "Not sure": [],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Satellite",
+     "value": "Satellite"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Fiber": [
+     "Fiber Internet"
+    ],
+    "Cable": [
+     "Home Broadband"
+    ],
+    "DSL": [
+     "Home Broadband"
+    ],
+    "Satellite": [
+     "Satellite"
+    ],
+    "Mobile Data (4G/5G)": [
+     "Mobile Data / 4G"
+    ],
+    "Wi-Fi (Shared / Community)": [
+     "Public Wi-Fi"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "tech2",
+   "to": "consumer-electronics6",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [
+     "Primary decision-maker"
+    ],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Primary decision-maker"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "tech1",
+   "to": "consumer-electronics1",
+   "toMultiple": true,
+   "valueMap": {
+    "smartwatch or Fitness Tracker": [
+     "Smartwatch"
+    ],
+    "Smart TV": [
+     "Smart TV"
+    ],
+    "Streaming Device": [
+     "Streaming / Media Device"
+    ],
+    "Gaming Console": [
+     "Gaming Console"
+    ],
+    "Wireless Earbuds / Headphones": [
+     "Wireless Earbuds / TWS"
+    ],
+    "Digital Camera": [
+     "Digital Camera"
+    ],
+    "Smart Home Device": [
+     "Smart Home Device"
+    ],
+    "E-Reader": [
+     "E-Reader"
+    ],
+    "Drone": [
+     "Drone"
+    ],
+    "VR / AR Headset": [
+     "VR / AR Device"
+    ],
+    "Printer / Scanner": [
+     "Printer / Scanner"
+    ],
+    "Android": [
+     "Smartphone"
+    ],
+    "iPhone": [
+     "Smartphone"
+    ],
+    "Tablet": [
+     "Tablet"
+    ],
+    "computer": []
+   },
+   "addOptions": [
+    {
+     "label": "Drone",
+     "value": "Drone"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "smartwatch or Fitness Tracker": [
+     "Smartwatch"
+    ],
+    "Smart TV": [
+     "Smart TV"
+    ],
+    "Streaming Device": [
+     "Streaming / Media Device"
+    ],
+    "Gaming Console": [
+     "Gaming Console"
+    ],
+    "Wireless Earbuds / Headphones": [
+     "Wireless Earbuds / TWS"
+    ],
+    "Digital Camera": [
+     "Digital Camera"
+    ],
+    "Smart Home Device": [
+     "Smart Home Device"
+    ],
+    "E-Reader": [
+     "E-Reader"
+    ],
+    "Drone": [
+     "Drone"
+    ],
+    "VR / AR Headset": [
+     "VR / AR Device"
+    ],
+    "Printer / Scanner": [
+     "Printer / Scanner"
+    ],
+    "Android": [
+     "Smartphone"
+    ],
+    "iPhone": [
+     "Smartphone"
+    ],
+    "Tablet": [
+     "Tablet"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "mobile1",
+   "to": "consumer-electronics1",
+   "toMultiple": true,
+   "valueMap": {
+    "Yes": [
+     "Smartphone"
+    ],
+    "No": []
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Smartphone"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "sports33",
+   "to": "sports-physical-fitness2",
+   "toMultiple": true,
+   "valueMap": {
+    "Football (Soccer)": [
+     "Football / Soccer"
+    ],
+    "Basketball": [
+     "Basketball"
+    ],
+    "Tennis": [
+     "Tennis"
+    ],
+    "Cricket": [
+     "Cricket"
+    ],
+    "Baseball": [
+     "Baseball / Softball"
+    ],
+    "Golf": [
+     "Golf"
+    ],
+    "Rugby": [
+     "Rugby"
+    ],
+    "Volleyball": [
+     "Volleyball"
+    ],
+    "Ice Hockey": [
+     "Hockey"
+    ],
+    "Field Hockey": [
+     "Hockey"
+    ],
+    "Table Tennis": [
+     "Table Tennis"
+    ],
+    "Badminton": [
+     "Badminton"
+    ],
+    "Athletics (Track and Field)": [
+     "Athletics / Running"
+    ],
+    "Swimming": [
+     "Swimming"
+    ],
+    "Cycling": [
+     "Cycling"
+    ],
+    "Martial Arts (Karate, Taekwondo, Judo, Boxing, etc.)": [
+     "Martial Arts"
+    ],
+    "Wrestling": [
+     "Wrestling"
+    ],
+    "Gymnastics": [
+     "Gymnastics"
+    ],
+    "Skiing": [
+     "Skiing"
+    ],
+    "Snowboarding": [
+     "Snowboarding"
+    ],
+    "Surfing": [
+     "Surfing"
+    ],
+    "Skateboarding": [
+     "Skateboarding"
+    ],
+    "Sailing": [
+     "Sailing"
+    ],
+    "Canoeing and Kayaking": [
+     "Canoeing and Kayaking"
+    ],
+    "Rowing": [
+     "Rowing"
+    ],
+    "Horseback Riding": [
+     "Horseback Riding"
+    ],
+    "Fencing": [
+     "Fencing"
+    ],
+    "Archery": [
+     "Archery"
+    ],
+    "Triathlon": [
+     "Triathlon"
+    ],
+    "CrossFit": [
+     "CrossFit"
+    ],
+    "Ultimate Frisbee": [
+     "Ultimate Frisbee"
+    ],
+    "Polo": [
+     "Polo"
+    ],
+    "Squash": [
+     "Squash"
+    ],
+    "Rock Climbing": [
+     "Rock Climbing"
+    ],
+    "Bungee Jumping": [
+     "Bungee Jumping"
+    ],
+    "Skydiving": [
+     "Skydiving"
+    ],
+    "Windsurfing": [
+     "Windsurfing"
+    ],
+    "Kiteboarding": [
+     "Kiteboarding"
+    ],
+    "Yoga": [
+     "Yoga"
+    ],
+    "Pilates": [
+     "Pilates"
+    ],
+    "Zumba": [
+     "Zumba"
+    ],
+    "Dance (Ballet, Hip Hop, Jazz, etc.)": [
+     "Dance (Ballet, Hip Hop, Jazz, etc.)"
+    ],
+    "Aerobics": [
+     "Aerobics"
+    ],
+    "Hiking": [
+     "Hiking"
+    ],
+    "Trail Running": [
+     "Trail Running"
+    ],
+    "Mountaineering": [
+     "Mountaineering"
+    ],
+    "Orienteering": [
+     "Orienteering"
+    ],
+    "Kayaking": [
+     "Canoeing and Kayaking"
+    ],
+    "Rafting": [
+     "Rafting"
+    ],
+    "Fishing": [
+     "Fishing"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Skiing",
+     "value": "Skiing"
+    },
+    {
+     "label": "Snowboarding",
+     "value": "Snowboarding"
+    },
+    {
+     "label": "Surfing",
+     "value": "Surfing"
+    },
+    {
+     "label": "Skateboarding",
+     "value": "Skateboarding"
+    },
+    {
+     "label": "Sailing",
+     "value": "Sailing"
+    },
+    {
+     "label": "Canoeing and Kayaking",
+     "value": "Canoeing and Kayaking"
+    },
+    {
+     "label": "Rowing",
+     "value": "Rowing"
+    },
+    {
+     "label": "Horseback Riding",
+     "value": "Horseback Riding"
+    },
+    {
+     "label": "Fencing",
+     "value": "Fencing"
+    },
+    {
+     "label": "Archery",
+     "value": "Archery"
+    },
+    {
+     "label": "Triathlon",
+     "value": "Triathlon"
+    },
+    {
+     "label": "CrossFit",
+     "value": "CrossFit"
+    },
+    {
+     "label": "Ultimate Frisbee",
+     "value": "Ultimate Frisbee"
+    },
+    {
+     "label": "Polo",
+     "value": "Polo"
+    },
+    {
+     "label": "Rock Climbing",
+     "value": "Rock Climbing"
+    },
+    {
+     "label": "Bungee Jumping",
+     "value": "Bungee Jumping"
+    },
+    {
+     "label": "Skydiving",
+     "value": "Skydiving"
+    },
+    {
+     "label": "Windsurfing",
+     "value": "Windsurfing"
+    },
+    {
+     "label": "Kiteboarding",
+     "value": "Kiteboarding"
+    },
+    {
+     "label": "Yoga",
+     "value": "Yoga"
+    },
+    {
+     "label": "Pilates",
+     "value": "Pilates"
+    },
+    {
+     "label": "Zumba",
+     "value": "Zumba"
+    },
+    {
+     "label": "Dance (Ballet, Hip Hop, Jazz, etc.)",
+     "value": "Dance (Ballet, Hip Hop, Jazz, etc.)"
+    },
+    {
+     "label": "Aerobics",
+     "value": "Aerobics"
+    },
+    {
+     "label": "Hiking",
+     "value": "Hiking"
+    },
+    {
+     "label": "Trail Running",
+     "value": "Trail Running"
+    },
+    {
+     "label": "Mountaineering",
+     "value": "Mountaineering"
+    },
+    {
+     "label": "Orienteering",
+     "value": "Orienteering"
+    },
+    {
+     "label": "Rafting",
+     "value": "Rafting"
+    },
+    {
+     "label": "Fishing",
+     "value": "Fishing"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Football (Soccer)": [
+     "Football / Soccer"
+    ],
+    "Basketball": [
+     "Basketball"
+    ],
+    "Tennis": [
+     "Tennis"
+    ],
+    "Cricket": [
+     "Cricket"
+    ],
+    "Baseball": [
+     "Baseball / Softball"
+    ],
+    "Golf": [
+     "Golf"
+    ],
+    "Rugby": [
+     "Rugby"
+    ],
+    "Volleyball": [
+     "Volleyball"
+    ],
+    "Ice Hockey": [
+     "Hockey"
+    ],
+    "Field Hockey": [
+     "Hockey"
+    ],
+    "Table Tennis": [
+     "Table Tennis"
+    ],
+    "Badminton": [
+     "Badminton"
+    ],
+    "Athletics (Track and Field)": [
+     "Athletics / Running"
+    ],
+    "Swimming": [
+     "Swimming"
+    ],
+    "Cycling": [
+     "Cycling"
+    ],
+    "Martial Arts (Karate, Taekwondo, Judo, Boxing, etc.)": [
+     "Martial Arts"
+    ],
+    "Wrestling": [
+     "Wrestling"
+    ],
+    "Gymnastics": [
+     "Gymnastics"
+    ],
+    "Skiing": [
+     "Skiing"
+    ],
+    "Snowboarding": [
+     "Snowboarding"
+    ],
+    "Surfing": [
+     "Surfing"
+    ],
+    "Skateboarding": [
+     "Skateboarding"
+    ],
+    "Sailing": [
+     "Sailing"
+    ],
+    "Canoeing and Kayaking": [
+     "Canoeing and Kayaking"
+    ],
+    "Rowing": [
+     "Rowing"
+    ],
+    "Horseback Riding": [
+     "Horseback Riding"
+    ],
+    "Fencing": [
+     "Fencing"
+    ],
+    "Archery": [
+     "Archery"
+    ],
+    "Triathlon": [
+     "Triathlon"
+    ],
+    "CrossFit": [
+     "CrossFit"
+    ],
+    "Ultimate Frisbee": [
+     "Ultimate Frisbee"
+    ],
+    "Polo": [
+     "Polo"
+    ],
+    "Squash": [
+     "Squash"
+    ],
+    "Rock Climbing": [
+     "Rock Climbing"
+    ],
+    "Bungee Jumping": [
+     "Bungee Jumping"
+    ],
+    "Skydiving": [
+     "Skydiving"
+    ],
+    "Windsurfing": [
+     "Windsurfing"
+    ],
+    "Kiteboarding": [
+     "Kiteboarding"
+    ],
+    "Yoga": [
+     "Yoga"
+    ],
+    "Pilates": [
+     "Pilates"
+    ],
+    "Zumba": [
+     "Zumba"
+    ],
+    "Dance (Ballet, Hip Hop, Jazz, etc.)": [
+     "Dance (Ballet, Hip Hop, Jazz, etc.)"
+    ],
+    "Aerobics": [
+     "Aerobics"
+    ],
+    "Hiking": [
+     "Hiking"
+    ],
+    "Trail Running": [
+     "Trail Running"
+    ],
+    "Mountaineering": [
+     "Mountaineering"
+    ],
+    "Orienteering": [
+     "Orienteering"
+    ],
+    "Kayaking": [
+     "Canoeing and Kayaking"
+    ],
+    "Rafting": [
+     "Rafting"
+    ],
+    "Fishing": [
+     "Fishing"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "sports31",
+   "to": "sports-physical-fitness21",
+   "toMultiple": null,
+   "valueMap": {},
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Yes": [
+     "Monthly or more often",
+     "Every 2–3 months",
+     "A few times a year",
+     "Once a year",
+     "Rarely"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "gaming1",
+   "to": "gaming-esports16",
+   "toMultiple": true,
+   "valueMap": {
+    "Adventure": [
+     "Adventure"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Platformer": [
+     "Platformer"
+    ],
+    "Simulation": [
+     "Simulation"
+    ],
+    "Strategy": [
+     "Strategy"
+    ],
+    "Music": [
+     "Music"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Board/Card": [
+     "Card/Board"
+    ],
+    "Stealth Action": [
+     "Action"
+    ],
+    "RPG": [
+     "Role-Playing (RPG)"
+    ],
+    "FPS": [
+     "First-Person Shooter (FPS)"
+    ],
+    "Puzzle": [
+     "Puzzle"
+    ],
+    "Fighting": [
+     "Fighting"
+    ],
+    "Racing": [
+     "Racing"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Platformer",
+     "value": "Platformer"
+    },
+    {
+     "label": "Music",
+     "value": "Music"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Adventure": [
+     "Adventure"
+    ],
+    "Horror": [
+     "Horror"
+    ],
+    "Platformer": [
+     "Platformer"
+    ],
+    "Simulation": [
+     "Simulation"
+    ],
+    "Strategy": [
+     "Strategy"
+    ],
+    "Music": [
+     "Music"
+    ],
+    "Sports": [
+     "Sports"
+    ],
+    "Board/Card": [
+     "Card/Board"
+    ],
+    "Stealth Action": [
+     "Action"
+    ],
+    "RPG": [
+     "Role-Playing (RPG)"
+    ],
+    "FPS": [
+     "First-Person Shooter (FPS)"
+    ],
+    "Puzzle": [
+     "Puzzle"
+    ],
+    "Fighting": [
+     "Fighting"
+    ],
+    "Racing": [
+     "Racing"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "gaming7",
+   "to": "gaming-esports14",
+   "toMultiple": null,
+   "valueMap": {
+    "Gaming PC": [
+     "Gaming PC"
+    ],
+    "PlayStation 4": [
+     "PlayStation 4"
+    ],
+    "PlayStation 5": [
+     "PlayStation 5"
+    ],
+    "Xbox One": [
+     "Xbox One"
+    ],
+    "Xbox Series S": [
+     "Xbox Series X/S"
+    ],
+    "Xbox Series X": [
+     "Xbox Series X/S"
+    ],
+    "Nintendo Switch": [
+     "Nintendo Switch"
+    ],
+    "Nintendo Switch Lite": [
+     "Nintendo Switch"
+    ],
+    "Nintendo Switch OLED": [
+     "Nintendo Switch"
+    ],
+    "Steam Deck": [
+     "Steam Deck"
+    ],
+    "Mobile Gaming": [
+     "Mobile Gaming"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "Gaming PC",
+     "value": "Gaming PC"
+    },
+    {
+     "label": "Steam Deck",
+     "value": "Steam Deck"
+    },
+    {
+     "label": "Mobile Gaming (Smartphone / Tablet)",
+     "value": "Mobile Gaming"
+    },
+    {
+     "label": "Other",
+     "value": "Other"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Gaming PC": [
+     "Gaming PC"
+    ],
+    "PlayStation 4": [
+     "PlayStation 4"
+    ],
+    "PlayStation 5": [
+     "PlayStation 5"
+    ],
+    "Xbox One": [
+     "Xbox One"
+    ],
+    "Xbox Series S": [
+     "Xbox Series X/S"
+    ],
+    "Xbox Series X": [
+     "Xbox Series X/S"
+    ],
+    "Nintendo Switch": [
+     "Nintendo Switch"
+    ],
+    "Nintendo Switch Lite": [
+     "Nintendo Switch"
+    ],
+    "Nintendo Switch OLED": [
+     "Nintendo Switch"
+    ],
+    "Steam Deck": [
+     "Steam Deck"
+    ],
+    "Mobile Gaming": [
+     "Mobile Gaming"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "gaming3",
+   "to": "gaming-esports31",
+   "toMultiple": null,
+   "valueMap": {
+    "yes": [],
+    "no": [
+     "Never"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "no": [
+     "Never"
+    ],
+    "yes": [
+     "Used previously",
+     "Currently use occasionally",
+     "Currently use regularly"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "gaming2",
+   "to": "gaming-esports2",
+   "toMultiple": null,
+   "valueMap": {
+    "00 - 60min": [
+     "Less than 30 minutes"
+    ],
+    "01_3": [
+     "Less than 30 minutes"
+    ],
+    "04_6": [
+     "30-59 minutes"
+    ],
+    "07_10": [
+     "1-2 hours"
+    ],
+    "11_15": [
+     "1-2 hours"
+    ],
+    "16_20": [
+     "2–3 hours"
+    ],
+    "21_30": [
+     "3-4 hours"
+    ],
+    "30_plus": [
+     "4-6 hours"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "00 - 60min": [
+     "Less than 30 minutes"
+    ],
+    "01_3": [
+     "Less than 30 minutes"
+    ],
+    "04_6": [
+     "30-59 minutes"
+    ],
+    "07_10": [
+     "1-2 hours"
+    ],
+    "11_15": [
+     "1-2 hours"
+    ],
+    "16_20": [
+     "2–3 hours"
+    ],
+    "21_30": [
+     "3-4 hours"
+    ],
+    "30_plus": [
+     "4-6 hours"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "gaming0",
+   "to": "gaming-esports1",
+   "toMultiple": null,
+   "valueMap": {
+    "Yes": [],
+    "No": [
+     "No"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "No": [
+     "No"
+    ],
+    "Yes": [
+     "Yes, occasionally",
+     "Yes, regularly"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "consumer-electronics13",
+   "to": "gaming-esports1",
+   "toMultiple": null,
+   "valueMap": {
+    "No": [
+     "No"
+    ],
+    "Yes, occasionally": [
+     "Yes, occasionally"
+    ],
+    "Yes, weekly": [
+     "Yes, regularly"
+    ],
+    "Yes, several times a week": [
+     "Yes, regularly"
+    ],
+    "Yes, daily": [
+     "Yes, regularly"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "No": [
+     "No"
+    ],
+    "Yes, occasionally": [
+     "Yes, occasionally"
+    ],
+    "Yes, weekly": [
+     "Yes, regularly"
+    ],
+    "Yes, several times a week": [
+     "Yes, regularly"
+    ],
+    "Yes, daily": [
+     "Yes, regularly"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "technology-digital-services16",
+   "to": "research-panel6",
+   "toMultiple": null,
+   "valueMap": {
+    "Definitely no": [
+     "No"
+    ],
+    "Probably no": [
+     "No"
+    ],
+    "Maybe": [
+     "Maybe"
+    ],
+    "Probably yes": [
+     "Yes"
+    ],
+    "Definitely yes": [
+     "Yes"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Definitely no": [
+     "No"
+    ],
+    "Probably no": [
+     "No"
+    ],
+    "Maybe": [
+     "Maybe"
+    ],
+    "Probably yes": [
+     "Yes"
+    ],
+    "Definitely yes": [
+     "Yes"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "technology-digital-services17",
+   "to": "research-panel7",
+   "toMultiple": null,
+   "valueMap": {
+    "Definitely no ": [
+     "No"
+    ],
+    "Definitely yes": [
+     "Yes"
+    ],
+    "Maybe": [
+     "Maybe"
+    ],
+    "Probably yes": [
+     "Yes"
+    ],
+    "Probably no": [
+     "No"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Definitely no ": [
+     "No"
+    ],
+    "Definitely yes": [
+     "Yes"
+    ],
+    "Maybe": [
+     "Maybe"
+    ],
+    "Probably yes": [
+     "Yes"
+    ],
+    "Probably no": [
+     "No"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "entertainment-media22",
+   "to": "sports-physical-fitness18",
+   "toMultiple": null,
+   "valueMap": {
+    "Cricket": [
+     "Cricket"
+    ],
+    "Football": [
+     "Football"
+    ],
+    "Basketball": [
+     "Basketball"
+    ],
+    "Tennis": [
+     "Tennis"
+    ],
+    "Badminton": [
+     "Badminton"
+    ],
+    "Hockey": [
+     "Hockey"
+    ],
+    "Formula 1 / Motorsport": [
+     "Formula 1 / Motorsport"
+    ],
+    "Wrestling": [
+     "Wrestling"
+    ],
+    "Athletics": [
+     "Athletics"
+    ],
+    "Golf": [
+     "Golf"
+    ],
+    "E-sports": [
+     "Esports"
+    ],
+    "Other": [
+     "Other"
+    ]
+   },
+   "addOptions": [],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "Cricket": [
+     "Cricket"
+    ],
+    "Football": [
+     "Football"
+    ],
+    "Basketball": [
+     "Basketball"
+    ],
+    "Tennis": [
+     "Tennis"
+    ],
+    "Badminton": [
+     "Badminton"
+    ],
+    "Hockey": [
+     "Hockey"
+    ],
+    "Formula 1 / Motorsport": [
+     "Formula 1 / Motorsport"
+    ],
+    "Wrestling": [
+     "Wrestling"
+    ],
+    "Athletics": [
+     "Athletics"
+    ],
+    "Golf": [
+     "Golf"
+    ],
+    "E-sports": [
+     "Esports"
+    ],
+    "Other": [
+     "Other"
+    ]
+   }
+  },
+  {
+   "op": "mergeQuestion",
+   "from": "content-creator-social-influence4",
+   "to": "technology-digital-services12",
+   "toMultiple": true,
+   "valueMap": {
+    "AI search": [
+     "AI Search"
+    ],
+    "AI writing tools": [
+     "AI Writing Tools"
+    ],
+    "AI image tools": [
+     "AI image tools"
+    ],
+    "AI productivity tools": [
+     "AI Productivity Tools"
+    ],
+    "AI customer service": [
+     "AI Customer Service"
+    ],
+    "AI shopping/recommendation tools": [
+     "AI shopping/recommendation tools"
+    ],
+    "AI translation": [
+     "AI Translation"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "None": [
+     "None"
+    ],
+    "AI chatbot": [
+     "AI Chatbots / Assistants"
+    ]
+   },
+   "addOptions": [
+    {
+     "label": "AI image tools",
+     "value": "AI image tools"
+    },
+    {
+     "label": "AI shopping/recommendation tools",
+     "value": "AI shopping/recommendation tools"
+    }
+   ],
+   "crossMap": {},
+   "conditional": [],
+   "childParentValueMap": {
+    "AI search": [
+     "AI Search"
+    ],
+    "AI writing tools": [
+     "AI Writing Tools"
+    ],
+    "AI image tools": [
+     "AI image tools"
+    ],
+    "AI productivity tools": [
+     "AI Productivity Tools"
+    ],
+    "AI customer service": [
+     "AI Customer Service"
+    ],
+    "AI shopping/recommendation tools": [
+     "AI shopping/recommendation tools"
+    ],
+    "AI translation": [
+     "AI Translation"
+    ],
+    "Other": [
+     "Other"
+    ],
+    "None": [
+     "None"
+    ],
+    "AI chatbot": [
+     "AI Chatbots / Assistants"
+    ]
+   }
+  },
+  {
+   "op": "moveQuestion",
+   "question": "fin_card_type",
+   "to": {
+    "slug": "banking-financial-services",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "fin_decisionmaking",
+   "to": {
+    "slug": "banking-financial-services",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "fin_investment",
+   "to": {
+    "slug": "banking-financial-services",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner3",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner5",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner8",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner19",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner20",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner27",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner10",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "homeowner11",
+   "to": {
+    "slug": "home-household",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "pet17",
+   "to": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food17",
+   "to": {
+    "slug": "tobacco-nicotine-alcoholic",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food18",
+   "to": {
+    "slug": "tobacco-nicotine-alcoholic",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food20",
+   "to": {
+    "slug": "tobacco-nicotine-alcoholic",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food7",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food9",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food10",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food11",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food12",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food13",
+   "to": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "food5",
+   "to": {
+    "slug": "restaurants-food-delivery",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_5",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_6",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_9",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "media7",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "media9",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "media13",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "media14",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "hobbies",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_1",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_10",
+   "to": {
+    "slug": "entertainment-media",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "travel7",
+   "to": {
+    "slug": "travel-tourism",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "travel14",
+   "to": {
+    "slug": "travel-tourism",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "travel11",
+   "to": {
+    "slug": "travel-tourism",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "travel12",
+   "to": {
+    "slug": "travel-tourism",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_7",
+   "to": {
+    "slug": "travel-tourism",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile2",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile3",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile4",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile5",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile6",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile7",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile8",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile9",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile10",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile11",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile12",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile13",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile14",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile15",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile16",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile17",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile18",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile19",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile20",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile22",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile23",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile24",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile25",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "automobile26",
+   "to": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health2",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health4",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health8",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health9",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health11",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health12",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health14",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health18",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health21",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health22",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health23",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "health24",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "physically-challendged",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_visual",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_hearing",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_mobility",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_neurological",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_intellectual",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_development",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_speech",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_mental",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_cognitive",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_chronic",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_sensory",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_autoimmune",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_genetic",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "disabled_other",
+   "to": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty5",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty6",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty7",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty9",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty10",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty13",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty14",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty16",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty17",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty18",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "beauty19",
+   "to": {
+    "slug": "beauty-personal-care",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "tech_computer",
+   "to": {
+    "slug": "consumer-electronics",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "tech_computer_brands",
+   "to": {
+    "slug": "consumer-electronics",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "tech_computer_os",
+   "to": {
+    "slug": "consumer-electronics",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mobile11",
+   "to": {
+    "slug": "consumer-electronics",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "tech_office_suite",
+   "to": {
+    "slug": "technology-digital-services",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "tech_computer_browser",
+   "to": {
+    "slug": "technology-digital-services",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports25",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports26",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports27",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "lifestyle_11",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports28",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports29",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports30",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports32",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "sports34",
+   "to": {
+    "slug": "sports-physical-fitness",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "gaming10",
+   "to": {
+    "slug": "gaming-esports",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "gaming26",
+   "to": {
+    "slug": "gaming-esports",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "gaming27",
+   "to": {
+    "slug": "gaming-esports",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mr1",
+   "to": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mr2",
+   "to": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mr3",
+   "to": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mr4",
+   "to": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "moveQuestion",
+   "question": "mr5",
+   "to": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "fromCategory": "b2c"
+  },
+  {
+   "op": "setQuestion",
+   "question": "food20",
+   "unset": [
+    "parent"
+   ]
+  },
+  {
+   "op": "setOptionParentValue",
+   "question": "food17",
+   "parentValue": [
+    "Current tobacco/nicotine user",
+    "Former tobacco/nicotine user"
+   ]
+  },
+  {
+   "op": "setOptionParentValue",
+   "question": "fin_card_type",
+   "parentValue": [
+    "Yes"
+   ]
+  },
+  {
+   "op": "profileReplaceNth",
+   "profile": {
+    "slug": "gaming-esports",
+    "category": "b2c"
+   },
+   "name": "gaming-esports5",
+   "nth": 2,
+   "replace": "gaming-esports15"
+  },
+  {
+   "op": "profileReplaceNth",
+   "profile": {
+    "slug": "health-wellness",
+    "category": "b2c"
+   },
+   "name": "health-wellness1",
+   "nth": 2,
+   "replace": "health-wellness2"
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "research-panel",
+    "category": "b2c"
+   },
+   "name": "research-panel14",
+   "before": "research-panel15"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "names": [
+    "pets-animal-care2"
+   ]
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "name": "pets-animal-care1",
+   "after": "pet15"
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "name": "pets-animal-care28",
+   "after": "pet16"
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "name": "pets-animal-care29",
+   "after": "pets-animal-care28"
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "name": "pets-animal-care30",
+   "after": "pets-animal-care29"
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "pets-animal-care",
+    "category": "b2c"
+   },
+   "name": "pets-animal-care31",
+   "after": "pets-animal-care30"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "parenting",
+    "category": "b2c"
+   },
+   "names": [
+    "havechild",
+    "children",
+    "parenting1",
+    "parenting5"
+   ]
+  },
+  {
+   "op": "profileInsert",
+   "profile": {
+    "slug": "parenting",
+    "category": "b2c"
+   },
+   "name": "parenting1",
+   "after": "parenting19"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "shopping",
+    "category": "b2c"
+   },
+   "names": [
+    "shopping21",
+    ""
+   ]
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "automotive-mobility",
+    "category": "b2c"
+   },
+   "names": [
+    "firstname"
+   ]
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "luxury-premium",
+    "category": "b2c"
+   },
+   "names": [
+    "empstat"
+   ]
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "food-beverages",
+    "category": "b2c"
+   },
+   "names": [
+    ""
+   ]
+  },
+  {
+   "op": "softDeleteProfile",
+   "profile": {
+    "slug": "",
+    "category": ""
+   },
+   "note": "stray empty profile record"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "basic",
+    "category": "minor"
+   },
+   "names": [
+    "demo-001",
+    "food",
+    "tech_isp",
+    "media"
+   ],
+   "note": "not questions in the bank"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "lifestyle-food",
+    "category": "minor"
+   },
+   "names": [
+    "demo-001",
+    "food",
+    "tech_isp",
+    "media"
+   ],
+   "note": "not questions in the bank"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "tech",
+    "category": "minor"
+   },
+   "names": [
+    "demo-001",
+    "food",
+    "tech_isp",
+    "media"
+   ],
+   "note": "not questions in the bank"
+  },
+  {
+   "op": "dedupeProfiles",
+   "note": "a question listed twice in one profile (teen health had health24 twice)"
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "financial",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "financial",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "home-pet",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "home-pet",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "lifestyle-food",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "lifestyle-food",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "travel",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "travel",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "automobile",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "automobile",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "health",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "health",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "beauty",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "beauty",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "tech",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "tech",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "sports",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "sports",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "game",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "game",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "mr",
+    "category": "b2c"
+   },
+   "names": [
+    "personal-income",
+    "household-income",
+    "pet",
+    "pet15",
+    "pet16",
+    "food",
+    "media",
+    "tech_isp",
+    "tech_computer_webcam",
+    "tech_computer_webcam_accept"
+   ],
+   "onlyIfEmptyAfter": false
+  },
+  {
+   "op": "deactivateProfileIfEmpty",
+   "profile": {
+    "slug": "mr",
+    "category": "b2c"
+   }
+  },
+  {
+   "op": "setMultiple",
+   "questions": [
+    "automotive-mobility1",
+    "automotive-mobility13",
+    "automotive-mobility14",
+    "automotive-mobility15",
+    "automotive-mobility18",
+    "automotive-mobility9",
+    "beverages1",
+    "beverages11",
+    "consumer-electronics1",
+    "consumer-electronics10",
+    "consumer-electronics14",
+    "consumer-electronics16",
+    "consumer-electronics4",
+    "consumer-electronics7",
+    "consumer-electronics8",
+    "content-creator-social-influence36",
+    "entertainment-media1",
+    "food-grocery2",
+    "gaming-esports16",
+    "gaming-esports21",
+    "gaming-esports34",
+    "gaming-esports4",
+    "household-services2",
+    "household-services22",
+    "luxury1",
+    "luxury12",
+    "luxury7",
+    "restaurants-food-delivery2",
+    "restaurants-food-delivery5",
+    "restaurants-food-delivery8",
+    "restaurants-food-delivery9",
+    "shopping20",
+    "shopping25",
+    "shopping27",
+    "shopping28",
+    "sports-physical-fitness15",
+    "sports-physical-fitness2",
+    "sports-physical-fitness31",
+    "sports-physical-fitness4",
+    "technology-digital-services1",
+    "technology-digital-services10",
+    "technology-digital-services12",
+    "technology-digital-services13",
+    "technology-digital-services15",
+    "technology-digital-services3",
+    "technology-digital-services4",
+    "technology-digital-services6",
+    "technology-digital-services8",
+    "tobacco-nicotine-alcoholic15",
+    "tobacco-nicotine-alcoholic2",
+    "tobacco-nicotine-alcoholic3",
+    "tobacco-nicotine-alcoholic9",
+    "travel-tourism11",
+    "travel-tourism13",
+    "travel-tourism14",
+    "travel-tourism15",
+    "travel-tourism19",
+    "travel-tourism2",
+    "travel-tourism5",
+    "travel-tourism8",
+    "travel-tourism9"
+   ],
+   "multiple": true
+  },
+  {
+   "op": "setMultiple",
+   "questions": [
+    "food-grocery1",
+    "food-grocery3",
+    "food-grocery4",
+    "shopping22",
+    "shopping23",
+    "shopping24",
+    "shopping26"
+   ],
+   "multiple": false
+  },
+  {
+   "op": "setExclusive",
+   "question": "automotive-mobility1",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "automotive-mobility16",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "automotive-mobility3",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "automotive-mobility5",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "automotive-mobility6",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services1",
+   "values": [
+    "No personal bank account"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services12",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services14",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services20",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services24",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services26",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "banking-financial-services27",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care12",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care16",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care23",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care24",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care27",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care28",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care3",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care5",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care7",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beauty-personal-care9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "beverages4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "consumer-electronics10",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "consumer-electronics11",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "consumer-electronics14",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence11",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence14",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence17",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence19",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence2",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence21",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence23",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence25",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence27",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence29",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence30",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence31",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence34",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence35",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence36",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "content-creator-social-influence8",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "entertainment-media34",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "entertainment-media4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "fashion-apparel11",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "fashion-apparel17",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "food-grocery2",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports11",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports18",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports29",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports30",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports33",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "gaming-esports34",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness11",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness12",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness15",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness17",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness18",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness20",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness23",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness31",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness33",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "health-wellness9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household15",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household17",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household19",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household21",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household6",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "home-household7",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services14",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services15",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services22",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services6",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services7",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "household-services9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "luxury1",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "luxury12",
+   "values": [
+    "I generally do not research"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "luxury4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting13",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting20",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting22",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting24",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting29",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting31",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting33",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting34",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "parenting38",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care10",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care15",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care16",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care19",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care21",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care7",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care8",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "pets-animal-care9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "research-panel2",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "research-panel4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "restaurants-food-delivery6",
+   "values": [
+    "I don't have a preferred service"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "shopping25",
+   "values": [
+    "I do not shop online"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "shopping27",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness14",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness16",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness23",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness25",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness27",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness28",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness31",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "technology-digital-services10",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "technology-digital-services12",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "technology-digital-services13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "technology-digital-services6",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic10",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic12",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic13",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic14",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic15",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic3",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic5",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic6",
+   "values": [
+    "Not applicable"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic7",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic8",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "tobacco-nicotine-alcoholic9",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "travel-tourism1",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "travel-tourism2",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "travel-tourism3",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "travel-tourism4",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "sports-physical-fitness23",
+   "values": [
+    "None"
+   ]
+  },
+  {
+   "op": "setExclusive",
+   "question": "travel-tourism1",
+   "values": [
+    "None"
+   ]
+  }
+ ]
+}
