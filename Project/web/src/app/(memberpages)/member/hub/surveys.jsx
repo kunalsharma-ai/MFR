@@ -28,7 +28,6 @@ import { fmt, relDay } from "./data";
 import { useHub } from "./store";
 import { play } from "./sound";
 import { surveyTopic, profileTopic, artOf, profileArt } from "./topics";
-import { worldKey } from "./v9/worlds";
 import GateBanner from "./v9/gate.jsx";
 import { useParentStatus } from "./v9/parentStore";
 
@@ -84,7 +83,7 @@ export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0
   const cta = st === "locked" ? t("v7.tile.howUnlock") : st === "resume" ? t("pf.continue") : isProfile ? t("sx.startProfile") : st === "done" || st === "closed" ? "" : t("v7.tile.startSurvey");
   const off = st === "done" || st === "closed";
   return (
-    <Tile world={worldKey(isProfile ? row.slug : null, tp.k)} lockText={t("v9.lockText")} art={isProfile ? profileArt(row.slug, tp) : artOf(tp)} name={row.name} topic={isProfile ? t("sx.profileTopic") : label}
+    <Tile c1={tp.c1} c2={tp.c2} lockText={t("v9.lockText")} art={isProfile ? profileArt(row.slug, tp) : artOf(tp)} name={row.name} topic={isProfile ? t("sx.profileTopic") : label}
       ribbon={!isProfile && row.participationStatus === "invited" && st === "available" ? t("v5.new") : null}
       meta={meta} pts={fmt(Number(row.points) || 0)} unit={unit} state={tstate} stateLabel={stateLabel} cta={cta} i={i} featured={featured}
       disabled={off} onClick={off ? undefined : () => onStart(row)} ariaLabel={off ? `${row.name}: ${stateLabel}` : `${cta}: ${row.name}`} />

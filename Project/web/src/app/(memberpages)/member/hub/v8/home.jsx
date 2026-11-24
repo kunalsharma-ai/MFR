@@ -22,7 +22,6 @@ import TeenExtras from "../engage/teen.jsx";
 import { useSurveyDesk } from "../surveys.jsx";
 import { fmt } from "../data";
 import { profileTopic, profileArt } from "../topics";
-import { worldKey } from "./../v9/worlds";
 import { useHub } from "../store";
 import { Recent, Badges, ConsumerMoves, ConsumerPicks, ConsumerSide, EarningsChart, ProKpis, ProStudies, ProReadiness, TeenQuests, TeenDrops, Head } from "../home7.jsx";
 
@@ -86,7 +85,7 @@ function ProfileRow({ hub }) {
             const state = p.done ? "done" : pct > 0 ? "going" : "new";
             const cta = p.done ? t("v7.tile.update") : pct > 0 ? t("pf.continue") : t("pf.start");
             return (
-              <Tile key={p.key} world={worldKey(p.slug, tp.k)} art={profileArt(p.slug, tp)} name={name} topic={t("sx.profileTopic")}
+              <Tile key={p.key} c1={tp.c1} c2={tp.c2} art={profileArt(p.slug, tp)} name={name} topic={t("sx.profileTopic")}
                 pts={p.reward ? fmt(p.reward) : null} unit={unit} state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
                 onClick={() => router.push(p.href)} ariaLabel={`${name}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
             );
