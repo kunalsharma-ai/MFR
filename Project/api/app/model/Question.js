@@ -63,6 +63,8 @@ export default mongooseModel(
         // and who answers it on the Teen Panel (teen, parent or both)
         topic: { type: String, trim: true, lowercase: true },
         answeredBy: { type: String, enum: ["teen", "parent", "both"] },
+        // Wording per language other than English: { hi: { label, description }, ... }
+        translations: { type: mongoose.Schema.Types.Mixed, default: undefined },
         size: {
             type: String,
             default: "6"

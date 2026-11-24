@@ -26,6 +26,8 @@ export default mongooseModel(
         },
         // Super admin console: limit an option to some countries (ISO codes, lower case), e.g. income and currency bands
         countries: [{ type: String, lowercase: true, trim: true }],
+        // Label per language other than English: { hi: "...", ... }
+        translations: { type: mongoose.Schema.Types.Mixed, default: undefined },
         describeLabel:{
             type:String,
             default:""
