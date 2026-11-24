@@ -16,4 +16,5 @@ try {
     console.log(new Date().toISOString(), JSON.stringify({ dryRun, droppedOld: Boolean(old), oldIndex: old?.name || null }));
 } finally {
     await mongoose.disconnect();
+    process.exit(0); // the shared utils keep timers open, so exit once the work is done
 }
