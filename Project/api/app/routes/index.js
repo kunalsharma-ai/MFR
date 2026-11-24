@@ -23,6 +23,7 @@ import engagementPublicRouter from "./api/EngagementPublic.js";
 import { isAuthenticated } from "../utils/index.js";
 
 import meRouter from "./api/Me.js";
+import adminRouter from "../admin/routes.js";
 import changeEmail from "./api/changeEmail.js"
 const router = express.Router();
 router
@@ -52,6 +53,7 @@ router
     .use("/api/v1/batch", isAuthenticated, batchRouter)
     .use("/api/v1/engagement-public", engagementPublicRouter)
     .use("/api/v1/engagement", engagementRouter)
+    .use("/api/admin/v1", adminRouter)
 
 
 // router

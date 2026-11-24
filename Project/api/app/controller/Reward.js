@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { CrudController, Mutate } from "../utils/index.js";
-import { Reward as rewardModel, Response as responseModel } from "../model/index.js";
+import { Reward as rewardModel, Response as responseModel, Profile as profileModel } from "../model/index.js";
 import profileController from "./Profile.js";
 
 export const DEFAULT_PROFILE_POINTS = 50; // same default the member area uses when a profile has no points of its own
@@ -93,7 +93,9 @@ class RewardController extends CrudController {
             const status = await profileController.status();
             if (!(Number(status?.[slug]) >= 100)) throw new Error("This profile is not complete yet.");
         }
-        const points = response ? 0 : DEFAULT_PROFILE_POINTS;
+        // points set on the profile in the super admin console, else the default
+        const own = response ? null : await profileModel.findOne({ slug, origin: this.request.origin, isDeleted: { $ne: true }, points: { $ne: null } }).lean();
+        const points = response ? 0 : (Number.isInteger(own?.points) ? own.points : DEFAULT_PROFILE_POINTS);
         const name = String(body.name || "").trim() || slug;
         try {
             return Mutate(await rewardModel.create({

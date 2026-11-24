@@ -38,3 +38,4 @@ export { default as ExpertVerification } from "./ExpertVerification.js";
 export { default as GuardianLink } from "./GuardianLink.js";
 export { default as DataRequest } from "./DataRequest.js";
 export { default as PushSubscription } from "./PushSubscription.js";
+export { default as SegmentChange } from "./SegmentChange.js";

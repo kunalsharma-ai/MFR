@@ -39,6 +39,8 @@ class User extends CrudController {
             throw new Error("Your parent or guardian hasn't finished their part yet. Ask them to check their email.");
         }
 
+        if (["suspended", "banned"].includes(temp?.memberStatus)) throw new Error("This account is not active. Please contact support.");
+
         let response = await temp.verifyPassword(password);
         if (response) {
             return temp;

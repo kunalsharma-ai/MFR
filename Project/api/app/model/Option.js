@@ -24,6 +24,8 @@ export default mongooseModel(
             type:Boolean,
             default:false
         },
+        // Super admin console: limit an option to some countries (ISO codes, lower case), e.g. income and currency bands
+        countries: [{ type: String, lowercase: true, trim: true }],
         describeLabel:{
             type:String,
             default:""

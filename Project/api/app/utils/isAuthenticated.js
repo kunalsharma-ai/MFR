@@ -41,6 +41,12 @@ export default async function isAuthenticated(req, res, next) {
         }
 
         req.user = await getUserDetails(user);
+        if (!req.user || ["suspended", "banned"].includes(req.user.memberStatus)) {
+            return res.status(403).json({
+                status: "error",
+                message: "This account is not active"
+            })
+        }
         return next();
     } catch (error) {
         console.log(error);
