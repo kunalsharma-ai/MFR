@@ -47,7 +47,7 @@ import { api, loadData, Page } from "@/util";
 import user from "@/validators/user";
 import { useToast } from "@/hooks";
 import { useMember, useQuery, useTelemetry } from "@/Context";
-import Captcha from "./Captcha";
+import HumanCheck from "@/components/HumanCheck";
 function capitalizeName(str) {
   if (!str) return "";
 
@@ -102,6 +102,8 @@ export default function SignUp({
   const [isLoading, setIsLoading] = React.useState(false);
   const [country, setCountry] = React.useState("");
   const [btnDisabled, setBtnDisabled] = React.useState(true);
+  const [captchaTries, setCaptchaTries] = React.useState(0);
+  const human = React.useRef(null);
 
   const form = useForm({
     mode: "onBlur",
@@ -243,7 +245,9 @@ export default function SignUp({
       // "Send me news and offers": unticked by default; only a tick opts in
       data.marketingOptIn = marketingOptIn === true;
       if (Boolean(query?.ref) && query.ref !== "") data.referredBy = query.ref;
+      data.captcha = human.current;
       const temp = await api.put("api/v1/user", data);
+      if (temp?.status != "success") setCaptchaTries((n) => n + 1); // the check is spent
       useToast(temp);
       if (temp?.status == "success") {
         const resetTimer = 30; //Modify timer if required
@@ -255,7 +259,7 @@ export default function SignUp({
         }, resetTimer * 1000);
       } else if (temp?.message?.includes("duplicate")) setStatus("duplicate");
     } catch (error) {
-      console.error(error);
+      console.error(error); setCaptchaTries((n) => n + 1);
       useToast(error);
     } finally {
       setIsLoading(false);
@@ -571,11 +575,7 @@ export default function SignUp({
                       direction="row"
                       alignItems="center"
                     >
-                      <Captcha
-                        onVerified={() => {
-                          setBtnDisabled(false);
-                        }}
-                      />
+                      <HumanCheck resetKey={captchaTries} onChange={(v) => { human.current = v; setBtnDisabled(!v); }} />
                     </Grid>
 
                     <Grid
