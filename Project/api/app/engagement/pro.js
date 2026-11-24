@@ -72,7 +72,7 @@ export async function expertise(user, origin) {
     const c = config().professional.expertise;
     const w = c.weights;
     const [prof, surveys, u, v] = await Promise.all([
-        profileProgress(user).catch(() => null),
+        profileProgress(user, origin).catch(() => null),
         Response.countDocuments({ user: oid(user._id), origin, status: "complete", isDeleted: false }),
         User.findById(user._id).select("qualityScore").lean(),
         ExpertVerification.findOne({ user: oid(user._id), origin }).lean(),

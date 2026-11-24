@@ -170,8 +170,8 @@ class Response extends CrudController {
             {
                 $lookup: {
                     from: "Survey",
-                    localField: "survey.slug",
-                    foreignField: "slug",
+                    let: { slug: "$survey.slug" },
+                    pipeline: [{ $match: { origin: this.request.origin, $expr: { $eq: ["$slug", "$$slug"] } } }],
                     as: "surveyInfo"
                 }
             },
@@ -225,8 +225,8 @@ class Response extends CrudController {
             {
                 $lookup: {
                     from: "Survey",
-                    localField: "survey.slug",
-                    foreignField: "slug",
+                    let: { slug: "$survey.slug" },
+                    pipeline: [{ $match: { origin: this.request.origin, $expr: { $eq: ["$slug", "$$slug"] } } }],
                     as: "surveyDetails"
                 }
             },

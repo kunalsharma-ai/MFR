@@ -140,7 +140,7 @@ router
                     delete (filters.Age);
                     filters["$or"] = temp;
                 }
-                market.qualified = await answerController.feasibility(filters)
+                market.qualified = await answerController.feasibility(filters, req.origin)
 
                 markets[i] = market
 
@@ -237,7 +237,7 @@ router
                     filters["$or"] = temp;
                 }
                 market.fltr = filters
-                market.data = await answerController.feasibility(filters)
+                market.data = await answerController.feasibility(filters, req.origin)
                 markets[i] = {
                     marketID: market.marketID,
                     data: market.data

@@ -5,12 +5,15 @@ class ProfileController extends CrudController {
   
   async status() {
     const userID = this?.request?.user?._id?.toString();
+    // One database holds every brand: profiles, questions and answers are read for this brand only.
+    const origin = this?.request?.origin;
     let temp = await profileModel.aggregate([
 
       {
         $match: {
           isActive: true,
-          isDeleted: false
+          isDeleted: false,
+          origin
         }
       },
 
@@ -29,8 +32,8 @@ class ProfileController extends CrudController {
       {
         $lookup: {
           from: "Question",
-          localField: "questionNames",
-          foreignField: "name",
+          let: { names: "$questionNames" },
+          pipeline: [{ $match: { origin, $expr: { $in: ["$name", "$$names"] } } }],
           as: "questions"
         }
       },
@@ -47,7 +50,8 @@ class ProfileController extends CrudController {
                 $expr: {
                   $and: [
                     { $eq: ["$question", "$$qName"] },
-                    { $eq: ["$user", userID] }
+                    { $eq: ["$user", userID] },
+                    { $eq: ["$origin", origin] }
                   ]
                 }
               }
@@ -63,6 +67,7 @@ class ProfileController extends CrudController {
           startWith: "$questions.parent",
           connectFromField: "parent",
           connectToField: "name",
+          restrictSearchWithMatch: { origin },
           as: "parentChain"
         }
       },
@@ -77,7 +82,7 @@ class ProfileController extends CrudController {
         $lookup: {
           from: "Answer",
           pipeline: [
-            { $match: { user: userID } },
+            { $match: { user: userID, origin } },
             { $project: { _id: 0, question: 1 } }
           ],
           as: "allUserAnswers"

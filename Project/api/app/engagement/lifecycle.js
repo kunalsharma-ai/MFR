@@ -65,10 +65,10 @@ export function progressFields(done, total, doneSlugs = []) {
 }
 
 // profiles complete for this member, out of the profiles of their category
-export async function profileProgress(user) {
-    profileController.request = { user: { _id: String(user._id), category: user.category }, origin: user.origin };
+export async function profileProgress(user, origin = user.origin) {
+    profileController.request = { user: { _id: String(user._id), category: user.category }, origin };
     const status = (await profileController.status()) || {};
-    const mine = await Profile.find({ category: user.category, isActive: true, isDeleted: false }).select("slug").lean();
+    const mine = await Profile.find({ origin, category: user.category, isActive: true, isDeleted: false }).select("slug").lean();
     const slugs = mine.map((p) => p.slug);
     const done = slugs.filter((s) => Number(status?.[s]) >= 100);
     return { done: done.length, total: slugs.length, doneSlugs: done };
@@ -92,7 +92,7 @@ export async function caseOf(user) {
     const withPw = await User.findById(user._id).select("+password").lean();
     if (!withPw?.password) return { id: "case1-password" };
     if (!hasTerms(user)) return { id: "case2-terms" };
-    const prog = await profileProgress(user);
+    const prog = await profileProgress(user, user.origin || withPw.origin);
     if (!prog.total) return null;
     if (prog.done === 0) return { id: "case3-noprofiles", prog };
     if (prog.done < prog.total) return { id: "case4-partial", prog };

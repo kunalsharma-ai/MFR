@@ -78,6 +78,7 @@ class Option extends CrudController {
     }
     async summary(){
         let temp=Mutate(await modelOption.aggregate([
+            { $match: { origin: this.request?.origin } },
             {
                 $group:{
                     _id:"$question",
