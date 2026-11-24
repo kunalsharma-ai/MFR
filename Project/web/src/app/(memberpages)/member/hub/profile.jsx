@@ -22,6 +22,8 @@ import { play } from "./sound";
 import { profileTopic, profileArt } from "./topics";
 import ParentCards from "./v9/parents.jsx";
 import GateBanner from "./v9/gate.jsx";
+import { useParentStatus } from "./v9/parentStore";
+import { useSurveyDesk, SurveyCard } from "./surveys.jsx";
 
 function useCelebrate(id, pct) {
   const [show, setShow] = React.useState(false);
@@ -88,9 +90,32 @@ function ProfileCard({ card, i }) {
   if (questions) meta.push({ icon: "surveys", text: t("pf.questions", { n: questions }) });
   meta.push({ icon: "clock", text: t("pf.minutes", { n: mins }) });
   return (
-    <Tile c1={tp.c1} c2={tp.c2} art={card.art} name={title} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
+    <Tile c1={tp.c1} c2={tp.c2} k={tp.k} kind="profile" art={card.art} name={title} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
       state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
       onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
+  );
+}
+
+/* ---------------- round 10, Teen: the surveys come fourth on the profile page, locked until parents + basics ---------------- */
+function TeenSurveys() {
+  const desk = useSurveyDesk();
+  const { gate, surveys, locked, loading, start, dialog, parent } = desk;
+  if (loading) return null;
+  const rows = surveys.slice(0, 4);
+  return (
+    <section className="pf-sec pf-g-sv" aria-labelledby="pf-g-sv">
+      <header className="h7-head">
+        <img className="h7-head-art" src={`/hub/3d/${locked ? "lock" : "game"}.webp`} alt="" width="40" height="40" loading="lazy" />
+        <div>
+          <h2 id="pf-g-sv" className="h7-title">{t("nav.surveys")}</h2>
+          <p className="h7-sub">{locked ? t("v10.tsv.locked") : t("v10.tsv.open")}</p>
+        </div>
+        <Link className="h-btn h-btn-ghost" href="/member/surveys">{t("v10.tsv.all")} <Icon name="arrow" size={14} /></Link>
+      </header>
+      <GateBanner gate={gate} kind="surveys" parent={parent} />
+      {rows.length ? <ul className="pf-grid tc-grid">{rows.map((r, i) => <SurveyCard key={r._id || r.slug} row={r} type="teen" locked={locked} onStart={start} i={i} />)}</ul> : null}
+      {dialog}
+    </section>
   );
 }
 
@@ -147,6 +172,7 @@ export default function ProfileStudio({ profiles = [], more = [], gate = null, e
   // round 9: the topic profiles, open ones first; all of them stay black and white with a padlock until the basics are done
   const extra = more.map((p, k) => toCard(p, cards.length + k)).sort((a, b) => Number(a.done) - Number(b.done));
   const [shownMore, setShownMore] = React.useState(8);
+  const parent = useParentStatus();
   if (pq.isError) return <div className="pf"><ErrorState text={t("d2.profileError")} onRetry={pq.refetch} /></div>;
   return (
     <div className="pf">
@@ -178,13 +204,14 @@ export default function ProfileStudio({ profiles = [], more = [], gate = null, e
             </div>
             <span className="h7-count">{`${extra.filter((x) => x.done).length}/${extra.length}`}</span>
           </header>
-          <GateBanner gate={gate} kind="profiles" />
+          <GateBanner gate={gate} kind="profiles" parent={type === "teen" ? parent : null} />
           <ul className="pf-grid tc-grid">{extra.slice(0, shownMore).map((x, i) => <ProfileCard key={x.slug} card={x} i={i} />)}</ul>
           {extra.length > shownMore ? (
             <div className="tc-more"><span>{t("v7.showing", { n: shownMore, m: extra.length })}</span><button type="button" className="h-btn h-btn-ghost" onClick={() => { setShownMore((n) => n + 8); play("tap"); }}>{t("v7.showMore")} <Icon name="arrow" size={14} /></button></div>
           ) : null}
         </section>
       ) : null}
+      {type === "teen" && ready ? <TeenSurveys /> : null}
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>

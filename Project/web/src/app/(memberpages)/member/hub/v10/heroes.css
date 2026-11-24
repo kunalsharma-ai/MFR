@@ -1,0 +1,129 @@
+/* Round 10: section heroes per segment (v10/heroes.jsx). The frame takes the section palette (--x1..3 background,
+   --xa/--xb accents); Consumer is light with navy type, Professional and Teen are dark with white type. */
+.hub.v8[data-type] .h8.h10 { border: 0; isolation: isolate; }
+.hub.v8[data-type] .h8.h10 .h8-bg i { display: none; }
+.hub.v8[data-type] .h8.h10.seg-consumer { background: radial-gradient(70% 120% at 85% 20%, color-mix(in srgb, var(--x3) 85%, transparent), transparent 70%), linear-gradient(120deg, var(--x1) 0%, var(--x2) 70%, var(--x3) 100%);
+  box-shadow: 0 30px 60px -40px color-mix(in srgb, var(--xa) 80%, transparent), inset 0 1px 0 rgba(255, 255, 255, .8); --text: #10173d; --muted: #4a4f6e; color: #10173d; }
+.hub.v8[data-type] .h8.h10.seg-consumer .h8-accent { background: linear-gradient(90deg, var(--xa), var(--xb)); -webkit-background-clip: text; background-clip: text; }
+.hub.v8[data-type] .h8.h10.seg-consumer .h8-stats li, .hub.v8[data-type] .h8.h10.seg-consumer .h8-eyebrow { background: rgba(255, 255, 255, .78); border-color: rgba(255, 255, 255, .9); }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) { --text: #ffffff; --muted: rgba(232, 236, 255, .86); color: #fff; }
+.hub.v8[data-type] .h8.h10.seg-professional { background: radial-gradient(60% 110% at 82% 40%, color-mix(in srgb, var(--x3) 80%, transparent), transparent 70%), linear-gradient(135deg, var(--x1) 0%, var(--x2) 100%);
+  box-shadow: 0 30px 60px -36px #000, inset 0 1px 0 rgba(255, 255, 255, .08); }
+.hub.v8[data-type] .h8.h10.seg-professional::after { background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 28px 28px; opacity: 1; }
+.hub.v8[data-type] .h8.h10.seg-professional .h8-accent { background: linear-gradient(90deg, var(--xa), color-mix(in srgb, var(--xa) 40%, #fff)); -webkit-background-clip: text; background-clip: text; }
+.hub.v8[data-type] .h8.h10.seg-teen { background: radial-gradient(55% 100% at 80% 30%, color-mix(in srgb, var(--x3) 75%, transparent), transparent 70%), radial-gradient(50% 90% at 100% 100%, color-mix(in srgb, var(--xb) 30%, transparent), transparent 70%), linear-gradient(135deg, var(--x1) 0%, var(--x2) 100%);
+  box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--x2) 90%, #000); }
+.hub.v8[data-type] .h8.h10.seg-teen::after { background-image: radial-gradient(rgba(255, 255, 255, .16) 1.2px, transparent 1.5px); background-size: 16px 16px; opacity: 1; }
+.hub.v8[data-type] .h8.h10.seg-teen .h8-accent { background: none; -webkit-text-fill-color: var(--xa); color: var(--xa); text-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-title, .hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-crumbs [aria-current] { color: #fff; }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) :is(.h8-sub, .h8-crumbs ol, .h8-crumbs a) { color: rgba(232, 236, 255, .86); }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-eyebrow { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .24); color: #fff; }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-stats li { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .16); }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-stats :is(small, b em) { color: rgba(232, 236, 255, .8); }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-stats b { color: #fff; }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) :is(.ac-pulse li, .st-now li, .qs-why li, .rf-counts li, [class*="-chip"]) { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .24); color: #fff; }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) :is(.ac-pulse li, .st-now li, .qs-why li, .rf-counts li) :is(b, span, small, em, svg) { color: #fff; }
+.hub.v8[data-type] .h8.h10:is(.seg-professional, .seg-teen) .h8-actions .h-btn:not(.h-btn-primary) { color: #fff; background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .3); }
+.hub.v8[data-type] .h8.h10.seg-teen .h8-actions .h-btn-primary { color: #1a0838; background: linear-gradient(135deg, var(--xa), color-mix(in srgb, var(--xa) 50%, #fff)); box-shadow: 0 10px 24px -10px var(--xa); }
+.hub.v8[data-type] .h8.h10.seg-professional .h8-actions .h-btn-primary { color: #1a1300; background: linear-gradient(135deg, var(--xa), color-mix(in srgb, var(--xa) 60%, #fff)); }
+
+/* ---------------- the stage ---------------- */
+.hub .x10 { position: absolute; inset: 0; display: block; }
+.hub .x10 img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.hub .x10 .x-main { position: absolute; z-index: 3; left: 50%; top: 46%; width: min(46%, 190px); aspect-ratio: 1; translate: -50% -50%; filter: drop-shadow(0 20px 22px rgba(10, 14, 40, .35)); animation: x-float 4.4s ease-in-out infinite; }
+.hub .x10 .x-badge { position: absolute; z-index: 6; right: 6%; bottom: 10%; display: inline-flex; align-items: baseline; gap: 2px; padding: 8px 14px; border-radius: 16px; background: #fff; color: #10173d; box-shadow: 0 14px 28px -14px rgba(10, 14, 40, .6); animation: x-pop .6s .4s cubic-bezier(.2, 1.6, .4, 1) both; }
+.hub .x10 .x-badge b { font-size: 1.6rem; font-weight: 800; } .hub .x10 .x-badge small { font-size: .8rem; font-weight: 700; color: #5d6785; }
+
+/* Consumer: pop-up store */
+.hub .x-consumer .x-sun { position: absolute; left: 50%; top: 44%; width: 74%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff 0%, color-mix(in srgb, var(--xa) 30%, #fff) 45%, color-mix(in srgb, var(--xb) 35%, transparent) 70%, transparent 72%); }
+.hub .x-consumer .x-sun i { position: absolute; inset: -14%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--xa) 22%, transparent) 0 6deg, transparent 6deg 18deg); mask: radial-gradient(closest-side, #000 40%, transparent 72%); -webkit-mask: radial-gradient(closest-side, #000 40%, transparent 72%); animation: x-spin 30s linear infinite; }
+.hub .x-consumer .x-pedestal { position: absolute; z-index: 2; left: 50%; bottom: 8%; width: 58%; height: 26%; translate: -50% 0; }
+.hub .x-consumer .x-pedestal i { position: absolute; left: 50%; translate: -50% 0; border-radius: 50%; }
+.hub .x-consumer .x-pedestal .t1 { bottom: 0; width: 100%; height: 60%; background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--xa) 25%, #fff) 50%, color-mix(in srgb, var(--xa) 55%, #fff) 100%); box-shadow: 0 18px 30px -16px color-mix(in srgb, var(--xa) 80%, #000), inset 0 6px 0 rgba(255, 255, 255, .9); }
+.hub .x-consumer .x-pedestal .t2 { bottom: 34%; width: 68%; height: 52%; background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--xb) 22%, #fff) 60%, color-mix(in srgb, var(--xb) 45%, #fff) 100%); box-shadow: 0 10px 20px -12px color-mix(in srgb, var(--xb) 80%, #000), inset 0 5px 0 rgba(255, 255, 255, .95); }
+.hub .x-consumer .x-main { top: 40%; }
+.hub .x-consumer .x-bub { position: absolute; z-index: 4; width: clamp(48px, 5vw, 64px); aspect-ratio: 1; padding: 10px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .98), rgba(255, 255, 255, .55) 60%, color-mix(in srgb, var(--xa) 25%, rgba(255, 255, 255, .4))); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .9), 0 14px 26px -14px color-mix(in srgb, var(--xa) 80%, #000); animation: x-bob 4.6s ease-in-out infinite; }
+.hub .x-consumer .b0 { left: 6%; top: 12%; } .hub .x-consumer .b1 { right: 8%; top: 8%; animation-delay: -1.2s; } .hub .x-consumer .b2 { left: 2%; top: 56%; animation-delay: -2.1s; } .hub .x-consumer .b3 { right: 2%; top: 52%; animation-delay: -3s; } .hub .x-consumer .b4 { left: 24%; top: -2%; width: 44px; animation-delay: -.6s; }
+.hub .x-consumer .x-ribbons i { position: absolute; z-index: 1; top: -10%; left: calc(8% + var(--i) * 11.5%); width: 8px; height: 16px; border-radius: 3px; background: var(--xa); opacity: .8; animation: x-fall 6s linear infinite; animation-delay: calc(var(--i) * -.8s); }
+.hub .x-consumer .x-ribbons i:nth-child(even) { background: var(--xb); width: 7px; height: 7px; border-radius: 50%; }
+.hub .x-consumer .x-ribbons i:nth-child(3n) { background: #facc15; }
+
+/* Professional: glass boardroom */
+.hub .x-professional .x-floor { position: absolute; left: -10%; right: -10%; bottom: -6%; height: 46%; background-image: linear-gradient(color-mix(in srgb, var(--xb) 40%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--xb) 40%, transparent) 1px, transparent 1px); background-size: 34px 34px; transform: perspective(380px) rotateX(62deg); transform-origin: 50% 100%; mask: linear-gradient(transparent, #000 70%); -webkit-mask: linear-gradient(transparent, #000 70%); animation: x-grid 6s linear infinite; }
+.hub .x-professional .x-pane { position: absolute; z-index: 1; border-radius: 14px; background: linear-gradient(160deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .04)); border: 1px solid rgba(255, 255, 255, .22); box-shadow: 0 18px 40px -20px #000, inset 0 1px 0 rgba(255, 255, 255, .25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.hub .x-professional .p1 { left: 2%; top: 10%; width: 40%; height: 34%; padding: 10px; transform: perspective(600px) rotateY(16deg); animation: x-bob 6s ease-in-out infinite; }
+.hub .x-professional .p1 svg { width: 100%; height: 100%; overflow: visible; }
+.hub .x-professional .p1 .ar { fill: color-mix(in srgb, var(--xb) 25%, transparent); }
+.hub .x-professional .p1 .ln { fill: none; stroke: var(--xa); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 100; animation: x-draw 3.4s ease-out infinite alternate; }
+.hub .x-professional .p1 circle { fill: var(--xa); }
+.hub .x-professional .p2 { right: 2%; top: 6%; width: 30%; height: 30%; padding: 10px; transform: perspective(600px) rotateY(-16deg); animation: x-bob 6.6s ease-in-out -2s infinite; }
+.hub .x-professional .x-bars { display: flex; align-items: flex-end; gap: 6%; height: 100%; }
+.hub .x-professional .x-bars i { flex: 1; height: calc(var(--h) * 1%); border-radius: 4px 4px 1px 1px; background: linear-gradient(180deg, var(--xa), color-mix(in srgb, var(--xa) 40%, transparent)); transform-origin: bottom; animation: x-rise 2.6s cubic-bezier(.2, 1, .3, 1) infinite alternate; animation-delay: calc(var(--i) * .15s); }
+.hub .x-professional .p3 { right: 6%; bottom: 14%; width: 18%; aspect-ratio: 1; padding: 8px; animation: x-bob 5.4s ease-in-out -1s infinite; }
+.hub .x-professional .p3 svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.hub .x-professional .p3 circle { fill: none; stroke-width: 6; }
+.hub .x-professional .p3 .rb { stroke: rgba(255, 255, 255, .15); }
+.hub .x-professional .p3 .rf { stroke: var(--xb); stroke-linecap: round; stroke-dasharray: 72 100; animation: x-ring 4s ease-in-out infinite alternate; }
+.hub .x-professional .x-plinth { position: absolute; z-index: 2; left: 50%; bottom: 10%; width: 40%; height: 16%; translate: -50% 0; border-radius: 50%; background: linear-gradient(180deg, color-mix(in srgb, var(--xa) 50%, #fff), color-mix(in srgb, var(--x3) 80%, #000)); box-shadow: 0 0 40px -6px var(--xa), inset 0 4px 0 rgba(255, 255, 255, .5); }
+.hub .x-professional .x-plinth i { position: absolute; inset: 18% 10%; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--xa) 70%, transparent); animation: x-pulse 2.6s ease-out infinite; }
+.hub .x-professional .x-halo { position: absolute; z-index: 1; left: 50%; top: 44%; width: 44%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--xa) 45%, transparent), transparent 65%); animation: x-breathe 4s ease-in-out infinite; }
+.hub .x-professional .x-main { top: 42%; width: min(40%, 170px); }
+.hub .x-professional .x-tile { position: absolute; z-index: 4; width: clamp(44px, 4.4vw, 56px); aspect-ratio: 1; padding: 9px; border-radius: 14px; background: linear-gradient(160deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .06)); border: 1px solid rgba(255, 255, 255, .28); box-shadow: 0 12px 24px -12px #000; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: x-bob 5s ease-in-out infinite; }
+.hub .x-professional .q0 { left: 12%; top: 50%; } .hub .x-professional .q1 { right: 24%; top: 40%; animation-delay: -1.4s; } .hub .x-professional .q2 { left: 30%; top: 2%; animation-delay: -2.2s; } .hub .x-professional .q3 { left: 6%; bottom: 6%; animation-delay: -3s; } .hub .x-professional .q4 { right: 30%; bottom: 0; animation-delay: -.8s; }
+
+/* Teen: sticker arcade */
+.hub .x-teen .x-burst { position: absolute; left: 50%; top: 46%; width: 86%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--xa) 40%, transparent) 0 10deg, color-mix(in srgb, var(--xb) 22%, transparent) 10deg 20deg); mask: radial-gradient(closest-side, #000 30%, transparent 75%); -webkit-mask: radial-gradient(closest-side, #000 30%, transparent 75%); animation: x-spin 16s linear infinite; }
+.hub .x-teen .x-dots { position: absolute; right: 4%; top: 6%; width: 30%; height: 40%; background-image: radial-gradient(var(--xb) 2px, transparent 2.5px); background-size: 12px 12px; opacity: .55; mask: radial-gradient(closest-side, #000, transparent); -webkit-mask: radial-gradient(closest-side, #000, transparent); }
+.hub .x-teen .x-squig { position: absolute; width: 30%; height: auto; fill: none; stroke-width: 5; stroke-linecap: round; }
+.hub .x-teen .x-squig path { stroke-dasharray: 160; animation: x-draw2 3s ease-in-out infinite alternate; }
+.hub .x-teen .s1 { left: 2%; bottom: 16%; stroke: var(--xa); transform: rotate(-12deg); }
+.hub .x-teen .s2 { right: 0; top: 4%; stroke: var(--xb); transform: rotate(10deg); }
+.hub .x-teen .x-main { animation: x-bounce 2.6s cubic-bezier(.3, 1.6, .5, 1) infinite; filter: drop-shadow(0 16px 0 rgba(0, 0, 0, .22)) drop-shadow(0 0 22px color-mix(in srgb, var(--xa) 60%, transparent)); }
+.hub .x-teen .x-stk { position: absolute; z-index: 4; width: clamp(48px, 5vw, 62px); aspect-ratio: 1; padding: 8px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--xa) 70%, #fff), 0 10px 0 -2px rgba(0, 0, 0, .25); rotate: calc((var(--i) - 2) * 9deg); animation: x-pop .5s cubic-bezier(.2, 1.6, .4, 1) both, x-wiggle 3s ease-in-out infinite; animation-delay: calc(var(--i) * .12s), calc(var(--i) * -.6s); }
+.hub .x-teen .k0 { left: 6%; top: 10%; } .hub .x-teen .k1 { right: 10%; top: 16%; box-shadow: 0 0 0 3px color-mix(in srgb, var(--xb) 70%, #fff), 0 10px 0 -2px rgba(0, 0, 0, .25); } .hub .x-teen .k2 { left: 4%; top: 58%; } .hub .x-teen .k3 { right: 4%; top: 58%; box-shadow: 0 0 0 3px color-mix(in srgb, var(--xb) 70%, #fff), 0 10px 0 -2px rgba(0, 0, 0, .25); } .hub .x-teen .k4 { left: 40%; bottom: -2%; width: 46px; }
+.hub .x-teen .x-star { position: absolute; z-index: 5; left: calc(12% + var(--i) * 18%); top: calc(8% + var(--i) * 15%); width: 12px; height: 12px; background: #fff; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); opacity: 0; animation: x-twinkle 2.4s ease-in-out infinite; animation-delay: calc(var(--i) * .45s); }
+
+@keyframes x-float { 50% { transform: translateY(-10px) rotate(-2deg); } }
+@keyframes x-bob { 50% { transform: translateY(-8px); } }
+@keyframes x-spin { to { rotate: 360deg; } }
+@keyframes x-fall { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: .9; } 100% { transform: translateY(380px) rotate(540deg); opacity: 0; } }
+@keyframes x-grid { to { background-position: 0 34px; } }
+@keyframes x-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes x-draw2 { from { stroke-dashoffset: 160; } to { stroke-dashoffset: 0; } }
+@keyframes x-rise { from { transform: scaleY(.35); } }
+@keyframes x-ring { from { stroke-dasharray: 20 100; } }
+@keyframes x-pulse { from { transform: scale(.7); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+@keyframes x-breathe { 50% { scale: 1.12; opacity: .75; } }
+@keyframes x-bounce { 0%, 100% { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-16px) scale(.97, 1.03); } 60% { transform: translateY(0) scale(1.05, .95); } }
+@keyframes x-pop { from { opacity: 0; scale: .3; } }
+@keyframes x-wiggle { 50% { transform: translateY(-6px) rotate(6deg); } }
+@keyframes x-twinkle { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+@media (max-width: 860px) {
+  .hub .x10 .x-main { width: min(40%, 150px); }
+  .hub .x-consumer .x-bub, .hub .x-teen .x-stk, .hub .x-professional .x-tile { width: 46px; }
+}
+@media (prefers-reduced-motion: reduce) { .hub .x10 *, .hub .x10 *::before, .hub .x10 *::after { animation: none !important; } }
+html[data-motion="reduced"] .hub .x10 * { animation: none !important; }
+
+/* account and help heroes use the same stages (their own frames) */
+.hub .ma-id.h10x, .hub .hp-hero.h10x { border: 0; }
+.hub .ma-id.h10x.seg-consumer, .hub .hp-hero.h10x.seg-consumer { background: radial-gradient(70% 120% at 85% 20%, color-mix(in srgb, var(--x3) 85%, transparent), transparent 70%), linear-gradient(120deg, var(--x1), var(--x2)); color: #10173d; }
+.hub :is(.ma-id, .hp-hero).h10x:is(.seg-professional, .seg-teen) { background: radial-gradient(60% 110% at 82% 40%, color-mix(in srgb, var(--x3) 80%, transparent), transparent 70%), linear-gradient(135deg, var(--x1), var(--x2)); color: #fff; }
+.hub.v8[data-type] .ma-id.h10x.seg-consumer :is(.ma-name, .hx-crumbs [aria-current], .ma-status, .ma-status b) { color: #10173d; -webkit-text-fill-color: #10173d; background: none; }
+.hub.v8[data-type] .ma-id.h10x.seg-consumer :is(.hx-crumbs ol, .hx-crumbs a, small, .ma-status > span) { color: #4a4f6e; -webkit-text-fill-color: currentColor; }
+.hub.v8[data-type] .ma-id.h10x.seg-consumer .ma-chip { background: rgba(255, 255, 255, .7); color: #10173d; }
+.hub.v8[data-type] .ma-id.h10x.seg-consumer .hh-type { background: #10173d; color: #fff; }
+.hub.v8[data-type] .ma-id.h10x.seg-consumer .ma-health-ring { color: #10173d; }
+.hub.v8[data-type] .ma-id.h10x:is(.seg-professional, .seg-teen) :is(.ma-name, .hx-crumbs [aria-current], .ma-status, .ma-status b) { color: #fff; -webkit-text-fill-color: #fff; background: none; }
+.hub.v8[data-type] .ma-id.h10x:is(.seg-professional, .seg-teen) :is(.hx-crumbs ol, .hx-crumbs a, small, .ma-status > span) { color: rgba(232, 236, 255, .82); -webkit-text-fill-color: currentColor; }
+.hub .hp-hero.h10x.seg-consumer :is(h1, .h-display, .h-eyebrow) { color: #10173d; }
+.hub .hp-hero.h10x.seg-consumer :is(.h-lead, .hp-popular > span, .hp-stats li) { color: #4a4f6e; }
+.hub .hp-hero.h10x.seg-consumer .hp-popular a { color: #9d174d; background: rgba(255, 255, 255, .75); }
+.hub .hp-hero.h10x:is(.seg-professional, .seg-teen) :is(h1, .h-display, .h-eyebrow, .hp-stats b) { color: #fff; }
+.hub .hp-hero.h10x:is(.seg-professional, .seg-teen) :is(.h-lead, .hp-popular > span, .hp-stats li) { color: rgba(232, 236, 255, .86); }
+.hub .hp-hero.h10x:is(.seg-professional, .seg-teen) .hp-popular a { color: #fff; background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .24); }
+.hub .ma-scene .x10, .hub .hp-scene .x10 { inset: 0; }
+
+/* round 10: the parent section heading was dark on its dark hero (v8 h2 rules won); force white */
+.hub.v8[data-type] .pc9 .pc9-hero h2, .hub .pc9 .pc9-hero h2#pc9-t { color: #fff; -webkit-text-fill-color: #fff; }
+.hub.v8[data-type] .pc9 .pc9-hero h2 mark { -webkit-text-fill-color: currentColor; }

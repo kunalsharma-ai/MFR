@@ -8,15 +8,16 @@ import Art8 from "./art.jsx";
 import { t } from "../strings";
 import { useMember } from "@/Context";
 import { memberTypeOf } from "../data";
-import WorldStage, { heroWorld, skyVars, isDarkWorld } from "../v9/stage.jsx";
+import HeroArt10, { sectionOf, heroVars } from "../v10/heroes.jsx";
 
 export default function Hero8({ kind, id, crumbs = [], eyebrow, title, accent, sub, status, actions, stats, score, children, className = "" }) {
-  // round 9: each section wears its own world (v9/stage.jsx): its sky, its 3D art and stickers
+  // round 10: each section has its own hero per segment (v10/heroes.jsx): Consumer pop-up store, Professional glass
+  // boardroom, Teen sticker arcade, each with the section's own objects and palette
   const type = memberTypeOf(useMember());
-  const world = heroWorld(kind, type);
-  const w9 = world ? ` h9 w9-${world} ${isDarkWorld(world) ? "is-dark" : "is-light"}` : "";
+  const sec = sectionOf(kind);
+  const x = sec ? ` h10 seg-${type} x-sec-${sec}` : "";
   return (
-    <section className={`h8 h8-${kind} ${className}${w9}`} style={world ? skyVars(world) : undefined} aria-labelledby={id}>
+    <section className={`h8 h8-${kind} ${className}${x}`} style={sec ? heroVars(kind, type) : undefined} aria-labelledby={id}>
       <div className="h8-bg" aria-hidden="true"><i /><i /><i /></div>
       <div className="h8-main">
         {crumbs.length ? (
@@ -35,7 +36,7 @@ export default function Hero8({ kind, id, crumbs = [], eyebrow, title, accent, s
         {actions ? <div className="h8-actions">{actions}</div> : null}
         {children}
       </div>
-      <div className="h8-art">{world ? <WorldStage world={world} type={type} badge={kind === "quality" && score != null ? <><b>{Number(score).toFixed(1)}</b><small>/10</small></> : null} /> : <Art8 kind={kind} score={score} />}</div>
+      <div className="h8-art">{sec ? <HeroArt10 kind={kind} type={type} badge={kind === "quality" && score != null ? <><b>{Number(score).toFixed(1)}</b><small>/10</small></> : null} /> : <Art8 kind={kind} score={score} />}</div>
       {stats && stats.length ? (
         <ul className="h8-stats">
           {stats.map((s, i) => (
