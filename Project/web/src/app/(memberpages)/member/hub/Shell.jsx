@@ -36,6 +36,7 @@ import "./v9/v9.css";
 import "./v9/cards.css";
 import "./v10/heroes.css";
 import "./v10/cards.css";
+import "./v10/parents.css";
 
 // v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
 // with MFR's own Services and Messages kept where they belong.
