@@ -1,7 +1,7 @@
 // Question bank versions and translations (super admin spec, module 3).
 import zlib from "node:zlib";
 import { Question, Option, Profile, QuestionVersion } from "../model/index.js";
-import { exportBank } from "./qb.js";
+import { exportBank, TEEN_BLOCKED } from "./qb.js";
 import { AdminError } from "./http.js";
 
 const live = { isDeleted: { $ne: true } };
@@ -77,6 +77,17 @@ export async function setTranslation(origin, name, { lang, label, description, o
     if (!LANG.test(String(lang || "")) || lang === "en") throw new AdminError("invalid_value", "lang is a language code other than en, e.g. hi or es-MX");
     const q = await Question.findOne({ origin, name: String(name).toLowerCase(), ...live }).lean();
     if (!q) throw new AdminError("not_found", "Question not found", 404);
+    // teen guardrails: a question teens can see (teen category, or placed in a teen profile) can't be translated into
+    // wording about tobacco, alcohol, health, cosmetics or vehicles either (same words as the question editor)
+    const teen = (q.category || []).some((c) => String(c).includes("minor"))
+        || (await Profile.countDocuments({ origin, ...live, category: { $regex: "minor" }, pages: { $elemMatch: { $elemMatch: { $eq: q.name } } } }));
+    if (teen) {
+        const texts = [["label", label], ["description", description], ...Object.entries(options && typeof options === "object" ? options : {}).map(([v, t]) => [`option ${v}`, t])];
+        for (const [where, t] of texts) {
+            const m = typeof t === "string" ? t.match(TEEN_BLOCKED) : null;
+            if (m) throw new AdminError("teen_guardrail", `${q.name} is asked of teens, so its ${lang} ${where} can't mention "${m[0]}"`, 422);
+        }
+    }
     const before = { label: q.translations?.[lang]?.label ?? null, description: q.translations?.[lang]?.description ?? null };
     const set = {};
     if (label !== undefined) { if (typeof label !== "string" || label.length > 500) throw new AdminError("invalid_value", "label is up to 500 characters"); set[`translations.${lang}.label`] = label.trim(); }
