@@ -20,6 +20,9 @@ export default mongooseModel(
             type: String,
         },
         pages:[],
+        // Super admin console: points paid when the profile is completed (null = the default, 50) and the time it takes
+        points: { type: Number, default: null, min: 0 },
+        estimatedMinutes: { type: Number, default: null, min: 1 },
         category: {
             type: String,
             required: true,

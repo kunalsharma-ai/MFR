@@ -27,7 +27,8 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
                 allowedHeaders: ["Content-Type", "Authorization", "test"],
                 methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
             }),
-            express.json(),
+            // The panel admin API (/api/admin/v1) parses its own bodies (bigger limit, raw bytes kept for MADP's signature)
+            express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }),
             express.urlencoded({
                 extended: true
             }),

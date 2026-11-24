@@ -300,7 +300,19 @@ export default mongooseModel(
             type: String,
             trim: true,
             default: "active"
-        }
+        },
+        // Super admin console (Members module). Suspended and banned members cannot sign in or use the member API.
+        // Archived members (no activity in six months) keep their points and answers and can sign in again.
+        memberStatus: {
+            type: String,
+            enum: ["active", "suspended", "banned", "archived"],
+            default: "active"
+        },
+        statusReason: { type: String, trim: true },
+        statusChangedAt: { type: Date },
+        archivedAt: { type: Date },
+        lastActivityAt: { type: Date },
+        profileCheckedAt: { type: Date }
 
     },
     [

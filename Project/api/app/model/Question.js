@@ -59,6 +59,10 @@ export default mongooseModel(
             type: Boolean,
             default: false
         },
+        // Super admin console: subject for the teen guardrails (tobacco, nicotine, alcohol, health, cosmetic, vehicle)
+        // and who answers it on the Teen Panel (teen, parent or both)
+        topic: { type: String, trim: true, lowercase: true },
+        answeredBy: { type: String, enum: ["teen", "parent", "both"] },
         size: {
             type: String,
             default: "6"
