@@ -9806,6 +9806,24 @@
    "note": "not questions in the bank"
   },
   {
+   "op": "profileRemove",
+   "profile": {
+    "slug": "lifestyle-food",
+    "category": "minor"
+   },
+   "names": [
+    "tobacco-nicotine-alcoholic2",
+    "tobacco-nicotine-alcoholic3",
+    "tobacco-nicotine-alcoholic9",
+    "tobacco-nicotine-alcoholic11",
+    "health-wellness29",
+    "food17",
+    "food18",
+    "food20"
+   ],
+   "note": "Teen Panel (13-17): no tobacco, nicotine or alcohol questions (Kunal, 24 Nov 2026)"
+  },
+  {
    "op": "dedupeProfiles",
    "note": "a question listed twice in one profile (teen health had health24 twice)"
   },
