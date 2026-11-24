@@ -1,0 +1,10 @@
+{%- assign tone = "guardian" -%}
+{%- assign preheader = "Your teen is now 18 and has an adult account." -%}
+{%- assign kicker = "For parents and legal guardians" -%}
+{%- assign title = "Your consent has ended" -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">Hello {{ guardian.firstName }},</p>
+<p style="margin:0 0 16px;">{{ teen.firstName }} has turned 18 and now has an adult account in their own name. Your consent for the Teen Panel has ended and your links no longer work.</p>
+<p style="margin:0 0 16px;">We have deleted your details and the answers you gave about your home and work.</p>
+{%- capture why -%}You received this because you gave consent for {{ teen.firstName }} to join the Teen Panel.{%- endcapture -%}
+{% include "mailer/teen/_foot.liquid" %}

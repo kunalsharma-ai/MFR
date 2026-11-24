@@ -1,0 +1,9 @@
+{%- assign tone = "teen" -%}
+{%- assign preheader = "Your account moves to an adult account when you turn 18." -%}
+{%- assign kicker = "Teen Panel" -%}
+{%- capture title -%}You're turning 18 soon, {{ teen.firstName }}{%- endcapture -%}
+{% include "mailer/teen/_head.liquid" %}
+<p style="margin:0 0 16px;">On {{ turns18 }} your Teen Panel account moves to an adult account. Your parent or guardian's permission ends at 18, so you'll need to agree to the adult terms in your own name.</p>
+<p style="margin:0 0 16px;">The next time you sign in after your birthday, we'll show you the steps. Your points, your level history and your own answers come with you. Surveys and rewards pause until you've agreed, and if you haven't agreed within 60 days the account closes.</p>
+{%- assign why = "You received this because you are a Teen Panel member. A copy went to your parent or guardian." -%}
+{% include "mailer/teen/_foot.liquid" %}

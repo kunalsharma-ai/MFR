@@ -8,7 +8,7 @@ import { maskEmail, maskPhone, birthYear } from "./mask.js";
 import { AdminError } from "./http.js";
 
 export const PAGE_SIZE = 50;
-export const STATUSES = ["active", "suspended", "banned", "archived"];
+export const STATUSES = ["active", "suspended", "banned", "archived", "closed"];
 const oid = (v) => new mongoose.Types.ObjectId(String(v));
 const isId = (v) => /^[a-f0-9]{24}$/i.test(String(v || ""));
 const escape = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

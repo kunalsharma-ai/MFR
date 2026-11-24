@@ -314,7 +314,7 @@ export async function resendInvite(req) {
     }
     return { message: "sent_if_pending" };
 }
-async function reinvite(reg, origin, by) {
+export async function reinvite(reg, origin, by) {
     const { teen, guardian } = await loadAll(reg);
     if (reg.status === STATUS.EXPIRED) move(reg, STATUS.PENDING_APPROVAL, by, "invitation renewed");
     const invite = await T.issue(reg._id, "guardian", origin);
@@ -625,7 +625,7 @@ const LOCKED = new Set(["D01", "D02", "D03", "D06", "D06__other"]); // owned by 
 // Answers saved before Nov 2026 under the upper-case key are still read (scripts/teen-bank-2026-11 renames them).
 const stored = (k) => String(k).toLowerCase();
 const KEY_OF = new Map(Object.keys(PROFILE_KEYS).flatMap((k) => [[k, k], [`${k}__other`, `${k}__other`], [stored(k), k], [stored(`${k}__other`), `${k}__other`]]));
-const PARENT_PROFILE_KEYS = PARENT_SURVEY_RULES.questions.filter((q) => q.profile && PROFILE_KEYS[q.n]).map((q) => q.n);
+export const PARENT_PROFILE_KEYS = PARENT_SURVEY_RULES.questions.filter((q) => q.profile && PROFILE_KEYS[q.n]).map((q) => q.n);
 function parentProfileAnswers(guardian) {
     const a = guardian?.onboarding?.answers || {};
     const out = {};
@@ -754,4 +754,74 @@ export async function sweep({ now = new Date(), dryRun = false } = {}) {
         await reg.save();
     }
     return report;
+}
+
+// ---- super admin console: the registration pipeline (spec module 13) ------------------------------------------------
+// MADP shows every registration by status and lets support approve a manual review, cancel, or renew an expired
+// invitation. Each decision needs a reason, is written to the registration's history as "support", and is audited in
+// MADP. Guardian and teen details stay masked here.
+const maskMail = (m = "") => { const [u, d] = String(m).split("@"); return d ? `${u.slice(0, 2)}•••@${d}` : "•••"; };
+export async function adminPipeline(origin, q = {}) {
+    const all = Object.values(STATUS);
+    const counts = Object.fromEntries(all.map((s) => [s, 0]));
+    for (const c of await TeenRegistration.aggregate([{ $match: { origin } }, { $group: { _id: "$status", n: { $sum: 1 } } }])) counts[c._id] = c.n;
+    const f = { origin };
+    if (q.status && all.includes(String(q.status))) f.status = String(q.status);
+    else f.status = { $nin: R.FINAL };
+    const regs = await TeenRegistration.find(f).sort({ updatedAt: -1 }).limit(200).lean();
+    const [teens, guardians] = await Promise.all([
+        User.find({ _id: { $in: regs.map((r) => r.teen) } }).select("name dob").lean(),
+        TeenGuardian.find({ _id: { $in: regs.map((r) => r.guardian) } }).select("relation email").lean(),
+    ]);
+    const tById = new Map(teens.map((t) => [String(t._id), t]));
+    const gById = new Map(guardians.map((g) => [String(g._id), g]));
+    return {
+        counts,
+        items: regs.map((r) => {
+            const t = tById.get(String(r.teen)) || {};
+            const g = gById.get(String(r.guardian)) || {};
+            const last = (r.history || [])[r.history.length - 1] || {};
+            return {
+                id: String(r._id), reference: r.reference, status: r.status, teenId: String(r.teen),
+                teen: [t.name?.first, t.name?.last ? `${String(t.name.last)[0]}.` : ""].filter(Boolean).join(" "),
+                birthYear: t.dob ? new Date(t.dob).getUTCFullYear() : null,
+                guardian: { relation: g.relation || null, email: maskMail(g.email) },
+                expiresAt: r.expiresAt || null, createdAt: r.createdAt, updatedAt: r.updatedAt,
+                lastNote: last.note || null, lastBy: last.by || null,
+                actions: adminActions(r.status),
+            };
+        }),
+    };
+}
+export function adminActions(status) {
+    const a = [];
+    if (status === STATUS.MANUAL_REVIEW) a.push("approve");
+    if (status === STATUS.EXPIRED) a.push("renew");
+    if (R.canMove(status, STATUS.CANCELLED)) a.push("cancel");
+    return a;
+}
+export async function adminDecide(origin, id, action, reason, actor) {
+    const why = String(reason || "").trim().slice(0, 500);
+    if (!why) fail("reason_required", { status: 400 });
+    if (!/^[a-f0-9]{24}$/i.test(String(id || ""))) fail("not_found", { status: 404 });
+    const reg = await TeenRegistration.findOne({ _id: id, origin });
+    if (!reg) fail("not_found", { status: 404 });
+    if (!adminActions(reg.status).includes(action)) fail("bad_state", { status: 409, extra: { status: reg.status } });
+    const note = `${why} (madp:${actor || "admin"})`;
+    const teenSet = {};
+    if (action === "approve") {
+        // support has spoken to the parent: the guardian carries on with the consent step from their link
+        move(reg, STATUS.PENDING_CONSENT, "support", note);
+    } else if (action === "cancel") {
+        move(reg, STATUS.CANCELLED, "support", note);
+        await T.revokeAll(reg._id);
+        teenSet.isActive = false;
+    } else if (action === "renew") {
+        reg.history.push({ status: reg.status, at: new Date(), by: "support", note: `renewal: ${note}` });
+        await reinvite(reg, origin, "support");
+    }
+    await reg.save();
+    // a direct update: older member records may not pass every current validator, and only these fields change
+    await User.updateOne({ _id: reg.teen, origin }, { $set: { ...teenSet, registrationStatus: reg.status } });
+    return { id: String(reg._id), reference: reg.reference, status: reg.status, actions: adminActions(reg.status) };
 }
