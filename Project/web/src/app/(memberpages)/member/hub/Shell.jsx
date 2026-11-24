@@ -29,6 +29,7 @@ import "./hub-v3.css";
 import "./hub-v4.css";
 import "./hub-v5.css";
 import "./hub-v6.css";
+import "./hub-v7.css";
 
 // v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
 // with MFR's own Services and Messages kept where they belong.

@@ -129,8 +129,8 @@
   --success: #0a8a55; --warning: #a35800; --error: #d1204f; --info: #0b7fa3;
   --primary: #c2157a; --primary-hover: #a10f64; --secondary: #1a0b3b; --accent: #c6ff3d; --on-primary: #ffffff; --lime: #c6ff3d; --gold: #ffd23f; --pink: #ff4fa3; --cyan: #2de2e6;
   --tone-reward: #c2157a; --tone-quality: #0a8a55; --tone-activity: #0b7fa3; --tone-social: #c2157a;
-  --ink: #1a0b3b; --pop: 4px 4px 0 var(--ink);
-  --shadow: var(--pop); --shadow-lg: 7px 7px 0 var(--ink);
+  --ink: #1a0b3b; --pop: 4px 4px 0 var(--ink-shadow, var(--ink));
+  --shadow: var(--pop); --shadow-lg: 7px 7px 0 var(--ink-shadow, var(--ink));
   --glass: rgba(255, 255, 255, .9);
   --r-card: 18px; --r-hero: 24px; --r-btn: 12px; --r-icon: 12px; --r-nav: 12px; --r-avatar: 12px;
   --card-border: var(--ink); --bw: 2px; --card-shadow: var(--pop);
