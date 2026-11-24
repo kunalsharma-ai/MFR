@@ -100,6 +100,17 @@ test("export has the same rows and counts as the import, and round-trips", async
     assert.equal(back.json.data.options.adds + back.json.data.options.changes, 0);
 });
 
+test("key order inside a field doesn't count as a change (Excel round trips reorder keys)", async () => {
+    const q0 = file.Question[0];
+    const withT = { ...file, Question: [{ ...q0, translations: { hi: { label: "नमस्ते" }, es: { label: "Hola", description: "x" } } }, ...file.Question.slice(1)] };
+    assert.equal((await admin("POST", "/api/admin/v1/qb/import?dryRun=0", withT)).status, 200);
+    const reordered = { ...file, Question: [{ ...q0, translations: { es: { description: "x", label: "Hola" }, hi: { label: "नमस्ते" } } }, ...file.Question.slice(1)] };
+    const r = (await admin("POST", "/api/admin/v1/qb/import", reordered)).json.data;
+    assert.equal(r.questions.changes, 0, JSON.stringify(r));
+    const changed = { ...file, Question: [{ ...q0, translations: { es: { description: "x", label: "Hola!" }, hi: { label: "नमस्ते" } } }, ...file.Question.slice(1)] };
+    assert.equal((await admin("POST", "/api/admin/v1/qb/import", changed)).json.data.questions.changes, 1, "a real change is still seen");
+});
+
 test("import refuses duplicates, broken references and teen-blocked questions", async () => {
     const bad = structuredClone(file);
     bad.Question.push({ ...bad.Question[0] });

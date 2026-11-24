@@ -53,7 +53,10 @@ const Q_FIELDS = ["label", "type", "parent", "description", "adminLabel", "isMon
 const O_FIELDS = ["parentValue", "isSelected", "isExclusive", "describeLabel", "sortOrder", "countries", "translations"];
 const P_FIELDS = ["name", "icon", "pages", "sortOrder", "points", "estimatedMinutes"];
 const pick = (o, fields) => Object.fromEntries(fields.filter((f) => o[f] !== undefined).map((f) => [f, o[f]]));
-const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+// Key order inside objects doesn't count (an Excel round trip from MADP keeps every field and type, but not the order).
+const stable = (v) => Array.isArray(v) ? v.map(stable) : v && typeof v === "object" && !(v instanceof Date)
+    ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, stable(v[k])])) : v;
+const same = (a, b) => JSON.stringify(stable(a ?? null)) === JSON.stringify(stable(b ?? null));
 const qKey = (q) => `${low(q.name)}|${cats(q.category).join(",")}`;
 const oKey = (o) => `${low(o.question)}|${norm(o.value)}|${norm(o.label)}`;
 const pKey = (p) => `${low(p.slug)}|${low(p.category)}`;
