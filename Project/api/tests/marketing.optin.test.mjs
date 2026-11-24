@@ -90,6 +90,23 @@ test("profile settings: the member sees and changes it, with a timestamp and his
     assert.deepEqual(after.marketingOptInHistory.map((h) => [h.granted, h.source, h.by]), [[true, "profile", "member"], [false, "profile", "member"]]);
 });
 
+test("T2O consent kit: adding or removing the 'marketing' term records the opt-in, other terms don't", async () => {
+    await call("PUT", "/api/v1/user", reg("Tara"));
+    const tara = await userBy("Tara");
+    assert.equal((await call("PUT", "/api/v1/me", { terms: ["terms", "privacy", "age"] }, token(tara))).json.status, "success");
+    assert.equal((await userBy("Tara")).marketingOptIn?.granted, undefined, "no marketing term, nothing recorded");
+    await call("PUT", "/api/v1/me", { terms: ["terms", "privacy", "age", "marketing"] }, token(tara));
+    let u = await userBy("Tara");
+    assert.equal(u.marketingOptIn.granted, true);
+    assert.equal(u.marketingOptIn.source, "profile");
+    await call("PUT", "/api/v1/me", { terms: ["terms", "privacy", "age", "marketing", "analytics"] }, token(tara));
+    assert.equal((await userBy("Tara")).marketingOptInHistory.length, 1, "unchanged marketing term, no new record");
+    await call("PUT", "/api/v1/me", { terms: ["terms", "privacy", "age"] }, token(tara));
+    u = await userBy("Tara");
+    assert.equal(u.marketingOptIn.granted, false);
+    assert.equal(u.marketingOptInHistory.length, 2);
+});
+
 test("teens can't opt in, but can always say no", async () => {
     const { insertedId } = await db.collection("User").insertOne({ origin: MFR, isActive: true, isDeleted: false, createdAt: new Date(), updatedAt: new Date(), name: { first: "Tia", last: "Demo" }, mail: "tia@example.invalid", dob: new Date(iso(15)), category: "b2c-minor", memberStatus: "active", registrationStatus: "active" });
     const t = token({ _id: insertedId });
@@ -99,6 +116,11 @@ test("teens can't opt in, but can always say no", async () => {
     assert.equal(r.status, 403);
     assert.equal(r.json.code, "teen_not_allowed");
     assert.equal((await call("PUT", "/api/v1/engagement/marketing", { optIn: false }, t)).json.data.granted, false);
+    // the consent kit can't sneak it in either: the term is dropped for a teen
+    await call("PUT", "/api/v1/me", { terms: ["terms", "marketing"] }, t);
+    const teen = await Models.User.findById(insertedId).lean();
+    assert.deepEqual(teen.terms, ["terms"]);
+    assert.equal(teen.marketingOptIn.granted, false);
 });
 
 test("the generic user update can't set it, from the member or an admin route", async () => {
@@ -113,7 +135,7 @@ test("MADP: list filter, list row, detail with history, and an admin can only re
     assert.deepEqual(list.json.data.items.map((m) => m.name), ["Ines D."]);
     assert.equal(list.json.data.items[0].marketingOptIn.granted, true);
     const unset = await admin("GET", `${V1}/members?marketing=unset`);
-    assert.deepEqual(unset.json.data.items.map((m) => m.name).sort(), ["Sam D."]);
+    assert.deepEqual(unset.json.data.items.map((m) => m.name).sort(), ["Sam D."]);  // Tara and Una changed theirs
 
     const ines = await userBy("Ines");
     assert.equal((await admin("POST", `${V1}/members/${ines._id}/marketing-opt-out`, {})).json.code, "reason_required");

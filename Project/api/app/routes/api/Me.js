@@ -54,8 +54,9 @@ Date.prototype.resetTime = function (type = "start") {
         this.setSeconds(0);
     }
 }
-import { Redemption } from "../../model/index.js";
+import { Redemption, User } from "../../model/index.js";
 import mongoose from "mongoose";
+import * as Marketing from "../../engagement/marketing.js";
 async function redeemedPoints(user, origin) {
     const r = await Redemption.aggregate([
         { $match: { user: new mongoose.Types.ObjectId(String(user)), origin, status: { $in: ["requested", "guardian_pending", "approved", "fulfilled"] } } },
@@ -151,7 +152,15 @@ router
                 }
             }
             if (!Object.keys(body).length) throw new Error("Nothing to update.");
+            // the consent kit's "marketing" id is the marketing e-mail opt-in: keep User.marketingOptIn in step
+            let termsBefore = null;
+            if (Array.isArray(body.terms)) {
+                const cur = await User.findOne({ _id: req.user._id, origin: req.origin }).select("terms category").lean();
+                termsBefore = cur?.terms || [];
+                body.terms = Marketing.stripForTeen(cur, body.terms);
+            }
             await userController.update(req.user._id, body);
+            if (termsBefore) await Marketing.syncFromTerms(req.user._id, req.origin, termsBefore, body.terms);
             return { message, data };
         },
         userController

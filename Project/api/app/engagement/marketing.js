@@ -40,3 +40,16 @@ export async function setOptIn(userOrId, origin, granted, source, by) {
     ).select("marketingOptIn").lean();
     return view(updated);
 }
+
+/**
+ * The T2O consent kit saves its choices as ids in User.terms (PUT /api/v1/me { terms }), and "marketing" is the
+ * "News and offers" choice. Call this with the terms before and after a save: when "marketing" was added or removed,
+ * the change is recorded here too, with a timestamp. Teens never keep "marketing" (see stripForTeen).
+ */
+export async function syncFromTerms(userId, origin, before = [], after = []) {
+    const had = Array.isArray(before) && before.includes("marketing");
+    const has = Array.isArray(after) && after.includes("marketing");
+    if (had === has) return null;
+    return setOptIn(userId, origin, has, "profile", "member");
+}
+export const stripForTeen = (user, terms) => (Array.isArray(terms) && isTeen(user) ? terms.filter((t) => t !== "marketing") : terms);
