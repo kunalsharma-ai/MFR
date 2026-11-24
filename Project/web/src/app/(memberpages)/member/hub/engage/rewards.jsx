@@ -12,6 +12,7 @@ import { useEngage, useEngageMutation } from "./data";
 import { play } from "../sound";
 import "./engage.css";
 
+const KIND_ART = { giftcard: "gift", upi: "digital", paypal: "money", charity: "heart", learning: "book" }; // v8.1: 3D art (public/hub/3d)
 const KIND_ICON = { giftcard: "rewards", upi: "wallet", paypal: "wallet", charity: "heart", learning: "star" };
 const cash = (v, cur = "USD") => (v == null ? "" : new Intl.NumberFormat(undefined, { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(v));
 const inr = (v) => (v == null ? "" : new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(v));
@@ -145,7 +146,7 @@ function Catalogue({ data, picking, onPicked }) {
           {list.map((x) => (
             <li key={x.key} className={`eg-item k-${x.kind}${x.affordable ? " can" : ""}`}>
               {x.affordable ? <span className="eg-can">{t("ct.can")}</span> : null}
-              <span className="eg-item-ic" aria-hidden="true"><Icon name={KIND_ICON[x.kind]} size={24} /></span>
+              <span className="eg-item-ic" aria-hidden="true"><i className="eg-item-glow" /><img src={`/hub/3d/${KIND_ART[x.kind] || "gift"}.webp`} alt="" width="64" height="64" loading="lazy" decoding="async" /></span>
               <b className="eg-item-t">{x.title}</b>
               <small className="eg-item-s">{x.subtitle}</small>
               <span className="eg-item-p">{fmt(x.points)} {t("c.pts")}{x.value != null ? <em> · {cash(x.value)}</em> : null}</span>

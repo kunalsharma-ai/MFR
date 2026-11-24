@@ -63,7 +63,8 @@ const rot = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)
 // skin: "claw" (Consumer claw arcade), "lift" (Professional executive lift), "spiral" (Teen spiral tower); "globe" and
 // "vault" are the round 5 machines, kept for reference.
 // Every skin dispenses the same capsules with the same rewards; only the machine and its motion differ.
-export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin = 'globe' }) {
+// cash={false} (teen members): no money wording anywhere on the machine, only points
+export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin = 'globe', cash = true }) {
   const { t, lang } = useI18n();
   useSyncExternalStore(subscribeRewards, rewardsVersion, rewardsVersion);
   const ps = useMemo(() => catProfiles(cat), [cat]);
@@ -199,7 +200,7 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin
       if (!alive) return;
       setBusy(false);
       const sr = document.getElementById('rw-live');
-      if (sr) sr.textContent = t('rw.boardAria', { rank: t(RANK_KEYS[rankOf(have.size, ps.length).i]), pts: nf.format(paidPoints()), usd: fmtUsd(paidPoints(), lang), n: nf.format(have.size), total: nf.format(ps.length) });
+      if (sr) sr.textContent = t(cash ? 'rw.boardAria' : 'rw.boardAriaPts', { rank: t(RANK_KEYS[rankOf(have.size, ps.length).i]), pts: nf.format(paidPoints()), usd: fmtUsd(paidPoints(), lang), n: nf.format(have.size), total: nf.format(ps.length) });
     })();
     return () => { alive = false; };
   }, [cat]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -250,10 +251,10 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin
           <div className="pm-neck" aria-hidden="true" />
           <div className="pm-body">
             <span className="pm-bulbrow" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span>
-            <div className="pm-led" role="img" aria-label={t('rw.boardAria', { rank: rankName, pts: nf.format(pts), usd: fmtUsd(pts, lang), n: nf.format(n), total: nf.format(ps.length) })}>
+            <div className="pm-led" role="img" aria-label={t(cash ? 'rw.boardAria' : 'rw.boardAriaPts', { rank: rankName, pts: nf.format(pts), usd: fmtUsd(pts, lang), n: nf.format(n), total: nf.format(ps.length) })}>
               <span className="pm-led-l">{t('rw.points')}</span>
               <span className="pm-led-v"><LedCount value={pts} lang={lang} /><small>{t('rw.pts')}</small></span>
-              <span className="pm-led-usd">{fmtUsd(pts, lang)}</span>
+              {cash ? <span className="pm-led-usd">{fmtUsd(pts, lang)}</span> : null}
             </div>
             <span className="pm-chute" aria-hidden="true"><i /></span>
             <span className="pm-tray" aria-hidden="true" />
@@ -284,15 +285,15 @@ export default function PrizeMachine({ cat, onOpen, isLocked = () => false, skin
       <div className="pm-head">
         <p className="pm-kicker"><span className="pm-stars" aria-hidden="true">{'★'.repeat(rk.i + 1)}{'☆'.repeat(4 - rk.i)}</span>{rankName}</p>
         <h3 id="pm-h">{t('rw.title')}</h3>
-        <p className="pm-sub">{t('rw.sub', { n: nf.format(POINTS_PER_PROFILE), rate: nf.format(POINTS_PER_USD), usd: fmtUsd(POINTS_PER_USD, lang) })}</p>
+        <p className="pm-sub">{cash ? t('rw.sub', { n: nf.format(POINTS_PER_PROFILE), rate: nf.format(POINTS_PER_USD), usd: fmtUsd(POINTS_PER_USD, lang) }) : t('rw.subPts', { n: nf.format(POINTS_PER_PROFILE) })}</p>
       </div>
       <div className="pm-side">
         <div className="pm-coll-h"><b>{t('rw.collection')}</b><span>{t('rw.count', { n: nf.format(n), total: nf.format(ps.length) })}</span></div>
         <ol className="pm-slots" aria-label={t('rw.collection')}>{ps.map(slot)}</ol>
         <div className="pm-chips">
           {rk.next != null ? <span className="pm-chip">⭐ {t('rw.nextRank', { n: nf.format((rk.next - n) * POINTS_PER_PROFILE), rank: t(RANK_KEYS[rk.i + 1]) })}</span> : <span className="pm-chip gold">🏁 {t('rw.max')}</span>}
-          {todo.length > 0 && <span className="pm-chip">💵 {t('rw.nextUsd', { n: nf.format(Math.max(0, nextUsd - pts)), usd: fmtUsd(nextUsd, lang) })}</span>}
-          <span className="pm-chip soft">{t('rw.rate', { rate: nf.format(POINTS_PER_USD), usd: fmtUsd(POINTS_PER_USD, lang) })}</span>
+          {cash && todo.length > 0 && <span className="pm-chip">💵 {t('rw.nextUsd', { n: nf.format(Math.max(0, nextUsd - pts)), usd: fmtUsd(nextUsd, lang) })}</span>}
+          {cash ? <span className="pm-chip soft">{t('rw.rate', { rate: nf.format(POINTS_PER_USD), usd: fmtUsd(POINTS_PER_USD, lang) })}</span> : null}
         </div>
         <ol className="pm-ranks" aria-label={t('rw.rank')}>
           {rk.steps.map((v, k) => (

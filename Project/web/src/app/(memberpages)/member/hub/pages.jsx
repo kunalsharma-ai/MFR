@@ -22,6 +22,7 @@ import { useHub, levelStart } from "./store";
 import { useAlerts } from "./Shell.jsx";
 import { locale } from "./prefs";
 import Hero8 from "./v8/hero.jsx";
+import RewardMachine8 from "./v8/machine.jsx";
 import { play } from "./sound";
 
 export { SettingsPage } from "./settings.jsx";
@@ -99,7 +100,7 @@ export function RewardsPage() {
         sub={points.isError ? null : pts ? (goal ? t("rw3.toGoal", { n: fmt(goal - pts.total), g: fmt(goal) }) : t("rw3.goalReached")) : t("c.loading")}
         status={points.isError ? <ErrorState onRetry={points.refetch} /> : null}
         actions={<>
-          <Link href="/member/profiles#reward-machine" className="h-btn h-btn-primary"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</Link>
+          <a href="#reward-machine" className="h-btn h-btn-primary"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</a>
           <Link href="/member/surveys" className="h-btn h-btn-ghost">{t("rw.waySurvey")} <Icon name="arrow" size={16} /></Link>
         </>}
         stats={[
@@ -109,6 +110,7 @@ export function RewardsPage() {
           ...(hub.bal?.pending ? [{ label: t("v8.pendingL"), value: fmt(hub.bal.pending), unit: t("c.pts"), tone: "d" }] : []),
         ]}
       />
+      <RewardMachine8 />
       <div className="rv-top">
         <Reveal><LevelTrack hub={hub} /></Reveal>
         <Reveal delay={60}><StreakCard compact /></Reveal>

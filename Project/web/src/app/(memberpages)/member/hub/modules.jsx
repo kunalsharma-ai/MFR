@@ -152,6 +152,7 @@ export function OpportunityCenter({ opps, variant = "board" }) {
 }
 
 /* ---------------- Achievement shelf: hexagon badges with progress ---------------- */
+const ACH_ART = { first: "sparkles", ten: "trophy", profile: "verified", quality: "star", consistent: "calendar", referral: "handshake" }; // v8.1
 export function AchievementShelf({ stats, profiles, quality, ledger, referrals, compact = false }) {
   const loading = stats.isLoading || profiles.isLoading || ledger.isLoading;
   const list = achievementsOf({ stats: stats.data, profiles: profiles.data, quality, ledger: ledger.data, referrals: referrals?.data });
@@ -172,7 +173,7 @@ export function AchievementShelf({ stats, profiles, quality, ledger, referrals, 
                 <path d="M30 2l26 15v32L30 64 4 49V17z" className="hx-bg" />
                 <path d="M30 2l26 15v32L30 64 4 49V17z" className="hx-p" pathLength="100" style={{ strokeDasharray: `${Math.round(a.progress * 100)} 100` }} />
               </svg>
-              <Icon name={a.icon} size={22} />
+              <img className="m-badge-art" src={`/hub/3d/${ACH_ART[a.id] || "medal"}.webp`} alt="" width="40" height="40" loading="lazy" decoding="async" />
             </span>
             <span className="m-badge-tx">
               <b>{t(a.label)}</b>

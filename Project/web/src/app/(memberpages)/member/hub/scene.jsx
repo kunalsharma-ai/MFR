@@ -14,7 +14,7 @@ import { useMember } from "@/Context";
 import { usePrefs, motionReduced } from "./prefs";
 import { memberTypeOf } from "./data";
 
-const E = (n) => `/ps/images/emoji/${n}.webp`;
+const E = (n) => `/hub/3d/${n}.webp`;
 
 // the section's main art, per member type (teens never get money art)
 const ART = {

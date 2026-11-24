@@ -11,7 +11,7 @@
 import React from "react";
 import Link from "next/link";
 import Hero8 from "./v8/hero.jsx";
-import RewardMachine8 from "./v8/machine.jsx";
+import PrizeHall from "./prize.jsx";
 import Tile from "./tiles.jsx";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
@@ -66,7 +66,7 @@ function ProfileHero({ hub, cards }) {
       eyebrow={t(greetingKey(), { name: first })}
       title={status ? t(`pf.title.${status}`) : t("c.loading")}
       sub={status ? t(`pf.sub.${status}.${type}`, { n: c.remaining.length }) : ""}
-      actions={<>{cta}<a className="h-btn h-btn-ghost h-btn-lg" href="#reward-machine"><Icon name="gift" size={18} /> {t(`v8.m.open.${type}`)}</a></>}
+      actions={<>{cta}<a className="h-btn h-btn-ghost h-btn-lg" href="#prize-machine"><Icon name="gift" size={18} /> {t(`v8.m.openPf.${type}`)}</a></>}
       stats={[
         { label: t("hdr.profile"), value: c ? c.pct : "…", unit: "%", pct: c?.pct, tone: "a" },
         { label: t("pf.statProfiles"), value: done, unit: `/${cards.length}`, pct: cards.length ? (done / cards.length) * 100 : 0, tone: "b" },
@@ -141,6 +141,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
   return (
     <div className="pf">
       <ProfileHero hub={hub} cards={cards} />
+      <PrizeHall />
       {!ready ? <LoadingBlock lines={4} h={220} /> : !cards.length ? (
         <section className="pf-sec"><p className="pf-empty"><Icon name="alert" size={18} /> {t("pf.none")}</p></section>
       ) : (
@@ -151,7 +152,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
         ].filter((g) => g.list.length).map((g) => (
           <section key={g.k} className={`pf-sec pf-g-${g.k}`} aria-labelledby={`pf-g-${g.k}`}>
             <header className="h7-head">
-              <img className="h7-head-art" src={`/ps/images/emoji/${g.art}.webp`} alt="" width="40" height="40" loading="lazy" />
+              <img className="h7-head-art" src={`/hub/3d/${g.art}.webp`} alt="" width="40" height="40" loading="lazy" />
               <div>
                 <h2 id={`pf-g-${g.k}`} className="h7-title">{t(`v7.pf.${g.k}`)}</h2>
                 <p className="h7-sub">{t(`v7.pf.${g.k}Sub`)}</p>
@@ -162,7 +163,6 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
           </section>
         ))
       )}
-      <RewardMachine8 />
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
@@ -186,7 +186,7 @@ export default function ProfileStudio({ profiles = [], extrasDone = [], onOpen, 
             ) : null}
             <div className="pf-ach-foot">
               {morePending ? <Link className="h-btn h-btn-soft" href="/member/surveys"><Icon name="surveys" size={16} /> {t("pf.moreTopics", { n: morePending })}</Link> : null}
-              <Link className="h-btn h-btn-ghost" href="#reward-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
+              <Link className="h-btn h-btn-ghost" href="#prize-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
             </div>
           </section>
         </Reveal>

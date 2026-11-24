@@ -23,7 +23,7 @@ import { usePrefs, motionReduced } from "../prefs";
 import { usePrizeData } from "../prize.jsx";
 import GateDialog from "../../(member pages)/profiles/ps/GateDialog";
 import { capsuleColors } from "../../(member pages)/profiles/ps/Capsule.jsx";
-import { emojiUrl } from "../../(member pages)/profiles/ps/assets.js";
+const emojiUrl = (n) => `/hub/3d/${n}.webp`; // the sharp 256px 3D set (round 8)
 import { t as pt } from "../../(member pages)/profiles/ps/i18n";
 import { catProfiles, isDone, isPaid, markPaid, markSeen, pKey, pendingKeys, pointsFor, subscribeRewards, rewardsVersion } from "../../(member pages)/profiles/ps/rules";
 import { isCore } from "../../(member pages)/profiles/ps/profileRules";
