@@ -1,11 +1,14 @@
 import express from "express";
 import { User as userController, Answer as answerController } from "../../controller/index.js";
 import { expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
+import { requireAdmin } from "../../utils/access.js";
+import { limit } from "../../utils/security.js";
 
 const router = express.Router();
 router
     .route('/')
-    .get(expressRoute(
+    // how many members the brand has: admins only (it was public)
+    .get(requireAdmin, expressRoute(
         async req => {
             // Read all entries
             let message = "";
@@ -14,11 +17,14 @@ router
         },
         userController
     ))
-    .post(expressRoute(
+    .post(limit(60, 10), expressRoute(
         async req => {
             // Read all entries matching filter
             let message = "";
-            let filters=Object.fromEntries(Object.entries(req.body).map(fltr=>{
+            // question names map to lists of answers; nothing else (no "$or" or other operators from the browser)
+            const body = Object.fromEntries(Object.entries(req.body && typeof req.body === "object" ? req.body : {})
+                .filter(([k, v]) => !k.startsWith("$") && v && typeof v === "object"));
+            let filters=Object.fromEntries(Object.entries(body).map(fltr=>{
                 if(fltr[1] instanceof Array)return fltr;
                 if(fltr[0]==="Country"){
                     return ["country",Object.keys(fltr[1])]

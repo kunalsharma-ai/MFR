@@ -1,6 +1,8 @@
 import express from "express";
 import { Question as questionController, Option as optionController } from "../../controller/index.js";
 import { expressRoute, expressView, isAuthenticated, fsLogger, Mutate } from "../../utils/index.js"
+import { requireAdmin } from "../../utils/access.js";
+// Reading questions is public (sign-up and profile pages). Creating, changing and deleting them is for admins only.
 
 const router = express.Router();
 router
@@ -36,7 +38,7 @@ router
             },
             questionController
         ))
-    .put(expressRoute(
+    .put(requireAdmin, expressRoute(
         async req => {
             // Create new entry
             let message = "";
@@ -56,7 +58,7 @@ router
         },
         questionController
     ))
-    .put(expressRoute(
+    .put(requireAdmin, expressRoute(
         async req => {
             // update single entry
             let message = "";
@@ -65,7 +67,7 @@ router
         },
         questionController
     ))
-    .patch(expressRoute(
+    .patch(requireAdmin, expressRoute(
         async req => {
             // update single entry
             let message = "";
@@ -74,7 +76,7 @@ router
         },
         questionController
     ))
-    .delete(expressRoute(
+    .delete(requireAdmin, expressRoute(
         async req => {
             // delete single entry
             let message = "";

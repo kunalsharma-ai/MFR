@@ -13,6 +13,7 @@ import mongoose from "mongoose";
 import { User, Answers, Response, Reward, Profile, OTP, MemberPreference } from "../model/index.js";
 import profileController from "../controller/Profile.js";
 import otpController from "../controller/OTP.js";
+import { withRequest } from "../utils/requestContext.js";
 import { config } from "./config.js";
 import { isOn, onAnywhere } from "./switches.js";
 import { memberType } from "./http.js";
@@ -66,8 +67,8 @@ export function progressFields(done, total, doneSlugs = []) {
 
 // profiles complete for this member, out of the profiles of their category
 export async function profileProgress(user, origin = user.origin) {
-    profileController.request = { user: { _id: String(user._id), category: user.category }, origin };
-    const status = (await profileController.status()) || {};
+    // runs as this member on this brand, also when called inside another request (an admin screen, a summary)
+    const status = (await withRequest({ user: { _id: String(user._id), category: user.category }, origin }, () => profileController.status())) || {};
     const mine = await Profile.find({ origin, category: user.category, isActive: true, isDeleted: false }).select("slug").lean();
     const slugs = mine.map((p) => p.slug);
     const done = slugs.filter((s) => Number(status?.[s]) >= 100);

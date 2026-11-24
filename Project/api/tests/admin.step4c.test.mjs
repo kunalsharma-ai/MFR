@@ -3,6 +3,7 @@
 //
 //   MONGO_URL=mongodb://127.0.0.1:27017/mfr_admin_step4c node --test --test-force-exit tests/admin.step4c.test.mjs
 import test from "node:test";
+import crypto from "node:crypto";
 import assert from "node:assert/strict";
 import dns from "node:dns";
 
@@ -43,7 +44,8 @@ const V1 = "/api/admin/v1";
 async function admin(method, path, body, { origin = MFR } = {}) {
     const raw = body ? JSON.stringify(body) : "";
     const ts = String(Math.floor(Date.now() / 1000));
-    const res = await fetch(`${BASE}${path}`, { method, body: raw || undefined, headers: { "content-type": "application/json", "x-madp-timestamp": ts, "x-madp-origin": origin, "x-madp-actor": ALICE, "x-madp-signature": sign(SECRET, { timestamp: ts, method, path, origin, actor: ALICE, body: raw }) } });
+    const nonce = crypto.randomBytes(16).toString("hex");
+    const res = await fetch(`${BASE}${path}`, { method, body: raw || undefined, headers: { "content-type": "application/json", "x-madp-timestamp": ts, "x-madp-origin": origin, "x-madp-actor": ALICE, "x-madp-nonce": nonce, "x-madp-signature": sign(SECRET, { nonce, timestamp: ts, method, path, origin, actor: ALICE, body: raw }) } });
     return { status: res.status, json: await res.json().catch(() => ({})) };
 }
 async function asMember(id, method, path, body) {

@@ -32,6 +32,7 @@ import {
 } from "../../utils/index.js"
 import { requireAdmin, requireMember, selfOrAdmin, SELF_EDITABLE, ADMIN_BLOCKED, pick, omit, safeFilter } from "../../utils/access.js";
 import { classifyDob } from "../../teen/rules.js";
+import { lockedFor, fail, clear, norm } from "../../utils/throttle.js";
 import { setOptIn } from "../../engagement/marketing.js";
 import responseController from "../../controller/Response.js";
 
@@ -157,7 +158,22 @@ router
         async req => {
             const message = "Login successful";
             let data = [];
-            const user = await userController.login(req.body);
+            // strings only (an object here would be a database filter), and a per-account lock after 10 wrong
+            // passwords in 15 minutes, so a bot that keeps changing its address gets no further
+            const { mail, phone, password } = req.body || {};
+            if (typeof password !== "string" || !password || (typeof mail !== "string" && typeof phone !== "string"))
+                throw new Error("E-Mail id or Password is invalid");
+            const who = `login:${req.origin}:${norm(typeof mail === "string" && mail ? mail : phone)}`;
+            const wait = await lockedFor(who);
+            if (wait) throw new Error(`Too many wrong attempts. Please wait ${wait} minute${wait === 1 ? "" : "s"} or reset your password.`);
+            let user;
+            try {
+                user = await userController.login(typeof mail === "string" && mail ? { mail, password } : { phone, password });
+            } catch (e) {
+                if (/invalid/i.test(e.message)) await fail(who, { max: 10, windowMin: 15, lockMin: 15 });
+                throw e;
+            }
+            await clear(who);
             const token = Token.generate({
                 _id: user._id,
                 category: user.category,
