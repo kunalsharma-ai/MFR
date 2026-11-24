@@ -1,4 +1,5 @@
 "use client";
+import ConsoleContent from "@/components/ConsoleContent";
 import React from "react";
 import {
   Accordion,
@@ -59,6 +60,7 @@ const CookiePolicy = () => {
       </Grid>
 
       <Grid size={{ xs: 11, xl: 8 }} container justifyContent={"center"} py={6}>
+        <ConsoleContent pageKey="cookies" headings={["h5", "h6"]}>
         <Grid container spacing={4}>
           <Grid size={12}>
             <Box textAlign="justify">
@@ -424,6 +426,7 @@ const CookiePolicy = () => {
             </AccordionDetails>
           </Accordion>
         </Box>
+        </ConsoleContent>
       </Grid>
     </Grid></React.Suspense>
   );
