@@ -17,6 +17,7 @@ import * as help from "./help.js";
 import * as switches from "./switches.js";
 import * as rewards from "./rewards.js";
 import * as prizes from "./prizes.js";
+import * as reports from "./reports.js";
 import * as engagement from "./engagement.js";
 import * as teens from "./teens.js";
 import * as dataRequests from "./datarequests.js";
@@ -153,5 +154,9 @@ router.post("/teens/:id/close", handle((req) => teens.closeAdult(req.adminOrigin
 router.get("/data-requests", handle((req) => dataRequests.list(req.adminOrigin, req.query)));
 router.get("/data-requests/:id", handle((req) => dataRequests.get(req.adminOrigin, req.params.id)));
 router.post("/data-requests/:id/decision", handle((req) => dataRequests.decide(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+
+// Reports (step 5): aggregate counts per brand, no personal data
+router.get("/reports", handle(() => ({ reports: reports.NAMES })));
+router.get("/reports/:name", handle((req) => reports.run(req.adminOrigin, req.params.name, req.query)));
 
 export default router;
