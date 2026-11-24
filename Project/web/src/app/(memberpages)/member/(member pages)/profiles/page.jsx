@@ -35,6 +35,7 @@ import { setRewardData } from "./ps/rules";
 import { setProfileNames } from "./ps/i18n";
 import { visibleProfiles, normalizeInterests, basicsDone, isCore } from "./ps/profileRules";
 import ProfileStudio from "../../hub/profile.jsx";
+import { useParentStatus } from "../../hub/v9/parentStore.js";
 
 function TabLabel({ label, progress = 0, icon, selected }) {
   return (
@@ -397,6 +398,7 @@ function SkinProfiles() {
   // ---- Prize Machine: capsules = the profiles listed; which of them are won = the rewards the database holds
   // The other profiles have a capsule too (worth the points of the profile). They are listed on this page only under "Completed"; the
   // Survey section lists the ones still to do (see hooks/useProfileGate.js).
+  const parent = useParentStatus(); // Teens: parent onboarding and consent come before the topic profiles
   const gate = useProfileGate();
   const gateRef = React.useRef(gate);
   gateRef.current = gate;
@@ -435,10 +437,12 @@ function SkinProfiles() {
   }, [qc, fetchProfiles, fetchPoints, applyRewards, creditQuality, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const doneExtras = React.useMemo(() => gate.extras.filter((e) => e.done).map((e) => ({ ...e, status: 100 })), [gate.extras]);
-  const canOpen = (slug) => isCore(slug) || gate.coreDone; // the other profiles open after the four basics
+  // the other profiles open after the four basics; for a Teen also after the parent onboarding and consent (round 10)
+  const canOpen = (slug) => isCore(slug) || (gate.coreDone && parent.done);
   const [gateOpen, setGateOpen] = React.useState(false); // the pop-up of a locked capsule: what to finish first
   const open = (p) => {
     if (canOpen(p.slug)) { ui("open"); return router.push(`?profile=${p.slug}`, { scroll: false }); }
+    if (gate.coreDone && !parent.done) { ui("open"); return document.getElementById("parent-section")?.scrollIntoView({ behavior: "smooth", block: "start" }); }
     setGateOpen(true); // not open yet: the pop-up lists the four basics to start
   };
   const hub = () => router.push(pathname, { scroll: false });

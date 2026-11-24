@@ -34,6 +34,8 @@ import Celebrate from "./v8/celebrate.jsx";
 import "./v8/v8.css";
 import "./v9/v9.css";
 import "./v9/cards.css";
+import "./v10/heroes.css";
+import "./v10/cards.css";
 
 // v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
 // with MFR's own Services and Messages kept where they belong.

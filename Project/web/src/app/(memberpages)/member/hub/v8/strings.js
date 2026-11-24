@@ -91,4 +91,14 @@ export const v8 = {
   "v9.moreLockedSub": "Locked until your basic profiles are done.",
   "v9.basics": "Your basic profiles",
   "v9.basicsSub": "Start here. Finish these first and every survey and profile opens.",
+
+  // v10 (round 10): cards
+  "v10.q.profile": "Raises your quality score",
+  "v10.q.survey": "Careful answers build your quality score",
+  "v10.q.title": "Quality",
+  "v10.r.label": "Reward",
+  "v10.r.teen": "XP",
+  "v10.tsv.locked": "Locked for now. Your parent's steps and your basic profiles open them.",
+  "v10.tsv.open": "Your surveys are open. Each one earns XP.",
+  "v10.tsv.all": "All surveys",
 };

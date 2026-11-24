@@ -13,7 +13,7 @@ import { play } from "../sound";
 import { t } from "../strings";
 import { useHelpContext, useHelpContent, searchHelp, answerBlocks, Highlight } from "./data";
 import RaiseQuery from "./RaiseQuery.jsx";
-import WorldStage, { skyVars } from "../v9/stage.jsx";
+import HeroArt10, { heroVars } from "../v10/heroes.jsx";
 import "./help.css";
 
 const POPULAR = {
@@ -179,7 +179,7 @@ export default function HelpCentre() {
 
   return (
     <div className={`pg pg-help hp-type-${ctx.type}`}>
-      <section className="hp-hero h9x is-light" style={skyVars("care")} aria-labelledby="hp-title">
+      <section className={`hp-hero h10x seg-${ctx.type}`} style={heroVars("help", ctx.type)} aria-labelledby="hp-title">
         <div className="hp-hero-tx">
           <p className="h-eyebrow">{t(ctx.type === "teen" ? "hp.eyebrowTeen" : "hp.eyebrow")}</p>
           <h1 className="h-display" id="hp-title">{hello}</h1>
@@ -211,7 +211,7 @@ export default function HelpCentre() {
             <li><b>{topics.length}</b> {t("hp.statTopics")}</li>
           </ul>
         </div>
-        <div className="hp-scene" aria-hidden="true"><WorldStage world="care" type={ctx.type} /></div>
+        <div className="hp-scene" aria-hidden="true"><HeroArt10 kind="help" type={ctx.type} /></div>
       </section>
 
       {!searching ? (
