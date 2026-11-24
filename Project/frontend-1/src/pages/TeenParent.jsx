@@ -295,7 +295,7 @@ const KNOWN_FROM_TEEN = ['parent-first-name', 'parent-dob', 'P01', 'P02', 'P03',
 
 function Onboarding({ view, token, titleRef, onDone, onDecline }) {
   const [a, setA] = useState(() => prefillFrom(view));
-  const [sec, setSec] = useState(0); // 0..3 sections, 4 = review
+  const [sec, setSec] = useState(0); // 0..n-1 sections, n = review
   const [tried, setTried] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -318,7 +318,7 @@ function Onboarding({ view, token, titleRef, onDone, onDecline }) {
     const qs = sec < SECTIONS_OB.length ? section.qs : ALL_QS;
     const e = R.validateOnboarding(a, rulesFor(qs));
     qs.forEach((q) => { if (q.other && (Array.isArray(a[q.n]) ? a[q.n] : [a[q.n]]).includes(q.other) && !String(a[`${q.n}__other`] || '').trim()) e[`${q.n}__other`] = 'required'; });
-    if (sec === 3 && healthMode !== 'answer') return {};
+    if (section?.intro && healthMode !== 'answer') return {};
     return e;
   }, [a, sec, section, healthMode]);
   const show = (k) => (tried ? err(errors[k]) : '');
@@ -381,10 +381,11 @@ function Onboarding({ view, token, titleRef, onDone, onDecline }) {
             <p className="tz-kicker">{t('ob_section', sec + 1, SECTIONS_OB.length)}</p>
             <h2 className="tz-h2 tz-serif" ref={secRef} tabIndex={-1}><span aria-hidden="true">{section.icon}</span> {section.name}</h2>
             {tried && Object.keys(errors).length ? <Alert>{t('e_fix_below')}</Alert> : null}
-            {section.optional ? (
+            {section.lead ? <p className="tz-small tz-ob-lead">{section.lead}</p> : null}
+            {section.intro ? (
               <HealthGate intro={section.intro} mode={healthMode} setMode={(m) => { setHealthMode(m); if (m === 'skipped') setA((x) => { const y = { ...x }; delete y.HQ1; delete y.HQ2; delete y.HQ4; delete y.HQ1__other; return y; }); }} />
             ) : null}
-            {!section.optional || healthMode === 'answer' ? (
+            {!section.intro || healthMode === 'answer' ? (
               <div className="tz-ob-qs">
                 {section.qs.filter(visible).map((q) => (
                   <Question key={q.n} q={q} a={a} set={set} show={show} list={list} cdata={cdata} teenName={teenName}
@@ -395,7 +396,7 @@ function Onboarding({ view, token, titleRef, onDone, onDecline }) {
             ) : null}
             <div className="tz-nav">
               {sec > 0 ? <Btn kind="ghost" icon="arrow" className="is-back" onClick={() => setSec((s) => s - 1)}>{t('back')}</Btn> : <button type="button" className="tz-link tz-small" onClick={onDecline}>{t('ob_changed_mind')}</button>}
-              <Btn iconEnd="arrow" onClick={next} disabled={section.optional && healthMode === 'intro'}>{t('continue')}</Btn>
+              <Btn iconEnd="arrow" onClick={next} disabled={Boolean(section.intro) && healthMode === 'intro'}>{t('continue')}</Btn>
             </div>
           </>
         ) : (
@@ -515,7 +516,7 @@ function Review({ a, healthMode, list, titleRef, onEdit, busy, msg, onSubmit, on
       {SECTIONS_OB.map((s, i) => (
         <section key={s.name} className="tz-review-sec">
           <header><h3><span aria-hidden="true">{s.icon}</span> {s.name}</h3><button type="button" className="tz-link" onClick={() => onEdit(i)}><Icon name="pen" size={14} /> {t('edit')}</button></header>
-          {s.optional && healthMode !== 'answer' ? <p className="tz-small">{t('ob_health_skipped')}</p> : (
+          {s.intro && healthMode !== 'answer' ? <p className="tz-small">{t('ob_health_skipped')}</p> : (
             <dl>
               {s.qs.filter((q) => !q.when || q.when(a)).map((q) => (
                 <div key={q.n}><dt>{q.q}</dt><dd>{q.kind === 'name' ? [a['parent-first-name'], a['parent-middle-name'], a['parent-last-name']].filter(Boolean).join(' ') : q.kind === 'phone' ? (a.P09 ? `+${a.P09}` : '—') : labelOf(q, a[q.n], list)}{a[`${q.n}__other`] ? ` · ${a[`${q.n}__other`]}` : ''}</dd></div>

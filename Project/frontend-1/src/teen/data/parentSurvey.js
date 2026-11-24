@@ -18,9 +18,34 @@
  *     `relationship` question, so both pages store identical values;
  *   · the optional health section asks for itself much more clearly.
  *
+ * v2.1 (Nov 2026, master teen question bank): the parent also fills the parent-answered profile questions
+ * (module 04 Household, module 05 Parent socio-economic) in two optional sections, "Your home" and "Work &
+ * income", with the SAME keys and stored values as the teen bank (teenProfiles.js, `by: 'parent'`), so their
+ * answers are copied into the teen's profile when the account is activated. P07 gains "Through my parent
+ * dashboard"; P13–P15 (invitation approval, research methods, contact frequency) are new and optional.
+ *
  * Option format: [label, stored value, emoji]. The emoji is unique within the
  * question and chosen for that answer (tests/data.test.mjs enforces both).
  */
+
+import { MINOR_PROFILES } from './teenProfiles.js';
+
+// a parent-answered teen profile question, worded for the parent but with the teen bank's key, options and values
+const TEEN_Q = new Map();
+MINOR_PROFILES.forEach((p) => p.sections.forEach((s) => s.qs.forEach((q) => TEEN_Q.set(q.n, q))));
+function fromTeen(n, q, extra = {}) {
+  const t = TEEN_Q.get(n);
+  if (!t) throw new Error(`parentSurvey: ${n} is not in teenProfiles.js`);
+  return {
+    n, q, kind: t.kind || 'choice', req: false,
+    ...(t.multi ? { multi: true } : {}),
+    ...(t.o ? { o: t.o.map((o) => [...o]) } : {}),
+    ...(t.exclusive ? { exclusive: [...t.exclusive] } : {}),
+    ...(t.other ? { other: t.other } : {}),
+    profile: true, // copied into the teen's profile on activation
+    ...extra,
+  };
+}
 
 export const PARENT_SURVEY = {
   id: 'parent__registration',
@@ -152,6 +177,7 @@ export const PARENT_SURVEY = {
             ['SMS', 'sms', '💬'],
             ['Phone call', 'call', '📞'],
             ['WhatsApp, where lawful', 'whatsapp', '🟢'],
+            ['Through my parent dashboard', 'dashboard', '🖥️'],
           ],
         },
         {
@@ -181,6 +207,77 @@ export const PARENT_SURVEY = {
             ['No, only what is required', 'no', '🔕'],
           ],
         },
+        {
+          n: 'P13',
+          q: 'Would you like to approve every study invitation yourself?',
+          kind: 'choice',
+          req: false,
+          o: [
+            ['Yes, every one', 'every', '✋'],
+            ['No, any study within the topics I agreed to', 'categories', '✅'],
+          ],
+        },
+        {
+          n: 'P14',
+          q: 'Which kinds of research may your teen be invited to?',
+          kind: 'choice',
+          multi: true,
+          req: false,
+          o: [
+            ['Surveys', 'surveys', '📝'],
+            ['Interviews', 'interviews', '🎙️'],
+            ['Focus groups', 'focus-groups', '👥'],
+            ['Product testing', 'product-testing', '📦'],
+            ['Research communities', 'research-communities', '🤝'],
+            ['None of these', 'none', '🚫'],
+          ],
+          exclusive: ['none'],
+        },
+        {
+          n: 'P15',
+          q: 'How often may we contact you?',
+          kind: 'choice',
+          req: false,
+          o: [
+            ['Weekly', 'weekly', '🗓️'],
+            ['Every two weeks', 'fortnightly', '📆'],
+            ['Monthly', 'monthly', '📅'],
+            ['Only when something needs me', 'relevant', '🔔'],
+          ],
+        },
+      ],
+    },
+
+    // ───── optional: parent profiling (master bank modules 04 + 05), copied into the teen's profile ─────
+    {
+      name: 'Your home',
+      icon: '🏠',
+      optional: true,
+      profile: 'minor__household',
+      lead: 'Optional. These answers fill the “Home & family” part of your teen’s profile, so they are not asked again.',
+      qs: [
+        fromTeen('H02', 'How many people live in your home, counting yourself?'),
+        fromTeen('H03', 'How many brothers and sisters does your teen have?'),
+        fromTeen('H002', 'How many children under 18 live in your home?'),
+        fromTeen('H003', 'Which age groups live in your home?'),
+        fromTeen('H005', 'What kind of home do you live in?'),
+        fromTeen('H006', 'Which pets live in your home?'),
+        fromTeen('H007', 'What do you have at home?'),
+        fromTeen('G006', 'Which language is spoken most at home?'),
+      ],
+    },
+    {
+      name: 'Work & income',
+      icon: '💼',
+      optional: true,
+      profile: 'minor__family',
+      lead: 'Optional, and every question has “Prefer not to answer”. Used only to group answers, never shown to a client with your name.',
+      qs: [
+        fromTeen('S001', 'What is your work situation?'),
+        fromTeen('S002', 'What is your highest level of education?'),
+        fromTeen('S003', 'What is your yearly household income?'),
+        fromTeen('S004', 'How many adults in your home earn an income?'),
+        fromTeen('S005', 'Which of these does your household have?'),
       ],
     },
 

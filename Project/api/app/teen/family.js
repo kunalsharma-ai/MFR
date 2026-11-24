@@ -56,7 +56,7 @@ function onboardingView(g, w) {
     const sections = [];
     PARENT_SURVEY_RULES.questions.forEach((q) => {
         let s = sections.find((x) => x.name === q.section);
-        if (!s) { s = { name: q.section, optional: q.optional, questions: [] }; sections.push(s); }
+        if (!s) { s = { name: q.section, optional: q.optional, health: Boolean(q.health), questions: [] }; sections.push(s); }
         const applies = typeof q.when === "function" ? q.when(a) : true;
         const ans = answerOf(q, a, w);
         s.questions.push({ n: q.n, q: q.q || q.n, kind: q.kind, required: q.req, applies, ...ans });

@@ -64,7 +64,7 @@ const iso = (yearsAgo, extraDays = 0) => {
     const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - yearsAgo); d.setUTCDate(d.getUTCDate() - extraDays);
     return d.toISOString().slice(0, 10);
 };
-const { TEEN_CONSENT, GUARDIAN_CONSENT } = await import("../app/teen/content.js");
+const { TEEN_CONSENT, GUARDIAN_CONSENT, PARENT_SURVEY_RULES } = await import("../app/teen/content.js");
 const allTicked = Object.fromEntries(TEEN_CONSENT.items.map((s) => [s.id, true]));
 const teenBody = (over = {}) => ({
     idempotencyKey: `key-${Math.random().toString(36).slice(2)}-${Date.now()}`,
@@ -84,6 +84,8 @@ const onboarding = {
     "parent-first-name": "Priya", "parent-middle-name": "", "parent-last-name": "Sharma", "parent-gender": "Female", "parent-dob": "1984-06-12",
     P01: "IN", P02: "DL", P03: "mother", "parent-marital": "Married", P04: "yes", P11: "1", P06: "en", P07: ["email"],
     P08: "priya.parent@example.com", P12: "yes",
+    // parent profiling (optional sections "Your home" and "Work & income"): copied into the teen's profile
+    H02: "3-4", H006: ["dog", "cat"], S001: "other", S001__other: "Shift work",
 };
 
 test.after(async () => {
@@ -274,6 +276,16 @@ test("teen creates a password, logs in, sees only their own profile", async () =
     assert.equal(me.json.data.guardian.emailMasked.includes("@example.com"), true);
     assert.equal(JSON.stringify(me.json).includes("priya.parent@example.com"), false);
     assert.equal(me.json.data.welcomeDone, false);
+    // what the parent answered in "Your home" / "Work & income" is in the teen's profile, and stays the parent's
+    assert.equal(me.json.data.answers.H02, "3-4");
+    assert.deepEqual(me.json.data.answers.H006, ["dog", "cat"]);
+    assert.equal(me.json.data.answers.S001, "other");
+    assert.equal(me.json.data.answers.S001__other, "Shift work");
+    assert.ok(me.json.data.locked.includes("H02") && me.json.data.locked.includes("S001"));
+    assert.ok(!me.json.data.locked.includes("H005"), "a question the parent skipped stays open for the teen");
+    const parentOwned = await call("PUT", "/api/v1/teen/me/answers", { answers: { H02: "1-2", S001__other: "x" } }, { cookie });
+    assert.equal(parentOwned.json.fields.H02, "locked");
+    assert.equal(parentOwned.json.fields.S001__other, "locked");
 
     const locked = await call("PUT", "/api/v1/teen/me/answers", { answers: { D02: "US" } }, { cookie });
     assert.equal(locked.json.fields.D02, "locked");
@@ -283,6 +295,15 @@ test("teen creates a password, logs in, sees only their own profile", async () =
     assert.equal(save.json.data.saved, 6);
     const me2 = await call("GET", "/api/v1/teen/me", null, { cookie });
     assert.deepEqual(me2.json.data.answers.T01, ["phone", "laptop"]);
+    // stored under the lower-case key, the name the member-hub Profiles page uses for the same question
+    const teenUser = await Models.User.findOne({ mail: "aarav.teen@example.com" }).lean();
+    const rows = await Models.Answers.find({ user: String(teenUser._id) }).lean();
+    assert.ok(rows.some((r) => r.question === "t01") && !rows.some((r) => r.question === "T01"));
+    assert.ok(rows.some((r) => r.question === "h02"), "the parent's answer is stored the same way");
+    // an answer saved before Nov 2026 under the upper-case key is still read
+    await Models.Answers.create({ user: String(teenUser._id), question: "SH01", answer: ["weekly"], origin: teenUser.origin });
+    const me3 = await call("GET", "/api/v1/teen/me", null, { cookie });
+    assert.equal(me3.json.data.answers.SH01, "weekly");
     assert.equal(me2.json.data.welcomeDone, true);
     teenCookie = cookie;
 });
@@ -310,7 +331,11 @@ test("teen profile: what the guardian submitted, only for that teen, only once c
     assert.deepEqual(by.P12.display, ["Yes, keep me updated"]);
     assert.equal(by.HQ1.answered, false, "unanswered optional questions say so");
     assert.equal(by.HQ4.applies, false, "follow-up that did not apply");
-    assert.equal(qs.filter((q) => q.n !== "P05").length, 17);
+    assert.equal(qs.filter((q) => q.n !== "P05").length, PARENT_SURVEY_RULES.questions.length);
+    assert.deepEqual(by.H006.display, ["Dog", "Cat"]);
+    assert.deepEqual(by.S001.display, ["Other: Shift work"]);
+    assert.equal(d.onboarding.sections.find((s) => s.name === "Your teen’s health").health, true);
+    assert.equal(d.onboarding.sections.find((s) => s.name === "Your home").health, false);
     // consent: the recorded statements and time, never the IP address or browser
     assert.equal(d.consent.guardian.version, GUARDIAN_CONSENT.version);
     assert.deepEqual(d.consent.guardian.sectionsRead, [1, 4, 9]);
