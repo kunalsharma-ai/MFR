@@ -6,10 +6,17 @@ import React from "react";
 import Link from "next/link";
 import Art8 from "./art.jsx";
 import { t } from "../strings";
+import { useMember } from "@/Context";
+import { memberTypeOf } from "../data";
+import WorldStage, { heroWorld, skyVars, isDarkWorld } from "../v9/stage.jsx";
 
 export default function Hero8({ kind, id, crumbs = [], eyebrow, title, accent, sub, status, actions, stats, score, children, className = "" }) {
+  // round 9: each section wears its own world (v9/stage.jsx): its sky, its 3D art and stickers
+  const type = memberTypeOf(useMember());
+  const world = heroWorld(kind, type);
+  const w9 = world ? ` h9 w9-${world} ${isDarkWorld(world) ? "is-dark" : "is-light"}` : "";
   return (
-    <section className={`h8 h8-${kind} ${className}`} aria-labelledby={id}>
+    <section className={`h8 h8-${kind} ${className}${w9}`} style={world ? skyVars(world) : undefined} aria-labelledby={id}>
       <div className="h8-bg" aria-hidden="true"><i /><i /><i /></div>
       <div className="h8-main">
         {crumbs.length ? (
@@ -28,7 +35,7 @@ export default function Hero8({ kind, id, crumbs = [], eyebrow, title, accent, s
         {actions ? <div className="h8-actions">{actions}</div> : null}
         {children}
       </div>
-      <div className="h8-art"><Art8 kind={kind} score={score} /></div>
+      <div className="h8-art">{world ? <WorldStage world={world} type={type} badge={kind === "quality" && score != null ? <><b>{Number(score).toFixed(1)}</b><small>/10</small></> : null} /> : <Art8 kind={kind} score={score} />}</div>
       {stats && stats.length ? (
         <ul className="h8-stats">
           {stats.map((s, i) => (

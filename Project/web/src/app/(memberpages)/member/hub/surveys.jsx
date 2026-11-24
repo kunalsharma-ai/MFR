@@ -28,6 +28,9 @@ import { fmt, relDay } from "./data";
 import { useHub } from "./store";
 import { play } from "./sound";
 import { surveyTopic, profileTopic, artOf, profileArt } from "./topics";
+import { worldKey } from "./v9/worlds";
+import GateBanner from "./v9/gate.jsx";
+import { useParentStatus } from "./v9/parentStore";
 
 const PERMITTED = ["invited", "dropout"]; // the statuses a member can start or resume
 const HIGH = 50; // more than 50 points = top reward (profileRules.isHighReward)
@@ -81,7 +84,7 @@ export function SurveyCard({ row, type, locked, onStart, featured = false, i = 0
   const cta = st === "locked" ? t("v7.tile.howUnlock") : st === "resume" ? t("pf.continue") : isProfile ? t("sx.startProfile") : st === "done" || st === "closed" ? "" : t("v7.tile.startSurvey");
   const off = st === "done" || st === "closed";
   return (
-    <Tile c1={tp.c1} c2={tp.c2} art={isProfile ? profileArt(row.slug, tp) : artOf(tp)} name={row.name} topic={isProfile ? t("sx.profileTopic") : label}
+    <Tile world={worldKey(isProfile ? row.slug : null, tp.k)} lockText={t("v9.lockText")} art={isProfile ? profileArt(row.slug, tp) : artOf(tp)} name={row.name} topic={isProfile ? t("sx.profileTopic") : label}
       ribbon={!isProfile && row.participationStatus === "invited" && st === "available" ? t("v5.new") : null}
       meta={meta} pts={fmt(Number(row.points) || 0)} unit={unit} state={tstate} stateLabel={stateLabel} cta={cta} i={i} featured={featured}
       disabled={off} onClick={off ? undefined : () => onStart(row)} ariaLabel={off ? `${row.name}: ${stateLabel}` : `${cta}: ${row.name}`} />
@@ -102,7 +105,8 @@ export function useSurveyDesk(source) {
   const { active, all } = useSurveys(source);
   const [gateOpen, setGateOpen] = React.useState(false);
 
-  const locked = gate.loading || !gate.coreDone;
+  const parent = useParentStatus(); // Teens: the parent onboarding and consent come first
+  const locked = gate.loading || parent.loading || !gate.coreDone || !parent.done;
   const isProfileSurvey = (s) => gate.profileSlugs.has(slugOf(s));
   const visible = (active.data || []).filter((s) => !doneProfiles.includes(slugOf(s)));
   const surveys = visible.filter((s) => !isProfileSurvey(s) && PERMITTED.includes(s.participationStatus)).map((s) => ({
@@ -134,7 +138,7 @@ export function useSurveyDesk(source) {
       onStart={(slug) => { setGateOpen(false); router.push(`/member/profiles?profile=${slug}`); }}
     />
   );
-  return { gate, active, all, surveys, profileRows, openRows, history, startable, best, total, avg, locked, loading, start, gateOpen, setGateOpen, dialog };
+  return { gate, parent, active, all, surveys, profileRows, openRows, history, startable, best, total, avg, locked, loading, start, gateOpen, setGateOpen, dialog };
 }
 
 export const surveyFilters = (profileRows) => [
@@ -176,6 +180,8 @@ export default function SurveysPage() {
           { label: t("sx.kTime"), value: loading ? "…" : avg ? t("sx.min", { n: avg }) : "–", tone: "c" },
         ]}
       />
+
+      <GateBanner gate={gate} kind="surveys" parent={desk.parent} />
 
       {best && !loading ? (
         <section className="sx-best" aria-labelledby="sx-best-t">

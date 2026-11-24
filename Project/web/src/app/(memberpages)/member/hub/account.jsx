@@ -5,7 +5,7 @@
 //   shortcuts → close account. Social settings moved to Settings › Social & visibility.
 import React from "react";
 import Link from "next/link";
-import Scene3D from "./scene.jsx";
+import WorldStage, { skyVars } from "./v9/stage.jsx";
 import { api } from "@/util";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
@@ -167,7 +167,7 @@ export function AccountPage() {
   ].filter((x) => x.v != null || x.k !== "streak");
   return (
     <div className="pg pg-account">
-      <section className={`ma-id t-${type}`} aria-labelledby="ma-name" id="identity">
+      <section className={`ma-id t-${type} h9x is-dark`} style={skyVars("trust")} aria-labelledby="ma-name" id="identity">
         <div className="ma-id-bg" aria-hidden="true"><i /><i /><i /></div>
         <AvatarStudio member={member} />
         <div className="ma-id-copy">
@@ -181,7 +181,7 @@ export function AccountPage() {
           </p>
           <div className="ma-status"><span>{t("ma.status")}</span><b><i className="ma-live" aria-hidden="true" /> {t("ma.active")}</b></div>
         </div>
-        <div className="ma-scene" aria-hidden="true"><Scene3D kind="account" /></div>
+        <div className="ma-scene" aria-hidden="true"><WorldStage world="trust" type={type} /></div>
         <div className="ma-health">
           <Link href="/member/profiles" className="ma-health-ring" aria-label={`${t("hdr.profile")} ${c?.pct ?? 0}%`}>
             <Ring pct={c?.pct ?? 0} size={96} stroke={8}><b>{c ? `${c.pct}%` : "…"}</b><small>{t("hdr.profile")}</small></Ring>

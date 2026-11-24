@@ -32,6 +32,7 @@ import "./hub-v6.css";
 import "./hub-v7.css";
 import Celebrate from "./v8/celebrate.jsx";
 import "./v8/v8.css";
+import "./v9/v9.css";
 
 // v5 (round 4): one "Your journey" list in the order members follow (the Turn2Opinion format Kunal chose),
 // with MFR's own Services and Messages kept where they belong.
@@ -41,7 +42,6 @@ export const NAV = [
     { key: "dashboard", href: "/member/dashboard", icon: "dashboard", label: "nav.dashboard", short: "nav.home", hint: "nav.hDashboard", tone: 1 },
     { key: "profile", href: "/member/profiles", icon: "profile", label: "nav.myProfile", short: "nav.profile", hint: "nav.hProfile", tone: 2 },
     { key: "surveys", href: "/member/surveys", icon: "surveys", label: "nav.surveys", hint: "nav.hSurveys", tone: 3 },
-    { key: "services", href: "/member/services", icon: "services", label: "nav.services", hint: "nav.hServices", tone: 4 },
     { key: "rewards", href: "/member/rewards", icon: "rewards", label: "nav.rewards", hint: "nav.hRewards", tone: 5 },
   ] },
   { group: "nav.groupProgress", items: [
@@ -432,7 +432,7 @@ function Header({ hub, prefs, onMenu, section, navOpen }) {
       <div className="hh-tools">
         <LanguagePicker prefs={prefs} />
         <Notifications />
-        <HelpMenu section={section.key === "messages" ? "dashboard" : section.key === "services" ? "surveys" : section.key} type={type} />
+        <HelpMenu section={section.key === "messages" ? "dashboard" : section.key} type={type} />
         <Pop id="hh-more" label={t("hdr.more")} className="hh-morepop" icon={<Icon name="sliders" size={20} />}>
           {(close) => (
             <div className="hh-moremenu">
@@ -461,7 +461,6 @@ function navBadge(key, hub, alerts) {
   if (key === "profile" && hub.completion && hub.completion.remaining.length) return { n: hub.completion.remaining.length, tip: "nav.bProfile" };
   if (key === "surveys" && hub.open) return { n: hub.open, tip: "nav.bSurveys" };
   if (key === "messages" && alerts) return { n: alerts, tip: "nav.bMessages" };
-  if (key === "services" && hub.pollOpen) return { n: 1, tip: "nav.bServices", dot: true };
   return null;
 }
 

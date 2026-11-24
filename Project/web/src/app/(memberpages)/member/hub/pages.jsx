@@ -217,7 +217,7 @@ export function QualityPage() {
   if (c && c.remaining.some((i) => i.kind === "profile")) tips.push({ icon: "profile", text: t("qs.tipProfile"), href: "/member/profiles", reward: c.pointsLeft });
   if (hub.stats.data?.dropout > 0) tips.push({ icon: "surveys", text: t("qs.tipFinish"), href: "/member/surveys" });
   if (hub.member?.isVerified?.email !== "verified") tips.push({ icon: "mail", text: t("q2.tipVerify"), href: "/member/myaccount#identity" });
-  if (watch.some((f) => f.key === "active")) tips.push({ icon: "calendar", text: t("q2.tipActive"), href: "/member/services" });
+  if (watch.some((f) => f.key === "active")) tips.push({ icon: "calendar", text: t("q2.tipActive"), href: "/member/surveys" });
   tips.push({ icon: "eye", text: t("qs.tipHonest") });
   return (
     <div className="pg pg-quality">
@@ -348,7 +348,7 @@ export function ActivityPage() {
             ))}
           </div>
           {hub.ledgerQ.isLoading ? <LoadingBlock lines={6} h={320} /> : hub.ledgerQ.isError ? <ErrorState onRetry={hub.ledgerQ.refetch} /> : !groups.length ? (
-            <EmptyState kind="activity" title={t("ac.emptyTitle")} text={t("ac.emptyText")} action={<Link href="/member/services" className="h-btn h-btn-primary">{t("nav.services")}</Link>} />
+            <EmptyState kind="activity" title={t("ac.emptyTitle")} text={t("ac.emptyText")} action={<Link href="/member/surveys" className="h-btn h-btn-primary">{t("nav.surveys")}</Link>} />
           ) : (
             <ol className="tl">
               {groups.map((g) => (
