@@ -6,6 +6,7 @@ import { requireMadp } from "./auth.js";
 import { handle } from "./http.js";
 import * as members from "./members.js";
 import * as qb from "./qb.js";
+import * as versions from "./versions.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -31,6 +32,13 @@ router.post("/questions", handle((req) => qb.createQuestion(req.adminOrigin, req
 router.get("/questions/:name", handle((req) => qb.getQuestion(req.adminOrigin, req.params.name)));
 router.put("/questions/:name", handle((req) => qb.updateQuestion(req.adminOrigin, req.params.name, req.body || {})));
 router.put("/questions/:name/options", handle((req) => qb.setOptions(req.adminOrigin, req.params.name, req.body?.options)));
+// Versions and translations (module 3)
+router.get("/qb/versions", handle((req) => versions.listVersions(req.adminOrigin)));
+router.post("/qb/versions", handle((req) => versions.createDraft(req.adminOrigin, req.body || {}, req.adminActor)));
+router.get("/qb/versions/:number", handle((req) => versions.versionBank(req.adminOrigin, req.params.number)));
+router.post("/qb/versions/:number/:action(review|publish|discard)", handle((req) => versions.move(req.adminOrigin, req.params.number, req.params.action, req.adminActor)));
+router.put("/questions/:name/translations", handle((req) => versions.setTranslation(req.adminOrigin, req.params.name, req.body || {})));
+router.get("/qb/translations/missing", handle((req) => versions.missingTranslations(req.adminOrigin, req.query.lang, req.query)));
 // Profiles (module 4)
 router.get("/profiles", handle((req) => qb.listProfiles(req.adminOrigin, req.query)));
 router.get("/profiles/completion", handle((req) => qb.completionReport(req.adminOrigin, req.query)));

@@ -49,8 +49,8 @@ export function countBank({ Questions }) {
 }
 
 // ---- import ------------------------------------------------------------------------------------------------------
-const Q_FIELDS = ["label", "type", "parent", "description", "adminLabel", "isMoney", "isRequired", "isEditable", "hasOthers", "hasNone", "hasSkip", "size", "sortOrder", "topic", "answeredBy"];
-const O_FIELDS = ["parentValue", "isSelected", "isExclusive", "describeLabel", "sortOrder", "countries"];
+const Q_FIELDS = ["label", "type", "parent", "description", "adminLabel", "isMoney", "isRequired", "isEditable", "hasOthers", "hasNone", "hasSkip", "size", "sortOrder", "topic", "answeredBy", "translations"];
+const O_FIELDS = ["parentValue", "isSelected", "isExclusive", "describeLabel", "sortOrder", "countries", "translations"];
 const P_FIELDS = ["name", "icon", "pages", "sortOrder", "points", "estimatedMinutes"];
 const pick = (o, fields) => Object.fromEntries(fields.filter((f) => o[f] !== undefined).map((f) => [f, o[f]]));
 const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
