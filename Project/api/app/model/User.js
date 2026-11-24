@@ -305,7 +305,7 @@ export default mongooseModel(
         // Archived members (no activity in six months) keep their points and answers and can sign in again.
         memberStatus: {
             type: String,
-            enum: ["active", "suspended", "banned", "archived"],
+            enum: ["active", "suspended", "banned", "archived", "closed"],
             default: "active"
         },
         statusReason: { type: String, trim: true },
@@ -313,6 +313,19 @@ export default mongooseModel(
         archivedAt: { type: Date },
         lastActivityAt: { type: Date },
         profileCheckedAt: { type: Date },
+        // Teen turning 18 (spec module 13): "turning_adult" from the birthday until the member accepts adult terms
+        // ("moved") or 60 days pass ("closed"). notifiedAt is the 30-day notice. See teen/adult.js.
+        adultMove: {
+            stage: { type: String, enum: ["turning_adult", "moved", "closed"] },
+            notifiedAt: Date,
+            since: Date,
+            deadline: Date,
+            acceptedAt: Date,
+            segment: { type: String, enum: ["b2c", "b2b"] },
+            termsVersion: String,
+            by: String,
+            closedAt: Date
+        },
         // Marketing e-mail consent ("Send me news and offers"). Unset means never asked: treat it as no.
         // Only an explicit tick grants it; nothing opts existing members in. Teens can't opt in.
         marketingOptIn: {

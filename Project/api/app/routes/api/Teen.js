@@ -23,12 +23,18 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import { isAuthenticated, fsLogger } from "../../utils/index.js";
 import * as S from "../../teen/service.js";
+import * as Adult from "../../teen/adult.js";
 import { family } from "../../teen/family.js";
 
 const router = express.Router();
 
 // Friendly English for every code; the Teen pages show their own (translated) text for the same codes.
 const MESSAGES = {
+    not_turning_adult: "Your account isn't waiting to move to an adult account.",
+    terms_required: "Please accept the terms and the privacy notice.",
+    bad_segment: "Choose Consumer or Business Professional.",
+    not_18: "The move happens once you turn 18.",
+    conflict: "Your account has already moved.",
     under_13: "Registration is not available for anyone under 13.",
     adult: "You are 18 or older, so please use the normal Consumer or Professional registration.",
     validation: "Please check the highlighted details.",
@@ -88,6 +94,18 @@ router
     .post("/guardian/:token/renew", limit(5, 60), noReferrer, handle(S.guardianRenew))
     .get("/password/:token", limit(30, 10), noReferrer, handle(S.passwordView))
     .post("/password/:token", limit(10, 10), noReferrer, handle(S.setPassword))
+    // turning 18: the move screen (teen/adult.js)
+    .get("/adult", isAuthenticated, handle(async (req) => Adult.view(req.user)))
+    .post("/adult", isAuthenticated, limit(10, 10), handle(async (req) => {
+        if (req.user.adultMove?.stage !== "turning_adult") throw new S.TeenError("not_turning_adult", { status: 409 });
+        if (req.body?.acceptTerms !== true || req.body?.acceptPrivacy !== true) throw new S.TeenError("terms_required", { status: 400 });
+        try {
+            return await Adult.completeMove(req.user._id, req.origin, { segment: req.body?.segment, by: "member" });
+        } catch (e) {
+            if (e instanceof Adult.AdultError) throw new S.TeenError(e.code, { status: e.status });
+            throw e;
+        }
+    }))
     .get("/me", isAuthenticated, handle(S.me))
     .put("/me/answers", isAuthenticated, handle(S.saveAnswers))
     .get("/me/family", isAuthenticated, handle(family))
@@ -95,6 +113,6 @@ router
         const key = process.env.TEEN_JOB_KEY;
         if (!key || req.headers["x-job-key"] !== key) return res.status(403).json({ status: "error", message: "Forbidden" });
         return next();
-    }, handle(async (req) => S.sweep({ dryRun: Boolean(req.body?.dryRun) })));
+    }, handle(async (req) => ({ ...(await S.sweep({ dryRun: Boolean(req.body?.dryRun) })), adult: await Adult.sweepAdult({ dryRun: Boolean(req.body?.dryRun) }) })));
 
 export default router;

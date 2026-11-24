@@ -21,6 +21,8 @@ export const SUBJECTS = {
     "guardian-reminder": "Reminder: your teen's Teen Panel request is waiting for you",
     "link-renewed": "Here is your new link",
     "link-expired": "Your Teen Panel link has expired",
+    "teen-turning-18": "You're turning 18: your account is moving to an adult account",
+    "guardian-consent-ended": "Your consent has ended: your teen now has an adult account",
 };
 
 const siteUrl = (origin) => (process.env.PUBLIC_SITE_URL || `https://${origin}`).replace(/\/$/, "");

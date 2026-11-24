@@ -135,10 +135,15 @@ router.post("/engagement/stories", handle((req) => engagement.createStory(req.ad
 router.put("/engagement/stories/:id", handle((req) => engagement.updateStory(req.adminOrigin, req.params.id, req.body || {})));
 router.get("/engagement/streaks", handle((req) => engagement.streakStats(req.adminOrigin, req.query)));
 // Teen Panel and guardians (module 13)
+router.get("/teens/registrations", handle((req) => teens.pipeline(req.adminOrigin, req.query)));
+router.post("/teens/registrations/:id/approve", handle((req) => teens.decideRegistration(req.adminOrigin, req.params.id, "approve", req.body?.reason, req.adminActor)));
+router.post("/teens/registrations/:id/cancel", handle((req) => teens.decideRegistration(req.adminOrigin, req.params.id, "cancel", req.body?.reason, req.adminActor)));
+router.post("/teens/registrations/:id/renew", handle((req) => teens.decideRegistration(req.adminOrigin, req.params.id, "renew", req.body?.reason, req.adminActor)));
 router.get("/teens", handle((req) => teens.list(req.adminOrigin, req.query)));
 router.get("/teens/:id", handle((req) => teens.get(req.adminOrigin, req.params.id)));
 router.post("/teens/:id/revoke-links", handle((req) => teens.revokeLinks(req.adminOrigin, req.params.id, req.body?.reason)));
-router.post("/teens/:id/graduate", handle((req) => teens.graduate(req.adminOrigin, req.params.id, { reason: req.body?.reason, dryRun: req.query.dryRun !== "0" }, req.adminActor)));
+router.post("/teens/:id/graduate", handle((req) => teens.graduate(req.adminOrigin, req.params.id, { reason: req.body?.reason, segment: req.body?.segment || "b2c", dryRun: req.query.dryRun !== "0" }, req.adminActor)));
+router.post("/teens/:id/close", handle((req) => teens.closeAdult(req.adminOrigin, req.params.id, req.body?.reason, req.adminActor)));
 // Data requests (module 14). Nothing here deletes anything.
 router.get("/data-requests", handle((req) => dataRequests.list(req.adminOrigin, req.query)));
 router.get("/data-requests/:id", handle((req) => dataRequests.get(req.adminOrigin, req.params.id)));

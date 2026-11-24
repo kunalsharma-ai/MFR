@@ -19,6 +19,7 @@ export const SWITCHES = [
     { key: "email_lifecycle", group: "email", label: "Sign-up reminder e-mails", def: (c) => c.emails?.lifecycle?.enabled },
     { key: "email_weekly", group: "email", label: "Weekly points summary e-mail", def: (c) => c.weeklySummary?.enabled },
     { key: "email_expiry", group: "email", label: "Points expiry reminder e-mail", def: (c) => c.expiry?.enabled },
+    { key: "email_turning18", group: "email", label: "Turning 18 e-mails (30-day notice, guardian's consent ended)", def: () => false },
     { key: "push", group: "email", label: "Browser push notifications", def: (c) => c.push?.enabled },
 ];
 const BY_KEY = new Map(SWITCHES.map((s) => [s.key, s]));

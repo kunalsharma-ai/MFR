@@ -52,7 +52,8 @@ const yearsAgo = (n, now) => { const d = new Date(now); d.setUTCFullYear(d.getUT
 /** The Mongo query for a filter, plus the member ids allowed by answer conditions (null = no answer condition). */
 export async function query(origin, filter, now = new Date()) {
     const f = cleanFilter(filter);
-    const q = { origin, isDeleted: { $ne: true }, memberStatus: { $in: [null, "active"] } };
+    // teens waiting to accept adult terms are paused: no invitations until they do
+    const q = { origin, isDeleted: { $ne: true }, memberStatus: { $in: [null, "active"] }, "adultMove.stage": { $ne: "turning_adult" } };
     if (f.categories) q.category = { $in: f.categories };
     if (f.countries) q["address.0.country"] = { $in: f.countries };
     if (f.ageMin || f.ageMax) q.dob = { ...(f.ageMin ? { $lte: yearsAgo(f.ageMin, now) } : {}), ...(f.ageMax ? { $gt: yearsAgo(f.ageMax + 1, now) } : {}) };
