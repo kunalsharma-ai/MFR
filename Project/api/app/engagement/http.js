@@ -38,11 +38,13 @@ export const limit = (max, minutes) => rateLimit({
 
 export { requireAdmin };
 
-// Category values: b2c / consumer (Consumer), b2b (Professional), b2c-minor and old "minor" (Teen).
+// Category values: b2c / consumer (Consumer), b2b (Professional), b2c-minor and old "minor" (Teen). MHO uses
+// "healthcare professional" (Professional), "patient" and "care giver" (Consumer) and "minor patient" (Teen).
+const PROFESSIONAL = ["professional", "healthcare professional", "hcp"];
 export function memberType(user) {
     const c = String(user?.category || "").trim().toLowerCase();
     if (c.includes("minor")) return "teen";
-    if (c.startsWith("b2b") || c === "professional") return "professional";
+    if (c.startsWith("b2b") || PROFESSIONAL.includes(c)) return "professional";
     return "consumer";
 }
 export const isTeen = (user) => memberType(user) === "teen";
