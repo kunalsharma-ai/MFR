@@ -12,6 +12,7 @@ import React from "react";
 import Link from "next/link";
 import Scene3D from "./scene.jsx";
 import Tile from "./tiles.jsx";
+import SurveyHistory7 from "./history.jsx";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/util";
@@ -143,7 +144,8 @@ export const surveyFilters = (profileRows) => [
   ...(profileRows.length ? [{ k: "profiles", test: (r) => r.kind === "profile" }] : []),
 ];
 
-export default function SurveysPage({ SurveyHistory }) {
+// The page still accepts the legacy SurveyHistory prop from the route, but v7 renders its own history table.
+export default function SurveysPage() {
   const hub = useHub();
   const { type } = hub;
   const query = useQueryParams();
@@ -230,12 +232,7 @@ export default function SurveysPage({ SurveyHistory }) {
         </Reveal>
       ) : null}
 
-      {SurveyHistory ? (
-        <section className="sx-history" aria-labelledby="sx-hist-t">
-          <h2 className="sx-h" id="sx-hist-t"><Icon name="activity" size={20} /> {t("sx.historyTitle")}</h2>
-          <div className="sx-history-box"><SurveyHistory /></div>
-        </section>
-      ) : null}
+      <SurveyHistory7 type={type} />
 
       {desk.dialog}
     </div>
