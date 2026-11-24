@@ -262,13 +262,13 @@ function OnboardingCard({ d, ...card }) {
   const qs = o.sections.flatMap((s) => s.questions);
   const asked = qs.filter((q) => q.applies);
   const answered = asked.filter((q) => q.answered).length;
-  const icons = { "About you": "user", "Your household": "home", "Staying in touch": "mail" };
+  const icons = { "About you": "user", "Your household": "home", "Staying in touch": "mail", "Your home": "home" };
   return (
     <Card {...card} icon="book" tone="onboarding" title={f("oTitle")} sub={f("oSub")} status={{ state: "done", label: f("oCount", { a: answered, b: asked.length }) }}>
       <p className="fm-meta"><Icon name="calendar" size={14} /> {f("oSent")} {fmtDate(o.submittedAt, true)}</p>
       <div className="fm-sections">
         {o.sections.map((s, i) => {
-          const health = s.optional;
+          const health = s.health ?? s.optional; // only the teen-health section (older API versions: the one optional section)
           const skipped = health && o.healthSkipped && !s.questions.some((q) => q.answered);
           return (
             <details key={s.name} className="fm-sec" open={i === 0}>

@@ -573,9 +573,12 @@ async function writeKnownAnswers(reg, teen) {
         D06: reg.teenDetails?.gender === "Self-describe" ? "Other" : reg.teenDetails?.gender,
     };
     if (reg.teenDetails?.gender === "Self-describe" && reg.teenDetails.genderSelf) known.D06__other = reg.teenDetails.genderSelf;
-    await Promise.all(Object.entries(known).filter(([, v]) => v).map(([question, v]) => Answers.updateOne(
-        { user: String(teen._id), question, origin: teen.origin },
-        { $set: { answer: [String(v)] }, $setOnInsert: { isActive: true, isDeleted: false, sortOrder: 0 } },
+    // the parent's own profiling answers (onboarding "Your home" and "Work & income") fill the same teen keys
+    const guardian = await TeenGuardian.findById(reg.guardian).select("+onboarding.answers").lean();
+    const all = { ...Object.fromEntries(Object.entries(known).filter(([, v]) => v).map(([k, v]) => [k, [String(v)]])), ...parentProfileAnswers(guardian) };
+    await Promise.all(Object.entries(all).map(([k, answer]) => Answers.updateOne(
+        { user: String(teen._id), question: stored(k), origin: teen.origin },
+        { $set: { answer }, $setOnInsert: { isActive: true, isDeleted: false, sortOrder: 0 } },
         { upsert: true }
     )));
 }
@@ -614,6 +617,28 @@ export async function renew(req) {
 
 // ---- 4. the signed-in teen: welcome survey and profile --------------------------------------------------------------
 const LOCKED = new Set(["D01", "D02", "D03", "D06", "D06__other"]); // owned by the registration
+// Parent profiling: the onboarding questions marked `profile` (Your home, Work & income) use the teen bank's own keys
+// and values. What the parent answered is copied into the teen's profile on activation and is the parent's to change,
+// so the teen sees it but cannot overwrite it. Questions the parent skipped stay open for the teen.
+// Answers are stored under the lower-case key ("d04", "hp001_snacks"): the member-hub Profiles page asks the same
+// questions from the Question collection, whose names are always lower case, so both save into one answer.
+// Answers saved before Nov 2026 under the upper-case key are still read (scripts/teen-bank-2026-11 renames them).
+const stored = (k) => String(k).toLowerCase();
+const KEY_OF = new Map(Object.keys(PROFILE_KEYS).flatMap((k) => [[k, k], [`${k}__other`, `${k}__other`], [stored(k), k], [stored(`${k}__other`), `${k}__other`]]));
+const PARENT_PROFILE_KEYS = PARENT_SURVEY_RULES.questions.filter((q) => q.profile && PROFILE_KEYS[q.n]).map((q) => q.n);
+function parentProfileAnswers(guardian) {
+    const a = guardian?.onboarding?.answers || {};
+    const out = {};
+    for (const k of PARENT_PROFILE_KEYS) {
+        const list = (Array.isArray(a[k]) ? a[k] : a[k] == null ? [] : [a[k]]).map(String).filter((x) => x !== "");
+        if (!list.length) continue;
+        const def = PROFILE_KEYS[k];
+        if (def.values && list.some((x) => !def.values.includes(x))) continue;
+        out[k] = list;
+        if (def.other && list.includes(def.other) && a[`${k}__other`]) out[`${k}__other`] = [String(a[`${k}__other`])];
+    }
+    return out;
+}
 async function teenOf(req) {
     if (!req.user || !String(req.user.category || "").includes("minor")) fail("not_teen", { status: 403 });
     const reg = await TeenRegistration.findOne({ teen: req.user._id, origin: req.origin });
@@ -623,11 +648,15 @@ async function teenOf(req) {
 export async function me(req) {
     const reg = await teenOf(req);
     const teen = await User.findById(reg.teen).lean();
-    const g = await TeenGuardian.findById(reg.guardian).lean();
+    const g = await TeenGuardian.findById(reg.guardian).select("+onboarding.answers").lean();
     const consent = await TeenConsent.findOne({ registration: reg._id, party: "guardian" }).sort({ acceptedAt: -1 }).lean();
-    const ans = await Answers.find({ user: String(teen._id), origin: req.origin, question: { $in: Object.keys(PROFILE_KEYS).flatMap((k) => [k, `${k}__other`]) } }).select("+answer").lean();
+    const ans = await Answers.find({ user: String(teen._id), origin: req.origin, question: { $in: [...KEY_OF.keys()] } }).select("+answer").lean();
     const answers = {};
-    ans.forEach((a) => { const def = PROFILE_KEYS[a.question]; answers[a.question] = def && def.multi ? a.answer : (a.answer || [])[0]; });
+    // the lower-case (current) answer wins over an older upper-case one
+    ans.sort((x, y) => (x.question === stored(x.question)) - (y.question === stored(y.question))).forEach((a) => {
+        const k = KEY_OF.get(a.question); const def = PROFILE_KEYS[k];
+        answers[k] = def && def.multi ? a.answer : (a.answer || [])[0];
+    });
     const loc = reg.teenDetails?.location || {};
     return {
         reference: reg.reference,
@@ -644,20 +673,21 @@ export async function me(req) {
             optional: (consent?.statements || []).filter((s) => !s.required).map((s) => ({ id: s.id, accepted: s.accepted })),
         },
         answers,
-        locked: [...LOCKED],
+        locked: [...LOCKED, ...Object.keys(parentProfileAnswers(g))],
         welcomeDone: Boolean(reg.welcomeDoneAt),
     };
 }
 export async function saveAnswers(req) {
     const reg = await teenOf(req);
     const input = (req.body && req.body.answers) || {};
+    const fromParent = parentProfileAnswers(await TeenGuardian.findById(reg.guardian).select("+onboarding.answers").lean());
     const bad = {};
     const writes = [];
     for (const [k, v] of Object.entries(input)) {
         const base = k.replace(/__other$/, "");
         const def = PROFILE_KEYS[base];
         if (!def) continue;
-        if (LOCKED.has(k) || LOCKED.has(base)) { bad[k] = "locked"; continue; }
+        if (LOCKED.has(k) || LOCKED.has(base) || fromParent[base]) { bad[k] = "locked"; continue; }
         let list = (Array.isArray(v) ? v : [v]).map((x) => R.clean(x, 200)).filter((x) => x !== "");
         if (k === base) {
             if (!def.multi && list.length > 1) { bad[k] = "one_answer"; continue; }
@@ -666,8 +696,8 @@ export async function saveAnswers(req) {
         writes.push([k, list.slice(0, 20)]);
     }
     if (Object.keys(bad).length) fail("validation", { status: 422, fields: bad });
-    await Promise.all(writes.map(([question, answer]) => Answers.updateOne(
-        { user: String(reg.teen), question, origin: req.origin },
+    await Promise.all(writes.map(([k, answer]) => Answers.updateOne(
+        { user: String(reg.teen), question: stored(k), origin: req.origin },
         { $set: { answer }, $setOnInsert: { isActive: true, isDeleted: false, sortOrder: 0 } },
         { upsert: true }
     )));
