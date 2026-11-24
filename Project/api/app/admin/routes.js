@@ -22,6 +22,7 @@ import * as engagement from "./engagement.js";
 import * as teens from "./teens.js";
 import * as dataRequests from "./datarequests.js";
 import * as experts from "./experts.js";
+import * as content from "./content.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -108,6 +109,15 @@ router.put("/messages/:id", handle((req) => messages.update(req.adminOrigin, req
 router.post("/messages/:id/preview", handle((req) => messages.preview(req.adminOrigin, req.params.id, req.body || {})));
 router.post("/messages/:id/send", handle((req) => messages.send(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.post("/messages/:id/withdraw", handle((req) => messages.withdraw(req.adminOrigin, req.params.id, req.adminActor)));
+// Site and legal pages (content editor). Legal pages need four eyes to publish; see content.js.
+router.get("/content", handle((req) => content.listPages(req.adminOrigin, req.query)));
+router.post("/content", handle((req) => content.createPage(req.adminOrigin, req.body || {}, req.adminActor)));
+router.get("/content/:id", handle((req) => content.getPage(req.adminOrigin, req.params.id)));
+router.put("/content/:id", handle((req) => content.updateDraft(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.post("/content/:id/:action(review|publish|discard)", handle((req) => content.move(req.adminOrigin, req.params.id, req.params.action, req.adminActor)));
+router.get("/content/:id/revisions", handle((req) => content.revisions(req.adminOrigin, req.params.id)));
+router.get("/content/:id/revisions/:version", handle((req) => content.revision(req.adminOrigin, req.params.id, req.params.version)));
+router.post("/content/:id/revisions/:version/restore", handle((req) => content.restore(req.adminOrigin, req.params.id, req.params.version, req.adminActor)));
 router.get("/help", handle((req) => help.list(req.adminOrigin, req.query)));
 router.post("/help", handle((req) => help.create(req.adminOrigin, req.body || {}, req.adminActor)));
 router.get("/help/:id", handle((req) => help.get(req.adminOrigin, req.params.id)));

@@ -28,6 +28,7 @@ import { securityHeaders, sanitizeInput } from "../utils/security.js";
 import meRouter from "./api/Me.js";
 import adminRouter from "../admin/routes.js";
 import changeEmail from "./api/changeEmail.js"
+import contentRouter from "./api/Content.js";
 import { alerts as alertsRouter, help as helpRouter } from "./api/Inbox.js";
 const router = express.Router();
 router
@@ -62,6 +63,7 @@ router
     .use("/api/v1/engagement", engagementRouter)
     .use("/api/v1/alerts", isAuthenticated, alertsRouter)
     .use("/api/v1/help", isAuthenticated, helpRouter)
+    .use("/api/v1/content", contentRouter)
     .use("/api/admin/v1", adminRouter)
 
 

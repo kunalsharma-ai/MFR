@@ -49,3 +49,5 @@ export { default as HelpArticle } from "./HelpArticle.js";
 export { default as FeatureSwitch } from "./FeatureSwitch.js";
 export { default as PrizeMachine } from "./PrizeMachine.js";
 export { default as PrizePlay } from "./PrizePlay.js";
+export { default as ContentPage } from "./ContentPage.js";
+export { default as ContentRevision } from "./ContentRevision.js";
