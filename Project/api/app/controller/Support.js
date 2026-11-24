@@ -32,7 +32,8 @@ class SupportController extends CrudController {
     }
     async conversation(ticket) {
         this.#comments.request = this.request;
-        return this.#comments.list({ ticketNo: ticket.ticketNo },null,{
+        // internal notes from the super admin console are never part of the member's conversation
+        return this.#comments.list({ ticketNo: ticket.ticketNo, type: { $ne: "note" } },null,{
             _id:-1
         });
     }

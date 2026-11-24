@@ -43,3 +43,6 @@ export { default as QuestionVersion } from "./QuestionVersion.js";
 export { default as PointsAdjustment } from "./PointsAdjustment.js";
 export { default as QualityEvent } from "./QualityEvent.js";
 export { default as Audience } from "./Audience.js";
+export { default as AdminMessage } from "./AdminMessage.js";
+export { default as MessageReceipt } from "./MessageReceipt.js";
+export { default as HelpArticle } from "./HelpArticle.js";

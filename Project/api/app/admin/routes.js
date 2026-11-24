@@ -11,6 +11,9 @@ import * as points from "./points.js";
 import * as audiences from "./audiences.js";
 import * as surveys from "./surveys.js";
 import * as quality from "./quality.js";
+import * as tickets from "./tickets.js";
+import * as messages from "./messages.js";
+import * as help from "./help.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -79,5 +82,23 @@ router.get("/quality/review", handle((req) => quality.review(req.adminOrigin, re
 router.get("/members/:id/quality", handle((req) => quality.history(req.adminOrigin, req.params.id)));
 router.post("/members/:id/quality", handle((req) => quality.changeScore(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.get("/referrals/fraud", handle((req) => quality.referralFraud(req.adminOrigin, req.query)));
+// Ticket desk, portal messages and help centre (step 3b). Nothing here sends e-mail.
+router.get("/tickets", handle((req) => tickets.list(req.adminOrigin, req.query)));
+router.get("/tickets/:id", handle((req) => tickets.get(req.adminOrigin, req.params.id)));
+router.post("/tickets/:id/reply", handle((req) => tickets.reply(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.post("/tickets/:id/status", handle((req) => tickets.setStatus(req.adminOrigin, req.params.id, req.body?.status, req.adminActor)));
+router.put("/tickets/:id", handle((req) => tickets.update(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.get("/messages", handle((req) => messages.list(req.adminOrigin, req.query)));
+router.post("/messages", handle((req) => messages.create(req.adminOrigin, req.body || {}, req.adminActor)));
+router.get("/messages/:id", handle((req) => messages.get(req.adminOrigin, req.params.id)));
+router.put("/messages/:id", handle((req) => messages.update(req.adminOrigin, req.params.id, req.body || {})));
+router.post("/messages/:id/preview", handle((req) => messages.preview(req.adminOrigin, req.params.id, req.body || {})));
+router.post("/messages/:id/send", handle((req) => messages.send(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.post("/messages/:id/withdraw", handle((req) => messages.withdraw(req.adminOrigin, req.params.id, req.adminActor)));
+router.get("/help", handle((req) => help.list(req.adminOrigin, req.query)));
+router.post("/help", handle((req) => help.create(req.adminOrigin, req.body || {}, req.adminActor)));
+router.get("/help/:id", handle((req) => help.get(req.adminOrigin, req.params.id)));
+router.put("/help/:id", handle((req) => help.update(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
+router.post("/help/:id/status", handle((req) => help.setStatus(req.adminOrigin, req.params.id, req.body?.status, req.adminActor)));
 
 export default router;

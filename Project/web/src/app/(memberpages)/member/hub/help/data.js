@@ -100,15 +100,31 @@ export function useHelpContext() {
 
 const visible = (e, ctx) => (!e.types || e.types.includes(ctx.type)) && (!e.feature || ctx.features[e.feature]);
 
+// Entries the team publishes from the super admin console (Nov 2026). They add to the built-in content; the
+// server already filters them to the member's type. If the call fails the Help centre works as before.
+export function useConsoleFaqs() {
+  const member = useMember();
+  return useQuery({
+    queryKey: ["hub", "help-console", member?._id],
+    enabled: Boolean(member?._id),
+    queryFn: async () => {
+      const r = await api.get("/api/v1/help").catch(() => null);
+      return ok(r) && Array.isArray(r?.data) ? r.data.filter((f) => f && f.id && f.q && Array.isArray(f.a)) : [];
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
 export function useHelpContent(ctx) {
+  const extra = useConsoleFaqs().data;
   return React.useMemo(() => {
     const guides = GUIDES.filter((g) => visible(g, ctx));
-    const faqs = FAQS.filter((f) => visible(f, ctx));
+    const faqs = [...FAQS, ...(extra || [])].filter((f) => visible(f, ctx));
     const topics = TOPICS.filter((tp) => visible(tp, ctx))
       .map((tp) => ({ ...tp, blurb: (ctx.type === "teen" && tp.blurbTeen) || tp.blurb, guides: guides.filter((g) => g.topic === tp.id), faqs: faqs.filter((f) => f.topic === tp.id) }))
       .filter((tp) => tp.guides.length || tp.faqs.length);
     return { topics, guides, faqs };
-  }, [ctx]);
+  }, [ctx, extra]);
 }
 
 /* ---------------- text of an answer (for search and for rendering) ---------------- */

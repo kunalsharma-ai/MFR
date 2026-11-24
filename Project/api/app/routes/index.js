@@ -25,6 +25,7 @@ import { isAuthenticated } from "../utils/index.js";
 import meRouter from "./api/Me.js";
 import adminRouter from "../admin/routes.js";
 import changeEmail from "./api/changeEmail.js"
+import { alerts as alertsRouter, help as helpRouter } from "./api/Inbox.js";
 const router = express.Router();
 router
     .use("/api/v1/llm", llmRouter)
@@ -53,6 +54,8 @@ router
     .use("/api/v1/batch", isAuthenticated, batchRouter)
     .use("/api/v1/engagement-public", engagementPublicRouter)
     .use("/api/v1/engagement", engagementRouter)
+    .use("/api/v1/alerts", isAuthenticated, alertsRouter)
+    .use("/api/v1/help", isAuthenticated, helpRouter)
     .use("/api/admin/v1", adminRouter)
 
 
