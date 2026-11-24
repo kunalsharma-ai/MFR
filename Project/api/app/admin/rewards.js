@@ -4,7 +4,7 @@
 import mongoose from "mongoose";
 import { CatalogueItem, Redemption, PrizeDraw, DrawEntry, BonusOffer, User } from "../model/index.js";
 import * as Draw from "../engagement/draw.js";
-import { isOn } from "../engagement/switches.js";
+import { isOn, scopeOf } from "../engagement/switches.js";
 import { AdminError } from "./http.js";
 import { maskEmail } from "./mask.js";
 
@@ -115,9 +115,9 @@ export async function decideRedemption(origin, id, { status, reason, note, provi
     if (!r) throw new AdminError("not_found", "Not found", 404);
     if (!(NEXT[r.status] || []).includes(status)) throw new AdminError("bad_transition", `A ${r.status} request can't become ${status || "that"}`, 409);
     if (status !== "rejected") {
-        const u = await User.findOne({ _id: r.user, origin }).select("category").lean();
+        const u = await User.findOne({ _id: r.user, origin }).select("category address").lean();
         const key = u?.category === TEEN ? "teen_redemptions" : "redemptions";
-        if (!(await isOn(origin, key))) throw new AdminError("switch_off", `The ${key} switch is off for this brand`, 409);
+        if (!(await isOn(origin, key, scopeOf(u)))) throw new AdminError("switch_off", `The ${key} switch is off for this member's segment or country`, 409);
     }
     const set = { status, ...(status === "fulfilled" ? { fulfilledAt: new Date() } : {}), ...(["fulfilled", "rejected"].includes(status) ? { open: false } : {}) };
     if (note !== undefined) set.note = str(note, 300);

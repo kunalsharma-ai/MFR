@@ -169,7 +169,7 @@ export async function family(req) {
         rewards: {
             // from the engagement settings: Teens earn points only (never money) and every learning reward needs
             // the guardian's YES by email
-            redemptionsOpen: await isOn(origin, "teen_redemptions"),
+            redemptionsOpen: await isOn(origin, "teen_redemptions", { segment: "teen" }),
             guardianApprovalRequired: true,
             requests: requests.map((r) => ({
                 reference: r.reference, title: r.item?.title || "", kind: r.item?.kind || "", points: r.points, status: r.status,

@@ -11,7 +11,7 @@
 import mongoose from "mongoose";
 import { CatalogueItem, BonusOffer } from "../model/index.js";
 import { config } from "./config.js";
-import { isOn } from "./switches.js";
+import { isOn, scopeOf } from "./switches.js";
 import { ledger } from "./ledger.js";
 import * as R from "./rewards.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
@@ -49,7 +49,7 @@ export function mount(router) {
                 goal: await R.goalOf(req.user, req.origin, available),
                 offers,
                 redemptions,
-                open: await isOn(req.origin, teen ? "teen_redemptions" : "redemptions"),
+                open: await isOn(req.origin, teen ? "teen_redemptions" : "redemptions", scopeOf(req.user)),
                 minRedemption: c.points.minRedemption,
                 usdPerPoint: teen ? null : c.points.usdPerPoint,
             };

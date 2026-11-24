@@ -11,7 +11,7 @@
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { PrizeDraw, DrawEntry, User } from "../model/index.js";
-import { isOn } from "./switches.js";
+import { isOn, scopeOf } from "./switches.js";
 import { registerSource, ledger } from "./ledger.js";
 import { memberType, fail } from "./http.js";
 
@@ -45,7 +45,7 @@ const view = (d, mine) => ({
 
 // The open draw for this member, or null. Says nothing at all when the feature is off or the member can't enter.
 export async function current(user, origin) {
-    const on = await isOn(origin, "draw");
+    const on = await isOn(origin, "draw", scopeOf(user));
     if (!on || memberType(user) === "teen") return null;
     const d = await PrizeDraw.findOne({ origin, status: "open", isActive: true, isDeleted: false, closesAt: { $gt: new Date() } }).sort({ closesAt: 1 }).lean();
     if (!d || !eligible(user, d, on).ok) return null;
@@ -60,7 +60,7 @@ export async function enter(user, origin, id, tickets) {
     if (!(n >= 1 && n <= 100)) fail("validation", "Choose how many tickets.", 422);
     if (!mongoose.isValidObjectId(id)) fail("bad_request", "That id isn't valid.");
     const d = await PrizeDraw.findOne({ _id: id, origin, isActive: true, isDeleted: false }).lean();
-    const el = eligible(user, d, await isOn(origin, "draw"));
+    const el = eligible(user, d, await isOn(origin, "draw", scopeOf(user)));
     if (!el.ok) fail(el.reason === "off" || el.reason === "teen" ? "closed" : el.reason, el.reason === "closed" ? "This draw has closed." : "This draw isn't open to you.", el.reason === "none" ? 404 : 409);
     const key = `${user._id}`;
     if (busy.has(key)) fail("too_soon", "One moment, your last entry is still being saved.", 429);

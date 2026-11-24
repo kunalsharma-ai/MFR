@@ -5,6 +5,7 @@
 //  GET  /challenges
 //  POST /draws/:id/enter          {tickets}
 //  GET  /stories?type=story|insight
+//  GET  /prize-machine            POST /prize-machine/play
 //  admin
 //  GET|POST /admin/tasks   PUT|DELETE /admin/tasks/:id       (polls scheduled for a day, monthly challenges)
 //  GET|POST /admin/draws   POST /admin/draws/:id/run   POST /admin/draws/:id/cancel
@@ -16,6 +17,7 @@ import { isOn } from "./switches.js";
 import { reconcile } from "./ledger.js";
 import * as D from "./daily.js";
 import * as Draw from "./draw.js";
+import * as Prizes from "./prizes.js";
 import { memberFacts } from "./pro.js";
 import { handle, fail, limit, requireAdmin, memberType, clean } from "./http.js";
 
@@ -82,7 +84,10 @@ export function mount(router) {
         .post("/poll/:id", limit(20, 1), handle(async (req) => { idOk(req.params.id); return D.answerPoll(req.user, req.origin, req.params.id, String(req.body?.choice || "")); }))
         .get("/challenges", handle(async (req) => { await reconcile(req.user, req.origin); return D.challenges(req.user, req.origin); }))
         .post("/draws/:id/enter", limit(10, 1), handle(async (req) => Draw.enter(req.user, req.origin, req.params.id, req.body?.tickets)))
-        .get("/stories", handle(async (req) => storiesFor(req.user, req.origin, req.query.type === "insight" ? "insight" : "story")));
+        .get("/stories", handle(async (req) => storiesFor(req.user, req.origin, req.query.type === "insight" ? "insight" : "story")))
+        // prize machines (behind the prize_machines legal switch; see prizes.js)
+        .get("/prize-machine", handle(async (req) => ({ machine: await Prizes.view(req.user, req.origin) })))
+        .post("/prize-machine/play", limit(20, 1), handle(async (req) => Prizes.play(req.user, req.origin)));
 
     // ---- admin ----
     router

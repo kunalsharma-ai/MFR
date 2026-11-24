@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import { User, Response, Invites, MemberPreference } from "../model/index.js";
 import { config } from "./config.js";
 import { grant, registerReconciler } from "./ledger.js";
+import { isOn, scopeOf } from "./switches.js";
 import { memberType } from "./http.js";
 import { monthKey } from "./time.js";
 
@@ -75,6 +76,7 @@ export async function referralView(user, origin) {
 
 registerReconciler(async (user, origin) => {
     if (!tiersOn(user)) return;
+    if (!(await isOn(origin, "bonuses", scopeOf(user)))) return; // the brand's bonuses switch
     const tiers = tierList();
     if (!tiers.length) return;
     const counted = (await referralsOf(user, origin)).filter((x) => x.counts).length;

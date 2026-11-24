@@ -16,6 +16,7 @@ import * as messages from "./messages.js";
 import * as help from "./help.js";
 import * as switches from "./switches.js";
 import * as rewards from "./rewards.js";
+import * as prizes from "./prizes.js";
 import * as engagement from "./engagement.js";
 import * as teens from "./teens.js";
 import * as dataRequests from "./datarequests.js";
@@ -108,7 +109,7 @@ router.put("/help/:id", handle((req) => help.update(req.adminOrigin, req.params.
 router.post("/help/:id/status", handle((req) => help.setStatus(req.adminOrigin, req.params.id, req.body?.status, req.adminActor)));
 
 // Feature switches (step 4). MADP lets only its Super Admin change them, always with a reason.
-router.get("/switches", handle((req) => switches.board(req.adminOrigin)));
+router.get("/switches", handle((req) => switches.board(req.adminOrigin, req.query)));
 router.put("/switches/:key", handle((req) => switches.set(req.adminOrigin, req.params.key, req.body || {}, req.adminActor)));
 // Rewards (module 7): catalogue, redemption queue, prize draws, bonus offers
 router.get("/rewards/catalogue", handle((req) => rewards.listCatalogue(req.adminOrigin)));
@@ -124,6 +125,10 @@ router.post("/draws/:id/cancel", handle((req) => rewards.cancelDraw(req.adminOri
 router.get("/offers", handle((req) => rewards.listOffers(req.adminOrigin)));
 router.post("/offers", handle((req) => rewards.createOffer(req.adminOrigin, req.body || {})));
 router.post("/offers/:id/end", handle((req) => rewards.endOffer(req.adminOrigin, req.params.id)));
+// Prize machines (module 7): one per segment, behind the prize_machines legal switch
+router.get("/prize-machines", handle((req) => prizes.list(req.adminOrigin)));
+router.put("/prize-machines/:segment", handle((req) => prizes.save(req.adminOrigin, req.params.segment, req.body || {}, req.adminActor)));
+router.get("/prize-machines/:segment/plays", handle((req) => prizes.plays(req.adminOrigin, req.params.segment, req.query)));
 // Engagement (module 8)
 router.get("/engagement/tasks", handle((req) => engagement.listTasks(req.adminOrigin, req.query)));
 router.post("/engagement/tasks", handle((req) => engagement.createTask(req.adminOrigin, req.body || {})));

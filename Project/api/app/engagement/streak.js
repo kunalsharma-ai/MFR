@@ -8,6 +8,7 @@ import { StreakDay, Response, Reward } from "../model/index.js";
 import { config } from "./config.js";
 import { dayKey, addDays, daysBetween } from "./time.js";
 import { grant, registerReconciler } from "./ledger.js";
+import { isOn, scopeOf } from "./switches.js";
 
 const oid = (id) => new mongoose.Types.ObjectId(String(id));
 
@@ -77,6 +78,7 @@ export async function streakOf(user, origin) {
 registerReconciler(async (user, origin) => {
     const bonuses = config().streak.bonuses || [];
     if (!bonuses.length) return;
+    if (!(await isOn(origin, "bonuses", scopeOf(user)))) return; // the brand's bonuses switch
     const today = dayKey(new Date(), user.timezone);
     const { runs } = computeStreak(await activeDays(user, origin), today);
     const from = String(config().streak.bonusFrom || "0000-00-00").slice(0, 10);

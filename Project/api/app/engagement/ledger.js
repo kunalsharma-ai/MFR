@@ -6,13 +6,15 @@
 //
 // Nothing here writes to Response or Reward. Each entry gets a state:
 //   cleared  - can be spent
-//   pending  - newer than config.points.holdDays (only entries created on/after config.points.holdFrom)
+//   pending  - newer than the hold days of the brand's points_hold switch (default config.points.holdDays), counting
+//              only entries created on/after config.points.holdFrom and after the switch went on
 //   on_hold  - an admin's PointsHold is active on it
 //
 // Balances: earned = all positive entries; available = cleared - spent.
 import mongoose from "mongoose";
 import { Response, Reward, PointsHold } from "../model/index.js";
 import { config } from "./config.js";
+import { resolve, scopeOf } from "./switches.js";
 
 const slugOf = (s) => String(s ?? "").trim().toLowerCase();
 const oid = (id) => new mongoose.Types.ObjectId(String(id));
@@ -76,14 +78,22 @@ async function baseEntries(user, origin) {
     return [...fromSurveys, ...fromRewards];
 }
 
+/** The points hold for this member now: { days, from } or null. Points already earned are never moved back. */
+export async function holdFor(user, origin) {
+    const s = await resolve(origin, "points_hold", scopeOf(user));
+    if (!s.on || !(s.value > 0)) return null;
+    const from = Math.max(new Date(config().points.holdFrom).getTime() || 0, s.since ? new Date(s.since).getTime() : 0);
+    return { days: s.value, from: new Date(from) };
+}
+
 export async function entries(user, origin, { now = new Date() } = {}) {
     const extra = (await Promise.all(SOURCES.map((fn) => fn(user, origin).catch((e) => { console.error("ledger source failed:", e.message); return []; })))).flat();
     const list = [...(await baseEntries(user, origin)), ...extra];
     const holds = await PointsHold.find({ user: oid(user._id), origin, releasedAt: null, isActive: true, isDeleted: false }).lean();
     const held = new Map(holds.map((h) => [`${h.source}:${h.entry}`, h]));
-    const c = config().points;
-    const holdFrom = new Date(c.holdFrom).getTime();
-    const holdMs = Math.max(0, Number(c.holdDays) || 0) * 86400000;
+    const hold = await holdFor(user, origin);
+    const holdFrom = hold ? hold.from.getTime() : Infinity;
+    const holdMs = hold ? hold.days * 86400000 : 0;
     for (const e of list) {
         e.at = e.at ? new Date(e.at) : null;
         if (e.points < 0) { e.status = e.status || "spent"; continue; }
