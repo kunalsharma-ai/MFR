@@ -40,3 +40,6 @@ export { default as DataRequest } from "./DataRequest.js";
 export { default as PushSubscription } from "./PushSubscription.js";
 export { default as SegmentChange } from "./SegmentChange.js";
 export { default as QuestionVersion } from "./QuestionVersion.js";
+export { default as PointsAdjustment } from "./PointsAdjustment.js";
+export { default as QualityEvent } from "./QualityEvent.js";
+export { default as Audience } from "./Audience.js";

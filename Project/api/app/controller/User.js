@@ -7,7 +7,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 
 import { CrudController, Mutate } from "../utils/index.js";
 import * as Emails from "../engagement/transactional.js";
-import { User as userModel, Invites as invitesModel, Answers, Survey,Response as responseModel } from "../model/index.js";
+import { User as userModel, Invites as invitesModel, Answers, Survey,Response as responseModel, Category } from "../model/index.js";
 import fs from "fs"
 
 const COMM_QUESTION = "communication-methods";
@@ -71,9 +71,30 @@ class User extends CrudController {
         console.log("communication-methods answer not saved:", e.message); // signup kabhi fail nahi hona chahiye
     }
 }
+    // Segment settings from the super admin console (sign-up open, countries, minimum age). A segment with no
+    // settings saved keeps today's behaviour.
+    async checkSegmentRules(data) {
+        const origin = data?.origin || this.request?.origin;
+        const cat = String(data?.category || "b2c").toLowerCase();
+        const c = await Category.findOne({ origin, name: cat, isDeleted: { $ne: true } }).lean();
+        const s = c?.settings;
+        if (!s) return;
+        if (s.signupOpen === false) throw new Error("Sign-up for this panel is closed at the moment.");
+        const country = String(data?.address?.[0]?.country || "").toLowerCase();
+        if (Array.isArray(s.countries) && s.countries.length && country && !s.countries.includes(country))
+            throw new Error("Sign-up isn't open in your country yet.");
+        if (s.minAge && data?.dob) {
+            const dob = new Date(data.dob);
+            const now = new Date();
+            let age = now.getUTCFullYear() - dob.getUTCFullYear();
+            if (now.getUTCMonth() < dob.getUTCMonth() || (now.getUTCMonth() === dob.getUTCMonth() && now.getUTCDate() < dob.getUTCDate())) age--;
+            if (age < s.minAge) throw new Error(`You need to be at least ${s.minAge} to join this panel.`);
+        }
+    }
    async create(data) {
     console.log("User.create hit", data.mail);
     this.fixUserIssue();
+    await this.checkSegmentRules(data);
     invitesModel.updateMany({
         email: data.mail
     }, {
