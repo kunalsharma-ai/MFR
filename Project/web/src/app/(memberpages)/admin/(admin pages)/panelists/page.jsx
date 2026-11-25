@@ -486,26 +486,7 @@ function UserData({ userId, onClose }) {
           >
             {showProfiles ? "Hide Profiles" : "Profiles"}
           </Page.MuiButton>
-          <Page.MuiButton
-            variant="contained"
-            onClick={async (e) => {
-              let resp = await api.post(`/api/v1/user/autologin`, {
-                _id: userId,
-              });
-              localStorage.setItem("token", resp.token);
-              useToast(resp);
-              me.Reload();
-              onClose();
-              router.refresh();
-            }}
-            color="info"
-            sx={{ fontWeight: 600, color: "white" }}
-            startIcon={
-              <i className="fa-solid fa-user" style={{ fontSize: "14px" }} />
-            }
-          >
-            Login As User
-          </Page.MuiButton>
+          {/* "Login As User" moved to the MADP console (Members, Account help), which asks for a reason and is audited. */}
           <Page.MuiButton
             variant="contained"
             color="error"

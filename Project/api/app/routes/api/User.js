@@ -12,7 +12,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 //            POST /login, /resend, POST /:id (check an emailed code), PATCH /:id {action:"resend-otp"}
 //   member   POST /            the member's OWN referrals only (admins: the full list, as before)
 //            GET /:id, PUT /:id, POST /:id/profile-data    own record only (PUT: a short list of fields)
-//   admin    GET /, GET /summarize, POST /autologin, DELETE /terms, POST /refresh, DELETE /:id,
+//   admin    GET /, GET /summarize, POST /autologin (410, moved to MADP), DELETE /terms, POST /refresh, DELETE /:id,
 //            GET/PUT /:id of any member (role read fresh from the database, never from the request)
 // Teen Panel registration moved to /api/v1/teen (routes/api/Teen.js); the old /teen and /parent-consent routes answer 410.
 import express from "express";
@@ -210,25 +210,11 @@ router
         res.cookie("authorization", `Bearer ${token}`, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: left * 1000 });
         return res.redirect("/member/dashboard");
     })
-    .post("/autologin", requireAdmin, expressRoute(
-        async req => {
-            // admin "log in as this member"
-            const message = "Login successful";
-            let token;
-            const user = await userController.read(req.body._id);
-            if (!user) throw new Error("Invalid request");
-            token = Token.generate({
-                _id: user._id,
-                category: user.category,
-                email: user.email,
-                phone: user.phone,
-                name: user.name,
-                origin: user.origin
-            })
-            return { message, data: [], token }
-        },
-        userController
-    ))
+    // The old "Login As User" gave a full, unlimited member token with no reason and no record. It is gone: admins use
+    // "Log in as member" in MADP, which asks for a reason, lasts 15 minutes, blocks money and password changes, shows
+    // the member a banner and is audited (admin/memberactions.js). The route answers 410 so old callers learn why.
+    .post("/autologin", requireAdmin, (req, res) =>
+        res.status(410).json({ status: "error", code: "moved_to_madp", message: "Log in as member has moved to the MADP console." }))
     .delete(`/terms`, requireAdmin, expressRoute(
         async req => {
             const message = "Terms reset";
