@@ -24,6 +24,7 @@ import * as teens from "./teens.js";
 import * as dataRequests from "./datarequests.js";
 import * as experts from "./experts.js";
 import * as content from "./content.js";
+import * as merge from "./merge.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -33,6 +34,11 @@ router.use(requireMadp);
 router.get("/members", handle((req) => members.search(req.adminOrigin, req.query)));
 router.post("/members/archive-run", handle((req) => members.archiveRun(req.adminOrigin, { months: req.body?.months, dryRun: req.body?.dryRun !== false })));
 router.post("/members/restore", handle((req) => members.bulkRestore(req.adminOrigin, req.body?.ids || [], req.body?.reason)));
+// Duplicate accounts: find, merge (dry run unless ?dryRun=0), list and undo merges (see merge.js)
+router.get("/members/duplicates", handle((req) => merge.duplicates(req.adminOrigin, req.query)));
+router.post("/members/merge", handle((req) => merge.merge(req.adminOrigin, req.body || {}, { dryRun: req.query.dryRun !== "0", actor: req.adminActor })));
+router.get("/members/merges", handle((req) => merge.listMerges(req.adminOrigin, req.query)));
+router.post("/members/merges/:id/undo", handle((req) => merge.undo(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.get("/members/:id", handle((req) => members.detail(req.adminOrigin, req.params.id)));
 router.get("/members/:id/ledger", handle((req) => members.ledger(req.adminOrigin, req.params.id)));
 router.put("/members/:id", handle((req) => members.update(req.adminOrigin, req.params.id, req.body || {})));
