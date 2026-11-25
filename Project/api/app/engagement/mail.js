@@ -4,7 +4,7 @@
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
-import { getMailer, sendMail, fsLogger } from "../utils/index.js";
+import { getMailer, sendMail, fsLogger, mailOk } from "../utils/index.js";
 
 export const siteUrl = (origin) => (process.env.PUBLIC_SITE_URL || `https://${origin}`).replace(/\/$/, "");
 const SUPPORT = { email: "support@myfrequentrewards.com", phone: "+91 81300 15743" };
@@ -31,7 +31,9 @@ export async function send({ origin, to, template, subject, data, category = "en
         }
         const mailer = await getMailer(category, template, payload);
         const r = await sendMail({ origin, "content-type": "application/json" }, to, subject, mailer.data);
-        return !(r && r.status === "error");
+        const ok = mailOk(r, mailer);
+        if (!ok) fsLogger.Log("engagement mail not sent", { template, status: r?.status });
+        return ok;
     } catch (e) {
         fsLogger.Log("engagement mail failed", { template, error: e.message });
         return false;

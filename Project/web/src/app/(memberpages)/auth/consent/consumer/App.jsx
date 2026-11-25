@@ -320,11 +320,12 @@ export default function App({ cfg }) {
       .filter(([, value]) => value === true)
       .map(([key]) => key);
     try {
-      useToast(
-        await api.put(`/api/v1/user/${user._id}`, {
-          terms: termsToSend,
-        }),
-      );
+      // api.put answers an error instead of throwing: an unsaved acceptance must not show as "signed"
+      const saved = await api.put(`/api/v1/user/${user._id}`, {
+        terms: termsToSend,
+      });
+      if (!saved || saved.status === "error") throw new Error(saved?.message || "Your acceptance was not saved.");
+      useToast(saved);
       // const response = await fetch("/auth/terms", {
       //   method: "POST",
       //   credentials: "include",

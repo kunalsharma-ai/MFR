@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Field from "./SxField.jsx";
 import CountryPicker from "./CountryPicker.jsx";
+import CityCombo from "./CityCombo.jsx";
 import { country as loadCountry, zipHint, zipOk } from "../teen/geo.js";
 
 // Country → State / Province → City → ZIP / Postal code for the Consumer and Professional sign-up.
@@ -41,6 +42,7 @@ export default function SignupLocation({ v, setV, list, err, ok, touch, geo, loa
   const cities = sOpts.find((s) => s.c === v.stateCode)?.ci || [];
   const zipFormat = geo?.z || "";
   const setLoc = (patch) => setV((s) => ({ ...s, ...patch }));
+  const [cityOpen, setCityOpen] = useState(false);
   return (
     <>
       <div className={`sx-field ${err("country") ? "bad" : ""} ${ok("country") ? "good" : ""}`} style={{ gridColumn: "1 / -1" }}>
@@ -65,10 +67,9 @@ export default function SignupLocation({ v, setV, list, err, ok, touch, geo, loa
                 onChange={(e) => setLoc({ state: e.target.value, stateCode: "", stateManual: true })} onBlur={() => touch("state")} />
             )}
           </Field>
-          <Field id="city" label="Town / city" icon="home" half error={err("city")} ok={ok("city")} hint={cities.length ? "Pick from the list or type it." : ""}>
-            <input id="city" placeholder=" " maxLength={80} list={cities.length ? "city-list" : undefined} value={v.city} aria-invalid={Boolean(err("city"))}
-              onChange={(e) => setLoc({ city: e.target.value })} onBlur={() => touch("city")} autoComplete="address-level2" />
-            {cities.length ? <datalist id="city-list">{cities.map((c) => <option key={c} value={c} />)}</datalist> : null}
+          <Field id="city" label="Town / city" icon="home" half error={cityOpen ? "" : err("city")} ok={ok("city")} hint={cities.length ? "Type to search, or type your own." : ""}>
+            <CityCombo id="city" value={v.city} cities={cities} invalid={Boolean(!cityOpen && err("city"))} onOpenChange={setCityOpen}
+              onChange={(c) => setLoc({ city: c })} onBlur={() => touch("city")} />
           </Field>
           <Field id="zip" label={zipFormat ? "ZIP / postal code" : "ZIP / postal code (optional)"} icon="mail" half error={v.noZip ? "" : err("zip")} ok={ok("zip") && Boolean(v.zip)}
             hint={zipHint(zipFormat) ? `For example ${zipHint(zipFormat)}` : ""}>

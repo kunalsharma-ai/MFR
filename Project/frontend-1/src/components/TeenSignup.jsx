@@ -9,10 +9,12 @@ import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import Captcha from './Captcha.jsx';
 import CountryPicker from './CountryPicker.jsx';
+import CityCombo from './CityCombo.jsx';
 import DobPicker from './DobPicker.jsx';
 import Field from './SxField.jsx';
 import SxRail, { railPct } from './SxRail.jsx';
 import { COUNTRIES } from '../data/countries.js';
+import { detectCountry } from '../utils/geo.js';
 import { err, fmtDate } from '../teen/i18n.js';
 import * as R from '../teen/rules.js';
 import { teenApi, relationLabel } from '../teen/api.js';
@@ -87,6 +89,7 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
   const [msg, setMsg] = useState('');
   const [captchaOk, setCaptchaOk] = useState(false);
   const [blocked, setBlocked] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
   const sent = useRef(false);
   const captchaRef = useRef(null);
   const cardRef = useRef(null);
@@ -113,6 +116,37 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
     }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Country and phone code come from the member's IP (or, if that service can't answer, their time zone). They can
+  // still change both. Nothing is overwritten once chosen.
+  useEffect(() => {
+    const ctrl = new AbortController();
+    detectCountry({ signal: ctrl.signal }).then((iso) => {
+      if (!iso || ctrl.signal.aborted) return;
+      const c = COUNTRIES.find((x) => x.iso.toLowerCase() === iso);
+      if (!c) return;
+      setD((s) => ({
+        ...s,
+        teen: {
+          ...s.teen,
+          location: s.teen.location.country ? s.teen.location : { ...s.teen.location, country: c.iso, countryName: c.name },
+          phone: s.teen.phone.country ? s.teen.phone : { ...s.teen.phone, country: c.iso },
+        },
+      }));
+    });
+    return () => ctrl.abort();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The "Track my registration" link in the teen's email also carries ?v=<token>: opening it confirms the email.
+  const [emailOk, setEmailOk] = useState(false);
+  useEffect(() => {
+    const u = new URL(window.location.href);
+    const v = u.searchParams.get('v');
+    if (!v) return;
+    u.searchParams.delete('v');
+    window.history.replaceState(window.history.state, '', `${u.pathname}${u.search}${u.hash}`);
+    teenApi.verifyEmail(v).then(() => setEmailOk(true)).catch(() => {});
+  }, []);
+
   // opened from the status link: show where the registration is
   useEffect(() => {
     if (!statusToken) return;
@@ -131,7 +165,7 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
   const step = d.step;
   const stepErrors = (n) => (STEP_KEYS[n] || []).filter((k) => errors[k]);
   const pct = step > 4 ? 100 : railPct(step, TEEN_STEPS.length, STEP_KEYS[step].length, stepErrors(step).length);
-  useEffect(() => { onView?.({ step: Math.min(step, 4), pct, sent: step > 4, firstName: d.result?.firstName || tn.firstName, lastName: step > 4 ? '' : tn.lastName, country: loc.country }); }, [step, pct, tn.firstName, tn.lastName, loc.country]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { onView?.({ step: Math.min(step, 4), pct, sent: step > 4, firstName: d.result?.firstName || tn.firstName, lastName: step > 4 ? '' : tn.lastName, country: step > 4 ? (d.result?.country || loc.country) : loc.country }); }, [step, pct, tn.firstName, tn.lastName, loc.country, d.result?.country]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const show = (k) => ((tried[step] || touched[k]) && errors[k] ? errorText(k, errors[k]) : '');
   const touch = (k) => setTouched((x) => ({ ...x, [k]: true }));
@@ -169,7 +203,7 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
         consent: { version: TEEN_CONSENT.version, accepted: Object.fromEntries(TEEN_CONSENT.items.map((i) => [i.id, d.accepted[i.id] === true])) },
       });
       // the invite is out: forget everything typed, keep only the receipt for this tab
-      const result = { ...res, firstName: tn.firstName, email: R.normEmail(tn.email), relation: g.relation, guardianEmail: res.guardianEmail || R.maskEmail(g.email) };
+      const result = { ...res, firstName: tn.firstName, email: R.normEmail(tn.email), relation: g.relation, country: loc.country, guardianEmail: res.guardianEmail || R.maskEmail(g.email) };
       setD({ ...EMPTY, step: 5, result });
       try { if (res.statusToken) sessionStorage.setItem('mfr.teen.status', res.statusToken); } catch { /* */ }
     } catch (e) {
@@ -208,7 +242,7 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
       </div>
     );
   }
-  if (step > 4) return <Sent r={d.result || {}} status={status} onRestart={() => { clearDraft(); setD(EMPTY); setStatus(null); }} cardRef={cardRef} />;
+  if (step > 4) return <Sent r={d.result || {}} status={status} emailOk={emailOk || Boolean(status?.emailVerified)} onRestart={() => { clearDraft(); setD(EMPTY); setStatus(null); }} cardRef={cardRef} />;
 
   const relLabel = relationLabel(g.relation || '').toLowerCase() || 'parent';
   const sOpts = cdata?.s || [];
@@ -291,10 +325,9 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
                         onChange={(e) => setLoc({ state: e.target.value, stateCode: '', stateManual: true })} onBlur={() => touch('state')} />
                     )}
                   </Field>
-                  <Field id="t-city" label="Town / city" icon="home" half error={show('city')} hint={cities.length ? 'Pick from the list or type it.' : ''}>
-                    <input id="t-city" placeholder=" " maxLength={80} list={cities.length ? 't-city-list' : undefined} value={loc.city} aria-invalid={Boolean(show('city'))}
-                      onChange={(e) => setLoc({ city: e.target.value })} onBlur={() => touch('city')} autoComplete="address-level2" />
-                    {cities.length ? <datalist id="t-city-list">{cities.map((c) => <option key={c} value={c} />)}</datalist> : null}
+                  <Field id="t-city" label="Town / city" icon="home" half error={cityOpen ? '' : show('city')} hint={cities.length ? 'Type to search, or type your own.' : ''}>
+                    <CityCombo id="t-city" value={loc.city} cities={cities} invalid={Boolean(!cityOpen && show('city'))} onOpenChange={setCityOpen}
+                      onChange={(v) => setLoc({ city: v })} onBlur={() => touch('city')} />
                   </Field>
                   <Field id="t-zip" label={zipFormat ? 'ZIP / postal code' : 'ZIP / postal code (optional)'} icon="mail" half error={loc.noZip ? '' : show('zip')}
                     hint={zipHint(zipFormat) ? `For example ${zipHint(zipFormat)}` : ''}>
@@ -458,7 +491,7 @@ const errorText = (k, code) => {
 };
 
 // ─────────────────────────────────────────────── invite sent / where things are ──────────────────────────────────────
-function Sent({ r, status, onRestart, cardRef }) {
+function Sent({ r, status, emailOk, onRestart, cardRef }) {
   const [rs, setRs] = useState({ state: 'idle', msg: '' });
   const [cool, setCool] = useState(0);
   useEffect(() => { if (cool <= 0) return undefined; const id = setTimeout(() => setCool((c) => c - 1), 1000); return () => clearTimeout(id); }, [cool]);
@@ -471,15 +504,7 @@ function Sent({ r, status, onRestart, cardRef }) {
     try { await teenApi.resend({ statusToken: r.statusToken }); setRs({ state: 'done', msg: `We’ve sent the email to your ${rel} again.` }); setCool(30); }
     catch (e) { setRs({ state: 'error', msg: err(e.code) || err('server') }); }
   };
-  if (!r.reference) {
-    return (
-      <div className="sx-done" role="status" ref={cardRef}>
-        <h2>Your registration was sent</h2>
-        <p>Open the “Track my registration” link in your email to see where things are, or start a new registration.</p>
-        <div className="done-actions"><button type="button" className="btn btn-dark" onClick={onRestart}>Start again</button></div>
-      </div>
-    );
-  }
+  if (!r.reference) return <SentNoReceipt onRestart={onRestart} cardRef={cardRef} />;
   return (
     <div className="sx-done sx-teen-sent" role="status" ref={cardRef}>
       <div className="done-check"><Icon name={st === 'active' ? 'check' : ended ? 'close' : 'send'} size={40} stroke={2.4} /></div>
@@ -498,6 +523,7 @@ function Sent({ r, status, onRestart, cardRef }) {
       ) : null}
       <dl className="sx-receipt">
         {r.email ? <div><dt>Your username</dt><dd>{r.email}</dd></div> : null}
+        <div><dt>Your email</dt><dd>{emailOk ? 'Confirmed' : 'Not confirmed yet: open “Track my registration” in the email we sent you'}</dd></div>
         <div><dt>Reference</dt><dd>{r.reference}</dd></div>
         <div><dt>Status</dt><dd>{st === 'active' ? 'Active' : ended ? 'Closed' : st === 'pending_password' ? 'Waiting for your password' : `Waiting for your ${rel}`}</dd></div>
         {r.expiresAt && !ended && st === 'pending_guardian_approval' ? <div><dt>Their link works until</dt><dd>{fmtDate(r.expiresAt)}</dd></div> : null}
@@ -516,6 +542,33 @@ function Sent({ r, status, onRestart, cardRef }) {
       <p className="tiny muted" role="status" aria-live="polite">{rs.msg}</p>
       <p className="tiny muted">Tip: let them know the email comes from MyFrequentRewards. Wrong email? <Link to="/contact-us">Contact us</Link>.</p>
       {ended ? <p className="tiny muted"><button type="button" className="sx-link" onClick={onRestart}>Start a new registration</button></p> : null}
+    </div>
+  );
+}
+
+// This tab no longer has the receipt (for example the page was opened fresh, or the track link has lapsed). Instead of
+// a dead end, the teen can ask for their links again by email.
+function SentNoReceipt({ onRestart, cardRef }) {
+  const [mail, setMail] = useState('');
+  const [rs, setRs] = useState({ state: 'idle', msg: '' });
+  const ok = R.validEmail(mail);
+  const send = async (e) => {
+    e.preventDefault();
+    if (!ok || rs.state === 'busy') return;
+    setRs({ state: 'busy', msg: '' });
+    try { await teenApi.renew(R.normEmail(mail)); setRs({ state: 'done', msg: 'If there is a registration for this email, we’ve sent its links again. Check your inbox and spam folder.' }); }
+    catch (ex) { setRs({ state: 'error', msg: err(ex.code) || err('server') }); }
+  };
+  return (
+    <div className="sx-done" role="status" ref={cardRef}>
+      <h2>Your registration was sent</h2>
+      <p>Open the “Track my registration” link in your email to see where things are. No email? Type your address and we’ll send your links again.</p>
+      <form className="done-actions" onSubmit={send} noValidate>
+        <input type="email" className="sx-auto-mail" aria-label="Your email address" placeholder="you@example.com" autoComplete="email" value={mail} onChange={(e) => setMail(e.target.value.trim())} />
+        <button type="submit" className="btn btn-primary" disabled={!ok || rs.state === 'busy'}>{rs.state === 'busy' ? 'Sending…' : 'Send my links again'}</button>
+        <button type="button" className="btn btn-ghost-dark" onClick={onRestart}>Start again</button>
+      </form>
+      <p className="tiny muted" role="status" aria-live="polite">{rs.msg}</p>
     </div>
   );
 }

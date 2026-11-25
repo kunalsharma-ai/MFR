@@ -8,6 +8,8 @@ import Icon from "../icons.jsx";
 import { t } from "../strings";
 import { LoadingBlock, ErrorState, Ring, Reveal } from "../ui.jsx";
 import { fmt } from "../data";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/util";
 import { E, useEngage, useEngageConfig, useEngageMutation, usePreferences, useSavePreferences, send } from "./data";
 import { play } from "../sound";
 import "./engage.css";
@@ -71,6 +73,46 @@ async function pushUnsubscribe() {
   const reg = await navigator.serviceWorker?.getRegistration?.("/member/");
   const sub = await reg?.pushManager?.getSubscription();
   if (sub) { await send("post", "/push/unsubscribe", { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); }
+}
+
+/* ---------------- terms the member accepted (sign-up box, member terms, Teen terms and parental consent) ---------------- */
+// Read from the server, never from this browser: Settings once showed this section empty / "not checked" after the
+// terms had been accepted, because nothing read the acceptance back.
+export function TermsStatus({ teen }) {
+  const q = useQuery({
+    queryKey: ["me", "terms"],
+    queryFn: async () => { const r = await api.get("/api/v1/me/terms"); if (!r || r.status === "error") throw new Error(r?.message || "terms"); return r.data; },
+    staleTime: 60_000,
+  });
+  if (q.isLoading) return <LoadingBlock lines={2} h={96} />;
+  if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
+  const items = q.data?.items || [];
+  if (!items.length) return <p className="h-sub">{t("tm.none")}</p>;
+  const missingRequired = !teen && items.some((i) => i.kind === "member" && i.required && !i.accepted);
+  return (
+    <div className="eg-set eg-terms">
+      <ul className="eg-terms-list">
+        {items.map((i) => (
+          <li key={i.id} className={i.accepted ? "on" : ""}>
+            <span className="eg-terms-ic" aria-hidden="true"><Icon name={i.accepted ? "check" : "shield"} size={16} /></span>
+            <span className="eg-terms-txt">
+              <b>{i.title}</b>
+              {i.kind === "member" ? <small>{i.required ? t("tm.required") : t("tm.optional")}</small> : null}
+              {i.statements?.length ? (
+                <ul className="eg-terms-sub">
+                  {i.statements.map((s) => <li key={s.id} className={s.accepted ? "on" : ""}><Icon name={s.accepted ? "check" : "close"} size={12} /> {s.text}</li>)}
+                </ul>
+              ) : null}
+            </span>
+            <span className={`eg-pill ${i.accepted ? "ok" : "warn"}`}>{i.accepted ? (i.at ? t("tm.acceptedOn", { date: when(i.at) }) : t("tm.accepted")) : t("tm.notYet")}</span>
+            {i.href ? <a href={i.href} target="_blank" rel="noopener" className="h-btn h-btn-soft eg-terms-read">{t("tm.read")}</a> : null}
+          </li>
+        ))}
+      </ul>
+      {q.data?.reference ? <p className="st-foot">{t("tm.reference", { ref: q.data.reference })}</p> : null}
+      {missingRequired ? <Link href="/auth/terms" className="h-btn h-btn-primary">{t("tm.review")}</Link> : null}
+    </div>
+  );
 }
 
 /* ---------------- marketing e-mail consent ("Send me news and offers") ---------------- */

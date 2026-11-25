@@ -6,10 +6,6 @@ import {
   User as userController
 } from "../../controller/index.js";
 
-async function getSocialChannels() {
-
-  return resp;
-}
 const router = express.Router();
 router
   .route(["/socials", "/social"])
@@ -41,7 +37,8 @@ router
           redirect: `/?signup=1&${searchParams.toString()}`
         };
       }
-      if (user?.isVerified?.email === "unverified") return { message: 'your email is not verified', data: user, redirect: `/?verifyemail=${user.mail}` }
+      // not verified yet: back to the site's "verify your email" prompt, with no session and nothing about the account
+      if (user?.isVerified?.email === "unverified") return { redirect: `/?verifyemail=${encodeURIComponent(user.mail)}` }
       token = Token.generate({
         _id: user._id,
         category: user.category,
@@ -51,7 +48,10 @@ router
         origin: user.origin,
         role: user.role ?? ""
       })
-      return { message: "", data: ["a"], token, redirect: "/member/dashboard" }
+      // No `redirect` here: expressRoute sets the login cookie for a token and then sends the member to
+      // /member/dashboard itself. A redirect returned with the token skipped the cookie, so a social sign-in
+      // landed on the dashboard logged out and bounced back to the home page.
+      return { message: "", data: [], token }
     },
       userController
     )
@@ -70,7 +70,6 @@ router
         )
 
         let resp = await api.get(temp.pathname.replace(/^\//, ""));
-        console.log(resp);
         return res.json({
           status: "success",
           data: resp?.data?.data?.providers

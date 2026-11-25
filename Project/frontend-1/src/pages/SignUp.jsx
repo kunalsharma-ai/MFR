@@ -351,8 +351,10 @@ function SignUp() {
       });
       rememberNotify(res.data?.user ?? res.data, v.notify);
       setSentTo(v.email.trim().toLowerCase());
-      setCooldown(RESEND_WAIT);
-      setResendMsg("");
+      // the account exists, but the email service refused the email: say so and let them resend straight away
+      const notSent = res.data?.emailSent === false;
+      setCooldown(notSent ? 0 : RESEND_WAIT);
+      setResendMsg(notSent ? "We couldn’t send the email just now. Press Resend email to try again." : "");
       setStatus("sent");
       setModalOpen(true);
     } catch (ex) {

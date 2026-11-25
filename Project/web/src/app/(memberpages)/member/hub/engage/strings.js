@@ -351,4 +351,16 @@ export const engage = {
   "ac.payout": "Payout details",
   "ac.noPayout": "You add your UPI ID or PayPal email when you redeem a reward. We keep it with that request only.",
   "ac.lastUsed": "last used {d}",
+  // settings: terms you accepted (GET /api/v1/me/terms)
+  "tm.title": "Terms you accepted",
+  "tm.hint": "What you agreed to, and when. Open a document to read it again.",
+  "tm.accepted": "Accepted",
+  "tm.acceptedOn": "Accepted {date}",
+  "tm.notYet": "Not accepted yet",
+  "tm.required": "Required",
+  "tm.optional": "Optional",
+  "tm.read": "Read",
+  "tm.review": "Review the member terms",
+  "tm.none": "No terms are recorded for this account yet.",
+  "tm.reference": "Registration reference {ref}",
 };

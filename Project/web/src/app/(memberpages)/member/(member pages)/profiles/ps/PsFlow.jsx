@@ -153,7 +153,7 @@ function QuestionCard({ it, value, form, err, pos, total, secLabel, dir, onAnswe
         {!def.required && <span className="q-opt">{t("q.optional")}</span>}
       </div>
       <h2 className="q-title" id="q-title" aria-live="polite">
-        <img className="q-emoji" src={emojiUrl(questionIcon(def.label, def.name, opts ? opts.map((o) => [o.label, o.value]) : null))} alt="" aria-hidden="true" width="44" height="44" decoding="async" />
+        <img className="q-emoji" src={emojiUrl(questionIcon(def.label, def.name, opts ? opts.map((o) => [o.label, o.value]) : null))} alt="" aria-hidden="true" width="44" height="44" decoding="async" onError={(e) => { const i = e.currentTarget; if (!i.dataset.fb) { i.dataset.fb = "1"; i.src = emojiUrl("sparkles"); } else i.style.visibility = "hidden"; }} />
         <span>{def.label}</span>
       </h2>
       {hint && <p className="q-hint">{hint}</p>}

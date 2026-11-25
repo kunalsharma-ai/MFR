@@ -41,8 +41,6 @@ async function basicsGate(req, slug) {
     }
 }
 
-const QUALITY_MAX = 200; // same cap as model/User.js
-const QUALITY_STEP_MAX = 5; // most profiles a member can complete in one save
 Date.prototype.resetTime = function (type = "start") {
     if (type === "end") {
         this.setHours(23);
@@ -56,6 +54,8 @@ Date.prototype.resetTime = function (type = "start") {
 }
 import { Redemption, User, AdminSession } from "../../model/index.js";
 import mongoose from "mongoose";
+import { termsFor } from "../../member/terms.js";
+import { settleProfiles, DEFAULT_PROFILE_POINTS } from "../../member/profileCredit.js";
 import * as Marketing from "../../engagement/marketing.js";
 async function redeemedPoints(user, origin) {
     const r = await Redemption.aggregate([
@@ -144,15 +144,8 @@ router
             // Only the member's own preference fields (the same list as PUT /api/v1/user/:id). Role, category,
             // verification flags, status, email, password and Teen/guardian data can never be set from here.
             const body = omit(pick(req.body || {}, SELF_EDITABLE), []);
-            // The quality score is still worked out in the browser (profiles page). Until it moves to the server,
-            // accept it only as a small step up from the stored value, never down and never above the cap.
-            if (req.body && Object.prototype.hasOwnProperty.call(req.body, "qualityScore")) {
-                const current = Number((await userController.read(req.user._id))?.qualityScore) || 0;
-                const wanted = Math.round(Number(req.body.qualityScore));
-                if (Number.isFinite(wanted) && wanted > current && wanted - current <= QUALITY_STEP_MAX) {
-                    body.qualityScore = Math.min(wanted, QUALITY_MAX);
-                }
-            }
+            // The Quality Score is no longer sent by the browser: completed profiles and surveys raise it on the server,
+            // once each (member/profileCredit.js, POST /me/quality/settle). A qualityScore in the body is ignored.
             if (!Object.keys(body).length) throw new Error("Nothing to update.");
             // the consent kit's "marketing" id is the marketing e-mail opt-in: keep User.marketingOptIn in step
             let termsBefore = null;
@@ -160,6 +153,7 @@ router
                 const cur = await User.findOne({ _id: req.user._id, origin: req.origin }).select("terms category").lean();
                 termsBefore = cur?.terms || [];
                 body.terms = Marketing.stripForTeen(cur, body.terms);
+                body["termsAcceptance.acceptedAt"] = body.terms.length ? new Date() : null; // Settings > Terms shows the date
             }
             await userController.update(req.user._id, body);
             if (termsBefore) await Marketing.syncFromTerms(req.user._id, req.origin, termsBefore, body.terms);
@@ -174,11 +168,27 @@ router
         return res.json({})
     })
 router
+    // Quality Score for completed profiles and surveys: worked out and saved here, once per item (member/profileCredit.js)
+    .post("/quality/settle", expressRoute(
+        async req => {
+            const r = await settleProfiles(req, { force: true });
+            const u = await User.findOne({ _id: req.user._id, origin: req.origin }).select("qualityScore").lean();
+            return { message: "", data: { added: r.quality, paid: r.paid, qualityScore: u?.qualityScore ?? null } };
+        },
+        userController
+    ))
+    // Settings > Terms: what this member agreed to, and when (member/terms.js)
+    .get("/terms", expressRoute(
+        async req => ({ message: "", data: await termsFor(req.user._id, req.origin) }),
+        userController
+    ))
     .get("/points",
         expressRoute(
             async req => {
                 let message = "";
                 let data = []
+                // completed profiles are paid (and add their Quality Score point) here, on the server
+                await settleProfiles(req);
                 responseController.request = req;
                 rewardController.request = req;
                 let respPoints = await responseController.getPoints();
@@ -186,13 +196,20 @@ router
                 let earned = await rewardController.total();
                 // points spent on rewards (Redemption, Nov 2026); 0 for everyone until redemptions open
                 const redeemed = await redeemedPoints(req.user._id, req.origin);
+                // the profile payments the database holds: the Profiles page's prize machine counts these instead of
+                // working the points out in the browser (it showed 390 points while the balance was 0)
+                const own = await rewardController.mine();
+                const profileRewards = own.filter((r) => r.category === "profile").map((r) => ({ profile: String(r.key || "").replace(/^profile:/, ""), points: Number(r.points) || 0 }));
                 data = {
                     respPoints,
                     rewardPoints: earned - respPoints,
                     redeemPoints: redeemed,
                     totalPoints: earned - redeemed,
                     threshold: 15000,
-                    conversionRate: 0.001
+                    conversionRate: 0.001,
+                    profileRewards,
+                    profilePoints: profileRewards.reduce((n, r) => n + r.points, 0),
+                    pointsPerProfile: DEFAULT_PROFILE_POINTS,
                 }
                 return { message, data }
             },

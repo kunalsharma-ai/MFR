@@ -103,28 +103,17 @@ export function creditProfileRewards(user, profiles) {
 export const creditCardRewards = (user, cards) => payOnce(user, cards);
 
 // ---- Quality Score: +1 for every item (a completed profile, a completed survey), once per item ---------------------------------------------
-// The items already counted are kept in the database as the answer "quality-credited" (PATCH /api/v1/me/answer), so nothing is counted
-// twice (not on another device, not after a reload). The new score is written with PUT /api/v1/me. keys: "basic", "survey:<slug>", ...
+// Worked out on the server now (POST /api/v1/me/quality/settle, api/app/member/profileCredit.js): it checks what is really complete and
+// raises the score in one atomic step per item, so two screens asking at the same time can never add 2 for one profile (QA BUG-07).
+// `keys` is kept for the callers; the server decides the items itself. Resolves to the number of points added.
 let qualityChain = Promise.resolve();
-export function creditQualityScore(user, keys) {
+export function creditQualityScore(user) {
   const run = async () => {
-    const want = [...new Set((keys || []).filter(Boolean))];
-    if (!user?._id || !want.length) return 0;
+    if (!user?._id) return 0;
     try {
-      const me = await api
-        .post("/api/v1/me", { questions: ["quality-credited"] })
-        .then((r) => r?.data);
-      if (!me) return 0;
-      const counted = [].concat(me["quality-credited"] ?? []).filter(Boolean);
-      const add = want.filter((k) => !counted.includes(k));
-      if (!add.length) return 0;
-      const score = Math.min(200, (Number(me.qualityScore) || 0) + add.length);
-      const saved = await api.put("/api/v1/me", { qualityScore: score });
-      if (saved?.status === "error") return 0;
-      await api.patch("/api/v1/me/answer", {
-        "quality-credited": [...counted, ...add],
-      });
-      return add.length;
+      const r = await api.post("/api/v1/me/quality/settle", {});
+      if (!r || r.status === "error") return 0;
+      return Number(r.data?.added) || 0;
     } catch (e) {
       console.log(e);
       return 0;

@@ -41,6 +41,8 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
     }],
     notification,
     marketingOptIn: v.marketing === true,
+    // the required "I agree to the Terms of Use and Privacy Policy" box; the server dates it (Settings > Terms)
+    termsAccepted: v.agreeTerms === true,
   };
  
   // the member who shared their referral link (User.referredBy); left out when the visitor did not come from one

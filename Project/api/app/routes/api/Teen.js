@@ -4,6 +4,7 @@
 //  POST /age-check                 {dob}                       | 60 / 10 min / IP
 //  POST /register                  steps 1-3 in one submit     | 10 / hour / IP
 //  GET  /status/:token             the teen's status page      | 60 / 10 min
+//  POST /verify-email/:token       the teen confirms their email (link in their first email) | 30 / 10 min
 //  POST /resend                    {statusToken} | {mail}      | 10 / hour
 //  POST /renew                     {mail} expired/lost links   | 10 / hour
 //  parent or guardian (the secure link from their email)
@@ -85,6 +86,7 @@ router
     .post("/age-check", limit(60, 10), handle(async (req) => S.ageCheck(req.body?.dob)))
     .post("/register", limit(10, 60), handle(S.register))
     .get("/status/:token", limit(60, 10), noReferrer, handle(S.statusView))
+    .post("/verify-email/:token", limit(30, 10), noReferrer, handle(S.verifyEmail))
     .post("/resend", limit(10, 60), handle(S.resendInvite))
     .post("/renew", limit(10, 60), handle(S.renew))
     .get("/guardian/:token", limit(60, 10), noReferrer, handle(S.guardianView))
