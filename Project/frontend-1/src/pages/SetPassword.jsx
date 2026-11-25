@@ -34,6 +34,7 @@ import { teenApi, relationLabel } from "../teen/api.js";
 import { useLinkToken, forgetLinkToken } from "../teen/link.js";
 import { DemoMailbox } from "../teen/shell.jsx";
 import AutoSignIn from "../components/AutoSignIn.jsx";
+import { fetchSession, logoutMember } from "../utils/session.js";
 import { DEMO_MODE } from "../data/site.js";
 
 const page = PAGES.setPassword;
@@ -81,6 +82,7 @@ function MemberSetPassword() {
   const [memberType, setMemberType] = useState("consumer");
   const [firstName, setFirstName] = useState("");
   const [mail, setMail] = useState(""); // remembered at sign-up on this device, used to log in straight after
+  const [emailVerified, setEmailVerified] = useState(false);
   const [channels, setChannels] = useState([]);
   const [v, setV] = useState({
     empstat: "",
@@ -139,6 +141,14 @@ function MemberSetPassword() {
           setReason(ex.message || "This link is no longer valid.");
           setPhase("invalid");
         }
+        return;
+      }
+      // Someone else is still logged in on this browser (the QA check saw another member's name in the header while
+      // a new account was being set up): log that session out first, so the header and the auto log-in are this member's.
+      const current = await fetchSession({ force: true });
+      if (live && current && current._id && String(current._id) !== String(userId)) {
+        await logoutMember();
+        window.location.reload();
         return;
       }
       const saved = recallSignup(userId);
@@ -288,12 +298,14 @@ function MemberSetPassword() {
     setPhase("saving");
     setServerMsg("");
     try {
-      await patchJSON(USER_API, {
+      const saved = await patchJSON(USER_API, {
         userID: userId,
         emailOTP: code,
         password: v.password,
         confirmPassword: v.confirm,
       });
+      // the server reads the account back after saving: the page says "confirmed" only when it really is
+      setEmailVerified(saved?.data?.emailVerified !== false);
       // only the notification channels chosen at sign-up wait for the first log in; the profile questions are asked then
       savePendingProfile(userId, buildProfileAnswers(memberType, {}, channels));
       forgetNotify(userId);
@@ -331,12 +343,19 @@ function MemberSetPassword() {
         <div className="container sx-row">
           <aside className="sx-aside">
             <p className="eyebrow eyebrow-light">
-              Email confirmed · almost done
+              {phase === "checking"
+                ? "Checking your link…"
+                : phase === "invalid"
+                  ? "This link needs a fresh copy"
+                  : phase === "done"
+                    ? emailVerified ? "Email confirmed · password saved" : "Password saved"
+                    : "Link checked · one step left"}
             </p>
-            <h1>{page.h1}</h1>
+            <h1>{phase === "done" ? "You’re all set" : page.h1}</h1>
             <p className="muted-light">
-              One quick step left. Choose a password and we open your
-              dashboard for you.
+              {phase === "done"
+                ? "Next you read and accept the member terms. Then your dashboard opens."
+                : "Choose a password. Saving it confirms your email, then you accept the member terms and your dashboard opens."}
             </p>
             <div className="sx-stage" aria-hidden="true">
               <div className={`sx-badge s${inWizard ? step : 4}`}>
@@ -851,10 +870,16 @@ function MemberSetPassword() {
                 </div>
                 <h2>You’re in{firstName ? `, ${firstName}` : ""}! 🎉</h2>
                 <p>
-                  Your password is saved and your email is verified. We are
-                  logging you in now.
+                  {emailVerified
+                    ? "Your password is saved and your email is confirmed."
+                    : "Your password is saved."}{" "}
+                  Next, read and accept the member terms. Then your
+                  dashboard opens.
                 </p>
                 <ol className="sx-next">
+                  <li>
+                    <Icon name="shield" size={18} /> Accept the member terms
+                  </li>
                   <li>
                     <Icon name="layers" size={18} /> Complete profile surveys
                   </li>
@@ -862,7 +887,7 @@ function MemberSetPassword() {
                     <Icon name="gift" size={18} /> Start earning rewards
                   </li>
                 </ol>
-                <AutoSignIn mail={mail} password={v.password} />
+                <AutoSignIn mail={mail} password={v.password} nextLabel="Continue to Terms" busyLabel="Signing you in…" />
               </div>
             ) : null}
           </div>

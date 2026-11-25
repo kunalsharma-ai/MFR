@@ -20,6 +20,8 @@ export default mongooseModel(
             min: [0, "Minimum score should not go below zero"],
             max: [200, "Quality score cannot exceed 200"]
         },
+        // the items (completed profiles, surveys) that already added their +1 to the score (member/profileCredit.js)
+        qualityCredited: { type: [String], default: undefined, select: false },
         category: {
             type: String,
             required: [true, "Please select your category"],
@@ -215,6 +217,12 @@ export default mongooseModel(
             required: true,
         },
         terms: [{ type: String }],
+        // when the terms were accepted: the box on the sign-up form, and the member terms on the consent page
+        termsAcceptance: {
+            signupAt: Date,
+            signupVersion: String,
+            acceptedAt: Date,
+        },
         socials: [
             {
                 channel: { type: String, required: true },

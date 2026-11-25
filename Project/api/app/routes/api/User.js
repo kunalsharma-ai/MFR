@@ -28,6 +28,8 @@ import {
     expressRoute,
     getMailer,
     sendMail,
+    mailOk,
+    fsLogger,
     Token
 } from "../../utils/index.js"
 import { requireAdmin, requireMember, selfOrAdmin, SELF_EDITABLE, ADMIN_BLOCKED, pick, omit, safeFilter } from "../../utils/access.js";
@@ -102,6 +104,8 @@ router
             if (age === "teen") throw new Error("You are under 18, so you can join through the Teen registration with your parent or guardian's permission.");
             if (age !== "adult") throw new Error("Please enter a valid date of birth.");
             if (String(userInfo.category || "").toLowerCase().includes("minor")) throw new Error("Please choose Consumer or Professional.");
+            // the "I agree to the Terms of Use and Privacy Policy" box on the sign-up form (dated here, never by the browser)
+            if (req.body?.termsAccepted === true) userInfo.termsAcceptance = { signupAt: new Date(), signupVersion: String(req.body.termsVersion || "").slice(0, 40) };
             let message = "";
             let data = await userController.create(userInfo);
             // "Send me news and offers": recorded only when the form sent a real true/false (unticked by default)
@@ -126,11 +130,14 @@ router
             const emailStatus = await sendMail(
                 { origin: req.origin, "content-type": "application/json" },
                 data.mail,
-                "Turn 2 Opinion: Registration",
+                "My Frequent Rewards: Registration",
                 mailer.data
-            )
-            // only the new member's id: the emailed code never goes back to the browser
-            return { message, data: { user: data._id } };
+            ).catch((e) => ({ status: 0, data: { error: e.message } }))
+            const emailSent = mailOk(emailStatus, mailer);
+            if (!emailSent) fsLogger.Log("registration email not sent", { user: String(data._id), origin: req.origin, status: emailStatus?.status });
+            // only the new member's id: the emailed code never goes back to the browser. emailSent lets the page say
+            // "we couldn't send it, press Resend" instead of "check your inbox" when the email service refused it.
+            return { message, data: { user: data._id, emailSent } };
         },
         userController
     ))
@@ -144,7 +151,9 @@ router
             if (!status) throw new Error("Something went wrong. Please contact support for more details");
             await otp.remove();
             Emails.welcome(req.body.userID, req.origin); // off unless config.emails.welcome
-            return { message, data: [] };
+            // read back, so the page says "email confirmed" only when the account really says so
+            const after = await userController.read(req.body.userID).catch(() => null);
+            return { message, data: { emailVerified: after?.isVerified?.email === "verified" } };
         },
         userController
     ))
@@ -254,14 +263,13 @@ router
                     otp
                 }
             )
-            console.log({
-                emailStatus: await sendMail(
-                    { origin: req.origin, "content-type": "application/json" },
-                    data.mail,
-                    "My Frequent Rewards: Registration",
-                    mailer.data
-                )
-            })
+            const r = await sendMail(
+                { origin: req.origin, "content-type": "application/json" },
+                data.mail,
+                "My Frequent Rewards: Registration",
+                mailer.data
+            ).catch((e) => ({ status: 0, data: { error: e.message } }));
+            if (!mailOk(r, mailer)) fsLogger.Log("registration email (resend) not sent", { user: String(data._id), origin: req.origin, status: r?.status });
 
             return { message, data: [] };
         },
@@ -319,6 +327,8 @@ router
                 ? omit(req.body || {}, [...ADMIN_BLOCKED, "registrationStatus", "parent"])
                 : omit(pick(req.body || {}, SELF_EDITABLE), []);
             if (!Object.keys(body).length) throw new Error("Nothing to update.");
+            // the consent page saves the accepted term names; the date is added here so Settings can show it
+            if (Array.isArray(body.terms)) body["termsAcceptance.acceptedAt"] = body.terms.length ? new Date() : null;
             let data = await userController.update(req.params.id, body)
             return { message, data: req.isAdmin ? data : { _id: req.params.id } };
         },

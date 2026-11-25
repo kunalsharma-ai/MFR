@@ -11,7 +11,9 @@ const DASHBOARD = "/member/dashboard";
 // POST /api/v1/user/login the login page uses) and sent to the dashboard. The member portal then shows
 // the consent step for their member type, if it is still open. If the email is not known on this device
 // (the link was opened elsewhere), it is asked once; if the login fails, the normal "Log in" button stays.
-export default function AutoSignIn({ mail, password, loginHref = "/login" }) {
+// nextLabel / busyLabel: what the button and the wait say. A new Consumer or Professional member goes to the member
+// terms first (the portal sends them there), so the set-password page says "Continue to Terms", not "Open my dashboard".
+export default function AutoSignIn({ mail, password, loginHref = "/login", nextLabel = "Open my dashboard", busyLabel = "Opening your dashboard…" }) {
   const [state, setState] = useState(mail ? "signing" : "ask"); // signing | ask | failed | demo
   const [email, setEmail] = useState(mail || "");
   const [msg, setMsg] = useState("");
@@ -39,7 +41,7 @@ export default function AutoSignIn({ mail, password, loginHref = "/login" }) {
   if (state === "signing") {
     return (
       <div className="done-actions" role="status" aria-live="polite">
-        <span className="btn btn-primary btn-lg" aria-busy="true">Opening your dashboard…</span>
+        <span className="btn btn-primary btn-lg" aria-busy="true">{busyLabel}</span>
       </div>
     );
   }
@@ -50,9 +52,9 @@ export default function AutoSignIn({ mail, password, loginHref = "/login" }) {
     const ok = EMAIL_RE.test(email.trim());
     return (
       <form className="done-actions" onSubmit={(e) => { e.preventDefault(); if (ok) run(email); }} noValidate>
-        <label className="tiny muted" htmlFor="auto-mail">Confirm the email you joined with to open your dashboard.</label>
+        <label className="tiny muted" htmlFor="auto-mail">Confirm the email you joined with to continue.</label>
         <input id="auto-mail" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="sx-auto-mail" />
-        <button type="submit" className="btn btn-primary btn-lg" disabled={!ok}>Open my dashboard <Icon name="arrow" size={18} /></button>
+        <button type="submit" className="btn btn-primary btn-lg" disabled={!ok}>{nextLabel} <Icon name="arrow" size={18} /></button>
       </form>
     );
   }

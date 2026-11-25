@@ -126,16 +126,21 @@ export function useHub() {
     const level = type === "teen" && tl
       ? { ...lv0, n: num(tl.level, lv0.n), name: tl.name, pct: clamp(num(tl.pct), 0, 100), left: tl.next?.left ?? null, nextName: tl.next?.name || null, server: true }
       : lv0;
-    // Balance: the engagement ledger (cleared − spent, the figure redemptions are checked against) when it is
-    // switched on, else GET /me/points. Waiting for the summary avoids showing one number and then another.
+    // Balance: the engagement ledger when it is switched on, else GET /me/points. Waiting for the summary avoids
+    // showing one number and then another. The header, sidebar and Profiles page show the member's points
+    // (earned − spent, without points an admin put on hold), so points still waiting out a points-hold period count
+    // too: showing only "available" left the header at 0 right after a profile paid +50 (QA BUG-06). What can be
+    // spent stays `available`, and the server checks redemptions against it.
     const p = points.data;
     const sumReady = !summary.isLoading;
     let total = p ? p.total : null;
+    let available = total;
     if (bal && Number.isFinite(Number(bal.available))) {
-      if (p && Number(bal.available) !== p.total && typeof console !== "undefined") console.warn("[hub] points differ: /me/points", p.total, "ledger available", bal.available);
-      total = Number(bal.available);
+      available = Number(bal.available);
+      total = Math.max(0, (Number(bal.cleared) || 0) + (Number(bal.pending) || 0) - (Number(bal.spent) || 0));
+      if (p && total !== p.total && typeof console !== "undefined") console.warn("[hub] points differ: /me/points", p.total, "ledger", total);
     }
-    const pts = p && sumReady ? { total: Math.max(0, total), threshold: p.threshold > 0 ? p.threshold : 15000, rate: p.rate, legacy: p.total } : null;
+    const pts = p && sumReady ? { total: Math.max(0, total), available: Math.max(0, available ?? total), pending: Number(bal?.pending) || 0, threshold: p.threshold > 0 ? p.threshold : 15000, rate: p.rate, legacy: p.total } : null;
     const quality = qualityFrom(member, eq.data);
     const completion = profiles.data ? completionOf(member, type, profiles.data) : null;
     const open = opps.data ? opps.data.internal.all + opps.data.external.all : null;

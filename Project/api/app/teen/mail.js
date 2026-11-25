@@ -6,7 +6,7 @@
 // TEEN_MAIL_OUTBOX=/some/dir (development/testing only) writes the email data there as JSON instead of sending.
 import fs from "fs";
 import path from "path";
-import { getMailer, sendMail, fsLogger } from "../utils/index.js";
+import { getMailer, sendMail, fsLogger, mailOk } from "../utils/index.js";
 
 export const SUBJECTS = {
     "teen-registered": "You're in the queue! Your parent or guardian has your invite",
@@ -49,7 +49,8 @@ export async function send(reg, template, to, address, data, origin) {
         } else {
             const mailer = await getMailer("teen", template, payload);
             const r = await sendMail({ origin, "content-type": "application/json" }, address, subject, mailer.data);
-            ok = !(r && r.status === "error");
+            ok = mailOk(r, mailer);
+            if (!ok) fsLogger.Log("teen mail not sent", { template, reference: reg.reference, status: r?.status, answer: r?.data?.message || r?.data?.error });
         }
     } catch (e) {
         fsLogger.Log("teen mail failed", { template, reference: reg.reference, error: e.message });

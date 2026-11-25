@@ -1,1 +1,10 @@
+# Kept out of the image context: installed and built in the image, or not needed to build it.
+# .env files stay IN the context: the build reads its VITE_ / NEXT_PUBLIC_ settings from them.
+node_modules
+.next
+out
+*.log
+.git
+.vscode
 Dockerfile
+.dockerignore

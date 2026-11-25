@@ -8,6 +8,7 @@ export const TTL = {
     guardian: 7 * 24 * 3600 * 1000,   // the parent's YES/NO + onboarding + consent link
     password: 72 * 3600 * 1000,       // the teen's create-password link
     status: 60 * 24 * 3600 * 1000,    // the teen's "where is my registration" link
+    verify: 60 * 24 * 3600 * 1000,    // the "confirm my email" part of the teen's first email
 };
 const hash = (t) => crypto.createHash("sha256").update(String(t)).digest("hex");
 const looksLikeToken = (t) => /^[A-Za-z0-9_-]{40,64}$/.test(String(t || ""));

@@ -21,6 +21,15 @@ const Ico = ({ name, size = 30 }) => {
         <Flag cc={name.slice(5).toLowerCase()} size={Math.round(size * 0.6)} />
       </span>
     );
+  // Number answers ("1", "2-3", "4-5") get a keycap emoji, and the keycap images were never in the emoji set: those
+  // options showed a broken image (QA BUG-09, Travel & Tourism question 1). They now show the digit itself.
+  const key = typeof name === "string" ? KEYCAP.exec(name) : null;
+  if (key)
+    return (
+      <span className="opt-ico opt-num" aria-hidden="true">
+        <b>{key[1]}</b>
+      </span>
+    );
   return (
     <span className="opt-ico" aria-hidden="true">
       <img
@@ -31,10 +40,24 @@ const Ico = ({ name, size = 30 }) => {
         loading="lazy"
         decoding="async"
         draggable="false"
+        onError={iconFallback}
       />
     </span>
   );
 };
+const KEYCAP = /^([0-9#*])\uFE0F?\u20E3$/u;
+// Any other picture that cannot be loaded: try the neutral sparkle, and if that fails too, hide the bubble (never a
+// broken-image icon).
+function iconFallback(e) {
+  const img = e.currentTarget;
+  if (!img.dataset.fb) {
+    img.dataset.fb = "1";
+    img.src = answerIconUrl("sparkles");
+    return;
+  }
+  const bubble = img.closest(".opt-ico");
+  if (bubble) bubble.style.display = "none";
+}
 /* Click ripple from the exact point that was pressed (one listener for all answer controls). */
 if (typeof document !== "undefined" && !window.__mfrRipple) {
   window.__mfrRipple = true;

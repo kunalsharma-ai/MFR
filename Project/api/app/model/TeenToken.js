@@ -3,12 +3,12 @@ import { mongooseModel } from "../utils/index.js";
 
 // Secure links for the Teen registration. Only a SHA-256 hash of the token is stored: the link itself exists only in
 // the email. purpose: guardian (YES/NO + onboarding + consent), password (teen sets a password), status (the teen's
-// own "where is my registration" view).
+// own "where is my registration" view), verify (the link in the teen's first email: opening it confirms their email).
 export default mongooseModel(
     "TeenToken",
     {
         hash: { type: String, required: true },
-        purpose: { type: String, enum: ["guardian", "password", "status"], required: true },
+        purpose: { type: String, enum: ["guardian", "password", "status", "verify"], required: true },
         registration: { type: mongoose.Schema.Types.ObjectId, ref: "TeenRegistration", required: true },
         expiresAt: { type: Date, required: true },
         usedAt: Date,

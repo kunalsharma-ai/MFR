@@ -49,6 +49,7 @@ export const teenApi = {
   ageCheck: (dob) => http('POST', '/age-check', { dob }),
   register: (body) => http('POST', '/register', body),
   status: (token) => http('GET', `/status/${encodeURIComponent(token)}`),
+  verifyEmail: (token) => http('POST', `/verify-email/${encodeURIComponent(token)}`, {}),
   resend: (body) => http('POST', '/resend', body),
   renew: (mail) => http('POST', '/renew', { mail }),
   guardian: (token) => http('GET', `/guardian/${encodeURIComponent(token)}`),

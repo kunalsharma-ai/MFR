@@ -240,14 +240,22 @@ export async function register(req) {
         fail("mail_failed", { status: 503 });
     }
     move(reg, STATUS.PENDING_APPROVAL, "system", "invitation sent");
-    await M.send(reg, "teen-registered", "teen", mail, {
-        teen: { firstName: user.name.first },
-        guardian: { relation: guardian.relation, relationLabel: relationLabel(guardian.relation), emailMasked: R.maskEmail(gMail) },
-        links: { status: M.linkTo(origin, "/sign-up?type=teen", status.token), help: M.linkTo(origin, "/contact-us") },
-        expires: invite.expiresAt.toISOString(),
-    }, origin);
+    // The "Track my registration" link also carries a one-use verify token: opening it from the teen's inbox is what
+    // marks their email as verified. The status token alone (which the browser also gets back) never does.
+    await sendTrackEmail(reg, user, { relation: guardian.relation, email: gMail }, status, invite.expiresAt, origin);
     await reg.save();
     return summary(reg, g, { statusToken: status.token });
+}
+
+// The teen's own "Track my registration" email. Its link carries a one-use verify token as well as the status token.
+async function sendTrackEmail(reg, user, guardian, status, expiresAt, origin) {
+    const verify = await T.issue(reg._id, "verify", origin);
+    return M.send(reg, "teen-registered", "teen", user.mail, {
+        teen: { firstName: user.name.first },
+        guardian: { relation: guardian.relation, relationLabel: relationLabel(guardian.relation), emailMasked: R.maskEmail(guardian.email) },
+        links: { status: M.linkTo(origin, `/sign-up?type=teen&v=${encodeURIComponent(verify.token)}`, status.token), help: M.linkTo(origin, "/contact-us") },
+        expires: new Date(expiresAt).toISOString(),
+    }, origin);
 }
 
 // A repeat of a submit that is still being processed: wait (up to ~3 s) until the first one has sent the invite,
@@ -282,6 +290,20 @@ function summary(reg, g, extra = {}) {
     };
 }
 
+// ---- the teen confirms their email (the link in their first email) ---------------------------------------------------
+export async function verifyEmail(req) {
+    const r = await T.check(req.params.token, "verify", req.origin);
+    if (!r.ok) {
+        // a second click on the same link is fine: the email is already confirmed
+        if (r.reason === "used") return { verified: true };
+        fail(`link_${r.reason}`, { status: r.reason === "invalid" ? 404 : 410 });
+    }
+    const reg = await loadReg(r.doc.registration);
+    if (!(await T.consume(r.doc))) return { verified: true };
+    await User.updateOne({ _id: reg.teen, "isVerified.email": { $ne: "verified" } }, { $set: { "isVerified.email": "verified" } });
+    return { verified: true };
+}
+
 // ---- the teen's status view (step 4 and the "where is my registration" link) ----------------------------------------
 export async function statusView(req) {
     const { reg } = await viaToken(req.params.token, "status", req.origin);
@@ -291,6 +313,7 @@ export async function statusView(req) {
         reference: reg.reference,
         status: reg.status,
         teenFirstName: teen?.name?.first,
+        emailVerified: teen?.isVerified?.email === "verified",
         guardian: { relation: g?.relation, emailMasked: R.maskEmail(g?.email) },
         timeline: reg.history.map((h) => ({ status: h.status, at: h.at })),
         expiresAt: reg.expiresAt,
@@ -603,7 +626,16 @@ export async function renew(req) {
     if (!reg) return { message: "sent_if_pending" };
     const last = [...reg.emails].reverse().find((m) => ["link-renewed", "guardian-invite", "teen-password"].includes(m.template));
     if (last && Date.now() - new Date(last.at).getTime() < 2 * 60 * 1000) return { message: "sent_if_pending" };
-    if ([STATUS.PENDING_APPROVAL, STATUS.EXPIRED].includes(reg.status)) await reinvite(reg, origin, "teen");
+    if ([STATUS.PENDING_APPROVAL, STATUS.EXPIRED].includes(reg.status)) {
+        await reinvite(reg, origin, "teen");
+        // "no email arrived": the teen also gets their own track / confirm-email link again
+        if (u.isVerified?.email !== "verified") {
+            const g = await TeenGuardian.findById(reg.guardian).lean();
+            const status = await T.issue(reg._id, "status", origin);
+            await sendTrackEmail(reg, u, { relation: g?.relation, email: g?.email }, status, reg.expiresAt, origin);
+            await reg.save();
+        }
+    }
     else if (reg.status === STATUS.PENDING_PASSWORD) {
         const pw = await T.issue(reg._id, "password", origin);
         await M.send(reg, "link-renewed", "teen", u.mail, {

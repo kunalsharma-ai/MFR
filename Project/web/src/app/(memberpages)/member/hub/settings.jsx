@@ -11,7 +11,7 @@ import { LANGUAGES } from "@/i18n/languages";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
 import { Hero, LoadingBlock, Meter } from "./ui.jsx";
-import { SurveyPrefs, EngageNotifications, MarketingConsent, PrivacyCentre, GuardianTab } from "./engage/settings.jsx";
+import { SurveyPrefs, EngageNotifications, MarketingConsent, PrivacyCentre, GuardianTab, TermsStatus } from "./engage/settings.jsx";
 import { usePreferences, useSavePreferences } from "./engage/data";
 import { InstallApp } from "./engage/pwa.jsx";
 import { PaletteList } from "./Shell.jsx";
@@ -283,6 +283,7 @@ export function SettingsPage() {
     { id: "notifications", icon: "bell", label: "st.notifications", hint: "st.notificationsHint" },
     { id: "surveyprefs", icon: "surveys", label: "sp.title", hint: "sp.hint" },
     { id: "social", icon: "users", label: "st.social", hint: "st.socialHint" },
+    { id: "terms", icon: "shield", label: "tm.title", hint: "tm.hint" },
     { id: "security", icon: "lock", label: "st.securityPrivacy", hint: "st.securityHint" },
     ...(teen ? [{ id: "guardian", icon: "shield", label: "gt.title", hint: "gt.hint" }] : []),
     { id: "app", icon: "rocket", label: "pw.title", hint: "pw.hint" },
@@ -408,6 +409,8 @@ export function SettingsPage() {
           <Panel c={P("surveyprefs")}><SurveyPrefs /></Panel>
 
           <Panel c={P("social")} wide><SocialCenter teen={teen} /></Panel>
+
+          <Panel c={P("terms")} wide><TermsStatus teen={teen} /></Panel>
 
           <Panel c={P("security")} wide>
             <div className="st-split">
