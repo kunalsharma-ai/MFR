@@ -57,6 +57,8 @@ export const SWITCHES = [
         effect: "Members are reminded before points would expire. Needs the points expiry switch on as well." },
     { key: "email_turning18", group: "email", label: "Turning 18 e-mails (30-day notice, guardian's consent ended)", def: () => false,
         effect: "Teen members get a notice 30 days before they turn 18, and the guardian is told when their consent ends." },
+    { key: "email_admin_actions", group: "email", label: "Console e-mails to one member (password reset link, welcome again)", def: () => false,
+        effect: "Admins can e-mail one member a password reset link or the welcome e-mail again from the MADP console. When off, the console shows what would be sent and nothing goes out." },
     { key: "push", group: "email", label: "Browser push notifications", def: (c) => c.push?.enabled,
         effect: "Members can allow browser notifications and get them." },
     { key: "whatsapp", group: "email", label: "WhatsApp messages", def: (c) => c.whatsapp?.enabled,

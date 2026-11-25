@@ -2,6 +2,7 @@ import API from "./API.js";
 import { verify } from "./token.js";
 import {User as userModel} from "../model/index.js"
 import { Mutate } from "./index.js";
+import { openSession, refused } from "./adminSession.js";
 export default async function isAuthenticated(req, res, next) {
     const authtoken = req.headers.authorization??req.cookies.authorization;
     
@@ -34,6 +35,16 @@ export default async function isAuthenticated(req, res, next) {
             })
         }
 
+        // An admin signed in as this member ("log in as member"): the session must still be open, and some actions
+        // are refused (utils/adminSession.js).
+        req.adminSession = null;
+        if (user.adm) {
+            const s = await openSession(user, req.origin);
+            if (!s) return res.status(401).json({ status: "error", code: "admin_session_ended", message: "This admin session has ended." });
+            req.adminSession = s;
+            const why = refused(req);
+            if (why) return res.status(403).json({ status: "error", code: "admin_session", message: why });
+        }
         req.user = await getUserDetails(user);
         if (!req.user || ["suspended", "banned", "closed"].includes(req.user.memberStatus)) {
             return res.status(403).json({

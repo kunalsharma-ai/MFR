@@ -18,7 +18,7 @@ async function roleOf(id) {
 export function requireMember(req, res, next) {
     return isAuthenticated(req, res, async () => {
         try {
-            req.isAdmin = ADMIN_ROLES.includes(String(await roleOf(req.user?._id)).toLowerCase());
+            req.isAdmin = !req.adminSession && ADMIN_ROLES.includes(String(await roleOf(req.user?._id)).toLowerCase());
         } catch (e) { req.isAdmin = false; }
         return next();
     });
@@ -28,6 +28,7 @@ const deny = (res, status, message) => res.status(status).json({ status: "error"
 
 export function requireAdmin(req, res, next) {
     return isAuthenticated(req, res, async () => {
+        if (req.adminSession) return deny(res, 403, "Forbidden");
         try {
             const role = await roleOf(req.user?._id);
             if (!ADMIN_ROLES.includes(String(role).toLowerCase())) return deny(res, 403, "Forbidden");
@@ -44,6 +45,7 @@ export function selfOrAdmin(param = "id") {
     return (req, res, next) => isAuthenticated(req, res, async () => {
         try {
             if (String(req.user?._id) === String(req.params[param])) { req.isSelf = true; return next(); }
+            if (req.adminSession) return deny(res, 403, "Forbidden");
             const role = await roleOf(req.user?._id);
             if (!ADMIN_ROLES.includes(String(role).toLowerCase())) return deny(res, 403, "Forbidden");
             req.isAdmin = true;
@@ -60,7 +62,8 @@ export async function optionalMember(req, res, next) {
         const token = raw && String(raw).split(" ")[1];
         if (token) {
             const u = verify(token);
-            if (u && u._id && u.origin === req.origin) {
+            // an admin session counts as a visitor here: these routes have no check for what it may not do
+            if (u && u._id && u.origin === req.origin && !u.adm) {
                 req.user = (await userModel.findById(u._id).lean()) || undefined;
                 if (req.user) {
                     req.user._id = String(req.user._id);

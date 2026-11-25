@@ -5,6 +5,7 @@ import express from "express";
 import { requireMadp } from "./auth.js";
 import { handle } from "./http.js";
 import * as members from "./members.js";
+import * as memberActions from "./memberactions.js";
 import * as qb from "./qb.js";
 import * as versions from "./versions.js";
 import * as points from "./points.js";
@@ -38,6 +39,12 @@ router.put("/members/:id", handle((req) => members.update(req.adminOrigin, req.p
 router.post("/members/:id/status", handle((req) => members.setStatus(req.adminOrigin, req.params.id, req.body?.action, req.body?.reason)));
 router.post("/members/:id/segment", handle((req) => members.changeSegment(req.adminOrigin, req.params.id, req.body?.category, req.body?.reason, req.adminActor)));
 router.post("/members/:id/marketing-opt-out", handle((req) => members.marketingOptOut(req.adminOrigin, req.params.id, req.body?.reason, req.adminActor)));
+// Member actions: e-mails behind the email_admin_actions switch, and "log in as member" (see memberactions.js)
+router.post("/members/:id/reset-password", handle((req) => memberActions.resetPassword(req.adminOrigin, req.params.id, req.body?.reason)));
+router.post("/members/:id/resend-welcome", handle((req) => memberActions.resendWelcome(req.adminOrigin, req.params.id, req.body?.reason)));
+router.post("/members/:id/login-as", handle((req) => memberActions.loginAs(req.adminOrigin, req.params.id, req.body?.reason, req.adminActor)));
+router.get("/members/:id/admin-sessions", handle((req) => memberActions.sessions(req.adminOrigin, req.params.id)));
+router.post("/members/:id/admin-sessions/:sid/end", handle((req) => memberActions.endSession(req.adminOrigin, req.params.id, req.params.sid, req.adminActor)));
 router.post("/members/:id/unmask", handle((req) => members.unmask(req.adminOrigin, req.params.id, req.body?.fields || [])));
 
 // Question bank (module 3)
