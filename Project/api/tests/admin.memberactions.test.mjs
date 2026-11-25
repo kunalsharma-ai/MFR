@@ -226,6 +226,41 @@ test("an admin session never counts as a panel admin, and a late ticket is refus
     assert.equal((await raw("PATCH", "/api/v1/me/payment-method", { body: { paymentMethod: { upi: "me@bank" } }, headers: { authorization: `Bearer ${own}` } })).json.code, undefined);
 });
 
+test("the member site is told about an admin session so it can show the banner, and the banner can end it", async () => {
+    const id = await member(MFR);
+    const own = Token.generate({ _id: id, origin: MFR });
+    const mine = await raw("GET", "/api/v1/me", { headers: { authorization: `Bearer ${own}` } });
+    assert.equal(mine.status, 200);
+    assert.equal(mine.json.data.adminSession, null, "the member's own session shows no banner");
+    assert.equal((await raw("POST", "/api/v1/me/admin-session/end", { body: {}, headers: { authorization: `Bearer ${own}` } })).status, 400);
+
+    const r = await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "Member says the dashboard is empty" });
+    const ok = await raw("GET", `/api/v1/user/admin-session?ticket=${ticketOf(r.json.data.url)}`);
+    const auth = { authorization: decodeURIComponent(cookieOf(ok)) };
+    const me = await raw("GET", "/api/v1/me", { headers: auth });
+    assert.equal(me.status, 200);
+    assert.equal(new Date(me.json.data.adminSession.expiresAt).toISOString(), new Date(r.json.data.expiresAt).toISOString());
+    assert.equal(me.json.data.adminSession.actor, undefined, "the admin's id is not shown to the member");
+    const end = await raw("POST", "/api/v1/me/admin-session/end", { body: {}, headers: auth });
+    assert.equal(end.status, 200);
+    assert.match(String(end.headers["set-cookie"]?.[0]), /authorization=;/);
+    assert.ok((await Models.AdminSession.findById(r.json.data.sessionId).lean()).endedAt);
+    assert.equal((await raw("GET", "/api/v1/me", { headers: auth })).json.code, "admin_session_ended");
+});
+
+test("the old Login As User route is gone: an admin gets 410 and no token, others still 401 or 403", async () => {
+    const id = await member(MFR);
+    const adminId = await member(MFR, { role: "administrator" });
+    const asAdmin = { authorization: `Bearer ${Token.generate({ _id: adminId, origin: MFR })}` };
+    const r = await raw("POST", "/api/v1/user/autologin", { body: { _id: id }, headers: asAdmin });
+    assert.equal(r.status, 410);
+    assert.equal(r.json.code, "moved_to_madp");
+    assert.equal(r.json.token, undefined);
+    assert.equal((await raw("POST", "/api/v1/user/autologin", { body: { _id: id } })).status, 401);
+    const asMember = { authorization: `Bearer ${Token.generate({ _id: id, origin: MFR })}` };
+    assert.equal((await raw("POST", "/api/v1/user/autologin", { body: { _id: adminId }, headers: asMember })).status, 403);
+});
+
 test("on MyHealthOpinions an admin session reads no answers; on every brand it can't answer or take surveys for the member", async () => {
     const open = async (origin) => {
         const id = await member(origin);

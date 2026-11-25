@@ -54,7 +54,7 @@ Date.prototype.resetTime = function (type = "start") {
         this.setSeconds(0);
     }
 }
-import { Redemption, User } from "../../model/index.js";
+import { Redemption, User, AdminSession } from "../../model/index.js";
 import mongoose from "mongoose";
 import * as Marketing from "../../engagement/marketing.js";
 async function redeemedPoints(user, origin) {
@@ -106,6 +106,8 @@ router
                 }) : null)
                 .filter(link => Boolean(link));
             data = { ...Mutate(data), ...req.user, navbar }
+            // Set only while an admin is signed in as this member, so the member site can show the banner.
+            data.adminSession = req.adminSession ? { expiresAt: req.adminSession.expiresAt } : null;
             data.firstname = data.name.first;
             data.lastname = data.name.last;
             return { message, data };
@@ -563,4 +565,12 @@ router
         },
         responseController
     ))
+// An admin signed in as this member ends the session from the banner: the session closes and the cookie is cleared.
+// The member's own sessions have nothing to end here.
+router.post("/admin-session/end", async (req, res) => {
+    if (!req.adminSession) return res.status(400).json({ status: "error", code: "no_admin_session", message: "This is not an admin session." });
+    await AdminSession.updateOne({ _id: req.adminSession.id, endedAt: null }, { $set: { endedAt: new Date(), endedBy: "banner" } });
+    res.clearCookie("authorization");
+    return res.json({ status: "success", message: "Admin session ended", data: [] });
+});
 export default router;

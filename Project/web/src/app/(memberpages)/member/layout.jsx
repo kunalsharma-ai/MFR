@@ -1,5 +1,6 @@
 "use client";
 import RewardSync from "./components/RewardSync";
+import AdminSessionBanner from "./components/AdminSessionBanner";
 import { useMember } from "@/Context";
 import LoadingOverlay from "@/componentsMHO/LoadingOverlay";
 import HubShell from "./hub/Shell.jsx";
@@ -12,6 +13,7 @@ function layout({ children }) {
   if (!user) return <LoadingOverlay />;
   return (
     <>
+      {user.adminSession ? <AdminSessionBanner session={user.adminSession} /> : null}
       <RewardSync />
       <PwaRegister />
       <HubShell>{children}</HubShell>
