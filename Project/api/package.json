@@ -10,7 +10,7 @@
     "test:teen": "node --test tests/teen.rules.test.mjs && node tests/teen.api.test.mjs",
     "test:engagement": "node --test tests/engagement.*.test.mjs",
     "test:support": "node tests/support.access.test.mjs",
-    "test:security": "node --test --test-force-exit tests/security.fixes.test.mjs tests/security.hardening.test.mjs",
+    "test:security": "node --test --test-force-exit tests/security.fixes.test.mjs tests/security.hardening.test.mjs tests/security.launch.test.mjs",
     "test:admin": "node --test --test-force-exit tests/admin.*.test.mjs"
   },
   "keywords": [

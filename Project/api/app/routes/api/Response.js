@@ -1,6 +1,7 @@
 import express from "express";
 import { Response as responseController, Reward as rewardController } from "../../controller/index.js";
 import { Mutate, expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
+import { requireMember, requireAdmin } from "../../utils/access.js";
 Date.prototype.resetTime = function (type = "start") {
     if (type === "end") {
         this.setHours(23);
@@ -79,16 +80,21 @@ router
     ))
 router
     .route('/:id')
-    .get(expressRoute(
+    // A member may read only their own response; admins may read any. Changing or deleting a response is admin only:
+    // points are summed from completed responses, so a member editing one could give themselves points.
+    .get(requireMember, expressRoute(
         async req => {
             // read single entry
             let message = "";
             let data = await responseController.read(req.params.id);
+            if (!req.isAdmin && String(data?.user?._id || data?.user || "") !== String(req.user._id)) {
+                throw new Error("Response not found");
+            }
             return { message, data };
         },
         responseController
     ))
-    .put(expressRoute(
+    .put(requireAdmin, expressRoute(
         async req => {
             // update single entry
             let message = "";
@@ -97,7 +103,7 @@ router
         },
         responseController
     ))
-    .delete(expressRoute(
+    .delete(requireAdmin, expressRoute(
         async req => {
             // delete single entry
             let message = "";
