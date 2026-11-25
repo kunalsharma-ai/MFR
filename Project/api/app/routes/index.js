@@ -35,6 +35,9 @@ router
     // every answer gets the browser security headers; member routes run in their own request context (so two
     // requests for different brands can't swap origins) and never see code-running Mongo operators
     .use(securityHeaders)
+    // the MADP console's signed admin API sits under the same /api/v1 prefix as the member API (so the gateway's
+    // /api/v1/ rule covers it), but is mounted first: it checks its own signature and parses its own body
+    .use("/api/v1/admin", adminRouter)
     .use("/api/v1", bindRequest, sanitizeInput)
     .use("/api/v1/llm", llmRouter)
     .use("/api/v1/auth",authRouter)
@@ -64,7 +67,6 @@ router
     .use("/api/v1/alerts", isAuthenticated, alertsRouter)
     .use("/api/v1/help", isAuthenticated, helpRouter)
     .use("/api/v1/content", contentRouter)
-    .use("/api/admin/v1", adminRouter)
 
 
 // router

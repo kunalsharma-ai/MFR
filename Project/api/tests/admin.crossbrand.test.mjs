@@ -25,13 +25,13 @@ const Models = await import("../app/model/index.js");
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_admin_crossbrand");
 await mongoose.connection.db.dropDatabase();
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const BASE = `http://127.0.0.1:${server.address().port}`;
 const BRANDS = { t2o: "www.turn2opinion.com", mfr: "www.myfrequentrewards.com", mho: "www.myhealthopinions.com" };
 process.env.MADP_ADMIN_API_ORIGINS = Object.values(BRANDS).join(",");
 const ALICE = "11111111-2222-4333-8444-555555555555";
-const V1 = "/api/admin/v1";
+const V1 = "/api/v1/admin";
 
 async function admin(method, path, body, origin) {
     const raw = body ? JSON.stringify(body) : "";

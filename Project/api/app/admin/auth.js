@@ -1,4 +1,4 @@
-// Panel admin API (/api/admin/v1): callable only by the MADP super admin console.
+// Panel admin API (/api/v1/admin): callable only by the MADP super admin console.
 //
 // MADP signs every request with a shared secret (HMAC-SHA256) and names the brand and the admin:
 //   x-madp-timestamp   unix seconds; requests older or newer than 5 minutes are refused (replay protection)

@@ -25,7 +25,7 @@ await mongoose.connection.db.dropDatabase();
 await Promise.all(mongoose.modelNames().map((n) => mongoose.model(n).init())); // unique indexes decide clashes
 const db = mongoose.connection.db;
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const BASE = `http://127.0.0.1:${server.address().port}`;
 const ACTOR = "11111111-2222-4333-8444-555555555555";
@@ -68,19 +68,19 @@ test("e-mail normalising: case, dots and +tags (Gmail), and nothing else", () =>
 });
 
 test("likely duplicates are grouped, masked, and never include teens or the matching value", async () => {
-    const r = await admin("GET", "/api/admin/v1/members/duplicates?by=email");
+    const r = await admin("GET", "/api/v1/admin/members/duplicates?by=email");
     assert.equal(r.status, 200, JSON.stringify(r.json));
     assert.equal(r.json.data.groups, 1);
     const ids = r.json.data.items[0].members.map((m) => m.id).sort();
     assert.deepEqual(ids, [String(keep), String(dup)].sort());
     assert.ok(!JSON.stringify(r.json).includes("janedoe@gmail.com") && !JSON.stringify(r.json).includes("jane.doe@gmail.com"));
-    assert.equal((await admin("GET", "/api/admin/v1/members/duplicates?by=name_dob")).json.data.groups, 1);
-    assert.equal((await admin("GET", "/api/admin/v1/members/duplicates?by=email", null, T2O)).json.data.groups, 0, "another brand sees none");
-    assert.equal((await admin("GET", "/api/admin/v1/members/duplicates?by=x")).status, 400);
+    assert.equal((await admin("GET", "/api/v1/admin/members/duplicates?by=name_dob")).json.data.groups, 1);
+    assert.equal((await admin("GET", "/api/v1/admin/members/duplicates?by=email", null, T2O)).json.data.groups, 0, "another brand sees none");
+    assert.equal((await admin("GET", "/api/v1/admin/members/duplicates?by=x")).status, 400);
 });
 
 test("dry run: what moves, what stays, points, and nothing changes", async () => {
-    const r = await admin("POST", "/api/admin/v1/members/merge", { keep: String(keep), duplicate: String(dup) });
+    const r = await admin("POST", "/api/v1/admin/members/merge", { keep: String(keep), duplicate: String(dup) });
     assert.equal(r.status, 200, JSON.stringify(r.json));
     const d = r.json.data;
     assert.equal(d.dryRun, true);
@@ -97,8 +97,8 @@ test("dry run: what moves, what stays, points, and nothing changes", async () =>
 });
 
 test("merge: needs a reason, moves the history, closes the duplicate, and can't run twice", async () => {
-    assert.equal((await admin("POST", "/api/admin/v1/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup) })).json.code, "reason_required");
-    const r = await admin("POST", "/api/admin/v1/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person, two sign-ups" });
+    assert.equal((await admin("POST", "/api/v1/admin/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup) })).json.code, "reason_required");
+    const r = await admin("POST", "/api/v1/admin/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person, two sign-ups" });
     assert.equal(r.status, 200, JSON.stringify(r.json));
     const d = r.json.data;
     assert.equal(d.points.keepAfter.earned, 350, "50 signup + 100 bonus + 200 survey; the duplicate signup stays behind");
@@ -109,37 +109,37 @@ test("merge: needs a reason, moves the history, closes the duplicate, and can't 
     assert.ok(await db.collection("Answer").findOne({ user: String(keep), question: "q2" }));
     assert.equal(String((await db.collection("SupportTicket").findOne({ ticketNo: "T-1" })).created.By), String(keep));
     assert.equal((await db.collection("User").findOne({ _id: ref })).referredBy, String(keep));
-    const again = await admin("POST", "/api/admin/v1/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person, two sign-ups" });
+    const again = await admin("POST", "/api/v1/admin/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person, two sign-ups" });
     assert.equal(again.status, 409);
     assert.equal(again.json.code, "already_closed");
-    const list = await admin("GET", `/api/admin/v1/members/merges?member=${dup}`);
+    const list = await admin("GET", `/api/v1/admin/members/merges?member=${dup}`);
     assert.equal(list.json.data.length, 1);
     assert.equal(list.json.data[0].moved.Reward, 1);
 });
 
 test("undo puts every moved row back and reopens the duplicate, once", async () => {
-    const [m] = (await admin("GET", "/api/admin/v1/members/merges")).json.data;
-    assert.equal((await admin("POST", `/api/admin/v1/members/merges/${m.id}/undo`, {})).json.code, "reason_required");
-    const r = await admin("POST", `/api/admin/v1/members/merges/${m.id}/undo`, { reason: "Merged the wrong pair" });
+    const [m] = (await admin("GET", "/api/v1/admin/members/merges")).json.data;
+    assert.equal((await admin("POST", `/api/v1/admin/members/merges/${m.id}/undo`, {})).json.code, "reason_required");
+    const r = await admin("POST", `/api/v1/admin/members/merges/${m.id}/undo`, { reason: "Merged the wrong pair" });
     assert.equal(r.status, 200, JSON.stringify(r.json));
     assert.equal((await db.collection("User").findOne({ _id: dup })).memberStatus, "active");
     assert.equal(await db.collection("Reward").countDocuments({ user: dup }), 2);
     assert.equal(await db.collection("Reward").countDocuments({ user: keep }), 1);
     assert.equal(await db.collection("Answer").countDocuments({ user: String(dup) }), 2);
     assert.equal((await db.collection("User").findOne({ _id: ref })).referredBy, String(dup));
-    assert.equal((await admin("POST", `/api/admin/v1/members/merges/${m.id}/undo`, { reason: "Merged the wrong pair" })).json.code, "already_undone");
+    assert.equal((await admin("POST", `/api/v1/admin/members/merges/${m.id}/undo`, { reason: "Merged the wrong pair" })).json.code, "already_undone");
 });
 
 test("blockers: teen accounts, an open redemption, the same account, another brand", async () => {
     const teen = await db.collection("User").findOne({ category: "b2c-minor" });
-    const t = await admin("POST", "/api/admin/v1/members/merge", { keep: String(keep), duplicate: String(teen._id) });
+    const t = await admin("POST", "/api/v1/admin/members/merge", { keep: String(keep), duplicate: String(teen._id) });
     assert.equal(t.json.data.blockers[0].code, "teen_account");
-    assert.equal((await admin("POST", "/api/admin/v1/members/merge?dryRun=0", { keep: String(keep), duplicate: String(teen._id), reason: "Same person" })).json.code, "teen_account");
+    assert.equal((await admin("POST", "/api/v1/admin/members/merge?dryRun=0", { keep: String(keep), duplicate: String(teen._id), reason: "Same person" })).json.code, "teen_account");
     await db.collection("Redemption").insertOne({ ...base(), user: dup, open: true, points: 100, status: "requested" });
-    assert.equal((await admin("POST", "/api/admin/v1/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person" })).json.code, "open_redemption");
-    assert.equal((await admin("POST", "/api/admin/v1/members/merge", { keep: String(keep), duplicate: String(keep) })).status, 400);
+    assert.equal((await admin("POST", "/api/v1/admin/members/merge?dryRun=0", { keep: String(keep), duplicate: String(dup), reason: "Same person" })).json.code, "open_redemption");
+    assert.equal((await admin("POST", "/api/v1/admin/members/merge", { keep: String(keep), duplicate: String(keep) })).status, 400);
     const other = await person("other@example.invalid", {}, T2O);
-    assert.equal((await admin("POST", "/api/admin/v1/members/merge", { keep: String(keep), duplicate: String(other) })).status, 404, "an account of another brand is not found");
+    assert.equal((await admin("POST", "/api/v1/admin/members/merge", { keep: String(keep), duplicate: String(other) })).status, 404, "an account of another brand is not found");
 });
 
 test.after(async () => { server.close(); await db.dropDatabase(); await mongoose.disconnect(); });
