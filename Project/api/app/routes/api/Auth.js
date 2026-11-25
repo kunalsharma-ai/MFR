@@ -12,7 +12,7 @@ async function getSocialChannels() {
 }
 const router = express.Router();
 router
-  .route(["/socials","/social"])
+  .route(["/socials", "/social"])
   .get(
     expressRoute(async (req) => {
       let { token } = req.query;
@@ -41,6 +41,7 @@ router
           redirect: `/?signup=1&${searchParams.toString()}`
         };
       }
+      if (user?.isVerified?.email === "unverified") return { message: 'your email is not verified', data: user, redirect: `/?verifyemail=${user.mail}` }
       token = Token.generate({
         _id: user._id,
         category: user.category,
@@ -50,7 +51,7 @@ router
         origin: user.origin,
         role: user.role ?? ""
       })
-      return { message: "", data: [], token }
+      return { message: "", data: ["a"], token, redirect: "/member/dashboard" }
     },
       userController
     )
@@ -59,7 +60,7 @@ router
     asyncHandler(
       async (req, res) => {
         let socialUrl = process.env.socials;
-        if (!socialUrl) throw HttpError(404, "Social signon is not allowed")
+        if (!socialUrl) throw new HttpError(404, "Social signon is not allowed")
         let temp = new URL(socialUrl);
         let api = new API(
           {
@@ -67,7 +68,9 @@ router
             useHttps: (temp.protocol === "https:")
           }
         )
-        let resp = await api.get(temp.pathname);
+
+        let resp = await api.get(temp.pathname.replace(/^\//, ""));
+        console.log(resp);
         return res.json({
           status: "success",
           data: resp?.data?.data?.providers
