@@ -36,6 +36,7 @@ import { lockedFor, fail, clear, norm } from "../../utils/throttle.js";
 import { createCaptcha, requireCaptcha } from "../../utils/captcha.js";
 import { setOptIn } from "../../engagement/marketing.js";
 import responseController from "../../controller/Response.js";
+import { redeem as redeemAdminTicket } from "../../admin/memberactions.js";
 
 const router = express.Router();
 
@@ -195,6 +196,20 @@ router
         },
         userController
     ))
+    // "Log in as member" from the MADP console: swap the one-use ticket for a member session that ends 15 minutes
+    // after the ticket was issued, marked as an admin session (admin/memberactions.js, utils/adminSession.js)
+    .get("/admin-session", limit(20, 10), async (req, res) => {
+        res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+        const r = await redeemAdminTicket(req.origin, req.query?.ticket).catch(() => null);
+        if (!r) return res.status(410).json({ status: "error", code: "ticket_used", message: "This sign-in link has been used or has expired. Ask for a new one in the console." });
+        const left = Math.max(1, Math.floor((new Date(r.session.expiresAt).getTime() - Date.now()) / 1000));
+        const token = Token.generate({
+            _id: r.user._id, category: r.user.category, name: r.user.name, origin: r.user.origin,
+            adm: { sid: String(r.session._id), by: r.session.actor },
+        }, left);
+        res.cookie("authorization", `Bearer ${token}`, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: left * 1000 });
+        return res.redirect("/member/dashboard");
+    })
     .post("/autologin", requireAdmin, expressRoute(
         async req => {
             // admin "log in as this member"

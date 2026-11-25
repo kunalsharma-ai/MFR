@@ -17,12 +17,32 @@ import { fsLogger, Mutate } from "../utils/index.js";
 const later = (fn) => { setImmediate(() => fn().catch((e) => fsLogger.Log("engagement email failed", { error: e.message }))); };
 const plainUser = (u) => { const x = Mutate(u); x.fullName = [x?.name?.first, x?.name?.middle, x?.name?.last].filter(Boolean).join(" "); return x; };
 
+// The brand's name for subject lines, from its hostname.
+export const brandName = (origin) => {
+    const o = String(origin || "").toLowerCase();
+    if (o.includes("turn2opinion")) return "Turn2Opinion";
+    if (o.includes("myhealthopinions")) return "MyHealthOpinions";
+    return "MyFrequentRewards";
+};
+
+// The two member e-mails the MADP console can send again (admin/memberactions.js), built the same way as the
+// member's own: the "account active" welcome, and the forgot-password link (an e-mailed code, 5 wrong guesses).
+export const welcomeMessage = (u, origin) => ({
+    origin, to: u.mail, category: "register", template: "welcome",
+    subject: `Your ${brandName(origin)} account is active`, data: { user: plainUser(u) },
+});
+export const resetMessage = (u, origin, otp) => ({
+    origin, to: u.mail, category: "register", template: "forgot-password",
+    subject: `${brandName(origin)}: Forgot Password`, data: { user: plainUser(u), otp },
+});
+export const sendNow = (message) => send(message);
+
 export function welcome(user, origin) {
     later(async () => {
         if (!(await isOn(origin, "email_welcome"))) return;
-        const u = plainUser(await User.findById(user._id || user).lean());
+        const u = await User.findById(user._id || user).lean();
         if (!u?.mail || memberType(u) === "teen") return; // Teens get teen/teen-active
-        await send({ origin, to: u.mail, category: "register", template: "welcome", subject: "Your MyFrequentRewards account is active", data: { user: u } });
+        await send(welcomeMessage(u, origin));
     });
 }
 

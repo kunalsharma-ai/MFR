@@ -51,3 +51,4 @@ export { default as PrizeMachine } from "./PrizeMachine.js";
 export { default as PrizePlay } from "./PrizePlay.js";
 export { default as ContentPage } from "./ContentPage.js";
 export { default as ContentRevision } from "./ContentRevision.js";
+export { default as AdminSession } from "./AdminSession.js";
