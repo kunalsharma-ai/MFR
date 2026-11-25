@@ -23,7 +23,7 @@ const { sign } = await import("../app/admin/auth.js");
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_admin_content_test");
 await mongoose.connection.db.dropDatabase();
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const BASE = `http://127.0.0.1:${server.address().port}`;
 const ALICE = "11111111-2222-4333-8444-555555555555";
@@ -49,26 +49,26 @@ const body = ["We keep your answers private.", { h2: "Who we are" }, { ul: ["One
 
 test("only blocks are stored: HTML-looking objects and unknown shapes are refused", async () => {
     for (const bad of [[{ html: "<script>alert(1)</script>" }], [{ h2: "x", ul: ["y"] }], [], "text", [{ table: { head: ["a", "b"], rows: [["only one"]] } }], [{ ul: [{ $gt: "" }] }]]) {
-        const r = await admin("POST", "/api/admin/v1/content", { key: "about-us", title: "About", body: bad });
+        const r = await admin("POST", "/api/v1/admin/content", { key: "about-us", title: "About", body: bad });
         assert.equal(r.status, 400, JSON.stringify(bad));
         assert.equal(r.json.code, "invalid_value");
     }
-    assert.equal((await admin("POST", "/api/admin/v1/content", { key: "Bad Key!", title: "About", body })).status, 400);
+    assert.equal((await admin("POST", "/api/v1/admin/content", { key: "Bad Key!", title: "About", body })).status, 400);
 });
 
 test("a legal page needs four eyes; the site shows only what is published", async () => {
-    const made = await admin("POST", "/api/admin/v1/content", { key: "privacy", kind: "page", title: "Privacy policy", body });
+    const made = await admin("POST", "/api/v1/admin/content", { key: "privacy", kind: "page", title: "Privacy policy", body });
     assert.equal(made.status, 200, JSON.stringify(made.json));
     const id = made.json.data.id;
     assert.equal(made.json.data.after.kind, "legal", "privacy is always legal, whatever kind is sent");
     assert.equal((await site("/api/v1/content/privacy")).status, 404, "nothing is published yet");
 
-    const early = await admin("POST", `/api/admin/v1/content/${id}/publish`, null, { actor: BOB });
+    const early = await admin("POST", `/api/v1/admin/content/${id}/publish`, null, { actor: BOB });
     assert.equal(early.json.code, "bad_transition", "legal pages are published from review");
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/review`)).status, 200);
-    const self = await admin("POST", `/api/admin/v1/content/${id}/publish`);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/review`)).status, 200);
+    const self = await admin("POST", `/api/v1/admin/content/${id}/publish`);
     assert.equal(self.json.code, "four_eyes", "the admin who asked for review can't publish");
-    const ok = await admin("POST", `/api/admin/v1/content/${id}/publish`, null, { actor: BOB });
+    const ok = await admin("POST", `/api/v1/admin/content/${id}/publish`, null, { actor: BOB });
     assert.equal(ok.status, 200, JSON.stringify(ok.json));
     assert.deepEqual(ok.json.data.after, { version: 1, state: "published" });
 
@@ -81,44 +81,44 @@ test("a legal page needs four eyes; the site shows only what is published", asyn
     assert.equal((await site("/api/v1/content/privacy?lang=hi")).json.data.lang, "en", "falls back to English");
 
     // editing a draft in review sends it back to editing; the live copy is untouched until the next publish
-    assert.equal((await admin("PUT", `/api/admin/v1/content/${id}`, { title: "Privacy policy (2027)" }, { actor: BOB })).status, 200);
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/review`)).status, 200);
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/publish`, null, { actor: BOB })).json.code, "four_eyes", "the last editor can't publish either");
-    await admin("PUT", `/api/admin/v1/content/${id}`, { body: ["Shorter."] });
-    assert.equal((await admin("GET", `/api/admin/v1/content/${id}`)).json.data.draft.state, "editing");
+    assert.equal((await admin("PUT", `/api/v1/admin/content/${id}`, { title: "Privacy policy (2027)" }, { actor: BOB })).status, 200);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/review`)).status, 200);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/publish`, null, { actor: BOB })).json.code, "four_eyes", "the last editor can't publish either");
+    await admin("PUT", `/api/v1/admin/content/${id}`, { body: ["Shorter."] });
+    assert.equal((await admin("GET", `/api/v1/admin/content/${id}`)).json.data.draft.state, "editing");
     assert.equal((await site("/api/v1/content/privacy")).json.data.title, "Privacy policy");
-    await admin("POST", `/api/admin/v1/content/${id}/review`, null, { actor: BOB });
-    await admin("PUT", `/api/admin/v1/content/${id}`, { body: ["Shorter."] }, { actor: BOB });
-    await admin("POST", `/api/admin/v1/content/${id}/review`, null, { actor: BOB });
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/publish`)).status, 200);
+    await admin("POST", `/api/v1/admin/content/${id}/review`, null, { actor: BOB });
+    await admin("PUT", `/api/v1/admin/content/${id}`, { body: ["Shorter."] }, { actor: BOB });
+    await admin("POST", `/api/v1/admin/content/${id}/review`, null, { actor: BOB });
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/publish`)).status, 200);
     assert.deepEqual((await site("/api/v1/content/privacy")).json.data.body, ["Shorter."]);
 
-    const revs = await admin("GET", `/api/admin/v1/content/${id}/revisions`);
+    const revs = await admin("GET", `/api/v1/admin/content/${id}/revisions`);
     assert.deepEqual(revs.json.data.map((r) => [r.version, r.publishedBy]), [[2, ALICE], [1, BOB]]);
-    const v1 = await admin("GET", `/api/admin/v1/content/${id}/revisions/1`);
+    const v1 = await admin("GET", `/api/v1/admin/content/${id}/revisions/1`);
     assert.deepEqual(v1.json.data.body, body);
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/revisions/1/restore`)).status, 200);
-    assert.deepEqual((await admin("GET", `/api/admin/v1/content/${id}`)).json.data.draft.body, body, "restore puts the old text in the draft");
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/revisions/x/restore`)).status, 404);
-    assert.equal((await admin("POST", `/api/admin/v1/content/${id}/discard`)).status, 200);
-    assert.equal((await admin("GET", `/api/admin/v1/content/${id}`)).json.data.draft, null);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/revisions/1/restore`)).status, 200);
+    assert.deepEqual((await admin("GET", `/api/v1/admin/content/${id}`)).json.data.draft.body, body, "restore puts the old text in the draft");
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/revisions/x/restore`)).status, 404);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${id}/discard`)).status, 200);
+    assert.equal((await admin("GET", `/api/v1/admin/content/${id}`)).json.data.draft, null);
 });
 
 test("a plain page publishes straight away; list filters; duplicates and other brands", async () => {
-    const r = await admin("POST", "/api/admin/v1/content", { key: "who-we-are", title: "Who we are", body: ["Hello."] });
+    const r = await admin("POST", "/api/v1/admin/content", { key: "who-we-are", title: "Who we are", body: ["Hello."] });
     assert.equal(r.json.data.after.kind, "page");
-    assert.equal((await admin("POST", `/api/admin/v1/content/${r.json.data.id}/publish`)).status, 200);
+    assert.equal((await admin("POST", `/api/v1/admin/content/${r.json.data.id}/publish`)).status, 200);
     assert.equal((await site("/api/v1/content/who-we-are")).json.data.title, "Who we are");
-    assert.equal((await admin("POST", "/api/admin/v1/content", { key: "who-we-are", title: "Again", body: ["x"] })).json.code, "duplicate");
-    const hi = await admin("POST", "/api/admin/v1/content", { key: "who-we-are", lang: "hi", title: "हम कौन हैं", body: ["नमस्ते"] });
+    assert.equal((await admin("POST", "/api/v1/admin/content", { key: "who-we-are", title: "Again", body: ["x"] })).json.code, "duplicate");
+    const hi = await admin("POST", "/api/v1/admin/content", { key: "who-we-are", lang: "hi", title: "हम कौन हैं", body: ["नमस्ते"] });
     assert.equal(hi.status, 200);
 
-    assert.deepEqual((await admin("GET", "/api/admin/v1/content?kind=legal")).json.data.map((p) => p.key), ["privacy"]);
-    assert.equal((await admin("GET", "/api/admin/v1/content?state=unpublished")).json.data.length, 1);
-    assert.equal((await admin("GET", "/api/admin/v1/content?lang=hi")).json.data[0].draft.state, "editing");
-    assert.equal((await admin("GET", "/api/admin/v1/content", null, { origin: T2O })).json.data.length, 0);
-    assert.equal((await admin("GET", `/api/admin/v1/content/${r.json.data.id}`, null, { origin: T2O })).status, 404, "an id from another brand is not found");
-    const unsigned = await fetch(`${BASE}/api/admin/v1/content`);
+    assert.deepEqual((await admin("GET", "/api/v1/admin/content?kind=legal")).json.data.map((p) => p.key), ["privacy"]);
+    assert.equal((await admin("GET", "/api/v1/admin/content?state=unpublished")).json.data.length, 1);
+    assert.equal((await admin("GET", "/api/v1/admin/content?lang=hi")).json.data[0].draft.state, "editing");
+    assert.equal((await admin("GET", "/api/v1/admin/content", null, { origin: T2O })).json.data.length, 0);
+    assert.equal((await admin("GET", `/api/v1/admin/content/${r.json.data.id}`, null, { origin: T2O })).status, 404, "an id from another brand is not found");
+    const unsigned = await fetch(`${BASE}/api/v1/admin/content`);
     assert.equal(unsigned.status, 401);
 });
 

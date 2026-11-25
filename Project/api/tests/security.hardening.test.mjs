@@ -30,7 +30,7 @@ await mongoose.connection.db.dropDatabase();
 await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes?.().catch(() => {})));
 const app = express();
 // as in server.js: the admin API parses its own bodies (the signature covers the raw bytes)
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const PORT = server.address().port;
 const T2O = "www.turn2opinion.com", MFR = "www.myfrequentrewards.com", MHO = "www.myhealthopinions.com";
@@ -242,18 +242,24 @@ function signed(method, path, body, { nonce = crypto.randomBytes(16).toString("h
 const send = (s) => call("panel-api.internal", s.method, s.path, s.raw || undefined, { headers: s.headers });
 
 test("admin API: a signed request works once; sent again it is refused as a replay", async () => {
-    const s = signed("GET", "/api/admin/v1/members?q=zz");
+    const s = signed("GET", "/api/v1/admin/members?q=zz");
     assert.equal((await send(s)).status, 200);
     const again = await send(s);
     assert.equal(again.status, 409);
     assert.match(again.json.message, /replayed/);
-    const w = signed("POST", "/api/admin/v1/members/restore", { ids: [], reason: "replay test" });
+    const w = signed("POST", "/api/v1/admin/members/restore", { ids: [], reason: "replay test" });
     assert.notEqual((await send(w)).status, 409);
     assert.equal((await send(w)).status, 409);
 });
 
+test("admin API lives under /api/v1/admin only: the old /api/admin/v1 path is gone, and unsigned calls are refused", async () => {
+    const old = signed("GET", "/api/admin/v1/members");
+    assert.equal((await send(old)).status, 404);
+    assert.equal((await call("panel-api.internal", "GET", "/api/v1/admin/members")).status, 401);
+});
+
 test("admin API: a request without a nonce, or with the nonce changed, is refused", async () => {
-    const s = signed("GET", "/api/admin/v1/members");
+    const s = signed("GET", "/api/v1/admin/members");
     const { "x-madp-nonce": _drop, ...noNonce } = s.headers;
     assert.equal((await call("panel-api.internal", "GET", s.path, undefined, { headers: noNonce })).status, 401);
     const changed = { ...s.headers, "x-madp-nonce": crypto.randomBytes(16).toString("hex") };

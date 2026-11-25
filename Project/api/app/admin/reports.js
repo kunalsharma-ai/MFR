@@ -2,7 +2,7 @@
 // e-mails or other personal data, and never added across brands. MADP turns these into tables, applies its small-cell
 // rule and exports them to CSV and Excel.
 //
-//   GET /api/admin/v1/reports/:name?from=YYYY-MM-DD&to=YYYY-MM-DD
+//   GET /api/v1/admin/reports/:name?from=YYYY-MM-DD&to=YYYY-MM-DD
 //
 // Segments are reported by the member's category as stored (b2c, b2b, b2c-minor on T2O and MFR; healthcare
 // professional, patient, care giver on MHO) with a readable label.

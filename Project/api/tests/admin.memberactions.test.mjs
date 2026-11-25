@@ -33,7 +33,7 @@ await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_a
 await mongoose.connection.db.dropDatabase();
 await Promise.all(Object.values(Models).map((m) => m.syncIndexes?.().catch(() => {})));
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const PORT = server.address().port;
 const ALICE = "11111111-2222-4333-8444-555555555555";
@@ -79,17 +79,17 @@ const cookieOf = (r) => String(r.headers["set-cookie"]?.[0] || "").split(";")[0]
 test("reset and welcome send nothing while the switch is off, and say what would be sent", async () => {
     const id = await member(MFR);
     const before = mails().length;
-    const r = await admin("POST", `/api/admin/v1/members/${id}/reset-password`, { reason: "Member phoned support" });
+    const r = await admin("POST", `/api/v1/admin/members/${id}/reset-password`, { reason: "Member phoned support" });
     assert.equal(r.status, 200, JSON.stringify(r.json));
     assert.deepEqual(r.json.data, { sent: false, switch: "email_admin_actions", wouldSend: { template: "register/forgot-password", to: r.json.data.wouldSend.to, brand: MFR, subject: "MyFrequentRewards: Forgot Password" } });
     assert.match(r.json.data.wouldSend.to, /\*/, "the address is masked");
-    const w = await admin("POST", `/api/admin/v1/members/${id}/resend-welcome`, { reason: "Member phoned support" });
+    const w = await admin("POST", `/api/v1/admin/members/${id}/resend-welcome`, { reason: "Member phoned support" });
     assert.equal(w.json.data.sent, false);
     assert.equal(w.json.data.wouldSend.template, "register/welcome");
     assert.equal(mails().length, before, "no e-mail");
     assert.equal(await Models.OTP.countDocuments({ user: id }), 0, "no reset code is made while off");
     const t = await member(T2O);
-    const tw = await admin("POST", `/api/admin/v1/members/${t}/resend-welcome`, { reason: "Member phoned support" }, { origin: T2O });
+    const tw = await admin("POST", `/api/v1/admin/members/${t}/resend-welcome`, { reason: "Member phoned support" }, { origin: T2O });
     assert.equal(tw.json.data.wouldSend.subject, "Your Turn2Opinion account is active");
 });
 
@@ -98,7 +98,7 @@ test("with the switch on, reset e-mails the member's own link (never a password)
     const id = await member(MFR);
     const before = mails().length;
     for (let i = 0; i < 3; i++) {
-        const r = await admin("POST", `/api/admin/v1/members/${id}/reset-password`, { reason: "Member asked by e-mail" });
+        const r = await admin("POST", `/api/v1/admin/members/${id}/reset-password`, { reason: "Member asked by e-mail" });
         assert.equal(r.status, 200, JSON.stringify(r.json));
         assert.equal(r.json.data.sent, true);
         assert.equal(JSON.stringify(r.json).includes("password\":"), false);
@@ -108,42 +108,42 @@ test("with the switch on, reset e-mails the member's own link (never a password)
     assert.equal(mail.category, "register");
     assert.equal(mail.data.template, "forgot-password");
     assert.ok(mail.data.otp?.code, "the e-mail carries the code for the normal set-password link");
-    assert.equal((await admin("POST", `/api/admin/v1/members/${id}/reset-password`, { reason: "Member asked by e-mail" })).status, 429);
-    const w = await admin("POST", `/api/admin/v1/members/${id}/resend-welcome`, { reason: "Lost the first one" });
+    assert.equal((await admin("POST", `/api/v1/admin/members/${id}/reset-password`, { reason: "Member asked by e-mail" })).status, 429);
+    const w = await admin("POST", `/api/v1/admin/members/${id}/resend-welcome`, { reason: "Lost the first one" });
     assert.equal(w.json.data.sent, true);
     const noPw = await member(MFR, { password: false });
-    assert.equal((await admin("POST", `/api/admin/v1/members/${noPw}/resend-welcome`, { reason: "Lost the first one" })).json.code, "no_password");
+    assert.equal((await admin("POST", `/api/v1/admin/members/${noPw}/resend-welcome`, { reason: "Lost the first one" })).json.code, "no_password");
     // the brand's kill switch stops it too
     await Models.FeatureSwitch.create({ origin: MFR, key: "kill", on: true, reason: "test", actor: ALICE });
     forget(MFR);
     const other = await member(MFR);
-    assert.equal((await admin("POST", `/api/admin/v1/members/${other}/reset-password`, { reason: "Member asked by e-mail" })).json.data.sent, false);
+    assert.equal((await admin("POST", `/api/v1/admin/members/${other}/reset-password`, { reason: "Member asked by e-mail" })).json.data.sent, false);
     await Models.FeatureSwitch.deleteMany({ origin: MFR, key: "kill" });
     await switchOn(MFR, false);
 });
 
 test("needs a reason, refuses teens and closed accounts, and another brand's member is not found", async () => {
     const id = await member(MFR);
-    assert.equal((await admin("POST", `/api/admin/v1/members/${id}/reset-password`, {})).json.code, "reason_required");
-    assert.equal((await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "x" })).json.code, "reason_required");
+    assert.equal((await admin("POST", `/api/v1/admin/members/${id}/reset-password`, {})).json.code, "reason_required");
+    assert.equal((await admin("POST", `/api/v1/admin/members/${id}/login-as`, { reason: "x" })).json.code, "reason_required");
     const teen = await member(MFR, { category: "b2c-minor" });
     for (const a of ["reset-password", "resend-welcome", "login-as"]) {
-        const r = await admin("POST", `/api/admin/v1/members/${teen}/${a}`, { reason: "Checking the account" });
+        const r = await admin("POST", `/api/v1/admin/members/${teen}/${a}`, { reason: "Checking the account" });
         assert.equal(r.status, 409);
         assert.equal(r.json.code, "teen_member");
     }
     const banned = await member(MFR, { status: "banned" });
-    assert.equal((await admin("POST", `/api/admin/v1/members/${banned}/login-as`, { reason: "Checking the account" })).json.code, "not_active");
+    assert.equal((await admin("POST", `/api/v1/admin/members/${banned}/login-as`, { reason: "Checking the account" })).json.code, "not_active");
     const boss = await member(MFR, { role: "administrator" });
-    assert.equal((await admin("POST", `/api/admin/v1/members/${boss}/login-as`, { reason: "Checking the account" })).json.code, "admin_member");
+    assert.equal((await admin("POST", `/api/v1/admin/members/${boss}/login-as`, { reason: "Checking the account" })).json.code, "admin_member");
     for (const a of ["reset-password", "resend-welcome", "login-as"])
-        assert.equal((await admin("POST", `/api/admin/v1/members/${id}/${a}`, { reason: "Checking the account" }, { origin: T2O })).status, 404);
-    assert.equal((await admin("GET", `/api/admin/v1/members/${id}/admin-sessions`, null, { origin: T2O })).status, 404);
+        assert.equal((await admin("POST", `/api/v1/admin/members/${id}/${a}`, { reason: "Checking the account" }, { origin: T2O })).status, 404);
+    assert.equal((await admin("GET", `/api/v1/admin/members/${id}/admin-sessions`, null, { origin: T2O })).status, 404);
 });
 
 test("log in as member: a one-use ticket gives a 15-minute admin session that can't touch the password, e-mail, payouts or rewards", async () => {
     const id = await member(MFR);
-    const r = await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "Member says the dashboard is empty" });
+    const r = await admin("POST", `/api/v1/admin/members/${id}/login-as`, { reason: "Member says the dashboard is empty" });
     assert.equal(r.status, 200, JSON.stringify(r.json));
     const { url, sessionId, expiresAt, redeemBy } = r.json.data;
     assert.ok(url.startsWith(`https://${MFR}/api/v1/user/admin-session?ticket=`));
@@ -193,10 +193,10 @@ test("log in as member: a one-use ticket gives a 15-minute admin session that ca
     assert.equal(u.toObject().paymentMethod?.upi, undefined, "no payout details set");
 
     // MADP can see and end it; the token stops working at once
-    const list = await admin("GET", `/api/admin/v1/members/${id}/admin-sessions`);
+    const list = await admin("GET", `/api/v1/admin/members/${id}/admin-sessions`);
     assert.equal(list.json.data.items[0].state, "open");
     assert.equal(JSON.stringify(list.json).includes(ticketOf(url)), false);
-    assert.equal((await admin("POST", `/api/admin/v1/members/${id}/admin-sessions/${sessionId}/end`)).status, 200);
+    assert.equal((await admin("POST", `/api/v1/admin/members/${id}/admin-sessions/${sessionId}/end`)).status, 200);
     const after = await raw("GET", "/api/v1/me", { headers: auth });
     assert.equal(after.status, 401);
     assert.equal(after.json.code, "admin_session_ended");
@@ -205,7 +205,7 @@ test("log in as member: a one-use ticket gives a 15-minute admin session that ca
 test("an admin session never counts as a panel admin, and a late ticket is refused", async () => {
     // a member who is not an admin now, but the session is checked fresh on every request anyway
     const id = await member(MFR);
-    const r = await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "Checking the reward page" });
+    const r = await admin("POST", `/api/v1/admin/members/${id}/login-as`, { reason: "Checking the reward page" });
     const ok = await raw("GET", `/api/v1/user/admin-session?ticket=${ticketOf(r.json.data.url)}`);
     const token = decodeURIComponent(cookieOf(ok)).replace(/^Bearer /, "");
     // the member is made an admin later: the admin session still can't use admin routes
@@ -215,7 +215,7 @@ test("an admin session never counts as a panel admin, and a late ticket is refus
     assert.equal((await raw("GET", `/api/v1/user/${other}`, { headers: { authorization: `Bearer ${token}` } })).status, 403);
 
     const late = await member(MFR);
-    const t = await admin("POST", `/api/admin/v1/members/${late}/login-as`, { reason: "Checking the reward page" });
+    const t = await admin("POST", `/api/v1/admin/members/${late}/login-as`, { reason: "Checking the reward page" });
     await Models.AdminSession.updateOne({ _id: t.json.data.sessionId }, { $set: { redeemBy: new Date(Date.now() - 1000) } });
     assert.equal((await raw("GET", `/api/v1/user/admin-session?ticket=${ticketOf(t.json.data.url)}`)).status, 410);
     // a forged token naming a session that was never opened
@@ -234,7 +234,7 @@ test("the member site is told about an admin session so it can show the banner, 
     assert.equal(mine.json.data.adminSession, null, "the member's own session shows no banner");
     assert.equal((await raw("POST", "/api/v1/me/admin-session/end", { body: {}, headers: { authorization: `Bearer ${own}` } })).status, 400);
 
-    const r = await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "Member says the dashboard is empty" });
+    const r = await admin("POST", `/api/v1/admin/members/${id}/login-as`, { reason: "Member says the dashboard is empty" });
     const ok = await raw("GET", `/api/v1/user/admin-session?ticket=${ticketOf(r.json.data.url)}`);
     const auth = { authorization: decodeURIComponent(cookieOf(ok)) };
     const me = await raw("GET", "/api/v1/me", { headers: auth });
@@ -264,7 +264,7 @@ test("the old Login As User route is gone: an admin gets 410 and no token, other
 test("on MyHealthOpinions an admin session reads no answers; on every brand it can't answer or take surveys for the member", async () => {
     const open = async (origin) => {
         const id = await member(origin);
-        const r = await admin("POST", `/api/admin/v1/members/${id}/login-as`, { reason: "Member can't see their surveys" }, { origin });
+        const r = await admin("POST", `/api/v1/admin/members/${id}/login-as`, { reason: "Member can't see their surveys" }, { origin });
         assert.equal(r.status, 200, JSON.stringify(r.json));
         const ok = await raw("GET", `/api/v1/user/admin-session?ticket=${ticketOf(r.json.data.url)}`, { host: origin });
         assert.equal(ok.status, 302);

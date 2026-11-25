@@ -33,12 +33,12 @@ await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_m
 await mongoose.connection.db.dropDatabase();
 await Promise.all(Object.values(Models).map((m) => m.syncIndexes?.().catch(() => {})));
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const BASE = `http://127.0.0.1:${server.address().port}`;
 const MFR = `127.0.0.1:${server.address().port}`;
 process.env.MADP_ADMIN_API_ORIGINS = MFR;
-const V1 = "/api/admin/v1";
+const V1 = "/api/v1/admin";
 const ALICE = "11111111-2222-4333-8444-555555555555";
 let ipN = 1;
 

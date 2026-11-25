@@ -24,11 +24,11 @@ const P = await import("../app/engagement/pro.js");
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_admin_experts");
 await mongoose.connection.db.dropDatabase();
 const app = express();
-app.use([express.json({ type: (req) => !req.url.startsWith("/api/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
+app.use([express.json({ type: (req) => !req.url.startsWith("/api/v1/admin/") && /json/i.test(req.headers["content-type"] || "") }), cookieParser(), setOrigin, appRoute]);
 const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
 const BASE = `http://127.0.0.1:${server.address().port}`;
 const ALICE = "11111111-2222-4333-8444-555555555555";
-const V1 = "/api/admin/v1";
+const V1 = "/api/v1/admin";
 async function admin(method, path, body, origin = MFR) {
     const raw = body ? JSON.stringify(body) : "";
     const ts = String(Math.floor(Date.now() / 1000));
