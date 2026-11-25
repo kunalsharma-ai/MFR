@@ -277,7 +277,21 @@ router
     .patch("/parent-details",
         expressRoute(
             async req => {
-                await userController.update(req.user._id, { ...req.body, category: "minor" });
+                // Only the guardian's details are taken from the body, and only for an existing teen who has not given
+                // them yet. This used to write the whole request body onto the member (any field, including role) and
+                // set any member's category to "minor".
+                const me = await userController.read(req.user._id);
+                if (!String(me?.category || "").includes("minor")) throw new Error("Only Teen Panel members can add guardian details");
+                if (me?.parent?.email) throw new Error("Guardian details are already on file");
+                const p = req.body?.parent || {};
+                const clean = (v, max = 120) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, max);
+                const parent = {
+                    relation: clean(p.relation, 40),
+                    name: { salutation: clean(p.name?.salutation, 10), first: clean(p.name?.first), last: clean(p.name?.last) },
+                    email: clean(p.email, 254).toLowerCase(),
+                };
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parent.email)) throw new Error("Please enter a valid email address");
+                await userController.update(req.user._id, { parent });
                 let user = Mutate(await userController.read(req.user._id))
 
                 let mailer = await getMailer(
