@@ -25,6 +25,7 @@ import * as dataRequests from "./datarequests.js";
 import * as experts from "./experts.js";
 import * as content from "./content.js";
 import * as merge from "./merge.js";
+import * as memberEngagement from "./memberengagement.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -51,6 +52,11 @@ router.post("/members/:id/resend-welcome", handle((req) => memberActions.resendW
 router.post("/members/:id/login-as", handle((req) => memberActions.loginAs(req.adminOrigin, req.params.id, req.body?.reason, req.adminActor)));
 router.get("/members/:id/admin-sessions", handle((req) => memberActions.sessions(req.adminOrigin, req.params.id)));
 router.post("/members/:id/admin-sessions/:sid/end", handle((req) => memberActions.endSession(req.adminOrigin, req.params.id, req.params.sid, req.adminActor)));
+// Member engagement: what the member sees in their member area, and the two changes the console may make (see memberengagement.js)
+router.get("/members/:id/engagement", handle((req) => memberEngagement.overview(req.adminOrigin, req.params.id)));
+router.get("/members/:id/responses", handle((req) => memberEngagement.responses(req.adminOrigin, req.params.id, req.query)));
+router.put("/members/:id/alerts", handle((req) => memberEngagement.setAlerts(req.adminOrigin, req.params.id, req.body || {})));
+router.post("/members/:id/payout/clear", handle((req) => memberEngagement.clearPayout(req.adminOrigin, req.params.id, req.body || {})));
 router.post("/members/:id/unmask", handle((req) => members.unmask(req.adminOrigin, req.params.id, req.body?.fields || [])));
 
 // Question bank (module 3)
