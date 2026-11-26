@@ -11,7 +11,7 @@ export function PwaRegister() {
   React.useEffect(() => {
     if (!document.querySelector('link[rel="manifest"]')) {
       const l = document.createElement("link");
-      l.rel = "manifest"; l.href = "/manifest.webmanifest";
+      l.rel = "manifest"; l.href = "/member/manifest.webmanifest";
       document.head.appendChild(l);
     }
     if ("serviceWorker" in navigator && window.isSecureContext) {
