@@ -13,7 +13,8 @@
     "test:security": "node --test --test-force-exit tests/security.fixes.test.mjs tests/security.hardening.test.mjs tests/security.launch.test.mjs",
     "test:admin": "node --test --test-force-exit tests/admin.*.test.mjs",
     "test:b2b": "node --test --test-force-exit tests/b2b.flow.test.mjs",
-    "test:signup": "node --test --test-force-exit tests/signup.qa.test.mjs"
+    "test:signup": "node --test --test-force-exit tests/signup.qa.test.mjs",
+    "test:account": "node --test --test-force-exit tests/account.actions.test.mjs"
   },
   "keywords": [
     "express",

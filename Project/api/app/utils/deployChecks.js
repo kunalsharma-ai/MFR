@@ -35,7 +35,7 @@ export async function checkMailAccounts(env = process.env) {
             return null;
         }
     }
-    if (missing.length) say(`the email service has no mail account for ${missing.join(", ")}; emails from those sites are not sent. Deploy services/email/config/aliases.json or set EMAIL_DEFAULT_ORIGIN.`, { missing });
+    if (missing.length) say(`the email service has no mail account for ${missing.join(", ")}; emails from those sites are not sent. Add config/<host>.json for each one on the email server.`, { missing });
     return missing.length === 0;
 }
 

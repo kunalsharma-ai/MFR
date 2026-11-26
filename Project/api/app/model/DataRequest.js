@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 import { mongooseModel } from "../utils/index.js";
 
-// A member's request to delete their account and data (Nov 2026). Nothing is deleted by the code: the team reviews
+// A member's request to delete their account and data (Nov 2026), or, from the "Delete or Deactivate Account" page,
+// to deactivate it for 30/60/90 days, put it on hold, or reactivate it (member/accountActions.js). Nothing is deleted by the code: the team reviews
 // each request (open payouts, legal hold, Teen guardian) and carries it out by hand, then marks it done.
 export default mongooseModel(
     "DataRequest",
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-        kind: { type: String, enum: ["delete"], default: "delete" },
+        kind: { type: String, enum: ["delete", "deactivate", "hold", "reactivate"], default: "delete" },
+        days: { type: Number },                                      // deactivate: 30, 60 or 90
         status: { type: String, enum: ["requested", "approved", "rejected", "done", "cancelled"], default: "requested" },
         reason: { type: String, trim: true, maxlength: 500 },
         open: { type: Boolean, default: true },
