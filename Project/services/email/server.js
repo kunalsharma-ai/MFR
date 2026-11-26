@@ -11,20 +11,12 @@ function getOrigin(data) {
     return data;
 }
 
-// Which mail account an origin sends from: config/<origin>.json, else the same without "www.", else the account
-// config/aliases.json names for it (so myfrequentrewards.com can use the existing MFR account without copying its
-// password into a second file), else EMAIL_DEFAULT_ORIGIN. Before this, the live host name had no file, every
-// email was answered with 405 and nothing was sent.
-const safe = (o) => /^[a-z0-9.-]+$/i.test(String(o || "")) ? String(o).toLowerCase() : "";
-const fileOf = (o) => (safe(o) && fs.existsSync(`config/${safe(o)}.json`) ? `config/${safe(o)}.json` : "");
-function readAliases() {
-    try { return JSON.parse(fs.readFileSync("config/aliases.json", "utf-8")); } catch { return {}; }
-}
+// Each origin sends from its own mail account, config/<origin>.json, set up per domain on the server. There is no
+// aliasing between domains. The origin must be a plain host name, so a crafted Origin header can't point outside config/.
+const safe = (o) => /^[a-z0-9.-]+$/i.test(String(o || "")) && !String(o).includes("..") ? String(o).toLowerCase() : "";
 function configFor(origin) {
     const o = safe(origin);
-    const bare = o.replace(/^www\./, "");
-    const aliases = readAliases();
-    return fileOf(o) || fileOf(bare) || fileOf(aliases[o]) || fileOf(aliases[bare]) || fileOf(process.env.EMAIL_DEFAULT_ORIGIN) || "";
+    return o && fs.existsSync(`config/${o}.json`) ? `config/${o}.json` : "";
 }
 
 (async () => {
@@ -35,7 +27,7 @@ function configFor(origin) {
                 req.origin = getOrigin(req.headers.origin ?? req.headers.host);
                 const file = configFor(req.origin);
                 if (!file) {
-                    console.log(`[${new Date()}] No mail account for "${req.origin}". Add config/${req.origin}.json or an entry in config/aliases.json.`);
+                    console.log(`[${new Date()}] No mail account for "${req.origin}". Add config/${req.origin}.json on the server.`);
                     return next();
                 }
                 req.creds = JSON.parse(fs.readFileSync(file, "utf-8"));
