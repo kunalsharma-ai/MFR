@@ -50,6 +50,12 @@ ENV NODE_ENV=production \
 RUN npm install -g pm2@6
 WORKDIR /src
 COPY --from=build /src /src
+# GET /api/v1/version answers with these, so anyone can check which code the server runs:
+#   docker build --build-arg GIT_SHA=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=$(date -u +%FT%TZ) ...
+ARG GIT_SHA=unknown
+ARG BUILD_DATE=unknown
+ENV GIT_SHA=${GIT_SHA} \
+    BUILD_DATE=${BUILD_DATE}
 EXPOSE 3000
 # Healthy while the server answers HTTP at all (any status code): pm2 already restarts a crashed process.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
