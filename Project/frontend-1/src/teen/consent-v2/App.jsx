@@ -318,20 +318,45 @@ export default function App({ cfg }) {
     if (typeof cfg.onActivated === 'function') cfg.onActivated({ consentId: (rec || record || {}).consentId });
   };
 
-  // waiting for the guardian's verification: poll the status endpoint
+  // waiting for the guardian's verification: ask the status endpoint now and then (issue #84: not a fixed fast loop).
+  // The gap starts at pollMs (6 s) and doubles up to 60 s, nothing is asked while the tab is hidden, and coming back
+  // to the tab asks once straight away and starts the short gap again. It stops after 30 minutes; a tab return
+  // still checks once after that.
   useEffect(() => {
     if (phase !== 'sent' || !record || cfg.demo || !cfg.statusUrl) return undefined;
     let stop = false;
-    const tick = async () => {
+    let timer;
+    const first = Math.max(2000, cfg.pollMs || 6000);
+    let gap = first;
+    const until = Date.now() + 30 * 60 * 1000;
+    const check = async () => {
       try {
         const r = await fetch(`${cfg.statusUrl}${cfg.statusUrl.includes('?') ? '&' : '?'}consentId=${encodeURIComponent(record.consentId)}`, { credentials: 'include', headers: { Accept: 'application/json', ...(cfg.headers || {}) } });
-        if (!r.ok) return;
+        if (!r.ok) return false;
         const d = await r.json();
-        if (!stop && d && d.accountActivationStatus === 'active') activate(record);
+        if (!stop && d && d.accountActivationStatus === 'active') { activate(record); return true; }
       } catch { /* try again */ }
+      return false;
     };
-    const id = setInterval(tick, Math.max(2000, cfg.pollMs || 6000));
-    return () => { stop = true; clearInterval(id); };
+    const next = () => {
+      clearTimeout(timer);
+      if (stop || Date.now() > until) return;
+      timer = setTimeout(async () => {
+        if (document.hidden) return; // asked again when the tab comes back
+        if (await check()) return;
+        gap = Math.min(gap * 2, 60000);
+        next();
+      }, gap);
+    };
+    const onVis = async () => {
+      if (document.hidden || stop) return;
+      if (await check()) return;
+      gap = first;
+      next();
+    };
+    next();
+    document.addEventListener('visibilitychange', onVis);
+    return () => { stop = true; clearTimeout(timer); document.removeEventListener('visibilitychange', onVis); };
   }, [phase, record]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resend = async () => {

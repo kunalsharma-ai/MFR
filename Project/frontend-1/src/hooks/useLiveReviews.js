@@ -7,7 +7,37 @@ import { API_BASE, DEMO_MODE } from '../data/site.js';
 
 const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || `${API_BASE}/api/v1/testimonial`;
 const FALLBACK = '/data/reviews.json';
-const POLL_MS = 30000;
+// No polling (issue #84). Reviews only change when the team approves one, so the feed is read once per page load and
+// shared by every section that shows reviews; it is read again only when the member comes back to a tab that has
+// been away for STALE_MS or more, and shortly after the member posts a review of their own.
+const STALE_MS = 10 * 60 * 1000;
+
+let feedUrl = FEED;
+let cache = null; // { list, status, at }
+let inflight = null;
+const subscribers = new Set();
+
+function readFeed(force = false) {
+  if (inflight) return inflight;
+  if (!force && cache && Date.now() - cache.at < STALE_MS) return Promise.resolve(cache);
+  inflight = (async () => {
+    let list = null;
+    try {
+      list = await fetchFeed(feedUrl);
+    } catch {
+      // the live feed is not answering: use the static file for the rest of this visit
+      if (feedUrl !== FALLBACK) {
+        feedUrl = FALLBACK;
+        try { list = await fetchFeed(feedUrl); } catch { /* keep what we had */ }
+      }
+    }
+    cache = { list: list || cache?.list || [], status: list && feedUrl !== FALLBACK && !DEMO_MODE ? 'live' : 'static', at: Date.now() };
+    inflight = null;
+    subscribers.forEach((fn) => fn(cache));
+    return cache;
+  })();
+  return inflight;
+}
 
 const BASE = [...TESTIMONIALS, ...SUPPLIED_TESTIMONIALS.filter((t) => t.publish || DEMO_MODE).map((t) => (t.publish ? t : { ...t, preview: true }))].map(normalizeReview).filter(Boolean);
 
@@ -51,33 +81,23 @@ async function fetchFeed(url) {
 
 
 export default function useLiveReviews() {
-  const [live, setLive] = useState([]);
+  const [live, setLive] = useState(() => cache?.list || []);
   const [own, setOwn] = useState([]);
-  const [status, setStatus] = useState('static'); // static | live
+  const [status, setStatus] = useState(() => cache?.status || 'static'); // static | live
   useEffect(() => {
     setOwn(ownReviews());
-    let alive = true;
-    let url = FEED;
-    const load = async () => {
-      if (document.hidden) return;
-      try {
-        const list = await fetchFeed(url);
-        if (!alive) return;
-        setLive(list);
-        setStatus(url === FALLBACK || DEMO_MODE ? 'static' : 'live');
-      } catch {
-        if (url !== FALLBACK) { url = FALLBACK; load(); }
-      }
-    };
-    load();
-    const t = setInterval(load, POLL_MS);
-    const onNew = () => { setOwn(ownReviews()); setTimeout(load, 1500); };
-    const onVis = () => { if (!document.hidden) load(); };
+    const apply = (c) => { setLive(c.list); setStatus(c.status); };
+    subscribers.add(apply);
+    if (cache) apply(cache);
+    readFeed();
+    let later;
+    const onNew = () => { setOwn(ownReviews()); clearTimeout(later); later = setTimeout(() => readFeed(true), 1500); };
+    const onVis = () => { if (!document.hidden) readFeed(); };
     window.addEventListener(REVIEW_EVENT, onNew);
     document.addEventListener('visibilitychange', onVis);
     return () => {
-      alive = false;
-      clearInterval(t);
+      subscribers.delete(apply);
+      clearTimeout(later);
       window.removeEventListener(REVIEW_EVENT, onNew);
       document.removeEventListener('visibilitychange', onVis);
     };
