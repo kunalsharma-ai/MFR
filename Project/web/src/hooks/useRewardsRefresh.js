@@ -11,7 +11,23 @@ let tick = 0;
 const listeners = new Set();
 const subscribe = (fn) => (listeners.add(fn), () => listeners.delete(fn));
 
+// Issue #99: every bump makes each screen read the points again, and a screen that bumps again after reading started an
+// endless request loop once a profile was completed. A real completion needs one or two bumps, so more than
+// BUMP_MAX within BUMP_WINDOW is a loop: those extra bumps are dropped (and logged once) instead of refetching forever.
+const BUMP_MAX = 6;
+const BUMP_WINDOW = 15_000;
+let bumps = [];
+let warned = false;
 export function bumpRewards() {
+  const now = Date.now();
+  bumps = bumps.filter((t) => now - t < BUMP_WINDOW);
+  if (bumps.length >= BUMP_MAX) {
+    if (!warned && typeof console !== "undefined") console.warn("[rewards] too many refreshes in a row, skipping until things settle");
+    warned = true;
+    return;
+  }
+  warned = false;
+  bumps.push(now);
   tick += 1;
   listeners.forEach((fn) => fn());
 }
@@ -22,7 +38,11 @@ export const useRewardsTick = () =>
     () => 0,
   );
 const PROFILE_REWARD_CATEGORY = "profile";
-const tagOf = (slug) => `[profile:${slug}]`;
+const slugKey = (slug) => String(slug ?? "").trim().toLowerCase(); // the API stores the slug in lower case
+const tagOf = (slug) => `[profile:${slugKey(slug)}]`;
+// profiles this page session already asked the API to pay, per member. The API pays a profile once anyway (unique key);
+// this stops the browser asking again and again when its read of the rewards does not show the payment (issue #99).
+const asked = new Set();
 const idOf = (v) => String(v?._id ?? v ?? "");
 export const profileCategoryOf = (user) => user?.category || "b2c"; // the category the Profiles page asks the profile list with
 
@@ -34,7 +54,7 @@ async function readRewards(user) {
       user: user._id,
     });
     if (!resp || resp.status === "error") return null;
-    return resp.data;
+    return Array.isArray(resp.data) ? resp.data : null; // anything else is not a list of rewards we can read
   } catch (e) {
     return null;
   }
@@ -46,11 +66,11 @@ const TAG_RE = /\[profile:([^\]]+)\]/;
 /** slugs of the profiles that already have a reward in the database, with the points paid for each (null when the rewards cannot be read) */
 export async function readPaidProfiles(user) {
   const mine = await readRewards(user);
-  if (!mine) return null;
+  if (!Array.isArray(mine)) return null;
   const paid = {};
   for (const r of mine) {
-    const m = TAG_RE.exec(String(r.remarks || ""));
-    if (m) paid[m[1]] = (paid[m[1]] || 0) + (Number(r.points) || 0);
+    const m = TAG_RE.exec(String(r?.remarks || ""));
+    if (m) { const k = slugKey(m[1]); paid[k] = (paid[k] || 0) + (Number(r.points) || 0); }
   }
   return paid;
 }
@@ -64,10 +84,13 @@ function payOnce(user, items) {
     if (!user?._id || !Array.isArray(items) || !items.length) return 0;
     const mine = await readRewards(user);
     if (!mine) return 0; // cannot check what was paid: pay nothing rather than twice
-    const remarks = mine.map((r) => String(r.remarks || ""));
+    const remarks = mine.map((r) => String(r?.remarks || "").toLowerCase());
     let paid = 0;
     for (const p of items) {
       if (!p?.slug || remarks.some((t) => t.includes(tagOf(p.slug)))) continue;
+      const once = `${idOf(user)}:${slugKey(p.slug)}`;
+      if (asked.has(once)) continue;
+      asked.add(once);
       try {
         const resp = await api.put("/api/v1/rewards", {
           user: user._id,

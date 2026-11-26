@@ -51,11 +51,37 @@ export async function checkTemplateHost(env = process.env) {
     return false;
 }
 
+// issue #98: the Teen Panel emails are built from mailer/teen/*.liquid. A template service built before the Teen Panel
+// (or without the mailer/teen folder) answers an error for them, so neither the parent's invite nor the teen's email
+// can go out. Building one teen template at start-up (nothing is sent) shows that in the log straight away.
+export async function checkTeenTemplates(env = process.env) {
+    const sample = {
+        template: "guardian-invite", subject: "check", reference: "TP-CHECK", site: "https://www.myfrequentrewards.com",
+        support: { email: "support@myfrequentrewards.com" }, year: new Date().getFullYear(),
+        teen: { firstName: "Check", age: 15 }, guardian: { firstName: "Check", relation: "mother", relationLabel: "Mother" },
+        links: { yes: "https://www.myfrequentrewards.com/teen/parent", no: "https://www.myfrequentrewards.com/teen/parent", review: "https://www.myfrequentrewards.com/teen/parent" },
+        expires: new Date().toISOString(),
+    };
+    try {
+        const r = await withService("template", {}, (api) => api.post("/api/v1/mailer/teen/guardian-invite", sample), env);
+        const html = r?.data;
+        const bad = typeof r?.status === "number" && (r.status < 200 || r.status >= 300);
+        if (bad || !html || (typeof html === "object" && (html.error || html.status === "error"))) {
+            say(`the email-template service can't build the Teen Panel emails (mailer/teen/guardian-invite answered ${r?.status}); no parent invite or teen email will be sent. Redeploy it with the mailer/teen templates.`);
+            return false;
+        }
+        return true;
+    } catch (e) {
+        return null; // not reachable: checkTemplateHost already reports that
+    }
+}
+
 export function runDeployChecks(env = process.env) {
     checkSocialKey(env);
     // the email service may start a little after the API
     setTimeout(() => {
         checkTemplateHost(env).catch(() => {});
         checkMailAccounts(env).catch(() => {});
+        checkTeenTemplates(env).catch(() => {});
     }, 20_000).unref();
 }

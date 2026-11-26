@@ -6,7 +6,7 @@ import React from "react";
 import { useMember } from "@/Context";
 import Icon from "../icons.jsx";
 import { t } from "../strings";
-import { Reveal, LoadingBlock, ErrorState, EmptyState } from "../ui.jsx";
+import { Reveal, LoadingBlock, ErrorState, EmptyState, CardBoundary } from "../ui.jsx";
 import { fmt, memberTypeOf } from "../data";
 import { useEngage, useEngageMutation } from "./data";
 import { play } from "../sound";
@@ -19,6 +19,26 @@ const inr = (v) => (v == null ? "" : new Intl.NumberFormat("en-IN", { style: "cu
 const when = (d) => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
 export const useRewardsData = () => useEngage("rewards", "/rewards");
+
+// Issue #97: an API that is older (or newer) than this page can answer GET /engagement/rewards without `balances`,
+// `items` or `redemptions`, and reading `balances.available` of undefined took the whole Rewards page down. Every field
+// the cards read gets a safe default here; the numbers still only ever come from the server.
+const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+export function normalizeRewards(raw) {
+  const r = raw && typeof raw === "object" ? raw : {};
+  const b = r.balances && typeof r.balances === "object" ? r.balances : {};
+  const g = r.goal && typeof r.goal === "object" && r.goal.item ? r.goal : null;
+  return {
+    ...r,
+    balances: { ...b, available: num(b.available), pending: num(b.pending), onHold: num(b.onHold), spent: num(b.spent) },
+    items: (Array.isArray(r.items) ? r.items : []).filter((x) => x && typeof x === "object"),
+    offers: Array.isArray(r.offers) ? r.offers : [],
+    redemptions: Array.isArray(r.redemptions) ? r.redemptions : [],
+    goal: g ? { ...g, pct: Math.max(0, Math.min(100, num(g.pct))), available: num(g.available), points: num(g.points), left: num(g.left) } : null,
+    open: Boolean(r.open),
+    minRedemption: r.minRedemption ?? null,
+  };
+}
 
 function Offers({ offers }) {
   if (!offers?.length) return null;
@@ -202,28 +222,30 @@ export function RewardsExtras() {
   const [picking, setPicking] = React.useState(false);
   if (R.isLoading) return <LoadingBlock lines={4} h={260} />;
   if (R.isError) return <ErrorState onRetry={R.refetch} />;
-  const d = R.data;
+  const d = normalizeRewards(R.data);
   const pick = () => { setPicking(true); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
   return (
     <div className={`eg-rewards${teen ? " is-teen" : ""}`}>
-      <Reveal><Offers offers={d.offers} /></Reveal>
+      <Reveal><CardBoundary name="rewards-offers" quiet><Offers offers={d.offers} /></CardBoundary></Reveal>
       <div className="eg-grid2">
-        <Reveal><Goal data={d} onPick={pick} /></Reveal>
+        <Reveal><CardBoundary name="rewards-goal"><Goal data={d} onPick={pick} /></CardBoundary></Reveal>
         <Reveal delay={80}>
-          <section className="eg-card" aria-labelledby="rb-title">
-            <h2 className="h-h3" id="rb-title"><Icon name="wallet" size={20} /> {t("bal.available")}</h2>
-            <p className="eg-big">{fmt(d.balances.available)} <small>{t("c.points")}</small></p>
-            <p className="eg-note">
-              {d.balances.pending ? `${t("bal.pending")}: ${fmt(d.balances.pending)} · ` : ""}
-              {d.balances.onHold ? `${t("bal.onHold")}: ${fmt(d.balances.onHold)} · ` : ""}
-              {d.balances.spent ? `${t("bal.spent")}: ${fmt(d.balances.spent)}` : ""}
-            </p>
-            {!teen ? <p className="eg-note">{t("ct.min", { n: fmt(d.minRedemption) })}</p> : <p className="eg-note">{t("ct.teenNote")}</p>}
-          </section>
+          <CardBoundary name="rewards-balance">
+            <section className="eg-card" aria-labelledby="rb-title">
+              <h2 className="h-h3" id="rb-title"><Icon name="wallet" size={20} /> {t("bal.available")}</h2>
+              <p className="eg-big">{fmt(d.balances.available)} <small>{t("c.points")}</small></p>
+              <p className="eg-note">
+                {d.balances.pending ? `${t("bal.pending")}: ${fmt(d.balances.pending)} · ` : ""}
+                {d.balances.onHold ? `${t("bal.onHold")}: ${fmt(d.balances.onHold)} · ` : ""}
+                {d.balances.spent ? `${t("bal.spent")}: ${fmt(d.balances.spent)}` : ""}
+              </p>
+              {!teen ? (d.minRedemption != null ? <p className="eg-note">{t("ct.min", { n: fmt(d.minRedemption) })}</p> : null) : <p className="eg-note">{t("ct.teenNote")}</p>}
+            </section>
+          </CardBoundary>
         </Reveal>
       </div>
-      <Reveal><Catalogue data={d} picking={picking} onPicked={() => setPicking(false)} /></Reveal>
-      <Reveal><Requests list={d.redemptions} /></Reveal>
+      <Reveal><CardBoundary name="rewards-catalogue"><Catalogue data={d} picking={picking} onPicked={() => setPicking(false)} /></CardBoundary></Reveal>
+      <Reveal><CardBoundary name="rewards-requests" quiet><Requests list={d.redemptions} /></CardBoundary></Reveal>
     </div>
   );
 }

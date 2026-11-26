@@ -419,9 +419,16 @@ function SkinProfiles() {
       pointsOf,
     });
   }, [user?._id, cat, visible]);
+  // Issue #99: this effect runs again whenever the profiles, points or the gate are read again, and every one of those
+  // reads follows a bump. Paying and the quality settle therefore run only when the set of completed profiles really
+  // changed, so a completed profile can no longer start an endless pay -> bump -> read -> pay loop.
+  const settledFor = React.useRef("");
   React.useEffect(() => {
     if (!Array.isArray(profiles) || isLoading || interestsLoading || !pointsFetched || gate.loading) return;
     applyRewards(profiles, points);
+    const doneKey = `${user?._id || ""}|${profiles.filter((p) => Number(p?.status) >= 100).map((p) => p.slug).sort().join(",")}`;
+    if (settledFor.current === doneKey) return;
+    settledFor.current = doneKey;
     creditProfileRewards(user, profiles).then((n) => { if (n) bumpRewards(); }).catch(() => {}); // completed profiles without a reward yet are paid once
     creditQuality(profiles); // profiles that were already complete are counted once
   }, [applyRewards, creditQuality, profiles, points, isLoading, interestsLoading, pointsFetched, gate.loading, gate.extras, user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -430,6 +437,7 @@ function SkinProfiles() {
     const fresh = await qc.fetchQuery({ queryKey: profileKey, queryFn: fetchProfiles, staleTime: 0 });
     const pts = await qc.fetchQuery({ queryKey: pointsKey, queryFn: fetchPoints, staleTime: 0 });
     applyRewards(fresh, pts);
+    if (Array.isArray(fresh)) settledFor.current = `${user?._id || ""}|${fresh.filter((p) => Number(p?.status) >= 100).map((p) => p.slug).sort().join(",")}`;
     await creditProfileRewards(user, fresh).catch(() => 0); // the profile just completed pays its points into the database (PUT /api/v1/rewards)
     bumpRewards(); // sidebar, dashboard and My Account read the new Reward Balance
     await creditQuality(fresh); // +1 Quality Score for every newly completed profile (also reloads the user)
