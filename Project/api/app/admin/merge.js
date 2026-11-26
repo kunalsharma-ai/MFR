@@ -1,7 +1,7 @@
 // Duplicate member accounts (super admin console, members module). One brand at a time (req.adminOrigin).
 //
-//   duplicates(by)   likely duplicates: same e-mail ignoring case, dots and +tags (Gmail style), same phone, or same
-//                    name and date of birth. Rows are masked like the member list.
+//   duplicates(by)   likely duplicates: same e-mail ignoring case, dots and +tags (Gmail style), same phone, same
+//                    name and date of birth, or the same sign-up IP or device (one-way hashes, never shown). Rows are masked like the member list.
 //   merge()          dry run by default. Moves the duplicate's history (survey responses, rewards, points
 //                    adjustments and holds, redemptions, quality, answers, tickets, referrals, ...) to the kept account
 //                    and closes the duplicate. Where the kept account already has the matching row (the same reward
@@ -94,17 +94,20 @@ const BY = {
     email: { why: "Same e-mail address, ignoring capitals, dots and +tags", key: (u) => (u.mail ? normEmail(u.mail) : null) },
     phone: { why: "Same phone number (last 10 digits)", key: (u) => { const p = normPhone(u.phone); return p.length >= 8 ? p : null; } },
     name_dob: { why: "Same name and date of birth", key: (u) => (u.name?.first && u.dob ? normName(u) : null) },
+    // one-way hashes saved at sign-up (utils/fingerprint.js); accounts from before that have none and never match
+    ip: { why: "Signed up from the same IP address", key: (u) => u.signupFingerprint?.ipHash || null },
+    device: { why: "Signed up from the same device", key: (u) => u.signupFingerprint?.deviceHash || null },
 };
 
 /** Groups of likely duplicates. The matching value itself is never returned, only masked member rows. */
 export async function duplicates(origin, { by = "email", limit = 50 } = {}) {
     const rule = BY[by];
-    if (!rule) throw new AdminError("invalid_value", "by is email, phone or name_dob");
+    if (!rule) throw new AdminError("invalid_value", "by is email, phone, name_dob, ip or device");
     const max = Math.min(Math.max(Number(limit) || 50, 1), 200);
     const groups = new Map();
     const cursor = User.collection.find(
         { origin, isDeleted: { $ne: true }, memberStatus: { $nin: ["closed"] }, category: { $not: /minor/ } },
-        { projection: { mail: 1, phone: 1, name: 1, dob: 1 } },
+        { projection: { mail: 1, phone: 1, name: 1, dob: 1, signupFingerprint: 1 } },
     );
     for await (const u of cursor) {
         const k = rule.key(u);

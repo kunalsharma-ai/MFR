@@ -38,6 +38,8 @@ import { lockedFor, fail, clear, norm } from "../../utils/throttle.js";
 import { createCaptcha, requireCaptcha } from "../../utils/captcha.js";
 import { setOptIn } from "../../engagement/marketing.js";
 import responseController from "../../controller/Response.js";
+import { User as UserModel } from "../../model/index.js";
+import { fingerprint } from "../../utils/fingerprint.js";
 import { redeem as redeemAdminTicket } from "../../admin/memberactions.js";
 
 const router = express.Router();
@@ -108,6 +110,8 @@ router
             if (req.body?.termsAccepted === true) userInfo.termsAcceptance = { signupAt: new Date(), signupVersion: String(req.body.termsVersion || "").slice(0, 40) };
             let message = "";
             let data = await userController.create(userInfo);
+            // one-way hashes of the sign-up IP and device for duplicate checks; a failure here never blocks sign-up
+            await UserModel.updateOne({ _id: data._id }, { $set: { signupFingerprint: fingerprint(req) } }).catch(() => {});
             // "Send me news and offers": recorded only when the form sent a real true/false (unticked by default)
             if (typeof req.body?.marketingOptIn === "boolean") await setOptIn(data._id, req.origin, req.body.marketingOptIn, "signup", "member");
             Emails.newUser(data, req.origin); // off unless config.emails.newUser

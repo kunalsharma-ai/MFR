@@ -29,6 +29,9 @@ what has to be set when it is deployed. Tests: `tests/security.hardening.test.mj
 - `JWT_SECRET`: a long random value (the server logs a warning under 32 characters).
 - `SOCIAL_JWT_SECRET`: only if social sign-on is used. The old key is public now (it was in the code), so the sign-on
   service must get a new one.
+- `SIGNUP_FINGERPRINT_SECRET` (optional): the key for the one-way sign-up IP and device hashes used by the duplicate
+  checks. Unset, a key derived from `JWT_SECRET` is used, so changing either later starts new hashes that won't match
+  older sign-ups. Set it once, as a long random value, and keep it.
 - The Sampledge push to `/project-dev` stops working without an admin token (Sampledge is not used any more).
 - MADP must send `x-madp-nonce` (MADP's `PanelAdminClient` does from the matching MADP change).
 
