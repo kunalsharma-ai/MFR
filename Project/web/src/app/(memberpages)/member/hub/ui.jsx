@@ -194,6 +194,26 @@ export function ErrorState({ text, onRetry }) {
   );
 }
 
+/* Keeps one card's failure inside that card: if it throws while drawing (for example the server sent a reply in a
+   shape it does not expect), the card shows the error state instead of the whole page going to "Application error". */
+export class CardBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error) {
+    if (typeof console !== "undefined") console.error("[hub] card failed", this.props.name || "", error);
+  }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    if (this.props.quiet) return null;
+    return <ErrorState onRetry={() => this.setState({ failed: false })} />;
+  }
+}
+
 /* Adds .is-in when the element scrolls into view (page-entry and scroll animations). */
 export function Reveal({ as: Tag = "div", className = "", children, delay = 0, ...rest }) {
   const ref = React.useRef(null);

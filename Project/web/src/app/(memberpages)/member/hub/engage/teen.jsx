@@ -4,7 +4,7 @@
 import React from "react";
 import Icon from "../icons.jsx";
 import { t } from "../strings";
-import { LoadingBlock, ErrorState, Reveal } from "../ui.jsx";
+import { LoadingBlock, ErrorState, Reveal, CardBoundary } from "../ui.jsx";
 import { fmt } from "../data";
 import { useEngage, useEngageMutation } from "./data";
 import { play } from "../sound";
@@ -134,14 +134,14 @@ export default function TeenExtras() {
   const q = useEngage("teen-progress", "/teen/progress");
   if (q.isLoading) return <LoadingBlock lines={2} h={140} />;
   if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
-  const p = q.data;
+  const p = q.data || {};
   return (
     <div className="eg-tgrid">
-      <Reveal><Level p={p} /></Reveal>
-      <Reveal delay={60}><Season s={p.season} /></Reveal>
-      <Reveal className="eg-tg-wide" delay={80}><Badges p={p} /></Reveal>
-      <Reveal className="eg-tg-wide" delay={100}><Tasks /></Reveal>
-      <Reveal className="eg-tg-wide" delay={120}><GuardianViewButton /></Reveal>
+      <Reveal><CardBoundary name="teen-level"><Level p={p} /></CardBoundary></Reveal>
+      <Reveal delay={60}><CardBoundary name="teen-season"><Season s={p.season} /></CardBoundary></Reveal>
+      <Reveal className="eg-tg-wide" delay={80}><CardBoundary name="teen-badges"><Badges p={p} /></CardBoundary></Reveal>
+      <Reveal className="eg-tg-wide" delay={100}><CardBoundary name="teen-tasks"><Tasks /></CardBoundary></Reveal>
+      <Reveal className="eg-tg-wide" delay={120}><CardBoundary name="teen-guardianviewbutton"><GuardianViewButton /></CardBoundary></Reveal>
     </div>
   );
 }
