@@ -74,10 +74,8 @@ export const PARENT_SURVEY = {
           q: 'How do you describe yourself?',
           kind: 'choice',
           req: true,
-          // the same five options, and the same stored values, as the Member
-          // Profile Studio's `gender` question — so both pages agree
-          o: [['Female', 'Female', '👩'], ['Male', 'Male', '👨'], ['Non-binary', 'Non-binary', '🧑'], ['Another identity', 'Other', '🌈'], ['Prefer not to say', 'Prefer not to say', '🤐']],
-          other: 'Other',
+          // Male, Female, Other: the same three choices as every sign-up (Kunal, 26 Nov 2026)
+          o: [['Male', 'Male', '👨'], ['Female', 'Female', '👩'], ['Other', 'Other', '🧑']],
         },
         {
           n: 'parent-dob',

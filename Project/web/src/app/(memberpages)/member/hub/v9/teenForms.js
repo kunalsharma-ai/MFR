@@ -30,33 +30,10 @@ export const PARENT_ONBOARDING = {
      "q": "How do you describe yourself?",
      "kind": "choice",
      "req": true,
-     "other": "Other",
      "o": [
-      [
-       "Female",
-       "Female",
-       "👩"
-      ],
-      [
-       "Male",
-       "Male",
-       "👨"
-      ],
-      [
-       "Non-binary",
-       "Non-binary",
-       "🧑"
-      ],
-      [
-       "Another identity",
-       "Other",
-       "🌈"
-      ],
-      [
-       "Prefer not to say",
-       "Prefer not to say",
-       "🤐"
-      ]
+      ["Male", "Male", "👨"],
+      ["Female", "Female", "👩"],
+      ["Other", "Other", "🧑"]
      ]
     },
     {

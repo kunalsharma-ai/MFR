@@ -151,8 +151,6 @@ export async function register(req) {
             category: TEEN_CATEGORY,
             name: { first: R.clean(teen.firstName, 60), middle: R.clean(teen.middleName, 60), last: R.clean(teen.lastName, 60) },
             gender: R.userGender(teen.gender),
-            genderIdentity: teen.gender,
-            genderSelf: teen.gender === "Self-describe" ? R.clean(teen.genderSelf, 40) : "",
             dob: new Date(`${teen.dob}T00:00:00Z`),
             mail,
             ...(teenPhone ? { phone: teenPhone } : {}),
@@ -196,7 +194,6 @@ export async function register(req) {
             guardian: g._id,
             teenDetails: {
                 gender: teen.gender,
-                genderSelf: teen.gender === "Self-describe" ? R.clean(teen.genderSelf, 40) : "",
                 phone: teenPhone || "",
                 location: {
                     country: String(loc.country).toUpperCase(), countryName: cn.name,
@@ -595,7 +592,7 @@ async function writeKnownAnswers(reg, teen) {
         D01: String(R.ageOn(new Date(teen.dob).toISOString().slice(0, 10))),
         D02: loc.country,
         D03: loc.stateManual ? loc.state : (loc.stateCode || loc.state),
-        D06: reg.teenDetails?.gender === "Self-describe" ? "Other" : reg.teenDetails?.gender,
+        D06: reg.teenDetails?.gender,
     };
     if (reg.teenDetails?.gender === "Self-describe" && reg.teenDetails.genderSelf) known.D06__other = reg.teenDetails.genderSelf;
     // the parent's own profiling answers (onboarding "Your home" and "Work & income") fill the same teen keys

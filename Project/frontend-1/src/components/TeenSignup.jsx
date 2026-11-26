@@ -44,7 +44,7 @@ const RELATIONS = [
   ['father', 'Father', 'My dad gives permission', 'user'],
   ['legal_guardian', 'Legal guardian', 'Another adult legally responsible for me', 'shield'],
 ];
-const GENDER_LABEL = { Female: 'Female', Male: 'Male', 'Non-binary': 'Non-binary', 'Self-describe': 'Self-describe', 'Prefer not to say': 'Prefer not to say' };
+const GENDER_LABEL = { Male: 'Male', Female: 'Female', Other: 'Other' };
 // which fields each step checks
 const STEP_KEYS = {
   1: ['firstName', 'middleName', 'lastName', 'dob', 'gender', 'genderSelf'],
@@ -280,7 +280,7 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
               </div>
               <div className={`sx-field ${show('gender') ? 'bad' : ''}`} style={{ gridColumn: '1 / -1' }}>
                 <span className="sx-static-label" id="t-gender-lbl">What is your gender?</span>
-                <div className="sx-genders sx-genders-5" role="radiogroup" aria-labelledby="t-gender-lbl" aria-invalid={Boolean(show('gender'))}>
+                <div className="sx-genders" role="radiogroup" aria-labelledby="t-gender-lbl" aria-invalid={Boolean(show('gender'))}>
                   {R.TEEN_GENDERS.map((x) => (
                     <label key={x} className={`sx-gender ${tn.gender === x ? 'on' : ''}`}>
                       <input type="radio" name="t-gender" value={x} checked={tn.gender === x} onChange={() => { setT('gender', x); touch('gender'); }} />
@@ -290,9 +290,6 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
                 </div>
                 {show('gender') ? <p className="f-err" role="alert">{show('gender')}</p> : null}
               </div>
-              {tn.gender === 'Self-describe' ? (
-                <Text id="t-genderSelf" label="In your own words (optional)" icon="pen" value={tn.genderSelf} onChange={(v) => setT('genderSelf', v)} maxLength={40} />
-              ) : null}
             </div>
             <p className="sx-note"><Icon name="shield" size={16} /> Under 18 you join with a parent or guardian’s OK. We’ll email them after the last step.</p>
           </>

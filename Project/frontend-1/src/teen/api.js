@@ -218,7 +218,7 @@ async function demoServer(method, path, body = {}) {
         reference: reg.ref,
         teen: { firstName: reg.teen.firstName, middleName: reg.teen.middleName, lastName: reg.teen.lastName, dob: reg.teen.dob, email: reg.teen.email, phone: reg.teen.phone?.number ? `+${reg.teen.phone.dial || ''} ${reg.teen.phone.number}` : '', gender: reg.teen.gender, genderSelf: reg.teen.genderSelf, location: { country: loc.country, countryName: loc.countryName, state: loc.state, city: loc.city, zip: loc.zip }, memberSince: reg.activatedAt },
         guardian: { relation: reg.guardian.relation, firstName: reg.guardian.firstName, emailMasked: R.maskEmail(reg.guardian.email), consentVersion: reg.guardianConsent?.version || TERMS_VERSION, consentAt: reg.guardianConsent?.at || reg.activatedAt, optional: [] },
-        answers: { D01: String(R.ageOn(reg.teen.dob)), D02: loc.country, D03: loc.stateCode || loc.state, D06: reg.teen.gender === 'Self-describe' ? 'Other' : reg.teen.gender, ...(reg.answers || {}) },
+        answers: { D01: String(R.ageOn(reg.teen.dob)), D02: loc.country, D03: loc.stateCode || loc.state, D06: reg.teen.gender, ...(reg.answers || {}) },
         locked: ['D01', 'D02', 'D03', 'D06'], welcomeDone: Boolean(reg.welcomeDone),
       };
     }

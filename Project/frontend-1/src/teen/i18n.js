@@ -21,7 +21,7 @@ export const EN = {
   phone: 'Phone number', gender: 'Gender', country: 'Country', state: 'State / province / region', city: 'City / town',
   zip: 'ZIP / postal code', dd: 'Day', mm: 'Month', yyyy: 'Year', country_code: 'Country code',
   no_zip: 'My address has no postal code', self_describe: 'Describe it in your own words (optional)',
-  g_Female: 'Female', g_Male: 'Male', 'g_Non-binary': 'Non-binary', 'g_Self-describe': 'Self-describe', 'g_Prefer not to say': 'Prefer not to say',
+  g_Female: 'Female', g_Male: 'Male', g_Other: 'Other', 'g_Non-binary': 'Non-binary', 'g_Self-describe': 'Self-describe', 'g_Prefer not to say': 'Prefer not to say',
   // errors (codes from the shared rules / the API)
   e_first_name: 'Please enter a first name (letters in any language).', e_middle_name: 'Letters only, please.',
   e_last_name: 'Please enter a last name.', e_email: 'That email address doesn’t look right.', e_phone: 'That number doesn’t look right for the country chosen.',
@@ -205,7 +205,7 @@ const HI = {
   saving: 'सेव हो रहा है…', saved: 'सेव हो गया', search: 'खोजें', type_own: 'सूची में नहीं है? ख़ुद लिखें', use_typed: '“{0}” इस्तेमाल करें',
   step_of: 'चरण {0} / {1}', ref: 'रेफ़रेंस', first_name: 'पहला नाम', middle_name: 'बीच का नाम', last_name: 'उपनाम', dob: 'जन्म तिथि',
   email: 'ईमेल पता', phone: 'फ़ोन नंबर', gender: 'लिंग', country: 'देश', state: 'राज्य / प्रांत', city: 'शहर / कस्बा', zip: 'पिन / पोस्टल कोड',
-  dd: 'दिन', mm: 'महीना', yyyy: 'साल', g_Female: 'महिला', g_Male: 'पुरुष', 'g_Non-binary': 'नॉन-बाइनरी', 'g_Self-describe': 'अपने शब्दों में', 'g_Prefer not to say': 'नहीं बताना चाहते',
+  dd: 'दिन', mm: 'महीना', yyyy: 'साल', g_Female: 'महिला', g_Male: 'पुरुष', g_Other: 'अन्य', 'g_Non-binary': 'नॉन-बाइनरी', 'g_Self-describe': 'अपने शब्दों में', 'g_Prefer not to say': 'नहीं बताना चाहते',
   en_kicker: 'टीन पैनल · 13–17 वर्ष', en_title: 'आपकी राय। आपके रिवॉर्ड। आपके अभिभावक की हाँ।',
   en_lead: 'चार छोटे चरणों में MyFrequentRewards टीन पैनल से जुड़ें। अभिभावक हाँ कहें, फिर आप पासवर्ड बनाएँ।',
   en_start: 'रजिस्ट्रेशन शुरू करें', en_age_h: 'पहले, आपका जन्मदिन कब है?', route_block_h: 'अभी नहीं!',

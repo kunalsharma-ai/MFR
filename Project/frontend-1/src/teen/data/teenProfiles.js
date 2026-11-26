@@ -33,7 +33,7 @@ const BASIC = {
       icon: "👋",
       qs: [
         { n: "D01", q: "When is your birthday?", kind: "dob", segment: "minor", ageOnly: true, help: "Tap the year to jump to it. We only keep your age — never your birthday.", req: true, doc: "T001 + T002 + T003" },
-        { n: "D06", q: "How do you describe yourself?", req: false, o: [["Female","Female","👩"],["Male","Male","👨"],["Non-binary","Non-binary","🧑"],["Another identity","Other","✨"],["Prefer not to say","Prefer not to say","🤐"]], other: "Other", doc: "T004" },
+        { n: "D06", q: "How do you describe yourself?", req: false, o: [["Male","Male","👨"],["Female","Female","👩"],["Other","Other","🧑"]], doc: "T004" },
         { n: "D02", q: "Which country do you live in?", kind: "country", req: true, doc: "G001" },
         { n: "D03", q: "Which state, province or region?", kind: "region", from: "D02", req: true, doc: "G002" },
         { n: "D04", q: "What kind of place is it?", req: true, o: [["A large city","city","🏙️"],["A suburb","suburb","🏘️"],["A small town","town","🏡"],["The countryside","rural","🌾"],["Remote","remote","🔹"],["Prefer not to say","na","🤐"]], doc: "G003" },
