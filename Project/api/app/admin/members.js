@@ -40,6 +40,25 @@ export function row(u) {
     };
 }
 
+/** Members table columns MADP can sort by, and the stored field each one sorts on. Nothing else is accepted. */
+export const SORTS = {
+    name: "name.first",
+    memberId: "respondentID",
+    email: "mail",
+    phone: "phone",
+    segment: "category",
+    country: "address.0.country",
+    born: "dob",
+    quality: "qualityScore",
+    status: "memberStatus",
+    marketing: "marketingOptIn.granted",
+    signedUp: "createdAt",
+    lastActivity: "lastActivityAt",
+};
+
+// Text columns sort case-insensitively ("anna" next to "Anna").
+const TEXT_SORTS = new Set(["name", "memberId", "email", "segment", "country", "status"]);
+
 /** Search (spec: email, phone, member ID, name, country, segment, status, sign-up date, quality, activity). */
 export async function search(origin, q = {}) {
     const f = { origin, isDeleted: { $ne: true } };
@@ -68,12 +87,21 @@ export async function search(origin, q = {}) {
         f.qualityScore = { ...(q.qualityMin != null ? { $gte: Number(q.qualityMin) } : {}), ...(q.qualityMax != null ? { $lte: Number(q.qualityMax) } : {}) };
     if (q.inactiveSince) f.$and = [...(f.$and || []), { $or: [{ lastActivityAt: null }, { lastActivityAt: { $lt: new Date(q.inactiveSince) } }] }];
     if (q.dueBefore) f.$and = [...(f.$and || []), { $or: [{ profileCheckedAt: null, createdAt: { $lt: new Date(q.dueBefore) } }, { profileCheckedAt: { $lt: new Date(q.dueBefore) } }] }];
+    // Born column: birth year range, on the stored date of birth (UTC year boundaries).
+    const yr = (v) => (/^\d{4}$/.test(String(v ?? "")) ? Number(v) : null);
+    const bornFrom = yr(q.bornFrom), bornTo = yr(q.bornTo);
+    if (bornFrom != null || bornTo != null)
+        f.dob = { ...(bornFrom != null ? { $gte: new Date(Date.UTC(bornFrom, 0, 1)) } : {}), ...(bornTo != null ? { $lt: new Date(Date.UTC(bornTo + 1, 0, 1)) } : {}) };
     const page = Math.max(1, Math.min(10000, Number(q.page) || 1));
+    const by = Object.hasOwn(SORTS, q.sort) ? q.sort : null;
+    const dir = q.dir === "asc" ? 1 : -1;
+    const order = by ? { [SORTS[by]]: dir, _id: dir } : { createdAt: -1, _id: -1 };
     const [items, total] = await Promise.all([
-        User.find(f).sort({ createdAt: -1, _id: -1 }).skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).lean(),
+        (TEXT_SORTS.has(by) ? User.find(f).collation({ locale: "en", strength: 2 }) : User.find(f)).sort(order).skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).lean(),
         User.countDocuments(f),
     ]);
-    return { items: items.map(row), total, page, pageSize: PAGE_SIZE };
+    // `sort` tells MADP the whole list is sorted, so it doesn't sort only the page on screen.
+    return { items: items.map(row), total, page, pageSize: PAGE_SIZE, sort: by ? { by, dir: dir === 1 ? "asc" : "desc" } : null };
 }
 
 async function load(origin, id) {
