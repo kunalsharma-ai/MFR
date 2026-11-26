@@ -1,4 +1,4 @@
-// Build the page for the member site → frontend-1/public/member/account-actions/ (the public folder web shares)  (index.html + assets/)
+// Build the page for the member site → web/public/member/account-actions/ (index.html + assets/)
 // Run:  node scripts/build-host.mjs <output dir>
 import * as esbuild from 'esbuild';
 import { mkdir, rm, writeFile } from 'node:fs/promises';

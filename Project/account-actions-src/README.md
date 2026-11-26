@@ -1,7 +1,7 @@
 # account-actions (page: Delete or Deactivate My Account)
 
 The full page of the account-actions package (mfr-account-actions v2) without its header, built for the member site.
-It is served as a static page from `frontend-1/public/member/account-actions/` (web/public is a link to that shared folder) and shown inside My Account (an iframe of the same origin).
+It is served as a static page from `web/public/member/account-actions/` and shown inside My Account (an iframe of the same origin).
 
 Why `/member/...`: the gateway sends only /member, /admin, /auth, /survey and /_next to the `web` app; any other path reaches the public site.
 
@@ -9,7 +9,7 @@ Why `/member/...`: the gateway sends only /member, /admin, /auth, /survey and /_
 ```bash
 cd account-actions-src
 npm install
-node scripts/build-host.mjs ../frontend-1/public/member/account-actions
+node scripts/build-host.mjs ../web/public/member/account-actions
 ```
 
 ## Where things are
