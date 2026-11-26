@@ -151,6 +151,8 @@ export async function register(req) {
             category: TEEN_CATEGORY,
             name: { first: R.clean(teen.firstName, 60), middle: R.clean(teen.middleName, 60), last: R.clean(teen.lastName, 60) },
             gender: R.userGender(teen.gender),
+            genderIdentity: teen.gender,
+            genderSelf: teen.gender === "Self-describe" ? R.clean(teen.genderSelf, 40) : "",
             dob: new Date(`${teen.dob}T00:00:00Z`),
             mail,
             ...(teenPhone ? { phone: teenPhone } : {}),

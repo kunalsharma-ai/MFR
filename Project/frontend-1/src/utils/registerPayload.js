@@ -4,7 +4,9 @@
 // Backend rules this respects (see model/User.js):
 //   • `mail` (not `email`), lower-cased. The pair (mail, origin) is unique.
 //   • `phone` is country code + number, digits only. A leading "+" fails its validator.
-//   • `gender` is required: Male | Female | Other.
+//   • `gender` is required: Male | Female | Other. The form's exact answer (the same five choices as the Teen form)
+//     goes in `genderIdentity`, plus `genderSelf` for "Self-describe".
+//   • `name.middle` is optional.
 //   • `address[].tag` is required; `country` is the lower-case ISO code; state, city and zipcode are optional.
 //   • `password` is NOT sent. The backend drops it and sets it later from the emailed link.
 //
@@ -25,8 +27,14 @@ export function buildRegisterPayload(v, { dial = '', categories, timezone = 'UTC
 
   const payload = {
     category: v.memberType === 'professional' ? categories.professional : categories.consumer,
-    name: { first: v.firstName.trim(), last: v.lastName.trim() },
-    gender: v.gender,
+    name: {
+      first: v.firstName.trim(),
+      ...(v.middleName && v.middleName.trim() ? { middle: v.middleName.trim() } : {}),
+      last: v.lastName.trim(),
+    },
+    gender: v.gender === 'Female' || v.gender === 'Male' ? v.gender : 'Other',
+    genderIdentity: v.gender,
+    ...(v.gender === 'Self-describe' && v.genderSelf && v.genderSelf.trim() ? { genderSelf: v.genderSelf.trim().slice(0, 40) } : {}),
     dob: v.dob, // ISO YYYY-MM-DD
     mail,
     phone,

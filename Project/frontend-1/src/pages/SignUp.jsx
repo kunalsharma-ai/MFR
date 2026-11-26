@@ -130,8 +130,10 @@ function SignUp() {
   const [v, setV] = useState({
     memberType: "consumer",
     firstName: "",
+    middleName: "",
     lastName: "",
     gender: "",
+    genderSelf: "",
     dob: "",
     country: "",
     stateCode: "",
@@ -201,6 +203,7 @@ function SignUp() {
     setV((s) => ({
       ...s,
       firstName: s.firstName || words[0] || "",
+      middleName: s.middleName || (words.length > 2 ? words.slice(1, -1).join(" ") : ""),
       lastName: s.lastName || (words.length > 1 ? words[words.length - 1] : ""),
       email: s.email || email,
     }));
@@ -573,12 +576,12 @@ function SignUp() {
                         ))}
                       </div>
                       <div className="sx-grid">
+                        <div className="sx-names">
                         <Field
                           id="firstName"
                           label="First name"
                           error={err("firstName")}
                           ok={ok("firstName")}
-                          half
                           icon="user"
                         >
                           <input
@@ -592,11 +595,27 @@ function SignUp() {
                           />
                         </Field>
                         <Field
+                          id="middleName"
+                          label="Middle name"
+                          error={err("middleName")}
+                          hint="Optional"
+                          icon="user"
+                        >
+                          <input
+                            id="middleName"
+                            placeholder=" "
+                            autoComplete="additional-name"
+                            maxLength={40}
+                            value={v.middleName}
+                            onChange={(e) => set("middleName", e.target.value)}
+                            {...aria("middleName")}
+                          />
+                        </Field>
+                        <Field
                           id="lastName"
                           label="Last name"
                           error={err("lastName")}
                           ok={ok("lastName")}
-                          half
                           icon="user"
                         >
                           <input
@@ -609,6 +628,7 @@ function SignUp() {
                             {...aria("lastName")}
                           />
                         </Field>
+                        </div>
                         <div
                           className={`sx-field half sx-dob ${err("dob") ? "bad" : ""} ${ok("dob") ? "good" : ""}`}
                         >
@@ -650,7 +670,7 @@ function SignUp() {
                             What is your gender?
                           </span>
                           <div
-                            className="sx-genders"
+                            className="sx-genders sx-genders-5"
                             role="radiogroup"
                             aria-labelledby="gender-lbl"
                             aria-invalid={Boolean(err("gender"))}
@@ -707,8 +727,7 @@ function SignUp() {
                                       <path d="M12 14v7M9 18h6" />
                                     </svg>
                                   )}
-                                  {(g === "Other" ||
-                                    g === "Prefer not to say") && (
+                                  {g !== "Male" && g !== "Female" && (
                                     <svg
                                       viewBox="0 0 24 24"
                                       width="28"
@@ -739,6 +758,23 @@ function SignUp() {
                             </p>
                           ) : null}
                         </div>
+                        {v.gender === "Self-describe" ? (
+                          <Field
+                            id="genderSelf"
+                            label="In your own words (optional)"
+                            error={err("genderSelf")}
+                            icon="pen"
+                          >
+                            <input
+                              id="genderSelf"
+                              placeholder=" "
+                              maxLength={40}
+                              value={v.genderSelf}
+                              onChange={(e) => set("genderSelf", e.target.value)}
+                              {...aria("genderSelf")}
+                            />
+                          </Field>
+                        ) : null}
                         {/* <Field
                           id="gender"
                           label="Gender"

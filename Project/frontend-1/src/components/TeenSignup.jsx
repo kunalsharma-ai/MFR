@@ -260,9 +260,11 @@ export default function TeenSignup({ seed, onSwitch, onView }) {
             <h2 className="sx-h">Hi there! Who’s joining?</h2>
             <TypeCards value="teen" onSwitch={onSwitch} />
             <div className="sx-grid">
-              <Text id="t-firstName" label="First name" icon="user" half value={tn.firstName} onChange={(v) => setT('firstName', v)} onBlur={() => touch('firstName')} error={show('firstName')} ok={touched.firstName && !errors.firstName} autoComplete="given-name" />
-              <Text id="t-middleName" label="Middle name (optional)" icon="user" half value={tn.middleName} onChange={(v) => setT('middleName', v)} onBlur={() => touch('middleName')} error={show('middleName')} autoComplete="additional-name" />
-              <Text id="t-lastName" label="Last name" icon="user" half value={tn.lastName} onChange={(v) => setT('lastName', v)} onBlur={() => touch('lastName')} error={show('lastName')} ok={touched.lastName && !errors.lastName} autoComplete="family-name" />
+              <div className="sx-names">
+              <Text id="t-firstName" label="First name" icon="user" value={tn.firstName} onChange={(v) => setT('firstName', v)} onBlur={() => touch('firstName')} error={show('firstName')} ok={touched.firstName && !errors.firstName} autoComplete="given-name" />
+              <Text id="t-middleName" label="Middle name" hint="Optional" icon="user" value={tn.middleName} onChange={(v) => setT('middleName', v)} onBlur={() => touch('middleName')} error={show('middleName')} autoComplete="additional-name" />
+              <Text id="t-lastName" label="Last name" icon="user" value={tn.lastName} onChange={(v) => setT('lastName', v)} onBlur={() => touch('lastName')} error={show('lastName')} ok={touched.lastName && !errors.lastName} autoComplete="family-name" />
+              </div>
               <div className={`sx-field half sx-dob ${show('dob') ? 'bad' : ''} ${touched.dob && !errors.dob ? 'good' : ''}`}>
                 <label className="sx-static-label" htmlFor="t-dob">Date of birth</label>
                 <DobPicker id="t-dob" value={tn.dob} minAge={13} invalid={Boolean(show('dob'))} describedBy={show('dob') ? 't-dob-err' : 't-dob-hint'}

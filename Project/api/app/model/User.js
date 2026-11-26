@@ -55,6 +55,15 @@ export default mongooseModel(
             enum: ["Male", "Female", "Other"],
             required: [true, "Gender is required"]
         },
+        // the exact answer on the sign-up form (issue #88: Consumer, Professional and Teen offer the same five
+        // choices). `gender` above stays Male | Female | Other for targeting and older screens.
+        genderIdentity: {
+            type: String,
+            trim: true,
+            enum: ["", "Female", "Male", "Non-binary", "Self-describe", "Prefer not to say"],
+            default: ""
+        },
+        genderSelf: { type: String, trim: true, maxlength: 40, default: "" },
         dob: {
             type: Date,
             required: [true, "Date of birth is required"],

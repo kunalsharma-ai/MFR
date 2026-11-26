@@ -121,6 +121,10 @@
 .sx-type.t-professional.on { border-color: var(--blue); background: #F2F6FF; }
 .sx-type.t-professional.on .sx-type-ico, .sx-type.t-professional.on .sx-tick { background: linear-gradient(140deg, #0B1E5B, #2F6BFF); color: #fff; }
 .sx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* first, middle and last name on one row (issue #90); stacked on phones */
+.sx-names { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.sx-names > *, .sx-names > .sx-field { grid-column: auto; min-width: 0; margin: 0; }
+@media (max-width: 560px) { .sx-names { grid-template-columns: minmax(0, 1fr); } }
 .sx-field { grid-column: 1 / -1; }
 .sx-field.half { grid-column: auto; }
 .sx-control { position: relative; }
