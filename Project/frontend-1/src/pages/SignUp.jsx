@@ -133,7 +133,6 @@ function SignUp() {
     middleName: "",
     lastName: "",
     gender: "",
-    genderSelf: "",
     dob: "",
     country: "",
     stateCode: "",
@@ -670,7 +669,7 @@ function SignUp() {
                             What is your gender?
                           </span>
                           <div
-                            className="sx-genders sx-genders-5"
+                            className="sx-genders"
                             role="radiogroup"
                             aria-labelledby="gender-lbl"
                             aria-invalid={Boolean(err("gender"))}
@@ -758,23 +757,6 @@ function SignUp() {
                             </p>
                           ) : null}
                         </div>
-                        {v.gender === "Self-describe" ? (
-                          <Field
-                            id="genderSelf"
-                            label="In your own words (optional)"
-                            error={err("genderSelf")}
-                            icon="pen"
-                          >
-                            <input
-                              id="genderSelf"
-                              placeholder=" "
-                              maxLength={40}
-                              value={v.genderSelf}
-                              onChange={(e) => set("genderSelf", e.target.value)}
-                              {...aria("genderSelf")}
-                            />
-                          </Field>
-                        ) : null}
                         {/* <Field
                           id="gender"
                           label="Gender"

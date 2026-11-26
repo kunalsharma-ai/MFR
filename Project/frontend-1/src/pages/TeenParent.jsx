@@ -283,7 +283,7 @@ function prefillFrom(view) {
   const put = (k, v) => { if ((a[k] === undefined || a[k] === '') && v) a[k] = v; };
   put('parent-first-name', g.firstName); put('parent-middle-name', g.middleName); put('parent-last-name', g.lastName);
   put('parent-dob', g.dob);
-  if (['Female', 'Male', 'Non-binary', 'Prefer not to say'].includes(g.gender)) put('parent-gender', g.gender);
+  if (['Male', 'Female', 'Other'].includes(g.gender)) put('parent-gender', g.gender);
   put('P01', p.country); put('P02', p.state);
   put('P03', REL_TO_P03[g.relation]);
   put('P08', g.email);

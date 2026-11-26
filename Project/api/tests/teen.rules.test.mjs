@@ -67,7 +67,7 @@ test("guardian: adult, own email, gender only for legal guardian", () => {
     assert.equal(R.validateGuardian({ ...g, email: teen.email }, teen, { now }).email, "guardian_own_email");
     assert.equal(R.validateGuardian({ ...g, dob: "2010-01-01" }, teen, { now }).dob, "guardian_adult");
     assert.equal(R.validateGuardian({ ...g, relation: "legal_guardian" }, teen, { now }).gender, "gender");
-    assert.deepEqual(R.validateGuardian({ ...g, relation: "legal_guardian", gender: "Prefer not to say" }, teen, { now }), {});
+    assert.deepEqual(R.validateGuardian({ ...g, relation: "legal_guardian", gender: "Other" }, teen, { now }), {});
     assert.equal(R.guardianGender({ relation: "father" }), "Male");
 });
 

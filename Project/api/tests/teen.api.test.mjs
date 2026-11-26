@@ -364,7 +364,7 @@ test("teen profile: what the guardian submitted, only for that teen, only once c
 });
 
 test("guardian says NO: confirmed decline, reasons optional, nothing activated", async () => {
-    const r = await call("POST", "/api/v1/teen/register", teenBody({ teen: { email: "zoya.teen@example.com", firstName: "Zoya", gender: "Female" }, guardian: { relation: "legal_guardian", gender: "Prefer not to say", email: "guardian.z@example.com", firstName: "Imran" } }));
+    const r = await call("POST", "/api/v1/teen/register", teenBody({ teen: { email: "zoya.teen@example.com", firstName: "Zoya", gender: "Female" }, guardian: { relation: "legal_guardian", gender: "Other", email: "guardian.z@example.com", firstName: "Imran" } }));
     assert.equal(r.json.status, "success", JSON.stringify(r.json));
     const tok = tokenFrom(lastMail("guardian-invite").data.links.no);
     const no = await call("POST", `/api/v1/teen/guardian/${tok}/decision`, { decision: "no", confirm: true, reasons: ["privacy", "other"], comment: "Not right now, thanks." });

@@ -90,8 +90,9 @@ export const validEmail = (s) => EMAIL_RE.test(normEmail(s)) && normEmail(s).len
 export const digitsOnly = (s) => String(s || "").replace(/\D/g, "");
 export const clean = (s, max = 120) => String(s ?? "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, max);
 
-export const TEEN_GENDERS = ["Female", "Male", "Non-binary", "Self-describe", "Prefer not to say"];
-export const GUARDIAN_GENDERS = ["Female", "Male", "Non-binary", "Prefer not to say"];
+// the same three choices as Consumer and Professional sign-up (Kunal, 26 Nov 2026)
+export const TEEN_GENDERS = ["Male", "Female", "Other"];
+export const GUARDIAN_GENDERS = ["Male", "Female", "Other"];
 export const RELATIONS = ["mother", "father", "legal_guardian"];
 // The User model's gender field only knows these three; the exact answer is kept on the registration record.
 export const userGender = (g) => (g === "Female" || g === "Male" ? g : "Other");
@@ -120,7 +121,6 @@ export function validateTeen(t = {}, { world = {}, now = new Date() } = {}) {
         if (n.length < 5 || n.length > 14) e.phone = "phone";
     }
     if (!TEEN_GENDERS.includes(t.gender)) e.gender = "gender";
-    if (t.gender === "Self-describe" && clean(t.genderSelf, 40).length > 40) e.genderSelf = "gender_self";
     const loc = t.location || {};
     const iso = String(loc.country || "").toUpperCase();
     const cn = world[iso];

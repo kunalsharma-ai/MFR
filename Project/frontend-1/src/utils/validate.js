@@ -11,9 +11,8 @@ export const ADULT_AGE = 18;
 // Under 13: friendly, and nothing typed is sent or kept (the server refuses these birthdays too)
 export const UNDER_MIN_MSG = 'Not quite yet! MyFrequentRewards starts at 13. We can’t create an account or keep any details before then — come back on your 13th birthday.';
 export const TEEN_DOB_MSG = 'Under 18? Teens join through the Teen sign-up, with a parent’s OK.';
-// The same five choices as the Teen sign-up (issue #88). registerPayload.js maps them to the User model's
-// Male | Female | Other and sends the exact answer as genderIdentity.
-export const GENDERS = ['Female', 'Male', 'Non-binary', 'Self-describe', 'Prefer not to say'];
+// The same three choices for Consumer, Professional and Teen (Kunal, 26 Nov 2026): the values the backend stores.
+export const GENDERS = ['Male', 'Female', 'Other'];
 const MIDDLE_RE = /^[\p{L}][\p{L}\s.'-]{0,39}$/u; // optional; a single initial is fine
 export const isFreeMail = (e = '') => FREE_MAIL.some((d) => e.toLowerCase().split('@')[1]?.includes(d));
 export const isDisposable = (e = '') => DISPOSABLE.some((d) => e.toLowerCase().split('@')[1]?.includes(d));
@@ -73,7 +72,7 @@ export function validatePhone(iso, raw = '') {
 
 // Field-level rules grouped by wizard step. Steps 1–2 are on /sign-up; steps 3–4 on /auth/password (the emailed link).
 export const STEP_FIELDS = {
-  1: ['memberType', 'firstName', 'middleName', 'lastName', 'gender', 'genderSelf', 'dob', 'country', 'state', 'city', 'zip'],
+  1: ['memberType', 'firstName', 'middleName', 'lastName', 'gender', 'dob', 'country', 'state', 'city', 'zip'],
   2: ['email', 'phone','captcha', 'agreeTerms'],
   3: ['password', 'confirm'],
   4: ['empstat', 'hw', 'freelancer', 'jobseeker', 'industry', 'sector', 'department', 'jobrole', 'jobTitleOther', 'companyEmail'],
@@ -88,7 +87,6 @@ export function validateSignup(v) {
   if (middle && !MIDDLE_RE.test(middle)) e.middleName = 'Letters only, or leave it empty.';
   if (!NAME_RE.test((v.lastName || '').trim())) e.lastName = 'Enter your last name (letters only).';
   if (!GENDERS.includes(v.gender)) e.gender = 'Select your gender.';
-  if (v.gender === 'Self-describe' && (v.genderSelf || '').trim().length > 40) e.genderSelf = 'Keep it to 40 characters.';
   const dobErr = validateDob(v.dob);
   if (dobErr) e.dob = dobErr;
   // Consumers and professionals are adults. Under-18s join through the Teen sign-up (a parent or guardian must agree).

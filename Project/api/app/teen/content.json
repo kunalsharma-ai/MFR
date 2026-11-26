@@ -122,22 +122,17 @@
     "req": true,
     "multi": false,
     "values": [
-     "Female",
      "Male",
-     "Non-binary",
-     "Other",
-     "Prefer not to say"
+     "Female",
+     "Other"
     ],
-    "other": "Other",
     "section": "About you",
     "optional": false,
     "q": "How do you describe yourself?",
     "labels": {
-     "Female": "Female",
      "Male": "Male",
-     "Non-binary": "Non-binary",
-     "Other": "Another identity",
-     "Prefer not to say": "Prefer not to say"
+     "Female": "Female",
+     "Other": "Other"
     }
    },
    {
@@ -883,13 +878,10 @@
    "kind": "choice",
    "multi": false,
    "values": [
-    "Female",
     "Male",
-    "Non-binary",
-    "Other",
-    "Prefer not to say"
+    "Female",
+    "Other"
    ],
-   "other": "Other",
    "profile": "minor__basic"
   },
   "D02": {

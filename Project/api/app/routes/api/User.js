@@ -49,7 +49,7 @@ const limit = (max, minutes) => rateLimit({
 });
 
 // what a visitor may send when registering (everything else - role, status, verification, password... - is dropped)
-const REGISTER_FIELDS = ["category", "name", "gender", "genderIdentity", "genderSelf", "dob", "mail", "phone", "timezone", "address", "notification", "referredBy", "socials", "consent"];
+const REGISTER_FIELDS = ["category", "name", "gender", "dob", "mail", "phone", "timezone", "address", "notification", "referredBy", "socials", "consent"];
 const REFERRAL_FIELDS = "mail name isVerified createdAt";
 
 router
@@ -99,12 +99,6 @@ router
             await requireCaptcha(req); // the human check (required for every client once CAPTCHA_REQUIRED=true)
             // public registration: Consumer / Professional, 18 and over
             const userInfo = pick(req.body || {}, REGISTER_FIELDS);
-            // same five gender choices as the Teen form; `gender` is derived from the exact answer when one is sent
-            if (userInfo.genderIdentity) {
-                const gi = String(userInfo.genderIdentity);
-                userInfo.gender = gi === "Female" || gi === "Male" ? gi : "Other";
-                userInfo.genderSelf = gi === "Self-describe" ? String(userInfo.genderSelf || "").trim().slice(0, 40) : "";
-            } else delete userInfo.genderSelf;
             const age = classifyDob(String(userInfo.dob || "").slice(0, 10));
             if (age === "blocked") throw new Error("Registration is not available for anyone under 13.");
             if (age === "teen") throw new Error("You are under 18, so you can join through the Teen registration with your parent or guardian's permission.");

@@ -27,7 +27,7 @@ export default mongooseModel(
         guardian: { type: mongoose.Schema.Types.ObjectId, ref: "TeenGuardian", required: true },
         // what the teen typed that the User model has no exact place for
         teenDetails: {
-            gender: String,          // Female | Male | Non-binary | Self-describe | Prefer not to say
+            gender: String,          // Male | Female | Other (older records may hold Non-binary, Self-describe or Prefer not to say)
             genderSelf: String,
             phone: String,           // E.164 digits, optional
             location: {
