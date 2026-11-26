@@ -42,6 +42,14 @@ function configFor(origin) {
                 next();
             },
             express.static('public'),
+            // 200 when this origin (or ?origin=) has a mail account, 503 when it hasn't: the API checks this at start-up
+            // (api/app/utils/deployChecks.js) and the container health check can use it too.
+            (req, res, next) => {
+                if (req.method !== "GET" || req.path !== "/health") return next();
+                const origin = getOrigin(String(req.query?.origin || req.origin || ""));
+                const file = configFor(origin);
+                return res.status(file ? 200 : 503).json({ origin, account: Boolean(file) });
+            },
             express.json(),
             (r, s, n) => {
                 console.log("yahan tak theek hai")
@@ -189,5 +197,9 @@ function configFor(origin) {
         })
     app.listen(port, () => {
         console.log(`[${new Date()}]: Started on port ${port}`);
+        // the public host names must have a mail account, or their emails are refused (sign-up QA report, Nov 2026)
+        const need = String(process.env.MAIL_ORIGINS || "myfrequentrewards.com,www.myfrequentrewards.com").split(",").map((x) => x.trim()).filter(Boolean);
+        const missing = need.filter((o) => !configFor(o));
+        if (missing.length) console.error(`DEPLOY CHECK FAILED: no mail account for ${missing.join(", ")}. Add config/aliases.json (or config/<host>.json) or set EMAIL_DEFAULT_ORIGIN.`);
     })
 })();

@@ -717,6 +717,3 @@
 .ps .gate-more { margin: 0 0 6px; color: var(--muted); font-size: 13px; }
 .ps .gate-bonus { margin: 8px 0 0; color: var(--muted); font-size: 12.5px; }
 
-
-/* number answers: the digit in the bubble instead of a keycap picture (Controls.jsx Ico) */
-.ps .opt-ico.opt-num b { font-weight: 800; font-size: calc(var(--b, 34px) * .42); line-height: 1; color: var(--ink, #1b2559); font-variant-numeric: tabular-nums; }

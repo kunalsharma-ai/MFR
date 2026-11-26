@@ -153,7 +153,8 @@ export default function App({ cfg }) {
       window.location.assign(AFTER_CONSENT_URL);
     }
 
-    if (user?.category === "consumer" || user?.category === "consumer-minor") {
+    // only Professional members sign these terms; any other category (b2c, consumer, ...) has its own page
+    if (!/b2b|business|professional/i.test(String(user?.category || ""))) {
       window.location.assign("/auth/consent/consumer");
     }
   }, [user]);

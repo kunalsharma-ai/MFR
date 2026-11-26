@@ -21,15 +21,8 @@ const Ico = ({ name, size = 30 }) => {
         <Flag cc={name.slice(5).toLowerCase()} size={Math.round(size * 0.6)} />
       </span>
     );
-  // Number answers ("1", "2-3", "4-5") get a keycap emoji, and the keycap images were never in the emoji set: those
-  // options showed a broken image (QA BUG-09, Travel & Tourism question 1). They now show the digit itself.
-  const key = typeof name === "string" ? KEYCAP.exec(name) : null;
-  if (key)
-    return (
-      <span className="opt-ico opt-num" aria-hidden="true">
-        <b>{key[1]}</b>
-      </span>
-    );
+  // Number answers ("1", "2-3", "4-5") get a keycap emoji. Those images were missing from the set (QA BUG-09,
+  // Travel & Tourism question 1) and are now in /ps/images/emoji/u (0-9, # and *, drawn in the set's own style).
   return (
     <span className="opt-ico" aria-hidden="true">
       <img
@@ -45,7 +38,6 @@ const Ico = ({ name, size = 30 }) => {
     </span>
   );
 };
-const KEYCAP = /^([0-9#*])\uFE0F?\u20E3$/u;
 // Any other picture that cannot be loaded: try the neutral sparkle, and if that fails too, hide the bubble (never a
 // broken-image icon).
 function iconFallback(e) {

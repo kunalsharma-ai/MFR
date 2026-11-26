@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import appRoute from "./routes/index.js";
 import compression from "compression";
 import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
+import { runDeployChecks } from "./utils/deployChecks.js";
 
 (async () => {
     const env = {
@@ -16,6 +17,7 @@ import { setOrigin, expressRoute, fsLogger } from "./utils/index.js";
     await mongoose.connect(env.db);
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)
         fsLogger.Log("WARNING: JWT_SECRET is missing or shorter than 32 characters. Use a long random secret in production.");
+    runDeployChecks();
     const app = express();
     app
         .disable("x-powered-by")
