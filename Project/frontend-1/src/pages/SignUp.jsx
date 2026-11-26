@@ -346,7 +346,7 @@ function SignUp() {
       rememberSignup(res.data?.user, {
         memberType: v.memberType,
         firstName: v.firstName.trim(),
-        mail: v.email.trim().toLowerCase(), // lets /set-password log the member in straight away
+        mail: v.email.trim().toLowerCase(), // lets the Log in page fill in the email after /set-password
         answers: consentAnswers(v),
       });
       rememberNotify(res.data?.user ?? res.data, v.notify);
