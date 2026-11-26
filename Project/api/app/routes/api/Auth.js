@@ -2,6 +2,8 @@ import { HttpError, asyncHandler, API } from "express-web-tools"
 import express from "express";
 import { expressRoute, expressView, isAuthenticated, fsLogger, Mutate, Token } from "../../utils/index.js"
 import JWT from "jsonwebtoken";
+import { limit } from "../../utils/security.js";
+import { fileAccountAction, AccountActionError } from "../../member/accountActions.js";
 import {
   User as userController
 } from "../../controller/index.js";
@@ -77,4 +79,16 @@ router
       }
     )
   )
+// "Delete or Deactivate Account" page (My Account): files the member's request for the support team. Nothing on the
+// account changes here; see member/accountActions.js. The member types their password again.
+router.post("/delete", limit(10, 15), isAuthenticated, async (req, res) => {
+  try {
+    const data = await fileAccountAction(req.user, req.origin, req.body || {});
+    res.json({ status: "success", message: "Your request has been sent to our Support Team.", data });
+  } catch (e) {
+    if (e instanceof AccountActionError) return res.status(e.status).json({ status: "error", error: e.code, message: e.message });
+    fsLogger.Log(`auth/delete failed: ${e?.message}`);
+    res.status(500).json({ status: "error", error: "server_error", message: "Something went wrong. Please try again." });
+  }
+});
 export default router;

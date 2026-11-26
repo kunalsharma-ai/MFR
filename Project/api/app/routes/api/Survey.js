@@ -76,6 +76,23 @@ router
         responseController
     ))
 router
+    .route("/response")
+    // The member's 1 to 5 star rating of a survey they finished, from the status page. Only their own response, only
+    // after it ended (complete, terminate or overquota). A second rating replaces the first.
+    .put(requireMember, expressRoute(
+        async req => {
+            const sid = String(req.body?.sid ?? "");
+            const rating = Number(req.body?.rating);
+            if (!/^[a-f0-9]{24}$/i.test(sid) || !Number.isInteger(rating) || rating < 1 || rating > 5) throw new Error("Invalid request");
+            const data = await responseController.read(sid);
+            if (!data || String(data.user?._id ?? data.user) !== String(req.user._id)) throw new Error("Invalid request");
+            if (!MEMBER_END_STATUSES.includes(String(data.status || "").toLowerCase())) throw new Error("You can rate a survey once it has ended");
+            await responseController.update(sid, { rating, ratedAt: new Date() });
+            return { message: "Thanks for your rating", data: { sid, rating } }
+        },
+        responseController
+    ))
+router
     .route('/:id/invite')
     .post(isAuthenticated, expressRoute(
         async req => {
