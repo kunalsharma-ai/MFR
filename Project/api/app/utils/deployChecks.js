@@ -4,7 +4,10 @@
 //   - SOCIAL_JWT_SECRET: without it (or shorter than 32 characters) Google / Facebook sign-in sends everyone back to sign-up.
 //   - the email service must have a mail account for every public host name (MAIL_ORIGINS, comma separated; default
 //     myfrequentrewards.com and www.myfrequentrewards.com). It answers GET /health?origin=<host> with 200 or 503.
-import { API, fsLogger } from "./index.js";
+//   - the email-template service's host name must resolve (EMAIL_TEMPLATE_URL, else email-template / api-email-template).
+import dns from "node:dns/promises";
+import { fsLogger } from "./index.js";
+import { candidates, withService } from "./serviceHosts.js";
 
 const say = (msg, extra) => {
     console.error(`DEPLOY CHECK FAILED: ${msg}`);
@@ -23,11 +26,10 @@ export function checkSocialKey(env = process.env) {
 export async function checkMailAccounts(env = process.env) {
     const origins = String(env.MAIL_ORIGINS || "myfrequentrewards.com,www.myfrequentrewards.com")
         .split(",").map((s) => s.trim()).filter(Boolean);
-    const api = new API({ baseURL: env.EMAIL_SERVICE_URL || "http://email:3000" });
     const missing = [];
     for (const origin of origins) {
         try {
-            const r = await api.get(`/health?origin=${encodeURIComponent(origin)}`, { origin });
+            const r = await withService("email", {}, (api) => api.get(`/health?origin=${encodeURIComponent(origin)}`, { origin }), env);
             if (r.status === 404) { say("the email service has no /health check (an older build); redeploy it from main."); return null; }
             if (r.status !== 200) missing.push(origin);
         } catch (e) {
@@ -39,8 +41,21 @@ export async function checkMailAccounts(env = process.env) {
     return missing.length === 0;
 }
 
+// issue #92: the template service's host name must resolve, or every email fails with "getaddrinfo EAI_AGAIN ..."
+export async function checkTemplateHost(env = process.env) {
+    const tried = candidates("template", env);
+    for (const u of tried) {
+        try { await dns.lookup(new URL(u).hostname); return true; } catch { /* next */ }
+    }
+    say(`the email-template service can't be found (tried ${tried.join(", ")}); no email will be sent. Set EMAIL_TEMPLATE_URL to its address.`);
+    return false;
+}
+
 export function runDeployChecks(env = process.env) {
     checkSocialKey(env);
     // the email service may start a little after the API
-    setTimeout(() => checkMailAccounts(env).catch(() => {}), 20_000).unref();
+    setTimeout(() => {
+        checkTemplateHost(env).catch(() => {});
+        checkMailAccounts(env).catch(() => {});
+    }, 20_000).unref();
 }

@@ -1,6 +1,6 @@
 import express from "express";
 import { User as userController, OTP as otpController } from "../../controller/index.js";
-import { expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, Token } from "../../utils/index.js"
+import { expressRoute, expressView, isAuthenticated, fsLogger, getMailer, sendMail, mailOk, Token } from "../../utils/index.js"
 import { limit } from "../../utils/security.js";
 import { lockedFor, fail, norm } from "../../utils/throttle.js";
 
@@ -32,14 +32,14 @@ router
                     otp
                 }
             )
-            // /*
-            await sendMail(
+            const sent = await sendMail(
                 { origin: req.origin, "content-type": "application/json" },
                 user[0].mail,
                 "My Frequent Rewards: Forgot Password",
                 mailer.data
             )
-                //*/
+            // the visitor always gets the same answer (no account lookups); the team sees the failure in the log
+            if (!mailOk(sent, mailer)) fsLogger.Log("password reset email not sent", { user: String(user[0]._id), origin: req.origin, status: sent?.status, error: sent?.data?.error || mailer?.data?.error });
             return { message, data: [] };
         },
         userController

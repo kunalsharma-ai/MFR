@@ -39,6 +39,9 @@ router
     // /api/v1/ rule covers it), but is mounted first: it checks its own signature and parses its own body
     .use("/api/v1/admin", adminRouter)
     .use("/api/v1", bindRequest, sanitizeInput)
+    // which build is running (issues #92 and #93 were an old API image on the server): GIT_SHA / BUILD_DATE are set
+    // by `docker build --build-arg GIT_SHA=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=...`
+    .get("/api/v1/version", (req, res) => res.json({ status: "success", data: { commit: process.env.GIT_SHA || "unknown", builtAt: process.env.BUILD_DATE || "unknown" } }))
     .use("/api/v1/llm", llmRouter)
     .use("/api/v1/auth",authRouter)
     .use("/api/v1/answers", ansRouter)

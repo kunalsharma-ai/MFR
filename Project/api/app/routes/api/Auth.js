@@ -32,7 +32,7 @@ router
           redirect: `/?signup=1&${searchParams.toString()}`
         };
       }
-      const user = await userController.findOne({ mail: info.email });
+      const user = await userController.findOne({ mail: String(info.email).trim().toLowerCase() });
       if (!user) {
         let searchParams = new URLSearchParams(info);
         return {
