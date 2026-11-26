@@ -25,6 +25,9 @@ export const SUBJECTS = {
     "guardian-consent-ended": "Your consent has ended: your teen now has an adult account",
 };
 
+const SEND_TRIES = 2;
+const RETRY_MS = Number(process.env.TEEN_MAIL_RETRY_MS ?? 1500);
+
 const siteUrl = (origin) => (process.env.PUBLIC_SITE_URL || `https://${origin}`).replace(/\/$/, "");
 export const linkTo = (origin, p, token) => `${siteUrl(origin)}${p}${token ? `${p.includes("?") ? "&" : "?"}t=${encodeURIComponent(token)}` : ""}`;
 
@@ -47,10 +50,17 @@ export async function send(reg, template, to, address, data, origin) {
             fs.writeFileSync(f, JSON.stringify({ to: address, role: to, subject, data: payload }, null, 2));
             ok = true;
         } else {
-            const mailer = await getMailer("teen", template, payload);
-            const r = await sendMail({ origin, "content-type": "application/json" }, address, subject, mailer.data);
-            ok = mailOk(r, mailer);
-            if (!ok) fsLogger.Log("teen mail not sent", { template, reference: reg.reference, status: r?.status, answer: r?.data?.message || r?.data?.error });
+            // issue #98: one failed call (the template or email service restarting, a slow DNS answer) used to lose the
+            // parent's invite or the teen's own email for good. Each email now gets one more try before it counts as failed.
+            for (let attempt = 1; attempt <= SEND_TRIES && !ok; attempt += 1) {
+                const mailer = await getMailer("teen", template, payload);
+                const r = await sendMail({ origin, "content-type": "application/json" }, address, subject, mailer.data);
+                ok = mailOk(r, mailer);
+                if (!ok) {
+                    fsLogger.Log("teen mail not sent", { template, to, attempt, reference: reg.reference, status: r?.status, template_status: mailer?.status, answer: r?.data?.message || r?.data?.error || mailer?.data?.error });
+                    if (attempt < SEND_TRIES) await new Promise((res) => setTimeout(res, RETRY_MS));
+                }
+            }
         }
     } catch (e) {
         fsLogger.Log("teen mail failed", { template, reference: reg.reference, error: e.message });

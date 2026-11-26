@@ -12,7 +12,7 @@ import { useMember } from "@/Context";
 import { api } from "@/util";
 import Icon from "./icons.jsx";
 import { t } from "./strings";
-import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock, Hero, Coin3D } from "./ui.jsx";
+import { Counter, Ring, Meter, Reveal, Skeleton, EmptyState, ErrorState, LoadingBlock, Hero, Coin3D, CardBoundary } from "./ui.jsx";
 import { AchievementShelf } from "./modules.jsx";
 import { BalanceStrip, StreakCard, PendingPanel, LedgerTable } from "./engage/activity.jsx";
 import { RewardsExtras } from "./engage/rewards.jsx";
@@ -113,10 +113,10 @@ export function RewardsPage() {
       <RewardMachine8 />
       <div className="rv-top">
         <Reveal><LevelTrack hub={hub} /></Reveal>
-        <Reveal delay={60}><StreakCard compact /></Reveal>
+        <Reveal delay={60}><CardBoundary name="streak" quiet><StreakCard compact /></CardBoundary></Reveal>
       </div>
       <h2 className="sec-h" id="catalogue-h"><Icon name="gift" size={20} /> {t("rw2.available")}</h2>
-      <RewardsExtras />
+      <CardBoundary name="rewards"><RewardsExtras /></CardBoundary>
       <div className="rv-grid">
         <Reveal><Milestones hub={hub} /></Reveal>
         <Reveal delay={60}>
@@ -278,11 +278,11 @@ export function QualityPage() {
             <p className="k-note">{t("qs.benefitText")}</p>
           </section>
         </Reveal>
-        <Reveal className="qs-tiers" delay={60}><QualityTiers /></Reveal>
+        <Reveal className="qs-tiers" delay={60}><CardBoundary name="quality-tiers"><QualityTiers /></CardBoundary></Reveal>
         <Reveal className="qs-trend">
           <section aria-labelledby="qhh-title">
             <h2 className="k-title" id="qhh-title"><Icon name="chart" size={18} /> {t("qs.history")}</h2>
-            <QualityTrend />
+            <CardBoundary name="quality-trend"><QualityTrend /></CardBoundary>
           </section>
         </Reveal>
       </div>
@@ -337,7 +337,7 @@ export function ActivityPage() {
           </svg>
         }
       />
-      <Reveal><BalanceStrip /></Reveal>
+      <Reveal><CardBoundary name="balances" quiet><BalanceStrip /></CardBoundary></Reveal>
       <div className="ac-layout">
         <div className="ac-main">
           <div className="ac-filters" role="toolbar" aria-label={t("a2.filter")}>
@@ -372,13 +372,13 @@ export function ActivityPage() {
           )}
         </div>
         <aside className="ac-side">
-          <Reveal><StreakCard /></Reveal>
-          <Reveal delay={60}><PendingPanel /></Reveal>
+          <Reveal><CardBoundary name="streak"><StreakCard /></CardBoundary></Reveal>
+          <Reveal delay={60}><CardBoundary name="pending"><PendingPanel /></CardBoundary></Reveal>
         </aside>
       </div>
       <details className="ac-statement">
         <summary><Icon name="book" size={18} /> {t("a2.statement")}</summary>
-        <LedgerTable />
+        <CardBoundary name="ledger"><LedgerTable /></CardBoundary>
       </details>
     </div>
   );
@@ -459,7 +459,7 @@ export function ReferralsPage() {
           </div>
         }
       />
-      <ReferralExtras />
+      <CardBoundary name="referrals"><ReferralExtras /></CardBoundary>
       <div className="rf-grid">
         <Reveal className="rf-share">
           <section aria-labelledby="rs-title">
@@ -486,7 +486,7 @@ export function ReferralsPage() {
               <EmptyState kind="referrals" title={t("rf.emptyTitle")} text={t("rf.emptyText")} />
             ) : (
               <>
-                <ReferralStatus />
+                <CardBoundary name="referral-status" quiet><ReferralStatus /></CardBoundary>
                 <h2 className="k-title" id="rl2-title"><Icon name="mail" size={18} /> {t("rf.listInvited")}</h2>
                 <ul className="rf-people">
                   {d.invited.map((p, i) => (
