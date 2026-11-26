@@ -2,7 +2,7 @@
   "name": "mfr-account-actions",
   "version": "2.0.0",
   "private": true,
-  "description": "Delete / Deactivate My Account: the full page without its header, built into web/public/member/account-actions/",
+  "description": "Delete / Deactivate My Account: the full page without its header, built into frontend-1/public/member/account-actions/ (the public folder web shares)",
   "type": "module",
   "main": "dist/lib/index.js",
   "module": "dist/lib/index.js",
@@ -10,7 +10,7 @@
     "node": ">=18.18"
   },
   "scripts": {
-    "build": "node scripts/build-host.mjs ../web/public/member/account-actions"
+    "build": "node scripts/build-host.mjs ../frontend-1/public/member/account-actions"
   },
   "peerDependencies": {
     "react": ">=18.2",

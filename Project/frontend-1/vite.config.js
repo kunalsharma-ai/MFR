@@ -12,6 +12,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        // public/ is shared with the member app (Project/web links its public folder here). Its member-only files are
+        // served by the member app under /member, so this site's service worker must not precache them.
+        globIgnores: ['**/node_modules/**', 'member/**', 'member-sw.js', 'hub/**'],
         navigateFallbackDenylist: [
           /^\/member/, 
           /^\/otel/,

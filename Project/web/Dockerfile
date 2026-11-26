@@ -9,6 +9,15 @@
 #   docker build --target production  -t mfr-web .             (also the default: the last stage)
 #
 # In docker-compose, pick one with `build: { context: ./Project/web, target: production }`.
+#
+# Shared public folder: web/public is a link to ../frontend-1/public (one public folder for both sites, because on
+# the live server every path outside /member, /admin, /auth, /survey and /_next is answered by frontend-1).
+# A link out of the build context can't be followed, so pass that folder as the named build context `public`:
+#
+#   docker build --build-context public=../frontend-1/public --target production -t mfr-web .
+#
+#   docker-compose:  build: { context: ./Project/web, target: production,
+#                             additional_contexts: { public: ./Project/frontend-1/public } }
 
 ARG NODE_IMAGE=node:24-alpine
 ARG NGINX_IMAGE=nginx:alpine
@@ -28,12 +37,14 @@ RUN npm ci
 FROM base AS build
 ENV NODE_ENV=production
 COPY . .
+COPY --from=public . ./public
 RUN npm run build
 
 # ---------- development ----------
 FROM base AS development
 ENV NODE_ENV=development
 COPY . .
+COPY --from=public . ./public
 EXPOSE 3000
 # Mount the source over /frfs to edit live (keep /frfs/node_modules).
 CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "3000"]
