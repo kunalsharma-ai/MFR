@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import Icon from "../icons.jsx";
 import { t } from "../strings";
-import { LoadingBlock, ErrorState, Reveal } from "../ui.jsx";
+import { LoadingBlock, ErrorState, Reveal, CardBoundary } from "../ui.jsx";
 import { fmt } from "../data";
 import { E, useEngage, useEngageMutation } from "./data";
 import { useRewardsData } from "./rewards.jsx";
@@ -18,17 +18,20 @@ function Studies() {
   const q = useEngage("pro-studies", "/pro/studies");
   if (q.isLoading) return <LoadingBlock lines={3} h={140} />;
   if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
-  const d = q.data;
+  // Read the reply defensively: an older API, or a proxy answering for it, can send a body without these fields.
+  const facts = q.data?.facts || {};
+  const studies = Array.isArray(q.data?.studies) ? q.data.studies : [];
+  const missing = facts.missing !== false || (!facts.industry && !facts.seniority);
   return (
     <section className="eg-card eg-pstudies" aria-labelledby="ps2-title">
       <h2 className="h-h3" id="ps2-title"><Icon name="briefcase" size={20} /> {t("pr.studies")}</h2>
       <p className="h-sub">
-        {d.facts.missing ? <>{t("pr.factsMissing")} <Link href="/member/profiles" className="h-link">{t("pr.factsLink")}</Link></>
-          : t("pr.matchedOn", { i: cap(d.facts.industry), s: cap(d.facts.seniority) })}
+        {missing ? <>{t("pr.factsMissing")} <Link href="/member/profiles" className="h-link">{t("pr.factsLink")}</Link></>
+          : t("pr.matchedOn", { i: cap(facts.industry), s: cap(facts.seniority) })}
       </p>
-      {d.studies.length ? (
+      {studies.length ? (
         <ul className="eg-plist">
-          {d.studies.map((s) => (
+          {studies.map((s) => (
             <li key={s.slug} className={`st-${s.state}`}>
               <div><b>{s.name}</b>{s.summary ? <small>{s.summary}</small> : null}</div>
               <span className="eg-pill">{fmt(s.points)} {t("c.points")}</span>
@@ -50,7 +53,8 @@ function Expertise() {
   const [open, setOpen] = React.useState(false);
   if (q.isLoading) return <LoadingBlock lines={3} h={140} />;
   if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
-  const d = q.data;
+  const d = q.data || {};
+  const parts = Array.isArray(d.parts) ? d.parts : [];
   const v = d.verification;
   const canAsk = !v || v.status === "declined";
   const submit = (e) => { e.preventDefault(); ask.mutate(f, { onSuccess: () => setOpen(false) }); };
@@ -59,9 +63,9 @@ function Expertise() {
       <h2 className="h-h3" id="ex-title"><Icon name="gauge" size={20} /> {t("pr.expertise")}
         {d.badge ? <span className="eg-badge"><Icon name="check" size={14} /> {t("pr.verified")}</span> : null}
       </h2>
-      <div className="eg-xscore"><b>{d.score}</b><small>/ 100</small></div>
+      <div className="eg-xscore"><b>{Number(d.score) || 0}</b><small>/ 100</small></div>
       <ul className="eg-xparts">
-        {d.parts.map((p) => (
+        {parts.map((p) => (
           <li key={p.key}>
             <span>{t(`pr.p.${p.key}`)}</span>
             <div className="eg-bar sm" aria-hidden="true"><i style={{ "--w": `${(p.points / Math.max(1, p.weight)) * 100}%` }} /></div>
@@ -94,15 +98,16 @@ function Statements() {
   const rw = useRewardsData();
   if (q.isLoading) return <LoadingBlock lines={3} h={140} />;
   if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
-  const sent = (rw.data?.redemptions || []).filter((r) => r.status === "fulfilled");
+  const rows = Array.isArray(q.data) ? q.data : [];
+  const sent = (Array.isArray(rw.data?.redemptions) ? rw.data.redemptions : []).filter((r) => r.status === "fulfilled");
   return (
     <section className="eg-card eg-statements" aria-labelledby="sm-title">
       <h2 className="h-h3" id="sm-title"><Icon name="stack" size={20} /> {t("pr.statements")}</h2>
-      {q.data.length ? (
+      {rows.length ? (
         <table className="eg-table">
           <thead><tr><th>{t("pr.month")}</th><th className="n">{t("pr.earned")}</th><th className="n">{t("pr.used")}</th><th /></tr></thead>
           <tbody>
-            {q.data.slice(0, 12).map((s) => (
+            {rows.slice(0, 12).map((s) => (
               <tr key={s.month}>
                 <td>{monthLong(s.month)}</td>
                 <td className="n">{fmt(s.earned)}</td>
@@ -127,7 +132,7 @@ function Statements() {
 
 function Insights() {
   const q = useEngage("insights", "/stories?type=insight");
-  if (q.isLoading || q.isError || !q.data?.length) return null;
+  if (q.isLoading || q.isError || !Array.isArray(q.data) || !q.data.length) return null;
   return (
     <section className="eg-card eg-insights" aria-labelledby="in-title">
       <h2 className="h-h3" id="in-title"><Icon name="chart" size={20} /> {t("pr.insights")}</h2>
@@ -148,10 +153,10 @@ function Insights() {
 export default function ProExtras() {
   return (
     <div className="eg-pgrid">
-      <Reveal className="eg-pg-studies"><Studies /></Reveal>
-      <Reveal delay={60}><Expertise /></Reveal>
-      <Reveal delay={80}><Statements /></Reveal>
-      <Reveal delay={100}><Insights /></Reveal>
+      <Reveal className="eg-pg-studies"><CardBoundary name="pro-studies"><Studies /></CardBoundary></Reveal>
+      <Reveal delay={60}><CardBoundary name="pro-expertise"><Expertise /></CardBoundary></Reveal>
+      <Reveal delay={80}><CardBoundary name="pro-statements"><Statements /></CardBoundary></Reveal>
+      <Reveal delay={100}><CardBoundary name="pro-insights" quiet><Insights /></CardBoundary></Reveal>
     </div>
   );
 }
