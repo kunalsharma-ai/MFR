@@ -145,14 +145,14 @@ export async function requestDelete(user, origin, reason) {
     }
 }
 export async function cancelDelete(user, origin) {
-    const r = await DataRequest.findOneAndUpdate({ user: oid(user._id), origin, open: true, status: "requested" }, { $set: { status: "cancelled", open: false }, $push: { history: { status: "cancelled", by: "member" } } }, { new: true }).lean();
+    const r = await DataRequest.findOneAndUpdate({ user: oid(user._id), origin, kind: "delete", open: true, status: "requested" }, { $set: { status: "cancelled", open: false }, $push: { history: { status: "cancelled", by: "member" } } }, { new: true }).lean();
     if (!r) fail("not_found", "There's no request waiting to cancel.", 404);
     return view(r);
 }
 export async function myRequests(user, origin) {
     return (await DataRequest.find({ user: oid(user._id), origin }).sort({ createdAt: -1 }).limit(10).lean()).map(view);
 }
-const view = (r) => ({ id: String(r._id), kind: r.kind, status: r.status, reason: r.reason || "", note: r.note || "", at: r.createdAt });
+const view = (r) => ({ id: String(r._id), kind: r.kind, days: r.days ?? null, status: r.status, reason: r.reason || "", note: r.note || "", at: r.createdAt });
 
 const NEXT = { requested: ["approved", "rejected"], approved: ["done", "rejected"] };
 export async function adminDecide(admin, origin, id, b = {}) {

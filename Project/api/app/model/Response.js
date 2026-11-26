@@ -36,7 +36,10 @@ export default mongooseModel(
             type: Number,
             required:true,
             default:0
-        }
+        },
+        // the member's star rating of the survey, from the status page after it (PUT /api/v1/survey/response)
+        rating: { type: Number, min: 1, max: 5 },
+        ratedAt: { type: Date }
     },
     [
         [
