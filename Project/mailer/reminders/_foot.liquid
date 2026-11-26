@@ -1,0 +1,27 @@
+{%- comment -%} Optional before including: why (one sentence on why this person got this message). {%- endcomment -%}
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:22px 40px 0;">
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="1" style="height:1px;font-size:1px;line-height:1px;border-top:1px solid #e7eaf3;">&nbsp;</td></tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td class="px" align="center" style="padding:18px 40px 4px;font-size:13.5px;line-height:21px;color:#5b6378;">
+            Need a hand? Write to <a href="mailto:{{ brand.support }}" style="color:{{ brand.primary }};font-weight:600;text-decoration:none;">{{ brand.support }}</a>. We are happy to help.
+          </td>
+        </tr>
+        <tr>
+          <td class="px" align="center" style="padding:10px 40px 26px;font-size:12px;line-height:19px;color:#7b8399;">
+            {% if why %}{{ why }}<br />{% endif %}
+            {% if links.unsubscribe %}<a href="{{ links.unsubscribe }}" style="color:#7b8399;">Stop these reminders</a> &middot; {% endif %}<a href="{{ preferences_url }}" style="color:#7b8399;">Choose how we contact you</a> &middot; <a href="{{ brand.privacy }}" style="color:#7b8399;">Privacy Policy</a><br />
+            We will never ask for your password, payment or bank details by e-mail.<br />
+            <span style="color:#a0a7b8;">&copy; {{ year }} {{ brand.name }} &middot; {{ brand.legal }}</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

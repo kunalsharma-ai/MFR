@@ -8,9 +8,10 @@
 // Rules (same as Profile v4.1): OFF unless config.emails.lifecycle.enabled; at most one email every intervalHours;
 // none while the member has been active in the last intervalHours; at most `max` in total; never for Teen Panel
 // members (they have their own guardian-led emails, and these talk about money); the state is re-checked at send
-// time, so a member who has moved on is never told they have not.
+// time, so a member who has moved on is never told they have not. A brand that saved Auto reminder settings in MADP
+// is left to engagement/reminders.js, which sends these same four with the days set there.
 import mongoose from "mongoose";
-import { User, Answers, Response, Reward, Profile, OTP, MemberPreference } from "../model/index.js";
+import { User, Answers, Response, Reward, Profile, OTP, MemberPreference, ReminderSetting } from "../model/index.js";
 import profileController from "../controller/Profile.js";
 import otpController from "../controller/OTP.js";
 import { withRequest } from "../utils/requestContext.js";
@@ -75,7 +76,7 @@ export async function profileProgress(user, origin = user.origin) {
     return { done: done.length, total: slugs.length, doneSlugs: done };
 }
 
-async function lastActivity(user) {
+export async function lastActivity(user) {
     const u = new mongoose.Types.ObjectId(String(user._id));
     const [a, r, w] = await Promise.all([
         Answers.findOne({ user: u }).sort({ updatedAt: -1 }).select("updatedAt").lean(),
@@ -145,9 +146,12 @@ export async function runLifecycle({ dryRun = false, origin, now = new Date(), f
     const q = { isActive: true, isDeleted: false, registrationStatus: { $in: ["active", null] }, createdAt: { $lte: new Date(now - c.startAfterHours * HOUR) } };
     if (origin) q.origin = origin;
     const cursor = User.find(q).select("name mail category timezone origin terms respondentID updatedAt createdAt").lean().cursor();
+    const managedBy = new Map(); // brands that saved Auto reminder settings: engagement/reminders.js sends these now
+    const isManaged = async (o) => { if (!managedBy.has(o)) managedBy.set(o, Boolean(await ReminderSetting.exists({ origin: o }))); return managedBy.get(o); };
     for await (const user of cursor) {
         if (report.sent >= c.maxPerRun) break;
         report.considered += 1;
+        if (await isManaged(user.origin)) { skip("managed_by_auto_reminders"); continue; }
         if (memberType(user) === "teen") { skip("teen"); continue; }
         if (!force && !(await isOn(user.origin, "email_lifecycle"))) { skip("switched_off"); continue; }
         const prefs = await MemberPreference.findOne({ user: user._id, origin: user.origin }).lean();

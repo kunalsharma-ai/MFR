@@ -1,0 +1,16 @@
+{%- comment -%} Case "partial": some profiles still open. Data: member.firstName, done, total, percent, links.profiles {%- endcomment -%}
+{%- capture preheader -%}Your profile is {{ percent }}% done{%- endcapture -%}
+{%- assign icon = "&#9733;" -%}{%- assign kicker = "Your profile" -%}
+{%- capture title -%}{{ member.firstName }}, your profile is {{ percent }}% complete{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:0 0 16px;">
+  <tr><td style="background:#eef0f6;border-radius:8px;height:12px;font-size:1px;line-height:12px;">
+    <table role="presentation" width="{{ percent }}%" border="0" cellspacing="0" cellpadding="0"><tr><td height="12" style="height:12px;border-radius:8px;background:{{ brand.primary }};background-image:linear-gradient(90deg,{{ brand.light }},{{ brand.primary }});font-size:1px;line-height:12px;">&nbsp;</td></tr></table>
+  </td></tr>
+  <tr><td style="padding-top:6px;font-size:13px;color:#7b8399;">{{ done }} of {{ total }} sections done</td></tr>
+</table>
+<p style="margin:0;">Nice progress so far. Finishing the rest helps us invite you to more of the surveys that fit you.</p>
+{%- assign btn_url = links.profiles -%}{%- assign btn_label = "Continue my profile" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because some sections of your profile are still open." -%}
+{% include "mailer/reminders/_foot.liquid" %}

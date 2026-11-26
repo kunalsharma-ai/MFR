@@ -29,6 +29,9 @@ what has to be set when it is deployed. Tests: `tests/security.hardening.test.mj
 - `JWT_SECRET`: a long random value (the server logs a warning under 32 characters).
 - `SOCIAL_JWT_SECRET`: only if social sign-on is used. The old key is public now (it was in the code), so the sign-on
   service must get a new one.
+- `CHANNEL_SECRETS_KEY` (optional, recommended): encrypts the WhatsApp and SMS provider keys an admin saves from the
+  MADP console. Unset, a key derived from `JWT_SECRET` is used. Changing it later makes the saved provider keys
+  unreadable, so they must be entered again in the console.
 - The Sampledge push to `/project-dev` stops working without an admin token (Sampledge is not used any more).
 - MADP must send `x-madp-nonce` (MADP's `PanelAdminClient` does from the matching MADP change).
 

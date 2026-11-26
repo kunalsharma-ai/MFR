@@ -1,0 +1,11 @@
+{%- comment -%} Case "streak": a daily streak about to break. Data: member.firstName, streak, next, links.dashboard {%- endcomment -%}
+{%- capture preheader -%}A quick visit today keeps your {{ streak }}-day streak{%- endcapture -%}
+{%- assign icon = "&#128293;" -%}{%- assign kicker = "Your streak" -%}
+{%- capture title -%}{{ member.firstName }}, keep your {{ streak }}-day streak going{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<p style="margin:0 0 12px;">You have been active {{ streak }} days in a row. Well done! Take a survey or answer a profile question today and the streak carries on.</p>
+{% if next %}<p style="margin:0;">Just {{ next.daysLeft }} more {% if next.daysLeft == 1 %}day{% else %}days{% endif %} to reach {{ next.days }} days and {{ next.points }} bonus points.</p>{% endif %}
+{%- assign btn_url = links.dashboard -%}{%- assign btn_label = "Keep my streak" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because your daily streak would end today." -%}
+{% include "mailer/reminders/_foot.liquid" %}
