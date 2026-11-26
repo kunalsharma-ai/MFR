@@ -11,6 +11,7 @@ import { loginMember } from '../utils/auth.js';
 import SocialLogin from '../components/SocialLogin.jsx';
 import AudienceSwitch from '../components/AudienceSwitch.jsx';
 import { flushPendingProfile } from '../utils/signupMemo.js';
+import { takeLoginEmail } from '../components/LoginNext.jsx';
 const page = PAGES.login;
 
 // Member log-in ("Member Pass").
@@ -100,6 +101,8 @@ function Login() {
   const formRef = useRef(null);
   const tokenRef = useRef(null);
   const { search } = useLocation();
+  // Coming from the set-password page: fill in the email they joined with (they still type the password and do the check)
+  useEffect(() => { const m = takeLoginEmail(); if (m) setF((s) => ({ ...s, email: m })); }, []);
   // Consumers, Professionals and Teens log in here alike; ?type= keeps the choice across a refresh
   const [aud, setAudState] = useState('consumer');
   useEffect(() => { const t = new URLSearchParams(search).get('type'); if (t === 'professional') setAudState('professional'); if (t === 'teen' || t === 'minor') setAudState('minor'); }, [search]);

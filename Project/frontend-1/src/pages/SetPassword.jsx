@@ -33,7 +33,7 @@ import { err as teenErr } from "../teen/i18n.js";
 import { teenApi, relationLabel } from "../teen/api.js";
 import { useLinkToken, forgetLinkToken } from "../teen/link.js";
 import { DemoMailbox } from "../teen/shell.jsx";
-import AutoSignIn from "../components/AutoSignIn.jsx";
+import LoginNext from "../components/LoginNext.jsx";
 import { fetchSession, logoutMember } from "../utils/session.js";
 import { DEMO_MODE } from "../data/site.js";
 
@@ -81,7 +81,7 @@ function MemberSetPassword() {
   const [dir, setDir] = useState(1);
   const [memberType, setMemberType] = useState("consumer");
   const [firstName, setFirstName] = useState("");
-  const [mail, setMail] = useState(""); // remembered at sign-up on this device, used to log in straight after
+  const [mail, setMail] = useState(""); // remembered at sign-up on this device, filled in on the Log in page afterwards
   const [emailVerified, setEmailVerified] = useState(false);
   const [channels, setChannels] = useState([]);
   const [v, setV] = useState({
@@ -354,8 +354,8 @@ function MemberSetPassword() {
             <h1>{phase === "done" ? "You’re all set" : page.h1}</h1>
             <p className="muted-light">
               {phase === "done"
-                ? "Next you read and accept the member terms. Then your dashboard opens."
-                : "Choose a password. Saving it confirms your email, then you accept the member terms and your dashboard opens."}
+                ? "Next, log in with your email and new password. Then you accept the member terms and your dashboard opens."
+                : "Choose a password. Saving it confirms your email. Then you log in, accept the member terms and your dashboard opens."}
             </p>
             <div className="sx-stage" aria-hidden="true">
               <div className={`sx-badge s${inWizard ? step : 4}`}>
@@ -873,10 +873,14 @@ function MemberSetPassword() {
                   {emailVerified
                     ? "Your password is saved and your email is confirmed."
                     : "Your password is saved."}{" "}
-                  Next, read and accept the member terms. Then your
-                  dashboard opens.
+                  Now log in with your email, your new password and the
+                  quick security check. After that you accept the member
+                  terms and your dashboard opens.
                 </p>
                 <ol className="sx-next">
+                  <li>
+                    <Icon name="lock" size={18} /> Log in with your email and password
+                  </li>
                   <li>
                     <Icon name="shield" size={18} /> Accept the member terms
                   </li>
@@ -887,7 +891,7 @@ function MemberSetPassword() {
                     <Icon name="gift" size={18} /> Start earning rewards
                   </li>
                 </ol>
-                <AutoSignIn mail={mail} password={v.password} nextLabel="Continue to Terms" busyLabel="Signing you in…" />
+                <LoginNext mail={mail} type={memberType} />
               </div>
             ) : null}
           </div>
@@ -1044,12 +1048,13 @@ function TeenSetPassword() {
                 <div className="done-burst" aria-hidden="true">{Array.from({ length: 14 }).map((_, i) => <i key={i} style={{ "--i": i }} />)}</div>
                 <div className="done-check"><Icon name="check" size={44} stroke={2.8} /></div>
                 <h2>You’re in{view?.firstName ? `, ${view.firstName}` : ""}! 🎉</h2>
-                <p>Your password is saved and your account is active. We are logging you in as <strong>{view?.email}</strong>.</p>
+                <p>Your password is saved and your account is active. Log in as <strong>{view?.email}</strong> with your new password and the quick security check.</p>
                 <ol className="sx-next">
+                  <li><Icon name="lock" size={18} /> Log in with your email and password</li>
                   <li><Icon name="layers" size={18} /> Complete profile surveys</li>
                   <li><Icon name="gift" size={18} /> Earn reward points</li>
                 </ol>
-                <AutoSignIn mail={view?.email} password={v.password} loginHref="/login?type=teen" />
+                <LoginNext mail={view?.email} type="teen" />
               </div>
             ) : null}
           </div>
