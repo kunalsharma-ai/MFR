@@ -269,7 +269,11 @@ router
                 "My Frequent Rewards: Registration",
                 mailer.data
             ).catch((e) => ({ status: 0, data: { error: e.message } }));
-            if (!mailOk(r, mailer)) fsLogger.Log("registration email (resend) not sent", { user: String(data._id), origin: req.origin, status: r?.status });
+            if (!mailOk(r, mailer)) {
+                fsLogger.Log("registration email (resend) not sent", { user: String(data._id), origin: req.origin, status: r?.status });
+                // the page says "we couldn't send it" instead of "sent again" (only while the email service is failing)
+                return { message: "We couldn't send the email just now. Please try again in a few minutes.", data: { emailSent: false } };
+            }
 
             return { message, data: [] };
         },

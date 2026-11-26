@@ -45,6 +45,8 @@ class API {
       });
 
       req.on("error", (err) => reject(err));
+      // an internal service that never answers must not hold a member's request (sign-up, password reset) forever
+      req.setTimeout(API.TIMEOUT_MS, () => req.destroy(new Error(`${this.baseURL.hostname} did not answer in time`)));
 
       if (body) {
         req.write(JSON.stringify(body));
@@ -74,5 +76,7 @@ class API {
     return this.request("DELETE", path, null, headers);
   }
 }
+
+API.TIMEOUT_MS = Number(process.env.INTERNAL_API_TIMEOUT_MS) || 15000;
 
 export default API;

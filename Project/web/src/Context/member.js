@@ -95,7 +95,8 @@ class ValidUser {
           "consumer-minor": "/auth/consent/consumer",
         };
 
-        this.router.replace(consentPages[category] || "/auth/consent/consumer");
+        // a Professional category under another name (business, professional) still gets the B2B terms
+        this.router.replace(consentPages[category] || (/b2b|business|professional/.test(category || "") ? "/auth/consent/b2b" : "/auth/consent/consumer"));
         return false;
       }
 

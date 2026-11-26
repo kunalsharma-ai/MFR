@@ -369,9 +369,14 @@ function SignUp() {
     setResendBusy(true);
     setResendMsg("");
     try {
-      await postJSON(`${USER_API}/resend`, { mail: sentTo });
-      setResendMsg("We’ve sent the email again.");
-      setCooldown(RESEND_WAIT);
+      const r = await postJSON(`${USER_API}/resend`, { mail: sentTo });
+      if (r?.data?.emailSent === false) {
+        setResendMsg("We couldn’t send the email just now. Please try again in a few minutes.");
+        setCooldown(30);
+      } else {
+        setResendMsg("We’ve sent the email again.");
+        setCooldown(RESEND_WAIT);
+      }
     } catch (ex) {
       setResendMsg(
         ex.message || "Could not resend the email. Please try again.",

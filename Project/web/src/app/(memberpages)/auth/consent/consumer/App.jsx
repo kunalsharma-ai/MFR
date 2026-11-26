@@ -149,7 +149,7 @@ export default function App({ cfg }) {
       window.location.assign(AFTER_CONSENT_URL);
     }
 
-    if (user?.category === "b2b" || user?.category === "b2b-minor") {
+    if (/b2b|business|professional/i.test(String(user?.category || ""))) {
       window.location.assign("/auth/consent/b2b");
     }
   }, [user]);
