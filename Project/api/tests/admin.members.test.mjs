@@ -109,6 +109,38 @@ test("search is per brand and masks personal data", async () => {
     assert.equal((await admin("GET", `/api/v1/admin/members/${mhoOnly}`)).status, 404);
 });
 
+test("sorts the whole list by any column and filters by birth year", async () => {
+    const U = db.collection("User");
+    const id = (x) => new mongoose.Types.ObjectId(x);
+    await U.updateOne({ _id: id(ben) }, { $set: { dob: new Date("1975-03-02"), qualityScore: 80 } });
+    await U.updateOne({ _id: id(cleo) }, { $set: { dob: new Date("2001-11-30"), qualityScore: 140 } });
+    await U.updateOne({ _id: id(asha) }, { $set: { name: { first: "asha", last: "Demo" }, qualityScore: 100 } });
+    const ids = async (qs) => (await admin("GET", `/api/v1/admin/members?${qs}`)).json.data;
+    // No sort: newest sign-ups first, as before, and no `sort` echoed.
+    const plain = await ids("noTeens=1");
+    assert.equal(plain.sort, null);
+    assert.deepEqual(plain.items.map((m) => m.id).slice(0, 1), [asha]);
+    // Text sorts ignore case: "asha" comes before "Ben".
+    const byName = await ids("noTeens=1&sort=name&dir=asc");
+    assert.deepEqual(byName.items.map((m) => m.id), [asha, ben, cleo]);
+    assert.deepEqual(byName.sort, { by: "name", dir: "asc" });
+    assert.deepEqual((await ids("noTeens=1&sort=name&dir=desc")).items.map((m) => m.id), [cleo, ben, asha]);
+    // Numbers and dates.
+    assert.deepEqual((await ids("noTeens=1&sort=quality&dir=desc")).items.map((m) => m.id), [cleo, asha, ben]);
+    assert.deepEqual((await ids("noTeens=1&sort=born&dir=asc")).items.map((m) => m.id), [ben, asha, cleo]);
+    assert.equal((await ids("noTeens=1&sort=signedUp&dir=asc")).items.at(-1).id, asha);
+    // Unknown columns are ignored, never passed to the database.
+    const bad = await ids("noTeens=1&sort=password&dir=asc");
+    assert.equal(bad.sort, null);
+    assert.equal(bad.total, 3);
+    // Born column filter: birth year range.
+    assert.deepEqual((await ids("bornFrom=1980&bornTo=1995")).items.map((m) => m.id).sort(), [asha, teen].sort());
+    assert.deepEqual((await ids("bornTo=1980")).items.map((m) => m.id), [ben]);
+    assert.deepEqual((await ids("bornFrom=2001")).items.map((m) => m.id), [cleo]);
+    assert.equal((await ids("bornFrom=abc")).total, 4);
+    await U.updateOne({ _id: id(asha) }, { $set: { name: { first: "Asha", last: "Demo" } } });
+});
+
 test("member page and unmask", async () => {
     const d = await admin("GET", `/api/v1/admin/members/${asha}`);
     assert.equal(d.status, 200);
