@@ -16,6 +16,7 @@ import * as tickets from "./tickets.js";
 import * as messages from "./messages.js";
 import * as help from "./help.js";
 import * as switches from "./switches.js";
+import * as reminders from "./reminders.js";
 import * as rewards from "./rewards.js";
 import * as prizes from "./prizes.js";
 import * as reports from "./reports.js";
@@ -142,6 +143,15 @@ router.post("/help", handle((req) => help.create(req.adminOrigin, req.body || {}
 router.get("/help/:id", handle((req) => help.get(req.adminOrigin, req.params.id)));
 router.put("/help/:id", handle((req) => help.update(req.adminOrigin, req.params.id, req.body || {}, req.adminActor)));
 router.post("/help/:id/status", handle((req) => help.setStatus(req.adminOrigin, req.params.id, req.body?.status, req.adminActor)));
+
+// Auto reminders and WhatsApp / SMS providers (MADP Auto reminders and Message channels screens)
+router.get("/reminders", handle((req) => reminders.get(req.adminOrigin)));
+router.put("/reminders", handle((req) => reminders.save(req.adminOrigin, req.body || {}, req.adminActor)));
+router.post("/reminders/preview", handle((req) => reminders.preview(req.adminOrigin, req.body || {})));
+router.get("/channels", handle((req) => reminders.channels(req.adminOrigin)));
+router.put("/channels/:channel", handle((req) => reminders.saveChannel(req.adminOrigin, req.params.channel, req.body || {}, req.adminActor)));
+router.post("/channels/:channel/check", handle((req) => reminders.checkChannel(req.adminOrigin, req.params.channel)));
+router.post("/channels/:channel/remove", handle((req) => reminders.removeChannel(req.adminOrigin, req.params.channel)));
 
 // Feature switches (step 4). MADP lets only its Super Admin change them, always with a reason.
 router.get("/switches", handle((req) => switches.board(req.adminOrigin, req.query)));

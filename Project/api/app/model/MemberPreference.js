@@ -18,6 +18,7 @@ export default mongooseModel(
             email: { type: Boolean, default: true },
             push: { type: Boolean, default: false },
             whatsapp: { type: Boolean, default: false },
+            sms: { type: Boolean, default: false },
             weeklySummary: { type: Boolean, default: true },
             expiryReminders: { type: Boolean, default: true },
             newSurvey: { type: Boolean, default: true },
@@ -47,6 +48,9 @@ export default mongooseModel(
         lastBirthdayYear: Number,
         newSurveyEmails: [{ at: Date, survey: String }],
         expiryReminders: [{ key: String, at: Date }],
+        // auto reminders (engagement/reminders.js): per case { count, lastAt } while the case lasts, and the last one of any kind
+        reminders: { type: Object, default: undefined },
+        lastReminderAt: Date,
     },
     [
         [{ user: 1, origin: 1 }, { unique: true }],

@@ -1,0 +1,16 @@
+{%- comment -%} Case "redeem": enough points to redeem. Data: member.firstName, points, money, links.rewards {%- endcomment -%}
+{%- capture preheader -%}{{ points }} points are ready for a reward{%- endcapture -%}
+{%- assign icon = "&#127873;" -%}{%- assign kicker = "Your rewards" -%}
+{%- capture title -%}{{ member.firstName }}, you have earned a reward{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:0 0 16px;">
+  <tr><td align="center" style="padding:18px;border:1px dashed {{ brand.light }};border-radius:16px;">
+    <div style="font-size:32px;line-height:38px;font-weight:800;color:{{ brand.ink }};">{{ points }}</div>
+    <div style="font-size:13px;line-height:18px;color:#7b8399;">points ready to use{% if money %} &middot; about {{ money }}{% endif %}</div>
+  </td></tr>
+</table>
+<p style="margin:0;">Thank you for all the surveys you have taken. Your balance has reached the redemption minimum, so you can pick a reward whenever you like.</p>
+{%- assign btn_url = links.rewards -%}{%- assign btn_label = "Choose my reward" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because your points balance has reached the redemption minimum." -%}
+{% include "mailer/reminders/_foot.liquid" %}

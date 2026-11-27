@@ -141,7 +141,7 @@ export async function setAlerts(origin, id, body = {}) {
     if (isTeen(u)) throw new AdminError("teen_member", "Teen accounts are changed from the Teen module.", 409);
     const user = { _id: u._id, category: u.category, origin };
     const current = await prefsOf(user, origin);
-    const patch = sanitizePrefs({ notifications: body.notifications, survey: body.survey }, current, { whatsapp: await isOn(origin, "whatsapp", scopeOf(user)) });
+    const patch = sanitizePrefs({ notifications: body.notifications, survey: body.survey }, current, { whatsapp: await isOn(origin, "whatsapp", scopeOf(user)), sms: await isOn(origin, "sms", scopeOf(user)) });
     if (!Object.keys(patch).length) throw new AdminError("bad_request", "Nothing to change");
     const p = await savePrefs(user, origin, patch);
     return { notifications: p.notifications, survey: p.survey };

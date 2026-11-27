@@ -51,6 +51,8 @@ export const SWITCHES = [
         effect: "Members get a birthday e-mail on the day." },
     { key: "email_lifecycle", group: "email", label: "Sign-up reminder e-mails", def: (c) => c.emails?.lifecycle?.enabled,
         effect: "Members who have not finished signing up get reminder e-mails." },
+    { key: "email_reminders", group: "email", label: "Auto reminder e-mails (set from MADP: surveys waiting, rewards, streak, sign-up steps)", def: () => false,
+        effect: "Members get the reminders switched on in MADP's Auto reminders screen, at the days set there. When off, MADP can still preview who would get one; nothing is sent." },
     { key: "email_weekly", group: "email", label: "Weekly points summary e-mail", def: (c) => c.weeklySummary?.enabled,
         effect: "Members who kept it on get a weekly points summary." },
     { key: "email_expiry", group: "email", label: "Points expiry reminder e-mail", def: (c) => c.expiry?.enabled,
@@ -63,6 +65,8 @@ export const SWITCHES = [
         effect: "Members can allow browser notifications and get them." },
     { key: "whatsapp", group: "email", label: "WhatsApp messages", def: (c) => c.whatsapp?.enabled,
         effect: "Members can choose WhatsApp messages in their notification settings. No provider is connected yet, so nothing is sent." },
+    { key: "sms", group: "email", label: "SMS messages", def: () => false,
+        effect: "Members can choose SMS in their notification settings. No SMS provider is connected yet, so nothing is sent." },
 ];
 const BY_KEY = new Map(SWITCHES.map((s) => [s.key, s]));
 export const isKey = (k) => k === KILL || BY_KEY.has(k);

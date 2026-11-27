@@ -1,0 +1,21 @@
+{%- comment -%} Case "surveys": surveys waiting. Data: member.firstName, surveys[] (name, points, minutes), links.surveys {%- endcomment -%}
+{%- capture preheader -%}{{ surveys.size }} {% if surveys.size == 1 %}survey is{% else %}surveys are{% endif %} open for you right now{%- endcapture -%}
+{%- assign icon = "&#9993;" -%}{%- assign kicker = "Picked for you" -%}
+{%- capture title -%}{{ member.firstName }}, {% if surveys.size == 1 %}a survey is{% else %}{{ surveys.size }} surveys are{% endif %} waiting for you{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<p style="margin:0 0 14px;">These were chosen for your profile and are still open. They close once enough people have answered, so whenever you have a moment:</p>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+{%- for s in surveys %}
+  <tr>
+    <td style="padding:12px 16px;border:1px solid #e7eaf3;border-left:4px solid {{ brand.primary }};border-radius:12px;">
+      <div style="font-size:15px;line-height:21px;font-weight:700;color:{{ brand.ink }};">{{ s.name }}</div>
+      <div style="font-size:13px;line-height:19px;color:#7b8399;">{{ s.points }} points{% if s.minutes %} &middot; about {{ s.minutes }} minutes{% endif %}</div>
+    </td>
+  </tr>
+  <tr><td height="8" style="height:8px;font-size:1px;line-height:8px;">&nbsp;</td></tr>
+{%- endfor %}
+</table>
+{%- assign btn_url = links.surveys -%}{%- assign btn_label = "Take a survey" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because surveys that match your profile are waiting in your account." -%}
+{% include "mailer/reminders/_foot.liquid" %}

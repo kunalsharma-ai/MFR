@@ -1,0 +1,11 @@
+{%- comment -%} Case "no_profiles": no profile complete yet. Data: member.firstName, links.profiles, links.unsubscribe {%- endcomment -%}
+{%- capture preheader -%}A few quick questions bring you surveys that fit you{%- endcapture -%}
+{%- assign icon = "&#9998;" -%}{%- assign kicker = "Your profile" -%}
+{%- capture title -%}{{ member.firstName }}, tell us a little about yourself{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<p style="margin:0 0 12px;">Your account is active. The next step is your profile: a few short questions so we can match you with surveys that suit you.</p>
+<p style="margin:0;">The more of it you fill in, the more surveys you will be invited to.</p>
+{%- assign btn_url = links.profiles -%}{%- assign btn_label = "Start my profile" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because your profile is still empty." -%}
+{% include "mailer/reminders/_foot.liquid" %}

@@ -217,5 +217,6 @@ export function publicConfig(memberType, on = {}) {
         drawEnabled: memberType !== "teen" && Boolean(on.draw),
         push: { enabled: Boolean(on.push && c.push?.vapidPublicKey), publicKey: on.push ? c.push.vapidPublicKey || null : null },
         whatsapp: { enabled: Boolean(on.whatsapp) },
+        sms: { enabled: Boolean(on.sms) },
     };
 }

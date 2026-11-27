@@ -1,0 +1,56 @@
+{%- comment -%}
+  Auto reminders (api/app/engagement/reminders.js): one gentle, branded layout for T2O, MFR and MHO.
+  Set before including: preheader, icon (one character), kicker, title.
+  Data: brand (name, logo, primary, light, soft, ink, support, privacy, legal), member.firstName, links.*, site, year.
+{%- endcomment -%}
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta name="color-scheme" content="light only" />
+  <title>{{ subject }}</title>
+  <style>
+    @media (max-width: 620px) {
+      .w { width: 100% !important; }
+      .px { padding-left: 22px !important; padding-right: 22px !important; }
+      .h1 { font-size: 23px !important; line-height: 30px !important; }
+      .btn { display: block !important; width: 100% !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#f4f6fb;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{ preheader }}&#8202;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f4f6fb" style="background:#f4f6fb;">
+  <tr>
+    <td align="center" style="padding:28px 12px;">
+      <table role="presentation" class="w" width="600" border="0" cellspacing="0" cellpadding="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:22px;overflow:hidden;box-shadow:0 10px 30px rgba(20,33,61,0.08);font-family:'Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <tr><td height="6" style="height:6px;font-size:1px;line-height:6px;background:{{ brand.primary }};background-image:linear-gradient(90deg,{{ brand.light }},{{ brand.primary }});">&nbsp;</td></tr>
+        <tr>
+          <td class="px" style="padding:22px 40px 8px;">
+            <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td valign="middle"><img src="{{ brand.logo }}" width="44" height="44" alt="{{ brand.name }}" style="display:block;border:0;width:44px;height:44px;border-radius:12px;" /></td>
+                <td valign="middle" style="padding-left:12px;font-size:17px;line-height:22px;font-weight:800;color:{{ brand.ink }};letter-spacing:-0.01em;">{{ brand.name }}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:18px 40px 6px;">
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:{{ brand.soft }};border-radius:18px;">
+              <tr>
+                <td align="center" style="padding:26px 24px 22px;">
+                  <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center"><tr>
+                    <td align="center" valign="middle" width="64" height="64" style="width:64px;height:64px;border-radius:32px;background:{{ brand.primary }};background-image:linear-gradient(135deg,{{ brand.light }},{{ brand.primary }});color:#ffffff;font-size:30px;line-height:64px;text-align:center;">{{ icon }}</td>
+                  </tr></table>
+                  <div style="margin:14px 0 0;font-size:12px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{{ brand.primary }};">{{ kicker }}</div>
+                  <h1 class="h1" style="margin:8px 0 0;font-family:'Manrope','Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:26px;line-height:33px;font-weight:800;letter-spacing:-0.02em;color:{{ brand.ink }};">{{ title }}</h1>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="px" style="padding:20px 40px 4px;font-size:15.5px;line-height:25px;color:#434e6e;">

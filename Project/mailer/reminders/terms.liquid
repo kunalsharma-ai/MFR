@@ -1,0 +1,10 @@
+{%- comment -%} Case "terms": password set, terms not accepted. Data: member.firstName, links.accept_terms {%- endcomment -%}
+{%- capture preheader -%}One last check and your account is active{%- endcapture -%}
+{%- assign icon = "&#10003;" -%}{%- assign kicker = "One last step" -%}
+{%- capture title -%}{{ member.firstName }}, please review and accept our member terms{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<p style="margin:0 0 12px;">You are nearly ready. Before we can send you surveys, we need you to read and accept the member terms. They explain how surveys, points and your privacy work.</p>
+{%- assign btn_url = links.accept_terms -%}{%- assign btn_label = "Review and accept" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- capture why -%}You get this because your {{ brand.name }} account is waiting for this one step.{%- endcapture -%}
+{% include "mailer/reminders/_foot.liquid" %}

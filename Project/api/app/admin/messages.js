@@ -2,7 +2,7 @@
 // it is sent, and shows in their bell and Messages page. It is never e-mailed. Teens only get a message whose filter
 // names the teen segment explicitly. A sent message can be withdrawn; it then disappears from members' inboxes.
 import mongoose from "mongoose";
-import { AdminMessage, MessageReceipt, User } from "../model/index.js";
+import { AdminMessage, MessageReceipt, MemberNotice, User } from "../model/index.js";
 import { query as audienceQuery, cleanFilter, audienceFilter } from "./audiences.js";
 import { AdminError } from "./http.js";
 
@@ -113,18 +113,25 @@ export async function withdraw(origin, id, actor) {
 
 // ---- member side: GET /api/v1/alerts (the bell and Messages page already call it) -----------------------------
 export async function inbox(user, origin) {
-    const receipts = await MessageReceipt.find({ origin, user: oid(user._id) }).sort({ createdAt: -1 }).limit(100).lean();
-    if (!receipts.length) return [];
-    const msgs = await AdminMessage.find({ _id: { $in: receipts.map((r) => r.message) }, origin, status: "sent" }).lean();
+    const [receipts, notices] = await Promise.all([
+        MessageReceipt.find({ origin, user: oid(user._id) }).sort({ createdAt: -1 }).limit(100).lean(),
+        // Auto reminders (engagement/reminders.js) also land here, so every reminder shows on the dashboard
+        MemberNotice.find({ origin, user: oid(user._id) }).sort({ createdAt: -1 }).limit(50).lean(),
+    ]);
+    const msgs = receipts.length ? await AdminMessage.find({ _id: { $in: receipts.map((r) => r.message) }, origin, status: "sent" }).lean() : [];
     const byId = new Map(msgs.map((x) => [String(x._id), x]));
-    return receipts.filter((r) => byId.has(String(r.message))).map((r) => {
+    const team = receipts.filter((r) => byId.has(String(r.message))).map((r) => {
         const x = byId.get(String(r.message));
         return { _id: String(x._id), title: x.title, subtitle: x.subtitle || "", message: x.body, cta: x.cta || "", ctaType: x.cta ? "link" : "", ctaLabel: x.ctaLabel || "", read: Boolean(r.readAt), createdAt: x.sentAt || r.createdAt };
     });
+    const mine = notices.map((x) => ({ _id: String(x._id), kind: x.kind, title: x.title, subtitle: "", message: x.body, cta: x.cta || "", ctaType: x.cta ? "link" : "", ctaLabel: x.ctaLabel || "", read: Boolean(x.readAt), createdAt: x.createdAt }));
+    return [...team, ...mine].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 100);
 }
 
 export async function markRead(user, origin, id) {
     if (!isId(id)) return { read: false };
     const r = await MessageReceipt.updateOne({ origin, user: oid(user._id), message: oid(id), readAt: null }, { $set: { readAt: new Date() } });
-    return { read: true, changed: r.modifiedCount > 0 };
+    if (r.matchedCount) return { read: true, changed: r.modifiedCount > 0 };
+    const n = await MemberNotice.updateOne({ _id: oid(id), origin, user: oid(user._id), readAt: null }, { $set: { readAt: new Date() } });
+    return { read: true, changed: n.modifiedCount > 0 };
 }

@@ -1,0 +1,11 @@
+{%- comment -%} Case "first_survey": joined, never finished a survey. Data: member.firstName, links.surveys {%- endcomment -%}
+{%- capture preheader -%}Your first survey is where your points begin{%- endcapture -%}
+{%- assign icon = "&#9654;" -%}{%- assign kicker = "Getting started" -%}
+{%- capture title -%}{{ member.firstName }}, ready for your first survey?{%- endcapture -%}
+{% include "mailer/reminders/_head.liquid" %}
+<p style="margin:0 0 12px;">It is great to have you with {{ brand.name }}. You have not finished a survey yet, and the first one is the easiest way to see how it all works.</p>
+<p style="margin:0;">Every survey you finish adds points to your account.</p>
+{%- assign btn_url = links.surveys -%}{%- assign btn_label = "See my surveys" -%}
+{% include "mailer/reminders/_button.liquid" %}
+{%- assign why = "You get this because you have not finished a survey since you joined." -%}
+{% include "mailer/reminders/_foot.liquid" %}
