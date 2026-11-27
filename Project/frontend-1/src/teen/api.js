@@ -47,6 +47,10 @@ async function http(method, path, body, url = `${TEEN_API}${path}`) {
   // An API without this route answers "Fallback route: ... is not available", on some builds with status "success"
   // and empty data. That is not a registration: say so instead of showing the family a success screen (issue #113).
   if (/^Fallback route/i.test(String(json?.message || ''))) throw new TeenApiError('unavailable', { status: res.status || 404 });
+  // An API build from before issue #113 does not hand a Teen body on PUT /api/v1/user to the Teen handler: it tries to
+  // save it as an ordinary member and answers "User validation failed: ... Firstname is required" (issue #118). The
+  // fix for that is an API redeploy; until then tell the family plainly that sign-up is not open, nothing was saved.
+  if (url === USER_API && /User validation failed/i.test(String(json?.message || ''))) throw new TeenApiError('unavailable', { status: res.status || 400 });
   if (res.ok && json.status === 'success') return json.data;
   const { code = res.status === 401 ? 'signin' : 'server', fields, status, message, ...extra } = json || {};
   throw new TeenApiError(code, { status: res.status, fields, extra });
