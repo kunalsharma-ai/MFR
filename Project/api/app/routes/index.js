@@ -27,6 +27,9 @@ import { securityHeaders, sanitizeInput } from "../utils/security.js";
 
 import meRouter from "./api/Me.js";
 import adminRouter from "../admin/routes.js";
+import { requireMadp } from "../admin/auth.js";
+import { handle } from "../admin/http.js";
+import { discoveryFor } from "../admin/contract.js";
 import changeEmail from "./api/changeEmail.js"
 import contentRouter from "./api/Content.js";
 import { alerts as alertsRouter, help as helpRouter } from "./api/Inbox.js";
@@ -38,6 +41,8 @@ router
     // the MADP console's signed admin API sits under the same /api/v1 prefix as the member API (so the gateway's
     // /api/v1/ rule covers it), but is mounted first: it checks its own signature and parses its own body
     .use("/api/v1/admin", adminRouter)
+    // MADP Panel API Contract discovery, signed like the admin API: which contract version and capabilities it serves
+    .get("/api/v1/contract", requireMadp, handle((req) => discoveryFor(req.adminOrigin)))
     .use("/api/v1", bindRequest, sanitizeInput)
     // which build is running (issues #92 and #93 were an old API image on the server): GIT_SHA / BUILD_DATE are set
     // by `docker build --build-arg GIT_SHA=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=...`
