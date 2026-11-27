@@ -1,13 +1,14 @@
 // Members module of the super admin console (spec module 1), for one brand at a time (req.adminOrigin).
 import mongoose from "mongoose";
-import { User, Response, Answers, Redemption, SupportTicket, TeenRegistration, Category, SegmentChange } from "../model/index.js";
+import { User, Response, Answers, Option, Redemption, SupportTicket, TeenRegistration, Category, SegmentChange } from "../model/index.js";
 import { entries as ledgerEntries, balances } from "../engagement/ledger.js";
 import { memberType } from "../engagement/http.js";
 import * as Marketing from "../engagement/marketing.js";
-import { maskEmail, maskPhone, birthYear } from "./mask.js";
+import { maskEmail, maskPhone, birthYear, ageYears } from "./mask.js";
 import { AdminError } from "./http.js";
 
 export const PAGE_SIZE = 50;
+export const GENDERS = ["Male", "Female", "Other"];
 export const STATUSES = ["active", "suspended", "banned", "archived", "closed"];
 const oid = (v) => new mongoose.Types.ObjectId(String(v));
 const isId = (v) => /^[a-f0-9]{24}$/i.test(String(v || ""));
@@ -28,6 +29,8 @@ export function row(u) {
         status: statusOf(u),
         country: a0.country || null,
         birthYear: birthYear(u.dob),
+        gender: GENDERS.includes(u.gender) ? u.gender : null,
+        age: ageYears(u.dob),
         qualityScore: u.qualityScore ?? 100,
         emailVerified: u.isVerified?.email || "unverified",
         phoneVerified: u.isVerified?.phone || "unverified",
@@ -49,6 +52,7 @@ export const SORTS = {
     segment: "category",
     country: "address.0.country",
     born: "dob",
+    gender: "gender",
     quality: "qualityScore",
     status: "memberStatus",
     marketing: "marketingOptIn.granted",
@@ -57,7 +61,31 @@ export const SORTS = {
 };
 
 // Text columns sort case-insensitively ("anna" next to "Anna").
-const TEXT_SORTS = new Set(["name", "memberId", "email", "segment", "country", "status"]);
+const TEXT_SORTS = new Set(["name", "memberId", "email", "segment", "country", "status", "gender"]);
+
+// Question keys MADP may ask answers for in the list ("type" columns: B2B designation, HCP specialty, ...). At most 8.
+const MAX_TYPE_QUESTIONS = 8;
+const typeKeys = (v) => [...new Set(String(v || "").split(",").map((s) => s.trim().toLowerCase()).filter((s) => /^[\w.:-]{1,80}$/.test(s)))].slice(0, MAX_TYPE_QUESTIONS);
+
+/** For each member on the page: the option labels they chose for each asked question ({ [question]: [label, ...] }). */
+async function typeAnswers(origin, users, keys) {
+    if (!keys.length || !users.length) return new Map();
+    const ids = users.map((u) => String(u._id));
+    const [answers, options] = await Promise.all([
+        Answers.find({ origin, user: { $in: ids }, question: { $in: keys }, isDeleted: { $ne: true } }).select("+answer user question").lean(),
+        Option.find({ origin, question: { $in: keys }, isDeleted: { $ne: true } }).select("question value label").lean(),
+    ]);
+    const label = new Map(options.map((o) => [`${o.question}\u0000${o.value}`, o.label || o.value]));
+    const out = new Map();
+    for (const a of answers) {
+        const vals = (Array.isArray(a.answer) ? a.answer : [a.answer]).filter((x) => x != null && String(x).trim() !== "");
+        if (!vals.length) continue;
+        const m = out.get(a.user) || {};
+        m[a.question] = vals.map((v) => label.get(`${a.question}\u0000${v}`) ?? String(v)).slice(0, 10);
+        out.set(a.user, m);
+    }
+    return out;
+}
 
 /** Search (spec: email, phone, member ID, name, country, segment, status, sign-up date, quality, activity). */
 export async function search(origin, q = {}) {
@@ -87,6 +115,15 @@ export async function search(origin, q = {}) {
         f.qualityScore = { ...(q.qualityMin != null ? { $gte: Number(q.qualityMin) } : {}), ...(q.qualityMax != null ? { $lte: Number(q.qualityMax) } : {}) };
     if (q.inactiveSince) f.$and = [...(f.$and || []), { $or: [{ lastActivityAt: null }, { lastActivityAt: { $lt: new Date(q.inactiveSince) } }] }];
     if (q.dueBefore) f.$and = [...(f.$and || []), { $or: [{ profileCheckedAt: null, createdAt: { $lt: new Date(q.dueBefore) } }, { profileCheckedAt: { $lt: new Date(q.dueBefore) } }] }];
+    if (GENDERS.includes(q.gender)) f.gender = q.gender;
+    // Age column: whole years today, as a date of birth range.
+    const years = (v) => (/^\d{1,3}$/.test(String(v ?? "")) ? Number(v) : null);
+    const ageMin = years(q.ageMin), ageMax = years(q.ageMax);
+    if (ageMin != null || ageMax != null) {
+        const now = new Date();
+        const back = (n) => new Date(Date.UTC(now.getUTCFullYear() - n, now.getUTCMonth(), now.getUTCDate()));
+        f.$and = [...(f.$and || []), { dob: { ...(ageMin != null ? { $lte: back(ageMin) } : {}), ...(ageMax != null ? { $gt: back(ageMax + 1) } : {}) } }];
+    }
     // Born column: birth year range, on the stored date of birth (UTC year boundaries).
     const yr = (v) => (/^\d{4}$/.test(String(v ?? "")) ? Number(v) : null);
     const bornFrom = yr(q.bornFrom), bornTo = yr(q.bornTo);
@@ -101,7 +138,10 @@ export async function search(origin, q = {}) {
         User.countDocuments(f),
     ]);
     // `sort` tells MADP the whole list is sorted, so it doesn't sort only the page on screen.
-    return { items: items.map(row), total, page, pageSize: PAGE_SIZE, sort: by ? { by, dir: dir === 1 ? "asc" : "desc" } : null };
+    const keys = typeKeys(q.typeQuestions);
+    const types = await typeAnswers(origin, items, keys);
+    const rows = items.map((u) => (keys.length ? { ...row(u), types: types.get(String(u._id)) || {} } : row(u)));
+    return { items: rows, total, page, pageSize: PAGE_SIZE, sort: by ? { by, dir: dir === 1 ? "asc" : "desc" } : null };
 }
 
 async function load(origin, id) {

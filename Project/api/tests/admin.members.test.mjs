@@ -141,6 +141,43 @@ test("sorts the whole list by any column and filters by birth year", async () =>
     await U.updateOne({ _id: id(asha) }, { $set: { name: { first: "Asha", last: "Demo" } } });
 });
 
+test("list rows show gender, age in years and the asked type answers as option labels", async () => {
+    const U = db.collection("User");
+    const id = (x) => new mongoose.Types.ObjectId(x);
+    const born = new Date(Date.UTC(now.getUTCFullYear() - 36, now.getUTCMonth(), now.getUTCDate()));
+    await U.updateOne({ _id: id(asha) }, { $set: { dob: born, gender: "Female" } });
+    await U.updateOne({ _id: id(cleo) }, { $set: { gender: "Male" } });
+    await U.updateOne({ _id: id(ben) }, { $set: { gender: "unknown" } });
+    await db.collection("Option").insertMany([
+        { ...base(MFR), question: "job_title", value: "3", label: "Purchasing manager" },
+        { ...base(MFR), question: "employment", value: "1", label: "Full-time employed" },
+        { ...base(MHO), question: "job_title", value: "3", label: "MHO label must not be used" },
+    ]);
+    await db.collection("Answer").insertMany([
+        { ...base(MFR), user: asha, question: "job_title", answer: ["3"] },
+        { ...base(MFR), user: asha, question: "employment", answer: ["1", "free text"] },
+        { ...base(MFR), user: asha, question: "secret_health", answer: ["x"] },
+        { ...base(MHO), user: cleo, question: "job_title", answer: ["3"] },
+    ]);
+    const list = async (qs) => (await admin("GET", `/api/v1/admin/members?${qs}`)).json.data;
+    const plain = (await list("noTeens=1")).items.find((m) => m.id === asha);
+    assert.equal(plain.gender, "Female");
+    assert.equal(plain.age, 36);
+    assert.equal(plain.types, undefined, "no answers unless MADP asks for them");
+    assert.equal((await list("noTeens=1")).items.find((m) => m.id === ben).gender, null);
+    const typed = await list("noTeens=1&typeQuestions=Job_Title,employment,bad%20key");
+    const a = typed.items.find((m) => m.id === asha);
+    assert.deepEqual(a.types, { job_title: ["Purchasing manager"], employment: ["Full-time employed", "free text"] });
+    assert.deepEqual(typed.items.find((m) => m.id === cleo).types, {}, "answers from another brand never show");
+    // Gender filter and sort, age filter (whole years today).
+    assert.deepEqual((await list("gender=Male")).items.map((m) => m.id), [cleo]);
+    assert.equal((await list("gender=nope")).total, 4);
+    assert.deepEqual((await list("noTeens=1&sort=gender&dir=asc")).sort, { by: "gender", dir: "asc" });
+    assert.deepEqual((await list("ageMin=36&ageMax=36&noTeens=1")).items.map((m) => m.id), [asha]);
+    assert.deepEqual((await list("ageMax=35&noTeens=1")).items.map((m) => m.id), [cleo]);
+    assert.deepEqual((await list("ageMin=40")).items.map((m) => m.id), [ben]);
+});
+
 test("member page and unmask", async () => {
     const d = await admin("GET", `/api/v1/admin/members/${asha}`);
     assert.equal(d.status, 200);
