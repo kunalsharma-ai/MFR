@@ -920,6 +920,7 @@ html[data-mode="dark"] .sx-knob::after{background:hsl(224, 16%, 11%)}
 html[data-mode="dark"] .sx-interests button{background:hsl(224, 16%, 11%)}
 html[data-mode="dark"] .sx-pw li.ok{color:hsl(142, 65%, 72%)}
 html[data-mode="dark"] .sx-pw li.ok .ico{color:hsl(142, 69%, 71%)}
+html[data-mode="dark"] .cc-pop{background:hsl(224, 16%, 11%)}
 /* src/components/SocialLogin.css */
 html[data-mode="dark"] .soc-or::before, html[data-mode="dark"] .soc-or::after{background:var(--line, hsl(224, 16%, 14%))}
 html[data-mode="dark"] .soc-btn{border:1px solid var(--line, hsl(224, 14%, 20%));background:hsl(224, 16%, 11%);color:var(--ink, hsl(224, 22%, 82%))}
