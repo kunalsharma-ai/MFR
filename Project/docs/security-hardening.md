@@ -32,6 +32,9 @@ what has to be set when it is deployed. Tests: `tests/security.hardening.test.mj
 - `CHANNEL_SECRETS_KEY` (optional, recommended): encrypts the WhatsApp and SMS provider keys an admin saves from the
   MADP console. Unset, a key derived from `JWT_SECRET` is used. Changing it later makes the saved provider keys
   unreadable, so they must be entered again in the console.
+- `SIGNUP_FINGERPRINT_SECRET` (optional): the key for the one-way sign-up IP and device hashes used by the duplicate
+  checks. Unset, a key derived from `JWT_SECRET` is used, so changing either later starts new hashes that won't match
+  older sign-ups. Set it once, as a long random value, and keep it.
 - The Sampledge push to `/project-dev` stops working without an admin token (Sampledge is not used any more).
 - MADP must send `x-madp-nonce` (MADP's `PanelAdminClient` does from the matching MADP change).
 
