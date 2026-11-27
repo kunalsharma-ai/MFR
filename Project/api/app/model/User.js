@@ -212,6 +212,12 @@ export default mongooseModel(
             canAcceptPushNotification: { type: Boolean, default: false },
         },
         password: { type: String, select: false },
+        // one-way hashes of the sign-up IP and device, only for duplicate checks (app/utils/fingerprint.js)
+        signupFingerprint: {
+            type: { ipHash: String, deviceHash: String, at: Date },
+            default: undefined,
+            select: false,
+        },
         origin: {
             type: String,
             required: true,
