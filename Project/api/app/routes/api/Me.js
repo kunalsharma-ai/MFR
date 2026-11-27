@@ -20,26 +20,10 @@ import {
 } from "../../utils/index.js"
 import { SELF_EDITABLE, pick, omit, requireAdmin } from "../../utils/access.js";
 
-// Round 9 (Kunal, 24 Nov 2026): every survey stays locked until the member's basic profiles are complete. The hub
-// shows the lock; this is the same rule on the server, so a direct survey link cannot open a survey early.
-// The basic profiles are the ones of these slugs that exist for the member's category (Teens have fewer).
-// Profiles themselves are never blocked here, so the basics (and other profiles) can always be filled in.
-const CORE_SLUGS = ["basic", "educational", "professional", "financial"];
-async function basicsGate(req, slug) {
-    profileController.request = req;
-    const [status, profiles] = await Promise.all([
-        profileController.status(),
-        profileController.list({ category: req.user?.category }),
-    ]);
-    const list = Mutate(profiles) || [];
-    if (list.some((p) => String(p.slug) === String(slug))) return; // opening a profile, not a survey
-    const missing = list.filter((p) => CORE_SLUGS.includes(p.slug) && !(Number(status?.[p.slug]) >= 100));
-    if (missing.length) {
-        const err = new Error("Finish your basic profiles first. Surveys open as soon as they are done.");
-        err.code = "basics";
-        throw err;
-    }
-}
+// Every survey and every non-About-You profile stays locked until the member's About You profiles are complete
+// (member/aboutYou.js; the list is set per brand from the MADP console). The member screen shows the same lock; this
+// is the rule on the server, so a direct survey link or an API call cannot open a survey or a locked profile early.
+import * as AboutYou from "../../member/aboutYou.js";
 
 Date.prototype.resetTime = function (type = "start") {
     if (type === "end") {
@@ -208,6 +192,12 @@ router
         async req => ({ message: "", data: await termsFor(req.user._id, req.origin) }),
         userController
     ))
+    // The About You lock for this member: which profiles must be finished first, which are still open, and which
+    // profiles stay locked until then. The member site reads this instead of keeping its own list.
+    .get("/about-you", expressRoute(
+        async req => ({ message: "", data: AboutYou.publicView(await AboutYou.aboutYouState(req)) }),
+        profileController
+    ))
     .get("/points",
         expressRoute(
             async req => {
@@ -277,6 +267,7 @@ router
             async req => {
                 let [message, data] = ["Updated successfully", []]
                 const questions = Object.keys(req.body);
+                await AboutYou.assertCanAnswer(req, questions);
                 const answers = questions.map(fld => {
                     return {
                         user: req.user._id,
@@ -461,6 +452,7 @@ router
             const answers = req.body;
             const questions = Object.keys(req.body);
             if (!user || !questions || !(questions instanceof Array) || questions.length < 1) throw new Error("Invalid request");
+            await AboutYou.assertCanAnswer(req, questions);
             const updatedAnswers = questions.map(fld => {
                 if (!(fld in answers)) return false;
                 return {
@@ -529,7 +521,7 @@ router
     .put(expressRoute(
         async req => {
             let message = "";
-            await basicsGate(req, req.body.slug);
+            await AboutYou.assertCanOpen(req, String(req.body?.slug ?? ""));
             surveyController.request = req;
             let data = await surveyController.openBySlug(req.body.slug)
             if (!data) throw new Error("Invalid Request");
@@ -572,6 +564,9 @@ router
             let message = "";
             let data = []
             let response = await responseController.read(req.body.respID);
+            if (!response || String(response.user?._id ?? response.user) !== String(req.user._id)) throw new Error("Invalid request");
+            // a survey opened before the lock (or a profile run as a survey) still needs About You done to save
+            await AboutYou.assertCanOpen(req, response.survey?.slug);
 
             // if (response.status !== "dropout") throw new Error("Invalid request");
 

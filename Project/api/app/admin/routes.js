@@ -27,6 +27,7 @@ import * as experts from "./experts.js";
 import * as content from "./content.js";
 import * as merge from "./merge.js";
 import * as memberEngagement from "./memberengagement.js";
+import * as aboutYou from "./aboutyou.js";
 
 const router = express.Router();
 // Keep the exact bytes: the signature covers them. Bank imports can be several MB.
@@ -80,6 +81,10 @@ router.get("/qb/translations/missing", handle((req) => versions.missingTranslati
 router.get("/profiles", handle((req) => qb.listProfiles(req.adminOrigin, req.query)));
 router.get("/profiles/completion", handle((req) => qb.completionReport(req.adminOrigin, req.query)));
 router.put("/profiles/:id", handle((req) => qb.updateProfile(req.adminOrigin, req.params.id, req.body || {})));
+
+// About You lock: which profiles a member finishes before surveys and the other profiles open (member/aboutYou.js)
+router.get("/about-you", handle((req) => aboutYou.get(req.adminOrigin)));
+router.put("/about-you", handle((req) => aboutYou.save(req.adminOrigin, req.body || {}, req.adminActor)));
 
 // Segments and audiences (module 2)
 router.get("/segments", handle((req) => audiences.listSegments(req.adminOrigin)));

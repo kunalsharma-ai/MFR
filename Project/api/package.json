@@ -15,7 +15,8 @@
     "test:b2b": "node --test --test-force-exit tests/b2b.flow.test.mjs",
     "test:signup": "node --test --test-force-exit tests/signup.qa.test.mjs",
     "test:account": "node --test --test-force-exit tests/account.actions.test.mjs",
-    "test:issues": "node --test --test-force-exit tests/issues.106-113.test.mjs"
+    "test:issues": "node --test --test-force-exit tests/issues.106-113.test.mjs",
+    "test:aboutyou": "node --test --test-force-exit tests/aboutyou.lock.test.mjs"
   },
   "keywords": [
     "express",
