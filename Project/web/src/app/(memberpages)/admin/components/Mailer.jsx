@@ -181,7 +181,7 @@ const newSurvey = `<table width="100%" cellpadding="0" cellspacing="0">
               <td style="padding-right: 20px">
                 <a href="https://www.frequentresearch.com/" style="text-decoration: none">
                   <img
-                    src="https://www.frequentresearch.com/mailer/frequent_signature_logo.jpg"
+                    src="https://mailer.frequentresearch.com/mailer/frequent_signature_logo.jpg"
                     alt="Frequent Research Fieldwork Solutions Pvt. Ltd."
                     width="125"
                     height="93"
@@ -206,7 +206,7 @@ const newSurvey = `<table width="100%" cellpadding="0" cellspacing="0">
                   style="text-decoration: none"
                 >
                   <img
-                    src="https://www.frequentresearch.com/mailer/iso_esomarv3.png"
+                    src="https://mailer.frequentresearch.com/mailer/iso_esomarv3.png"
                     width="155"
                     height="93"
                     alt="ISO ESOMAR"
@@ -225,7 +225,7 @@ const newSurvey = `<table width="100%" cellpadding="0" cellspacing="0">
                     <td>
                       <a href="https://in.linkedin.com/company/frequentresearch">
                         <img
-                          src="https://www.frequentresearch.com/mailer/Linkedin.png"
+                          src="https://mailer.frequentresearch.com/mailer/Linkedin.png"
                           width="20"
                           height="20"
                           alt="LinkedIn"
@@ -239,7 +239,7 @@ const newSurvey = `<table width="100%" cellpadding="0" cellspacing="0">
                     <td>
                       <a href="https://www.facebook.com/frequentrfs/">
                         <img
-                          src="https://www.frequentresearch.com/mailer/facebook.png"
+                          src="https://mailer.frequentresearch.com/mailer/facebook.png"
                           width="20"
                           height="20"
                           alt="Facebook"
@@ -253,7 +253,7 @@ const newSurvey = `<table width="100%" cellpadding="0" cellspacing="0">
                     <td>
                       <a href="https://twitter.com/frequentrfs/">
                         <img
-                          src="https://www.frequentresearch.com/mailer/twitter.png"
+                          src="https://mailer.frequentresearch.com/mailer/twitter.png"
                           width="20"
                           height="20"
                           alt="Twitter"
