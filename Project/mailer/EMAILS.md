@@ -4,7 +4,7 @@ All templates are the approved **v6** designs (Kunal, Nov 2026), except the Teen
 earlier. Every email goes through the same two services as before: `email-template` renders
 `mailer/<category>/<template>.liquid`, and `email` sends it. No new mail provider was added.
 
-**Images.** The v6 templates load their images from `https://www.frequentresearch.com/mailer/v6/...` (the four
+**Images.** The v6 templates load their images from `https://mailer.frequentresearch.com/mailer/v6/...` (the four
 reminder emails) and `.../mailer/v7/...` (the 18 templates). Upload `mailer/assets/v6/` and `mailer/assets/v7/` to
 those paths before switching anything on. Only the images the templates actually use are included (82 files, 1.9 MB).
 

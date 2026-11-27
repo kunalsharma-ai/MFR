@@ -503,7 +503,7 @@ function Sent({ r, status, emailOk, onRestart, cardRef }) {
     try { await teenApi.resend({ statusToken: r.statusToken }); setRs({ state: 'done', msg: `We’ve sent the email to your ${rel} again.` }); setCool(30); }
     catch (e) { setRs({ state: 'error', msg: err(e.code) || err('server') }); }
   };
-  if (!r.reference) return <SentNoReceipt onRestart={onRestart} cardRef={cardRef} />;
+  if (!r.reference) return <SentNoReceipt email={r.email} onRestart={onRestart} cardRef={cardRef} />;
   return (
     <div className="sx-done sx-teen-sent" role="status" ref={cardRef}>
       <div className="done-check"><Icon name={st === 'active' ? 'check' : ended ? 'close' : 'send'} size={40} stroke={2.4} /></div>
@@ -546,9 +546,11 @@ function Sent({ r, status, emailOk, onRestart, cardRef }) {
 }
 
 // This tab no longer has the receipt (for example the page was opened fresh, or the track link has lapsed). Instead of
-// a dead end, the teen can ask for their links again by email.
-function SentNoReceipt({ onRestart, cardRef }) {
-  const [mail, setMail] = useState('');
+// a dead end, the teen can ask for their links again by email. Issue #114: when the email typed at registration is
+// still known, it is used as it is and only a Resend button shows; the address box appears only when it is not known.
+function SentNoReceipt({ email = '', onRestart, cardRef }) {
+  const known = R.validEmail(email || '');
+  const [mail, setMail] = useState(known ? email : '');
   const [rs, setRs] = useState({ state: 'idle', msg: '' });
   const ok = R.validEmail(mail);
   const send = async (e) => {
@@ -561,10 +563,14 @@ function SentNoReceipt({ onRestart, cardRef }) {
   return (
     <div className="sx-done" role="status" ref={cardRef}>
       <h2>Your registration was sent</h2>
-      <p>Open the “Track my registration” link in your email to see where things are. No email? Type your address and we’ll send your links again.</p>
+      {known ? (
+        <p>Open the “Track my registration” link in the email we sent to <strong>{R.maskEmail(email)}</strong> to see where things are. No email? Press Resend and we’ll send your links again.</p>
+      ) : (
+        <p>Open the “Track my registration” link in your email to see where things are. No email? Type your address and we’ll send your links again.</p>
+      )}
       <form className="done-actions" onSubmit={send} noValidate>
-        <input type="email" className="sx-auto-mail" aria-label="Your email address" placeholder="you@example.com" autoComplete="email" value={mail} onChange={(e) => setMail(e.target.value.trim())} />
-        <button type="submit" className="btn btn-primary" disabled={!ok || rs.state === 'busy'}>{rs.state === 'busy' ? 'Sending…' : 'Send my links again'}</button>
+        {known ? null : <input type="email" className="sx-auto-mail" aria-label="Your email address" placeholder="you@example.com" autoComplete="email" value={mail} onChange={(e) => setMail(e.target.value.trim())} />}
+        <button type="submit" className="btn btn-primary" disabled={!ok || rs.state === 'busy'}>{rs.state === 'busy' ? 'Sending…' : known ? 'Resend email' : 'Send my links again'}</button>
         <button type="button" className="btn btn-ghost-dark" onClick={onRestart}>Start again</button>
       </form>
       <p className="tiny muted" role="status" aria-live="polite">{rs.msg}</p>

@@ -1,7 +1,7 @@
 // What each brand looks like in a member message: name, logo, colours, support address and legal links. All three
 // brands share this backend, so the brand comes from the member's origin. Logos are the square brand marks in
 // mailer/assets/v7/brand (published with the other mailer assets); MAIL_LOGO_T2O / _MFR / _MHO override the URL.
-const ASSETS = "https://www.frequentresearch.com/mailer/v7/brand";
+const ASSETS = "https://mailer.frequentresearch.com/mailer/v7/brand";
 const LEGAL = "Frequent Research Fieldwork Solutions Private Limited, 70/1/2 Mangolpur Kalan, First Floor, West Enclave, Pitampura, Delhi 110085, India";
 
 export const BRANDS = {
