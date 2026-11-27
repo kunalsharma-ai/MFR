@@ -4,6 +4,7 @@ import { expressRoute, expressView, isAuthenticated, fsLogger, Mutate, Token } f
 import JWT from "jsonwebtoken";
 import { limit } from "../../utils/security.js";
 import { fileAccountAction, AccountActionError } from "../../member/accountActions.js";
+import { start as startSession } from "../../utils/memberSession.js";
 import {
   User as userController
 } from "../../controller/index.js";
@@ -48,7 +49,8 @@ router
         phone: user.phone,
         name: user.name,
         origin: user.origin,
-        role: user.role ?? ""
+        role: user.role ?? "",
+        sid: await startSession(req, user, "social"), // Settings > Sessions (issue #112)
       })
       // No `redirect` here: expressRoute sets the login cookie for a token and then sends the member to
       // /member/dashboard itself. A redirect returned with the token skipped the cookie, so a social sign-in

@@ -72,9 +72,11 @@ const addrOf = (m) => (Array.isArray(m?.address) ? m.address[0] || {} : {});
 export function completionOf(member, type, profiles) {
   const items = [];
   const core = profiles?.core || [];
-  for (const p of core) {
+  // Issue #110: the profile % counts EVERY profile of the member's category, the four basics first, then the topic profiles
+  const rest = (profiles?.list || []).filter((p) => !core.some((c) => c.slug === p.slug));
+  for (const p of [...core, ...rest]) {
     items.push({
-      key: `p-${p.slug}`, kind: "profile", label: p.name, slug: p.slug, progress: p.status / 100, weight: 2,
+      key: `p-${p.slug}`, kind: "profile", core: core.includes(p), label: p.name, slug: p.slug, progress: p.status / 100, weight: 2,
       done: p.status >= 100, reward: p.status >= 100 ? 0 : p.points, href: `/member/profiles?profile=${encodeURIComponent(p.slug)}`,
       action: p.status > 0 ? "hub.cpContinue" : "hub.cpStart",
     });

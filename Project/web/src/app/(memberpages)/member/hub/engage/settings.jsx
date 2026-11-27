@@ -143,7 +143,6 @@ export function EngageNotifications({ teen }) {
   if (p.isLoading || cfg.isLoading || !n) return <LoadingBlock lines={3} h={140} />;
   if (p.isError) return <ErrorState onRetry={() => p.refetch()} />;
   const pushOn = cfg.data?.push?.enabled;
-  const waOn = cfg.data?.whatsapp?.enabled;
   const set = (k) => (v) => setN({ ...n, [k]: v });
   const q = n.quietHours || { enabled: false, start: "22:00", end: "08:00" };
   async function togglePush(v) {
@@ -157,11 +156,10 @@ export function EngageNotifications({ teen }) {
   }
   return (
     <div className="eg-set">
-      <p className="eg-set-l">{t("np.channels")}</p>
-      <Switch checked={n.email !== false} onChange={set("email")} label={t("np.email")} hint={t("np.emailHint")} />
-      <Switch checked={n.push} onChange={togglePush} label={t("np.push")} hint={pushOn ? t("np.pushHint") : t("np.soon")} disabled={!pushOn} />
+      {/* Issue #111: "How we reach you" is gone; the channels are chosen once, under "Where should we reach you?"
+          above. Browser notifications have no box there, so their switch stays, and only once they are switched on. */}
+      {pushOn ? <Switch checked={n.push} onChange={togglePush} label={t("np.push")} hint={t("np.pushHint")} /> : null}
       {pushMsg ? <p className="eg-err" role="alert">{pushMsg}</p> : null}
-      <Switch checked={n.whatsapp} onChange={set("whatsapp")} label="WhatsApp" hint={waOn ? t("np.waHint") : t("np.soon")} disabled={!waOn} />
       <p className="eg-set-l">{t("np.what")}</p>
       <Switch checked={n.newSurvey !== false} onChange={set("newSurvey")} label={t("np.newSurvey")} />
       <Switch checked={n.weeklySummary !== false} onChange={set("weeklySummary")} label={t("np.weekly")} />

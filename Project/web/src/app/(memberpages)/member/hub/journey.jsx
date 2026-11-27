@@ -152,7 +152,7 @@ function roadPath(xs, ys, W) {
 }
 function ProfileRoad({ hub }) {
   const c = hub.completion;
-  const pins = c ? c.items.filter((i) => i.kind === "profile") : [];
+  const pins = c ? c.items.filter((i) => i.kind === "profile" && i.core) : []; // the road shows the basics
   const status = !c ? null : c.pct >= 100 ? "full" : c.pct >= 60 ? "strong" : c.pct > 0 ? "building" : "new";
   const W = 1000;
   const xs = pins.map((_, i) => (pins.length === 1 ? W / 2 : 80 + (i * (W - 160)) / (pins.length - 1)));

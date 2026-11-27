@@ -15,6 +15,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 //   admin    GET /, GET /summarize, POST /autologin (410, moved to MADP), DELETE /terms, POST /refresh, DELETE /:id,
 //            GET/PUT /:id of any member (role read fresh from the database, never from the request)
 // Teen Panel registration moved to /api/v1/teen (routes/api/Teen.js); the old /teen and /parent-consent routes answer 410.
+// A Teen sign-up sent to PUT / with category "minor" and the teen/guardian body goes to the Teen handler (issue #113).
 import express from "express";
 import * as Emails from "../../engagement/transactional.js";
 import rateLimit from "express-rate-limit";
@@ -41,6 +42,8 @@ import responseController from "../../controller/Response.js";
 import { User as UserModel } from "../../model/index.js";
 import { fingerprint } from "../../utils/fingerprint.js";
 import { redeem as redeemAdminTicket } from "../../admin/memberactions.js";
+import { start as startSession } from "../../utils/memberSession.js";
+import { registerHandlers as teenRegister, isTeenSignup } from "./Teen.js";
 
 const router = express.Router();
 
@@ -96,7 +99,12 @@ router
         },
         userController
     ))
-    .put(limit(20, 60), expressRoute(
+    // Teen Panel sign-up sent here with category "minor" (issue #113): handled exactly like POST /api/v1/teen/register
+    .put((req, res, next) => {
+        if (!isTeenSignup(req.body)) return next();
+        const [rate, handler] = teenRegister;
+        return rate(req, res, () => handler(req, res));
+    }, limit(20, 60), expressRoute(
         async req => {
             await requireCaptcha(req); // the human check (required for every client once CAPTCHA_REQUIRED=true)
             // public registration: Consumer / Professional, 18 and over
@@ -203,7 +211,8 @@ router
                 phone: user.phone,
                 name: user.name,
                 origin: user.origin,
-                role: user.role
+                role: user.role,
+                sid: await startSession(req, user, "password"), // Settings > Sessions (issue #112)
             })
             return { message, data: [], token }
         },

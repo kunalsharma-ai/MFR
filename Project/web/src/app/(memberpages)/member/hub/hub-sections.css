@@ -1012,3 +1012,13 @@ a.k-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
   .hx-dash-c .hx-art, .hx-dash-t .hx-art, .hx-quality .hx-art { display: grid; }
   .hx-quality .hx-art { height: auto; }
 }
+/* Settings > Sessions (issue #112): one row per signed-in device; the button sits under the text so the narrow
+   Privacy & security column never squeezes the device name */
+.st-sessions { display: grid; gap: 10px; }
+.st-sessions > ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.st-sessions .st-session { grid-template-columns: auto minmax(0, 1fr); }
+.st-sessions .st-session b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-sessions .st-session small { display: block; line-height: 1.35; }
+.st-sessions .st-session .h-btn { grid-column: 1 / -1; justify-self: start; min-height: 34px; padding-block: 6px; }
+.st-sessions .st-session.is-current { outline: 1px solid color-mix(in srgb, var(--success) 35%, transparent); }
+.st-sessions > .h-btn { justify-self: start; }

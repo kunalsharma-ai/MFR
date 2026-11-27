@@ -301,6 +301,8 @@ export function ActivityPage() {
     ...hub.ledger.map((r) => ({ id: `l-${r.id}`, kind: r.kind, at: r.at, title: r.points ? `+${fmt(r.points)} ${t("c.points")}` : t(`ac.${r.kind}`), sub: `${t(`ac.${r.kind}`)}${r.name ? ` · ${r.name}` : ""}`, pts: r.points })),
     ...(hub.quality?.history || []).map((h) => ({ id: `q-${h.month}`, kind: "quality", at: new Date(`${h.month}-01T12:00:00`), title: t("a2.qualityTitle", { n: (Math.round((h.score / hub.quality.scale) * 100) / 10).toFixed(1) }), sub: t("a2.qualitySub") })),
     ...(alerts.data || []).map((a) => ({ id: `n-${a.id}`, kind: "notice", at: a.at, title: a.subtitle || a.title, sub: a.title })),
+    // each Quality Score change (issue #107), e.g. +1 for a completed profile
+    ...(hub.eq?.data?.events || []).map((e, i) => ({ id: `qe-${i}-${e.at}`, kind: "quality", at: e.at ? new Date(e.at) : null, title: `${Number(e.delta) > 0 ? "+" : ""}${Number(e.delta) || 0} ${t("nav.quality")}`, sub: t("qt.ev.score", { from: fmt(e.from), to: fmt(e.to) }) })),
   ].filter((e) => e.at).sort((a, b) => b.at - a.at);
   const kinds = ["all", "survey", "profile", "reward", "quality", "notice"].filter((k) => k === "all" || events.some((e) => e.kind === k));
   const shown = filter === "all" ? events : events.filter((e) => e.kind === filter);

@@ -74,7 +74,44 @@ export function QualityTrend() {
   if (q.isLoading) return <LoadingBlock lines={2} h={140} />;
   if (q.isError) return <ErrorState onRetry={() => q.refetch()} />;
   const h = q.data.history || [];
-  if (h.length < 2) return <EmptyState kind="quality" title={t("qt.trendSoon")} text={t("qt.trendSoonText")} />;
+  const ev = Array.isArray(q.data.events) ? q.data.events : [];
+  // Issue #107: each change (a completed profile or survey, a review by the quality team) is listed, newest first;
+  // the monthly line only appears once there are two months to draw
+  if (h.length < 2 && !ev.length) return <EmptyState kind="quality" title={t("qt.trendSoon")} text={t("qt.trendSoonText")} />;
+  return (
+    <>
+      {h.length >= 2 ? <TrendLine h={h} q={q} /> : null}
+      {ev.length ? <QualityEvents events={ev} /> : null}
+    </>
+  );
+}
+
+const RULE_KEY = { profile_complete: "qt.ev.profile", survey_complete: "qt.ev.survey" };
+function QualityEvents({ events }) {
+  const [all, setAll] = React.useState(false);
+  const rows = all ? events : events.slice(0, 8);
+  return (
+    <div className="eg-qev">
+      <ol>
+        {rows.map((e, i) => {
+          const d = Number(e.delta) || 0;
+          const at = e.at ? new Date(e.at) : null;
+          const label = RULE_KEY[e.rule] ? t(RULE_KEY[e.rule], { name: String(e.name || "").replace(/(^|[\s-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase()) }) : d >= 0 ? t("qt.ev.raised") : t("qt.ev.lowered");
+          return (
+            <li key={`${e.at}-${i}`} className={d > 0 ? "up" : d < 0 ? "down" : ""}>
+              <b className="eg-qev-d">{d > 0 ? `+${d}` : d}</b>
+              <span><b>{label}</b><small>{t("qt.ev.score", { from: fmt(e.from), to: fmt(e.to) })}</small></span>
+              {at ? <time dateTime={at.toISOString()}>{relDay(at, t)}</time> : null}
+            </li>
+          );
+        })}
+      </ol>
+      {events.length > 8 && !all ? <button type="button" className="h-btn h-btn-ghost" onClick={() => setAll(true)}>{t("qt.ev.more", { n: events.length - 8 })}</button> : null}
+    </div>
+  );
+}
+
+function TrendLine({ h, q }) {
   const max = q.data.scale || 200;
   const W = 600, H = 160, pad = 24;
   const x = (i) => pad + (i * (W - pad * 2)) / Math.max(1, h.length - 1);

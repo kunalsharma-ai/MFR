@@ -263,3 +263,13 @@
   .hub .eg-terms-list > li { grid-template-columns: auto 1fr; }
   .hub .eg-terms-list > li .eg-pill, .hub .eg-terms-read { grid-column: 2; justify-self: start; }
 }
+/* Quality page > Score history: one row per change (issue #107) */
+.eg-qev ol { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.eg-qev li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--card-2, rgba(0,0,0,.03)); }
+.eg-qev li > span { display: grid; min-width: 0; }
+.eg-qev li > span b { font-size: .86rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.eg-qev li small, .eg-qev time { font-size: .74rem; color: var(--muted); }
+.eg-qev-d { display: grid; place-items: center; height: 30px; border-radius: 9px; font-size: .8rem; background: color-mix(in srgb, var(--muted) 14%, transparent); }
+.eg-qev li.up .eg-qev-d { color: var(--success); background: color-mix(in srgb, var(--success) 14%, transparent); }
+.eg-qev li.down .eg-qev-d { color: var(--danger, #d33); background: color-mix(in srgb, var(--danger, #d33) 14%, transparent); }
+.eg-qev > .h-btn { margin-top: 8px; }

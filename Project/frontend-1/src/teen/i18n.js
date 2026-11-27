@@ -35,6 +35,7 @@ export const EN = {
   e_pw_short: 'At least 8 characters, please.', e_pw_mix: 'Mix letters and numbers.', e_pw_personal: 'Don’t use your name or email in your password.',
   e_pw_common: 'That one is too easy to guess.', e_pw_match: 'The two passwords don’t match.', e_pw_long: 'That’s too long.',
   e_unknown_option: 'Please pick one of the options.', e_one_answer: 'Please pick one answer.', e_exclusive: 'That answer can’t be combined with others.',
+  e_unavailable: 'Teen sign-up isn’t open on our server just now. Nothing was sent or saved. Please try again later.',
   e_server: 'Something went wrong on our side. Please try again in a moment.', e_network: 'We couldn’t reach the server. Check your connection and try again.',
   e_too_soon: 'We just sent that. Please wait a couple of minutes.', e_mail_failed: 'We couldn’t email your parent or guardian just now. Nothing was saved — please try again shortly.',
   e_link_invalid: 'This link isn’t valid. Please use the newest email we sent.', e_link_expired: 'This link has expired.', e_link_used: 'This link has already been used.',

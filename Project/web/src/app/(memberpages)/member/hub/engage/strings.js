@@ -143,6 +143,12 @@ export const engage = {
   "sy.less": "Show less",
   "sy.read": "Read the story",
   // quality tiers
+  "qt.ev.profile": "Profile completed: {name}",
+  "qt.ev.survey": "Survey completed: {name}",
+  "qt.ev.raised": "Score raised by the quality team",
+  "qt.ev.lowered": "Score lowered by the quality team",
+  "qt.ev.score": "Score {from} to {to}",
+  "qt.ev.more": "Show {n} more",
   "qt.title": "Your tier",
   "qt.from": "from {n}",
   "qt.next": "{n} more points of quality score to reach {tier}.",

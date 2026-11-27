@@ -50,8 +50,12 @@ const CHANNELS = [
   { value: "whatsapp", label: "st.chWhatsapp", icon: "share" },
 ];
 
+// Issue #111: this is the one place that asks how we reach the member (the engagement panel's own "How we reach you"
+// switches were a second copy). Saving it also turns the engagement e-mails and WhatsApp messages on or off.
 function NotificationPrefs() {
   const member = useMember();
+  const prefs = usePreferences();
+  const savePrefs = useSavePreferences();
   const [sel, setSel] = React.useState(null);
   const [init, setInit] = React.useState([]);
   const [st, setSt] = React.useState("");
@@ -84,7 +88,12 @@ function NotificationPrefs() {
           onClick={async () => {
             setSt(t("c.saving"));
             const r = await api.patch("/api/v1/me/answer", { "communication-methods": sel });
-            if (r && r.status !== "error") { setInit(sel); setSt(t("c.saved")); play("complete"); } else { setSt(t("c.errorTitle")); play("error"); }
+            if (r && r.status !== "error") {
+              setInit(sel); setSt(t("c.saved")); play("complete");
+              const n = prefs.data?.notifications;
+              const next = { email: sel.includes("email"), whatsapp: sel.includes("whatsapp") };
+              if (n && (Boolean(n.email !== false) !== next.email || Boolean(n.whatsapp) !== next.whatsapp)) savePrefs.mutate({ notifications: { ...n, ...next } });
+            } else { setSt(t("c.errorTitle")); play("error"); }
           }}>{t("c.save")}</button>
       </div>
     </div>
@@ -123,23 +132,49 @@ function PasswordForm() {
   );
 }
 
-function deviceName() {
-  if (typeof navigator === "undefined") return "";
-  const ua = navigator.userAgent;
-  const b = /Edg\//.test(ua) ? "Edge" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : t("st.browser");
-  const o = /Windows/.test(ua) ? "Windows" : /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iOS" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
-  return [b, o].filter(Boolean).join(" · ");
-}
-
-function Session() {
+// Issue #112: every device the member is signed in on (GET /api/v1/me/sessions), newest activity first. Any other
+// device can be signed out here; this one signs out with Log out.
+function Sessions() {
   const member = useMember();
-  const [dev, setDev] = React.useState("");
-  React.useEffect(() => setDev(deviceName()), []);
+  const [st, setSt] = React.useState({ rows: null, error: false, busy: "" });
+  const load = React.useCallback(async () => {
+    const r = await api.get("/api/v1/me/sessions");
+    if (r && r.status !== "error" && Array.isArray(r.data?.sessions)) setSt({ rows: r.data.sessions, error: false, busy: "" });
+    else setSt({ rows: [], error: true, busy: "" });
+  }, []);
+  React.useEffect(() => { if (member?._id) load(); }, [member?._id, load]);
+  if (!st.rows) return <LoadingBlock lines={2} h={90} />;
+  const end = async (path, id) => {
+    setSt((x) => ({ ...x, busy: id }));
+    const r = await api.post(path, {});
+    play(r && r.status !== "error" ? "complete" : "error");
+    load();
+  };
+  const when = (d) => (d ? new Date(d).toLocaleString(locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "");
+  // signed in before sessions were recorded: this device is not in the list yet, so it is shown on its own
+  const rows = st.rows.some((r) => r.current) ? st.rows : [{ id: "this", device: t("st.thisDevice"), current: true }, ...st.rows];
+  const others = rows.filter((r) => !r.current).length;
   return (
-    <div className="st-session">
-      <span className="st-session-ic"><Icon name="device" size={22} /></span>
-      <span><b>{dev || "…"}</b><small>{t("st.thisDevice")}</small></span>
-      <button type="button" className="h-btn h-btn-soft" onClick={() => (member?.Logout ? member.Logout() : null)}><Icon name="logout" size={16} /> {t("st.signOut")}</button>
+    <div className="st-sessions">
+      {st.error ? <p className="st-err" role="alert">{t("c.errorTitle")}</p> : null}
+      <ul>
+        {rows.map((r) => (
+          <li key={r.id} className={`st-session ${r.current ? "is-current" : ""}`}>
+            <span className="st-session-ic"><Icon name="device" size={22} /></span>
+            <span>
+              <b>{r.device}</b>
+              <small>{r.current ? t("st.thisDevice") : t("st.lastActive", { when: when(r.lastSeenAt) })}</small>
+              {r.signedInAt ? <small>{t("st.signedIn", { when: when(r.signedInAt) })}</small> : null}
+            </span>
+            {r.current ? (
+              <button type="button" className="h-btn h-btn-soft" onClick={() => (member?.Logout ? member.Logout() : null)}><Icon name="logout" size={16} /> {t("st.signOut")}</button>
+            ) : (
+              <button type="button" className="h-btn h-btn-soft" disabled={st.busy === r.id} onClick={() => end(`/api/v1/me/sessions/${encodeURIComponent(r.id)}/end`, r.id)}><Icon name="logout" size={16} /> {t("st.signOutDevice")}</button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {others > 1 ? <button type="button" className="h-btn h-btn-ghost" disabled={st.busy === "all"} onClick={() => end("/api/v1/me/sessions/end-others", "all")}>{t("st.signOutOthers")}</button> : null}
     </div>
   );
 }
@@ -420,7 +455,7 @@ export function SettingsPage() {
               </div>
               <div>
                 <h3 className="st-sub"><Icon name="device" size={16} /> {t("st.sessions")}</h3>
-                <Session />
+                <Sessions />
                 <h3 className="st-sub"><Icon name="shield" size={16} /> {t("st.privacy")}</h3>
                 <div className="st-links">
                   <a href={teen ? "/teen-terms" : "/terms"} target="_blank" rel="noopener" className="h-btn h-btn-soft">{t("st.terms")} <Icon name="arrow" size={16} /></a>

@@ -3,6 +3,7 @@ import { verify } from "./token.js";
 import {User as userModel} from "../model/index.js"
 import { Mutate } from "./index.js";
 import { openSession, refused } from "./adminSession.js";
+import { check as checkMemberSession } from "./memberSession.js";
 export default async function isAuthenticated(req, res, next) {
     const authtoken = req.headers.authorization??req.cookies.authorization;
     
@@ -38,6 +39,14 @@ export default async function isAuthenticated(req, res, next) {
         // An admin signed in as this member ("log in as member"): the session must still be open, and some actions
         // are refused (utils/adminSession.js).
         req.adminSession = null;
+        req.memberSessionId = null;
+        // the member's own sign-in (issue #112): one signed out from Settings > Sessions stops working at once.
+        // Tokens from before sessions were recorded carry no sid and keep working until they expire.
+        if (user.sid && !user.adm) {
+            const own = await checkMemberSession(user, req.origin);
+            if (!own) return res.status(401).json({ status: "error", code: "session_ended", message: "You were signed out on this device." });
+            req.memberSessionId = String(user.sid);
+        }
         if (user.adm) {
             const s = await openSession(user, req.origin);
             if (!s) return res.status(401).json({ status: "error", code: "admin_session_ended", message: "This admin session has ended." });
