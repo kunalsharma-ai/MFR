@@ -25,6 +25,9 @@ export async function start(db = "mfr_engagement_test") {
     const url = process.env.MONGO_URL || `mongodb://127.0.0.1:27017/${db}_${Date.now()}`;
     await mongoose.connect(url);
     await Promise.all(Object.values(Models).map((m) => m.syncIndexes?.().catch(() => {})));
+    // syncIndexes can race the models' own start-up index build and leave a unique index missing for a moment, which made
+    // "409 already exists" checks flaky when many files run one after another (npm test). createIndexes is idempotent.
+    await Promise.all(Object.values(Models).map((m) => m.init?.().then(() => m.createIndexes()).catch(() => {})));
     const app = express();
     app.use([express.json(), cookieParser(), setOrigin, appRoute]);
     const server = await new Promise((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });

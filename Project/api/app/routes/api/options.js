@@ -4,9 +4,10 @@ import { expressRoute, expressView, isAuthenticated, fsLogger } from "../../util
 import fs from "fs";
 const router = express.Router();
 
-const world = JSON.parse(
-    fs.readFileSync("/src/app/dataBank/theworld.json", "utf-8")
-)
+// The Docker image keeps the app at /src; tests and local runs read the copy next to this file.
+const worldFile = [new URL("../../dataBank/theworld.json", import.meta.url), "/src/app/dataBank/theworld.json"]
+    .find((f) => fs.existsSync(f));
+const world = JSON.parse(fs.readFileSync(worldFile, "utf-8"))
 function getCN(country) {
     let cn
     if (country.length === 2)
