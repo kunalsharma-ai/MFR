@@ -12,7 +12,7 @@
 //   - every completed profile adds 1 to the Quality Score once. The profile's slug is added to User.qualityCredited
 //     in the same atomic update that raises the score, so the score can never go up twice for one profile.
 import mongoose from "mongoose";
-import { Reward, Response, Profile, User, Answers } from "../model/index.js";
+import { Reward, Response, Profile, User, Answers, QualityEvent } from "../model/index.js";
 import profileController from "../controller/Profile.js";
 import { withRequest } from "../utils/requestContext.js";
 import { registerReconciler } from "../engagement/ledger.js";
@@ -79,13 +79,13 @@ async function seedCredited(uid, origin) {
     return again?.qualityCredited || legacy;
 }
 
-async function creditQuality(uid, origin, keys) {
+async function creditQuality(uid, origin, keys, names = {}) {
     const counted = await seedCredited(uid, origin);
     if (!counted) return 0;
     let n = 0;
     for (const k of keys.filter((x) => !counted.includes(x))) {
         // one atomic update per item: the filter only matches while the item is not counted yet
-        const r = await User.updateOne(
+        const after = await User.findOneAndUpdate(
             { _id: uid, origin, qualityCredited: { $ne: k } },
             [{
                 $set: {
@@ -93,8 +93,19 @@ async function creditQuality(uid, origin, keys) {
                     qualityCredited: { $concatArrays: [{ $ifNull: ["$qualityCredited", []] }, [k]] },
                 },
             }],
-        );
-        if (r.modifiedCount) n += 1;
+            { new: true, projection: { qualityScore: 1 } },
+        ).lean();
+        if (!after) continue;
+        n += 1;
+        // Issue #107: the Quality page's Score history lists each change, so every +1 is logged (QualityEvent)
+        const to = Number(after.qualityScore) || 0;
+        const survey = k.startsWith("survey:");
+        const slug = survey ? k.slice(7) : k;
+        await QualityEvent.create({
+            origin, user: uid, rule: survey ? "survey_complete" : "profile_complete",
+            delta: to >= QUALITY_MAX ? 0 : 1, from: to >= QUALITY_MAX ? to : to - 1, to,
+            note: String(names[slug] || slug).slice(0, 120), survey: slug.slice(0, 80), actor: "system",
+        }).catch((e) => console.error("quality event not logged:", e.message));
     }
     return n;
 }
@@ -104,17 +115,20 @@ async function creditQuality(uid, origin, keys) {
 // count it as both "<slug>" and "survey:<slug>", which was one of the ways a single completion added 2.
 async function qualityKeys(uid, origin, done) {
     const [responses, profiles] = await Promise.all([
-        Response.find({ user: uid, origin, status: "complete", isDeleted: { $ne: true } }).select("survey.slug").lean(),
-        Profile.find({ origin, isDeleted: { $ne: true } }).select("slug").lean(),
+        Response.find({ user: uid, origin, status: "complete", isDeleted: { $ne: true } }).select("survey.slug survey.name").lean(),
+        Profile.find({ origin, isDeleted: { $ne: true } }).select("slug name").lean(),
     ]);
     const profileSlugs = new Set(profiles.map((p) => slugOf(p.slug)));
+    const names = {};
+    for (const p of profiles) names[slugOf(p.slug)] = p.name;
     const keys = new Set(done);
     for (const r of responses) {
         const s = slugOf(r?.survey?.slug);
         if (!s) continue;
+        if (!names[s] && r?.survey?.name) names[s] = r.survey.name;
         keys.add(profileSlugs.has(s) ? s : `survey:${s}`);
     }
-    return [...keys];
+    return { keys: [...keys], names };
 }
 
 // one run at a time per member, and not again within a few seconds (several screens read the points together)
@@ -125,13 +139,19 @@ export async function settleProfiles(req, { force = false } = {}) {
     if (!req?.user?._id || !req.origin) return { paid: 0, quality: 0 };
     const k = `${req.origin}:${req.user._id}`;
     const r = recent.get(k);
-    if (r && (r.pending || (!force && Date.now() - r.at < SETTLE_MS))) return r.pending || r.result;
+    // Issue #106: a forced settle (right after answers were saved) must look again, even when another read settled a
+    // moment ago: it waits for a run already going and then runs once more, so a profile completed now is paid now.
+    if (r?.pending) {
+        if (!force) return r.pending;
+        await r.pending.catch(() => {});
+    } else if (r && !force && Date.now() - r.at < SETTLE_MS) return r.result;
     const pending = (async () => {
         try {
             const done = await completedSlugs(req);
             const uid = oid(req.user._id);
             const paid = done.length ? await payProfiles(uid, req.origin, done, req.user._id) : 0;
-            const quality = await creditQuality(uid, req.origin, await qualityKeys(uid, req.origin, done));
+            const q = await qualityKeys(uid, req.origin, done);
+            const quality = await creditQuality(uid, req.origin, q.keys, q.names);
             return { paid, quality };
         } catch (e) {
             console.error("settleProfiles failed:", e.message);

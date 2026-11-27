@@ -4,7 +4,7 @@
 // breakdown shows the member's real figures for the things the Quality page already tells them help (finishing
 // surveys, completing profiles, a verified email, being active); it does not claim to be the formula.
 import mongoose from "mongoose";
-import { User, Response, Survey, QualitySnapshot, MemberPreference } from "../model/index.js";
+import { User, Response, Survey, QualitySnapshot, QualityEvent, MemberPreference } from "../model/index.js";
 import { config } from "./config.js";
 import { monthKey, dayKey, addDays } from "./time.js";
 import { activeDays } from "./streak.js";
@@ -91,11 +91,14 @@ async function locked(user, origin, score) {
 export async function qualityView(user, origin) {
     const score = await scoreOf(user);
     await snapshot(user, origin, score);
-    const [b, history, pref, more] = await Promise.all([
+    const [b, history, pref, more, events] = await Promise.all([
         breakdown(user, origin),
         QualitySnapshot.find({ user: oid(user._id), origin }).sort({ month: -1 }).limit(12).lean(),
         MemberPreference.findOne({ user: oid(user._id), origin }).select("quality").lean(),
         locked(user, origin, score),
+        // Issue #107: every logged change, newest first. An admin's private note is never sent to the member;
+        // a completed profile or survey carries its name.
+        QualityEvent.find({ user: oid(user._id), origin }).sort({ createdAt: -1 }).limit(30).select("rule delta from to note actor createdAt").lean(),
     ]);
     const t = tierOf(score);
     const seen = pref?.quality?.seenScore;
@@ -112,6 +115,10 @@ export async function qualityView(user, origin) {
         tiers: tiers(),
         factors: b.factors, tips: b.tips,
         history: history.reverse().map((h) => ({ month: h.month, score: h.score })),
+        events: events.map((e) => ({
+            rule: e.rule, delta: e.delta, from: e.from, to: e.to, at: e.createdAt,
+            name: e.actor === "system" ? e.note || "" : "",
+        })),
         unlocks: more,
         celebrate,
     };

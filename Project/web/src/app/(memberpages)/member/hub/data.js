@@ -83,8 +83,9 @@ export function useLedger() {
 // survey participation summary (GET /api/v1/me/statistics)
 export function useStats() {
   const member = useMember();
+  const tick = useRewardsTick(); // issue #108: a finished survey shows in the counts right away
   return useQuery({
-    queryKey: ["hub", "stats", member?._id],
+    queryKey: ["hub", "stats", member?._id, tick],
     enabled: Boolean(member?._id),
     queryFn: async () => {
       const r = await api.get("/api/v1/me/statistics");

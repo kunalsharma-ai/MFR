@@ -23,6 +23,7 @@ const BLOCKED = [
     ["POST", /^\/api\/v1\/engagement\/rewards\/redeem/],
     ["POST", /^\/api\/v1\/engagement\/rewards\/redemptions\/[^/]+\/cancel/],
     ["POST", /^\/api\/v1\/me\/invite/], // e-mails a friend in the member's name
+    ["POST", /^\/api\/v1\/me\/sessions/], // signing the member out of their own devices
     ["POST", /^\/api\/v1\/engagement\/draws\/[^/]+\/enter/],
     ["POST", /^\/api\/v1\/engagement\/prize-machine\/play/],
     ["POST", /^\/api\/v1\/engagement\/privacy\/delete\/?$/],

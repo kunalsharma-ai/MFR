@@ -623,7 +623,7 @@ export default function ParentSection() {
   const [open, setOpen] = React.useState(null);
   const teen = member?.firstname || member?.name?.first || (member?.fullname || "").split(" ")[0] || "your teen";
   const c = hub.completion;
-  const core = c ? c.items.filter((i) => i.kind === "profile") : [];
+  const core = c ? c.items.filter((i) => i.kind === "profile" && i.core) : [];
   const coreDone = core.filter((i) => i.done).length;
   const onbPct = st.server ? 100 : forms.onb.status === "submitted" ? 100 : progressOf(forms.onb.a || {});
   const readN = (forms.con.read || []).length;

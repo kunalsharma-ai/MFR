@@ -23,7 +23,6 @@ import { profileTopic, profileArt } from "./topics";
 import ParentCards from "./v9/parents.jsx";
 import GateBanner from "./v9/gate.jsx";
 import { useParentStatus } from "./v9/parentStore";
-import { useSurveyDesk, SurveyCard } from "./surveys.jsx";
 
 function useCelebrate(id, pct) {
   const [show, setShow] = React.useState(false);
@@ -93,29 +92,6 @@ function ProfileCard({ card, i }) {
     <Tile c1={tp.c1} c2={tp.c2} k={tp.k} kind="profile" art={card.art} name={title} num={num} lockText={t("v9.lockText")} meta={meta} pts={points ? fmt(points) : null}
       state={state} stateLabel={t(`pf.state.${state}`, { n: pct })} pct={pct} cta={cta} i={i}
       onClick={() => { play("tap"); open(); }} ariaLabel={`${title}. ${t(`pf.state.${state}`, { n: pct })}. ${cta}`} />
-  );
-}
-
-/* ---------------- round 10, Teen: the surveys come fourth on the profile page, locked until parents + basics ---------------- */
-function TeenSurveys() {
-  const desk = useSurveyDesk();
-  const { gate, surveys, locked, loading, start, dialog, parent } = desk;
-  if (loading) return null;
-  const rows = surveys.slice(0, 4);
-  return (
-    <section className="pf-sec pf-g-sv" aria-labelledby="pf-g-sv">
-      <header className="h7-head">
-        <img className="h7-head-art" src={`/hub/3d/${locked ? "lock" : "game"}.webp`} alt="" width="40" height="40" loading="lazy" />
-        <div>
-          <h2 id="pf-g-sv" className="h7-title">{t("nav.surveys")}</h2>
-          <p className="h7-sub">{locked ? t("v10.tsv.locked") : t("v10.tsv.open")}</p>
-        </div>
-        <Link className="h-btn h-btn-ghost" href="/member/surveys">{t("v10.tsv.all")} <Icon name="arrow" size={14} /></Link>
-      </header>
-      <GateBanner gate={gate} kind="surveys" parent={parent} />
-      {rows.length ? <ul className="pf-grid tc-grid">{rows.map((r, i) => <SurveyCard key={r._id || r.slug} row={r} type="teen" locked={locked} onStart={start} i={i} />)}</ul> : null}
-      {dialog}
-    </section>
   );
 }
 
@@ -211,7 +187,7 @@ export default function ProfileStudio({ profiles = [], more = [], gate = null, e
           ) : null}
         </section>
       ) : null}
-      {type === "teen" && ready ? <TeenSurveys /> : null}
+      {/* issue #109: surveys are listed only on the Surveys page (the Teen page used to show four here too) */}
       <div className="pf-duo">
         {c ? <Reveal><AccountSteps c={c} /></Reveal> : <LoadingBlock lines={3} h={200} />}
         <Reveal delay={60}>
@@ -234,7 +210,7 @@ export default function ProfileStudio({ profiles = [], more = [], gate = null, e
               </ul>
             ) : null}
             <div className="pf-ach-foot">
-              {morePending ? <Link className="h-btn h-btn-soft" href="/member/surveys"><Icon name="surveys" size={16} /> {t("pf.moreTopics", { n: morePending })}</Link> : null}
+              {morePending ? <a className="h-btn h-btn-soft" href="#pf-g-more"><Icon name="profile" size={16} /> {t("pf.moreTopics", { n: morePending })}</a> : null}
               <Link className="h-btn h-btn-ghost" href="#prize-machine"><Icon name="gift" size={16} /> {t("pf.toMachine")}</Link>
             </div>
           </section>

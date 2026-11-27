@@ -59,7 +59,7 @@ export const v3 = {
   "pf.achTitle": "Topic profiles completed",
   "pf.achSub": "{n} topic profiles finished. Each one opens more matching surveys.",
   "pf.achNone": "Topic profiles you complete from the Surveys section appear here.",
-  "pf.moreTopics": "{n} more topic profiles in Surveys",
+  "pf.moreTopics": "{n} more topic profiles to complete",
   "pf.toMachine": "Open your prize machine",
 
   // profile identities (title + description per category)

@@ -56,3 +56,4 @@ export { default as ContentPage } from "./ContentPage.js";
 export { default as ContentRevision } from "./ContentRevision.js";
 export { default as AdminSession } from "./AdminSession.js";
 export { default as MemberMerge } from "./MemberMerge.js";
+export { default as MemberSession } from "./MemberSession.js";

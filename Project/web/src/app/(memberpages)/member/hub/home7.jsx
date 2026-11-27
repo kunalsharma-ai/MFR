@@ -297,7 +297,7 @@ export function ProStudies({ desk }) {
 export function ProReadiness({ hub }) {
   const c = hub.completion;
   const q = hub.quality;
-  const items = c ? c.items.filter((i) => i.kind === "profile") : [];
+  const items = c ? c.items.filter((i) => i.kind === "profile" && i.core) : [];
   const a = q ? -90 + (q.pct / 100) * 180 : -90;
   return (
     <aside className="p7-side">

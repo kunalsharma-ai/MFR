@@ -383,8 +383,8 @@ function SkinProfiles() {
   const [dark] = useProfileDark(); // day / night button in the header
   useClickSounds(); // v4.1: every button, link, tab and chip plays a note
 
-  // ---- The hub lists Basic, Education, Professional and Financial. Every other profile is listed in the Survey section and is filled with
-  // this same form (?profile=<slug>) once those four are complete; it then appears under "Completed" here.
+  // ---- The hub lists Basic, Education, Professional and Financial first, then every other (topic) profile, filled with this same
+  // form (?profile=<slug>) once those four are complete (issue #109: no profile is listed in the Survey section).
   const [notice] = React.useState(null);
 
   // ---- Quality Score: +1 for every completed profile, once per profile (the marks are kept in the database, see creditQualityScore)
@@ -463,10 +463,10 @@ function SkinProfiles() {
   const current = query.profile && canOpen(query.profile) ? profiles.find((p) => p.slug === query.profile) : null;
   const at = current ? shown.indexOf(current) : -1;
   const next = at >= 0 ? shown[at + 1] : null;
-  // A profile filled from the Survey section (not one of the four basics) is a survey for the member: its wording says survey, "next" is the
-  // next profile still to do there, and "back" returns to the Survey section.
-  const asSurvey = Boolean(current) && !isCore(current.slug);
-  const nextExtra = asSurvey ? gate.pending.find((p) => p.slug !== current.slug) : null;
+  // Issue #109: every profile, the four basics and the topic profiles, is a profile on this page (none is listed under Surveys any
+  // more). After a topic profile, "next" is the next topic profile still to do, and "back" returns to this page.
+  const isExtra = Boolean(current) && !isCore(current.slug);
+  const nextExtra = isExtra ? gate.pending.find((p) => p.slug !== current.slug) : null;
   return (
     <>
     {/* Member hub v3 (Nov 2026): the profile studio (hero + profile cards) replaces the v4.1 world cards; the question flow
@@ -491,11 +491,10 @@ function SkinProfiles() {
           survey={current}
           user={user}
           endpage="/api/v1/me/profile"
-          asSurvey={asSurvey}
-          onHub={asSurvey ? () => router.push("/member/surveys") : hub}
+          onHub={hub}
           onSaved={afterSave}
-          hasNext={asSurvey ? Boolean(nextExtra) : Boolean(next)}
-          onNextProfile={() => { const target = asSurvey ? nextExtra : next; if (target) open(target); }}
+          hasNext={isExtra ? Boolean(nextExtra) : Boolean(next)}
+          onNextProfile={() => { const target = isExtra ? nextExtra : next; if (target) open(target); }}
         />
       ) : null}
       <GateDialog

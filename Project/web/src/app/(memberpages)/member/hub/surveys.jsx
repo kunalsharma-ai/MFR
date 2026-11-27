@@ -2,7 +2,7 @@
 // Survey discovery (v3, Nov 2026 rebuild of /member/surveys). Same data and workflow as before, new screen:
 //   - the list is POST /api/v1/me/survey { status: "active" } (invited + dropout), the member's real invitations;
 //     completed and closed ones come from the same call without a status filter (the request useProfileGate shares)
-//   - topic profiles still to complete are listed first (useProfileGate.pending), exactly as before
+//   - topic profiles are NOT listed here (issue #109): they are on the Profiles page
 //   - surveys stay locked until the four basic profiles are complete (GateDialog says what to finish)
 //   - Start opens the existing survey flow: /survey?name=<slug>; a topic profile opens /member/profiles?profile=<slug>
 //   - a survey whose topic profile is already complete is not listed again (useCompletedProfiles)
@@ -95,7 +95,7 @@ function CardSkeleton() {
 }
 
 // Everything a survey list needs, shared by the Surveys page and the dashboard's opportunities section:
-// real /me/survey rows (invited + dropout), pending topic profiles, the gate, and the start action.
+// real /me/survey rows (invited + dropout), the gate, and the start action. Topic profiles are on the Profiles page.
 export function useSurveyDesk(source) {
   const router = useRouter();
   const member = useMember();
@@ -111,8 +111,9 @@ export function useSurveyDesk(source) {
   const surveys = visible.filter((s) => !isProfileSurvey(s) && PERMITTED.includes(s.participationStatus)).map((s) => ({
     ...s, kind: "survey", state: locked ? "locked" : s.participationStatus === "dropout" ? "resume" : "available",
   }));
-  const profileRows = gate.pending.map((p) => ({ _id: p._id, slug: p.slug, name: p.name, points: p.points, loi: p.loi, questions: p.questions, kind: "profile", participationStatus: "invited", state: locked ? "locked" : "available" }));
-  const openRows = [...profileRows, ...surveys];
+  // Issue #109: profiles are listed only on the Profiles page and surveys only here, so no topic profile rows
+  const profileRows = [];
+  const openRows = surveys;
   const history = (all.data || []).filter((s) => !isProfileSurvey(s) && ["complete", "terminate", "overquota"].includes(s.participationStatus))
     .map((s) => ({ ...s, kind: "survey", state: s.participationStatus === "complete" ? "done" : "closed", at: s.updatedAt || s.createdAt }))
     .slice(0, 6);

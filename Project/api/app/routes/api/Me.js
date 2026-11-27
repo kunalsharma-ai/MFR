@@ -56,6 +56,7 @@ import { Redemption, User, AdminSession } from "../../model/index.js";
 import mongoose from "mongoose";
 import { termsFor } from "../../member/terms.js";
 import { settleProfiles, DEFAULT_PROFILE_POINTS } from "../../member/profileCredit.js";
+import * as Sessions from "../../utils/memberSession.js";
 import * as Marketing from "../../engagement/marketing.js";
 async function redeemedPoints(user, origin) {
     const r = await Redemption.aggregate([
@@ -134,6 +135,8 @@ router
             const { oldPassword, newPassword, cnfPassword } = req.body;
             if (newPassword !== cnfPassword) throw new Error("Invalid request")
             await userController.changePassword(oldPassword, newPassword);
+            // a new password signs out every other device (Settings > Sessions, issue #112)
+            await Sessions.endOthers(req.user._id, req.origin, req.memberSessionId, "password").catch(() => {});
             return { message, data }
         },
         userController
@@ -162,11 +165,34 @@ router
         userController
     ))
     .delete(async (req, res) => {
+        // log out: this device's session ends too, so a copy of the token stops working (issue #112)
+        if (req.memberSessionId) await Sessions.end(req.user._id, req.origin, req.memberSessionId, "logout").catch(() => {});
         res.cookie("authorization", null, {
             maxAge: -1
         })
         return res.json({})
     })
+router
+    // Settings > Privacy & security > Sessions (issue #112): every device this member is signed in on
+    .get("/sessions", expressRoute(
+        async req => ({ message: "", data: { current: req.memberSessionId || null, sessions: await Sessions.list(req.user._id, req.origin, req.memberSessionId) } }),
+        userController
+    ))
+    // sign out one device (not this one: that is Log out)
+    .post("/sessions/:sid/end", expressRoute(
+        async req => {
+            if (String(req.params.sid) === String(req.memberSessionId || "")) throw new Error("Use Log out to sign out of this device.");
+            const n = await Sessions.end(req.user._id, req.origin, req.params.sid, "member");
+            if (!n) throw new Error("That session has already ended.");
+            return { message: "Signed out", data: { ended: n } };
+        },
+        userController
+    ))
+    // sign out every other device
+    .post("/sessions/end-others", expressRoute(
+        async req => ({ message: "Signed out", data: { ended: await Sessions.endOthers(req.user._id, req.origin, req.memberSessionId, "member") } }),
+        userController
+    ))
 router
     // Quality Score for completed profiles and surveys: worked out and saved here, once per item (member/profileCredit.js)
     .post("/quality/settle", expressRoute(
@@ -444,7 +470,10 @@ router
                 }
             }).filter(q => Boolean(q))
             await answerController.save(updatedAnswers)
-            return { message: "Profile updated successfully", data: [] }
+            // Issue #106: a profile completed by these answers is paid (and adds its Quality Score point) right now,
+            // so the header and the Rewards page show the new points on their next read
+            const settled = await settleProfiles(req, { force: true });
+            return { message: "Profile updated successfully", data: { paid: settled.paid, quality: settled.quality } }
         },
         answerController
     ))

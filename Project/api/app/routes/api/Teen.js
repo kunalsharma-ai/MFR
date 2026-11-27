@@ -82,6 +82,12 @@ const limit = (max, minutes) => rateLimit({
 // links carry their token in the path: keep them out of logs, referrers and caches
 const noReferrer = (req, res, next) => { res.set("Referrer-Policy", "no-referrer"); next(); };
 
+// Issue #113: the Teen sign-up can also be sent to PUT /api/v1/user (the endpoint Consumer and Professional use) with
+// category "minor". It is the same handler, rate limit and guardian YES/NO flow; nothing about consent is skipped.
+export const registerHandlers = [limit(10, 60), handle(S.register)];
+export const isTeenSignup = (b) => Boolean(b && typeof b === "object" && b.teen && typeof b.teen === "object" && b.guardian && typeof b.guardian === "object"
+    && /minor|teen/i.test(String(b.category || "")));
+
 router
     .post("/age-check", limit(60, 10), handle(async (req) => S.ageCheck(req.body?.dob)))
     .post("/register", limit(10, 60), handle(S.register))

@@ -5,8 +5,9 @@
 import React from "react";
 import Link from "next/link";
 import { api, loadData } from "@/util";
-import { useQuery } from "@/Context";
-import useProfileGate from "@/hooks/useProfileGate";
+import { useQuery, useMember } from "@/Context";
+import useProfileGate, { syncSurveyRewards } from "@/hooks/useProfileGate";
+import { bumpRewards } from "@/hooks/useRewardsRefresh";
 import { useParentStatus } from "@/app/(memberpages)/member/hub/v9/parentStore";
 import "./status.css";
 
@@ -30,11 +31,21 @@ export default function SurveyStatusPage() {
   const parent = useParentStatus();
   const open = !gate.loading && gate.coreDone && !parent.loading && parent.done; // surveys open only after the basics
 
+  const user = useMember();
+  const userRef = React.useRef(user);
+  userRef.current = user;
   React.useEffect(() => {
     setState((s) => ({ ...s, loading: true }));
     loadData(
       api.patch(`/api/v1/survey/response`, query),
-      (resp) => { const d = resp?.data; if (d) setState({ loading: false, type: d.status, points: Number(d.points) || 0 }); },
+      (resp) => {
+        const d = resp?.data;
+        if (!d) return;
+        setState({ loading: false, type: d.status, points: Number(d.points) || 0 });
+        // issue #108: the survey's end is saved, so Activity, the balance and the survey counts read it again now
+        bumpRewards();
+        if (d.status === "complete" && userRef.current?._id) syncSurveyRewards(userRef.current);
+      },
       () => setState((s) => ({ ...s, loading: false })),
     );
   }, [query]);

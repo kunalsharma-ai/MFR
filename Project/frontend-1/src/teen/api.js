@@ -24,11 +24,15 @@ export class TeenApiError extends Error {
   }
 }
 
-async function http(method, path, body) {
+// Issue #113: the sign-up itself goes to PUT /api/v1/user, the endpoint Consumer and Professional use, with category
+// "minor" (the API hands it to the same Teen handler, guardian YES/NO and all). The other steps stay under /api/v1/teen.
+export const USER_API = `${API_BASE}/api/v1/user`;
+
+async function http(method, path, body, url = `${TEEN_API}${path}`) {
   if (DEMO_MODE) return demoServer(method, path, body);
   let res;
   try {
-    res = await fetch(`${TEEN_API}${path}`, {
+    res = await fetch(url, {
       method,
       credentials: 'include',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -40,6 +44,9 @@ async function http(method, path, body) {
   }
   let json = {};
   try { json = await res.json(); } catch { /* not JSON */ }
+  // An API without this route answers "Fallback route: ... is not available", on some builds with status "success"
+  // and empty data. That is not a registration: say so instead of showing the family a success screen (issue #113).
+  if (/^Fallback route/i.test(String(json?.message || ''))) throw new TeenApiError('unavailable', { status: res.status || 404 });
   if (res.ok && json.status === 'success') return json.data;
   const { code = res.status === 401 ? 'signin' : 'server', fields, status, message, ...extra } = json || {};
   throw new TeenApiError(code, { status: res.status, fields, extra });
@@ -47,7 +54,7 @@ async function http(method, path, body) {
 
 export const teenApi = {
   ageCheck: (dob) => http('POST', '/age-check', { dob }),
-  register: (body) => http('POST', '/register', body),
+  register: (body) => http('PUT', '/register', { ...body, category: 'minor' }, USER_API),
   status: (token) => http('GET', `/status/${encodeURIComponent(token)}`),
   verifyEmail: (token) => http('POST', `/verify-email/${encodeURIComponent(token)}`, {}),
   resend: (body) => http('POST', '/resend', body),

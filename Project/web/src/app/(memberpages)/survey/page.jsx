@@ -16,6 +16,7 @@ import SecurityCheck from "./components/SecurityCheck";
 import SurveyAlreadyTaken from "./components/SurveyAlreadyTaken";
 import Survey from "./components/Survey";
 import useProfileGate, { syncSurveyRewards } from "@/hooks/useProfileGate";
+import { bumpRewards } from "@/hooks/useRewardsRefresh";
 import { isCore } from "@/app/(memberpages)/member/(member pages)/profiles/ps/profileRules";
 import { useParentStatus } from "@/app/(memberpages)/member/hub/v9/parentStore";
 
@@ -251,6 +252,7 @@ export default function page() {
                     setSurveyCompleted(status);
                     // the survey is saved as complete: pay its profile points (profile surveys) and raise the Quality Score
                     if (status) syncSurveyRewards(user);
+                    bumpRewards(); // issue #108: Activity and the survey counts read the finished survey right away
                     setTimeout(() => {
                       router.replace("/member/dashboard");
                     }, 30000);
