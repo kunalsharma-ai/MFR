@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { CAPABILITIES, CONTRACT_VERSION, discoveryFor } from "../app/admin/contract.js";
 
-test("declares contract 1.0.0, the signed brand and the admin capabilities", () => {
+test("declares contract 1.1.0, the signed brand and the admin capabilities", () => {
     const d = discoveryFor("WWW.MyFrequentRewards.com", { GIT_SHA: "abc123" });
     assert.equal(d.contract, "madp-panel-api");
     assert.equal(d.version, CONTRACT_VERSION);
@@ -20,7 +20,7 @@ test("every declared admin group has routes in admin/routes.js", () => {
     const prefix = {
         "admin.members": "/members", "admin.members.actions": "/reset-password", "admin.members.engagement": "/engagement",
         "admin.members.duplicates": "/members/duplicates", "admin.members.archive": "/members/archive-run",
-        "admin.question_bank": "/qb/", "admin.profiles": "/profiles", "admin.segments": "/segments",
+        "admin.question_bank": "/qb/", "admin.profiles": "/profiles", "admin.about_you": "/about-you", "admin.segments": "/segments",
         "admin.audiences": "/audiences", "admin.surveys": "/surveys", "admin.points": "/points/", "admin.quality": "/quality/",
         "admin.experts": "/experts", "admin.tickets": "/tickets", "admin.messages": "/messages", "admin.help": "/help",
         "admin.content": "/content", "admin.switches": "/switches", "admin.reminders": "/reminders",

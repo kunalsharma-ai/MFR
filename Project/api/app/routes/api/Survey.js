@@ -5,7 +5,20 @@ import {
     User as userController
 } from "../../controller/index.js";
 import { Mutate, expressRoute, expressView, isAuthenticated, fsLogger } from "../../utils/index.js"
-import { requireAdmin, requireMember } from "../../utils/access.js";
+import { requireAdmin, requireMember, optionalMember } from "../../utils/access.js";
+
+// The survey's entry link is only for admins here. Members get it from PUT /api/v1/me/survey, which checks the
+// About You lock first (member/aboutYou.js), so the link cannot be read off these list routes to skip the lock.
+function hideLinks(req, data) {
+    if (req.isAdmin) return data;
+    const strip = (s) => {
+        if (!s || typeof s !== "object") return s;
+        const o = typeof s.toObject === "function" ? s.toObject() : { ...s };
+        delete o.link;
+        return o;
+    };
+    return Array.isArray(data) ? data.map(strip) : strip(data);
+}
 
 // Statuses a member's own survey redirect may set (status page after the survey tool sends them back).
 const MEMBER_END_STATUSES = ["complete", "terminate", "overquota"];
@@ -13,11 +26,11 @@ const MEMBER_END_STATUSES = ["complete", "terminate", "overquota"];
 const router = express.Router();
 router
     .route('/')
-    .get(expressRoute(
+    .get(optionalMember, expressRoute(
         async req => {
             // Read all entries
             let message = "";
-            let data = await surveyController.list()
+            let data = hideLinks(req, Mutate(await surveyController.list()))
             return { message, data };
         },
         surveyController
@@ -25,7 +38,8 @@ router
     .post(isAuthenticated, expressRoute(
         async req => {
             let message = "";
-            let data = Mutate(await surveyController.list(req.body))
+            req.isAdmin = false; // isAuthenticated does not check the role: admins use GET (above) or the admin API
+            let data = hideLinks(req, Mutate(await surveyController.list(req.body)))
             return { message, data }
         },
         surveyController
@@ -108,11 +122,11 @@ router
     ))
 router
     .route('/:id')
-    .get(expressRoute(
+    .get(optionalMember, expressRoute(
         async req => {
             // read single entry
             let message = "";
-            let data = await surveyController.read(req.params.id);
+            let data = hideLinks(req, Mutate((await surveyController.read(req.params.id)) ?? null));
             return { message, data };
         },
         surveyController

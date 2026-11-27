@@ -17,7 +17,14 @@ export default function expressRoute(callback, Controller) {
             return res.redirect(`/member/dashboard`)
         } catch (error) {
             console.log(error)
-            res.status(404).json(APIResponse.Error(error.message))
+            // an error marked `expose` carries its own HTTP status, a machine-readable code and data (e.g. the About You
+            // lock: 403, code "about_you", the profiles still open); every other error keeps the old 404
+            const own = error?.expose === true;
+            const status = own && Number.isInteger(error.status) && error.status >= 400 && error.status < 600 ? error.status : 404;
+            const body = APIResponse.Error(error.message);
+            if (own && typeof error.code === "string") body.code = error.code;
+            if (own && error.data !== undefined) body.data = error.data;
+            res.status(status).json(body)
         }
     }
 }
