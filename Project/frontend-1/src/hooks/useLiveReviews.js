@@ -6,7 +6,10 @@ import { API_BASE, DEMO_MODE } from '../data/site.js';
 
 
 const FEED = import.meta.env.VITE_REVIEWS_FEED_URL || `${API_BASE}/api/v1/testimonial`;
-const FALLBACK = '/data/reviews.json';
+// Issue #89 (Kunal, 27 Nov 2026): the site shows ONLY reviews from the live feed (plus the visitor's own just-posted
+// one). The fixed testimonial texts (data/community.js, data/testimonialsSupplied.js, public/data/reviews.json) are no
+// longer shown on the live site; preview builds (no backend) still use them so the sections can be seen.
+const FALLBACK = DEMO_MODE ? '/data/reviews.json' : null;
 // No polling (issue #84). Reviews only change when the team approves one, so the feed is read once per page load and
 // shared by every section that shows reviews; it is read again only when the member comes back to a tab that has
 // been away for STALE_MS or more, and shortly after the member posts a review of their own.
@@ -25,8 +28,8 @@ function readFeed(force = false) {
     try {
       list = await fetchFeed(feedUrl);
     } catch {
-      // the live feed is not answering: use the static file for the rest of this visit
-      if (feedUrl !== FALLBACK) {
+      // the live feed is not answering: a preview build uses the static file; the live site shows no fixed texts
+      if (FALLBACK && feedUrl !== FALLBACK) {
         feedUrl = FALLBACK;
         try { list = await fetchFeed(feedUrl); } catch { /* keep what we had */ }
       }
@@ -39,7 +42,9 @@ function readFeed(force = false) {
   return inflight;
 }
 
-const BASE = [...TESTIMONIALS, ...SUPPLIED_TESTIMONIALS.filter((t) => t.publish || DEMO_MODE).map((t) => (t.publish ? t : { ...t, preview: true }))].map(normalizeReview).filter(Boolean);
+const BASE = DEMO_MODE
+  ? [...TESTIMONIALS, ...SUPPLIED_TESTIMONIALS.map((t) => (t.publish ? t : { ...t, preview: true }))].map(normalizeReview).filter(Boolean)
+  : [];
 
 
 function fromApi(r) {
