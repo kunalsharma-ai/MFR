@@ -27,6 +27,10 @@ const { User: UserModel } = await import("../app/model/index.js");
 
 await mongoose.connect(process.env.MONGO_URL || `mongodb://127.0.0.1:27017/mfr_security_hardening_${Date.now()}`);
 await mongoose.connection.db.dropDatabase();
+// build the unique indexes before the first request (the "409 already exists" checks rely on them; dropping the
+// database while the models' start-up index build runs could leave one missing for a moment)
+const IndexModels = await import("../app/model/index.js");
+await Promise.all(Object.values(IndexModels).map((m) => m.init?.().then(() => m.createIndexes()).catch(() => {})));
 await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes?.().catch(() => {})));
 const app = express();
 // as in server.js: the admin API parses its own bodies (the signature covers the raw bytes)
