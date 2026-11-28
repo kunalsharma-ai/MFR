@@ -12,7 +12,7 @@ Date.prototype.isMinor = function (cn = "IN") {
 //            POST /login, /resend, POST /:id (check an emailed code), PATCH /:id {action:"resend-otp"}
 //   member   POST /            the member's OWN referrals only (admins: the full list, as before)
 //            GET /:id, PUT /:id, POST /:id/profile-data    own record only (PUT: a short list of fields)
-//   admin    GET /, GET /summarize, POST /autologin (410, moved to MADP), DELETE /terms, POST /refresh, DELETE /:id,
+//   admin    GET/PUT/PATCH/POST /apps (integrated apps + tokens, routes/api/Apps.js), GET /, GET /summarize, POST /autologin (410, moved to MADP), DELETE /terms, POST /refresh, DELETE /:id,
 //            GET/PUT /:id of any member (role read fresh from the database, never from the request)
 // Teen Panel registration moved to /api/v1/teen (routes/api/Teen.js); the old /teen and /parent-consent routes answer 410.
 // A Teen sign-up sent to PUT / with category "minor" and the teen/guardian body goes to the Teen handler (issue #113).
@@ -44,6 +44,7 @@ import { fingerprint } from "../../utils/fingerprint.js";
 import { redeem as redeemAdminTicket } from "../../admin/memberactions.js";
 import { start as startSession } from "../../utils/memberSession.js";
 import { registerHandlers as teenRegister, isTeenSignup } from "./Teen.js";
+import appsRouter from "./Apps.js";
 
 const router = express.Router();
 
@@ -312,6 +313,9 @@ router
     .post("/teen", moved)
     .post("/teen/resend", moved)
     .put("/parent-consent/:id", moved)
+
+// integrated applications and their API tokens (issue #124). Mounted before /:id, which would read "apps" as a member id.
+router.use("/apps", appsRouter);
 
 router
     .route('/:id')

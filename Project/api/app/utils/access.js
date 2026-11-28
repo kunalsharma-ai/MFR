@@ -10,6 +10,11 @@ import { User as userModel } from "../model/index.js";
 
 export const ADMIN_ROLES = ["administrator", "admin", "superadmin", "root"];
 
+// an integrated application's token (issue #124) is an admin credential; members are read fresh from the database
+async function roleFor(req) {
+    if (req.appClient) return "root";
+    return roleOf(req.user?._id);
+}
 async function roleOf(id) {
     const u = await userModel.findById(id).select("+role").lean();
     return u?.role || "";
@@ -18,7 +23,7 @@ async function roleOf(id) {
 export function requireMember(req, res, next) {
     return isAuthenticated(req, res, async () => {
         try {
-            req.isAdmin = !req.adminSession && ADMIN_ROLES.includes(String(await roleOf(req.user?._id)).toLowerCase());
+            req.isAdmin = !req.adminSession && ADMIN_ROLES.includes(String(await roleFor(req)).toLowerCase());
         } catch (e) { req.isAdmin = false; }
         return next();
     });
@@ -30,7 +35,7 @@ export function requireAdmin(req, res, next) {
     return isAuthenticated(req, res, async () => {
         if (req.adminSession) return deny(res, 403, "Forbidden");
         try {
-            const role = await roleOf(req.user?._id);
+            const role = await roleFor(req);
             if (!ADMIN_ROLES.includes(String(role).toLowerCase())) return deny(res, 403, "Forbidden");
             req.user.role = role;
             req.isAdmin = true;
@@ -46,7 +51,7 @@ export function selfOrAdmin(param = "id") {
         try {
             if (String(req.user?._id) === String(req.params[param])) { req.isSelf = true; return next(); }
             if (req.adminSession) return deny(res, 403, "Forbidden");
-            const role = await roleOf(req.user?._id);
+            const role = await roleFor(req);
             if (!ADMIN_ROLES.includes(String(role).toLowerCase())) return deny(res, 403, "Forbidden");
             req.isAdmin = true;
             return next();

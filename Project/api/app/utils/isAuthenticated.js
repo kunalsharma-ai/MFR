@@ -1,6 +1,6 @@
 import API from "./API.js";
 import { verify } from "./token.js";
-import {User as userModel} from "../model/index.js"
+import {User as userModel, IntegratedApp} from "../model/index.js"
 import { Mutate } from "./index.js";
 import { openSession, refused } from "./adminSession.js";
 import { check as checkMemberSession } from "./memberSession.js";
@@ -36,6 +36,17 @@ export default async function isAuthenticated(req, res, next) {
             })
         }
 
+        // An integrated application's token (issue #124, made on /admin/apps): the app must still be switched on and
+        // the token must be its newest one. It acts as an admin (role root) for reading live data.
+        if (user.app) {
+            const app = await appFor(user);
+            if (!app) return res.status(401).json({ status: "error", code: "app_token_revoked", message: "This app token is no longer valid." });
+            req.adminSession = null;
+            req.memberSessionId = null;
+            req.appClient = app;
+            req.user = { _id: String(app._id), name: { first: app.name, last: "app" }, fullName: `${app.name} app`, role: "root", isApp: true, origin: app.origin };
+            return next();
+        }
         // An admin signed in as this member ("log in as member"): the session must still be open, and some actions
         // are refused (utils/adminSession.js).
         req.adminSession = null;
@@ -84,4 +95,15 @@ export default async function isAuthenticated(req, res, next) {
 async function getUserDetails(user) {
     let usr=Mutate(await userModel.findById(user._id));
     return usr;
+}
+
+// the app named in an app token, when it is switched on and the token is its newest one
+export async function appFor(claims) {
+    if (!claims?._id || !claims.app) return null;
+    const app = await IntegratedApp.findOne({ _id: claims._id, origin: claims.origin, isDeleted: { $ne: true } }).select("+isActive").lean().catch(() => null);
+    if (!app || app.isActive === false || Number(app.tokenVersion || 0) !== Number(claims.tv)) return null;
+    // remember when it was last used (at most once a minute, never blocks the request)
+    if (!app.lastUsedAt || Date.now() - new Date(app.lastUsedAt).getTime() > 60000)
+        IntegratedApp.updateOne({ _id: app._id }, { $set: { lastUsedAt: new Date() } }).catch(() => {});
+    return app;
 }
