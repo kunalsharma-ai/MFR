@@ -11,18 +11,25 @@ export default function appPage() {
     const [isLoading, setIsLoading] = React.useState(true);
     const [token, setToken] = React.useState(null);
     const [app, setApp] = React.useState({ open: false, id: null });
+    const [reload, setReload] = React.useState(0);
+    const refresh = () => setReload((n) => n + 1);
     React.useEffect(() => {
         setIsLoading(true);
         loadData(
             api.get("/api/v1/user/apps"),
             (resp) => {
-                setApps(resp.data);
+                setApps(Array.isArray(resp?.data) ? resp.data : []);
             },
             () => {
                 setIsLoading(false);
             },
         );
-    }, []);
+    }, [reload]);
+    const setActive = async (id, isActive) => {
+        const resp = await api.patch("/api/v1/user/apps", { _id: id, isActive });
+        useToast(resp);
+        refresh();
+    };
     return (
         <Page.Box
             sx={{
@@ -66,9 +73,12 @@ export default function appPage() {
                                         let resp = await api.post("/api/v1/user/apps", {
                                             _id: info._id,
                                         });
-                                        setToken(resp.data.token);
-                                        console.log(resp);
-                                        // setApp({ open: true, id: info._id, appName: info.name.first });
+                                        if (resp?.data?.token) {
+                                            setToken(resp.data.token);
+                                            refresh();
+                                        } else {
+                                            useToast(resp);
+                                        }
                                     }}
                                     style={{ color: "#035f87", fontSize: 16 }}
                                     sx={{ m: 0 }}
@@ -77,16 +87,16 @@ export default function appPage() {
                                 {info.isActive ? (
                                     <Icon
                                         iconClass="fa fa-ban"
-                                        onClick={() => { }}
-                                        label="Disable User"
+                                        onClick={() => setActive(info._id, false)}
+                                        label="Switch app off (its token stops working)"
                                         style={{ color: "rgba(237, 89, 89, 1)", fontSize: 16 }}
                                         sx={{ m: 0 }}
                                     />
                                 ) : (
                                     <Icon
                                         iconClass="fa fa-circle-check"
-                                        onClick={() => { }}
-                                        label="Enable User"
+                                        onClick={() => setActive(info._id, true)}
+                                        label="Switch app on"
                                         style={{ color: "#59AC77", fontSize: 16 }}
                                         sx={{ m: 0 }}
                                     />
@@ -101,10 +111,16 @@ export default function appPage() {
                         width: "350px",
                     },
                     {
-                        id: "mail",
-                        data: "mail",
-                        label: "App Email",
-                        width: "350px",
+                        id: "tokenIssuedAt",
+                        label: "Token made",
+                        width: "220px",
+                        render: (info) => (info.tokenIssuedAt ? new Date(info.tokenIssuedAt).toLocaleString() : "No token yet"),
+                    },
+                    {
+                        id: "lastUsedAt",
+                        label: "Last used",
+                        width: "220px",
+                        render: (info) => (info.lastUsedAt ? new Date(info.lastUsedAt).toLocaleString() : "Never"),
                     },
                 ]}
                 add={() => {
@@ -122,6 +138,7 @@ export default function appPage() {
                     appName={app.appName}
                     onClose={() => {
                         setApp({ open: false, id: null });
+                        refresh();
                     }}
                 />
             </Popup.SideDrawer>
@@ -138,6 +155,10 @@ export default function appPage() {
                 }}
             >
                 <Page.Box p={2}>
+                    <Page.Text variant="body2" sx={{ mb: 1 }}>
+                        Copy this token now: it is shown only once. Send it in the Authorization header as Bearer, then the token.
+                        Making a new token stops this one.
+                    </Page.Text>
                     <Page.Text variant="body1" sx={{ wordBreak: "break-all" }}>
                         {token}
                     </Page.Text>

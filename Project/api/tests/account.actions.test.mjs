@@ -20,6 +20,10 @@ const { parseAction } = await import("../app/member/accountActions.js");
 
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_account_test");
 await mongoose.connection.db.dropDatabase();
+// build the unique indexes before the first request: the "filed once" check (409) relies on one, and dropping the
+// database while the models' start-up index build runs could leave it missing for a moment
+const Models = await import("../app/model/index.js");
+await Promise.all(Object.values(Models).map((m) => m.init?.().then(() => m.createIndexes()).catch(() => {})));
 
 const app = express();
 app.use([express.json(), cookieParser(), setOrigin, appRoute]);

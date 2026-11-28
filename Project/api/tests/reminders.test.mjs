@@ -46,6 +46,10 @@ const { e164 } = await import("../app/engagement/channels.js");
 
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_reminders");
 await mongoose.connection.db.dropDatabase();
+// build the unique indexes before the first request (the "409 already exists" checks rely on them; dropping the
+// database while the models' start-up index build runs could leave one missing for a moment)
+const IndexModels = await import("../app/model/index.js");
+await Promise.all(Object.values(IndexModels).map((m) => m.init?.().then(() => m.createIndexes()).catch(() => {})));
 await Promise.all(mongoose.modelNames().map((n) => mongoose.model(n).init()));
 const db = mongoose.connection.db;
 const app = express();

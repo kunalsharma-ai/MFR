@@ -56,6 +56,10 @@ const stubs = await Promise.all([
 
 await mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mfr_teen_mail_test");
 await mongoose.connection.db.dropDatabase();
+// build the unique indexes before the first request (the "409 already exists" checks rely on them; dropping the
+// database while the models' start-up index build runs could leave one missing for a moment)
+const IndexModels = await import("../app/model/index.js");
+await Promise.all(Object.values(IndexModels).map((m) => m.init?.().then(() => m.createIndexes()).catch(() => {})));
 await Promise.all(Object.values(Models).map((m) => m.syncIndexes?.().catch(() => {})));
 
 const app = express();
